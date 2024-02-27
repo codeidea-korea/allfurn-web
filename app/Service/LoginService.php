@@ -106,14 +106,16 @@ class LoginService
     
     
     public function getUserById(string $user_id) {
-        
         $user = User::select("*")->where([
                 ['account', $user_id]
             ])->first();
-        
         return $user;
-            
     }
     
-    
+    public function getUserByPhoneNumber(string $phone_number) {
+        $user = User::select("*")->where([
+                ['phone_number', $phone_number]
+            ])->first();
+        return $user;
+    }
 }

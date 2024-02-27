@@ -26,7 +26,7 @@ Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
-    Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
+    Route::get('/sendAuthCode', 'LoginController@sendAuthCode');
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
     Route::get('/success', function () {
         return view('login/success');
@@ -60,6 +60,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::post('/getOption/{productIdx}', 'ProductController@getOption');
     Route::post('/getProductData/{productIdx}', 'ProductController@getProductData');
     Route::post('/getCategoryList/{parentIdx}', 'ProductController@getCategoryList');
+    Route::post('/getCategoryListV2', 'ProductController@getCategoryListV2');
     Route::post('/getCategoryProperty', 'ProductController@getCategoryProperty');
     Route::post('/saveProduct', 'ProductController@saveProduct');
     Route::get('/modify/{productIdx}', 'ProductController@modify')->name('.modify');

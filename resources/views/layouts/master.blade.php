@@ -28,7 +28,7 @@
     <script src="/js/jquery-ui-1.13.1.js" ></script>
     <script src="/js/swiper-bundle.min.js"></script>
     
-    <link rel="stylesheet" href="/css/ui.css?22122804">
+    <link rel="stylesheet" href="/ver.1/css/ui.css?22122804">
     
 </head>
 

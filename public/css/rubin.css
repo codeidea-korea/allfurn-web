@@ -1,0 +1,122 @@
+/* ------------------------------------
+    마이페이지
+------------------------------------ */
+/* 공통 */
+.main_color{
+    color:var(--main_color);
+}
+.bg_main{
+    background:var(--main_color);
+}
+
+/* 상단 */
+.my_top_area{
+    padding:50px;
+    border-radius: 3px;
+    background: #F5F6F8;
+    margin-top:40px;
+    margin-bottom:60px;
+}
+.profile img{
+    width:75px;
+    height:75px;
+}
+.profile_id{
+    font-size:24px;
+    font-weight: 700;
+}
+
+.status_zone{
+    background:#fff;
+    padding:0px 20px;
+    border-radius: 3px;
+    height:76px;
+}
+.status_zone .line{
+    width:1px;
+    background: #DADDE0;
+    height:44px;
+}
+.status_zone > div{
+    width:100px;
+}
+
+.my_point_area{
+    height:76px;
+    background:#fff;
+    border-radius: 3px;
+    padding:0px 20px;
+    width:297px;
+}
+
+
+/* 하단 왼쪽 */
+.my_menu_list{
+    border-radius: 3px;
+    border: 1px solid var(--line, #DADDE0);
+    width:260px;
+}
+.my_menu_list li a:hover{
+    background:#F5F6F8;
+}
+.border_b{
+    border-bottom-width:1px;
+    border-color:#DADDE0;
+}
+.my_small_b{
+    border-radius: 3px;
+}
+
+/* 하단 오른쪽 */
+.st_box{
+    border-width:1px;
+    border-color:var(--color-black, #46433F);
+    border-radius: 3px;
+    height:50px;
+}
+.st_box .line{
+    width:1px;
+    background: #DADDE0;
+    height:10px;
+}
+.my_filterbox{
+    height:44px;
+
+}
+.my_filterbox .filter_border{
+    padding:0 16px;
+    border: 1px solid var(--line, #DADDE0);
+    border-radius: 3px;
+}
+.filter_dropdown:hover{
+    border: 1px solid var(--main_color);
+}
+
+.filter_dropdown svg{
+    stroke: #46433F;
+}
+.filter_dropdown svg.active{
+    stroke: var(--main_color);
+    transform: rotate(180deg);
+}
+.filter_dropdown:hover svg {
+    stroke: var(--main_color);
+}
+.filter_dropdown.active{
+    border: 1px solid var(--main_color);
+}
+
+.filter_dropdown_wrap{
+    border: 1px solid var(--main_color);
+    border-radius: 3px;
+    position:absolute;
+    margin-top:10px;
+    display: none;
+}
+.filter_dropdown_wrap a{
+    padding:0 16px;
+    height:44px;
+}
+.filter_dropdown_wrap a:hover{
+    background:rgba(251, 71, 96, 0.10);;
+}

@@ -10,9 +10,11 @@ use App\Models\Popup;
 use App\Models\Banner;
 use App\Models\KeywordAd;
 use App\Models\Product;
+use App\Models\ProductAd;
 use App\Models\Push;
 use App\Models\UserSearch;
 use App\Models\Cart;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +31,9 @@ class HomeService
      */
     public function getHomeData()
     {
-        $data['banner_top'] = Banner::where('ad_location', 'alltop')
+        // 배너 상단
+        $banner_top = Banner::select('AF_banner_ad.company_idx', 'AF_banner_ad.company_type', 'AF_banner_ad.web_link_type', 'AF_banner_ad.web_link', 'ac.folder', 'ac.filename')
+            ->where('ad_location', 'alltop')
             ->join('AF_attachment as ac', function ($query) {
                 $query->on('ac.idx', 'AF_banner_ad.web_attachment_idx');
             })
@@ -41,6 +45,54 @@ class HomeService
             ->orderByRaw('banner_price desc, RAND()')
             ->limit(20)
             ->get();
+
+        foreach ($banner_top as $key => $value) {
+            if ($value->company_type == 'W') {
+                $company = DB::table('AF_wholesale')->select('company_name')->where('idx', $value->company_idx)->first();
+                if (is_null($company->company_name)){ $value->company_name = ''; } else { $value->company_name = $company->company_name; }
+            } else if ($value->company_type == 'R') {
+                $company = DB::table('AF_retail')->select('idx', 'company_name')->where('idx', $value->company_idx)->first();
+                if (is_null($company->company_name)){ $value->company_name = ''; } else { $value->company_name = $company->company_name; }
+            }else{
+                $company = DB::table('AF_normal')->select('name')->where('idx', $value->company_idx)->first();
+                if (is_null($company->name)){ $value->company_name = ''; } else { $value->company_name = $company->name; }
+            }
+        }
+        
+        $data['banner_top'] = $banner_top;
+
+
+        // 상위 카테고리 목록
+        $data['categoryAlist'] = Category::select('AF_category.idx', 'AF_category.name', DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
+            ->where('parent_idx', null)->where('is_delete', 0)
+            ->leftjoin('AF_attachment as aat', function($query) {
+                $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
+            })
+            ->orderBy('AF_category.order_idx', 'asc')->get();
+
+
+        // 베스트 신상품 목록
+        $data['productAd'] = ProductAd::select('AF_product.*',
+            DB::raw('AF_product_ad.price as ad_price, 
+                (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'))
+            ->join('AF_product', function ($query) {
+                $query->on('AF_product.idx', 'AF_product_ad.product_idx')
+                    ->whereIn('AF_product.state', ['S', 'O']);
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            //->where('AF_product_ad.state', 'G')
+            //->where('AF_product_ad.start_date', '<', DB::raw("now()"))
+            //->where('AF_product_ad.end_date', '>', DB::raw("now()"))
+            //->where('AF_product_ad.ad_location', 1)
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
+            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+       
 
         // 신상품 랜덤 8개
         $data['new_product'] = Product::select('AF_product.*',

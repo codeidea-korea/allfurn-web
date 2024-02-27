@@ -1,4 +1,4 @@
-<select id="{{$id}}" name="countryCode" class="sign_up_country_phone_code">
+<select id="{{$id}}" name="countryCode" class="input-form">
     <option value="82" Selected>대한민국 (+82)</option>
     <option value="44">UK (+44)</option>
     <option value="1">USA (+1)</option>

@@ -86,11 +86,9 @@ class MemberController extends BaseController {
      * @return JsonResponse
      */
     public function createUser(Request $request): JsonResponse {
-        
         Log::info("***** MemberController > createUser");
         
         $data = $request->all();
-
         if ($this->memberService->checkEmail($data['email']) > 0) {
             return response()->json([
                 'success' => false,
@@ -98,18 +96,16 @@ class MemberController extends BaseController {
                 'message' => 'registed email'
             ]);
         }
-
+        
         //이미지 저장
         $storageName = "name-card-image";
         if ($data['userType'] != 'N' && $data['userType'] != 'S') {
             $storageName = 'business-license-image';
         }
-
         $file = $request->file('file')->store($storageName, 's3');
         $data['attachmentIdx'] = $this->memberService->saveAttachment($file);
         $data['companyIdx'] = $this->memberService->createCompany($data);
         $userIdx = $this->memberService->createUser($data);
-
         
         return response()->json([
             'success' => $userIdx != null ? true : false,

@@ -236,6 +236,12 @@
         </div>
     </div>
 </div>
+<script>
+function openModal(name) {
+	$(`${name}`).css('display', 'block');
+	$('body').css('overflow', 'hidden');
+}
+</script>
 @endsection
 @push('scripts')
     <script>
@@ -260,5 +266,7 @@
 
             })
         }
+
+
     </script>
 @endpush

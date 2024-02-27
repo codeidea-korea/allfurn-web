@@ -65,6 +65,12 @@ class ProductController extends BaseController
         return $this->productService->getCategoryList($parentIdx);
     }
 
+    // 상품 카테고리 리스트 가져오기 리뉴얼 : 2뎁스까지 한번에 가져옴. (코드아이디어)
+    public function getCategoryListV2()
+    {
+        return $this->productService->getCategoryListV2();
+    }
+
     /**
      * 상품 카테고리 속성 가져오기
      * @param Request $request

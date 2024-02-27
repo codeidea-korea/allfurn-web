@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.app')
 
 @section('content')
     <div id="container" class="container" style="min-height:calc(100vh - 367px)">
@@ -27,51 +27,10 @@
             </div>
         </div>
 
-        <!-- 가입완료 팝업 -->
-        <div id="LGI-04-modal1" class="modal">
-            <div class="modal__container">
-                <div class="modal__content">
-                    <div class="modal-box__container">
-                        <div class="modal-box__content">
-                            <div class="modal__desc">
-                                <p class="modal__text">
-                                    가입이 완료되었습니다.<br>
-                                    홈으로 이동합니다.
-                                </p>
-                            </div>
-                            <div class="modal__buttons">
-                                <a onclick="closeModal('#LGI-04-modal1')" class="modal__button" >
-                                    <span>확인</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
-@stop
+@endsection
 
-@section('footer')
-    @include('layouts.footer.main-footer')
-@stop
 
-@section('script')
-    <script>
-        $(document).ready(function () {
-            actvTabList('register-type', 99)
-        });
 
-        $(".radio-tab .chkbox__checked").on("click", function () {
-            if ($('.chkbox__checked01').is(":checked") === true ) {
-                $('.location--type01').css("display", "block");
-                $('.location--type02').css("display", "none");
-                $
-            }
-            if ($('.chkbox__checked02').is(":checked") === true) {
-                $('.location--type02').css("display", "block");
-                $('.location--type01').css("display", "none");
-            }
-        });
-    </script>
-@stop
+

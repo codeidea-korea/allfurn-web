@@ -48,6 +48,25 @@ class ProductService
         }
     }
 
+    public function getCategoryListV2()
+    {
+        $category = Category::select('AF_category.*',
+            DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
+            ->where('parent_idx', null)
+            ->where('is_delete', 0)
+            ->leftjoin('AF_attachment as aat', function($query) {
+                $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
+            })
+            ->orderBy('AF_category.order_idx', 'asc')
+            ->get();
+            
+        foreach($category as $depth1) {
+            $depth1->depth2 = Category::whereRaw('is_delete=0 and parent_idx='.$depth1->idx)->orderBy('order_idx', 'asc')->get();
+        }
+
+        return $category;
+    }
+
     public function getCategoryProperty(array $params = [])
     {
         Log::info($params);

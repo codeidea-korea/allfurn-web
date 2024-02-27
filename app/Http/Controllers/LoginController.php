@@ -87,18 +87,13 @@ class LoginController extends BaseController
     }
 
     public function sendAuthCode(Request $request) {
-        
         Log::info("***** LoginController > sendAuthCode :: $request->target");
-        
-        $user = $this->loginService->getUserById($request->target);
-        
-        // $request->target = "+$user->phone_country_number$user->phone_number";
+        $user = $this->loginService->getUserByPhoneNumber($request->target);
         $target = "$user->phone_number";
-        
         Log::info($request->target);
         
         $new_param['target'] = $target;
-        $new_param['type'] = 'S';
+        $new_param['type'] = $request->type;
         
         return response()->json($this->loginService->sendAuth($new_param));
     }
