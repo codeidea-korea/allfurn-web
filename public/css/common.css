@@ -190,8 +190,8 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .slide_arrow.type03.prev svg {transform:rotate(0); }
 
 /* 상품아이템 */
-.prod_item .img_box {position:relative; }
-.prod_item .img_box img {width:100%; border-radius:4px; }
+.prod_item .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:4px; background-color:#f5f5f5; }
+.prod_item .img_box img {position:absolute; left:50%; top:50%; max-width:fit-content; height:100%; border-radius:4px; transform:translate(-50%,-50%); }
 .prod_item .img_box .zzim_btn {position:absolute; right:16px; bottom:16px; }
 .prod_item .txt_box {padding-top:6px ; line-height:1;}
 .prod_item .txt_box span {color:var(--gray_color); font-size:14px; }
@@ -244,7 +244,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_filter .filter_box {display:flex; align-items:center; gap:8px;  }
 .sub_filter .filter_box button {display:flex; align-items:center; gap:4px; height:44px; border:0.5px solid var(--gray_color); padding:5px 14px; border-radius:3px; }
 .sub_filter .filter_box button.on {border:1px solid var(--main_color); background-color:#ffeff1; }
-.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('../img/icon/filter_arrow.svg') no-repeat center center; }
+.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('/img/icon/filter_arrow.svg') no-repeat center center; }
 .sub_filter .total {font-weight:500; }
 
 .sub_filter_result {display:flex; align-items:center; justify-content:space-between; padding:15px; border:1px solid #dadde0; margin-bottom:24px; border-radius:3px;}

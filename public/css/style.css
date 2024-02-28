@@ -194,6 +194,10 @@ section.sub_section_bot {padding:70px 0 140px; }
 /* category_banner */
 .category_banner .inner {padding:30px 0; border-bottom: 1px solid rgba(218, 221, 224, 0.60); }
 .category_banner .slide_box i {position:relative; display:block; width:100%; padding-bottom:100%; background-color:#F5F5F5; border-radius:50%; }
+.category_banner .slide_box li:hover i,
+.category_banner .slide_box li.on i {background-color:var(--main_color); }
+.category_banner .slide_box li:hover svg,
+.category_banner .slide_box li.on svg {stroke:#fff; }
 .category_banner .slide_box .active i {background-color:#46433F; }
 .category_banner .slide_box i b,
 .category_banner .slide_box i svg,
@@ -213,7 +217,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 /* popular_prod */
 .popular_prod .slide_box ul {display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
 .popular_prod .slide_box ul li:first-of-type {grid-column:span 2; grid-row:span 2; }
-.popular_prod .popular_banner {background:url('../img/popular_banner.png') no-repeat center center / cover; }
+.popular_prod .popular_banner {background:url('/img/popular_banner.png') no-repeat center center / cover; }
 .popular_prod .popular_banner .txt_box {padding-top:150px; text-align:center; }
 .popular_prod .popular_banner .txt_box p {color:#fff; font-size:30px; font-weight:500; }
 .popular_prod .popular_banner .txt_box p b {font-size:40px; font-weight:700; }
@@ -229,7 +233,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 .video_prod .video_box .txt_box h4 span {font-size:30px; font-weight:400; }
 .video_prod .video_box .slide_box {width:690px; max-width:100%; margin:0 auto; }
 .video_prod .video_box .slide_box a {position:relative; display:block; }
-.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 29px); top:calc(50% - 26.5px); width:58px; height:53px; background:url('../img/icon/play_btn.svg') no-repeat center center; }
+.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 29px); top:calc(50% - 26.5px); width:58px; height:53px; background:url('/img/icon/play_btn.svg') no-repeat center center; }
 .video_prod .video_box .count_pager {display:inline-block; margin-top:20px; }
 .video_prod .video_box .count_pager .swiper-pagination-current {color:#fff; }
 
