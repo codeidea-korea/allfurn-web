@@ -77,7 +77,9 @@ class HomeService
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'))
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
             ->join('AF_product', function ($query) {
                 $query->on('AF_product.idx', 'AF_product_ad.product_idx')
                     ->whereIn('AF_product.state', ['S', 'O']);
@@ -85,31 +87,31 @@ class HomeService
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
-            //->where('AF_product_ad.state', 'G')
-            //->where('AF_product_ad.start_date', '<', DB::raw("now()"))
-            //->where('AF_product_ad.end_date', '>', DB::raw("now()"))
-            //->where('AF_product_ad.ad_location', 1)
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_product_ad.ad_location', 1)
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
             ->orderby('ad_price', 'desc')->inRandomOrder()->get();
        
 
-        // 신상품 랜덤 8개
-        $data['new_product'] = Product::select('AF_product.*',
+        // 신상품 목록 
+        $data['new_product'] = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                                ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'))
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
             ->where([
-                'AF_product.is_showroom_item' => 1,
+                'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
-            ->inRandomOrder()
-            ->limit(16)
-            ->get();
+            ->inRandomOrder()->get();
 
         // 커뮤니티 인기글
         $data['community'] = Article::select('AF_board_article.*', 'ab.name',

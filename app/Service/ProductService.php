@@ -460,6 +460,36 @@ class ProductService
 
     }
 
+
+    /** 베스트상품 목록 */
+    public function getBestNewProductList(array $param = [])
+    {
+        $bestNewProducts = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 
+            DB::raw('AF_product_ad.price as ad_price, 
+                (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->join('AF_product', function ($query) {
+                $query->on('AF_product.idx', 'AF_product_ad.product_idx')
+                    ->whereIn('AF_product.state', ['S', 'O']);
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_product_ad.ad_location', 1)
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
+            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+        return $bestNewProducts;
+    }
+
+
     public function addOrder(array $param = [])
     {
         $order = new Order;

@@ -218,6 +218,16 @@ class ProductController extends BaseController
     }
 
 
+    /** 베스트 신상품 가져오기 */
+    public function bestNewProduct(Request $request)
+    {
+        $bestNewProducts = $this->productService->getBestNewProductList();
+        return view('product.best-new-product', [
+            'bestNewProducts' => $bestNewProducts,
+        ]);
+    }
+
+
     // 상품 상세 데이터 가져오기
     public function detail(int $productIdx) {
         $data = $this->productService->getProductData($productIdx);

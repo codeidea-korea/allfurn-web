@@ -1,22 +1,22 @@
 <header>
     <div class="header_top">
         <div class="inner">
-            <h1 class="logo"><a class="flex items-center gap-1" href="./index.php"><img src="./img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
-            <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button>
+            <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
+            <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button>
             <ul class="right_link flex items-center">
                 <li><a href="javascript:;">올톡</a></li>
                 <li><a href="/mypage/deal">마이올펀</a></li>
                 <li><a href="./like_prod.php">좋아요</a></li>
-                <li><a class="alarm_btn" href="javascript:;"><span>10</span><svg><use xlink:href="./img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="javascript:;"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
     <div class="header_banner">
         <div class="inner">
             <a href="javascript:;" class="flex items-center">
-                <svg><use xlink:href="./img/icon-defs.svg#Notice"></use></svg>
+                <svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>
                 내 집에서 호텔 침대를 만나보세요
-                <svg><use xlink:href="./img/icon-defs.svg#Notice_arrow"></use></svg>
+                <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg>
             </a>
         </div>
     </div>

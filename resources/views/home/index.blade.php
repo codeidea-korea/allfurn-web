@@ -141,7 +141,8 @@
     </div>
 
     {{-- 베스트 신상품 --}}
-    @include('home.best-new-product')
+    @php $bestNewProducts = $data['productAd']; @endphp
+    @include('home.inc-best-new-product')
 
     <section class="main_section new_prod">
         <div class="inner">
@@ -1453,182 +1454,182 @@
 
 
 <script>
+// main_visual 
+const main_visual = new Swiper(".main_visual .slide_box", {
+    slidesPerView: 1,
+    navigation: {
+        nextEl: ".main_visual .slide_arrow.next",
+        prevEl: ".main_visual .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".main_visual .count_pager",
+        type: "fraction",
+    },
+    on: {
+        slideChangeTransitionEnd: function () {
+            let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
+            $('.main_visual .bottom_box p').text(brand)
+        },
+    },
+});
 
-    // main_visual 
-    const main_visual = new Swiper(".main_visual .slide_box", {
-        slidesPerView: 1,
-        navigation: {
-            nextEl: ".main_visual .slide_arrow.next",
-            prevEl: ".main_visual .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".main_visual .count_pager",
-            type: "fraction",
-        },
-        on: {
-            slideChangeTransitionEnd: function () {
-                let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
-                $('.main_visual .bottom_box p').text(brand)
-            },
-        },
-    });
 
+// main_mid_banner
+const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
+    slidesPerView: 5,
+    spaceBetween: 12,
+});
 
-    // main_mid_banner
-    const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
-        slidesPerView: 5,
-        spaceBetween: 12,
-    });
+// category_banner
+const category_banner = new Swiper(".category_banner .slide_box", {
+    slidesPerView: 12,
+    spaceBetween: 12,
+});
 
-    // category_banner
-    const category_banner = new Swiper(".category_banner .slide_box", {
-        slidesPerView: 12,
-        spaceBetween: 12,
-    });
+// best_prod 
+const best_prod = new Swiper(".best_prod .slide_box", {
+    slidesPerView: 4,
+    spaceBetween: 20,
+    slidesPerGroup: 4,
+    grid: {
+        rows: 2,
+    },
+    navigation: {
+        nextEl: ".best_prod .slide_arrow.next",
+        prevEl: ".best_prod .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".best_prod .count_pager",
+        type: "fraction",
+    },
+});
 
-    // best_prod 
-    const best_prod = new Swiper(".best_prod .slide_box", {
-        slidesPerView: 4,
-        spaceBetween: 20,
-        slidesPerGroup: 4,
-        grid: {
-            rows: 2,
-        },
-        navigation: {
-            nextEl: ".best_prod .slide_arrow.next",
-            prevEl: ".best_prod .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".best_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// new_prod 
+const new_prod = new Swiper(".new_prod .slide_box", {
+    slidesPerView: 4,
+    spaceBetween: 20,
+    slidesPerGroup: 4,
+    grid: {
+        rows: 2,
+    },
+    navigation: {
+        nextEl: ".new_prod .slide_arrow.next",
+        prevEl: ".new_prod .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".new_prod .count_pager",
+        type: "fraction",
+    },
+});
 
-    // new_prod 
-    const new_prod = new Swiper(".new_prod .slide_box", {
-        slidesPerView: 4,
-        spaceBetween: 20,
-        slidesPerGroup: 4,
-        grid: {
-            rows: 2,
-        },
-        navigation: {
-            nextEl: ".new_prod .slide_arrow.next",
-            prevEl: ".new_prod .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".new_prod .count_pager",
-            type: "fraction",
-        },
-    });
-
-    // 테마별상품 탭
-    $('.theme_prod .tab_layout li').on('click',function(){
-        let liN = $(this).index();
-        $(this).addClass('active').siblings().removeClass('active');
-        $('.theme_prod .tab_content').each(function(){
-            $(this).find('>div').eq(liN).addClass('active').siblings().removeClass('active');
-        })
+// 테마별상품 탭
+$('.theme_prod .tab_layout li').on('click',function(){
+    let liN = $(this).index();
+    $(this).addClass('active').siblings().removeClass('active');
+    $('.theme_prod .tab_content').each(function(){
+        $(this).find('>div').eq(liN).addClass('active').siblings().removeClass('active');
     })
+})
 
-    // theme_prod 
-    const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
-        slidesPerView: 3,
-        spaceBetween: 20,
-        slidesPerGroup: 3,
-        navigation: {
-            nextEl: ".theme_prod .tab_01 .slide_arrow.next",
-            prevEl: ".theme_prod .tab_01 .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".theme_prod .tab_01.count_pager",
-            type: "fraction",
-        },
-    });
+// theme_prod 
+const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    slidesPerGroup: 3,
+    navigation: {
+        nextEl: ".theme_prod .tab_01 .slide_arrow.next",
+        prevEl: ".theme_prod .tab_01 .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".theme_prod .tab_01.count_pager",
+        type: "fraction",
+    },
+});
 
-    const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
-        slidesPerView: 3,
-        spaceBetween: 20,
-        slidesPerGroup: 3,
-        navigation: {
-            nextEl: ".theme_prod .tab_02 .slide_arrow.next",
-            prevEl: ".theme_prod .tab_02 .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".theme_prod .tab_02.count_pager",
-            type: "fraction",
-        },
-    });
+const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    slidesPerGroup: 3,
+    navigation: {
+        nextEl: ".theme_prod .tab_02 .slide_arrow.next",
+        prevEl: ".theme_prod .tab_02 .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".theme_prod .tab_02.count_pager",
+        type: "fraction",
+    },
+});
 
-    const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
-        slidesPerView: 3,
-        spaceBetween: 20,
-        slidesPerGroup: 3,
-        navigation: {
-            nextEl: ".theme_prod .tab_03 .slide_arrow.next",
-            prevEl: ".theme_prod .tab_03 .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".theme_prod .tab_03.count_pager",
-            type: "fraction",
-        },
-    });
+const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    slidesPerGroup: 3,
+    navigation: {
+        nextEl: ".theme_prod .tab_03 .slide_arrow.next",
+        prevEl: ".theme_prod .tab_03 .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".theme_prod .tab_03.count_pager",
+        type: "fraction",
+    },
+});
 
-    const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
-        slidesPerView: 3,
-        spaceBetween: 20,
-        slidesPerGroup: 3,
-        navigation: {
-            nextEl: ".theme_prod .tab_04 .slide_arrow.next",
-            prevEl: ".theme_prod .tab_04 .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".theme_prod .tab_04.count_pager",
-            type: "fraction",
-        },
-    });
+const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+    slidesPerView: 3,
+    spaceBetween: 20,
+    slidesPerGroup: 3,
+    navigation: {
+        nextEl: ".theme_prod .tab_04 .slide_arrow.next",
+        prevEl: ".theme_prod .tab_04 .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".theme_prod .tab_04.count_pager",
+        type: "fraction",
+    },
+});
 
-    // popular_prod 
-    const popular_prod = new Swiper(".popular_prod .slide_box", {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        navigation: {
-            nextEl: ".popular_prod .slide_arrow.next",
-            prevEl: ".popular_prod .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".popular_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// popular_prod 
+const popular_prod = new Swiper(".popular_prod .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    navigation: {
+        nextEl: ".popular_prod .slide_arrow.next",
+        prevEl: ".popular_prod .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".popular_prod .count_pager",
+        type: "fraction",
+    },
+});
 
-    // sale_prod 
-    const sale_prod = new Swiper(".sale_prod .slide_box", {
-        slidesPerView: 2,
-        spaceBetween: 30,
-        slidesPerGroup: 2,
-        navigation: {
-            nextEl: ".sale_prod .slide_arrow.next",
-            prevEl: ".sale_prod .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".sale_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// sale_prod 
+const sale_prod = new Swiper(".sale_prod .slide_box", {
+    slidesPerView: 2,
+    spaceBetween: 30,
+    slidesPerGroup: 2,
+    navigation: {
+        nextEl: ".sale_prod .slide_arrow.next",
+        prevEl: ".sale_prod .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".sale_prod .count_pager",
+        type: "fraction",
+    },
+});
 
-    // video_prod 
-    const video_prod = new Swiper(".video_prod .slide_box", {
-        slidesPerView: 1,
-        navigation: {
-            nextEl: ".video_prod .slide_arrow.next",
-            prevEl: ".video_prod .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".video_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// video_prod 
+const video_prod = new Swiper(".video_prod .slide_box", {
+    slidesPerView: 1,
+    navigation: {
+        nextEl: ".video_prod .slide_arrow.next",
+        prevEl: ".video_prod .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".video_prod .count_pager",
+        type: "fraction",
+    },
+});
+
 
 </script>
 

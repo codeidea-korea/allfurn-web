@@ -64,64 +64,6 @@
 	</div>
 </div>
 
-<!-- 확대보기 -->
-<div class="modal" id="zoom_view-modal">
-    <div class="modal_bg" onclick="modalClose('#zoom_view-modal')"></div>
-    <div class="modal_inner modal-lg zoom_view_wrap">
-        <div class="count_pager dark_type"><b>1</b> / 12</div>
-        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body">
-            <div class="slide_box zoom_prod_list">
-                <ul class="swiper-wrapper">
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-            <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-        </div>
-    </div>
-</div>
 
 <!-- 검색모달 -->
 <div class="modal" id="search-modal">
@@ -366,7 +308,7 @@
 <div class="modal" id="filter_category-modal">
     <div class="modal_bg" onclick="modalClose('#filter_category-modal')"></div>
     <div class="modal_inner modal-md">
-        <button class="close_btn" onclick="modalClose('#filter_category-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#filter_category-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body filter_body">
             <h4>카테고리 선택</h4>
             <ul class="filter_list">
@@ -447,7 +389,7 @@
 <div class="modal" id="filter_location-modal">
     <div class="modal_bg" onclick="modalClose('#filter_location-modal')"></div>
     <div class="modal_inner modal-md">
-        <button class="close_btn" onclick="modalClose('#filter_location-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#filter_location-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body filter_body">
             <h4>소재지 선택</h4>
             <ul class="filter_list">
@@ -520,7 +462,7 @@
 <div class="modal" id="filter_align-modal">
     <div class="modal_bg" onclick="modalClose('#filter_align-modal')"></div>
     <div class="modal_inner modal-md">
-        <button class="close_btn" onclick="modalClose('#filter_align-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#filter_align-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body filter_body">
             <h4>정렬 선택</h4>
             <ul class="filter_list">
@@ -793,19 +735,19 @@
 <!-- 모달 들어가는곳 : E -->
 
 <script>
-    // zoom_prod_list
-    const zoom_prod_list = new Swiper(".zoom_prod_list", {
-        slidesPerView: 1,
-        spaceBetween: 120,
-        navigation: {
-            nextEl: ".zoom_view_wrap .slide_arrow.next",
-            prevEl: ".zoom_view_wrap .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".zoom_view_wrap .count_pager",
-            type: "fraction",
-        },
-    });
+// zoom_prod_list
+const zoom_prod_list = new Swiper(".zoom_prod_list", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    navigation: {
+        nextEl: ".zoom_view_wrap .slide_arrow.next",
+        prevEl: ".zoom_view_wrap .slide_arrow.prev",
+    },
+    pagination: {
+        el: ".zoom_view_wrap .count_pager",
+        type: "fraction",
+    },
+});
 </script>
 
 

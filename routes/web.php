@@ -54,6 +54,7 @@ Route::prefix('/member')->name('member')->group(function() {
 });
 
 Route::prefix('product')->name('product')->group(function() {
+    Route::get('/best-new', 'ProductController@bestNewProduct')->name('.best-new');
     Route::get('/new', 'ProductController@newProduct')->name('.new');
     Route::get('/detail/{productIdx}', 'ProductController@detail')->name('.detail');
     Route::get('/registration', 'ProductController@registration')->name('.create');

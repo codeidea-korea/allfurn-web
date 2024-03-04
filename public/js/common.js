@@ -32,11 +32,6 @@ $( function() {
         }
     });
 
-    // 찜아이콘
-    $('.zzim_btn').on('click',function(){
-        $(this).toggleClass('active')
-    })
-
     // 검색모달 제어
     $('.search_wrap .search_btn_list li').on('click',function(){
         $(this).addClass('active').siblings().removeClass('active')
