@@ -1028,48 +1028,23 @@
                         <div class="flex items-center gap-4">
                             <h3>커뮤니티</h3>
                         </div>
-                        <div class="flex items-center gap-7">
-                            <a class="more_btn flex items-center" href="javascript:;">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
+                        <div class="flex items-center gap-7"><a class="more_btn flex items-center" href="/community">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
                         </div>
                     </div>
                     <ul class="main_board_list">
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>상품문의</span>
-                                    <p>이 제품을 찾고있습니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>홍보</span>
-                                    <p>20개조 한정으로 소파 할인 행사</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>상품문의</span>
-                                    <p>집 인테리어에 어울릴까요?</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>홍보</span>
-                                    <p>친환경 침대 특별 할인 행사 진행</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
+                        @foreach($data['community'] as $item)
+                            <li>
+                                <div class="title">
+                                    <a href="/community/detail/{{$item->idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
                     </ul>
+
 
                     <div class="main_tit mb-6 mt-10 flex justify-between items-center">
                         <div class="flex items-center gap-4">
