@@ -1006,37 +1006,21 @@
                             <h3>매거진</h3>
                         </div>
                         <div class="flex items-center gap-7">
-                            <a class="more_btn flex items-center" href="javascript:;">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
+                            <a class="more_btn flex items-center" href="/magazine">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
                         </div>
                     </div>
                     <ul class="main_board_list2">
+                        @foreach($data['magazine'] as $item)
                         <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
+                            <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
                             <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
+                                <a href="/magazine/detail/{{ $item->idx }}">
+                                    <b>{{$item->title}}</b>
+                                    <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
                                 </a>
                             </div>
                         </li>
-                        <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
-                            <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
-                            <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
-                                </a>
-                            </div>
-                        </li>
+                        @endforeach
                     </ul>
                 </div>
                 <div>
