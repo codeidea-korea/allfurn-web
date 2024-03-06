@@ -208,12 +208,14 @@ class ProductController extends BaseController
         $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
 
         $list = $this->productService->getNewProductList($data);
+        $bestNewProducts = $this->productService->getBestNewProductList();
 
         return view('product.newProduct', [
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
             'list'=>$list,
+            'bestNewProducts' => $bestNewProducts,
         ]);
     }
 
