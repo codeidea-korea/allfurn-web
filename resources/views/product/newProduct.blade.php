@@ -232,7 +232,22 @@
 
             <div class="relative">
                 <ul class="prod_list">
-                    <li class="prod_item">
+                    @foreach ($list as $item )
+                        <li class="prod_item">
+                            <div class="img_box">
+                                <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
+                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                            </div>
+                            <div class="txt_box">
+                                <a href="./prod_detail.php">
+                                    <span>{{$item->companyName}}</span>
+                                    <p>{{ $item->name }}</p>
+                                    <b>{{ number_format($item->price, 0) }}원</b>
+                                </a>
+                            </div>
+                        </li>
+                    @endforeach
+                    {{-- <li class="prod_item">
                         <div class="img_box">
                             <a href="./prod_detail.php"><img src="/img/prod_thumb.png" alt=""></a>
                             <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
@@ -335,7 +350,7 @@
                                 <b>112,500원</b>
                             </a>
                         </div>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>
@@ -385,6 +400,48 @@
             prevEl: ".new_arrival_con03 .slide_arrow.prev",
         },
     });
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 100 >= $(document).height()) {
+            loadNewProductList();
+        }
+    });
+
+    let currentPage = 1;
+
+    function loadNewProductList() {
+        $.ajax({
+            url: '/product/newAddedProduct',
+            method: 'GET',
+            data: { 
+                page: currentPage + 1 
+            }, 
+            success: function(data) {
+            
+                let html ="";
+
+                for(let i=0; i<data['data'].length; i++) {
+            
+                    html += '<li class="prod_item">'+
+                            '<div class="img_box">'+
+                                '<a href="/product/detail/'+ data['data'][i]['idx'] + '"><img src="'+ data['data'][i]['imgUrl'] +'" alt=""></a>'+
+                                '<button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                           '</div>'+
+                            '<div class="txt_box">'+
+                                '<a href="./prod_detail.php">'+
+                                    '<span>'+ data['data'][i]['companyName'] +'</span>'+
+                                    '<p>'+ data['data'][i]['name']+'</p>'+
+                                    '<b>'+ data['data'][i]['price'].toLocaleString('ko-KR') +'원</b>'+
+                                '</a>'+
+                            '</div>'+
+                        '</li>';
+                }
+
+                $(".sub_section_bot .prod_item").last().after(html);
+                currentPage++;
+            }
+        })
+    }
 </script>
 
 @endsection

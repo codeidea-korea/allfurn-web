@@ -489,6 +489,28 @@ class ProductService
         return $bestNewProducts;
     }
 
+    //신규 등록 상품
+    //TODO: 카테고리, 소재지, 최신순/조회순/인기순 필터적용한 조회기능으로 변경
+    public function getNewAddedProductList() {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price',
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->where([
+                'AF_product.is_new_product' => 1,
+                'AF_product.state' => 'S'
+            ])
+            ->orderBy('AF_product.register_time', 'desc')
+            ->paginate(8);
+
+        return $new_product;
+    }
 
     public function addOrder(array $param = [])
     {

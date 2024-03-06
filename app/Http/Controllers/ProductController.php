@@ -207,7 +207,8 @@ class ProductController extends BaseController
 
         $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
 
-        $list = $this->productService->getNewProductList($data);
+        // $list = $this->productService->getNewProductList($data);
+        $list = $this->productService->getNewAddedProductList($data);
         $bestNewProducts = $this->productService->getBestNewProductList();
 
         return view('product.newProduct', [
@@ -227,6 +228,13 @@ class ProductController extends BaseController
         return view('product.best-new-product', [
             'bestNewProducts' => $bestNewProducts,
         ]);
+    }
+
+    // 신규 등록 상품 가져오기
+    public function newAddedProduct(Request $request)
+    {
+        $list = $this->productService->getNewAddedProductList();
+        return response()->json($list);
     }
 
 
