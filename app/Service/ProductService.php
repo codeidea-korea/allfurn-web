@@ -6,6 +6,7 @@ use App\Models\Attachment;
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\CategoryProperty;
+use App\Models\CompanyRetail;
 use App\Models\CompanyWholesale;
 use App\Models\KeywordAd;
 use App\Models\Product;
@@ -743,6 +744,60 @@ class ProductService
             ->orderBy('ap.idx', 'desc')
             ->orderBy('AF_wholesale.idx', 'desc')
             ->count();
+    }
+
+    // 최근 상품 등록 업체
+    public function getRecentlyAddedProductCompanyList()
+    {
+        $wholesaleCompany = CompanyWholesale::select('AF_wholesale.idx', 'AF_wholesale.company_name', 'prodcut.MAX(register_time)')
+            ->join(DB::raw('
+                    (SELECT company_idx, MAX(register_time),COUNT(idx) 
+                    FROM AF_product
+                    WHERE company_type = \'W\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
+                    GROUP BY company_idx
+                    HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
+                $query->on('prodcut.company_idx', 'AF_wholesale.idx');
+            })
+        ->groupBy('idx');
+
+        
+        $retailCompany = CompanyRetail::select('AF_retail.idx', 'AF_retail.company_name', 'prodcut.MAX(register_time)')
+                ->join(DB::raw('
+                        (SELECT company_idx, MAX(register_time), COUNT(idx) 
+                        FROM AF_product
+                        WHERE company_type = \'R\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
+                        GROUP BY company_idx
+                        HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
+                    $query->on('prodcut.company_idx', 'AF_retail.idx');
+                })
+            ->groupBy('idx');
+
+        $company = $wholesaleCompany
+                ->union($retailCompany)
+                ->orderby('MAX(register_time)', 'desc')
+                ->limit(10)
+                ->get();
+
+        foreach($company as $key => $item) {
+
+            $category = Product::select(DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList'))
+            ->where('AF_product.company_idx', $item->idx)
+            ->whereIn('AF_product.state', ['S','O'])
+            ->whereNotNull('access_date')
+            ->orderBy('AF_product.register_time', 'desc');
+
+            $category->join('AF_category AS ac', function ($query) {
+                $query->on('ac.idx', 'AF_product.category_idx');
+            });
+
+            $category->join('AF_category AS ac2', function ($query) {
+                $query->on('ac2.idx', 'ac.parent_idx');
+            });
+
+            $company[$key]['categoryList'] = $category -> get()[0] -> categoryList;
+        }
+
+        return $company;
     }
 
     public function listBySearch(array $param = [])

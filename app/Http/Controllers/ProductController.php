@@ -210,6 +210,7 @@ class ProductController extends BaseController
         // $list = $this->productService->getNewProductList($data);
         $list = $this->productService->getNewAddedProductList($data);
         $bestNewProducts = $this->productService->getBestNewProductList();
+        $company = $this->productService->getRecentlyAddedProductCompanyList();
 
         return view('product.newProduct', [
             'banners'=>$banners,
@@ -217,6 +218,7 @@ class ProductController extends BaseController
             'categoryList'=>$categoryList,
             'list'=>$list,
             'bestNewProducts' => $bestNewProducts,
+            'company' => $company,
         ]);
     }
 
