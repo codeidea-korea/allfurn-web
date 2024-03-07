@@ -9,9 +9,9 @@ section.sub_section_top {padding:0 0 70px; }
 section.sub_section_bot {padding:70px 0 140px; }
 
 /* 확대보기 */
-#zoom_view-modal .modal_inner {background-color:transparent; }
-#zoom_view-modal .modal_body {overflow:visible; }
-#zoom_view-modal .slide_arrow {z-index:10; }
+.zoom_view_wrap.modal_inner {background-color:transparent; }
+.zoom_view_wrap .modal_body {overflow:visible; }
+.zoom_view_wrap .slide_arrow {z-index:10; }
 .zoom_view_wrap .count_pager {position:absolute; left:0; bottom:calc(100% + 29px); }
 .zoom_view_wrap .count_pager .swiper-pagination-current {color:#fff; }
 .zoom_prod_list li {display:flex; }

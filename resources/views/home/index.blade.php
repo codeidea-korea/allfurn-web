@@ -1201,6 +1201,24 @@ const new_prod = new Swiper(".new_prod .slide_box", {
     },
 });
 
+// new_prod_modal
+const new_prod_modal = new Swiper(".zoom_prod_list2 .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    slidesPerGroup: 1,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: ".zoom_prod_list2 .slide_arrow.next",
+        prevEl: ".zoom_prod_list2 .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal-new .count_pager",
+        type: "fraction",
+    },
+});
+
 // 테마별상품 탭
 $('.theme_prod .tab_layout li').on('click',function(){
     let liN = $(this).index();
