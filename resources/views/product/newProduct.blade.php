@@ -170,7 +170,7 @@
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
-                                <a href="./prod_detail.php">
+                                <a href="/product/detail/{{ $item->idx }}">
                                     <span>{{$item->companyName}}</span>
                                     <p>{{ $item->name }}</p>
                                     <b>{{ number_format($item->price, 0) }}원</b>
@@ -252,19 +252,21 @@
             success: function(data) {
             
                 let html ="";
+                let product;
 
                 for(let i=0; i<data['data'].length; i++) {
+                    product = data['data'][i];
             
                     html += '<li class="prod_item">'+
                             '<div class="img_box">'+
-                                '<a href="/product/detail/'+ data['data'][i]['idx'] + '"><img src="'+ data['data'][i]['imgUrl'] +'" alt=""></a>'+
-                                '<button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                                '<a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
+                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
                            '</div>'+
                             '<div class="txt_box">'+
-                                '<a href="./prod_detail.php">'+
-                                    '<span>'+ data['data'][i]['companyName'] +'</span>'+
-                                    '<p>'+ data['data'][i]['name']+'</p>'+
-                                    '<b>'+ data['data'][i]['price'].toLocaleString('ko-KR') +'원</b>'+
+                                '<a href="/product/detail/' + product['idx'] + '">'+
+                                    '<span>' + product['companyName'] +'</span>'+
+                                    '<p>' + product['name']+'</p>'+
+                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
                                 '</a>'+
                             '</div>'+
                         '</li>';
