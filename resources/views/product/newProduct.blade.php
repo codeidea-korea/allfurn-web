@@ -230,15 +230,19 @@
         },
     });
 
+    let flag = false;
     $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 100 >= $(document).height()) {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
             loadNewProductList();
         }
     });
 
     let currentPage = 1;
+    
 
     function loadNewProductList() {
+        flag = true;
+
         $.ajax({
             url: '/product/newAddedProduct',
             method: 'GET',
@@ -268,6 +272,9 @@
 
                 $(".sub_section_bot .prod_item").last().after(html);
                 currentPage++;
+            
+            }, complete : function () {
+                flag = false;
             }
         })
     }
