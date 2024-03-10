@@ -1,6 +1,6 @@
 $( function() {
     /** 찜 아이콘 */
-    $('.zzim_btn').on('click',function(){
+    $(document).on('click', '.zzim_btn', function() {
         let pidx = $(this).attr('pidx');
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

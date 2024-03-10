@@ -230,6 +230,24 @@
         },
     });
 
+    // 신규 등록 상품 - 확대보기
+    const zoom_view_modal_new = new Swiper("#zoom_view-modal-new .slide_box", {
+        slidesPerView: 1,
+        spaceBetween: 120,
+        slidesPerGroup: 1,
+        grid: {
+            rows: 1,
+        },
+        navigation: {
+            nextEl: "#zoom_view-modal-new .slide_arrow.next",
+            prevEl: "#zoom_view-modal-new .slide_arrow.prev",
+        },
+        pagination: {
+            el: "#zoom_view-modal-new .count_pager",
+            type: "fraction",
+        },
+    });
+
     let flag = false;
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
@@ -250,8 +268,10 @@
                 page: currentPage + 1 
             }, 
             success: function(data) {
+                console.log(data['data'].length);
             
                 let html ="";
+                let htmlForModal = "";
                 let product;
 
                 for(let i=0; i<data['data'].length; i++) {
@@ -270,9 +290,27 @@
                                 '</a>'+
                             '</div>'+
                         '</li>';
+
+                    htmlForModal +=
+                        '<li class="swiper-slide">' +
+                            '<div class="img_box">' +
+                                '<img src="'+ product['imgUrl'] +'" alt="">' +
+                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                            '</div>' +
+                            '<div class="txt_box">' +
+                               '<div>' +
+                                    '<h5>' + product['companyName'] +'</h5>' +
+                                    '<p>' + product['name']+'</p>' +
+                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
+                                '</div>' +
+                                '<a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
+                            '</div>' +
+                        '</li>';
                 }
 
                 $(".sub_section_bot .prod_item").last().after(html);
+                zoom_view_modal_new.appendSlide(htmlForModal);
+
                 currentPage++;
             
             }, complete : function () {
