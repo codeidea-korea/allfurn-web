@@ -206,6 +206,10 @@
         },
     });
 
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove();
+    }
+
     let flag = false;
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
@@ -214,8 +218,6 @@
     });
 
     let currentPage = 1;
-    
-
     function loadNewProductList() {
         flag = true;
 
@@ -226,60 +228,16 @@
                 'page': currentPage + 1,
                 'categories' : getIndexesOfSelectedCategory().join(','), 
             }, 
-            success: function(data) {
-                console.log(data['data'].length);
-            
-                let html ="";
-                let htmlForModal = "";
-                let product;
-
-                for(let i=0; i<data['data'].length; i++) {
-                    product = data['data'][i];
-            
-                    html += '<li class="prod_item">'+
-                            '<div class="img_box">'+
-                                '<a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
-                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
-                           '</div>'+
-                            '<div class="txt_box">'+
-                                '<a href="/product/detail/' + product['idx'] + '">'+
-                                    '<span>' + product['companyName'] +'</span>'+
-                                    '<p>' + product['name']+'</p>'+
-                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
-                                '</a>'+
-                            '</div>'+
-                        '</li>';
-
-                    htmlForModal +=
-                        '<li class="swiper-slide">' +
-                            '<div class="img_box">' +
-                                '<img src="'+ product['imgUrl'] +'" alt="">' +
-                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                            '</div>' +
-                            '<div class="txt_box">' +
-                               '<div>' +
-                                    '<h5>' + product['companyName'] +'</h5>' +
-                                    '<p>' + product['name']+'</p>' +
-                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
-                                '</div>' +
-                                '<a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
-                            '</div>' +
-                        '</li>';
-                }
-
-                $(".sub_section_bot .prod_item").last().after(html);
-                zoom_view_modal_new.appendSlide(htmlForModal);
-
+            success: function(result) {
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
+                
                 currentPage++;
-            
-            }, complete : function () {
+            }, 
+            complete : function () {
                 flag = false;
             }
         })
-    }
-
-    const filterRemove = (item)=>{
-        $(item).parents('span').remove();
     }
 
     // 신규 등록 상품 카테고리
@@ -287,58 +245,15 @@
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/product/newAddedProduct',
-            data			: {
+            data : {
                 'categories' : getIndexesOfSelectedCategory().join(','),
             },
-            type			: 'GET',
+            type : 'GET',
             success: function (result) {
-                console.log(result);
-
-                $(".sub_section_bot .prod_list").empty();
-                zoom_view_modal_new.removeAllSlides();
-                
-                let filterHtml = "";
-                let filterOnHtml = "";
-
-                for (let i = 0; i < result['data'].length; i++) {
-                    product = result['data'][i];
-                    
-                    filterHtml += '<li class="prod_item">'+
-                            '<div class="img_box">'+
-                                '<a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
-                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
-                           '</div>'+
-                            '<div class="txt_box">'+
-                                '<a href="/product/detail/' + product['idx'] + '">'+
-                                    '<span>' + product['companyName'] +'</span>'+
-                                    '<p>' + product['name']+'</p>'+
-                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
-                                '</a>'+
-                            '</div>'+
-                        '</li>';
-
-
-                    filterOnHtml += '<li class="swiper-slide">' +
-                            '<div class="img_box">' +
-                                '<img src="'+ product['imgUrl'] +'" alt="">' +
-                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                            '</div>' +
-                            '<div class="txt_box">' +
-                               '<div>' +
-                                    '<h5>' + product['companyName'] +'</h5>' +
-                                    '<p>' + product['name']+'</p>' +
-                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
-                                '</div>' +
-                                '<a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
-                            '</div>' +
-                        '</li>';
-                }
-
-                $(".sub_section_bot .prod_list").append(filterHtml);
-                zoom_view_modal_new.appendSlide(filterOnHtml);
-                zoom_view_modal_new.update();                
-            
-            }, complete : function () {
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);        
+            }, 
+            complete : function () {
                 displaySelectedCategories();
                 modalClose('#filter_category-modal');
             }
@@ -352,6 +267,53 @@
         });
 
         return categories;
+    }
+
+    function displayNewProducts(productArr, target, needsEmptying) {
+        if(needsEmptying) {
+            target.empty();
+        }
+
+        productArr.forEach(function(product, index) {
+            target.append(  '<li class="prod_item">'+
+                            '   <div class="img_box">'+
+                            '       <a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
+                            '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                            '   </div>'+
+                            '   <div class="txt_box">'+
+                            '       <a href="/product/detail/' + product['idx'] + '">'+
+                            '           <span>' + product['companyName'] +'</span>'+
+                            '           <p>' + product['name']+'</p>'+
+                            '           <b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
+                            '       </a>'+
+                            '   </div>'+
+                            '</li>'
+            );
+        });
+    };
+
+    function displayNewProductsOnModal(productArr, target, needsEmptying) {
+        if(needsEmptying) {
+            target.removeAllSlides();
+        }
+
+        productArr.forEach(function(product, index) {
+            target.appendSlide( '<li class="swiper-slide">' +
+                                '   <div class="img_box">' +
+                                '       <img src="'+ product['imgUrl'] +'" alt="">' +
+                                '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                                '   </div>' +
+                                '   <div class="txt_box">' +
+                                '       <div>' +
+                                '           <h5>' + product['companyName'] +'</h5>' +
+                                '           <p>' + product['name']+'</p>' +
+                                '           <b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
+                                '       </div>' +
+                                '       <a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
+                                '   </div>' +
+                                '</li>'
+            );
+        });
     }
 
     function displaySelectedCategories() {
@@ -374,5 +336,4 @@
         }
     }
 </script>
-
 @endsection
