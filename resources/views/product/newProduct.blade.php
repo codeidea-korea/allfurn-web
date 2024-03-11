@@ -223,7 +223,8 @@
             url: '/product/newAddedProduct',
             method: 'GET',
             data: { 
-                page: currentPage + 1 
+                'page': currentPage + 1,
+                'categories' : getIndexesOfSelectedCategory().join(','), 
             }, 
             success: function(data) {
                 console.log(data['data'].length);
@@ -275,6 +276,102 @@
                 flag = false;
             }
         })
+    }
+
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove();
+    }
+
+    // 신규 등록 상품 카테고리
+    $(document).on('click', '#filter_category-modal .btn-primary', function() {    
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/newAddedProduct',
+            data			: {
+                'categories' : getIndexesOfSelectedCategory().join(','),
+            },
+            type			: 'GET',
+            success: function (result) {
+                console.log(result);
+
+                $(".sub_section_bot .prod_list").empty();
+                zoom_view_modal_new.removeAllSlides();
+                
+                let filterHtml = "";
+                let filterOnHtml = "";
+
+                for (let i = 0; i < result['data'].length; i++) {
+                    product = result['data'][i];
+                    
+                    filterHtml += '<li class="prod_item">'+
+                            '<div class="img_box">'+
+                                '<a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
+                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                           '</div>'+
+                            '<div class="txt_box">'+
+                                '<a href="/product/detail/' + product['idx'] + '">'+
+                                    '<span>' + product['companyName'] +'</span>'+
+                                    '<p>' + product['name']+'</p>'+
+                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
+                                '</a>'+
+                            '</div>'+
+                        '</li>';
+
+
+                    filterOnHtml += '<li class="swiper-slide">' +
+                            '<div class="img_box">' +
+                                '<img src="'+ product['imgUrl'] +'" alt="">' +
+                                '<button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                            '</div>' +
+                            '<div class="txt_box">' +
+                               '<div>' +
+                                    '<h5>' + product['companyName'] +'</h5>' +
+                                    '<p>' + product['name']+'</p>' +
+                                    '<b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
+                                '</div>' +
+                                '<a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
+                            '</div>' +
+                        '</li>';
+                }
+
+                $(".sub_section_bot .prod_list").append(filterHtml);
+                zoom_view_modal_new.appendSlide(filterOnHtml);
+                zoom_view_modal_new.update();                
+            
+            }, complete : function () {
+                displaySelectedCategories();
+                modalClose('#filter_category-modal');
+            }
+        });        
+    });
+
+    function getIndexesOfSelectedCategory() {
+        let categories = [];
+        $("#filter_category-modal .check-form:checked").each(function(){
+            categories.push($(this).attr('id'));
+        });
+
+        return categories;
+    }
+
+    function displaySelectedCategories() {
+        
+        let html = "";  
+        $("#filter_category-modal .check-form:checked").each(function(){
+            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() + 
+                    "   <button onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                    "</span>";
+        });
+        $(".filter_on_box .category").empty().append(html);
+
+        let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
+        if(totalOfSelectedCategories == 0) {
+            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).removeClass('on');
+        } else {
+            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).addClass('on');
+        }
     }
 </script>
 

@@ -205,10 +205,12 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $todayCount = $this->productService->getTodayCount();
 
-        $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
-
+        // $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
         // $list = $this->productService->getNewProductList($data);
-        $list = $this->productService->getNewAddedProductList($data);
+
+        $categories = $request->categories == null ? "" : $request->categories;
+        $list = $this->productService->getNewAddedProductList($categories);
+
         $bestNewProducts = $this->productService->getBestNewProductList();
         $company = $this->productService->getRecentlyAddedProductCompanyList();
 
@@ -235,7 +237,8 @@ class ProductController extends BaseController
     // 신규 등록 상품 가져오기
     public function newAddedProduct(Request $request)
     {
-        $list = $this->productService->getNewAddedProductList();
+        $categories = $request->categories == null ? "" : $request->categories;
+        $list = $this->productService->getNewAddedProductList($categories);
         return response()->json($list);
     }
 

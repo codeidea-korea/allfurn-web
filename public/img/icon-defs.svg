@@ -1,14 +1,35 @@
 <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
 
+  <symbol id="setting" viewBox="0 0 24 24" fill="none">
+    <path d="M12.22 2H11.78C11.2496 2 10.7409 2.21071 10.3658 2.58579C9.99072 2.96086 9.78 3.46957 9.78 4V4.18C9.77964 4.53073 9.68706 4.87519 9.51154 5.17884C9.33602 5.48248 9.08374 5.73464 8.78 5.91L8.35 6.16C8.04596 6.33554 7.70108 6.42795 7.35 6.42795C6.99893 6.42795 6.65404 6.33554 6.35 6.16L6.2 6.08C5.74107 5.81526 5.19584 5.74344 4.684 5.88031C4.17217 6.01717 3.73555 6.35154 3.47 6.81L3.25 7.19C2.98526 7.64893 2.91345 8.19416 3.05031 8.706C3.18717 9.21783 3.52154 9.65445 3.98 9.92L4.13 10.02C4.43228 10.1945 4.68362 10.4451 4.85905 10.7468C5.03448 11.0486 5.1279 11.391 5.13 11.74V12.25C5.1314 12.6024 5.03965 12.949 4.86405 13.2545C4.68844 13.5601 4.43521 13.8138 4.13 13.99L3.98 14.08C3.52154 14.3456 3.18717 14.7822 3.05031 15.294C2.91345 15.8058 2.98526 16.3511 3.25 16.81L3.47 17.19C3.73555 17.6485 4.17217 17.9828 4.684 18.1197C5.19584 18.2566 5.74107 18.1847 6.2 17.92L6.35 17.84C6.65404 17.6645 6.99893 17.5721 7.35 17.5721C7.70108 17.5721 8.04596 17.6645 8.35 17.84L8.78 18.09C9.08374 18.2654 9.33602 18.5175 9.51154 18.8212C9.68706 19.1248 9.77964 19.4693 9.78 19.82V20C9.78 20.5304 9.99072 21.0391 10.3658 21.4142C10.7409 21.7893 11.2496 22 11.78 22H12.22C12.7504 22 13.2591 21.7893 13.6342 21.4142C14.0093 21.0391 14.22 20.5304 14.22 20V19.82C14.2204 19.4693 14.3129 19.1248 14.4885 18.8212C14.664 18.5175 14.9163 18.2654 15.22 18.09L15.65 17.84C15.954 17.6645 16.2989 17.5721 16.65 17.5721C17.0011 17.5721 17.346 17.6645 17.65 17.84L17.8 17.92C18.2589 18.1847 18.8042 18.2566 19.316 18.1197C19.8278 17.9828 20.2645 17.6485 20.53 17.19L20.75 16.8C21.0147 16.3411 21.0866 15.7958 20.9497 15.284C20.8128 14.7722 20.4785 14.3356 20.02 14.07L19.87 13.99C19.5648 13.8138 19.3116 13.5601 19.136 13.2545C18.9604 12.949 18.8686 12.6024 18.87 12.25V11.75C18.8686 11.3976 18.9604 11.051 19.136 10.7455C19.3116 10.4399 19.5648 10.1862 19.87 10.01L20.02 9.92C20.4785 9.65445 20.8128 9.21783 20.9497 8.706C21.0866 8.19416 21.0147 7.64893 20.75 7.19L20.53 6.81C20.2645 6.35154 19.8278 6.01717 19.316 5.88031C18.8042 5.74344 18.2589 5.81526 17.8 6.08L17.65 6.16C17.346 6.33554 17.0011 6.42795 16.65 6.42795C16.2989 6.42795 15.954 6.33554 15.65 6.16L15.22 5.91C14.9163 5.73464 14.664 5.48248 14.4885 5.17884C14.3129 4.87519 14.2204 4.53073 14.22 4.18V4C14.22 3.46957 14.0093 2.96086 13.6342 2.58579C13.2591 2.21071 12.7504 2 12.22 2Z" stroke="#BBB8B5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="#BBB8B5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="drop_b_arrow" viewBox="0 0 24 24" fill="none">
+    <path d="M6 9L12 15L18 9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
   <symbol id="Close" viewBox="0 0 44 44" fill="none">
     <path d="M33 11L11 33" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M11 11L33 33" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
 
+  <symbol id="Calendar" viewBox="0 0 24 24" fill="none">
+    <path d="M8 2V6" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 2V6" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 10H21" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
   <symbol id="Search" viewBox="0 0 24 24" fill="none">
     <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#D8D8D8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M21.0002 20.9992L16.7002 16.6992" stroke="#D8D8D8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="Search_dark" viewBox="0 0 24 24" fill="none">
+    <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#46433f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M21.0002 20.9992L16.7002 16.6992" stroke="#46433f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
 
   <symbol id="Alarm" viewBox="0 0 24 24" fill="none">
@@ -51,7 +72,7 @@
 
   <symbol id="category_sofa" viewBox="0 0 35 34" fill="none">
     <path d="M27.4166 12.7493V8.49935C27.4166 7.7479 27.1181 7.02723 26.5867 6.49588C26.0554 5.96453 25.3347 5.66602 24.5833 5.66602H10.4166C9.66514 5.66602 8.94447 5.96453 8.41312 6.49588C7.88176 7.02723 7.58325 7.7479 7.58325 8.49935V12.7493" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M4.75 22.6667C4.75 23.4181 5.04851 24.1388 5.57986 24.6701C6.11122 25.2015 6.83189 25.5 7.58333 25.5H27.4167C28.1681 25.5 28.8888 25.2015 29.4201 24.6701C29.9515 24.1388 30.25 23.4181 30.25 22.6667V15.5833C30.25 14.8319 29.9515 14.1112 29.4201 13.5799C28.8888 13.0485 28.1681 12.75 27.4167 12.75C26.6652 12.75 25.9446 13.0485 25.4132 13.5799C24.8818 14.1112 24.5833 14.8319 24.5833 15.5833V18.4167H10.4167V15.5833C10.4167 14.8319 10.1182 14.1112 9.5868 13.5799C9.05545 13.0485 8.33478 12.75 7.58333 12.75C6.83189 12.75 6.11122 13.0485 5.57986 13.5799C5.04851 14.1112 4.75 14.8319 4.75 15.5833V22.6667Z" stroke="#8E8E8E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4.75 22.6667C4.75 23.4181 5.04851 24.1388 5.57986 24.6701C6.11122 25.2015 6.83189 25.5 7.58333 25.5H27.4167C28.1681 25.5 28.8888 25.2015 29.4201 24.6701C29.9515 24.1388 30.25 23.4181 30.25 22.6667V15.5833C30.25 14.8319 29.9515 14.1112 29.4201 13.5799C28.8888 13.0485 28.1681 12.75 27.4167 12.75C26.6652 12.75 25.9446 13.0485 25.4132 13.5799C24.8818 14.1112 24.5833 14.8319 24.5833 15.5833V18.4167H10.4167V15.5833C10.4167 14.8319 10.1182 14.1112 9.5868 13.5799C9.05545 13.0485 8.33478 12.75 7.58333 12.75C6.83189 12.75 6.11122 13.0485 5.57986 13.5799C5.04851 14.1112 4.75 14.8319 4.75 15.5833V22.6667Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M7.58325 25.5V28.3333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M27.4167 25.5V28.3333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
@@ -259,6 +280,29 @@
     <path d="M4 4v7a4 4 0 0 0 4 4h12"/>
   </symbol>
 
+  <symbol id="left_arrow" viewBox="0 0 24 24" fill="none" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m12 19-7-7 7-7"/>
+    <path d="M19 12H5"/>
+  </symbol>
+
+  <symbol id="message" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"/>
+    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>
+  </symbol>
+
+  <symbol id="minus" viewBox="0 0 18 18" fill="none" >
+    <path d="M3.75 9H14.25" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="plus" viewBox="0 0 18 18" fill="none" >
+    <path d="M3.75 9H14.25" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 3.75V14.25" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="x" viewBox="0 0 24 24" fill="none" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 6 6 18"/>
+    <path d="m6 6 12 12"/>
+  </symbol>
 
   
 

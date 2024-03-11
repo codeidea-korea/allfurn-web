@@ -491,9 +491,9 @@ class ProductService
     }
 
     //신규 등록 상품
-    //TODO: 카테고리, 소재지, 최신순/조회순/인기순 필터적용한 조회기능으로 변경
-    public function getNewAddedProductList() {
-        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price',
+    //TODO: 소재지, 최신순/조회순/인기순 필터적용한 조회기능으로 변경
+    public function getNewAddedProductList($params) {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
@@ -503,14 +503,20 @@ class ProductService
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
-            ->where([
-                'AF_product.is_new_product' => 1,
-                'AF_product.state' => 'S'
-            ])
-            ->orderBy('AF_product.register_time', 'desc')
-            ->paginate(8);
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_category as ac2', function($query) {
+                $query->on('ac2.idx', '=', 'ac.parent_idx');
+            })
+            ->where('AF_product.is_new_product', 1)
+            ->whereIn('AF_product.state', ['S', 'O']);
 
-        return $new_product;
+        if($params != "") {
+            $new_product->where('ac2.idx', $params);
+        }
+
+        return $new_product->orderBy('AF_product.register_time', 'desc')->paginate(8);
     }
 
     public function addOrder(array $param = [])
