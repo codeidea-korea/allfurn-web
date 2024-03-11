@@ -162,6 +162,22 @@
         },
     });
 
+    const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+        slidesPerView: 1,
+        spaceBetween: 120,
+        grid: {
+            rows: 1,
+        },
+        navigation: {
+            nextEl: "#zoom_view-modal .slide_arrow.next",
+            prevEl: "#zoom_view-modal .slide_arrow.prev",
+        },
+        pagination: {
+            el: "#zoom_view-modal .count_pager",
+            type: "fraction",
+        },
+    });
+
     // new_arrival_con03 
     const new_arrival_con03 = new Swiper(".new_arrival_con03 .slide_box", {
         slidesPerView: 4.5,
