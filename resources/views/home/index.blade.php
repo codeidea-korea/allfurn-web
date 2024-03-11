@@ -1183,6 +1183,23 @@ const best_prod = new Swiper(".best_prod .slide_box", {
     },
 });
 
+// best_prod_modal
+const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: "#zoom_view-modal .slide_arrow.next",
+        prevEl: "#zoom_view-modal .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal .count_pager",
+        type: "fraction",
+    },
+});
+
 // new_prod 
 const new_prod = new Swiper(".new_prod .slide_box", {
     slidesPerView: 4,
@@ -1202,16 +1219,16 @@ const new_prod = new Swiper(".new_prod .slide_box", {
 });
 
 // new_prod_modal
-const new_prod_modal = new Swiper(".zoom_prod_list2 .slide_box", {
+const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
     slidesPerView: 1,
-    spaceBetween: 20,
+    spaceBetween: 120,
     slidesPerGroup: 1,
     grid: {
         rows: 1,
     },
     navigation: {
-        nextEl: ".zoom_prod_list2 .slide_arrow.next",
-        prevEl: ".zoom_prod_list2 .slide_arrow.prev",
+        nextEl: "#zoom_view-modal-new .slide_arrow.next",
+        prevEl: "#zoom_view-modal-new .slide_arrow.prev",
     },
     pagination: {
         el: "#zoom_view-modal-new .count_pager",

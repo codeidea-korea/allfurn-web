@@ -734,7 +734,7 @@
 
 <!-- 모달 들어가는곳 : E -->
 
-<script>
+{{-- <script>
 // zoom_prod_list
 const zoom_prod_list = new Swiper(".zoom_prod_list", {
     slidesPerView: 1,
@@ -748,6 +748,6 @@ const zoom_prod_list = new Swiper(".zoom_prod_list", {
         type: "fraction",
     },
 });
-</script>
+</script> --}}
 
 
