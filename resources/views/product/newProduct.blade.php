@@ -210,13 +210,13 @@
         $(item).parents('span').remove();
     }
 
-    let flag = false;
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
             loadNewProductList();
         }
     });
 
+    let flag = false;
     let currentPage = 1;
     function loadNewProductList() {
         flag = true;
@@ -225,14 +225,13 @@
             url: '/product/newAddedProduct',
             method: 'GET',
             data: { 
-                'page': currentPage + 1,
+                'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','), 
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             }, 
             success: function(result) {
                 displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
                 displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
-                
-                currentPage++;
             }, 
             complete : function () {
                 flag = false;
@@ -241,23 +240,33 @@
     }
 
     // 신규 등록 상품 카테고리
-    $(document).on('click', '#filter_category-modal .btn-primary', function() {    
+    $(document).on('click', '[id^="filter"] .btn-primary', function() { 
+        let $this = $(this);
+
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/product/newAddedProduct',
             data : {
                 'categories' : getIndexesOfSelectedCategory().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             },
             type : 'GET',
+            beforeSend : function() {
+                $this.prop("disabled", true);
+            },
             success: function (result) {
                 displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);        
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');       
             }, 
             complete : function () {
+                $this.prop("disabled", false);
                 displaySelectedCategories();
-                modalClose('#filter_category-modal');
+                displaySelectedOrders();
+                modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
+                currentPage = 1;
             }
-        });        
+        });
     });
 
     function getIndexesOfSelectedCategory() {
@@ -334,6 +343,11 @@
             $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
             $(".sub_filter .filter_box button").eq(0).addClass('on');
         }
+    }
+
+    function displaySelectedOrders() {
+        $(".sub_filter .filter_box button").eq(2)
+            .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
     }
 </script>
 @endsection

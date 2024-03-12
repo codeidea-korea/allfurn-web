@@ -10,9 +10,9 @@
             <div class="filter_box">
                 <button class="" onclick="modalOpen('#filter_category-modal')">카테고리</button>
                 <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button>
-                <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                <button onclick="modalOpen('#filter_align-modal')">최신순</button>
             </div>
-            <div class="total">전체 428개</div>
+            <div class="total">전체 {{ number_format($total, 0) }}개</div>
         </div>
         <div class="sub_filter_result">
             <div class="filter_on_box">

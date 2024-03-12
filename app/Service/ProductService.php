@@ -491,9 +491,11 @@ class ProductService
     }
 
     //신규 등록 상품
-    //TODO: 소재지, 최신순/조회순/인기순 필터적용한 조회기능으로 변경
+    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
     public function getNewAddedProductList($params) {
-        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
+            'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
+            DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
@@ -509,14 +511,20 @@ class ProductService
             ->leftjoin('AF_category as ac2', function($query) {
                 $query->on('ac2.idx', '=', 'ac.parent_idx');
             })
+            ->leftjoin(
+                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+                    FROM AF_product_interest
+                    GROUP BY product_idx) AS api'), function($query) {
+                        $query->on('AF_product.idx', '=', 'api.product_idx');
+            })
             ->where('AF_product.is_new_product', 1)
             ->whereIn('AF_product.state', ['S', 'O']);
-
-        if($params != "") {
-            $new_product->where('ac2.idx', $params);
+            
+        if($params['categories'] != "") {
+            $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        return $new_product->orderBy('AF_product.register_time', 'desc')->paginate(8);
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
     }
 
     public function addOrder(array $param = [])

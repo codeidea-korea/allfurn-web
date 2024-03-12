@@ -411,28 +411,14 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_01">
-                    <label for="filter_cate_3_01">추천순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_02">
-                    <label for="filter_cate_3_02">최신 상품 등록순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_03">
-                    <label for="filter_cate_3_03">검색 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_04">
-                    <label for="filter_cate_3_04">거래 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_05">
-                    <label for="filter_cate_3_05">상품 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_06">
-                    <label for="filter_cate_3_06">가나다 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_register_time" checked>
+                    <label for="filter_register_time">최신순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_access_count">
+                    <label for="filter_access_count">조회순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_popularity">
+                    <label for="filter_popularity">인기순</label>
                 </li>
             </ul>
             <div class="btn_bot">

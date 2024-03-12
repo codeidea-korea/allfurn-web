@@ -208,8 +208,10 @@ class ProductController extends BaseController
         // $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
         // $list = $this->productService->getNewProductList($data);
 
-        $categories = $request->categories == null ? "" : $request->categories;
-        $list = $this->productService->getNewAddedProductList($categories);
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $list = $this->productService->getNewAddedProductList($data);
+        $total = $list->total();
 
         $bestNewProducts = $this->productService->getBestNewProductList();
         $company = $this->productService->getRecentlyAddedProductCompanyList();
@@ -221,6 +223,7 @@ class ProductController extends BaseController
             'list'=>$list,
             'bestNewProducts' => $bestNewProducts,
             'company' => $company,
+            'total'=>$total,
         ]);
     }
 
@@ -237,8 +240,10 @@ class ProductController extends BaseController
     // 신규 등록 상품 가져오기
     public function newAddedProduct(Request $request)
     {
-        $categories = $request->categories == null ? "" : $request->categories;
-        $list = $this->productService->getNewAddedProductList($categories);
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $list = $this->productService->getNewAddedProductList($data);
+
         return response()->json($list);
     }
 
