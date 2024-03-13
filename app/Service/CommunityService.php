@@ -50,7 +50,10 @@ class CommunityService {
         $articles = $this->getArticlesDB($params);
         $data['articleTotalCount'] = $articles['count'];
         $data['articles'] = $articles['list'];
-        $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+        }
 
         return $data;
     }
@@ -97,8 +100,6 @@ class CommunityService {
      */
     private function getArticlesDB(array $params=[]): array {
         
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
-        $limit = $params['limit'];
         $query = DB::table('AF_board_article','article')
             ->select(DB::raw("article.*, AF_board.name AS board_name, AF_board.is_anonymous
             , IF(DATE_ADD(article.register_time, INTERVAL +1 DAY) > now(),'new','') AS is_new
@@ -176,7 +177,14 @@ class CommunityService {
         }
 
         $count = $query->count();
-        $list = $query->offset($offset)->limit($limit)->get();
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+            $limit = $params['limit'];
+            $query->offset($offset)->limit($limit);
+        }
+
+        $list = $query->get();
         
         return ['count' => $count, 'list' => $list];
     }

@@ -189,7 +189,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/', 'WholesalerController@index')->name('.index');
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
-    Route::get('/search', 'WholesalerController@listBySearch');
+    Route::get('/search', 'WholefsalerController@listBySearch');
 });
 
 Route::prefix('download')->name('download')->group(function() {
@@ -198,6 +198,8 @@ Route::prefix('download')->name('download')->group(function() {
 
 Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function() {
     Route::get('/', 'MagazineController@index');
+    Route::get('/daily', 'MagazineController@dailyNews');
+    Route::get('/daily/detail/{idx}', 'MagazineController@dailyNewsDetail');
     Route::get('/detail/{idx}', 'MagazineController@detail');
 });
 
