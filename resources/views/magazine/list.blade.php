@@ -68,41 +68,24 @@
                     <h3>가구 소식</h3>
                 </div>
                 <div class="flex items-center gap-7">
-                    <a class="more_btn flex items-center" href="./furniture_news.php">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                    <a class="more_btn flex items-center" href="/magazine/furniture">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
                 </div>
             </div>
             <div class="sub_desc mb-8">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</div>
             <ul class="furniture_news">
-                <li>
-                    <div class="img_box"><a href="javascrsipt:;"><img src="/img/furniture_thumb.png" alt=""></a></div>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">한국국제가구 및 인테리어 산업대전</div>
-                            <div class="desc">올해 가구 사업자에게 주는 혜댁</div>
-                            <span>2023.10.05</span>
-                        </a>
-                    </div>
-                </li>
-                <li>
-                    <div class="img_box"><a href="javascrsipt:;"><img src="/img/furniture_thumb.png" alt=""></a></div>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">한국국제가구 및 인테리어 산업대전</div>
-                            <div class="desc">올해 가구 사업자에게 주는 혜댁</div>
-                            <span>2023.10.05</span>
-                        </a>
-                    </div>
-                </li>
-                <li>
-                    <div class="img_box"><a href="javascrsipt:;"><img src="/img/furniture_thumb.png" alt=""></a></div>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">한국국제가구 및 인테리어 산업대전</div>
-                            <div class="desc">올해 가구 사업자에게 주는 혜댁</div>
-                            <span>2023.10.05</span>
-                        </a>
-                    </div>
-                </li>
+                @foreach ( $furnitureNewsList as $item )
+                    <li>
+                        {{-- TODO: 가구 소식 리스트 생성 후 이미지 URL 변경 --}}
+                        <div class="img_box"><a href="/magazine/furniture/detail/{{ $item->idx }}"><img src="/img/furniture_thumb.png"  alt=""></a></div>
+                        <div class="txt_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                <div class="tit">{{ $item->title }}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(strip_tags($item->content), $limit = 40, $end = '...') !!}</div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                            </a>
+                        </div>
+                    </li>
+                @endforeach 
             </ul>
         </div>
     </section>
@@ -232,7 +215,7 @@
     });
 
     function validateKeyword(data) {
-        return (/^[가-힣a-zA-Z0-9\s]*$/).test(data) ? true : false;
+        return (/^[가-힣a-zA-Z0-9\s]*$/).test(data);
     }
 
    

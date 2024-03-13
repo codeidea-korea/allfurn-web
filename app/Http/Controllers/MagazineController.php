@@ -29,6 +29,16 @@ class MagazineController extends BaseController
 
         $data['banners'] = $this->magazineService->banners();
         $data = array_merge($data, $this->communityService->getArticleList($params));
+
+        //가구 소식
+        //TODO: 가구 소식 리스트 생성 후 문자열 값 변경
+        $params['board_name'] = '일일 가구 뉴스';
+        $params['offset'] = 0;
+        $params['limit'] = 3;
+
+        $furnitureNewsList = $this->communityService->getArticleList($params);
+        $data['furnitureNewsList'] = $furnitureNewsList['articles'];
+
         return view('magazine.list', $data);
     }
 
@@ -41,7 +51,16 @@ class MagazineController extends BaseController
         return view('magazine.dailyNews', $data);
     }
 
-    public function dailyNewsDetail(int $idx) {
+    //TODO: 가구 소식 리스트 생성 후 문자열 값 변경
+    public function furnitureNews() {
+
+        $params['board_name'] = '일일 가구 뉴스';
+
+        $data = $this->communityService->getArticleList($params);
+        return view('magazine.furnitureNews', $data);
+    }
+
+    public function newsDetail(int $idx) {
 
         // 게시글 조회 +1
         $this->communityService->updateArticleView($idx);
@@ -51,7 +70,7 @@ class MagazineController extends BaseController
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
 
-        return view('magazine.dailyNews-detail', $data);
+        return view('magazine.news-detail', $data);
     }
 
     public function detail(int $idx)

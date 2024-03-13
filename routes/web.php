@@ -199,7 +199,9 @@ Route::prefix('download')->name('download')->group(function() {
 Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function() {
     Route::get('/', 'MagazineController@index');
     Route::get('/daily', 'MagazineController@dailyNews');
-    Route::get('/daily/detail/{idx}', 'MagazineController@dailyNewsDetail');
+    Route::get('/daily/detail/{idx}', 'MagazineController@newsDetail');
+    Route::get('/furniture', 'MagazineController@furnitureNews');
+    Route::get('/furniture/detail/{idx}', 'MagazineController@newsDetail');
     Route::get('/detail/{idx}', 'MagazineController@detail');
 });
 

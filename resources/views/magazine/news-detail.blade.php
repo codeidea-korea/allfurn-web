@@ -80,6 +80,7 @@
                                 @endif
                             </div>
                         @endforeach
+                    </div>
                 </div>
                 <div class="comment_form" id="new_comment">
                     <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
@@ -88,6 +89,7 @@
             </div>
         </div>
     </section>
+
     {{-- 삭제완료 or 신고완료 모달--}}
     <div class="modal" id="delete_comment-modal">
         <div class="modal_bg" onclick="modalClose('#delete_comment-modal')"></div>
@@ -136,6 +138,7 @@
         </div>
     </div>
 </div>
+    
 <script>
     $('.comment_list .recomm_btn').on('click',function(){
         $(this).next('.recomm_form').toggleClass('active')
@@ -146,7 +149,7 @@
     })
 
     $(".comment_form input").on('keyup', function() {
-        if($(this).val().length == 0) {    
+        if($(this).val().length === 0) {
             $(this).nextAll('button.btn-primary').attr('disabled', true);
         } else {
             $(this).nextAll('button.btn-primary').attr('disabled', false);
@@ -171,7 +174,7 @@
 
     // 댓글 달기
     function comment(data) {
-        if(data!=undefined && typeof(data)=="object") {
+        if(data!==undefined && typeof(data)=="object") {
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
