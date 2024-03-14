@@ -226,16 +226,16 @@
             $(".magazine_list").append(
             '<li>'+
             '        <div class="txt_box">'+
-            '            <a href="/magazine/detail/' + magazine.idx + '{{$row->idx}}">'+
-            '                <div class="top">'+
-            '                <span>카테고리 없음</span>'+
-            '                <b>' +formatDate(magazine.register_time) + '</b>'+
-            '            </div>'+
-            '            <div class="tit">' + magazine.forma + '</div>'+
-            '        </a>'+
-            '    </div>'+
-            '        <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>'+
-            '    </li>'
+            '            <a href="/magazine/detail/' + magazine.idx + '">' +
+            '                <div class="top">' +
+            '                   <span>카테고리 없음</span>'+
+            '                   <b>' + formatDate(magazine.register_time) + '</b>' +
+            '               </div>' +
+            '               <div class="tit">' + magazine.title + '</div>' +
+            '           </a>' +
+            '    </div>' +
+            '    <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>' +
+            '</li>'
             );
         });
         
@@ -248,8 +248,7 @@
         const month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
         const day = ("0" + dateObject.getDate()).slice(-2);
 
-        var formattedDate = year + "." + month + "." + day;
-        return formattedDate;
+        return year + "." + month + "." + day;
       }
    
 </script>
