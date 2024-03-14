@@ -70,7 +70,33 @@
                 @foreach ( $furnitureNewsList as $item )
                     <li>
                         {{-- TODO: 가구 소식 리스트 생성 후 이미지 URL 변경 --}}
-                        <div class="img_box"><a href="/magazine/furniture/detail/{{ $item->idx }}"><img src="/img/furniture_thumb.png"  alt=""></a></div>
+                        <div class="img_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                @if($item->content)
+                                    @php
+                                        $tmp = '';
+                                        $pos = strpos($item->content, '<img src=', 0);
+                                        
+                                        if ( $pos !== false ) {
+                                            
+                                            $pos_from = strpos($item->content, 'https', $pos);
+                                            $pos_to = strpos($item->content, '>', $pos_from);
+                                            $sub = substr($item->content, $pos_from, $pos_to);
+                                            $image_end = strpos($sub, '.jpg');
+                                            
+                                            if ($image_end) {
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            } else {
+                                                $image_end = strpos($sub, '.png');
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            }
+                                            
+                                        }
+                                    @endphp
+                                    <img src="{{ $tmp ? $tmp : '' }}" alt="">
+                                @endif
+                            </a>
+                        </div>
                         <div class="txt_box">
                             <a href="/magazine/furniture/detail/{{ $item->idx }}">
                                 <div class="tit">{{ $item->title }}</div>
