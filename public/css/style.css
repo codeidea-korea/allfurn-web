@@ -60,7 +60,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 /* 띠배너 공통 */
 .line_common_banner {overflow:hidden; position:relative; }
-.line_common_banner li {height:240px; padding:35px 80px; border-radius:3px; background-repeat:no-repeat; background-position:center center; background-size:cover;  }
+.line_common_banner li {height:240px; border-radius:3px; background-repeat:no-repeat; background-position:center center; background-size:cover;  }
+.line_common_banner li > a {display:block; width:100%; height:100%; padding:35px 80px; }
 .line_common_banner li .txt_box {color:#fff; }
 .line_common_banner li .txt_box.type02 {color:#475872; }
 .line_common_banner li .txt_box p {margin-bottom:20px; font-size:30px; font-weight:600; line-height:1.4; }

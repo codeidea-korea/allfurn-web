@@ -8,22 +8,16 @@
         <div class="inner">
             <div class="line_common_banner">
                 <ul class="swiper-wrapper">
-                    <li class="swiper-slide" style="background-image:url('/img/banner_img_01.png')">
-                        <a href="javascript:;">
-                            <div class="txt_box type02">
-                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                                <span>매달 5일과 15일에 게시됩니다.</span>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="swiper-slide">
-                        <a href="javascript:;">
-                            <div class="txt_box">
-                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                                <span>매달 5일과 15일에 게시됩니다.</span>
-                            </div>
-                        </a>
-                    </li>
+                    @foreach($banners as $banner)
+                        <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
+                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                                <div class="txt_box type02">
+                                    <p>{{ $banner->subtext1 }}</p>
+                                    <span>{{ $banner->subtext2 }}</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
                 <div class="count_pager" style="width:auto"><b>1</b> / 12</div>
                 <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
@@ -127,11 +121,14 @@
 
 <script>
    
-
     // line_common_banner 
     const line_common_banner = new Swiper(".line_common_banner", {
         slidesPerView: 1,
         spaceBetween: 0,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
         navigation: {
             nextEl: ".line_common_banner .slide_arrow.next",
             prevEl: ".line_common_banner .slide_arrow.prev",
@@ -140,6 +137,11 @@
             el: ".line_common_banner .count_pager",
             type: "fraction",
         }
+    });
+    $('.line_common_banner').hover(function(){
+        line_common_banner.autoplay.stop();
+    }, function(){
+        line_common_banner.autoplay.start();
     });
 
 
