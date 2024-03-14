@@ -112,7 +112,7 @@ class HomeService
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
-            ->inRandomOrder()->get();
+            ->inRandomOrder()->limit(32)->get();
 
         // 매거진
         $data['magazine'] = Magazine::select('AF_magazine.*',
