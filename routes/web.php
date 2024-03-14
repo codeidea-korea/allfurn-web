@@ -178,6 +178,10 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::post('/reporting', 'CommunityController@reporting');
     Route::get('/write-dispatch/{orderGroupCode}', 'CommunityController@writeDispatch');
 
+    Route::get('/group', function () {
+        return view('community.group');
+    });
+
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');
         Route::get('/comments', 'CommunityController@getMyComments')->name('.comments');

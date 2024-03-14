@@ -1,205 +1,738 @@
-@extends('layouts.master')
-
-@section('header')
-    @include('layouts.header.main-header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
-<div id="container" class="container community">
-    <div class="inner">
-        <div class="contents">
-            @if(isset($banners) && count($banners) > 0)
-            <div id="kvswiper" class="swiper-container">
-                <div class="swiper-wrapper">
-                    @foreach($banners as $banner)
-                    <div class="swiper-slide">
-                        <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
-                            <p class="event__banner" style="background-image:url({{ preImgUrl() }}{{$banner->attachment->folder}}/{{$banner->attachment->filename}})"></p>
-                        </a>
-                    </div>
-                    @endforeach
-                </div>
-                <div class="swiper-util">
-                    <div>
-                        <div class="swiper-pagination"></div>
-                    </div>
-                </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-            </div>
-            @else
-                <div class="blank"></div>
-            @endif
-            <div class="info">
-                <div class="textfield">
-                    <i class="textfield__icon ico__search"><span class="a11y">검색</span></i>
+@include('layouts.header')
 
-                    <input type="text" class="textfield__search textfield__search--modify" id="community_search_keyword" name="community_search_keyword" placeholder="글 제목이나 작성자를 검색해주세요." style="width: 100%;">
-                    <button type="button" class="textfield__icon--delete ico__sdelete"><span class="a11y">삭제하기</span></button>
-                </div>
-                
-                <div class="search-list">
-                    <div class="search-list__head">
-                        <p class="search-list__title">
-                            최근 검색어
-                        </p>
-                        <a href="javascript:void(0)" onclick="deleteSearchList('all')" class="search-list__action">전체 삭제</a>
-                    </div>
-                    <div class="search-list__wrap">
-                        @include('community.search-list')
-                    </div>
-                </div>
-                <div class="post-list">
-                    <ul>
-                        <li class="{{ !isset($board_name) || empty($board_name) ? 'post-list__item--active' : ''}}">
-                            <a href="javascript:void(0)" onclick="getBoardList('전체')">전체</a>
-                        </li>
-                        @foreach($boards as $board)
-                            <li class="{{ isset($board_name) && $board->name == $board_name ? 'post-list__item--active' : '' }}">
-                                <a href="javascript:void(0)" onclick="getBoardList('{{$board->name}}')">{{$board->name}}</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-                <a href="/community/my/articles" class="profile"><i class="ico__profile"></i><span>내 활동</span></a>
-            </div>
-            @includeWhen(Route::current()->getName() == 'community.detail', 'community.detail')
-            @includeWhen(Route::current()->getName() == 'community.index', 'community.community-content')
+<div id="content">
+    <section class="sub_section nopadding community_tab mb-10">
+        <div class="inner">
+            <ul>
+                <li class="active"><a href="javascript:;">커뮤니티 게시판</a></li>
+                <li><a href="/community/group">가구인 모임</a></li>
+            </ul>
         </div>
-    </div>
-</div>
-@if (request()->route()->getName() == 'community.index' && count($popup) > 0)
-<div id="main-event" class="modal">
-    <div class="modal__container" style="width: 600px;">
-        <div class="modal__content">
-            <button type="button" onclick="closeModal('#main-event');" class="close-button ico_circle_delete">
-                <span class="a11y">닫기</span>
-            </button>
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="modal__desc">
-                        <div class="modal-box__swiper">
-                            <div id="modalkvSwipe" class="modalkeyvisual swiper-container">
-                                <div class="swiper-wrapper">
-                                    @foreach($popup as $item)
-                                        <div class="swiper-slide">
-                                            <a href="{{$item->web_type_link}}">
-                                                <p class="event__banner" style="background-image:url({{$item->imgUrl}})"></p>
-                                            </a>
+    </section>
+
+
+    <section class="sub_section nopadding">
+        <div class="inner">
+            <div class="line_common_banner">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide" style="background-color:#475872; ">
+                        <a href="javascript:;">
+                            <div class="txt_box">
+                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
+                                <span>매달 5일과 15일에 게시됩니다.</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" style="background-color:#6D5C64; ">
+                        <a href="javascript:;">
+                            <div class="txt_box">
+                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
+                                <span>매달 5일과 15일에 게시됩니다.</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <div class="count_pager"><b>1</b> / 12</div>
+                <button class="slide_arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="slide_arrow next type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            </div>
+        </div>
+    </section>
+    
+    <section class="sub_section community_con01">
+        <div class="inner">
+            <div class="title">
+                <div class="search_box">
+                    <input type="text" class="input-form" placeholder="글 제목이나 작성자를 검색해주세요">
+                    <button><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#news_search"></use></svg></button>
+                </div>
+            </div>
+
+            <div class="tab_layout type02">
+                <ul>
+                    <li class="active"><a href="javascript:;">전체</a></li>
+                    <li><a href="javascript:;">상품문의</a></li>
+                    <li><a href="javascript:;">홍보</a></li>
+                    <li><a href="javascript:;">일상</a></li>
+                    <li><a href="javascript:;">매매/임대</a></li>
+                    <li><a href="javascript:;">구인구직</a></li>
+                </ul>
+            </div>
+
+            <div class="tab_content">
+                <!-- 전체 -->
+                <div class="active">
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
                                         </div>
-                                    @endforeach
-                                </div>
-                                <div class="swiper-util">
-                                    <div>
-                                        <div class="swiper-pagination"></div>
+                                        <div class="date">2024.05.07</div>
                                     </div>
                                 </div>
-                                <div class="swiper-button-prev"></div>
-                                <div class="swiper-button-next"></div>
-                            </div>
-                        </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb3.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb4.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb5.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb2.png" alt=""></a></div>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="modal__util">
-                        <a onclick="todayClose()" class="modal__hide-button"><span>오늘 하루 보지않기</span></a>
-                        <a onclick="viewPopup()" class="modal__detail-button"><span>자세히 보기</span></a>
+                </div>
+                <!-- 상품문의 -->
+                <div>
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>상품문의</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>상품문의</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb2.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>상품문의</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb5.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>상품문의</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb3.png" alt=""></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 홍보 -->
+                <div>
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>홍보</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb5.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>홍보</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb3.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>홍보</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>홍보</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb4.png" alt=""></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 일상 -->
+                <div>
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>일상</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>일상</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>일상</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>일상</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb3.png" alt=""></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 매매/임대 -->
+                <div>
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb2.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/sale_thumb.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>매매/임대</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb5.png" alt=""></a></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 구인구직 -->
+                <div>
+                    <div class="community_list">
+                        <ul>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>구인구직</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>구인구직</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb2.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>구인구직</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb3.png" alt=""></a></div>
+                            </li>
+                            <li>
+                                <div class="txt_box">
+                                    <div class="top">
+                                        <a href="./community_detail.php">
+                                            <div class="category">
+                                                <span>구인구직</span>
+                                                <b>티엔엠</b>
+                                            </div>
+                                            <div class="title">각종 의자 정리합니다. 제품별 소량 있습니다.</div>
+                                        </a>
+                                    </div>
+                                    <div class="bot">
+                                        <div class="info">
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
+                                            <span>322</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                            <span>1005</span>
+                                            <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
+                                            <span>30</span>
+                                        </div>
+                                        <div class="date">2024.05.07</div>
+                                    </div>
+                                </div>
+                                <div class="img_box"><a href="./community_detail.php"><img src="./img/prod_thumb4.png" alt=""></a></div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
+
+            <div class="mt-6 flex justify-end">
+                <a href="./community_write.php" class="btn btn-round btn-primary px-4"><svg class="w-5 h-5 mr-1"><use xlink:href="./img/icon-defs.svg#write_add"></use></svg>글쓰기</a>
+            </div>
         </div>
-    </div>
+    </section>
+
 </div>
-@endif
 
-    <script>
-        const swiper = new Swiper('#kvswiper', {
-            autoplay: {
-            delay: 3000,
-            disableOnInteraction: false,
-            },
-            loop: true,
-            slidesPerView: 1,
-            spaceBetween: 0,
-            paginationClickable: false,
-            keyboard: false,
-            pagination: {
-                el: '#kvswiper .swiper-pagination',
-                type: 'fraction',
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-        $('#kvswiper').hover(function(){
-            swiper.autoplay.stop();
-        }, function(){
-            swiper.autoplay.start();
-        });
 
-        
-        function getBoardList(boardName) {
-            location.replace("/community?" + new URLSearchParams({board_name: boardName}));
+<script>
+    // line_common_banner 
+    const line_common_banner = new Swiper(".line_common_banner", {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        navigation: {
+            nextEl: ".line_common_banner .slide_arrow.next",
+            prevEl: ".line_common_banner .slide_arrow.prev",
+        },
+        pagination: {
+            el: ".line_common_banner .count_pager",
+            type: "fraction",
         }
-        
+    });
 
-        @if (request()->route()->getName() == 'community.index' && count($popup) > 0)
-        const todayClose = () => {
-            setCookie("communityPopup","Y");
-            closeModal('#main-event');
-        }
-
-        // 24시간 기준 쿠키 설정하기
-        const setCookie = function (cname, cvalue) {
-            var todayDate = new Date();
-            todayDate.setHours(23, 59, 59, 999);
-            var expires = "expires=" + todayDate.toString(); // UTC기준의 시간에 exdays인자로 받은 값에 의해서 cookie가 설정 됩니다.
-            document.cookie = cname + "=" + cvalue + "; " + expires;
-        }
-
-        const viewPopup = () => {
-            location.href = $('#modalkvSwipe .swiper-slide-active a').attr('href');
-        }
-
-        $(document).ready(function(){
-            const cookiedata = document.cookie;
-            if(cookiedata.indexOf("communityPopup=Y")<0){
-                openModal("#main-event");
-            }
-        });
-
-        const modalswiper = new Swiper('#modalkvSwipe', {
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
-            },
-            loop: true,
-            slidesPerView: 1,
-            spaceBetween: 0,
-            paginationClickable: true,
-            keyboard: true,
-            speed: 500,
-            pagination: {
-                el: '#modalkvSwipe .swiper-pagination',
-                type: 'fraction',
-            },
-            navigation: {
-                nextEl: '#modalkvSwipe .swiper-button-next',
-                prevEl: '#modalkvSwipe .swiper-button-prev',
-            },
-        });
-        $('#modalkvSwipe .swiper-slide').hover(function(){
-            modalswiper.autoplay.stop();
-        }, function(){
-            modalswiper.autoplay.start();
-        });
-        @endif
-
-    </script>
-
-
+    // 탭 컨트롤
+    $('.tab_layout li').on('click',function(){
+        let liN = $(this).index();
+        $(this).addClass('active').siblings().removeClass('active');
+        $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active');
+    })
+</script>
 
 @endsection
-
-@push('scripts')
-    
-@endpush
