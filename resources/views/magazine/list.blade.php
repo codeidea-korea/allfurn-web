@@ -104,78 +104,21 @@
                 </div>
             </div>
             <ul class="magazine_list">
+                @foreach ($list as $row)
                 <li>
                     <div class="txt_box">
-                        <a href="javascript:;">
+                        <a href="/magazine/detail/{{$row->idx}}">
                             <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
+                                {{--TODO: 카테고리 생성된 후 변경 --}}
+                                <span>카테고리 없음</span>
+                                <b>{{ Carbon\Carbon::parse($row->register_time)->format('Y.m.d') }}</b>
                             </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스</div>
+                            <div class="tit">{{$row->title}}</div>
                         </a>
                     </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
+                    <div class="img_box"><a href="/magazine/detail/{{$row->idx}}"><img src="{{$row->image_url}}" alt=""></a></div>
                 </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
-                            </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
-                            </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스</div>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
-                            </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
-                            </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스</div>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="top">
-                                <span>가구,가구인</span>
-                                <b>2023.10.05</b>
-                            </div>
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
+                @endforeach
             </ul>
         </div>
     </section>

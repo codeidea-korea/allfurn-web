@@ -18,9 +18,6 @@ class MagazineService
      */
     public function list($params): array
     {
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
-        $limit = $params['limit'];
-
         $query = Magazine::where(function($query) {
                 $query->where('is_date', 0);
                 $query->orWhere(function($query2) {
@@ -39,9 +36,21 @@ class MagazineService
                 , DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'));
 
         $data['count'] = $query->count();
-        $list = $query->orderBy('AF_magazine.idx', 'desc')->offset($offset)->limit($limit)->get();
+        $list = $query->orderBy('AF_magazine.idx', 'desc');
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+            $limit = $params['limit'];
+
+            $list = $list->offset($offset)->limit($limit);
+        }
+
+        $list = $list->get();
+
         $data['list'] = $list;
-        $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
+        }
         return $data;
     }
 

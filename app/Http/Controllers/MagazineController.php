@@ -39,6 +39,11 @@ class MagazineController extends BaseController
         $furnitureNewsList = $this->communityService->getArticleList($params);
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
 
+        //매거진
+        $params['offset'] = null;
+        $params['limit'] = null;
+        $data = array_merge($data, $this->magazineService->list($params));
+
         return view('magazine.list', $data);
     }
 
@@ -75,7 +80,11 @@ class MagazineController extends BaseController
 
     public function detail(int $idx)
     {
-        $data['detail'] = $this->magazineService->detail($idx);
-        return view('magazine.detail', $data);
+        $data['article'] = $this->magazineService->detail($idx);
+        // TODO: TODO: 카테고리 생성된 후 변경 
+        $data['article']['board_name'] = '카테고리 없음';
+
+        return view('magazine.simple-detail', $data);
+        // return view('magazine.detail', $data);
     }
 }
