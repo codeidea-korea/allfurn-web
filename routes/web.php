@@ -206,6 +206,7 @@ Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function(
     Route::get('/daily/detail/{idx}', 'MagazineController@newsDetail');
     Route::get('/furniture', 'MagazineController@furnitureNews');
     Route::get('/furniture/detail/{idx}', 'MagazineController@newsDetail');
+    Route::get('/list', 'MagazineController@magazineList');
     Route::get('/detail/{idx}', 'MagazineController@detail');
 });
 

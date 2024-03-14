@@ -40,8 +40,8 @@ class MagazineController extends BaseController
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
 
         //매거진
-        $params['offset'] = null;
-        $params['limit'] = null;
+        $params['offset'] = 0;
+        $params['limit'] = 6;
         $data = array_merge($data, $this->magazineService->list($params));
 
         return view('magazine.list', $data);
@@ -76,6 +76,15 @@ class MagazineController extends BaseController
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
 
         return view('magazine.news-detail', $data);
+    }
+
+    public function magazineList(Request $request) {
+
+        $params['offset'] = $request->offset;
+        $params['limit'] = 6;
+        $data = $this->magazineService->list($params);
+
+        return response()->json($data);
     }
 
     public function detail(int $idx)

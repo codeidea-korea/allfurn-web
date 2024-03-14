@@ -189,6 +189,68 @@
         return (/^[가-힣a-zA-Z0-9\s]*$/).test(data);
     }
 
+
+    // 매거진 스크롤 로딩
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
+            loadMagazineList();
+        }
+    });
+
+    let flag = false;
+    let currentPage = 1;
+    function loadMagazineList() {
+        flag = true;
+
+        $.ajax({
+            url: '/magazine/list',
+            method: 'GET',
+            data: { 
+                'offset': ++currentPage,
+            }, 
+            success: function(result) {
+                displayMagazineList(result.list);
+            },
+            error : function(e) {
+                currentPage--;
+            },
+            complete : function () {
+                flag = false;
+            }
+        })
+    }
+
+    function displayMagazineList(data) {
+        
+        data.forEach(function(magazine) {
+            $(".magazine_list").append(
+            '<li>'+
+            '        <div class="txt_box">'+
+            '            <a href="/magazine/detail/' + magazine.idx + '{{$row->idx}}">'+
+            '                <div class="top">'+
+            '                <span>카테고리 없음</span>'+
+            '                <b>' +formatDate(magazine.register_time) + '</b>'+
+            '            </div>'+
+            '            <div class="tit">' + magazine.forma + '</div>'+
+            '        </a>'+
+            '    </div>'+
+            '        <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>'+
+            '    </li>'
+            );
+        });
+        
+    }
+
+    function formatDate(date) {
+        const dateObject = new Date(date);
+
+        const year = dateObject.getFullYear().toString().substr(-2);
+        const month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+        const day = ("0" + dateObject.getDate()).slice(-2);
+
+        var formattedDate = year + "." + month + "." + day;
+        return formattedDate;
+      }
    
 </script>
 @endsection
