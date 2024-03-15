@@ -88,6 +88,8 @@ class CommunityController extends BaseController
      */
     public function detail(int $idx): View
     {
+        // 게시판 상단 배너
+        $data['banners'] = $this->communityService->getBannerList();
         // lnb 게시판 리스트
         $data['boards'] = $this->communityService->getBoardList();
         $data['searches'] = $this->communityService->getSearchList();
@@ -98,7 +100,7 @@ class CommunityController extends BaseController
 
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
-        return view('community.community', $data);
+        return view('community.detail', $data);
     }
 
     /**

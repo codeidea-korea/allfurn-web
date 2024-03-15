@@ -314,6 +314,8 @@ class CommunityService {
      */
     public function getArticleDetail(int $idx)
     {
+        $userIdx = Auth::user()['idx'];
+
         return Article::where('AF_board_article.idx', $idx)
             ->where('AF_board_article.is_delete', 0)
             ->join('AF_board', 'AF_board.idx', 'AF_board_article.board_idx')
@@ -330,7 +332,12 @@ class CommunityService {
                     IF(AF_wholesale.company_name IS NOT NULL,AF_wholesale.company_name,
                         IF(AF_retail.company_name IS NOT NULL,AF_retail.company_name,AF_user.name)
                     )
-                 ) AS writer, AF_user.company_idx, AF_user.type AS company_type'))
+                 ) AS writer, AF_user.company_idx, AF_user.type AS company_type
+                ,(SELECT 
+                    CASE
+                    WHEN EXISTS (SELECT 1 FROM AF_article_like WHERE article_idx = '. $idx .' AND user_idx = '. $userIdx .') THEN 1
+                    ELSE 0 END
+                ) AS is_like'))
             ->withCount('like')->withCount('view')->first($idx);
     }
 

@@ -28,7 +28,7 @@ $( function() {
         }
 
         $zzimbtn = $(this);
-        let articleIndex = $(this).attr('articeId');
+        let articleIndex = $(this).data('article-id');
         if(articleIndex) {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

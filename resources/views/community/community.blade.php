@@ -4,39 +4,8 @@
 @include('layouts.header')
 
 <div id="content">
-    <section class="sub_section nopadding community_tab mb-10">
-        <div class="inner">
-            <ul>
-                <li class="active"><a href="javascript:;">커뮤니티 게시판</a></li>
-                <li><a href="/community/group">가구인 모임</a></li>
-            </ul>
-        </div>
-    </section>
-
-
-    <section class="sub_section nopadding">
-        <div class="inner">
-            <div class="line_common_banner">
-                <ul class="swiper-wrapper">
-                    @if(isset($banners) && count($banners) > 0)
-                        @foreach ($banners as $banner)
-                        <li class="swiper-slide" style="background-image:url({{ preImgUrl() }}{{$banner->attachment->folder}}/{{$banner->attachment->filename}})">
-                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
-                                <div class="txt_box">
-                                    <p></p>
-                                    <span></span>
-                                </div>
-                            </a>
-                        </li>    
-                        @endforeach
-                    @endif
-                </ul>
-                <div class="count_pager"><b>1</b> / 12</div>
-                <button class="slide_arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-                <button class="slide_arrow next type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-            </div>
-        </div>
-    </section>
+    @include('community.community-tab')
+    @include('community.community-banner')
     
     <section class="sub_section community_con01">
         <div class="inner">
@@ -87,7 +56,7 @@
                                 <li>
                                     <div class="txt_box">
                                         <div class="top">
-                                            <a href="./community_detail.php">
+                                            <a href="/community/detail/{{$article->idx}}">
                                                 <div class="category">
                                                     <span>{{$article->board_name}}</span>
                                                     <b>{{ $article->is_admin ? '관리자' : $article->writer }}</b>
@@ -107,7 +76,7 @@
                                             <div class="date">{{$article->diff_time}}</div>
                                         </div>
                                     </div>
-                                    <div class="img_box"><a href="./community_detail.php">
+                                    <div class="img_box"><a href="/community/detail/{{$article->idx}}">
                                         @if($article->content)
                                             @php
                                                 $tmp = '';
@@ -167,19 +136,6 @@
 
 
 <script>
-    // line_common_banner 
-    const line_common_banner = new Swiper(".line_common_banner", {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        navigation: {
-            nextEl: ".line_common_banner .slide_arrow.next",
-            prevEl: ".line_common_banner .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".line_common_banner .count_pager",
-            type: "fraction",
-        }
-    });
 
     // // 탭 컨트롤
     // $('.tab_layout li').on('click',function(){
