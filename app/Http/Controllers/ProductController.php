@@ -17,6 +17,7 @@ use Illuminate\View\View;
 use Session;
 use function Symfony\Component\Translation\t;
 use App\Models\Banner;
+use Carbon\Carbon;
 
 class ProductController extends BaseController
 {
@@ -267,9 +268,13 @@ class ProductController extends BaseController
             $propArray["인증정보"] =  $data['detail']->auth_info;
         }
 
-
         $data['detail']->propertyArray = $propArray;
 
+        // 신상품 처리 최근등록일 기준 ( 30일 )
+        $date1 = Carbon::parse( $data['detail']->register_time);
+        $date2 = Carbon::parse( now() );
+
+        $data['detail']->diff = $date1->diffInDays($date2);
 
         // 상단 배너
         $banners = $this->productService->getBannerList();

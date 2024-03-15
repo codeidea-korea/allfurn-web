@@ -34,9 +34,9 @@
                 </div>
                 <div class="txt_box">
                     <div class="name">
-                        @if( $data['detail']->is_new_product )
+                        @if( $data['detail']->diff <= 30 )
                         <div class="tag">
-                            @if( $data['detail']->is_new_product )
+                            @if( $data['detail']->diff <= 30 )
                                 <span class="new">NEW</span>
                             @endif
                             <span class="event">이벤트</span>
