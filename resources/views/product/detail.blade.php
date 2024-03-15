@@ -34,10 +34,14 @@
                 </div>
                 <div class="txt_box">
                     <div class="name">
+                        @if( $data['detail']->is_new_product )
                         <div class="tag">
-                            <span class="new">NEW</span>
+                            @if( $data['detail']->is_new_product )
+                                <span class="new">NEW</span>
+                            @endif
                             <span class="event">이벤트</span>
                         </div>
+                        @endif
                         <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
                     </div>
                     <div class="info">
@@ -48,7 +52,7 @@
                             <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
                         </div>
                         <div class="link_box">
-                            <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                            <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
                             <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                             <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
                         </div>
@@ -79,8 +83,6 @@
 
 
     <!-- 공유 팝업 -->
-
-    <!-- 업체 전화번호 모달 -->
     <div class="modal" id="alert-modal">
         <div class="modal_bg" onclick="modalClose('#alert-modal')"></div>
         <div class="modal_inner modal-md">
@@ -126,10 +128,5 @@
 
             modalOpen('#alert-modal')
         }
-
-        // 찜아이콘
-        $('.zzim_btn').on('click',function(){
-            $(this).toggleClass('active')
-        })
     </script>
 @endsection
