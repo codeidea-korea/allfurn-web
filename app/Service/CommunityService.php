@@ -68,11 +68,18 @@ class CommunityService {
     public function getBoardList(array $params = []): Collection
     {
         $query = Board::where('is_open', 1)->where('view_access', 'like', "%".Auth::user()['type']."%");
+
         if (!empty($params)) {
-            foreach($params as $key => $value) {
-                $query->where($key, $value['condition'], $value['value']);
+            
+            if(isset($params['isCommunity']) && $params['excludedBoardList']) {
+                $query->whereNotIn('AF_board.idx', $params['excludedBoardList']);
+            } else {
+                foreach($params as $key => $value) {
+                    $query->where($key, $value['condition'], $value['value']);
+                }
             }
         }
+
         return $query->get();
     }
 
@@ -139,8 +146,13 @@ class CommunityService {
             })
             ->where('AF_board.view_access', 'like', "%".Auth::user()['type']."%")
             ->where('article.is_delete', 0)
-            ->where('AF_board.is_open', 1)
-            ->orderBy('article.register_time','DESC');
+            ->where('AF_board.is_open', 1);
+
+            if(isset($params['isCommunity']) && $params['excludedBoardList']) {
+                $query->whereNotIn('AF_board.idx', $params['excludedBoardList']);
+            }
+
+            $query->orderBy('article.register_time','DESC');
             
             
         // 키워드 검색 시

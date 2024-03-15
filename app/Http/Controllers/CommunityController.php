@@ -25,6 +25,10 @@ class CommunityController extends BaseController
 
     public function index(Request $request)
     {
+        //제외되야 하는 카테고리
+        $params['isCommunity'] = true;
+        $params['excludedBoardList'] = [12,22]; // 일일 가구 뉴스, 가구 소식
+
         $params['keyword'] = preg_replace('/\%\"/i','',$request->input('keyword'));
         $params['board_name'] = preg_replace('/전체/', '',$request->input('board_name'));
         $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
@@ -33,7 +37,7 @@ class CommunityController extends BaseController
         // 게시판 상단 배너
         $data['banners'] = $this->communityService->getBannerList();
         // lnb 게시판 리스트
-        $data['boards'] = $this->communityService->getBoardList();
+        $data['boards'] = $this->communityService->getBoardList($params);
         // 전체 게시판 리스트
         $data = array_merge($this->communityService->getArticleList($params), $data);
         // 검색어 리스트

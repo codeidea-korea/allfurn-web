@@ -344,10 +344,12 @@ section.sub_section_bot {padding:70px 0 140px; }
 .community_con01 .title .search_box {position:relative; width:500px; margin-top:30px; margin-left:auto; margin-right:0; }
 .community_con01 .title .search_box input {width:100%; padding:12px 44px 12px 20px; border: 1px solid var(--gray_color); background-color:#fff; }
 .community_con01 .title .search_box input::placeholder {color:var(--gray_color); }
-.community_con01 .title .search_box button {position:absolute; right:20px; top:12px; width:24px; }
-.community_con01 .title .search_box button svg {width:24px; height:24px; }
+.community_con01 .title .search_box > button {position:absolute; right:20px; top:12px; width:24px; }
+.community_con01 .title .search_box > button svg {width:24px; height:24px; }
 
 .community_con01 .tab_layout {width:calc(100% - 248px); margin:40px auto; }
+.community_con01 .tab_layout ul {flex-wrap:wrap; justify-content:center; }
+.community_con01 .tab_layout ul li {width:auto; }
 
 /* 커뮤니티 글쓰기 */
 .community_write_con01 .title {padding-bottom:10px; border-bottom:1px solid #F2F2F2; margin:10px 0 30px;  }
@@ -632,3 +634,5 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 
 
+/* 최근검색어 A링크  */
+.search_list li a {flex-grow:1; }
