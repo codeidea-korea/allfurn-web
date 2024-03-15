@@ -27,8 +27,8 @@
             <li><button class="flex items-center category_btn"><svg><use xlink:href="/img/icon-defs.svg#Hamicon"></use></svg>카테고리</button></li>
             <li class="{{ Request::segment(1) == '' ? 'active' : '' }}"><a href="/">홈</a></li>
             <li class="{{ (Request::segment(1) == 'product' && Request::segment(2) == 'new') ? 'active' : '' }}"><a href="/product/new">신상품</a></li>
-            <li class="{{ Request::segment(1) == 'wholesaler' ? 'active' : '' }}"><a href="./wholesaler.php">도매업체</a></li>
-            <li class="{{ Request::segment(2) == 'thisMonth' ? 'active' : '' }}"><a href="/프라디노 마르세 모듈형 패브릭소파 업체 문의"><span>이벤트를 모아보는</span>이달의딜</a></li>
+            <li class="{{ Request::segment(1) == 'wholesaler' ? 'active' : '' }}"><a href="/wholesaler">도매업체</a></li>
+            <li class="{{ Request::segment(2) == 'thisMonth' ? 'active' : '' }}"><a href="/product/thisMonth"><span>이벤트를 모아보는</span>이달의딜</a></li>
             <li class="{{ Request::segment(1) == 'magazine' ? 'active' : '' }}"><a href="/magazine">뉴스정보</a></li>
             <li class="{{ Request::segment(2) == 'thisMonth' ? 'active' : '' }}"><a href="/community">커뮤니티</a></li>
         </ul>
