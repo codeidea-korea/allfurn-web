@@ -50,7 +50,21 @@ class WholesalerController extends BaseController
         $data['wholesalerIdx'] = $wholesalerIdx;
         $data['sort'] = $request->query('so');
 
-        return $this->wholesalerService->detail($data);
+        // 상단 배너
+        $banners = $this->productService->getBannerList();
+        $categoryList = $this->productService->getCategoryList();
+        $todayCount = $this->productService->getTodayCount();
+
+        $data = $this->wholesalerService->detail($data);
+
+        $data['info']->place = substr( $data['info']->business_address, 0, 6 );
+
+        return view('wholesaler.detail', [
+            'banners'=>$banners,
+            'todayCount'=>$todayCount,
+            'categoryList'=>$categoryList,
+            'data'=>$data
+        ]);
     }
 
 

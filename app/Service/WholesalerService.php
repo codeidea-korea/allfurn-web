@@ -272,8 +272,11 @@ class WholesalerService {
         $list = $list->paginate(32);
 
         $data['list'] = $list;
-        return view('wholesaler.detail', [
+
+        // view 호출을 컨트롤러에서 하도록 변경함 ( kr.kevin, 2024.03.15 )
+        /*return view('wholesaler.detail', [
             'data'=>$data
-        ]);
+        ]);*/
+        return $data;
     }
 }
