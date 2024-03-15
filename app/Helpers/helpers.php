@@ -36,3 +36,11 @@ function preImgUrl() {
 function api() {
     return env('ALLFURN_API_DOMAIN', 'https://api.all-furn.com');
 }
+
+function print_re( $data ) {
+    if( empty( $data ) ) return false;
+
+    echo "<pre>";
+    print_r( $data );
+    echo "</pre>";
+}
