@@ -269,11 +269,17 @@ class ProductController extends BaseController
 
 
         $data['detail']->propertyArray = $propArray;
-        
-        
-        
+
+
+        // 상단 배너
+        $banners = $this->productService->getBannerList();
+        $categoryList = $this->productService->getCategoryList();
+        $todayCount = $this->productService->getTodayCount();
 
         return view('product.detail', [
+            'banners'=>$banners,
+            'todayCount'=>$todayCount,
+            'categoryList'=>$categoryList,
             'data'=>$data
         ]);
     }

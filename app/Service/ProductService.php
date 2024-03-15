@@ -83,12 +83,15 @@ class ProductService
     public function getProductData(int $productIdx, string $type = '') {
 
         if ($type != '' && $type == 'temp') {
-            
+
             $data['detail'] = ProductTemp::select('AF_product_temp.*', 'ac2.idx as category_parent_idx',
                 DB::raw('CONCAT(ac2.name, CONCAT(" > ", ac.name)) as category,
             (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
                   WHEN AF_product_temp.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
-                  ELSE "" END) as companyName,
+                  ELSE "" END) as companyName,                  
+            (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
+                  WHEN AF_product_temp.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
                   COUNT(DISTINCT pi.idx) as isInterest,
                   COUNT(DISTINCT pa.idx) as isAd'))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
@@ -124,6 +127,9 @@ class ProductService
             (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                   ELSE "" END) as companyName,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
                   COUNT(DISTINCT pi.idx) as isInterest,
                   COUNT(DISTINCT pa.idx) as isAd'))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
