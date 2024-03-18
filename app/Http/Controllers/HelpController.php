@@ -54,7 +54,7 @@ class HelpController extends BaseController
 
         $data['pageType'] = 'notice';
         $data = array_merge($data, $this->helpService->getNoticeList($params));
-        return view('help.index', $data);
+        return view('help.notice', $data);
     }
 
     /**
