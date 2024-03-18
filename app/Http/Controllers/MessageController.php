@@ -59,6 +59,57 @@ class MessageController extends BaseController
             'company_idx' => $data['company']->idx,
             'company_type' => $data['company']->company_type,
         ];
+
+        if(isset($data['chatting'])) {
+            foreach($data['chatting'] as $key => $chat) {
+                try{
+                    $chatContent = json_decode($chat->content, true);
+                    if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
+                        // 단순 텍스트
+                        $data['chatting'][$key]->contentHtml = $chatContent['text'];
+                    } else if($chatContent['type'] == 'attach') {
+                        // 첨부
+                        $data['chatting'][$key]->contentHtml = '<div class="flex flex-col"><img src="'.$chatContent['imgUrl'].'"></div>';
+                    } else if($chatContent['type'] == 'inquiry') {
+                        // 상담
+                        $data['chatting'][$key]->contentHtml = '<div class="flex flex-col">
+                                                <span>[ 상담문의가 도착했습니다 ] '.$chatContent['productName'].'</span>
+                                                <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                                    <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                                    <img src="'.$chatContent['productThumbnailURL'].'">
+                                                        바로가기
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                                    </p>
+                                                </button>
+                                            </div>';
+                    } else if($chatContent['type'] == 'order') {
+                        // 주문
+                        $data['chatting'][$key]->contentHtml = '<div class="flex flex-col">
+                                                <span>[ 거래가 확정되었습니다. ] '.$chatContent['order_group_code'].'</span>
+                                                <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['order_group_code'].'\'">
+                                                    <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                                        바로가기
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                                    </p>
+                                                </button>
+                                            </div>';
+                    } else if($chatContent['type'] == 'estimate') {
+                        // 견적
+                        $data['chatting'][$key]->contentHtml = '<div class="flex flex-col">
+                                                <span>[ 견적문의가 도착했습니다. ]</span>
+                                                <button class="flex flex-col mt-1" click="location.href=\'/estimate/detail/'.$chatContent['estimate_idx'].'\'">
+                                                    <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                                        바로가기
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                                    </p>
+                                                </button>
+                                            </div>';
+                    }
+                } catch(Exception $e) {
+                }
+            }
+            
+        }
         
         // if ($this->messageService->hasUserPushSet($pushParams) === false) {
         //     $this->messageService->toggleCompanyPush($pushParams);

@@ -152,9 +152,10 @@ class MessageService
             ->orderBy('AF_message_room.register_time', 'DESC')
             ->select('AF_message.*'
                 , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
-                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H') AS message_register_hour")
-                , DB::raw("DATE_FORMAT(AF_message.register_time, '%i') AS message_register_min")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
+                , DB::raw("DAYOFWEEK(AF_message.register_time) AS message_register_day_of_week")
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') AS message_register_day")
+                , DB::raw("'' as contentHtml")
             );
             
         // if (isset($params['keyword']) && !empty($params['keyword'])) {
@@ -357,6 +358,7 @@ class MessageService
      * 검색어 저장
      * @param $keyword
      */
+        /*
     public function storeSearchKeyword($keyword)
     {
         MessageKeyword::where('user_idx', Auth::user()['idx'])->where('keyword', $keyword)->delete();
@@ -365,12 +367,14 @@ class MessageService
         $messageKeyword->keyword = $keyword;
         $messageKeyword->save();
     }
+        */
 
     /**
      * 검색어 삭제
      * @param $idx
      * @return array
      */
+    /*
     public function deleteKeyword($idx): array
     {
         if ($idx === 'all') {
@@ -385,6 +389,7 @@ class MessageService
             'message' => ''
         ];
     }
+    */
 
     /**
      * 알림 켜기/끄기
@@ -480,7 +485,10 @@ class MessageService
             $message->sender_company_type = $user['type'];
             $message->sender_company_idx = $user['company_idx'];
             $message->user_idx = $user['idx'];
-            $message->content = $imageUrl;
+            $message->content = json_encode((object)[
+                'type' => 'attach',
+                'imgUrl' => $imageUrl,
+            ], JSON_UNESCAPED_UNICODE); ;
             $message->save();
         }
         
@@ -532,7 +540,10 @@ class MessageService
             $message->sender_company_type = $user['type'];
             $message->sender_company_idx = $user['company_idx'];
             $message->user_idx = $user['idx'];
-            $message->content = $params['message'];
+            $message->content = json_encode((object)[
+                'type' => 'normal',
+                'text' => $params['message'],
+            ], JSON_UNESCAPED_UNICODE);
             $message->save();
         }
         
