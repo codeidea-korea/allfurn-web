@@ -31,8 +31,7 @@ class MagazineController extends BaseController
         $data = array_merge($data, $this->communityService->getArticleList($params));
 
         //가구 소식
-        //TODO: 가구 소식 리스트 생성 후 문자열 값 변경
-        $params['board_name'] = '일일 가구 뉴스';
+        $params['board_name'] = '가구 소식';
         $params['offset'] = 0;
         $params['limit'] = 3;
 
@@ -56,10 +55,9 @@ class MagazineController extends BaseController
         return view('magazine.dailyNews', $data);
     }
 
-    //TODO: 가구 소식 리스트 생성 후 문자열 값 변경
     public function furnitureNews() {
 
-        $params['board_name'] = '일일 가구 뉴스';
+        $params['board_name'] = '가구 소식';
 
         $data = $this->communityService->getArticleList($params);
         return view('magazine.furnitureNews', $data);
