@@ -12,64 +12,75 @@
         </div>
         <div class="flex itesm-center justify-between">
             <h2 class="text-2xl font-bold">1:1 문의</h2>
-            <a href="./inquiry_detail.php" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
+            <a href="/help/inquiry/form" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
         </div>
         <hr class="mt-5">
-        <!-- 최대 10개 출력 -->
-        <div class="accordion divide-y divide-gray-200">
-            <div class="accordion-item">
-                <button class="accordion-header py-4 px-5 w-full text-left" type="button">
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm text-stone-400 w-16 shrink-0">회원정보</span>
-                        <span class="text-lg">정회원 승격 요청 진행하는 법 알려주세요</span>
-                        <span class="text-primary bg-primaryop py-1 px-2 text-xs ml-auto">답변완료</span>
-                    </div>
-                </button>
-                <div class="accordion-body hidden p-5 bg-stone-50">
-                    <p class="w-1/2">
-                        정회원 승격 요청하는 방법이 있다고 하는데<br/>
-                        어디서 하는지 모르겠어요 알려주세요
-                    </p>
-                    <div class="bg-stone-200 p-5 mt-5 rounded-md">
-                        <p class="text-sm text-stone-400">2023.12.04</p>
-                        <div class="mt-2">
-                            안녕하세요 고객님<br/>
-                            정회원 승격 요청은 마이페이지 > 계정관리 > 정회원 승격 요청 버튼 클릭으로<br/>
-                            진행 가능합니다.
+        @if($count < 1)
+            <!-- 1:1 문의 없을 떼 -->
+            <div class="flex items-center justify-center h-[300px]">
+                <div class="flex flex-col items-center justify-center gap-1 text-stone-500">
+                    <img class="w-8" src="/img/member/info_icon.svg" alt="">
+                    <p>등록하신 1:1 문의가 없습니다.</p>
+                </div>
+            </div>
+        @else
+            <!-- 최대 10개 출력 -->
+            <div class="accordion divide-y divide-gray-200">
+                @foreach($list as $row)
+                    <div class="accordion-item">
+                        <button class="accordion-header py-4 px-5 w-full text-left" type="button">
+                            <div class="flex items-center gap-4">
+                                <span class="text-sm text-stone-400 w-16 shrink-0">{{ $row->category->name }}</span>
+                                <span class="text-lg">{{ $row->title }}</span>
+                                <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
+                                @if ($row->state === 0)
+                                    <span class="text-stone-400 bg-stone-100 py-1 px-2 text-xs ml-auto">답변대기</span>
+                                @else
+                                    <span class="text-primary bg-primaryop py-1 px-2 text-xs ml-auto">답변완료</span>
+                                @endif
+                            </div>
+                        </button>
+                        <div class="accordion-body hidden p-5 bg-stone-50">
+                            <p class="w-1/2">
+                                {!! nl2br($row->content) !!}
+                            </p>
+                            @if($row->reply)
+                                <div class="bg-stone-200 p-5 mt-5 rounded-md">
+                                    <p class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->reply_date)) }}</p>
+                                    <div class="mt-2">
+                                        {!! nl2br($row->reply) !!}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-            <div class="accordion-item">
-                <button class="accordion-header py-4 px-5 w-full text-left" type="button">
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm text-stone-400 w-16 shrink-0">기타</span>
-                        <span class="text-lg">전화번호 변경됐어요</span>
-                        <span class="text-stone-400 bg-stone-100 py-1 px-2 text-xs ml-auto">답변대기</span>
-                    </div>
-                </button>
-                <div class="accordion-body hidden p-5 bg-stone-50">
-                    <p class="w-1/2">
-                        정회원 승격 요청하는 방법이 있다고 하는데<br/>
-                        어디서 하는지 모르겠어요 알려주세요
-                    </p>
-                </div>
+        @endif
+        
+        @if($count > 0)
+            <div class="pagenation flex items-center justify-center py-12">
+                @if($pagination['prev'] > 0)
+                    <a href="javascript:;" class="" onclick="moveToList({{$pagination['prev']}})">
+                        <
+                    </a>
+                @endif
+
+                @foreach ($pagination['pages'] as $paginate)
+                    @if ($paginate == $offset)
+                        <a href="javascript:;" class="active" onclick="moveToList({{$paginate}})">{{$paginate}}</a>
+                    @else
+                        <a href="javascript:;" class="" onclick="moveToList({{$paginate}})">{{$paginate}}</a>
+                    @endif
+                @endforeach
+
+                @if($pagination['next'] > 0)
+                    <a href="javascript:;" class="" onclick="moveToList({{$pagination['next']}})">
+                        >
+                    </a>
+                @endif
             </div>
-        </div>
-        <div class="pagenation flex items-center justify-center py-12">
-            <a href="javascript:;" class="active">1</a>
-            <a href="javascriot:;">2</a>
-            <a href="javascriot:;">3</a>
-            <a href="javascriot:;">4</a>
-            <a href="javascriot:;">5</a>
-        </div>
-        <!-- 1:1 문의 없을 떼 -->
-        <div class="flex items-center justify-center h-[300px]">
-            <div class="flex flex-col items-center justify-center gap-1 text-stone-500">
-                <img class="w-8" src="./img/member/info_icon.svg" alt="">
-                <p>등록하신 1:1 문의가 없습니다.</p>
-            </div>
-        </div>
+        @endif
     </div>
 </div>
 

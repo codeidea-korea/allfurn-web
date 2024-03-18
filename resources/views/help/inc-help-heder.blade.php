@@ -9,7 +9,7 @@
     </div>
     <div class="flex flex-col gap-2">
         <button class="h-[48px] w-[140px] border rounded-md" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button>
-        <a href="./inquiry.php" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
+        <a href="/help/inquiry" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
     </div>
 </div>
 <div class="border-b">
