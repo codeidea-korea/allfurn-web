@@ -13,7 +13,19 @@
                 <div class="tag">
                     <span>{{ $article->board_name }}</span>
                 </div>
-                <h3>{{ $article->title }}</h3>
+                <div class="flex items-center justify-between">
+                    <h3>{{ $article->title }}</h3>
+                    <div class="custom_hover shrink-0">
+                        <button class="p-2"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
+                        <div class="hover_cont">
+                            @if( $article->is_admin || $article->user_idx === auth()->user()->idx)
+                                <a href="javascript:;" onclick="deleteArticle({{ $articleId }})">삭제</a>
+                            @else
+                                <a href="javascript:;" onclick="setReportedArticleInfoAndModalOpen({{ $article->idx }}, {{ $article->company_idx }}, '{{ $article->company_type }}')">신고하기</a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
                 <p>{{ $article->is_admin ? '관리자' : $article->writer }}</p>
                 <div class="info">
                     <p>
@@ -22,16 +34,6 @@
                     </p>
                     <p>
                         {{ date('Y.m.d H:i', strtotime($article->register_time)) }}
-                        <div class="more_btn">
-                            <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                            <div>
-                                @if( $article->is_admin || $article->user_idx === auth()->user()->idx)
-                                    <a href="javascript:;" onclick="">삭제</a>
-                                @else
-                                    <a href="javascript:;" onclick="setReportedArticleInfoAndModalOpen({{ $article->idx }}, {{ $article->company_idx }}, '{{ $article->company_type }}')">신고하기</a>
-                                @endif
-                            </div>
-                        </div>
                     </p>
                 </div>
             </div>
@@ -104,7 +106,7 @@
         </div>
     </section>
 
-    {{-- 삭제완료 모달--}}
+    {{-- 댓글 삭제완료 모달--}}
     <div class="modal" id="delete_comment-modal">
         <div class="modal_bg" onclick="modalClose('#delete_comment-modal')"></div>
         <div class="modal_inner modal-sm">
@@ -113,6 +115,20 @@
                 <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
                 <div class="flex gap-2 justify-center">
                     <button class="btn btn-primary w-1/2 mt-5" onclick="location.reload()">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 게시글 삭제완료 모달 --}}
+    <div class="modal" id="delete_article-modal">
+        <div class="modal_bg" onclick="modalClose('#delete_article-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#delete_article-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community')">확인</button>
                 </div>
             </div>
         </div>
@@ -255,6 +271,24 @@
         $("#report-modal h3").text("댓글 신고");
         $("#report-modal p").text("해당 댓글을 신고하시겠습니까?");
         modalOpen('#report-modal');
+    }
+
+    // 게시글 삭제
+    function deleteArticle(idx) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'DELETE',
+            url: '/community/remove/' + idx,
+            success : function (result) {
+                if(result.result === "success") {
+                    modalOpen("#delete_article-modal");    
+                } else { 
+                    location.replace('/community');
+                }
+            }
+        });
     }
 
     // 게시글 신고
