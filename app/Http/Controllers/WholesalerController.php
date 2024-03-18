@@ -94,5 +94,20 @@ class WholesalerController extends BaseController
         ]);
         
     }
+
+    // 업체 카테고리 상품 가져오기
+    public function wholesalerAddProduct(Request $request)
+    {
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $data['company_idx'] = $request->company_idx;
+
+        $list = $this->productService->getWholesalerAddedProductList($data);
+
+        if( !empty( $list ) )
+            return response()->json($list);
+        else
+            return false;
+    }
     
 }

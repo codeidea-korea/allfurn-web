@@ -533,6 +533,42 @@ class ProductService
         return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
     }
 
+
+    //도메업체 상품 상품
+    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    public function getWholesalerAddedProductList($params) {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
+            'ac.idx AS categoryIdx', 'ac.name AS categoryName', 'AF_product.category_idx',
+            DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin(
+                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+                    FROM AF_product_interest
+                    GROUP BY product_idx) AS api'), function($query) {
+                $query->on('AF_product.idx', '=', 'api.product_idx');
+            })
+            ->where('AF_product.is_new_product', 1)
+            ->where('AF_product.company_idx', $params['company_idx'])
+            ->whereIn('AF_product.state', ['S', 'O']);
+
+        if($params['categories'] != "") {
+            $new_product->whereIN('ac.idx', explode(",", $params['categories']));
+        }
+
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
+    }
+
     public function addOrder(array $param = [])
     {
         $order = new Order;

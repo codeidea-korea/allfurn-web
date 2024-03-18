@@ -761,26 +761,31 @@
         $(document).on('click', '[id^="filter"] .btn-primary', function() {
             let $this = $(this);
 
+            var data = {
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                'company_idx'   : '{{$data['info']->idx}}'
+            };
+
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: '/wholesaler/detail',
-                data : {
-                    'categories' : getIndexesOfSelectedCategory().join(','),
-                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
-                },
+                url: '/wholesaler/wholesalerAddProduct',
+                data : data,
                 type : 'GET',
                 beforeSend : function() {
-                    console.log('111');
                     $this.prop("disabled", true);
                 },
                 success: function (result) {
-                    console.log('222');
-                    displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                    displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                    if( result.total > 0 ) {
+                        displayNewProducts(result['data'], $(".tab_content .prod_list"), true);
+                        displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                    } else {
+                        // 목록이 없을경우
+
+                    }
                     $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
                 },
                 complete : function () {
-                    console.log('333');
                     $this.prop("disabled", false);
                     displaySelectedCategories();
                     displaySelectedOrders();
@@ -822,5 +827,28 @@
             $(".sub_filter .filter_box button").eq(2)
                 .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
         }
+
+        function displayNewProducts(productArr, target, needsEmptying) {
+            if(needsEmptying) {
+                target.empty();
+            }
+
+            productArr.forEach(function(product, index) {
+                target.append(  '<li class="prod_item">'+
+                    '   <div class="img_box">'+
+                    '       <a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
+                    '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                    '   </div>'+
+                    '   <div class="txt_box">'+
+                    '       <a href="/product/detail/' + product['idx'] + '">'+
+                    '           <span>' + product['companyName'] +'</span>'+
+                    '           <p>' + product['name']+'</p>'+
+                    '           <b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
+                    '       </a>'+
+                    '   </div>'+
+                    '</li>'
+                );
+            });
+        };
     </script>
 @endsection
