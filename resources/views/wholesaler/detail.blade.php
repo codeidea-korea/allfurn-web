@@ -11,7 +11,7 @@
                         <!-- img src="/img/profile_img.svg" alt="" //-->
                     </div>
                     <div class="link_box">
-                        <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                        <button class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         <button onClick="copyUrl();"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg></button>
                     </div>
                 </div>
@@ -41,8 +41,8 @@
                             </p>
                         </div>
                         <div class="btn_box">
-                            <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
-                            <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
+                            <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
+                            <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
                         </div>
                     </div>
                 </div>
@@ -619,7 +619,7 @@
         <div class="modal" id="company_phone-modal">
             <div class="modal_bg" onclick="modalClose('#company_phone-modal')"></div>
             <div class="modal_inner modal-md">
-                <button class="close_btn" onclick="modalClose('#company_phone-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+                <button class="close_btn" onclick="modalClose('#company_phone-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
                 <div class="modal_body company_phone_modal">
                     <h4><b>업체</b> 전화번호</h4>
                     <table>
@@ -696,9 +696,9 @@
                 success: function (result) {
                     if (result.success) {
                         if (result.like == 0) {
-                            $('.company__like.active').removeClass('active');
+                            $('.addLike.active').removeClass('active');
                         } else {
-                            $('.company__like').addClass('active');
+                            $('.addLike').addClass('active');
                         }
                     } else {
                         alert(reslult.message);
@@ -757,9 +757,70 @@
             $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active')
         })
 
-        // 찜아이콘
-        $('.zzim_btn').on('click',function(){
-            $(this).toggleClass('active')
-        })
+        // 카테고리 및 소팅
+        $(document).on('click', '[id^="filter"] .btn-primary', function() {
+            let $this = $(this);
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: '/wholesaler/detail',
+                data : {
+                    'categories' : getIndexesOfSelectedCategory().join(','),
+                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                },
+                type : 'GET',
+                beforeSend : function() {
+                    console.log('111');
+                    $this.prop("disabled", true);
+                },
+                success: function (result) {
+                    console.log('222');
+                    displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                    displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                    $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
+                },
+                complete : function () {
+                    console.log('333');
+                    $this.prop("disabled", false);
+                    displaySelectedCategories();
+                    displaySelectedOrders();
+                    modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
+                    currentPage = 1;
+                }
+            });
+        });
+
+        function getIndexesOfSelectedCategory() {
+            let categories = [];
+            $("#filter_category-modal .check-form:checked").each(function(){
+                categories.push($(this).attr('id'));
+            });
+
+            return categories;
+        }
+
+        function displaySelectedCategories() {
+            let html = "";
+            $("#filter_category-modal .check-form:checked").each(function(){
+                html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
+                    "   <button onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                    "</span>";
+            });
+            $(".filter_on_box .category").empty().append(html);
+
+            let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
+            if(totalOfSelectedCategories == 0) {
+                $(".sub_filter .filter_box button").eq(0).html("카테고리");
+                $(".sub_filter .filter_box button").eq(0).removeClass('on');
+            } else {
+                $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+                $(".sub_filter .filter_box button").eq(0).addClass('on');
+            }
+        }
+
+        function displaySelectedOrders() {
+            $(".sub_filter .filter_box button").eq(2)
+                .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
+        }
     </script>
 @endsection

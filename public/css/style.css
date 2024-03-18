@@ -166,6 +166,10 @@ section.sub_section_bot {padding:70px 0 140px; }
 .count_box button:last-of-type {border-left:1px solid #dadde0; }
 .count_box button svg {width:18px; height:18px; }
 
+/* custom_hover */
+.custom_hover {position:relative; }
+.custom_hover .hover_cont {position:absolute; right:0; top:0; display:none; padding:10px; background-color: #fff; border-radius:3px; box-shadow:0 5px 5px rgba(187, 184, 181, 0.40); white-space:nowrap;}
+.custom_hover:hover .hover_cont {display:block; }
 /* ------------------------------------
     메인
 ------------------------------------ */
@@ -222,7 +226,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 /* popular_prod */
 .popular_prod .slide_box ul {display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
 .popular_prod .slide_box ul li:first-of-type {grid-column:span 2; grid-row:span 2; }
-.popular_prod .popular_banner {background:url('/img/popular_banner.png') no-repeat center center / cover; }
+.popular_prod .popular_banner {background:url('../img/popular_banner.png') no-repeat center center / cover; }
 .popular_prod .popular_banner .txt_box {padding-top:150px; text-align:center; }
 .popular_prod .popular_banner .txt_box p {color:#fff; font-size:30px; font-weight:500; }
 .popular_prod .popular_banner .txt_box p b {font-size:40px; font-weight:700; }
@@ -238,7 +242,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 .video_prod .video_box .txt_box h4 span {font-size:30px; font-weight:400; }
 .video_prod .video_box .slide_box {width:690px; max-width:100%; margin:0 auto; }
 .video_prod .video_box .slide_box a {position:relative; display:block; }
-.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 29px); top:calc(50% - 26.5px); width:58px; height:53px; background:url('/img/icon/play_btn.svg') no-repeat center center; }
+.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 29px); top:calc(50% - 26.5px); width:58px; height:53px; background:url('../img/icon/play_btn.svg') no-repeat center center; }
 .video_prod .video_box .count_pager {display:inline-block; margin-top:20px; }
 .video_prod .video_box .count_pager .swiper-pagination-current {color:#fff; }
 
@@ -458,6 +462,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .company_detail_top .banner .link_box button svg {width:26px; height:26px; }
 .company_detail_top .banner .link_box button.zzim_btn svg {stroke:#46433F; fill:transparent; }
 .company_detail_top .banner .link_box button.zzim_btn.active svg {stroke:var(--main_color); fill:var(--main_color); }
+.company_detail_top .banner .link_box button.addLike svg {stroke:#46433F; fill:transparent; }
+.company_detail_top .banner .link_box button.addLike.active svg {stroke:var(--main_color); fill:var(--main_color); }
 
 .company_detail_top .info {display:flex; justify-content:space-between; margin-top:40px; }
 .company_detail_top .info .left_box h3 {font-size:40px; font-weight:600; }
