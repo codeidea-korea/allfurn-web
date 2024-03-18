@@ -5,26 +5,7 @@
 
 <div id="content">
     <div class="inner">
-        <div class="mt-10">
-            <h2 class="text-2xl font-bold">고객센터</h2>
-        </div>
-        <div class="border rounded-md p-5 flex items-center justify-between mt-4">
-            <div>
-                <div class="text-stone-500">궁금한 내용이 있으신가요?</div>
-                <div class="font-bold text-3xl mt-2">031-813-5588</div>
-                <div class="mt-2"><span class="text-stone-500">운영시간</span> | 평일 09:00 - 18:00</div>
-            </div>
-            <div class="flex flex-col gap-2">
-                <button class="h-[48px] w-[140px] border rounded-md" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button>
-                <a href="./inquiry.php" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
-            </div>
-        </div>
-        <div class="border-b">
-            <div class="flex gap-5">
-                <a href="" class="border-b-2 border-primary text-primary font-bold py-4">자주 묻는 질문</a>
-                <a href="/help/notice" class="font-medium py-4 text-stone-400">공지사항</a>
-            </div>
-        </div>
+        @include('help.inc-help-heder')
         <div class="tab_faq mt-6">
             <button class="h-[48px] {{ $category_idx ? '' : 'active' }}" data-target="faq_sec01" onclick="location.href='/help/faq'">전체</button>
             @foreach ($categories as $category)
@@ -72,6 +53,9 @@
             </div>
         </div>
     </div>
+
+    {{-- 올펀 이용 가이드 모달 --}}
+    @include('help.index-ext')
 </div>
 
 <script>
@@ -79,20 +63,20 @@
     // 초기 상태에서 "전체" 탭의 내용을 제외한 나머지 컨텐츠 섹션을 숨깁니다.
     // "전체" 탭의 내용에 해당하는 요소는 이미 HTML에서 active 클래스로 표시되어 있어야 합니다.
 
-        // 탭 버튼 클릭 이벤트
-        $(".tab_faq button").click(function() {
-            // 모든 버튼에서 'active' 클래스 제거
-            $(".tab_faq button").removeClass('active');
-            // 클릭된 버튼에만 'active' 클래스 추가
-            $(this).addClass('active');
+        // // 탭 버튼 클릭 이벤트
+        // $(".tab_faq button").click(function() {
+        //     // 모든 버튼에서 'active' 클래스 제거
+        //     $(".tab_faq button").removeClass('active');
+        //     // 클릭된 버튼에만 'active' 클래스 추가
+        //     $(this).addClass('active');
 
-            // 클릭된 버튼의 data-target 속성 값과 일치하는 id를 가진 섹션만 표시
-            var targetId = "#" + $(this).data("target");
-            // 모든 컨텐츠 섹션을 숨깁니다.
-            $(".faq_content").addClass('hidden');
-            // 해당하는 컨텐츠 섹션만 보여줍니다.
-            $(targetId).removeClass('hidden');
-        });
+        //     // 클릭된 버튼의 data-target 속성 값과 일치하는 id를 가진 섹션만 표시
+        //     var targetId = "#" + $(this).data("target");
+        //     // 모든 컨텐츠 섹션을 숨깁니다.
+        //     $(".faq_content").addClass('hidden');
+        //     // 해당하는 컨텐츠 섹션만 보여줍니다.
+        //     $(targetId).removeClass('hidden');
+        // });
     
         $(".accordion-header").click(function() {
             // 클릭된 항목의 바디를 토글합니다.
