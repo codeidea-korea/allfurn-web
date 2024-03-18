@@ -124,6 +124,8 @@ class CommunityController extends BaseController
         $data['idx'] = $idx; // idx 가 있으면 수정 없으면 등록
         $boardsWhere = [
             'write_access' => ['condition' => 'like', 'value' => "%".Auth::user()['type']."%"],
+            'isCommunity'=> true,
+            'excludedBoardList' => [12,22], // 일일 가구 뉴스, 가구 소식
         ];
         $data['boards'] = $this->communityService->getBoardList($boardsWhere);
         if ($data['idx']) {
