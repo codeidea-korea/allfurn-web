@@ -21,8 +21,8 @@
         </div>
         <div class="border-b">
             <div class="flex gap-5">
-                <a href="javascript:;" class="border-b-2 border-primary text-primary font-bold py-4">자주 묻는 질문</a>
-                <a href="./notice.php" class="font-medium py-4 text-stone-400">공지사항</a>
+                <a href="" class="border-b-2 border-primary text-primary font-bold py-4">자주 묻는 질문</a>
+                <a href="/help/notice" class="font-medium py-4 text-stone-400">공지사항</a>
             </div>
         </div>
         <div class="tab_faq mt-6">
