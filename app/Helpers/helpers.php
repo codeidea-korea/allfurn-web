@@ -44,3 +44,15 @@ function print_re( $data ) {
     print_r( $data );
     echo "</pre>";
 }
+
+function getDeviceType() {
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $mobile_agents = array('iphone','ipod','ipad','android','webos',
+        'blackberry','nokia','opera mini','windows mobile','windows phone','iemobile');
+    foreach($mobile_agents as $mobile_agent) {
+        if (strpos(strtolower($user_agent), strtolower($mobile_agent)) !== false) {
+            return 'm.';
+        }
+    }
+    return '';
+}
