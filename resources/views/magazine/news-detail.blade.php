@@ -3,38 +3,22 @@
 @section('content')
 @include('layouts.header')
 
-<div id="content">
-    @include('community.community-tab')
-    @include('community.community-banner')
 
+<div id="content">
     <section class="sub_section_bot community_detail">
         <div class="inner">
             <div class="title">
                 <div class="tag">
-                    <span>{{ $article->board_name }}</span>
+                    <span>{{$article->board_name}}</span>
                 </div>
-                <div class="flex items-center justify-between">
-                    <h3>{{ $article->title }}</h3>
-                    <div class="custom_hover shrink-0">
-                        <button class="p-2"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                        <div class="hover_cont">
-                            @if( $article->is_admin || $article->user_idx === auth()->user()->idx)
-                                <a href="javascript:;" onclick="deleteArticle({{ $articleId }})">삭제</a>
-                            @else
-                                <a href="javascript:;" onclick="setReportedArticleInfoAndModalOpen({{ $article->idx }}, {{ $article->company_idx }}, '{{ $article->company_type }}')">신고하기</a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <h3>{{$article->title}}</h3>
                 <p>{{ $article->is_admin ? '관리자' : $article->writer }}</p>
                 <div class="info">
                     <p>
                         <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_view"></use></svg>
                         조회 {{ $article->view_count }}
                     </p>
-                    <p>
-                        {{ date('Y.m.d H:i', strtotime($article->register_time)) }}
-                    </p>
+                    <p>{{ date('Y.m.d H:i', strtotime($article->register_time)) }}</p>
                 </div>
             </div>
             <div class="content">
@@ -42,7 +26,7 @@
             </div>
             <div class="bottom">
                 <div class="link_box">
-                    <button class="btn zzim_btn {{ $article->is_like ? 'active' : ''}}" data-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
+                    <button class="btn zzim_btn" articeId="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
                     <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                 </div>
                 <div class="comment_box">
@@ -56,13 +40,13 @@
                                         {{$comment['diff_time']}}
                                     </p>
                                     <div class="more_btn">
-                                        <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                                        <div>
-                                            @if($comment['user_idx'] == auth()->user()->idx)
-                                                <a href="javascript:;" onclick="deleteComment({{ $comment['idx'] }})">삭제</a>
-                                            @else
-                                                <a href="javascript:;" onclick="setReportedCommentInfoAndModalOpen({{ $comment['idx'] }}, {{ $comment['company_idx'] }}, '{{ $comment['company_type'] }}')">신고하기</a>
-                                            @endif
+                                            <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
+                                            <div>
+                                                @if($comment['user_idx'] == auth()->user()->idx)
+                                                    <a href="javascript:;" onclick="deleteComment({{ $comment['idx'] }})">삭제</a>
+                                                @else
+                                                    <a href="javascript:;" onclick="setReportedCommentInfoAndModalOpen({{ $comment['idx'] }}, {{ $comment['company_idx'] }}, '{{ $comment['company_type'] }}')">신고하기</a>
+                                                @endif
                                         </div>
                                     </div>
                                 </div>
@@ -106,7 +90,7 @@
         </div>
     </section>
 
-    {{-- 댓글 삭제완료 모달--}}
+    {{-- 삭제완료 or 신고완료 모달--}}
     <div class="modal" id="delete_comment-modal">
         <div class="modal_bg" onclick="modalClose('#delete_comment-modal')"></div>
         <div class="modal_inner modal-sm">
@@ -119,21 +103,6 @@
             </div>
         </div>
     </div>
-
-    {{-- 게시글 삭제완료 모달 --}}
-    <div class="modal" id="delete_article-modal">
-        <div class="modal_bg" onclick="modalClose('#delete_article-modal')"></div>
-        <div class="modal_inner modal-sm">
-            <button class="close_btn" onclick="modalClose('#delete_article-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body agree_modal_body">
-                <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
-                <div class="flex gap-2 justify-center">
-                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community')">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- 공유하기(링크복사)완료 모달  --}}
     <div class="modal" id="share_article-modal">
         <div class="modal_bg" onclick="modalClose('#share_article-modal')"></div>
@@ -149,53 +118,36 @@
     </div>
 
     {{-- 신고하기 모달 --}}
-    <div class="modal" id="report-modal">
-        <div class="modal_bg" onclick="modalClose('#report-modal')"></div>
+    <div class="modal" id="report_comment-modal">
+        <div class="modal_bg" onclick="modalClose('#report_comment-modal')"></div>
         <div class="modal_inner modal-md">
-            <button class="close_btn" onclick="modalClose('#report-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <button class="close_btn" onclick="modalClose('#report_comment-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
             <div class="modal_body agree_modal_body">
                 <h3>댓글 신고</h3>
                 <p class="text-center py-4">해당 댓글을 신고하시겠습니까?</p>
                 <textarea class="textarea-form" id="report_content" placeholder="신고 사유를 입력해주세요."></textarea>
-                <input type="hidden" name="report_type" id="report_type" value="" />
+                <input type="hidden" name="report_content_type" id="report_content_type" value="" />
                 <input type="hidden" name="report_id" id="report_id" value="" />
                 <input type="hidden" name="report_company_idx" id="report_company_idx" value="" />
                 <input type="hidden" name="report_company_type" id="report_company_type" value="" />
                 <div class="flex gap-2 justify-center">
                     <button class="btn w-full btn-primary-line mt-5" onclick="refreshReportedCommentInfoAndModalClose()">취소</button>
-                    <button class="btn w-full btn-primary mt-5" onclick="reportComment('#report-modal')">확인</button>
+                    <button class="btn w-full btn-primary mt-5" onclick="reportComment()">확인</button>
                 </div>
             </div>
         </div>
     </div>
-
-     {{-- 신고하기 완료 모달 --}}
-     <div class="modal" id="complete_report-modal">
-        <div class="modal_bg" onclick="modalClose('#complete_report-modal')"></div>
-        <div class="modal_inner modal-sm">
-            <button class="close_btn" onclick="modalClose('#complete_report-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body agree_modal_body">
-                <p class="text-center py-4"><b>신고가 완료되었습니다.</b></p>
-                <div class="flex gap-2 justify-center">
-                    <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#complete_report-modal')">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
 </div>
-
+    
 <script>
-
-    // 대댓글 입력 
     $('.comment_list .recomm_btn').on('click',function(){
         $(this).next('.recomm_form').toggleClass('active')
     })
+
     $('.comment_list .comment_cancel').on('click',function(){
         $(this).parents('.recomm_form').toggleClass('active')
     })
 
-    // 댓글 입력
     $(".comment_form input").on('keyup', function() {
         if($(this).val().length === 0) {
             $(this).nextAll('button.btn-primary').attr('disabled', true);
@@ -204,7 +156,6 @@
         }
     });
 
-    // 댓글 등록 클릭
     $(".comment_form button").on('click', function() {
         const $comment = $(this).prevAll('input.input-form');
         if($comment.val().length > 0) {
@@ -221,6 +172,7 @@
         }
     });
 
+    // 댓글 달기
     function comment(data) {
         if(data!==undefined && typeof(data)=="object") {
             $.ajax({
@@ -234,7 +186,7 @@
                     $("#new_comment button").attr('disabled', true);
                 },
                 success : function (result) {
-                    if(result.result === "success") {
+                    if(result.result == "success") {
                         location.reload();
                     }
                 },
@@ -254,67 +206,34 @@
             method: 'DELETE',
             url: '/community/comment/' + idx,
             success : function (result) {
-                if(result.result === "success") {
+                if(result.result == "success") {
+                    $("#delete_comment-modal .py-4").html('<b>삭제 완료되었습니다.</b>')
                     modalOpen("#delete_comment-modal");    
                 }
             }
         });
     }
 
-    // 댓글 신고
     function setReportedCommentInfoAndModalOpen(idx, company_idx, company_type) {
-        $('#report_type').val('R'); // R: 댓글, B: 게시글
+        $('#report_content_type').val('R'); // R: 댓글, B: 게시글
         $("#report_id").val(idx);
         $("#report_company_idx").val(company_idx);
         $("#report_company_type").val(company_type);
 
-        $("#report-modal h3").text("댓글 신고");
-        $("#report-modal p").text("해당 댓글을 신고하시겠습니까?");
-        modalOpen('#report-modal');
-    }
-
-    // 게시글 삭제
-    function deleteArticle(idx) {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            method: 'DELETE',
-            url: '/community/remove/' + idx,
-            success : function (result) {
-                if(result.result === "success") {
-                    modalOpen("#delete_article-modal");    
-                } else { 
-                    location.replace('/community');
-                }
-            }
-        });
-    }
-
-    // 게시글 신고
-    function setReportedArticleInfoAndModalOpen(idx, company_idx, company_type) {
-        $('#report_type').val('B'); // R: 댓글, B: 게시글
-        $("#report_id").val(idx);
-        $("#report_company_idx").val(company_idx);
-        $("#report_company_type").val(company_type);
-
-        $("#report-modal h3").text("게시글 신고");
-        $("#report-modal p").text("해당 게시글을 신고하시겠습니까?");
-        modalOpen('#report-modal');
+        modalOpen('#report_comment-modal');
     }
 
     function refreshReportedCommentInfoAndModalClose() {
-        $('#report_type').val('');
+        $('#report_content_type').val('');
         $("#report_id").val('');
         $("#report_company_idx").val('');
         $("#report_company_type").val('');
         $("#report_content").val('');
 
-        modalClose('#report-modal');
+        modalClose('#report_comment-modal');
     }
 
-
-    //댓글, 게시글 신고하기
+    //댓글 신고하기
     function reportComment() {
         $.ajax({
             headers: {
@@ -323,15 +242,17 @@
             method: 'POST',
             url: '/community/reporting',
             data : {
-                contentType : $("#report_type").val(),
+                contentType : $("#report_content_type").val(),
                 reportId : $("#report_id").val(),
                 companyIdx : $("#report_company_idx").val(),
                 companyType : $("#report_company_type").val(),
                 content : $("#report_content").val(),
             },
             success : function (result) {
+                modalClose('#report_comment-modal');
                 refreshReportedCommentInfoAndModalClose();
-                modalOpen('#complete_report-modal');
+                $("#delete_comment-modal .py-4").html('<b>신고가 완료되었습니다.</b>');
+                modalOpen('#delete_comment-modal');
             }
         });
     }
@@ -348,7 +269,5 @@
         document.body.removeChild(dummy);
         modalOpen('#share_article-modal');
     });
-
 </script>
-
 @endsection

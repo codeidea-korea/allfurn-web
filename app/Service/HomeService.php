@@ -15,6 +15,7 @@ use App\Models\Push;
 use App\Models\UserSearch;
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\Magazine;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -111,7 +112,17 @@ class HomeService
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
-            ->inRandomOrder()->get();
+            ->inRandomOrder()->limit(32)->get();
+
+        // 매거진
+        $data['magazine'] = Magazine::select('AF_magazine.*',
+            DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
+        ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
+        ->where('is_delete', 0)
+        ->where('is_open', 1)
+        ->orderby('AF_magazine.register_time', 'desc')
+        ->limit(3)
+        ->get();
 
         // 커뮤니티 인기글
         $data['community'] = Article::select('AF_board_article.*', 'ab.name',

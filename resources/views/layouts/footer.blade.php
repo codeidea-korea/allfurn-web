@@ -2,11 +2,11 @@
     <div class="inner">
         @if(Auth::check())
             <ul class="fnb flex">
-                <li><a href="javascsript:;">고객센터</a></li>
-                <li><a href="javascsript:;">자주 묻는 질문</a></li>
-                <li><a href="javascsript:;">공지사항</a></li>
-                <li><a href="javascsript:;">1:1 문의</a></li>
-                <li><a href="javascsript:;">이용 가이드</a></li>
+                <li><a href="/help">고객센터</a></li>
+                <li><a href="/help/faq">자주 묻는 질문</a></li>
+                <li><a href="/help/notice">공지사항</a></li>
+                <li><a href="/help/inquiry">1:1 문의</a></li>
+                <li><a href="/help/notice">이용 가이드</a></li>
             </ul>
         @endif 
         <div class="info">

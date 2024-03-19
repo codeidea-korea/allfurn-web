@@ -312,70 +312,14 @@
         <div class="modal_body filter_body">
             <h4>카테고리 선택</h4>
             <ul class="filter_list">
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_01">
-                    <label for="filter_cate_01">침대/매트리스</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_02">
-                    <label for="filter_cate_02">소파/거실</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_03">
-                    <label for="filter_cate_03">식탁/의자</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_04">
-                    <label for="filter_cate_04">수납/서랍장/옷장</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_05">
-                    <label for="filter_cate_05">서재/공부방</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_06">
-                    <label for="filter_cate_06">화장대/거울/콘솔</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_07">
-                    <label for="filter_cate_07">키즈/주니어</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_08">
-                    <label for="filter_cate_08">진열장/장식장</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_09">
-                    <label for="filter_cate_09">의자</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_10">
-                    <label for="filter_cate_10">테이블</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_11">
-                    <label for="filter_cate_11">사무용가구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_12">
-                    <label for="filter_cate_12">조달가구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_13">
-                    <label for="filter_cate_13">업소용가구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_14">
-                    <label for="filter_cate_14">아웃도어가구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_15">
-                    <label for="filter_cate_15">펫가구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_16">
-                    <label for="filter_cate_16">기타 카테고리</label>
-                </li>
+                @if(isset($categoryList) != '')
+                    @foreach ($categoryList as $category)
+                        <li>
+                            <input type="checkbox" class="check-form" id="{{$category->idx}}">
+                            <label for="{{$category->idx}}">{{$category->name}}</label>
+                        </li>
+                    @endforeach
+                @endif
             </ul>
             <div class="btn_bot">
                 <button class="btn btn-line3 refresh_btn" onclick="refreshHandle(this)"><svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg>초기화</button>
@@ -467,28 +411,14 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_01">
-                    <label for="filter_cate_3_01">추천순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_02">
-                    <label for="filter_cate_3_02">최신 상품 등록순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_03">
-                    <label for="filter_cate_3_03">검색 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_04">
-                    <label for="filter_cate_3_04">거래 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_05">
-                    <label for="filter_cate_3_05">상품 많은 순</label>
-                </li>
-                <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_cate_3_06">
-                    <label for="filter_cate_3_06">가나다 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_register_time" checked>
+                    <label for="filter_register_time">최신순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_access_count">
+                    <label for="filter_access_count">조회순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_popularity">
+                    <label for="filter_popularity">인기순</label>
                 </li>
             </ul>
             <div class="btn_bot">
@@ -734,7 +664,7 @@
 
 <!-- 모달 들어가는곳 : E -->
 
-<script>
+{{-- <script>
 // zoom_prod_list
 const zoom_prod_list = new Swiper(".zoom_prod_list", {
     slidesPerView: 1,
@@ -748,6 +678,6 @@ const zoom_prod_list = new Swiper(".zoom_prod_list", {
         type: "fraction",
     },
 });
-</script>
+</script> --}}
 
 

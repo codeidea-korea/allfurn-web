@@ -50,7 +50,10 @@ class CommunityService {
         $articles = $this->getArticlesDB($params);
         $data['articleTotalCount'] = $articles['count'];
         $data['articles'] = $articles['list'];
-        $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+        }
 
         return $data;
     }
@@ -65,11 +68,18 @@ class CommunityService {
     public function getBoardList(array $params = []): Collection
     {
         $query = Board::where('is_open', 1)->where('view_access', 'like', "%".Auth::user()['type']."%");
+
         if (!empty($params)) {
-            foreach($params as $key => $value) {
-                $query->where($key, $value['condition'], $value['value']);
+            
+            if(isset($params['isCommunity']) && $params['excludedBoardList']) {
+                $query->whereNotIn('AF_board.idx', $params['excludedBoardList']);
+            } else {
+                foreach($params as $key => $value) {
+                    $query->where($key, $value['condition'], $value['value']);
+                }
             }
         }
+
         return $query->get();
     }
 
@@ -97,8 +107,6 @@ class CommunityService {
      */
     private function getArticlesDB(array $params=[]): array {
         
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
-        $limit = $params['limit'];
         $query = DB::table('AF_board_article','article')
             ->select(DB::raw("article.*, AF_board.name AS board_name, AF_board.is_anonymous
             , IF(DATE_ADD(article.register_time, INTERVAL +1 DAY) > now(),'new','') AS is_new
@@ -138,8 +146,13 @@ class CommunityService {
             })
             ->where('AF_board.view_access', 'like', "%".Auth::user()['type']."%")
             ->where('article.is_delete', 0)
-            ->where('AF_board.is_open', 1)
-            ->orderBy('article.register_time','DESC');
+            ->where('AF_board.is_open', 1);
+
+            if(isset($params['isCommunity']) && $params['excludedBoardList']) {
+                $query->whereNotIn('AF_board.idx', $params['excludedBoardList']);
+            }
+
+            $query->orderBy('article.register_time','DESC');
             
             
         // 키워드 검색 시
@@ -176,7 +189,14 @@ class CommunityService {
         }
 
         $count = $query->count();
-        $list = $query->offset($offset)->limit($limit)->get();
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+            $limit = $params['limit'];
+            $query->offset($offset)->limit($limit);
+        }
+
+        $list = $query->get();
         
         return ['count' => $count, 'list' => $list];
     }
@@ -294,6 +314,8 @@ class CommunityService {
      */
     public function getArticleDetail(int $idx)
     {
+        $userIdx = Auth::user()['idx'];
+
         return Article::where('AF_board_article.idx', $idx)
             ->where('AF_board_article.is_delete', 0)
             ->join('AF_board', 'AF_board.idx', 'AF_board_article.board_idx')
@@ -310,7 +332,12 @@ class CommunityService {
                     IF(AF_wholesale.company_name IS NOT NULL,AF_wholesale.company_name,
                         IF(AF_retail.company_name IS NOT NULL,AF_retail.company_name,AF_user.name)
                     )
-                 ) AS writer, AF_user.company_idx, AF_user.type AS company_type'))
+                 ) AS writer, AF_user.company_idx, AF_user.type AS company_type
+                ,(SELECT 
+                    CASE
+                    WHEN EXISTS (SELECT 1 FROM AF_article_like WHERE article_idx = '. $idx .' AND user_idx = '. $userIdx .') THEN 1
+                    ELSE 0 END
+                ) AS is_like'))
             ->withCount('like')->withCount('view')->first($idx);
     }
 

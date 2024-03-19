@@ -60,7 +60,11 @@ class WholesalerController extends BaseController
 
         $data['info']->place = substr( $data['info']->business_address, 0, 6 );
 
+<<<<<<< HEAD
         return view(getDeviceType().'wholesaler.detail', [
+=======
+        return view('wholesaler.detail', [
+>>>>>>> 98cb4c4473586aac31ab152998d1cbe22cb9905f
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
