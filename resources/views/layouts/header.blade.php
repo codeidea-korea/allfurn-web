@@ -7,7 +7,7 @@
                 <li><a href="javascript:;">올톡</a></li>
                 <li><a href="/mypage/deal">마이올펀</a></li>
                 <li><a href="./like_prod.php">좋아요</a></li>
-                <li><a class="alarm_btn" href="javascript:;"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
