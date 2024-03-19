@@ -211,6 +211,12 @@
     </div>
 </div>
 
+    <!-- pusher -->
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+    Pusher.logToConsole = true;
+    </script>
+
     <script>
         $(document).ready(function(){
             const searchParams = new URLSearchParams(location.search);
@@ -292,13 +298,13 @@
                     document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
                 }
                 document.querySelector('.message__section').innerHTML = html;
-                loadEvent();
+                loadEvent(idx);
                 document.querySelector('.chat-box:last-child').focus();
             }).catch(error => {
             })
             
         }
-        const loadEvent = () => {
+        const loadEvent = (roomIdx) => {
                     
             // 우측 검색아이콘 클릭시
             $('.chatting_box .right_search_btn').off().on('click',function(){
@@ -312,6 +318,15 @@
             $('.chatting_box .company_info_btn').off().on('click',function(){
                 $(this).toggleClass('active')
                 $('.chatting_box .top_info .company_info').toggleClass('active');
+            });
+            
+            const pusher = new Pusher('51b26f4641d16394d3fd', {
+            cluster: 'ap3'
+            });
+
+            var channel = pusher.subscribe('chat-' + roomIdx);
+            channel.bind('chat-event-' + roomIdx, function(data) {
+                console.log(JSON.stringify(data));
             });
         };
 
@@ -431,7 +446,7 @@
                 throw new Error('Sever Error');
             }).then(json => {
                 if (json.result === 'success') {
-                    visibleRoom(roomIdx);
+//                    visibleRoom(roomIdx);
                 }
             }).catch(error => {
                 delete elem.dataset.processing;

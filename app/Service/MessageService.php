@@ -14,6 +14,7 @@ use App\Models\Report;
 use App\Models\User;
 use App\Models\UserNormal;
 use App\Models\UserPushSet;
+use App\Events\ChatMessage;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -146,12 +147,21 @@ class MessageService
     public function getChatting(array $params) {
         
         $user = Auth::user();
+
+        $offset = 0;
+        $limit = 30;
+        if(isset($params['offset'])) {
+            $offset = $params['offset'];
+        }
+        if(isset($params['limit'])) {
+            $limit = $params['limit'];
+        }
         
         $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
             ->orderBy('AF_message_room.register_time', 'DESC')
-            ->offset()
-            ->limit()
+            ->offset($offset)
+            ->limit($limit)
             ->select('AF_message.*'
                 , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
@@ -549,9 +559,15 @@ class MessageService
             $message->save();
         }
 
-        event(new ChatMessage(
-            $roomIdx, $user['company_idx'], $params['message'], date('Y-m-d H:i:s')
-        ))
+        event(new ChatMessage([
+            'room_idx' => $params['room_idx'],
+            'type' => $params['room_idx'],
+            'sender_company_type' => $user['type'],
+            'sender_company_idx' => $user['company_idx'],
+            'user_idx' => $user['idx'],
+            'content' => $params['message'],
+            'created_at' => date('Y-m-d H:i:s')
+        ]));
         
         return [
             'result' => 'success',

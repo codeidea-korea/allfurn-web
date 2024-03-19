@@ -46,7 +46,7 @@
         <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
     </div>
 </div>
-<div class="chatting_list">
+<div class="chatting_list" style="overflow-y: scroll;">
 
     @foreach($chatting as $chat)
     <div class="date"><span>{{ $chat->message_register_day }} {{ $day[$chat->message_register_day_of_week] }}요일</span></div>
