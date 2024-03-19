@@ -13,30 +13,52 @@
         <div class="w-full">
             <!-- 리스트 기본 10개 출력 -->
             <div class="border-t border-b divide-y divide-gray-200 mt-[47px] flex flex-col">
-                <a href="javascript:;" class="py-5 px-8 hover:bg-rose-50">
-                    <p>제품을 확인해보세요!</p>
-                    <p class="mt-2">CMDE0017/라이트그레이</p>
-                    <p class="text-stone-400 mt-1 text-sm">어제</p>
-                </a>
-                <a href="javascript:;" class="py-5 px-8 hover:bg-rose-50">
-                    <p>구매 확정 대기 안내</p>
-                    <p class="mt-2">[이태리매트리스_엔트리22 (K)] 주문 건이 구매 확정 대기 상태로 변경되었습니다.</p>
-                    <p class="text-stone-400 mt-1 text-sm">02월 22일</p>
-                </a>
-                <a href="javascript:;" class="py-5 px-8 hover:bg-rose-50">
-                    <p>구매 확정 대기 안내</p>
-                    <p class="mt-2">[이태리매트리스_엔트리22 (K)] 주문 건이 구매 확정 대기 상태로 변경되었습니다.</p>
-                    <p class="text-stone-400 mt-1 text-sm">02월 22일</p>
-                </a>
-            </div>
-            <div class="pagenation flex items-center justify-center py-12">
-                <a href="javascript:;" class="active">1</a>
-                <a href="javascriot:;">2</a>
-                <a href="javascriot:;">3</a>
-                <a href="javascriot:;">4</a>
-                <a href="javascriot:;">5</a>
+                @if ($count < 1)
+                    <div class="flex items-center justify-center h-[300px]">
+                        <div class="flex flex-col items-center justify-center gap-1 text-stone-500">
+                            <img class="w-8" src="/img/member/info_icon.svg" alt="">
+                            <p>도착한 알림이 없습니다</p>
+                        </div>
+                    </div>
+                @else
+                    @foreach($list as $row)
+                        <a href="{{ $row->type != 'order' && $row->type != 'active' ? $row->web_url : '#' }}" class="py-5 px-8 hover:bg-rose-50" disabled>
+                            <p>{{ $row->title }}</p>
+                            <p class="mt-2">{!! $row->content !!}</p>
+                            <p class="text-stone-400 mt-1 text-sm">{{ $row->send_date }}</p>
+                        </a>
+                        @if ($row->log_image)
+                            {{-- 이미지 있는지 확인하기 => 있으면 css 요청해야함 --}}
+                        @endif
+                    @endforeach
+                    <div class="pagenation flex items-center justify-center py-12">
+                        @if($pagination['prev'] > 0)
+                            <a href="javascriot:;" onclick="moveToList({{$pagination['prev']}})">
+                                <
+                            </a>
+                        @endif
+                        @foreach ($pagination['pages'] as $paginate)
+                            @if ($paginate == $offset)
+                                <a href="javascript:;" class="active" onclick="moveToList({{$paginate}})">{{$paginate}}</a>
+                            @else
+                            <a href="javascript:;" class="" onclick="moveToList({{$paginate}})">{{$paginate}}</a>
+                            @endif
+
+                        @endforeach
+                        @if($pagination['next'] > 0)
+                            <a href="javascriot:;" onclick="moveToList({{$pagination['next']}})">
+                                >
+                            </a>
+                        @endif
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
+<script>
+    const moveToList = page => {
+        location.replace(location.pathname + "?" + new URLSearchParams({offset:page}));
+    }
+</script> 
 @endsection

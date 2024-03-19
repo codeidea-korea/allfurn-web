@@ -112,7 +112,35 @@ class HomeService
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
-            ->inRandomOrder()->limit(32)->get();
+            ->orderBy('idx', 'desc')->limit(256)->get();
+
+        // MD가 추천하는 테마별 상품
+        $data['md_product_ad'] = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 
+            DB::raw('AF_product_ad.price as ad_price, 
+                (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->join('AF_product', function ($query) {
+                $query->on('AF_product.idx', 'AF_product_ad.product_idx')
+                    ->whereIn('AF_product.state', ['S', 'O']);
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_product_ad.ad_location', 1)
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
+            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+
+        // 인기 브랜드
+        // 할인 상품
+        // 동영상 광고
 
         // 매거진
         $data['magazine'] = Magazine::select('AF_magazine.*',
@@ -131,33 +159,32 @@ class HomeService
             ->join('AF_board as ab', function ($query) {
                 $query->on('ab.idx', 'AF_board_article.board_idx')->where('ab.is_business', 0);
             })
-//            ->where('AF_board_article.is_admin', 0)
             ->where('AF_board_article.is_delete', 0)
             ->orderBy('viewCnt', 'desc')
             ->limit(5)
             ->get();
 
         // 비즈니스 최신글
-        $data['business'] = Article::select('AF_board_article.*', 'ab.name',
-        DB::raw('(SELECT CASE WHEN COUNT(*) > 999 THEN "999+" ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = AF_board_article.idx AND is_delete = 0) as replyCnt'))
-            ->join('AF_board as ab', function ($query) {
-                $query->on('ab.idx', 'AF_board_article.board_idx')->where('ab.is_business', 1);
-            })
-            ->where('AF_board_article.is_admin', 0)
-            ->where('AF_board_article.is_delete', 0)
-            ->orderBy('AF_board_article.update_time', 'desc')
-            ->limit(5)
-            ->get();
+        // $data['business'] = Article::select('AF_board_article.*', 'ab.name',
+        // DB::raw('(SELECT CASE WHEN COUNT(*) > 999 THEN "999+" ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = AF_board_article.idx AND is_delete = 0) as replyCnt'))
+        //     ->join('AF_board as ab', function ($query) {
+        //         $query->on('ab.idx', 'AF_board_article.board_idx')->where('ab.is_business', 1);
+        //     })
+        //     ->where('AF_board_article.is_admin', 0)
+        //     ->where('AF_board_article.is_delete', 0)
+        //     ->orderBy('AF_board_article.update_time', 'desc')
+        //     ->limit(5)
+        //     ->get();
 
-        $data['banner_bottom'] = Banner::where('ad_location', 'allbottom')
-            ->where('start_date', '<', DB::raw('now()'))
-            ->where('end_date', '>', DB::raw('now()'))
-            ->where('state', 'G')
-            ->where('is_delete', 0)
-            ->where('is_open', 1)
-            ->orderByRaw('banner_price desc, RAND()')
-            ->limit(20)
-            ->get();
+        // $data['banner_bottom'] = Banner::where('ad_location', 'allbottom')
+        //     ->where('start_date', '<', DB::raw('now()'))
+        //     ->where('end_date', '>', DB::raw('now()'))
+        //     ->where('state', 'G')
+        //     ->where('is_delete', 0)
+        //     ->where('is_open', 1)
+        //     ->orderByRaw('banner_price desc, RAND()')
+        //     ->limit(20)
+        //     ->get();
 
         $data['popup'] = Popup::select('AF_popup.*',
             DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
