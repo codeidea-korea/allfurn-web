@@ -21,7 +21,14 @@ class AlarmService
      * @param array $params
      * @return array
      */
+    // TODO: 쿼리 조회 시간 확인 필요
     public function getList(array $params): array {
+
+        /*DB::listen(function ($query) {
+            dd("Query executed in {$query->time}ms: {$query->sql}");
+        });*/
+
+
         $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
@@ -49,6 +56,40 @@ class AlarmService
                     break;
             }
         }
+
+        
+        /*$query = "";
+        if (isset($params['type'])) {
+            switch($params['type']) {
+                case 'order':
+                    $query = 'AND type = "order"';
+                    break;
+                case 'active':
+                    $query = 'AND type = "active"';
+                    break;
+                case 'news':
+                    $query = 'AND type IN ("event", "normal", "notice", "ad")';
+                    break;
+            }
+        }
+
+
+        $logs = DB::table(DB::raw('
+                (
+                    SELECT * FROM AF_notification
+                    WHERE target_company_type = "'. Auth::user()['type'] .'" 
+                    AND target_company_idx = "'. Auth::user()['company_idx'] .'"
+                    '. $query .'
+                ) AS AF_notification'
+            ))
+            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_notification.attachment_idx')
+            ->select('AF_notification.*'
+                , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS log_image')
+                , DB::raw("CASE WHEN TIMESTAMPDIFF(SECOND ,AF_notification.send_date, now()) < 86400 THEN DATE_FORMAT(AF_notification.send_date, '%H:%i')
+                    WHEN TIMESTAMPDIFF(SECOND ,AF_notification.send_date, now()) < 259200 THEN '어제'
+                    ELSE DATE_FORMAT(AF_notification.send_date, '%m월 %d일')
+                END send_date")
+            );*/
         
         $data['count'] = $logs->count();
         $data['list'] = $logs->orderBy('AF_notification.idx', 'desc')->offset($offset)->limit($limit)->get();
