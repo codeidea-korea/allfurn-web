@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/pci.js?{{ date('Ymdhis') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
