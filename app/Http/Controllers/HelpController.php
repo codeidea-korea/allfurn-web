@@ -77,10 +77,15 @@ class HelpController extends BaseController
      * @param int|null $idx
      * @return View
      */
-    public function inquiryForm(int $idx=null): View
+    public function inquiryForm(int $idx=null)
     {
         $data['detail'] = null;
         if ($idx) {
+            
+            if(!$this->helpService->isInquiryOfUser($idx) || $this->helpService->isDeleted($idx)) {
+                return redirect('/help/inquiry');
+            }
+
             $data['detail'] = $this->helpService->getSavedInquiry($idx);
         }
         $data['categories'] = $this->helpService->getInquiryCategories();

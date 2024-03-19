@@ -19,6 +19,7 @@
                     @if (!is_null($detail))
                         <input type="hidden" id="inquiry_idx" name="inquiry_idx" value="{{ $detail->idx }}" />
                     @endif
+                    <input type="hidden" id="inquiry_idx" name="inquiry_idx">
                     <div class="essential w-[190px] shrink-0 mt-2">문의 유형</div>
                     <div class="w-full">
                         <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-full flex justify-between items-center">
@@ -52,9 +53,11 @@
                 <div class="mb-4 flex">
                     <div class="essential w-[190px] shrink-0 mt-2">문의 내용</div>
                     <div class="font-medium w-full">
-                        <div class="setting_input h-[440px] py-3">
-                            <textarea name="" id="inquiry_content" class="w-full h-full" placeholder="문의 내용을 입력해 주세요." maxlength="1000">{{ !is_null($detail) ? $detail->content : '' }}</textarea>
-                            <div class="textarea_count"><span class="textarea_count-meta" id="input-text-length">0</span><i>/</i><span>1000</span></div>
+                        <div class="relative setting_input pt-3 !px-0">
+                            <textarea name="" id="inquiry_content" class="w-full h-[400px] px-3" placeholder="문의 내용을 입력해 주세요." maxlength="1000">{{ !is_null($detail) ? $detail->content : '' }}</textarea>
+                            <div class="textarea_count flex items-center justify-end gap-1 w-full py-1 px-2 bg-[#f6f6f6]">
+                                <span class="textarea_count-meta" id="input-text-length">0</span><i>/</i><span>1000</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +78,7 @@
                 <p class="text-center py-4"><b>작성 중인 내용이 있습니다.<br>진행을 취소하시겠습니까?</b></p>
                 <div class="flex gap-2 justify-center">
                     <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#cancel_writing_inquiry-modal')">취소</button>
-                    <button class="btn btn-primary w-1/2 mt-5" onclick="history.back();">확인</button>
+                    <button class="btn btn-primary w-full mt-5" onclick="history.back();">확인</button>
                 </div>
             </div>
         </div>
@@ -166,7 +169,6 @@
         });
     });
 
-
     $("#inquiry_content").on('keyup', function() {
         makeContentLength();
     })
@@ -188,6 +190,9 @@
             method: 'POST',
             url: '/help/inquiry',
             data : {
+                inquiry_idx : function() {
+                    return $("#inquiry_idx").val() ? $("#inquiry_idx").val() : ''
+                },
                 inquiry_category : $("#inquiry_category").val(),
                 inquiry_title : $("#inquiry_title").val(),
                 inquiry_content : $("#inquiry_content").val(),
@@ -211,40 +216,17 @@
     }
 
     function validateForm() {
-        if (!document.getElementById('inquiry_category').value) {
-                return false;
-        }
-        if (!document.getElementById('inquiry_title').value) {
+        if(!$("#inquiry_category").val()) {
             return false;
         }
-        if (!document.getElementById('inquiry_content').value) {
+        if(!$("#inquiry_title").val()) {
+            return false;
+        }
+        if(!$("#inquiry_content").val()) {
             return false;
         }
         return true;
     }
 
-        document.querySelectorAll('.inquiry-category').forEach(elem => {
-            elem.addEventListener('click', e => {
-                const category = e.currentTarget.querySelector('span').textContent;
-                document.getElementById('inquiry_category').value = category;
-            })
-        })
-
-        document.getElementById('inquiry_content').addEventListener('keyup', () => {
-            makeContentLength();
-        });
-
-        const makeContentLength = () => {
-            document.getElementById('input-text-length').textContent =
-                document.getElementById('inquiry_content').value.length;
-        }
-
-        window.onload = () => {
-            makeContentLength();
-        };
-
-        $('.dropdown__item').on('click', function () {
-            $('.dropdown__title').css('color', '#1B1B1B');
-        })
-    </script>
-@endpush
+</script>
+@endsection

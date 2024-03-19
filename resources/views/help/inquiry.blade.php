@@ -34,12 +34,17 @@
                                 <span class="text-lg">{{ $row->title }}</span>
                                 <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                                 @if ($row->state === 0)
-                                    <span class="text-stone-400 bg-stone-100 py-1 px-2 text-xs ml-auto">답변대기</span>
+                                    <span class="text-stone-400 bg-stone-100 py-1 px-2 text-xs ml-auto shrink-0">답변대기</span>
                                 @else
-                                    <span class="text-primary bg-primaryop py-1 px-2 text-xs ml-auto">답변완료</span>
+                                    <span class="text-primary bg-primaryop py-1 px-2 text-xs ml-auto shrink-0">답변완료</span>
                                 @endif
                             </div>
                         </button>
+                        <div class="relative top-[-17px] inline-flex items-center gap-1.5 pl-24 ml-1 text-xs text-stone-400">
+                            <button onclick="cancelInquiry({{ $row->idx }})">문의 취소</button>
+                            <i class="h-2 border-r border-stone-400"></i>
+                            <button onclick="location.href='/help/inquiry/form/{{ $row->idx }}'">수정</button>
+                        </div>
                         <div class="accordion-body hidden p-5 bg-stone-50">
                             <p class="w-1/2">
                                 {!! nl2br($row->content) !!}
@@ -82,19 +87,77 @@
             </div>
         @endif
     </div>
+
+    {{-- 문의 취소 모달 --}}
+    <div class="modal" id="cancel_inquiry-modal">
+        <div class="modal_bg" onclick="modalClose('#cancel_inquiry-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#cancel_inquiry-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>문의를 취소하시겠습니까?</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#cancel_inquiry-modal')">취소</button>
+                    <button class="btn btn-primary w-full mt-5" onclick="doCancelInquiry(this)" id="doCancelInquiry">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 등록 완료 팝업 -->
+    <div class="modal" id="complete_cancel_inquiry-modal">
+        <div class="modal_bg" onclick="modalClose('#complete_cancel_inquiry-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#complete_cancel_inquiry-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>문의가 취소되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.reload()">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     $(document).ready(function() {
         $(".accordion-header").click(function() {
             // 클릭된 항목의 바디를 토글합니다.
-            var $body = $(this).next(".accordion-body");
+            var $body = $(this).siblings(".accordion-body");
             $body.slideToggle(200);
 
             // 선택적: 클릭된 헤더와 같은 아코디언 그룹 내의 다른 모든 바디를 닫습니다.
             $(this).closest('.accordion').find(".accordion-body").not($body).slideUp(200);
         });
     });
+
+    function cancelInquiry(idx) {
+        $("#doCancelInquiry").val(idx);
+        modalOpen("#cancel_inquiry-modal");
+    }
+
+    function doCancelInquiry(element) {
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'DELETE',
+            url: '/help/inquiry/' + $(element).val() ,
+            beforeSend: function() {
+                $("#doCancelInquiry").prop('disabled', true)
+            },
+            success : function (result) {
+                if(result.result === 'success') {
+                    modalClose('#cancel_inquiry-modal')
+                    modalOpen("#complete_cancel_inquiry-modal");
+                }
+            },
+            complete : function() {
+                
+            }
+        })
+        
+    }
  </script>
 
 @endsection

@@ -150,4 +150,24 @@ class HelpService
             'message' => ''
         ];
     }
+
+  // 수정자와 작성자가 동일한지 체크
+    function isInquiryOfUser($idx) {
+        return Inquiry::select(
+                DB::raw("CASE WHEN user_idx = ". Auth::user()['idx'] ." THEN true ELSE false END AS is_equl")
+            )
+            ->where('idx', $idx)
+            ->first()
+            ->is_equl;
+    }
+
+    // 삭제된 문의인지 확인
+    function isDeleted($idx) {
+        return Inquiry::select(
+                DB::raw("CASE WHEN is_delete = 1 THEN true ELSE false END AS is_delete")
+            )
+            ->where('idx', $idx)
+            ->first()
+            ->is_delete;
+    }
 }
