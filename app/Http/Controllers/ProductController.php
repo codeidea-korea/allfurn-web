@@ -17,6 +17,7 @@ use Illuminate\View\View;
 use Session;
 use function Symfony\Component\Translation\t;
 use App\Models\Banner;
+use Carbon\Carbon;
 
 class ProductController extends BaseController
 {
@@ -128,8 +129,11 @@ class ProductController extends BaseController
      */
     public function registration()
     {
+
         return view('product.product-registration', [
-            'categoryList'=> $this->getCategoryList(),
+            'banners'=>$this->productService->getBannerList(),
+            'todayCount'=>$this->productService->getTodayCount(),
+            'categoryList'=> $this->productService->getCategoryList(),
             'productList'=> $this->getMyProductList()
         ]);
     }
@@ -205,15 +209,25 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $todayCount = $this->productService->getTodayCount();
 
-        $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
+        // $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
+        // $list = $this->productService->getNewProductList($data);
 
-        $list = $this->productService->getNewProductList($data);
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $list = $this->productService->getNewAddedProductList($data);
+        $total = $list->total();
+
+        $bestNewProducts = $this->productService->getBestNewProductList();
+        $company = $this->productService->getRecentlyAddedProductCompanyList();
 
         return view('product.newProduct', [
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
             'list'=>$list,
+            'bestNewProducts' => $bestNewProducts,
+            'company' => $company,
+            'total'=>$total,
         ]);
     }
 
@@ -225,6 +239,16 @@ class ProductController extends BaseController
         return view('product.best-new-product', [
             'bestNewProducts' => $bestNewProducts,
         ]);
+    }
+
+    // 신규 등록 상품 가져오기
+    public function newAddedProduct(Request $request)
+    {
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $list = $this->productService->getNewAddedProductList($data);
+
+        return response()->json($list);
     }
 
 
@@ -247,13 +271,23 @@ class ProductController extends BaseController
             $propArray["인증정보"] =  $data['detail']->auth_info;
         }
 
-
         $data['detail']->propertyArray = $propArray;
-        
-        
-        
+
+        // 신상품 처리 최근등록일 기준 ( 30일 )
+        $date1 = Carbon::parse( $data['detail']->register_time);
+        $date2 = Carbon::parse( now() );
+
+        $data['detail']->diff = $date1->diffInDays($date2);
+
+        // 상단 배너
+        $banners = $this->productService->getBannerList();
+        $categoryList = $this->productService->getCategoryList();
+        $todayCount = $this->productService->getTodayCount();
 
         return view('product.detail', [
+            'banners'=>$banners,
+            'todayCount'=>$todayCount,
+            'categoryList'=>$categoryList,
             'data'=>$data
         ]);
     }
@@ -266,12 +300,43 @@ class ProductController extends BaseController
         $data['parentIdx'] = $request->query('pre');
         $data['property'] = $request->query('prop');
         $data['sort'] = $request->query('so');
+        $data['jn'] = $request->query('jn');
 
-        $list = $this->productService->listByCategory($data);
+        if( $data['jn'] ) {
 
-        return view('product.categoryBy', [
-            'data'=>$list
-        ]);
+            $categoryList = $this->productService->getCategoryAll();
+            $cateArray = array();
+
+            foreach($categoryList as $category) {
+                if( $category->parent_idx ) {
+                    $cateArray[$category->parent_idx][$category->idx]['idx'] = $category->idx;
+                    $cateArray[$category->parent_idx][$category->idx]['name'] = $category->name;
+                } else {
+                    $cateArray[$category->idx]['idx'] = $category->idx;
+                    $cateArray[$category->idx]['name'] = $category->name;
+                }
+            }
+
+            $cateChoiceName = '';
+            if( $data['parentIdx'] ) {
+                $cateChoiceName .= $cateArray[$data['parentIdx']]['name'];
+                $cateChoiceName .= ' > '.$cateArray[$data['parentIdx']][$data['categoryIdx']]['name'];
+            } else {
+                $cateChoiceName .= $cateArray[$data['categoryIdx']]['name'];
+            }
+
+            $ret['name']    = $cateChoiceName;
+            $ret['cate_idx']= $data['categoryIdx'];
+
+            return json_encode( $ret );
+
+        } else {
+            $list = $this->productService->listByCategory($data);
+
+            return view('product.categoryBy', [
+                'data' => $list
+            ]);
+        }
     }
     
 

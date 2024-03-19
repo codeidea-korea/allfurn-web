@@ -6,6 +6,7 @@ use App\Models\Attachment;
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\CategoryProperty;
+use App\Models\CompanyRetail;
 use App\Models\CompanyWholesale;
 use App\Models\KeywordAd;
 use App\Models\Product;
@@ -77,17 +78,27 @@ class ProductService
             ->get();
     }
 
+    public function getCategoryAll()
+    {
+        return Category::where('is_delete', 0)
+            ->orderby('order_idx', 'asc')
+            ->get();
+    }
+
 
 
     public function getProductData(int $productIdx, string $type = '') {
 
         if ($type != '' && $type == 'temp') {
-            
+
             $data['detail'] = ProductTemp::select('AF_product_temp.*', 'ac2.idx as category_parent_idx',
                 DB::raw('CONCAT(ac2.name, CONCAT(" > ", ac.name)) as category,
             (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
                   WHEN AF_product_temp.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
-                  ELSE "" END) as companyName,
+                  ELSE "" END) as companyName,                  
+            (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
+                  WHEN AF_product_temp.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
                   COUNT(DISTINCT pi.idx) as isInterest,
                   COUNT(DISTINCT pa.idx) as isAd'))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
@@ -123,6 +134,9 @@ class ProductService
             (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                   ELSE "" END) as companyName,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
                   COUNT(DISTINCT pi.idx) as isInterest,
                   COUNT(DISTINCT pa.idx) as isAd'))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
@@ -489,6 +503,78 @@ class ProductService
         return $bestNewProducts;
     }
 
+    //신규 등록 상품
+    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    public function getNewAddedProductList($params) {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
+            'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
+            DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_category as ac2', function($query) {
+                $query->on('ac2.idx', '=', 'ac.parent_idx');
+            })
+            ->leftjoin(
+                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+                    FROM AF_product_interest
+                    GROUP BY product_idx) AS api'), function($query) {
+                        $query->on('AF_product.idx', '=', 'api.product_idx');
+            })
+            ->where('AF_product.is_new_product', 1)
+            ->whereIn('AF_product.state', ['S', 'O']);
+            
+        if($params['categories'] != "") {
+            $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
+        }
+
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
+    }
+
+
+    //도메업체 상품 상품
+    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    public function getWholesalerAddedProductList($params) {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
+            'ac.idx AS categoryIdx', 'ac.name AS categoryName', 'AF_product.category_idx',
+            DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin(
+                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+                    FROM AF_product_interest
+                    GROUP BY product_idx) AS api'), function($query) {
+                $query->on('AF_product.idx', '=', 'api.product_idx');
+            })
+            ->where('AF_product.is_new_product', 1)
+            ->where('AF_product.company_idx', $params['company_idx'])
+            ->whereIn('AF_product.state', ['S', 'O']);
+
+        if($params['categories'] != "") {
+            $new_product->whereIN('ac.idx', explode(",", $params['categories']));
+        }
+
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
+    }
 
     public function addOrder(array $param = [])
     {
@@ -721,6 +807,60 @@ class ProductService
             ->orderBy('ap.idx', 'desc')
             ->orderBy('AF_wholesale.idx', 'desc')
             ->count();
+    }
+
+    // 최근 상품 등록 업체
+    public function getRecentlyAddedProductCompanyList()
+    {
+        $wholesaleCompany = CompanyWholesale::select('AF_wholesale.idx', 'AF_wholesale.company_name', 'prodcut.MAX(register_time)')
+            ->join(DB::raw('
+                    (SELECT company_idx, MAX(register_time),COUNT(idx) 
+                    FROM AF_product
+                    WHERE company_type = \'W\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
+                    GROUP BY company_idx
+                    HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
+                $query->on('prodcut.company_idx', 'AF_wholesale.idx');
+            })
+        ->groupBy('idx');
+
+        
+        $retailCompany = CompanyRetail::select('AF_retail.idx', 'AF_retail.company_name', 'prodcut.MAX(register_time)')
+                ->join(DB::raw('
+                        (SELECT company_idx, MAX(register_time), COUNT(idx) 
+                        FROM AF_product
+                        WHERE company_type = \'R\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
+                        GROUP BY company_idx
+                        HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
+                    $query->on('prodcut.company_idx', 'AF_retail.idx');
+                })
+            ->groupBy('idx');
+
+        $company = $wholesaleCompany
+                ->union($retailCompany)
+                ->orderby('MAX(register_time)', 'desc')
+                ->limit(10)
+                ->get();
+
+        foreach($company as $key => $item) {
+
+            $category = Product::select(DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList'))
+            ->where('AF_product.company_idx', $item->idx)
+            ->whereIn('AF_product.state', ['S','O'])
+            ->whereNotNull('access_date')
+            ->orderBy('AF_product.register_time', 'desc');
+
+            $category->join('AF_category AS ac', function ($query) {
+                $query->on('ac.idx', 'AF_product.category_idx');
+            });
+
+            $category->join('AF_category AS ac2', function ($query) {
+                $query->on('ac2.idx', 'ac.parent_idx');
+            });
+
+            $company[$key]['categoryList'] = $category -> get()[0] -> categoryList;
+        }
+
+        return $company;
     }
 
     public function listBySearch(array $param = [])

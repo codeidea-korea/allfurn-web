@@ -1,121 +1,254 @@
-@extends('layouts.master')
-
-@section('header')
-    @include('layouts.header.main-header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
-<div id="container" class="container">
-    <div class="inner__full">
-        <div id="kvswiper" class="eventkeyvisual swiper-container">
-            <div class="swiper-wrapper">
-                @foreach($banners as $banner)
-                <div class="swiper-slide">
-                    <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
-                        <p class="event__banner" style="background-image:url({{ $banner->image_url }})"></p>
-                    </a>
-                </div>
-                @endforeach
-            </div>
-            <div class="swiper-util">
-                <div>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-            <!-- <div class="swiper-button-wrap"> -->
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
-            <!-- </div> -->
-        </div>
-    </div>
+@include('layouts.header')
 
-    <div class="inner">
-        <div class="content">
-            <ul class="magazine__wrap" style="margin-bottom: -40px;">
-                @foreach($list as $row)
-                <li class="magazine__list">
-                    <a href="/magazine/detail/{{ $row->idx }}" title="{{ $row->title }}">
-                        <div class="magazine__img">
-                            <img src="{{ $row->image_url }}" alt="{{ $row->title }}">
+<div id="content">
+    <section class="sub_section sub_section_top thismonth_con01">
+        <div class="inner">
+            <div class="line_common_banner">
+                <ul class="swiper-wrapper">
+                    @foreach($banners as $banner)
+                        <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
+                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                                <div class="txt_box type02">
+                                    <p>{{ $banner->subtext1 }}</p>
+                                    <span>{{ $banner->subtext2 }}</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="count_pager" style="width:auto"><b>1</b> / 12</div>
+                <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            </div>
+        </div>
+    </section>
+
+    <section class="sub_section sub_section_top news_con02">
+        <div class="inner">
+            <dl class="news_wrap">
+                <dt>
+                    <div class="title">
+                        <h4>일일 가구 뉴스</h4>
+                        <p>매일 올라오는 가구관련 주요 <br/>뉴스를 모아 보여드립니다.</p>
+                        <div class="search_box">
+                            <input type="text" class="input-form" placeholder="검색해 주세요">
+                            <button><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#news_search"></use></svg></button>
                         </div>
-                        <div class="magazine__text">
-                            <h3>{{ $row->title }}</h3>
-                            @if ($row->start_date && $row->start_date !== '0000-00-00' && $row->end_date && $row->end_date !== '0000-00-00')
-                                <p>{{ $row->start_date }} - {{ $row->end_date }}</p>
-                            @endif
+                    </div>
+                </dt>
+                <dd>
+                    <ul class="news_list">
+                        @foreach($articles as $item)
+                            <li><a href="/magazine/daily/detail/{{ $item->idx }}">
+                                <div class="tit">{{ $item->title }}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 140, $end = '...') !!}</div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                            </a></li>
+                        @endforeach
+                    </ul>
+                    <a href="/magazine/daily" class="more_btn">더보기</a>
+                </dd>
+            </dl>
+        </div>
+    </section>
+
+    <section class="sub_section news_con03">
+        <div class="inner">
+            <div class="main_tit mb-2 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h3>가구 소식</h3>
+                </div>
+                <div class="flex items-center gap-7">
+                    <a class="more_btn flex items-center" href="/magazine/furniture">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                </div>
+            </div>
+            <div class="sub_desc mb-8">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</div>
+            <ul class="furniture_news">
+                @foreach ( $furnitureNewsList as $item )
+                    <li>
+                        <div class="img_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                @if($item->content)
+                                    @php
+                                        $tmp = '';
+                                        $pos = strpos($item->content, '<img src=', 0);
+                                        
+                                        if ( $pos !== false ) {
+                                            
+                                            $pos_from = strpos($item->content, 'https', $pos);
+                                            $pos_to = strpos($item->content, '>', $pos_from);
+                                            $sub = substr($item->content, $pos_from, $pos_to);
+                                            $image_end = strpos($sub, '.jpg');
+                                            
+                                            if ($image_end) {
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            } else {
+                                                $image_end = strpos($sub, '.png');
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            }
+                                            
+                                        }
+                                    @endphp
+                                    <img src="{{ $tmp ? $tmp : '' }}" alt="">
+                                @endif
+                            </a>
                         </div>
-                    </a>
+                        <div class="txt_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                <div class="tit">{{ $item->title }}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                            </a>
+                        </div>
+                    </li>
+                @endforeach 
+            </ul>
+        </div>
+    </section>
+
+    <section class="sub_section sub_section_bot news_con04">
+        <div class="inner">
+            <div class="main_tit mb-5 flex justify-between items-center">
+                <div class="">
+                    <h3>매거진</h3>
+                    <p class="mt-1">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</p>
+                </div>
+                <div class="sub_filter">
+                    <div class="filter_box">
+                        <button onclick="modalOpen('#filter_align-modal')">최신 등록 순</button>
+                    </div>
+                </div>
+            </div>
+            <ul class="magazine_list">
+                @foreach ($list as $row)
+                <li>
+                    <div class="txt_box">
+                        <a href="/magazine/detail/{{$row->idx}}">
+                            <div class="top">
+                                {{--TODO: 카테고리 생성된 후 변경 --}}
+                                <span>카테고리 없음</span>
+                                <b>{{ Carbon\Carbon::parse($row->register_time)->format('Y.m.d') }}</b>
+                            </div>
+                            <div class="tit">{{$row->title}}</div>
+                        </a>
+                    </div>
+                    <div class="img_box"><a href="/magazine/detail/{{$row->idx}}"><img src="{{$row->image_url}}" alt=""></a></div>
                 </li>
                 @endforeach
             </ul>
-
-            <div class="pagenation pagination--center">
-                @if($pagination['prev'] > 0)
-                <button type="button" class="prev" onclick="moveToList({{$pagination['prev']}})">
-                    <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round"
-                              stroke-linejoin="round" />
-                    </svg>
-                </button>
-                @endif
-                <div class="numbering">
-                    @foreach($pagination['pages'] as $paginate)
-                        @if ($paginate == $offset)
-                            <a href="javascript:void(0)" onclick="moveToList({{$paginate}})" class="numbering--active">{{$paginate}}</a>
-                        @else
-                            <a href="javascript:void(0)" onclick="moveToList({{$paginate}})">{{$paginate}}</a>
-                        @endif
-                    @endforeach
-                </div>
-                @if($pagination['next'] > 0)
-                <button type="button" class="next" onclick="moveToList({{$pagination['next']}})">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round"
-                              stroke-linejoin="round" />
-                    </svg>
-                </button>
-                @endif
-            </div>
         </div>
-    </div>
+    </section>
 </div>
 
+
 <script>
-    const swiper = new Swiper('#kvswiper', {
+   
+    // line_common_banner 
+    const line_common_banner = new Swiper(".line_common_banner", {
+        slidesPerView: 1,
+        spaceBetween: 0,
         autoplay: {
             delay: 3000,
             disableOnInteraction: false,
         },
-        loop: true,
-        slidesPerView: 1,
-        spaceBetween: 0,
-        paginationClickable: false,
-        keyboard: false,
-        pagination: {
-            el: '#kvswiper .swiper-pagination',
-            type: 'fraction',
-        },
         navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
+            nextEl: ".line_common_banner .slide_arrow.next",
+            prevEl: ".line_common_banner .slide_arrow.prev",
         },
+        pagination: {
+            el: ".line_common_banner .count_pager",
+            type: "fraction",
+        }
     });
-    $('#kvswiper').hover(function(){
-        swiper.autoplay.stop();
+    $('.line_common_banner').hover(function(){
+        line_common_banner.autoplay.stop();
     }, function(){
-        swiper.autoplay.start();
+        line_common_banner.autoplay.start();
     });
-    
-    
-    
-    function moveToList(page) {
+
+
+
+    $('.search_box input').keydown(function (event) {
+        if (event.which === 13 && validateKeyword($(this).val())) { 
+            window.location.href = "/magazine/daily?keyword=" +  $(this).val();
+        }
+    });
+
+    $(".search_box button").on('click', function() {
+
+        if(validateKeyword($(".search_box input").val())) {
+            window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
+        }
+    });
+
+    function validateKeyword(data) {
+        return (/^[가-힣a-zA-Z0-9\s]*$/).test(data);
+    }
+
+
+    // 매거진 스크롤 로딩
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
+            loadMagazineList();
+        }
+    });
+
+    let flag = false;
+    let currentPage = 1;
+    function loadMagazineList() {
+        flag = true;
+
+        $.ajax({
+            url: '/magazine/list',
+            method: 'GET',
+            data: { 
+                'offset': ++currentPage,
+            }, 
+            success: function(result) {
+                displayMagazineList(result.list);
+            },
+            error : function(e) {
+                currentPage--;
+            },
+            complete : function () {
+                flag = false;
+            }
+        })
+    }
+
+    function displayMagazineList(data) {
         
-        location.replace(location.pathname + "?" + new URLSearchParams({offset:page}));
+        data.forEach(function(magazine) {
+            $(".magazine_list").append(
+            '<li>'+
+            '        <div class="txt_box">'+
+            '            <a href="/magazine/detail/' + magazine.idx + '">' +
+            '                <div class="top">' +
+            '                   <span>카테고리 없음</span>'+
+            '                   <b>' + formatDate(magazine.register_time) + '</b>' +
+            '               </div>' +
+            '               <div class="tit">' + magazine.title + '</div>' +
+            '           </a>' +
+            '    </div>' +
+            '    <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>' +
+            '</li>'
+            );
+        });
         
     }
-    
+
+    function formatDate(date) {
+        const dateObject = new Date(date);
+
+        const year = dateObject.getFullYear().toString().substr(-2);
+        const month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+        const day = ("0" + dateObject.getDate()).slice(-2);
+
+        return year + "." + month + "." + day;
+      }
+   
 </script>
-
-
-
 @endsection

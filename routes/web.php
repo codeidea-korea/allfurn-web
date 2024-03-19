@@ -56,6 +56,7 @@ Route::prefix('/member')->name('member')->group(function() {
 Route::prefix('product')->name('product')->group(function() {
     Route::get('/best-new', 'ProductController@bestNewProduct')->name('.best-new');
     Route::get('/new', 'ProductController@newProduct')->name('.new');
+    Route::get("/newAddedProduct", 'ProductController@newAddedProduct');
     Route::get('/detail/{productIdx}', 'ProductController@detail')->name('.detail');
     Route::get('/registration', 'ProductController@registration')->name('.create');
     Route::post('/getOption/{productIdx}', 'ProductController@getOption');
@@ -177,6 +178,10 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::post('/reporting', 'CommunityController@reporting');
     Route::get('/write-dispatch/{orderGroupCode}', 'CommunityController@writeDispatch');
 
+    Route::get('/group', function () {
+        return view('community.group');
+    });
+
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');
         Route::get('/comments', 'CommunityController@getMyComments')->name('.comments');
@@ -188,7 +193,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/', 'WholesalerController@index')->name('.index');
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
-    Route::get('/search', 'WholesalerController@listBySearch');
+    Route::get('/search', 'WholefsalerController@listBySearch');
 });
 
 Route::prefix('download')->name('download')->group(function() {
@@ -197,6 +202,11 @@ Route::prefix('download')->name('download')->group(function() {
 
 Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function() {
     Route::get('/', 'MagazineController@index');
+    Route::get('/daily', 'MagazineController@dailyNews');
+    Route::get('/daily/detail/{idx}', 'MagazineController@newsDetail');
+    Route::get('/furniture', 'MagazineController@furnitureNews');
+    Route::get('/furniture/detail/{idx}', 'MagazineController@newsDetail');
+    Route::get('/list', 'MagazineController@magazineList');
     Route::get('/detail/{idx}', 'MagazineController@detail');
 });
 

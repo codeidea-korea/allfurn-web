@@ -18,6 +18,7 @@ class WholesalerController extends BaseController
 {
     private $wholesalerService;
     private $productService;
+
     public function __construct(WholesalerService $wholesalerService, ProductService $productService)
     {
         $this->middleware('auth');
@@ -50,7 +51,21 @@ class WholesalerController extends BaseController
         $data['wholesalerIdx'] = $wholesalerIdx;
         $data['sort'] = $request->query('so');
 
-        return $this->wholesalerService->detail($data);
+        // 상단 배너
+        $banners = $this->productService->getBannerList();
+        $categoryList = $this->productService->getCategoryList();
+        $todayCount = $this->productService->getTodayCount();
+
+        $data = $this->wholesalerService->detail($data);
+
+        $data['info']->place = substr( $data['info']->business_address, 0, 6 );
+
+        return view(getDeviceType().'wholesaler.detail', [
+            'banners'=>$banners,
+            'todayCount'=>$todayCount,
+            'categoryList'=>$categoryList,
+            'data'=>$data
+        ]);
     }
 
 
@@ -79,6 +94,21 @@ class WholesalerController extends BaseController
             'categoryList'=>$categoryList,
         ]);
         
+    }
+
+    // 업체 카테고리 상품 가져오기
+    public function wholesalerAddProduct(Request $request)
+    {
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $data['company_idx'] = $request->company_idx;
+
+        $list = $this->productService->getWholesalerAddedProductList($data);
+
+        if( !empty( $list ) )
+            return response()->json($list);
+        else
+            return false;
     }
     
 }
