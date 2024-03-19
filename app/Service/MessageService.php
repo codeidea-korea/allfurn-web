@@ -150,6 +150,8 @@ class MessageService
         $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
             ->orderBy('AF_message_room.register_time', 'DESC')
+            ->offset()
+            ->limit()
             ->select('AF_message.*'
                 , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
@@ -200,7 +202,7 @@ class MessageService
                         'company_type' => $messageRoom->other_company_type,
                         'message_type' => $room->type,
                         'unread_count' => $room->unread_count,
-                        'last_message_content' => $this->getRoomLastMessage($room->type, $room->content),
+                        'last_message_content' => $this->getRoomMessageTitle($room->content),
                         'last_message_time' => $room->register_time,
                     ];
                     break;
@@ -252,7 +254,7 @@ class MessageService
                     'company_type' => $messageRoom->other_company_type,
                     'message_type' => $room->type,
                     'unread_count' => $room->unread_count ?? 0,
-                    'last_message_content' => $this->getRoomLastMessage($room->type, $room->content),
+                    'last_message_content' => $this->getRoomMessageTitle($room->content),
                     'last_message_time' => $room->register_time ?? "",
                 ];
             }
@@ -303,41 +305,41 @@ class MessageService
     }
 
     /**
-     * 대화방 리스트에 표시되는 마지막 대화 내용 가져오기
-     * @param $type
+     * 대화방 리스트에 표시되는 대화 내용 파싱해서 가져오기
      * @param $content
      * @return mixed
      */
-    public function getRoomLastMessage($type, $content): string
+    public function getRoomMessageTitle($content): string
     {
         $message = '';
-        switch($type) {
-            case '1': // 일반 메시지
-                $message = $content;
-                break;
-            case '2': // 이미지
-                $message = '이미지';
-                break;
-            case '3': // JSON
-                $content = json_decode($content, true);
-                switch($content['type']) {
-                    case 'welcome':
-                        $message = "올펀 가입을 축하드립니다.";
-                        break;
-                    case 'cs':
-                        $message = "올펀 고객센터";
-                        break;
-                    case 'inquiry':
-                        $message = "상품 문의드립니다.";
-                        break;
-                    case 'order_complete':
-                        $message = "주문이 완료되었습니다.";
-                        break;
-                    default:
-                        $message = isset($content['title']) ? $content['title'] : strip_tags($content['text'] ?? '');
-                        break;
-                }
-                break;
+
+        try{
+            $decodedContent = json_decode($content, true);
+            
+            switch($decodedContent['type']) {
+                case 'welcome':
+                    $message = "올펀 가입을 축하드립니다.";
+                    break;
+                case 'cs':
+                    $message = "올펀 고객센터";
+                    break;
+                case 'inquiry':
+                    $message = "상품 문의드립니다.";
+                    break;
+                case 'estimate':
+                    $message = "견적 문의드립니다.";
+                    break;
+                case 'order':
+                case 'order_complete':
+                    $message = "주문이 완료되었습니다.";
+                    break;
+                default:
+                    $message = isset($content['title']) ? $content['title'] : strip_tags($content['text'] ?? '');
+                    break;
+            }
+        } catch(Exception $e) {
+            // 디코드 실패할 경우
+            $message = $content;
         }
         return $message;
     }
@@ -396,7 +398,7 @@ class MessageService
      * @param array $params
      * @return array
      */
-    public function toggleCompanyPush(array $params): array
+    public function toggleCompanyPush($roomIdx, array $params): array
     {
         $userPush = UserPushSet::where('user_idx', Auth::user()['idx'])
             ->where('push_type', 'T')
@@ -546,6 +548,10 @@ class MessageService
             ], JSON_UNESCAPED_UNICODE);
             $message->save();
         }
+
+        event(new ChatMessage(
+            $roomIdx, $user['company_idx'], $params['message'], date('Y-m-d H:i:s')
+        ))
         
         return [
             'result' => 'success',

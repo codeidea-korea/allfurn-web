@@ -183,4 +183,62 @@ class MessageController extends BaseController
     {
         return response()->json($this->messageService->sendRoomMessage($request->all()));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    /**
+     * 알림 켜기/끄기
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function toggleNotificationConfig(Request $request, int $idx): JsonResponse
+    {
+        return response()->json($this->messageService->toggleCompanyPush($request->all()));
+    }
+
+    /**
+     * 신고하기
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function reportRoom(Request $request, int $idx): JsonResponse
+    {
+        return response()->json($this->messageService->reporting($request->all()));
+    }
+
+    /**
+     * 메시지 전송
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function sendMessage(Request $request, int $idx): JsonResponse {
+        return response()->json($this->messageService->sendMessage($request));
+    }
 }
