@@ -2198,7 +2198,7 @@
     <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
         <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
         <div class="flex items-center">
-            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="modalOpen('#state_preview_modal');">미리보기</button>
+            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
             <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900">임시등록</button>
             <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onClick="saveProduct(0);">등록신청</button>
         </div>
@@ -2367,6 +2367,45 @@
 
         $('#sortable').sortable();
         $('#sortable').disableSelection();
+
+        // 에디터 초기화
+        function init_editor() {
+            editer = new FroalaEditor('.textarea-form', {
+                key: "wFE7nG5E4I4D3A11A6eMRPYf1h1REb1BGQOQIc2CDBREJImA11C8D6B5B1G4D3F2F3C8==",
+                requestHeaders: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+
+                // fullPage: true,
+                height:300,
+                useClasses: false,
+
+                imageUploadParam: 'file',
+                imageUploadURL: '/product/image',
+                imageUploadParams: {folder: 'product'},
+                imageUploadMethod: 'POST',
+                imageMaxSize: 20 * 1024 * 1024,
+                imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+
+                events: {
+                    'image.inserted': function ($img, response) {
+                        var obj = $.parseJSON(response);
+                        $img.data('idx', obj.idx);
+                    },
+                    'image.removed': function ($img) {
+                        $.ajax({
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            method: "DELETE",
+                            url: "/product/image",
+                            data: {
+                                src: $img.attr('src'),
+                                idx: $img.data('idx')
+                            }
+                        })
+                    },
+                }
+            });
+        }
 
         function img_reload_order() {
             $('.desc__product-img-wrap').find('.add__badge').remove();
@@ -2566,6 +2605,143 @@
             }
         }
 
+        // 상품 미리보기
+        function preview() {
+            $('#default-modal-preview02 .left-wrap__img img').attr('src', $('.product-img__add:first img').attr('src'));
+            smallImg = '';
+            $('.product-img__add').map(function () {
+                smallImg += '<li class="thumnail">' +
+                    '<button type="button">' +
+                    '<img src="' + $(this).find('img').attr('src') + '" alt="' + $(this).find('img').attr('alt') + '">' +
+                    '</button>' +
+                    '</li>'
+            })
+            $('.left-wrap__img--small').html(smallImg);
+            $('li.thumnail:first-child').addClass('selected');
+
+            $('.right-wrap__company .name').text($('#categoryIdx').text());
+            $('.title-wrap h2').text($('#form-list01').val());
+            if ($('input[name="price_open"]:checked').val() == 0) {
+                $('#default-modal-preview02 .product-detail .right-wrap__title p.price').text($('.select-group__dropdown.price_open .dropdown__title').text());
+            } else {
+                $('#default-modal-preview02 .product-detail .right-wrap__title p.price').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
+            }
+            if ($('input[name="product_code"]').val() != '') {
+                $('#default-modal-preview02 dd.preview_product_code').text($('input[name="product_code"]').val());
+            } else {
+                $('.preview_product_code').parent().hide();
+            }
+
+            var htmlText = "";
+            var requiredCnt = 0;
+            $('#order_options li.form__list-wrap').each(function (i, el) {
+                required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
+
+                htmlText += '<div class="dropdown" style="width: 576px">' +
+                    '<p class="dropdown__title">' +
+                    $('#option-name_0' + (i+1)).val() +' 선택' +
+                    '('
+                if(required == 1) {
+                    requiredCnt ++;
+                    htmlText += '필수';
+                } else {
+                    htmlText += '선택';
+                }
+                htmlText += ')' +
+                    '</p>' +
+                    '<ul class="dropdown__wrap">' ;
+                $(el).find('ul.option_value_wrap li.item__input-wrap').each(function (y, eli) {
+                    price = $(eli).find('input[name="option-price"]').val().replace(/\,/g, '').replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+
+                    htmlText += '<li class="dropdown__item">' +
+                        '<p class="name">' + $(eli).find('input[name="option-property_name"]').val() + '</p>' +
+                        '<p class="price">' + (price != '0' ? price +'원' : '') + '</p>' +
+                        '</li>';
+                });
+                htmlText += '</ul>' +
+                    '</div>';
+            })
+
+            if (requiredCnt == 0) {
+                $('.right-wrap__selection').css('display', 'none');
+            } else {
+                $('.right-wrap__selection').html(htmlText);
+            }
+
+            htmlText = '';
+            i = 1;
+            $('.desc__select-group--item').map(function () {
+                if ($(this).find('.select-group__result li').length > 0) {
+                    if (i%2 == 1) {
+                        htmlText += '<dl class="item01">';
+                    }
+                    htmlText += '<dt>' + $(this).find('button').text() + '</dt>';
+                    str = '';
+                    $(this).find('.select-group__result li').map(function (i, k) {
+                        str += (i != 0 ? ', ' : '') + $(this).find('span.property_name').text();
+                    })
+                    htmlText += '<dd>' + str + '</dd>';
+
+                    if(i%2 == 0) {
+                        htmlText += '</dl>';
+                    }
+                    i ++;
+                }
+            });
+
+            if (i%2 == 0) {
+                htmlText += '<dt></dt><dd></dd></dl>';
+            }
+
+            htmlText += '<dl class="item02">' +
+                '<dt class="ico__notice24"><span class="a11y">공지</span></dt>' +
+                '<dd>' + $('#form-list09').val() + '</dd>' +
+                '</dl>';
+
+            $('.product-detail__table').html(htmlText);
+
+            var shipping = "";
+            $('.shipping-wrap__add span.add__name').each(function (i, el) {
+                shipping += $(el).text() + ", ";
+            })
+            $('#default-modal-preview02 dd.previce_delivery').text(shipping.slice(0, -2));
+            $('#default-modal-preview02 .previce_title').text($('#form-list01').val());
+            if (!editer || typeof editer === 'undefined') {
+                init_editor();
+            } else {
+                $('#default-modal-preview02 .product-detail__img-area').html(editer.html.get());
+            }
+
+            if ($('input[name="order-info01"]:checked').val() == 1) {
+                $('#default-modal-preview02 .order-info_1 .order-info__desc').text($('#pay_notice').val());
+                $('#default-modal-preview02 .order-info_1').css('display', 'block');
+            } else {
+                $('#default-modal-preview02 .order-info_1').css('display', 'none');
+            }
+            if ($('input[name="order-info02"]:checked').val() == 1) {
+                $('#default-modal-preview02 .order-info_2 .order-info__desc').text($('#delivery_notice').val());
+                $('#default-modal-preview02 .order-info_2').css('display', 'block');
+            } else {
+                $('#default-modal-preview02 .order-info_2').css('display', 'none');
+            }
+            if ($('input[name="order-info03"]:checked').val() == 1) {
+                $('#default-modal-preview02 .order-info_3 .order-info__desc').text($('#return_notice').val());
+                $('#default-modal-preview02 .order-info_3').css('display', 'block');
+            } else {
+                $('#default-modal-preview02 .order-info_3').css('display', 'none');
+            }
+            if ($('input[name="order-info04"]:checked').val() == 1) {
+                $('#default-modal-preview02 .order-info_4 .order-info__title p').text($('#order_title').val());
+                $('#default-modal-preview02 .order-info_4 .order-info__desc').text($('#order_content').val());
+                $('#default-modal-preview02 .order-info_4').css('display', 'block');
+            } else {
+                $('#default-modal-preview02 .order-info_4').css('display', 'none');
+            }
+
+            // 미리보기 창 오픈
+            modalOpen('#state_preview_modal');
+        }
+
         // 옵션순서 변경 모달
         function sortOption() {
             sortList = '';
@@ -2655,15 +2831,22 @@
             }
         });
 
+        // 상품 주문 정보 탭 설정
         $('[name="order-info01"], [name="order-info02"], [name="order-info03"], [name="order-info04"]').on('change', function () {
             var _target = $(this).closest('.radio_btn').next('.guide_area');
             if($(this).val() == 1) {
+                if( _target.find('#order_title').length > 0 ) {
+                    _target.find('#order_title').prop('disablec', false);
+                }
+                _target.find('textarea').prop('disabled', false);
                 _target.show();
             } else {
                 if( _target.find('#order_title').length > 0 ) {
                     _target.find('#order_title').val('');
+                    _target.find('#order_title').prop('disablec', true);
                 }
                 _target.find('textarea').val('');
+                _target.find('textarea').prop('disabled', true);
                 _target.hide();
             }
         });
