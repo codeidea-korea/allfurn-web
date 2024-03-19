@@ -183,9 +183,7 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(editor.html.get(), 'text/html');
                 const images = doc.body.getElementsByTagName('img');
-                if (images.length > 0) {
-                    return images[0].src;
-                }
+                return images.length > 0 ? images[0].src : ''
             },
         }
 
