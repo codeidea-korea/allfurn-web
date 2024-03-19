@@ -42,7 +42,7 @@
                     <dl class="flex">
                         <dt class="w-[190px] shrink-0 mt-2">상품 이미지</dt>
                         <dd class="font-medium w-full">
-                            <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap ui-sortable">
                                 <div class="border border-dashed w-[200px] h-[200px] rounded-md relative flex items-center justify-center">
                                     <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                     <div>
@@ -61,6 +61,7 @@
                                     </div>
                                 </div>
 
+                                {{--
                                 <!-- 이미지 추가 버튼 누른 후 이미지들 시작점  -->
                                 <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-400">
                                     <div class="absolute top-2.5 right-2.5">
@@ -79,7 +80,7 @@
                                         </button>
                                     </div>
                                 </div>
-
+                                --}}
                             </div>
                             <div class="info">
                                 <div class="">
@@ -920,59 +921,92 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0">결제 안내</p>
-                    <div class="radio_btn flex items-center">
-                        <div>
-                            <input type="radio" name="price_exposure04" id="price_exposure10">
-                            <label for="price_exposure10" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                <div class="flex gap-3 border-b pb-5 mb-5">
+                    <p class="w-[190px] shrink-0 mt-3">결제 안내</p>
+                    <div class="w-full">
+                        <div class="radio_btn flex items-center">
+                            <div>
+                                <input type="radio" name="order-info01" id="price_exposure20" value="1">
+                                <label for="price_exposure20" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                            </div>
+                            <div style="margin-left:-1px;">
+                                <input type="radio" name="order-info01" id="price_exposure21" value="0" checked>
+                                <label for="price_exposure21" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                            </div>
                         </div>
-                        <div style="margin-left:-1px;">
-                            <input type="radio" name="price_exposure04" id="price_exposure11" checked="">
-                            <label for="price_exposure11" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0">배송 안내</p>
-                    <div class="radio_btn flex items-center">
-                        <div>
-                            <input type="radio" name="price_exposure05" id="price_exposure12">
-                            <label for="price_exposure12" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                        </div>
-                        <div style="margin-left:-1px;">
-                            <input type="radio" name="price_exposure05" id="price_exposure13" checked="">
-                            <label for="price_exposure13" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                        <!-- hidden -->
+                        <div class="guide_area mt-3 hidden">
+                            <div class=" setting_input h-[100px] py-3  w-full">
+                                <textarea name="pay_notice" id="pay_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0">교환/반품/취소 안내</p>
-                    <div class="radio_btn flex items-center">
-                        <div>
-                            <input type="radio" name="price_exposure06" id="price_exposure13">
-                            <label for="price_exposure13" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                <div class="flex gap-3 border-b pb-5 mb-5">
+                    <p class="w-[190px] shrink-0 mt-3">배송 안내</p>
+                    <div class="w-full">
+                        <div class="radio_btn flex items-center">
+                            <div>
+                                <input type="radio" name="order-info02" id="price_exposure23" value="1">
+                                <label for="price_exposure23" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                            </div>
+                            <div style="margin-left:-1px;">
+                                <input type="radio" name="order-info02" id="price_exposure24" value="2" checked>
+                                <label for="price_exposure24" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                            </div>
                         </div>
-                        <div style="margin-left:-1px;">
-                            <input type="radio" name="price_exposure06" id="price_exposure14" checked="">
-                            <label for="price_exposure14" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                        <div class="guide_area mt-3 hidden">
+                            <div class=" setting_input h-[100px] py-3  w-full">
+                                <textarea name="delivery_notice" id="delivery_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 pb-5 mb-5">
-                    <p class="w-[190px] shrink-0">주문 정보 직접 입력</p>
-                    <div class="radio_btn flex items-center">
-                        <div>
-                            <input type="radio" name="price_exposure07" id="price_exposure14">
-                            <label for="price_exposure14" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                <div class="flex gap-3 border-b pb-5 mb-5">
+                    <p class="w-[190px] shrink-0 mt-3">교환/반품/취소 안내</p>
+                    <div class="w-full">
+                        <div class="radio_btn flex items-center">
+                            <div>
+                                <input type="radio" name="order-info03" id="price_exposure25" value="1">
+                                <label for="price_exposure25" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                            </div>
+                            <div style="margin-left:-1px;">
+                                <input type="radio" name="order-info03" id="price_exposure26" value="2" checked>
+                                <label for="price_exposure26" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                            </div>
                         </div>
-                        <div style="margin-left:-1px;">
-                            <input type="radio" name="price_exposure07" id="price_exposure15" checked="">
-                            <label for="price_exposure15" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                        <div class="guide_area mt-3 hidden">
+                            <div class=" setting_input h-[100px] py-3  w-full">
+                                <textarea name="return_notice" id="return_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 border-b pb-5 mb-5">
+                    <p class="w-[190px] shrink-0 mt-3">주문 정보 직접 입력</p>
+                    <div class="w-full">
+                        <div class="radio_btn flex items-center">
+                            <div>
+                                <input type="radio" name="order-info04" id="price_exposure27" value="1">
+                                <label for="price_exposure27" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
+                            </div>
+                            <div style="margin-left:-1px;">
+                                <input type="radio" name="order-info04" id="price_exposure28" value="2" checked>
+                                <label for="price_exposure28" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
+                            </div>
+                        </div>
+                        <div class="guide_area mt-3 hidden">
+                            <div class="font-medium w-full">
+                                <input type="text" class="setting_input h-[48px] w-full" id="order_title" placeholder="항목 상세">
+                            </div>
+                            <div class=" setting_input h-[100px] py-3 mt-3 w-full ">
+                                <textarea name="order_content" id="order_content" class="w-full h-full" placeholder="항목 상세 내용"></textarea>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -2047,13 +2081,130 @@
                 <div class="modal_body agree_modal_body">
                     <p class="text-center py-4"><b>옵션 삭제 시 입력한 내용은 삭제됩니다.<br/>삭제하시겠습니까?</b></p>
                     <div class="flex gap-2 justify-center">
-                        <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#del_con_modal')">취소</button>
-                        <button class="btn w-full btn-primary mt-5" onclick="modalClose('#del_con_modal')">확인</button>
+                        <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#del_con_modal');">취소</button>
+                        <button class="btn w-full btn-primary mt-5" onclick="saveProduct(1);">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 마이페이지 상품 미리보기 모달 -->
+        <div class="modal" id="state_preview_modal">
+            <div class="modal_bg" onclick="modalClose('#state_preview_modal')"></div>
+            <div class="modal_inner modal-md" style="width:1340px;">
+                <div class="modal_body filter_body" style="max-height:inherit">
+                    <div class="py-2">
+                        <p class="text-lg font-bold text-left">미리보기</p>
+                    </div>
+                    <div class="overflow-y-scroll h-[600px]">
+                        <div class="prod_detail_top">
+                            <div class="inner">
+                                <div class="img_box">
+                                    <div class="left_thumb">
+                                        <ul class="swiper-wrapper">
+                                            <li class="swiper-slide"><img src="./img/zoom_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb4.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb5.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb3.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/sale_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/video_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                        </ul>
+                                    </div>
+                                    <div class="big_thumb">
+                                        <ul class="swiper-wrapper">
+                                            <li class="swiper-slide"><img src="./img/zoom_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb4.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb5.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/prod_thumb3.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/sale_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="./img/video_thumb.png" alt=""></li
+                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="txt_box">
+                                    <div class="name">
+                                        <div class="tag">
+                                            <span class="new">NEW</span>
+                                            <span class="event">이벤트</span>
+                                        </div>
+                                        <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
+                                    </div>
+                                    <div class="info">
+                                        <p>업체 문의</p>
+                                        <hr>
+                                        <div>
+                                            <dl class="flex">
+                                                <dt class="text-stone-400 w-[130px]">상품 코드</dt>
+                                                <dd>FORMA</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="mt-3">
+                                            <dl class="flex">
+                                                <dt class="text-stone-400 w-[130px]">판매자 상품번호</dt>
+                                                <dd>A01A17MIZPWR</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="mt-3">
+                                            <dl class="flex">
+                                                <dt class="text-stone-400 w-[130px]">상품 승인 일자</dt>
+                                                <dd>2022.12.05</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="link_box">
+                                            <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                                            <button class="btn btn-line4 nohover"><svg><use xlink:href="./img/icon-defs.svg#share"></use></svg>공유하기</button>
+                                            <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="./img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
+                                        </div>
+                                    </div>
+                                    <div class="btn_box">
+                                        <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
+                                        <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-10 flex justify-center">
+                            <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button class="btn btn-primary w-1/4 mt-8" onclick="modalClose('#state_preview_modal')">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 등록취소 -->
+        <div class="modal" id="alert-registration_cancel">
+            <div class="modal_bg" onclick="modalClose('#alert-registration_cancel')"></div>
+            <div class="modal_inner modal-sm">
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>상품 등록을 취소하시겠습니까?<br/>입력한 내용은 임시 등록됩니다.</b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#alert-registration_cancel')">취소</button>
+                        <button class="btn w-full btn-primary mt-5" onclick="modalClose('#alert-registration_cancel')">확인</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+<div class="fixed bottom-0 border-t border-stone-200 bg-stone-100 w-full z-10">
+    <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
+        <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
+        <div class="flex items-center">
+            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="modalOpen('#state_preview_modal');">미리보기</button>
+            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900">임시등록</button>
+            <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onClick="saveProduct(0);">등록신청</button>
+        </div>
+
+    </div>
+</div>
 
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
@@ -2134,22 +2285,35 @@
                                 }
 
                                 $('.desc__product-img-wrap').append(
-                                    '<li class="product-img__add" file="' + file.name +  '">' +
+                                    '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
+                                    '   <img class="w-[200px] h-[200px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
+                                    '   <div class="absolute top-2.5 right-2.5">' +
+                                    '       <button class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
+                                    '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
+                                    '       </button>' +
+                                    '   </div>' +
+                                    '</div>'
+                                );
+
+                                    /*'<li class="product-img__add" file="' + file.name +  '">' +
                                     '<div class="add__img-wrap">' +
                                     '<img src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
                                     '<button type="button" class="ico__delete--circle">' +
                                     '<span class="a11y">삭제</span>' +
                                     '</button>' +
                                     '</div>' +
-                                    '</li>'
-                                );
+                                    '</li>'*/
 
                                 if (imgCnt == 1) {
-                                    $('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
+                                    $('.product-img__add').append(
+                                        '   <div class="absolute top-2.5 left-2.5">' +
+                                        '       <p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p>' +
+                                        '   </div>'
+                                    );
                                 }
 
                                 if (imgCnt == 8) {
-                                    $('li .product-img__gallery').hide();
+                                    $('.desc__product-img-wrap > div').first().hide();
                                 }
                             };
                         })(file);
@@ -2203,6 +2367,17 @@
 
         $('#sortable').sortable();
         $('#sortable').disableSelection();
+
+        function img_reload_order() {
+            $('.desc__product-img-wrap').find('.add__badge').remove();
+            $('li .product-img__add').first().children('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
+        }
+
+        function img_add_order() {
+            $('.desc__product-img-wrap li').each(function(n) {
+                $(this).attr('item', n);
+            });
+        }
 
         // 속성 가져오기
         function getProperty(parentIdx=null, title=null) {
@@ -2480,9 +2655,22 @@
             }
         });
 
+        $('[name="order-info01"], [name="order-info02"], [name="order-info03"], [name="order-info04"]').on('change', function () {
+            var _target = $(this).closest('.radio_btn').next('.guide_area');
+            if($(this).val() == 1) {
+                _target.show();
+            } else {
+                if( _target.find('#order_title').length > 0 ) {
+                    _target.find('#order_title').val('');
+                }
+                _target.find('textarea').val('');
+                _target.hide();
+            }
+        });
+
         function saveProduct(regType) {
 
-            closeModal('#alert-modal09');
+            //closeModal('#alert-modal09');
 
             if($('#form-list01').val() == '') {
                 alert('상품명을 입력해주세요.');
