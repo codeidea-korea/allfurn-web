@@ -59,11 +59,11 @@
 
 <div class="quick_menu">
     <ul class="menu">
-        <li class=""><a href="./category.php"><svg><use xlink:href="/img/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
-        <li class=""><a href="./like_prod.php"><svg><use xlink:href="/img/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
-        <li class="active"><a href="./index.php"><svg><use xlink:href="/img/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
-        <li class=""><a href="./message_list.php"><svg><use xlink:href="/img/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
-        <li class=""><a href="./mypage.php"><svg><use xlink:href="/img/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
+        <li class=""><a href="./category.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
+        <li class=""><a href="./like_prod.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
+        <li class="active"><a href="./index.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
+        <li class=""><a href="./message_list.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
+        <li class=""><a href="./mypage.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
     </ul>
 </div>
 
