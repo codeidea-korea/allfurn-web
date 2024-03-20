@@ -21,8 +21,8 @@
             </div>
         </div>
         <div class="tab_content">
-            @php $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true); @endphp
-            @foreach ($md_product_info as $key => $theme)
+            {{-- @php $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true); @endphp --}}
+            @foreach ($data['md_product_info'] as $key => $theme)
                 <div class="tab_0{{ $key+1 }} relative @if ($key == 0) active @endif">
                     <div class="title">
                         <div class="bg" style="background-color:#D6B498; "></div>
@@ -37,7 +37,7 @@
                                 <li class="swiper-slide prod_item">
                                     <div class="img_box">
                                         <a href="/product/detail/{{ $goods['mdp_gidx'] }}"><img src="{{ $goods['mdp_gimg'] }}" alt=""></a>
-                                        <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                        <button class="zzim_btn prd_{{ $goods['mdp_gidx'] }} {{ ($data['md_product_interest'][$goods['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $goods['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
                                     <div class="txt_box">
                                         <a href="/product/detail/{{ $goods['mdp_gidx'] }}">
