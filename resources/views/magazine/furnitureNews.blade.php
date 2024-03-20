@@ -43,7 +43,7 @@
                         <div class="txt_box">
                             <a href="/magazine/furniture/detail/{{$item->idx}}">
                                 <div class="tit">{{ $item->title }}</div>
-                                <div class="desc">{!! Illuminate\Support\Str::limit(strip_tags($item->content), $limit = 40, $end = '...') !!}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
                                 <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
                             </a>
                         </div>
