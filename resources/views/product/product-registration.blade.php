@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-@include('layouts.header')
+    @include('layouts.header')
     <div id="content">
         <div class="inner">
             <div class="flex gap-4 py-10">
@@ -31,10 +31,10 @@
                         <dt class="essential w-[190px] shrink-0 mt-2">상품명</dt>
                         <dd class="font-medium w-full">
                             <input type="text" id="form-list01" name="name" maxlength="50"
-                                @if(@isset($data->name))
-                                    value="{{$data->name}}"
-                                @endif
-                                class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
+                                   @if(@isset($data->name))
+                                       value="{{$data->name}}"
+                                   @endif
+                                   class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
                         </dd>
                     </dl>
                 </div>
@@ -102,7 +102,7 @@
                                 </div>
                             </div>
                             <div class="text-primary mt-3">
-                                선택한 카테고리 : <span>-</span>
+                                선택한 카테고리 : <span id="categoryIdx">-</span>
                             </div>
                         </dd>
                     </dl>
@@ -154,7 +154,7 @@
                                 <div class="select-group__dropdown">
                                     <div class="mt-5">
                                         <a href="javascript:;" class="h-[48px] px-3 border rounded-sm inline-block filter_border filter_dropdown w-[410px] flex justify-between items-center">
-                                            <p>가격 안내 문구 선택</p>
+                                            <p class="dropdown__title">가격 안내 문구 선택</p>
                                             <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                                         </a>
                                         <div class="filter_dropdown_wrap w-[410px]" style="display: none;">
@@ -249,7 +249,7 @@
                             </button>
                             <div class="mt-3 shipping-wrap__add hidden">
                                 <span class="plus_del text-primary text-sm">추가된 배송 방법</span>
-                                <div class="flex items-center gap-3 mt-3">
+                                <div class="flex items-center gap-3 mt-3 shipping_method_list">
                                     <!-- div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full">
                                         소비자 직배 가능 (무료)
                                         <button class="delivery_del"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
@@ -280,12 +280,10 @@
                         <dt class="w-[190px] shrink-0 mt-2">인증 정보</dt>
                         <dd class="font-medium w-full">
                             <button class="h-[48px] w-[240px] rounded-md bg-stone-700 text-white hover:bg-stone-600" onclick="openAuthInfo();">인증 정보 선택</button>
-                            <div class="mt-3 hidden">
+                            <div class="mt-3 wrap__selected hidden">
                                 <span class="plus_del text-primary text-sm">선택된 인증 정보</span>
-                                <div class="mt-1">
-                                    <span>독일 LGA 인증,</span>
-                                    <span>GOTS(오가닉) 인증,</span>
-                                    <span>라돈테스트 인증,</span>
+                                <div class="mt-1" id="auth_info">
+                                    {{-- 인증정보 텍스트 영역 --}}
                                 </div>
 
                             </div>
@@ -1076,9 +1074,9 @@
                                     <dt class="essential w-[190px] shrink-0 mt-8">배송 방법</dt>
 
                                     <dd class="font-medium w-full mt-3">
-                                        <div>
+                                        <div class="dropdown step1">
                                             <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center">
-                                                <p>소비자 직배 가능</p>
+                                                <p>가격 안내 문구 선택</p>
                                                 <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
                                             </a>
                                             <div class="filter_dropdown_wrap w-[456px]" style="display: none;">
@@ -1087,19 +1085,19 @@
                                                         <a href="javascript:;" class="flex items-center" data-target="direct_input_2">직접 입력</a>
                                                     </li>
                                                     <li>
-                                                        <a href="javascript:;" class="flex items-center">소비자 직배 가능</a>
+                                                        <a href="javascript:;" class="flex items-center direct_input_2_hidden">소비자 직배 가능</a>
                                                     </li>
                                                     <li>
-                                                        <a href="javascript:;" class="flex items-center">매장 배송</a>
+                                                        <a href="javascript:;" class="flex items-center direct_input_2_hidden">매장 배송</a>
                                                     </li>
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="direct_input_2 font-medium w-full mt-3 hidden" style="display: none;">
+                                        <div class="direct_input_2 font-medium w-full mt-3 hidden">
                                             <input type="text" class="setting_input h-[48px] w-full" placeholder="배송 방법을 입력해 주세요.">
                                         </div>
                                         <p class="mt-5">위 배송 방법의 가격을 선택해주세요</p>
-                                        <div>
+                                        <div class="dropdown step2">
                                             <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center mt-3">
                                                 <p>배송가격을 선택해주세요</p>
                                                 <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
@@ -1120,7 +1118,7 @@
                             </div>
                         </div>
                         <div class="flex justify-center">
-                            <button class="btn btn-primary w-full mt-8" onclick="modalClose('#shipping_method_modal')">추가하기</button>
+                            <button class="btn btn-primary w-full mt-8">추가하기</button>
                         </div>
                     </div>
                 </div>
@@ -2101,36 +2099,36 @@
                                 <div class="img_box">
                                     <div class="left_thumb">
                                         <ul class="swiper-wrapper">
-                                            <li class="swiper-slide"><img src="./img/zoom_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb4.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb5.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb3.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/sale_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/video_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/zoom_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb4.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb5.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                         </ul>
                                     </div>
                                     <div class="big_thumb">
                                         <ul class="swiper-wrapper">
-                                            <li class="swiper-slide"><img src="./img/zoom_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb4.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb5.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/prod_thumb3.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/sale_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="./img/video_thumb.png" alt=""></li
-                                            <li class="swiper-slide"><img src="./img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/zoom_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb4.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb5.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
+                                            <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li
+                                            <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="txt_box">
+                                <div class="txt_box right-wrap__code">
                                     <div class="name">
                                         <div class="tag">
                                             <span class="new">NEW</span>
-                                            <span class="event">이벤트</span>
+                                            <!-- span class="event">이벤트</span //-->
                                         </div>
                                         <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
                                     </div>
@@ -2140,35 +2138,35 @@
                                         <div>
                                             <dl class="flex">
                                                 <dt class="text-stone-400 w-[130px]">상품 코드</dt>
-                                                <dd>FORMA</dd>
+                                                <dd class="preview_product_code">FORMA</dd>
                                             </dl>
                                         </div>
                                         <div class="mt-3">
                                             <dl class="flex">
                                                 <dt class="text-stone-400 w-[130px]">판매자 상품번호</dt>
-                                                <dd>A01A17MIZPWR</dd>
+                                                <dd class="previce_delivery">A01A17MIZPWR</dd>
                                             </dl>
                                         </div>
                                         <div class="mt-3">
                                             <dl class="flex">
                                                 <dt class="text-stone-400 w-[130px]">상품 승인 일자</dt>
-                                                <dd>2022.12.05</dd>
+                                                <dd class="access_date">2022.12.05</dd>
                                             </dl>
                                         </div>
                                         <div class="link_box">
-                                            <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg>좋아요</button>
-                                            <button class="btn btn-line4 nohover"><svg><use xlink:href="./img/icon-defs.svg#share"></use></svg>공유하기</button>
-                                            <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="./img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
+                                            <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                                            <button class="btn btn-line4 nohover"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+                                            <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
                                         </div>
                                     </div>
                                     <div class="btn_box">
-                                        <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
-                                        <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="./img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
+                                        <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
+                                        <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-10 flex justify-center">
+                        <div class="mt-10 flex justify-center product-detail__img-area">
                             <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
                         </div>
                     </div>
@@ -2192,19 +2190,74 @@
                 </div>
             </div>
         </div>
-    </div>
-
-<div class="fixed bottom-0 border-t border-stone-200 bg-stone-100 w-full z-10">
-    <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
-        <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
-        <div class="flex items-center">
-            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
-            <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900">임시등록</button>
-            <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onClick="saveProduct(0);">등록신청</button>
+        {{-- 배송 정보 제한 --}}
+        <div class="modal" id="shipping_error_modal">
+            <div class="modal_bg" onclick="modalClose('#shipping_error_modal')"></div>
+            <div class="modal_inner modal-sm">
+                <button class="close_btn" onclick="modalClose('#shipping_error_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>배송 방법은 최대 6개까지 추가 가능합니다.
+                        </b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#shipping_error_modal')">확인</button>
+                    </div>
+                </div>
+            </div>
         </div>
-
+        <!-- 임시 등록 팝업 -->
+        <div class="modal" id="shipping_error_modal">
+            <div class="modal_bg" onclick="modalClose('#shipping_error_modal')"></div>
+            <div class="modal_inner modal-sm">
+                <button class="close_btn" onclick="modalClose('#shipping_error_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>상품 등록 신청이 완료되었습니다.<br />등록 승인 결과는 푸시 알림으로 발송됩니다.</b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 등록 신청 팝업 -->
+        <div class="modal" id="alert-modal06">
+            <div class="modal_bg" onclick="modalClose('#alert-modal06')"></div>
+            <div class="modal_inner modal-sm">
+                <button class="close_btn" onclick="modalClose('#alert-modal06')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>임시 등록되었습니다.</b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 수정 완료 팝업 -->
+        <div class="modal" id="alert-modal12">
+            <div class="modal_bg" onclick="modalClose('#alert-modal12')"></div>
+            <div class="modal_inner modal-sm">
+                <button class="close_btn" onclick="modalClose('#alert-modal12')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>상품 수정이 완료되었습니다.</b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
+
+
+    <div class="fixed bottom-0 border-t border-stone-200 bg-stone-100 w-full z-10">
+        <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
+            <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
+            <div class="flex items-center">
+                <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
+                <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900" onclick="saveProduct(1);">임시등록</button>
+                <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onClick="saveProduct(0);">등록신청</button>
+            </div>
+
+        </div>
+    </div>
 
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
@@ -2217,6 +2270,8 @@
         var oIdx = 0;
         var _tmp = 0;
         editer = null;
+
+        init_editor();
 
         $(document)
             .on('click', '.setting_category .category_list li > a', function(e) {
@@ -2248,9 +2303,9 @@
                                     '   <div class="info">' +
                                     '       <div class="">' +
                                     '           <p>· 상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="text-priamry">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>'
-                                    '       </div>' +
-                                    '   </div>' +
-                                    '</div>';
+                                '       </div>' +
+                                '   </div>' +
+                                '</div>';
 
                                 $('#property').empty();
                                 $('#property').append(infoText);
@@ -2295,14 +2350,14 @@
                                     '</div>'
                                 );
 
-                                    /*'<li class="product-img__add" file="' + file.name +  '">' +
-                                    '<div class="add__img-wrap">' +
-                                    '<img src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
-                                    '<button type="button" class="ico__delete--circle">' +
-                                    '<span class="a11y">삭제</span>' +
-                                    '</button>' +
-                                    '</div>' +
-                                    '</li>'*/
+                                /*'<li class="product-img__add" file="' + file.name +  '">' +
+                                '<div class="add__img-wrap">' +
+                                '<img src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
+                                '<button type="button" class="ico__delete--circle">' +
+                                '<span class="a11y">삭제</span>' +
+                                '</button>' +
+                                '</div>' +
+                                '</li>'*/
 
                                 if (imgCnt == 1) {
                                     $('.product-img__add').append(
@@ -2430,36 +2485,45 @@
                 type			: 'POST',
                 dataType		: 'json',
                 success		: function(result) {
-                    pb_cls = 'pb-5';
+                    pb_cls = ' pb-5';
                     if (parentIdx == null) {
                         var htmlText = '';
                         result.forEach(function (e, idx) {
                             if( idx > 0 ) {
-                                pb_cls = 'py-5';
+                                pb_cls = ' py-5';
                             }
-                            htmlText += '<div class="flex items-center gap-3 border-b ' + pb_cls + '">' +
-                                '<p class="text-stone-400 w-[130px]">' + e.name + '</p>' +
-                                '<button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
-                                '</div>'
-                        })
+
+                            htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
+                                '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
+                                    '<div class="flex items-center gap-3">' +
+                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
+                                '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
+                                '       </div>' +
+                                '   </div>' +
+                                '</div>';
+                        });
                         $('#property #property_info').before(htmlText);
                     } else {
                         var htmlText = "";
                         var subHtmlText = '';
                         result.forEach(function (e, idx) {
-                            console.log( e );
                             if( idx > 0 ) {
                                 pb_cls = 'py-5';
                             }
-                            htmlText += '<div class="flex items-center gap-3 border-b ' + pb_cls + '">' +
-                                '<p class="text-stone-400 w-[130px]">' + e.name + '</p>' +
-                                '<button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
-                                '</div>'
+
+                            htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
+                                '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
+                                '<div class="flex items-center gap-3">' +
+                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
+                                '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
+                                '       </div>' +
+                                '   </div>' +
+                                '</div>';
 
                             subHtmlText += '<li>' +
-                                '<input type="checkbox" class="check-form" id="filter_cate_2_01">' +
-                                '<label for="filter_cate_2_01">' + e.property_name + '</label>' +
-                                '</li>'
+                                '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
+                                '<label for="property-check_' + e.idx + '">' + e.property_name + '</label>' +
+                                '</li>';
                         })
 
                         $('#product_attributes_modal').data('property_idx', parentIdx);
@@ -2467,7 +2531,7 @@
                         $('#product_attributes_modal .filter_list').html(subHtmlText);
 
                         //$('ul.select-group__result[data-property_idx="' + parentIdx + '"] li').each(function (i, el) {
-                            //$('#property-modal #property-check_'+$(el).data('sub_idx')).attr('checked', true);
+                        //$('#property-modal #property-check_'+$(el).data('sub_idx')).attr('checked', true);
                         //})
 
                         modalOpen('#product_attributes_modal');
@@ -2475,6 +2539,24 @@
                 }
             });
         }
+
+        // 속성 선택하기
+        $('#product_attributes_modal button').click(function () {
+            if ($(this).has('.btn-primary')) {
+                var htmlText = "";
+                $('#product_attributes_modal .check-form:checked').map(function (n, i) {
+
+                    htmlText += '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + $(this).data('sub_property') + '">' +
+                    '   <span class="text-stone-500 property_name">' + $(this).data('sub_name') + '</span>' +
+                    '   <button><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
+                    '</div>';
+                })
+                $('#property .select-group__result[data-property_idx="' + $('#product_attributes_modal').data('property_idx') + '"]').html(htmlText);
+
+                modalClose('#product_attributes_modal');
+            }
+        })
+
 
         // 드롭다운 토글
         $(".filter_dropdown").click(function(event) {
@@ -2484,7 +2566,7 @@
             $(this).find("svg").toggleClass("active");
             event.stopPropagation(); // 이벤트 전파 방지
         });
-        
+
         // 드롭다운 항목 선택 이벤트
         $(".filter_dropdown_wrap ul li a").click(function(event) {
             var selectedText = $(this).text();
@@ -2494,25 +2576,29 @@
             $dropdown.removeClass('active');
             $dropdown.find("svg").removeClass("active");
 
-            var targetClass = $(this).data('target');
+            // '직접 입력' 선택 시 direct_input_2 표시
+            if ($(this).data('target') === "direct_input_2") {
+                $('.direct_input_2').show();
+            }
+            // '소비자 직배 가능' 또는 '매장 배송' 선택 시 direct_input_2 숨김
+            else if ($(this).hasClass('direct_input_2_hidden')) {
+                $('.direct_input_2').hide();
+            }
+            // '무료' 또는 '착불' 선택 시 direct_input_2의 상태 변경 없음
 
-            var has = $(this).hasClass('delivery');
-
-            if (targetClass) {
-                // 모든 targetClass 요소를 숨기고, 현재 targetClass만 표시
-                $('[data-target]').each(function() {
-                    var currentTarget = $(this).data('target');
-                    if (currentTarget !== targetClass) {
-                        $('.' + currentTarget).hide();
-                    }
-                });
-                $('.' + targetClass).show(); // 현재 클릭한 targetClass 요소만 표시
+            // 배송방법추가일경우
+            if( $('#shipping_method_modal .dropdown.step1 p').text() == '직접 입력' ) {
+                if( $('#shipping_method_modal .direct_input_2 > input').val() != '' && $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
+                } else {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
+                }
             } else {
-                // 현재 클릭이 data-target을 가지고 있지 않다면, 모든 targetClass 요소를 숨김
-                $('[data-target]').each(function() {
-                    var currentTarget = $(this).data('target');
-                    $('.' + currentTarget).hide();
-                });
+                if( $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
+                } else {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
+                }
             }
 
             event.stopPropagation(); // 이벤트 전파 방지
@@ -2545,17 +2631,93 @@
         function openDeliveryModal() {
             // 배송방법은 최대 5개까지만 등록가능
             if( $('.shipping-wrap__add div').length > 5 ) {
-
+                modalOpen('#shipping_error_modal');
             } else {
                 $('#shipping_method_modal .btn-primary').prop('disabled', true);
                 modalOpen('#shipping_method_modal');
             }
         }
 
+        // 배송 방법 추가
+        $('#shipping_method_modal .btn-primary').on('click', function (e) {
+            e.stopPropagation();
+            var title = $('#shipping_method_modal .dropdown.step1 p').text();
+            if (title == '직접 입력') {
+                title = $('#shipping_method_modal .direct_input_2 > input').val();
+            }
+
+            let htmlText = '' +
+                '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + title + ' ('+ $('#shipping_method_modal .dropdown.step2 p').text() + ')</span>' +
+                '   <button class="delivery_del">' +
+                '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
+                '           <path d="M18 6 6 18"></path>' +
+                '           <path d="m6 6 12 12"></path>' +
+                '       </svg>' +
+                '   </button>' +
+                '</div>';
+
+                /*'<li>' +
+                '<span class="add__name">'+ title + ' (' + $('#delivery-modal .wrap-item--02 .dropdown__title').text() +')</span>' +
+                '<i class="ico__delete16"><span class="a11y">삭제</span></i>' +
+                '</li>';*/
+
+            $('.shipping-wrap__add .shipping_method_list').append(htmlText);
+            $('.shipping-wrap__add').addClass('active');
+
+            $('.shipping-wrap__add').show();
+
+            //초기화
+            $('#shipping_method_modal .dropdown.step2 p').text('가격 안내 문구 선택');
+            $('#shipping_method_modal .direct_input_2 > input').val('');
+            $('#shipping_method_modal .shipping-wrap__add.active').removeClass('active');
+
+            $('#shipping_method_modal .dropdown.step2 p').text('배송 가격을 선택해주세요');
+
+            modalClose('#shipping_method_modal');
+
+            //$(this).prop('disabled', true);
+        })
+
         // 인증정보 모달
         function openAuthInfo() {
             modalOpen('#certification_information_modal');
         }
+
+        $('#shipping_method_modal .direct_input_2 > input').on('keyup', function() {
+            if( $(this).val() != '' && $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
+                $('#shipping_method_modal .btn-primary').prop('disabled', false);
+            } else {
+                $('#shipping_method_modal .btn-primary').prop('disabled', true);
+            }
+        });
+
+        // 인증정보 선택
+        $('#certification_information_modal .btn-primary').click(function () {
+            if ($('#certification_information_modal [type="checkbox"]:checked').length > 0 ) {
+                let text = "";
+                $('#certification_information_modal [type="checkbox"]:checked').each(function (i, el) {
+                    if ($(el).is('[data-auth="기타 인증"]')) {
+                        if ($('#auth_info_text').val() != '') {
+                            text += $('#auth_info_text').val();
+                        } else {
+                            $(el).prop('checked', false);
+                        }
+                    } else {
+                        text += $(el).parent().find('label').text();
+                    }
+                    text += ", "
+                });
+                $('.wrap__selected .mt-1').text(text.slice(0, -2));
+                $('.wrap__selected').addClass('active');
+                $('.wrap__selected').show();
+            } else {
+                $('.wrap__selected .mt-1').text('');
+                $('.wrap__selected.active').removeClass('active');
+                $('.wrap__selected').hide();
+            }
+
+            modalClose('#certification_information_modal');
+        })
 
         // 옵션 추가
         function addOrderOption() {
@@ -2566,35 +2728,35 @@
                 oIdx = parseInt( oIdx - 1 );
                 openModal('#alert-modal10');
             } else {
-                var titleHtml = '<div class="flex gap-3 border-t py-5 optNum' + parseInt( _tmp -1 ) + '" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
+                var titleHtml = '<div class="flex gap-3 border-t py-5 optNum' + parseInt( _tmp -1 ) + ' form__list-wrap" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
                     '   <div class="w-[190px] shrink-0 mt-2">' +
                     '       <p>옵션 ' + oIdx + '</p>' +
                     '       <button class="text-stone-400 underline mt-2" onclick="checkRemoveOption(' + parseInt( _tmp -1 ) + ');">삭제</button>' +
                     '   </div>' +
-                    '   <div class="w-full">' +
+                    '   <div class="w-full option_value_wrap">' +
                     '       <div class="radio_btn flex items-center border-b pb-5">' +
                     '           <p class="essential w-[130px] shrink-0">필수옵션</p>' +
                     '           <div>' +
-                    '               <input type="radio" name="required-option0'+ parseInt( _tmp -1 ) +'" id="price_exposure0'+ parseInt( _tmp -1 ) +'-1" checked="">' +
-                    '               <label for="price_exposure0'+ parseInt( _tmp -1 ) +'-1" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>' +
+                    '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-1" value="1" checked="">' +
+                    '               <label for="repuired-option0'+ parseInt( oIdx ) +'-1" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>' +
                     '           </div>' +
                     '           <div style="margin-left:-1px;">' +
-                    '               <input type="radio" name="required-option0'+ parseInt( _tmp -1 ) +'" id="price_exposure0'+ parseInt( _tmp -1 ) +'-2">' +
-                    '               <label for="price_exposure0'+ parseInt( _tmp -1 ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
+                    '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-2" value="0">' +
+                    '               <label for="repuired-option0'+ parseInt( oIdx ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
                     '           </div>' +
                     '       </div>' +
                     '       <div class="flex items-center mt-3 ">' +
                     '           <p class="essential w-[130px] shrink-0">옵션명</p>' +
-                    '           <input type="text" class="setting_input h-[48px] w-[340px]" name="option-name['+ parseInt( _tmp -1 ) +']" placeholder="예시)색상">' +
+                    '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
                     '       </div>' +
-                    '       <div class="flex items-center mt-3">' +
+                    '       <div class="flex items-center mt-3 item__input-wrap">' +
                     '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
-                    '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property['+ parseInt( _tmp -1 ) +'][]" name="option-property_name" placeholder="예시)색상">' +
+                    '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" placeholder="예시)색상">' +
                     '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
-                    '               <input type="text" class="text-right w-full h-full pr-10" name="option-price['+ parseInt( _tmp -1 ) +'][]" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
+                    '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
                     '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">환</p>' +
                     '           </div>' +
-                    '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2">' +
+                    '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
                     '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
                     '           </button>' +
                     '       </div>' +
@@ -2607,47 +2769,65 @@
 
         // 상품 미리보기
         function preview() {
-            $('#default-modal-preview02 .left-wrap__img img').attr('src', $('.product-img__add:first img').attr('src'));
-            smallImg = '';
+            //$('#state_preview_modal .left-wrap__img img').attr('src', $('.product-img__add:first img').attr('src'));
+            setImg = '';
             $('.product-img__add').map(function () {
-                smallImg += '<li class="thumnail">' +
-                    '<button type="button">' +
+                setImg += '<li class="swiper-slide">' +
                     '<img src="' + $(this).find('img').attr('src') + '" alt="' + $(this).find('img').attr('alt') + '">' +
-                    '</button>' +
-                    '</li>'
+                    '</li>';
             })
-            $('.left-wrap__img--small').html(smallImg);
-            $('li.thumnail:first-child').addClass('selected');
+            $('.left_thumb').html(setImg);
+            $('.big_thumb > ul').html(setImg);
+            // 썸네일 첫번째 이미지 선택
+            //$('.left_thumb li:first-child').addClass('selected');
 
-            $('.right-wrap__company .name').text($('#categoryIdx').text());
-            $('.title-wrap h2').text($('#form-list01').val());
-            if ($('input[name="price_open"]:checked').val() == 0) {
-                $('#default-modal-preview02 .product-detail .right-wrap__title p.price').text($('.select-group__dropdown.price_open .dropdown__title').text());
+            // 상품명 상단에 카테고리 노출
+            //$('.prod_detail_top .name .tag').text($('#categoryIdx').text());
+            $('.prod_detail_top .name h4').text($('#form-list01').val());
+
+            // 상품가격
+            if ($('input[name="price_exposure"]:checked').val() == 0) {
+                $('.prod_detail_top .info p').text($('.select-group__dropdown p:first-child').text());
             } else {
-                $('#default-modal-preview02 .product-detail .right-wrap__title p.price').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
+                $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
             }
+
+            // 상품코드 노출
             if ($('input[name="product_code"]').val() != '') {
-                $('#default-modal-preview02 dd.preview_product_code').text($('input[name="product_code"]').val());
+                $('.prod_detail_top dd.preview_product_code').text($('input[name="product_code"]').val());
             } else {
                 $('.preview_product_code').parent().hide();
             }
 
+            // 상품 상세 내용
+            if (!editer || typeof editer === 'undefined') {
+                init_editor();
+            } else {
+                $('#state_preview_modal .product-detail__img-area').html(editer.html.get());
+            }
+
+            if (requiredCnt == 0) {
+                $('.right-wrap__selection').css('display', 'none');
+            } else {
+                $('.right-wrap__selection').html(htmlText);
+            }
+
             var htmlText = "";
             var requiredCnt = 0;
-            $('#order_options li.form__list-wrap').each(function (i, el) {
+            $('#optsArea > div.flex').each(function (i, el) {
                 required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
 
-                htmlText += '<div class="dropdown" style="width: 576px">' +
+                /*htmlText += '<div class="dropdown" style="width: 576px">' +
                     '<p class="dropdown__title">' +
                     $('#option-name_0' + (i+1)).val() +' 선택' +
-                    '('
+                    '('*/
                 if(required == 1) {
                     requiredCnt ++;
-                    htmlText += '필수';
+                    //htmlText += '필수';
                 } else {
-                    htmlText += '선택';
+                    //htmlText += '선택';
                 }
-                htmlText += ')' +
+                /*htmlText += ')' +
                     '</p>' +
                     '<ul class="dropdown__wrap">' ;
                 $(el).find('ul.option_value_wrap li.item__input-wrap').each(function (y, eli) {
@@ -2659,14 +2839,8 @@
                         '</li>';
                 });
                 htmlText += '</ul>' +
-                    '</div>';
+                    '</div>';*/
             })
-
-            if (requiredCnt == 0) {
-                $('.right-wrap__selection').css('display', 'none');
-            } else {
-                $('.right-wrap__selection').html(htmlText);
-            }
 
             htmlText = '';
             i = 1;
@@ -2706,11 +2880,6 @@
             })
             $('#default-modal-preview02 dd.previce_delivery').text(shipping.slice(0, -2));
             $('#default-modal-preview02 .previce_title').text($('#form-list01').val());
-            if (!editer || typeof editer === 'undefined') {
-                init_editor();
-            } else {
-                $('#default-modal-preview02 .product-detail__img-area').html(editer.html.get());
-            }
 
             if ($('input[name="order-info01"]:checked').val() == 1) {
                 $('#default-modal-preview02 .order-info_1 .order-info__desc').text($('#pay_notice').val());
@@ -2742,6 +2911,96 @@
             modalOpen('#state_preview_modal');
         }
 
+        const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
+            slidesPerView: 'auto',
+            direction: "vertical",
+            spaceBetween: 8,
+        });
+
+        // thismonth_con01
+        const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            thumbs: {
+                swiper: detail_thumb_list,
+            },
+        });
+
+
+        // 옵션값 추가
+        $('body').on('click', '.input__add-btn', function () {
+            if ($(this).is('.input__del-btn')) {
+                var valueWrap = $(this).parents('.option_value_wrap');
+                var isLast = $(this).parents('.item__input-wrap').is(':last-child')
+
+                $(this).parents('.item__input-wrap').remove();
+
+                if (isLast) {
+                    valueWrap.find('.item__input-wrap:last').append(valueWrap.find('.input__add-btn:last').clone());
+                    valueWrap.find('.input__add-btn:last').removeClass('input__del-btn');
+                    valueWrap.find('.input__add-btn:last').html('' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800">' +
+                        '   <path d="M5 12h14"></path>' +
+                        '   <path d="M12 5v14"></path>' +
+                        '</svg>'
+                    );
+                }
+
+                if (valueWrap.find('.input__add-btn').length == 2) {
+                    valueWrap.find('.input__add-btn.input__del-btn').remove();
+                }
+            } else {
+                if ($(this).parents('.item__input-wrap').index() != 0) {
+                    $(this).parents('.item__input-wrap').find('.input__add-btn.input__del-btn').remove();
+                }
+
+                $(this).addClass('input__del-btn');
+                $(this).html('<i class="ico__delete24"><span class="a11y">삭제</span></i>');
+
+                var clone = $(this).parents('.item__input-wrap').clone();
+                clone.find('input[name="option-property_name"]').val('');
+                clone.find('input[name="option-price"]').val('0');
+                clone.append(clone.find('.input__add-btn').clone());
+                clone.find('.input__add-btn:last').removeClass('input__del-btn');
+                clone.find('.input__add-btn:last').html('' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800">' +
+                    '   <path d="M5 12h14"></path>' +
+                    '   <path d="M12 5v14"></path>' +
+                    '</svg>'
+                );
+
+                $(this).parents('.option_value_wrap').append(clone);
+            }
+        });
+
+        function checkRemoveOption(optionIdx) {
+            $('#alert-modal07 button.button--solid').data('option_idx', optionIdx);
+            ;openModal('#alert-modal07');
+        }
+
+        // 옵션 삭제 모달
+        function checkRemoveOption( optionIdx ) {
+            $('#del_con_modal button.btn-primary').data('option_idx', optionIdx);
+            modalOpen('#del_con_modal');
+        }
+
+        // 옵션 삭제
+        $('#del_con_modal button.btn-primary').on('click', function () {
+
+            var optionIdx = $(this).data('option_idx');
+
+            $('#optsArea div.optNum' + optionIdx).remove();
+
+            var num = 0;
+            $('#optsArea > div').each(function() {
+                num = parseInt( num + 1 );
+                $(this).find('.shrink-0 p').text('옵션 ' + num);
+            });
+
+            oIdx = parseInt( oIdx - 1 );
+            modalClose('#del_con_modal');
+        });
+
         // 옵션순서 변경 모달
         function sortOption() {
             sortList = '';
@@ -2764,31 +3023,6 @@
             $('#sortable').html(sortList)
             modalOpen('#change_order_modal');
         }
-
-        // 옵션 삭제 모달
-        function checkRemoveOption( optionIdx ) {
-            $('#del_con_modal button.btn-primary').data('option_idx', optionIdx);
-            modalOpen('#del_con_modal');
-        }
-
-        // 옵션 삭제
-        $('#del_con_modal button.btn-primary').on('click', function () {
-
-            var optionIdx = $(this).data('option_idx');
-
-            $('#optsArea div.optNum' + optionIdx).remove();
-
-            var num = 0;
-            $('#optsArea > div').each(function() {
-                num = parseInt( num + 1 );
-                console.log( parseInt( num ) );
-                $(this).find('.shrink-0 p').text('옵션 ' + num);
-            });
-
-            oIdx = parseInt( oIdx - 1 );
-            console.log( oIdx );
-            modalClose('#del_con_modal');
-        });
 
         // 옵션 순서 변경
         $('#change_order_modal .btn-primary').click(function () {
@@ -2863,7 +3097,7 @@
                 alert('상품 이미지를 등록해주세요.');
                 $('#form-list02').focus();
                 return;
-            } else if ($('.list-item--selected.active').length == 0) {
+            } else if ($('.w-full .text-primary.active').length == 0) {
                 alert('상품 카테고리를 등록해주세요.');
                 $('.category__list-item.step1').focus();
                 return;
@@ -2871,15 +3105,15 @@
                 alert('가격을 등록해주세요.');
                 $('#product-price').focus();
                 return;
-            } else if ($('[name="payment"]:checked').length == 0) {
+            } else if ($('[name="price_exposure3"]:checked').length == 0) {
                 alert('결제방식을 선택해주세요.');
-                $('#payment').focus();
+                $('#price_exposure05').focus();
                 return;
             } else if ($('.shipping-wrap__add.active').length == 0) {
                 alert('배송방법을 선택해주세요.');
                 $('.shipping-wrap__add').focus();
                 return;
-            } else if (editer.html.get() == '<!DOCTYPE html><html><head><title></title></head><body></body></html>') {
+            } else if (editer.html.get() == '') {
                 alert('상품 상세 내용을 입력해주세요.');
                 editer.events.focus();
                 return;
@@ -2894,23 +3128,23 @@
             var form = new FormData();
             form.append("reg_type", regType);
 
-            form.append("name", $('#form-list01[name="name"]').val());
+            form.append("name", $('#form-list01').val());
 
             for (var i = storedFiles.length - 1; i >= 0; i--) {
                 form.append('files[]', storedFiles[i]);
             }
 
             var property = '';
-            $('.list__desc.property .select-group__result li').map(function () {
+            $('#property .select-group__result div').map(function () {
                 property += $(this).data('sub_idx') + ",";
             })
-            form.append("category_idx", $('.list-item--selected.active span').data('category_idx'));
+            form.append("category_idx", $('.w-full .text-primary span').data('category_idx'));
             form.append("property", property.slice(0, -1));
             form.append('price', $('#product-price').val());
-            form.append('is_price_open',$('input[name="price_open"]:checked').val());
-            form.append('is_new_product', $('input[name="is_new_product"]:checked').val());
-            form.append('price_text', $('.select-group__dropdown.price_open .dropdown__title').text());
-            form.append('pay_type',$('input[name="payment"]:checked').val());
+            form.append('is_price_open',$('input[name="price_exposure"]:checked').val());
+            form.append('is_new_product', $('input[name="price_exposure2"]:checked').val());
+            form.append('price_text', $('.select-group__dropdown .dropdown__title').text());
+            form.append('pay_type',$('input[name="price_exposure3"]:checked').val());
 
             if ($('input[name="payment"]').val() == 4) {
                 form.append('pay_type_text', $('input[name="payment_text"]').val());
@@ -2936,14 +3170,14 @@
             form.append('order_content', $('#order_content').val());
 
             @if(Route::current()->getName() == 'product.modify')
-                form.append('productIdx', $('#modifyBtn').data('idx'));
+            form.append('productIdx', $('#modifyBtn').data('idx'));
 
-                if (deleteImage.length > 0) {
-                    form.append('removeImage', deleteImage);
-                }
+            if (deleteImage.length > 0) {
+                form.append('removeImage', deleteImage);
+            }
             @endif
 
-            attachmentList = '';
+                attachmentList = '';
 
             $('.product-img__add').map(function () {
                 if($(this).data('idx') != undefined) {
@@ -2956,13 +3190,13 @@
             }
 
             var data = new Array();
-            $('#order_options li.form__list-wrap').each(function (i, el) {
+            $('#optsArea .form__list-wrap').each(function (i, el) {
                 var option = new Object();
                 option.required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
                 option.optionName = $('#option-name_0' + (i+1)).val();
 
                 var valueArray = new Array();
-                $(el).find('ul.option_value_wrap li.item__input-wrap').each(function (y, eli) {
+                $(el).find('.item__input-wrap').each(function (y, eli) {
                     var value = new Object();
                     value.propertyName = $(eli).find('input[name="option-property_name"]').val();
                     value.price = $(eli).find('input[name="option-price"]').val();
