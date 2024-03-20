@@ -78,7 +78,7 @@ class MagazineController extends BaseController
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
 
-        return view('magazine.news-detail', $data);
+        return view(getDeviceType().'magazine.news-detail', $data);
     }
 
     public function magazineList(Request $request) {
