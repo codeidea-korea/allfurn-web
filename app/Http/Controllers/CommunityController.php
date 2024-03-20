@@ -131,7 +131,7 @@ class CommunityController extends BaseController
         if ($data['idx']) {
             $data['detail'] = $this->communityService->getArticleDetail($idx);
         }
-        return view('community.write', $data);
+        return view(getDeviceType().'community.write', $data);
     }
 
     /**
