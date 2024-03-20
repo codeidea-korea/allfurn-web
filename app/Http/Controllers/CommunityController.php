@@ -100,7 +100,7 @@ class CommunityController extends BaseController
 
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
-        return view('community.detail', $data);
+        return view(getDeviceType().'community.detail', $data);
     }
 
     /**
