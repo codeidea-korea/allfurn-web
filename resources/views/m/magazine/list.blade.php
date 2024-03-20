@@ -7,22 +7,16 @@
     <section class="sub_section sub_section_top thismonth_con01">
         <div class="line_common_banner">
             <ul class="swiper-wrapper">
-                <li class="swiper-slide" style="background-image:url('/img/banner_img_01.png')">
-                    <a href="javascript:;">
-                        <div class="txt_box type02">
-                            <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                            <span>매달 5일과 15일에 게시됩니다.</span>
-                        </div>
-                    </a>
-                </li>
-                <li class="swiper-slide" style="background-color:#6D5C64; ">
-                    <a href="javascript:;">
-                        <div class="txt_box">
-                            <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                            <span>매달 5일과 15일에 게시됩니다.</span>
-                        </div>
-                    </a>
-                </li>
+                @foreach($banners as $banner)
+                    <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
+                        <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                            <div class="txt_box type02">
+                                <p>{{ $banner->subtext1 }}</p>
+                                <span>{{ $banner->subtext2 }}</span>
+                            </div>
+                        </a>
+                    </li>
+                @endforeach
             </ul>
             <div class="count_pager"><b>1</b> / 12</div>
         </div>
@@ -39,33 +33,15 @@
                 </div>
             </div>
             <ul class="news_list">
-                <li><a href="javascript:;">
-                    <div class="tit">소비자 유치 총력…한샘‧현대리바트, AS 경쟁 가속</div>
-                    <div class="desc">6일 관련 업계에 따르면, 한샘과 현대리바트 AS 서비스 </div>
-                    <span>2023.10.05</span>
-                </a></li>
-                <li><a href="javascript:;">
-                    <div class="tit">소비자 유치 총력…한샘‧현대리바트, AS 경쟁 가속</div>
-                    <div class="desc">6일 관련 업계에 따르면, 한샘과 현대리바트 AS 서비스 </div>
-                    <span>2023.10.05</span>
-                </a></li>
-                <li><a href="javascript:;">
-                    <div class="tit">소비자 유치 총력…한샘‧현대리바트, AS 경쟁 가속</div>
-                    <div class="desc">6일 관련 업계에 따르면, 한샘과 현대리바트 AS 서비스 </div>
-                    <span>2023.10.05</span>
-                </a></li>
-                <li><a href="javascript:;">
-                    <div class="tit">소비자 유치 총력…한샘‧현대리바트, AS 경쟁 가속</div>
-                    <div class="desc">6일 관련 업계에 따르면, 한샘과 현대리바트 AS 서비스 </div>
-                    <span>2023.10.05</span>
-                </a></li>
-                <li><a href="javascript:;">
-                    <div class="tit">소비자 유치 총력…한샘‧현대리바트, AS 경쟁 가속</div>
-                    <div class="desc">6일 관련 업계에 따르면, 한샘과 현대리바트 AS 서비스 </div>
-                    <span>2023.10.05</span>
-                </a></li>
+                @foreach($articles as $item)
+                    <li><a href="/magazine/daily/detail/{{ $item->idx }}">
+                        <div class="tit">{{ $item->title }}</div>
+                        <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 140, $end = '...') !!}</div>
+                        <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                    </a></li>
+                @endforeach
             </ul>
-            <a href="/daily_news.php" class="btn btn-line4 mt-7">더보기</a>
+            <a href="/magazine/daily" class="btn btn-line4 mt-7">더보기</a>
             
         </div>
     </section>
@@ -79,18 +55,46 @@
             </div>
             <div class="sub_desc mb-5">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</div>
             <ul class="furniture_news">
+                @foreach ( $furnitureNewsList as $item )
                 <li>
-                    <div class="img_box"><a href="javascrsipt:;"><img src="/img/furniture_thumb.png" alt=""></a></div>
+                    <div class="img_box">
+                        <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                            @if($item->content)
+                                    @php
+                                        $tmp = '';
+                                        $pos = strpos($item->content, '<img src=', 0);
+                                        
+                                        if ( $pos !== false ) {
+                                            
+                                            $pos_from = strpos($item->content, 'https', $pos);
+                                            $pos_to = strpos($item->content, '>', $pos_from);
+                                            $sub = substr($item->content, $pos_from, $pos_to);
+                                            $image_end = strpos($sub, '.jpg');
+                                            
+                                            if ($image_end) {
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            } else {
+                                                $image_end = strpos($sub, '.png');
+                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            }
+                                            
+                                        }
+                                    @endphp
+                                    <img src="{{ $tmp ? $tmp : '' }}" alt="">
+                                @endif
+                        </a>
+                    </div>
                     <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">한국국제가구 및 인테리어 산업대전</div>
-                            <div class="desc">올해 가구 사업자에게 주는 혜댁</div>
-                            <span>2023.10.05</span>
+                        <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                            <div class="tit">{{ $item->title }}</div>
+                            <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
+                            <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
                         </a>
                     </div>
                 </li>
+                @endforeach
             </ul>
-            <a href="./furniture_news.php" class="btn btn-line4 mt-7">더보기</a>
+            <a href="/magazine/furniture" class="btn btn-line4 mt-7">더보기</a>
         </div>
     </section>
 
@@ -108,42 +112,17 @@
                 </div>
             </div>
             <ul class="magazine_list">
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스설치 물류의 선도기업 (주)바로스</div>
-                            <b>2023.10.05</b>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                            <b>2023.10.05</b>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                    <a href="javascript:;">
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                            <b>2023.10.05</b>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
-                <li>
-                    <div class="txt_box">
-                        <a href="javascript:;">
-                            <div class="tit">설치 물류의 선도기업 (주)바로스</div>
-                            <b>2023.10.05</b>
-                        </a>
-                    </div>
-                    <div class="img_box"><a href="javascript:;"><img src="/img/magazine_thumb.png" alt=""></a></div>
-                </li>
+                @foreach ($list as $row)
+                    <li>
+                        <div class="txt_box">
+                            <a href="/magazine/detail/{{$row->idx}}">
+                                <div class="tit">{{$row->title}}</div>
+                                <b>{{ Carbon\Carbon::parse($row->register_time)->format('Y.m.d') }}</b>
+                            </a>
+                        </div>
+                        <div class="img_box"><a href="/magazine/detail/{{$row->idx}}"><img src="{{$row->image_url}}" alt=""></a></div>
+                    </li>
+                @endforeach
             </ul>
         </div>
     </section>
@@ -155,11 +134,82 @@
     const line_common_banner = new Swiper(".line_common_banner", {
         slidesPerView: 1,
         spaceBetween: 0,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
         pagination: {
             el: ".line_common_banner .count_pager",
             type: "fraction",
         }
     });
+
+    $('.search_box input').keydown(function (event) {
+        if(event.key === "Enter") {
+            window.location.href = "/magazine/daily?keyword=" +  $(this).val();
+        }
+    });
+
+    $(".search_box button").on('click', function() {
+        window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
+    });
+
+    // 매거진 스크롤 로딩
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !loading) {
+            loadMagazineList();
+        }
+    });
+
+    let loading = false;
+    let currentPage = 1;
+    function loadMagazineList() {
+        loading = true;
+
+        $.ajax({
+            url: '/magazine/list',
+            method: 'GET',
+            data: { 
+                'offset': ++currentPage,
+            }, 
+            success: function(result) {
+                displayMagazineList(result.list);
+            },
+            error : function() {
+                currentPage--;
+            },
+            complete : function () {
+                loading = false;
+            }
+        })
+    }
+
+    function displayMagazineList(data) {
+        
+        data.forEach(function(magazine) {
+            $(".magazine_list").append(
+            '<li>'+
+            '   <div class="txt_box">'+
+            '       <a href="/magazine/detail/' + magazine.idx + '">'+
+            '           <div class="tit">' + magazine.title + '</div>'+
+            '           <b>' + formatDate(magazine.register_time) + '</b>'+
+            '       </a>'+
+            '   </div>'+
+            '   <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>'+
+            '</li>'
+            );
+        })
+    }
+
+    function formatDate(date) {
+        const dateObject = new Date(date);
+
+        const year = dateObject.getFullYear().toString().substr(-2);
+        const month = ("0" + (dateObject.getMonth() + 1)).slice(-2);
+        const day = ("0" + dateObject.getDate()).slice(-2);
+
+        return year + "." + month + "." + day;
+    }
 
    
 </script>

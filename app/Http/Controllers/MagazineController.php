@@ -33,7 +33,12 @@ class MagazineController extends BaseController
         //가구 소식
         $params['board_name'] = '가구 소식';
         $params['offset'] = 0;
-        $params['limit'] = 3;
+        
+        if(getDeviceType() == "m.") {
+            $params['limit'] = 1;
+        } else {
+            $params['limit'] = 3;
+        }
 
         $furnitureNewsList = $this->communityService->getArticleList($params);
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
