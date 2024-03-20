@@ -48,13 +48,7 @@
 </div>
 <div class="chatting_list" style="overflow-y: scroll;">
 
-    @foreach($chatting as $chat)
-    <div class="date"><span>{{ $chat->message_register_day }} {{ $day[$chat->message_register_day_of_week] }}요일</span></div>
-    <div class="chatting {{ $chat->arrow }}">
-        <div class="chat_box">{!! $chat->contentHtml !!}</div>
-        <div class="timestamp">{{ $chat->message_register_times }}</div>
-    </div>
-    @endforeach
+    {!! $chattingHtml !!}
     <!--
     <div class="chatting left">
         <div class="chat_box">상품 문의드립니다.</div>

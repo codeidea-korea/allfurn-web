@@ -159,7 +159,7 @@ class MessageService
         
         $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
-            ->orderBy('AF_message_room.register_time', 'DESC')
+            ->orderBy('AF_message.register_time', 'DESC')
             ->offset($offset)
             ->limit($limit)
             ->select('AF_message.*'
@@ -167,17 +167,14 @@ class MessageService
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
                 , DB::raw("DAYOFWEEK(AF_message.register_time) AS message_register_day_of_week")
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') AS message_register_day")
-                , DB::raw("'' as contentHtml")
             );
             
-        // if (isset($params['keyword']) && !empty($params['keyword'])) {
-        //     $chatting->where(function($query) use($params) {
-        //         $query->whereRaw('IF(AF_message.type=3,AF_message.content->"$.text",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "product",AF_message.content->"$.name",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "product",AF_message.content->"$.price",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "order",AF_message.content->"$.order_group_code",AF_message.content) LIKE "%'.$params['keyword'].'%"');
-        //     });
-        // }
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+             $chatting->where(function($query) use($params) {
+                 $query->whereRaw('AF_message_room.room_name LIKE "%'.$params['keyword'].'%"')
+                     ->orWhereRaw('AF_message.content LIKE "%'.$params['keyword'].'%"');
+             });
+        }
         
         return $chatting->get();
     }
