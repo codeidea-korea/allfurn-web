@@ -122,12 +122,23 @@ class HomeService
             ->where('AF_product_md.is_delete', 0)
             ->where('AF_product_md.is_open', 1)
             ->orderby('idx', 'desc')->first();
-        $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true);
+
+        $md_product_interest = array();
         $theme_name_list = [];
-        foreach($md_product_info as $theme){
+        $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true);
+        foreach ($md_product_info as $key => $theme) {
             array_push($theme_name_list, $theme['th_name']);
+            foreach ($theme['groups'] as $key => $goods) {
+                $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
+                    ->where('product_idx', $goods['mdp_gidx'])
+                    ->where('user_idx', Auth::user()->idx)
+                    ->first();
+                $md_product_interest[$goods['mdp_gidx']] = $tmpInterest->interest;
+            }
         }
+        $data['md_product_info'] = $md_product_info;
         $data['md_product_ad_theme_list'] = $theme_name_list;
+        $data['md_product_interest'] = $md_product_interest;
 
         // 인기 브랜드
         $data['popularbrand_ad'] = Banner::select('AF_banner_ad.*', 
