@@ -30,7 +30,13 @@
 </div>
 <script>
     $('.search_box input').keydown(function (event) {
-        if (event.which === 13 && validateKeyword($(this).val())) { 
+        if (event.which === 13 && $(this).val()) {
+            window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
+        }
+    });
+
+    $(".search_box button").on('click', function() {
+        if($(".search_box input").val()){
             window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
         }
     });

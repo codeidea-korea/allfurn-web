@@ -57,7 +57,7 @@ class MagazineController extends BaseController
         $params['keyword'] = $request->keyword ? $request->keyword : "";
 
         $data = $this->communityService->getArticleList($params);
-        return view('magazine.dailyNews', $data);
+        return view(getDeviceType().'magazine.dailyNews', $data);
     }
 
     public function furnitureNews() {
@@ -65,7 +65,7 @@ class MagazineController extends BaseController
         $params['board_name'] = '가구 소식';
 
         $data = $this->communityService->getArticleList($params);
-        return view('magazine.furnitureNews', $data);
+        return view(getDeviceType().'magazine.furnitureNews', $data);
     }
 
     public function newsDetail(int $idx) {
@@ -78,7 +78,7 @@ class MagazineController extends BaseController
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
 
-        return view('magazine.news-detail', $data);
+        return view(getDeviceType().'magazine.news-detail', $data);
     }
 
     public function magazineList(Request $request) {
@@ -96,7 +96,7 @@ class MagazineController extends BaseController
         // TODO: TODO: 카테고리 생성된 후 변경 
         $data['article']['board_name'] = '카테고리 없음';
 
-        return view('magazine.simple-detail', $data);
+        return view(getDeviceType().'magazine.simple-detail', $data);
         // return view('magazine.detail', $data);
     }
 }

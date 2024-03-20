@@ -1,11 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.app_m')
 
 @section('content')
-@include('layouts.header')
-
+@include('layouts.header_m')
 
 <div id="content">
-    <section class="sub_section_bot community_detail">
+
+    <div class="detail_mo_top">
+        <div class="inner">
+            <a class="back_img" href="javascript:history.back();"><svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg></a>
+        </div>
+    </div>
+
+    <section class="community_detail">
         <div class="inner">
             <div class="title">
                 <div class="tag">
@@ -24,68 +30,68 @@
             <div class="content">
                 {!! $article->content !!}
             </div>
-            <div class="bottom">
-                <div class="link_box">
-                    <button class="btn zzim_btn" data-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
-                    <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
-                </div>
-                <div class="comment_box">
-                    <h6>댓글 {{ count($comments) }}</h6>
-                    <div class="comment_list">
-                        @foreach ($comments as $comment)
-                            <div class="comment_item {{ $comment['depth'] == 2 ? 'recomment_item' : '' }}"  data-id="{{ $comment['idx'] }}">
-                                <div class="name">
-                                    <p>
-                                        <b>{{$comment['writer']}}</b>
-                                        {{$comment['diff_time']}}
-                                    </p>
-                                    <div class="more_btn">
-                                            <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                                            <div>
-                                                @if($comment['user_idx'] == auth()->user()->idx)
-                                                    <a href="javascript:;" onclick="deleteComment({{ $comment['idx'] }})">삭제</a>
-                                                @else
-                                                    <a href="javascript:;" onclick="setReportedCommentInfoAndModalOpen({{ $comment['idx'] }}, {{ $comment['company_idx'] }}, '{{ $comment['company_type'] }}')">신고하기</a>
-                                                @endif
-                                        </div>
+        </div>
+        <div class="bottom">
+            <div class="link_box">
+                <button class="btn zzim_btn" data-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
+                <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+            </div>
+            <div class="comment_box">
+                <h6>댓글 {{ count($comments) }}</h6>
+                <div class="comment_list">
+                    @foreach ($comments as $comment)
+                        <div class="comment_item {{ $comment['depth'] == 2 ? 'recomment_item' : '' }}"  data-id="{{ $comment['idx'] }}">
+                            <div class="name">
+                                <p>
+                                    <b>{{$comment['writer']}}</b>
+                                    {{$comment['diff_time']}}
+                                </p>
+                                <div class="more_btn">
+                                    <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
+                                    <div>
+                                        @if($comment['user_idx'] == auth()->user()->idx)
+                                            <a href="javascript:;" onclick="deleteComment({{ $comment['idx'] }})">삭제</a>
+                                        @else
+                                            <a href="javascript:;" onclick="setReportedCommentInfoAndModalOpen({{ $comment['idx'] }}, {{ $comment['company_idx'] }}, '{{ $comment['company_type'] }}')">신고하기</a>
+                                        @endif
                                     </div>
                                 </div>
-                                <div class="comm">
-                                    {{---- 게시판이 비밀 댓글이 설정된 경우 게시글의 작성자만 모든 댓글에 내용을 확인할 수 있다. 다만, 댓글을 작성한 작성자의 경우 본인의 댓글과 작성자가 작성한 대댓글은 확인할 수 있다. ----}}
-                                    @if(!$comment['is_secret_reply'] || ($comment['is_secret_reply'] && (
-                                            ($article->user_idx == auth()->user()->idx)
-                                            || ($comment['user_idx'] == auth()->user()->idx)
-                                            || ($comment['depth'] == 2 && $comment['user_idx'] == $article->user_idx && $comment['parent_user_idx'] == auth()->user()->idx)
-                                        )
-                                    ))
-                                        {{$comment['content']}}
-                                    @else
-                                        비밀 댓글입니다.
-                                    @endif
-                                </div>
-                                @if ($comment['depth'] == 1)
-                                    <div class="recomm">
-                                        <button class="recomm_btn">
-                                            <svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> 답글 쓰기
-                                        </button>
-                                        <div class="recomm_form">
-                                            <p><svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> {{$comment['writer']}} 님에게 답글 쓰는 중</p>
-                                            <div class="comment_form">
-                                                <input type="text" class="input-form" placeholder="답글을 입력해주세요." data-parent-id="{{ $comment['idx'] }}">
-                                                <button class="btn btn-line4 nohover comment_cancel">취소</button>
-                                                <button class="btn btn-primary" disabled>등록</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="comm">
+                                {{---- 게시판이 비밀 댓글이 설정된 경우 게시글의 작성자만 모든 댓글에 내용을 확인할 수 있다. 다만, 댓글을 작성한 작성자의 경우 본인의 댓글과 작성자가 작성한 대댓글은 확인할 수 있다. ----}}
+                                @if(!$comment['is_secret_reply'] || ($comment['is_secret_reply'] && (
+                                        ($article->user_idx == auth()->user()->idx)
+                                        || ($comment['user_idx'] == auth()->user()->idx)
+                                        || ($comment['depth'] == 2 && $comment['user_idx'] == $article->user_idx && $comment['parent_user_idx'] == auth()->user()->idx)
+                                    )
+                                ))
+                                    {{$comment['content']}}
+                                @else
+                                    비밀 댓글입니다.
                                 @endif
                             </div>
-                        @endforeach
-                    </div>
+                            @if ($comment['depth'] == 1)
+                                <div class="recomm">
+                                    <button class="recomm_btn">
+                                        <svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> 답글 쓰기
+                                    </button>
+                                    <div class="recomm_form">
+                                        <p><svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> {{$comment['writer']}} 님에게 답글 쓰는 중</p>
+                                        <div class="comment_form">
+                                            <input type="text" class="input-form" placeholder="답글을 입력해주세요." data-parent-id="{{ $comment['idx'] }}">
+                                            <button class="btn btn-line4 nohover comment_cancel">취소</button>
+                                            <button class="btn btn-primary" disabled>등록</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
-                <div class="comment_form" id="new_comment">
-                    <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
-                    <button class="btn btn-primary" disabled>등록</button>
-                </div>
+            </div>
+            <div class="comment_form">
+                <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
+                <button class="btn btn-primary" disabled>등록</button>
             </div>
         </div>
     </section>
@@ -137,13 +143,15 @@
             </div>
         </div>
     </div>
+
 </div>
-    
+
 <script>
+
+    // 답글쓰기 버튼 클릭 시
     $('.comment_list .recomm_btn').on('click',function(){
         $(this).next('.recomm_form').toggleClass('active')
     })
-
     $('.comment_list .comment_cancel').on('click',function(){
         $(this).parents('.recomm_form').toggleClass('active')
     })
@@ -186,7 +194,7 @@
                     $("#new_comment button").attr('disabled', true);
                 },
                 success : function (result) {
-                    if(result.result == "success") {
+                    if(result.result === "success") {
                         location.reload();
                     }
                 },
@@ -206,7 +214,7 @@
             method: 'DELETE',
             url: '/community/comment/' + idx,
             success : function (result) {
-                if(result.result == "success") {
+                if(result.result === "success") {
                     $("#delete_comment-modal .py-4").html('<b>삭제 완료되었습니다.</b>')
                     modalOpen("#delete_comment-modal");    
                 }
@@ -269,5 +277,6 @@
         document.body.removeChild(dummy);
         modalOpen('#share_article-modal');
     });
+
 </script>
 @endsection
