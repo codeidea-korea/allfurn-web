@@ -54,11 +54,30 @@ class MessageController extends BaseController
         $this->messageService->readRoomAlarmCount($data['room_idx']);
         $data['company'] = $this->messageService->getCompany($params);
         $data['chatting'] = $this->messageService->getChatting($params);
+        $data['chattingCount'] = $this->messageService->getChattingCount($params);
         $data['day'] = ["일","월","화","수","목","금","토"];
         $pushParams = [
             'company_idx' => $data['company']->idx,
             'company_type' => $data['company']->company_type,
         ];
+        $data['chattingHtml'] = '';
+        $lastCommunicatedDate = '';
+        
+        if(isset($data['chatting'])) {
+            foreach($data['chatting'] as $key => $chat) {
+                try{
+                    if($chat->message_register_day != $lastCommunicatedDate) {
+                        $lastCommunicatedDate = $chat->message_register_day;
+
+                        $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
+                    }
+                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
+                    $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
+                } catch(Exception $e) {
+                }
+            }
+        }
         
         // if ($this->messageService->hasUserPushSet($pushParams) === false) {
         //     $this->messageService->toggleCompanyPush($pushParams);
@@ -70,6 +89,69 @@ class MessageController extends BaseController
         }
 
         return view('message.message-section', $data);
+    }
+
+
+    /**
+     * 대화방 내용만 가져오기
+     * @param Request $request
+     * @return Redirector|View
+     */
+    public function getChatting(Request $request)
+    {
+        $params = $request->all();
+        if (!isset($params['room_idx'])) {
+            return response()->json([
+                'result' => 'fail',
+                'message' => 'pleeze input roomIdx.'
+            ]);
+        }
+        
+        $data['keyword'] = isset($params['keyword']) ? $params['keyword'] : '';
+        $data['room_idx'] = $params['room_idx'];
+        $this->messageService->readRoomAlarmCount($data['room_idx']);
+        $data['company'] = $this->messageService->getCompany($params);
+        $data['chatting'] = $this->messageService->getChatting($params);
+        $data['chattingCount'] = $this->messageService->getChattingCount($params);
+        $data['day'] = ["일","월","화","수","목","금","토"];
+        $pushParams = [
+            'company_idx' => $data['company']->idx,
+            'company_type' => $data['company']->company_type,
+        ];
+        $data['chattingHtml'] = '';
+        $lastCommunicatedDate = '';
+        
+        if(isset($data['chatting'])) {
+            foreach($data['chatting'] as $key => $chat) {
+                try{
+                    if($chat->message_register_day != $lastCommunicatedDate) {
+                        $lastCommunicatedDate = $chat->message_register_day;
+
+                        $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
+                    }
+                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
+                    $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
+                } catch(Exception $e) {
+                }
+            }
+        }
+        
+        // if ($this->messageService->hasUserPushSet($pushParams) === false) {
+        //     $this->messageService->toggleCompanyPush($pushParams);
+        //     $data['company']->is_alarm = 'Y';
+        // }
+        
+        if (isset($params['product_idx'])) {
+            $data['product'] = $this->messageService->getProduct($params['product_idx']);
+        }
+
+        return response()->json([
+            'result' => 'success',
+            'message' => '',
+            'data' => $data,
+            'params' => $params
+        ]);
     }
 
     /**
@@ -108,7 +190,9 @@ class MessageController extends BaseController
      * @return JsonResponse
      */
     public function sendMessage(Request $request): JsonResponse {
-        return response()->json($this->messageService->sendMessage($request));
+        return response()->json(
+            $this->messageService->sendMessage($request)
+        );
     }
 
 
