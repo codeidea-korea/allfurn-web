@@ -33,7 +33,12 @@ class MagazineController extends BaseController
         //가구 소식
         $params['board_name'] = '가구 소식';
         $params['offset'] = 0;
-        $params['limit'] = 3;
+        
+        if(getDeviceType() == "m.") {
+            $params['limit'] = 1;
+        } else {
+            $params['limit'] = 3;
+        }
 
         $furnitureNewsList = $this->communityService->getArticleList($params);
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
@@ -43,7 +48,7 @@ class MagazineController extends BaseController
         $params['limit'] = 6;
         $data = array_merge($data, $this->magazineService->list($params));
 
-        return view('magazine.list', $data);
+        return view(getDeviceType().'magazine.list', $data);
     }
 
     public function dailyNews(Request $request) {

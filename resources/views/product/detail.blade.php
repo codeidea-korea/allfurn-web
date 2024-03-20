@@ -35,12 +35,12 @@
                 <div class="txt_box">
                     <div class="name">
                         @if( $data['detail']->diff <= 30 )
-                        <div class="tag">
-                            @if( $data['detail']->diff <= 30 )
-                                <span class="new">NEW</span>
-                            @endif
-                            <span class="event">이벤트</span>
-                        </div>
+                            <div class="tag">
+                                @if( $data['detail']->diff <= 30 )
+                                    <span class="new">NEW</span>
+                                @endif
+                                <span class="event">이벤트</span>
+                            </div>
                         @endif
                         <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
                     </div>
@@ -116,6 +116,33 @@
         </div>
     </div>
     <script type="text/javascript">
+
+        const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
+            slidesPerView: 'auto',
+            direction: "vertical",
+            spaceBetween: 8,
+        });
+
+        // thismonth_con01
+        const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            thumbs: {
+                swiper: detail_thumb_list,
+            },
+        });
+
+        $(window).on('scroll load',function(e){
+            let detailTop = $('.prod_detail').offset().top;
+            let winH = $(window).height();
+
+            if(e.currentTarget.scrollY > (detailTop - (winH/2))){
+                $('.prod_detail .info_quick').addClass('active')
+            }else{
+                $('.prod_detail .info_quick').removeClass('active')
+            }
+        })
+        
         function copyUrl() {
             var dummy   = document.createElement("input");
             var text    = location.href;
