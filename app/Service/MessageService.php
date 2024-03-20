@@ -438,7 +438,7 @@ class MessageService
      * @param array $params
      * @return array
      */
-    public function toggleCompanyPush($roomIdx, array $params): array
+    public function toggleCompanyPush(array $params): array
     {
         $userPush = UserPushSet::where('user_idx', Auth::user()['idx'])
             ->where('push_type', 'T')
@@ -481,11 +481,11 @@ class MessageService
     public function reporting($params): array
     {
         $targetUser = User::where('company_idx', $params['company_idx'])
-            ->where('parent_idx', 0)
+//            ->where('parent_idx', 0)
             ->where('type', $params['company_type'])->first();
         $report = new Report;
         $report->report_type = 'M';
-        $report->target_idx = $targetUser->idx;
+        $report->target_idx = $targetUser->idx ?? 1;
         $report->reason = $params['content'];
         $report->state = 1; // 미처리
         $report->user_idx = Auth::user()['idx'];

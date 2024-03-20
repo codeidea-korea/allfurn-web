@@ -151,6 +151,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::get('/', 'MessageController@index');
     Route::get('/room/detail', 'MessageController@index');
     Route::get('/room', 'MessageController@room');
+    Route::get('/chatting', 'MessageController@getChatting');
     Route::delete('/keyword/{idx}', 'MessageController@deleteKeyword');
     Route::post('/company/push', 'MessageController@toggleCompanyPush');
     Route::post('/send', 'MessageController@sendMessage');
