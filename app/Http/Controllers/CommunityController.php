@@ -43,7 +43,7 @@ class CommunityController extends BaseController
         // 검색어 리스트
         $data['searches'] = $this->communityService->getSearchList();
         $data['popup'] = $this->communityService->popupList();
-        return view('community.community', $data);
+        return view(getDeviceType().'community.community', $data);
     }
 
     /**
