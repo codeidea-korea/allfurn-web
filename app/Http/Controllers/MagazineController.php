@@ -57,7 +57,7 @@ class MagazineController extends BaseController
         $params['keyword'] = $request->keyword ? $request->keyword : "";
 
         $data = $this->communityService->getArticleList($params);
-        return view('magazine.dailyNews', $data);
+        return view(getDeviceType().'magazine.dailyNews', $data);
     }
 
     public function furnitureNews() {
