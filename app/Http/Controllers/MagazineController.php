@@ -65,7 +65,7 @@ class MagazineController extends BaseController
         $params['board_name'] = '가구 소식';
 
         $data = $this->communityService->getArticleList($params);
-        return view('magazine.furnitureNews', $data);
+        return view(getDeviceType().'magazine.furnitureNews', $data);
     }
 
     public function newsDetail(int $idx) {
