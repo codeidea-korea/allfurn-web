@@ -186,7 +186,7 @@
             }
             pageNo = pageNo + 1;
             
-            fetch('/message/getChatting?' + new URLSearchParams(params)).then(response => {
+            fetch('/message/chatting?' + new URLSearchParams(params)).then(response => {
                 
                 if (response.ok) {
                     return response.json();
