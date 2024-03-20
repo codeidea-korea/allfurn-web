@@ -141,11 +141,34 @@
                 }
                 document.querySelector('.message__section').innerHTML = html;
                 loadEvent(idx);
-                document.querySelector('.chat-box:last-child').focus();
-                
+            
+                const pusher = new Pusher('51b26f4641d16394d3fd', {
+                cluster: 'ap3'
+                });
+
+                const roomIdx = idx;
+                var channel = pusher.subscribe('chat-' + roomIdx);
+                channel.bind('chat-event-' + roomIdx, function(messages) {
+                    console.log(JSON.stringify(messages));
+
+                    var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+                    const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
+
+                    if(messages.date != lastCommunicatedDate) {
+                        const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
+                        $('.chatting_list').html($('.chatting_list').html() + dateTag);
+                    }
+                    $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+                    
+                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+                    $('._room'+roomIdx+'LastMent').text(messages.title);
+                });
                 setTimeout(() => {
+                    document.querySelector('.chatting_list').focus();
                     $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
                 }, 100);
+                document.querySelector('.chat-box:last-child').focus();
+                
             }).catch(error => {
             })
         }
@@ -207,27 +230,6 @@
                 $(this).toggleClass('active')
                 $('.chatting_box .top_info .company_info').toggleClass('active');
             });
-            
-            const pusher = new Pusher('51b26f4641d16394d3fd', {
-            cluster: 'ap3'
-            });
-
-            var channel = pusher.subscribe('chat-' + roomIdx);
-            channel.bind('chat-event-' + roomIdx, function(messages) {
-                console.log(JSON.stringify(messages));
-
-                var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
-                const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
-
-                if(messages.date != lastCommunicatedDate) {
-                    const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
-                    $('.chatting_list').html($('.chatting_list').html() + dateTag);
-                }
-                $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
-                
-                $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-                $('._room'+roomIdx+'LastMent').text(messages.title);
-            });
         };
 
 
@@ -236,9 +238,9 @@
             document.getElementById('confirmTogglePushBtn').dataset.companyType = company_type;
             document.getElementById('confirmTogglePushBtn').dataset.companyIdx = company_idx;
             if (document.querySelector('.notification_status_txt').innerText == '알림 켜짐') {
-                document.getElementById('push-text').innerText = '해제 하시겠습니까?';
+                document.getElementById('push-text').innerText = '해제 하시겠습니까';
             } else {
-                document.getElementById('push-text').innerText = '받으시겠습니까?';
+                document.getElementById('push-text').innerText = '받으시겠습니까';
             }
             modalOpen('#alarm_on_modal');
         }
@@ -259,13 +261,12 @@
             }).then(json => {
                 if (json.result === 'success') {
                     if (json.code === 'INSERT_SUCCESS') {
-                        document.querySelector('.notification_status_txt[data-company-idx='+company_idx+']').textContent = '알림 켜짐';
-                        document.getElementById('notification_status_btn[data-company-idx='+company_idx+']').textContent = '알림끄기';
+                        document.querySelector('.notification_status_txt').innerText = '알림 켜짐';
+                        document.querySelector('.notification_status_btn').innerText = '알림끄기';
                     } else {
-                        document.querySelector('.notification_status_txt[data-company-idx='+company_idx+']').textContent = '알림 꺼짐';
-                        document.getElementById('notification_status_btn[data-company-idx='+company_idx+']').textContent = '알림켜기';
+                        document.querySelector('.notification_status_txt').innerText = '알림 꺼짐';
+                        document.querySelector('.notification_status_btn').innerText = '알림켜기';
                     }
-                    document.querySelector('.usermenu-toggle').click();
                 }
                 modalClose('#alarm_on_modal');
             })
@@ -393,7 +394,7 @@
             const btn = document.getElementById('confirmReportBtn');
             btn.dataset.companyIdx= company_idx;
             btn.dataset.companyType = company_type;
-            openModal('#declaration_modal');
+            modalOpen('#declaration_modal');
         }
 
         const writeReportContent = (ele) => {
@@ -425,7 +426,7 @@
             }).then(json => {
                 if (json.result === 'success') {
                     alert('신고되었습니다.');
-                    closeModal('#declaration_modal');
+                    modalClose('#declaration_modal');
                 }
             }).catch(error => {
             })
@@ -523,3 +524,5 @@
 
 
 @endsection
+
+@include('message.modal')
