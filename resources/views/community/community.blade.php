@@ -11,7 +11,7 @@
         <div class="inner">
             <div class="title">
                 <div class="search_box">
-                    <input type="text" class="input-form" placeholder="글 제목이나 작성자를 검색해주세요">
+                    <input type="text" class="input-form" placeholder="글 제목이나 작성자를 검색해주세요" value={{ isset($keyword) ? $keyword : ''}}>
                     <button><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#news_search"></use></svg></button>
                     <div class="absolute w-full p-4 bg-white rounded-md z-999 shadow-md search_list hidden">
                         <div class="text-sm flex justify-between py-3">

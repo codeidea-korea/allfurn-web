@@ -7,8 +7,8 @@
                     <li class="swiper-slide" style="background-image:url({{ preImgUrl() }}{{$banner->attachment->folder}}/{{$banner->attachment->filename}})">
                         <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
                             <div class="txt_box">
-                                <p></p>
-                                <span></span>
+                                <p>{{$banner->subtext1}}</p>
+                                <span>{{$banner->subtext2}}</span>
                             </div>
                         </a>
                     </li>    
