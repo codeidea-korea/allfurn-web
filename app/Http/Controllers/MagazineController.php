@@ -43,7 +43,7 @@ class MagazineController extends BaseController
         $params['limit'] = 6;
         $data = array_merge($data, $this->magazineService->list($params));
 
-        return view('magazine.list', $data);
+        return view(getDeviceType().'magazine.list', $data);
     }
 
     public function dailyNews(Request $request) {
