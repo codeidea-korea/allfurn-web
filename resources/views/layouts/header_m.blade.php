@@ -49,7 +49,7 @@
             <li class=""><a href="./wholesaler.php">도매업체</a></li>
             <li class=""><a href="./thismonth.php"><span>이벤트를 모아보는</span>이달의딜</a></li>
             <li class=""><a href="/magazine">뉴스정보</a></li>
-            <li class=""><a href="./community.php">커뮤니티</a></li>
+            <li class=""><a href="/community">커뮤니티</a></li>
         </ul>
 
 
@@ -67,9 +67,11 @@
     </ul>
 </div>
 
-<div id="prod_regist_btn" class="">
-    <a href="./prod_registration.php">상품<br>등록</a>
-</div>
+@if(!Str::contains(url()->current(), ['/community']))
+    <div id="prod_regist_btn" class="">
+        <a href="./prod_registration.php">상품<br>등록</a>
+    </div>
+@endif
 
 <!-- 검색 -->
 <div class="modal" id="search_modal">

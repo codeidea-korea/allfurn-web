@@ -43,7 +43,7 @@ class CommunityController extends BaseController
         // 검색어 리스트
         $data['searches'] = $this->communityService->getSearchList();
         $data['popup'] = $this->communityService->popupList();
-        return view('community.community', $data);
+        return view(getDeviceType().'community.community', $data);
     }
 
     /**
@@ -100,7 +100,7 @@ class CommunityController extends BaseController
 
         // 댓글 가져오기
         $data['comments'] = $data['article'] ? $this->communityService->getArticleComments($idx) : [];
-        return view('community.detail', $data);
+        return view(getDeviceType().'community.detail', $data);
     }
 
     /**
@@ -131,7 +131,7 @@ class CommunityController extends BaseController
         if ($data['idx']) {
             $data['detail'] = $this->communityService->getArticleDetail($idx);
         }
-        return view('community.write', $data);
+        return view(getDeviceType().'community.write', $data);
     }
 
     /**
