@@ -26,7 +26,7 @@
             </div>
             <div class="bottom">
                 <div class="link_box">
-                    <button class="btn zzim_btn" articeId="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
+                    <button class="btn zzim_btn" data-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
                     <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                 </div>
                 <div class="comment_box">
