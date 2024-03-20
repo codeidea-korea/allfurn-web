@@ -150,11 +150,15 @@ class MessageService
 
         $offset = 0;
         $limit = 30;
+
         if(isset($params['offset'])) {
             $offset = $params['offset'];
         }
         if(isset($params['limit'])) {
             $limit = $params['limit'];
+        }
+        if(isset($params['pageNo'])) {
+            $offset = ($params['pageNo'] - 1) * $limit;
         }
         
         $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
@@ -176,7 +180,36 @@ class MessageService
              });
         }
         
-        return $chatting->get();
+        return $chatting->get()->reverse()->values();
+    }
+    
+
+    /**
+     * 채팅 수량 가져오기
+     * @param array $params
+     * @return mixed
+     */
+    public function getChattingCount(array $params) {
+        
+        $user = Auth::user();
+        
+        $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
+            ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
+            ->select('AF_message.*'
+                , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
+                , DB::raw("DAYOFWEEK(AF_message.register_time) AS message_register_day_of_week")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') AS message_register_day")
+            );
+            
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+             $chatting->where(function($query) use($params) {
+                 $query->whereRaw('AF_message_room.room_name LIKE "%'.$params['keyword'].'%"')
+                     ->orWhereRaw('AF_message.content LIKE "%'.$params['keyword'].'%"');
+             });
+        }
+        
+        return $chatting->count();
     }
 
 
@@ -475,7 +508,39 @@ class MessageService
             $contentHtml = $chatContent['text'];
         } else if($chatContent['type'] == 'attach') {
             // 첨부
-            $contentHtml = '<div class="flex flex-col"><img src="'.$chatContent['imgUrl'].'"></div>';
+            $extension = explode('.', $chatContent['imgUrl']);
+            $extension = end($extension);
+            $extension = strtolower($extension);
+
+            if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+                // 이미지
+                return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+                            <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
+                            <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
+                        </div>';
+            } else if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+                // PDF
+                $contentHtml = '<div class="flex gap-3 items-center"><a href="'.$chatContent['imgUrl'].'" target="_blank">
+                                    <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text text-stone-400"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                                    </div>
+                                    <div class="font-medium w-[260px]">
+                                        <span class="text-sm text-stone-400">PDF</span>
+                                        <p class="truncate">'.$chatContent['originName'].'</p>
+                                    </div></a>
+                                </div>';
+            } else if(in_array($extension, ['zip', 'egg', 'tar', 'tar.gz', '7zip'])) {
+                // 압축 파일
+                $contentHtml = '<div class="flex gap-3 items-center"><a href="'.$chatContent['imgUrl'].'" target="_blank">
+                                    <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-archive text-stone-400"><circle cx="15" cy="19" r="2"/><path d="M20.9 19.8A2 2 0 0 0 22 18V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h5.1"/><path d="M15 11v-1"/><path d="M15 17v-2"/></svg>
+                                    </div>
+                                    <div class="font-medium w-[260px]">
+                                        <span class="text-sm text-stone-400">ZIP</span>
+                                        <p class="truncate">'.$chatContent['originName'].'</p>
+                                    </div></a>
+                                </div>';
+            }
         } else if($chatContent['type'] == 'inquiry') {
             // 상담
             $contentHtml = '<div class="flex flex-col">
@@ -490,30 +555,36 @@ class MessageService
                                 </div>';
         } else if($chatContent['type'] == 'order') {
             // 주문
-            $contentHtml = '<div class="flex flex-col">
-                                    <span>[ 거래가 확정되었습니다. ] '.$chatContent['order_group_code'].'</span>
-                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['order_group_code'].'\'">
-                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
-                                            바로가기
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                        </p>
-                                    </button>
+            $contentHtml = '<div class="font-medium w-[260px]">
+                                    <p class="truncate">주문번호 : '.$chatContent['order_group_code'].'</p>
+                                    <div class="mt-2">
+                                        <p class="text-sm font-basic">거래가 확정되었습니다.</p>
+                                        <p class="text-sm font-basic">상품이 준비중이니 기다려주세요!</p>
+                                    </div>
+                                    <a href="/product/detail/'.$chatContent['order_group_code'].'" class="block w-full mt-2 py-3 border rounded-md text-primary text-center hover:bg-stone-50">주문 현황 보러가기</a>
                                 </div>';
+
         } else if($chatContent['type'] == 'estimate') {
             // 견적
-            $contentHtml = '<div class="flex flex-col">
-                                    <span>[ 견적문의가 도착했습니다. ]</span>
-                                    <button class="flex flex-col mt-1" click="location.href=\'/estimate/detail/'.$chatContent['estimate_idx'].'\'">
-                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
-                                            바로가기
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                        </p>
-                                    </button>
-                                </div>';
+            $contentHtml = '<a href="/estimate/detail/'.$chatContent['estimate_idx'].'">
+                                <p class="font-bold">상품 문의드립니다.</p>
+                                <div class="flex gap-3 items-center mt-2">
+                                    <img src="'.$chatContent['product_image'].'" alt="" class="border rounded-md object-cover w-[48px] h-[48px] shrink-0">
+                                    <!-- 이미지 없을 때 -->
+                                    <!-- <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-off text-stone-400"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" x2="6" y1="13.5" y2="21"/><line x1="18" x2="21" y1="12" y2="15"/><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></svg>
+                                    </div> -->
+                                    <div class="font-medium w-[260px]">
+                                        <p class="truncate">'.$chatContent['product_name'].'</p>
+                                        <span class="text-sm text-stone-400">'.$chatContent['memo'].'</span>
+                                    </div>
+                                </div>
+                            </a>';
         }
+
         return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
                     <div class="chat_box">' . $contentHtml . '</div>
-                    <div class="timestamp">' . date('H:i') . '</div>
+                    <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                 </div>';
     }
 
@@ -549,6 +620,8 @@ class MessageService
             $message->content = json_encode((object)[
                 'type' => 'attach',
                 'imgUrl' => $imageUrl,
+                'ext' => pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION),
+                'originName' => $image->getClientOriginalName()
             ], JSON_UNESCAPED_UNICODE); ;
             $message->save();
         }
@@ -608,12 +681,14 @@ class MessageService
             $message->save();
         }
 
-        // TODO: pusher service 로 이동
+        setlocale(LC_ALL, "ko_KR.utf-8");
         event(new ChatMessage($message->room_idx, 
             $message->content, 
             $this->convertHtmlContentByMessage($message),
             date('Y년 m월 d일'),
-            date('H:i')
+            substr(date('H:i:s'), 0, 5),
+            ["일","월","화","수","목","금","토"][date('w', time())],
+            $this->getRoomMessageTitle($message)
         ));
         
         return [

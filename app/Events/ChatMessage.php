@@ -18,14 +18,18 @@ class ChatMessage implements ShouldBroadcast
     public $contentHtml;
     public $date;
     public $times;
+    public $dateOfWeek;
+    public $title;
 
-    public function __construct($roomIdx, $message, $contentHtml, $date, $times)
+    public function __construct($roomIdx, $message, $contentHtml, $date, $times, $dateOfWeek, $title)
     {
         $this->roomIdx = $roomIdx;
         $this->message = $message;
         $this->contentHtml = $contentHtml;
         $this->date = $date;
         $this->times = $times;
+        $this->dateOfWeek = $dateOfWeek;
+        $this->title = $title;
     }
 
     public function broadcastOn()

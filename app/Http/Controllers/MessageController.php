@@ -54,6 +54,7 @@ class MessageController extends BaseController
         $this->messageService->readRoomAlarmCount($data['room_idx']);
         $data['company'] = $this->messageService->getCompany($params);
         $data['chatting'] = $this->messageService->getChatting($params);
+        $data['chattingCount'] = $this->messageService->getChattingCount($params);
         $data['day'] = ["일","월","화","수","목","금","토"];
         $pushParams = [
             'company_idx' => $data['company']->idx,
@@ -65,11 +66,11 @@ class MessageController extends BaseController
         if(isset($data['chatting'])) {
             foreach($data['chatting'] as $key => $chat) {
                 try{
-                    if($chat->message_register_day == $lastCommunicatedDate) {
+                    if($chat->message_register_day != $lastCommunicatedDate) {
                         $lastCommunicatedDate = $chat->message_register_day;
 
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
-                            $chat->message_register_day.' '.$day[$chat->message_register_day_of_week].'요일</span></div>';
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
                     }
                     $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
@@ -111,6 +112,7 @@ class MessageController extends BaseController
         $this->messageService->readRoomAlarmCount($data['room_idx']);
         $data['company'] = $this->messageService->getCompany($params);
         $data['chatting'] = $this->messageService->getChatting($params);
+        $data['chattingCount'] = $this->messageService->getChattingCount($params);
         $data['day'] = ["일","월","화","수","목","금","토"];
         $pushParams = [
             'company_idx' => $data['company']->idx,
@@ -122,11 +124,11 @@ class MessageController extends BaseController
         if(isset($data['chatting'])) {
             foreach($data['chatting'] as $key => $chat) {
                 try{
-                    if($chat->message_register_day == $lastCommunicatedDate) {
+                    if($chat->message_register_day != $lastCommunicatedDate) {
                         $lastCommunicatedDate = $chat->message_register_day;
 
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
-                            $chat->message_register_day.' '.$day[$chat->message_register_day_of_week].'요일</span></div>';
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
                     }
                     $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;

@@ -16,6 +16,10 @@
                         <svg style="cursor: pointer;" onclick="searchKeyword($('#chatting_keyword').val())"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
                         <input type="text" placeholder="업체명 및 대화 내용을 검색해주세요." id="chatting_keyword" name="keyword" value="{{ request()->get('keyword') }}">
                     </div>
+                    <div class="flex items-center gap-2 ml-3 talk_search_arrow">
+                        <button class="active"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg></button>
+                        <button ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
+                    </div>
                 </div>
                 <ul class="message_list">
                     @foreach($rooms as $room)
@@ -28,7 +32,7 @@
                                 {{ $room->name }}
                                 <span>{{ $room->last_message_time }}</span>
                             </h3>
-                            <div class="desc">{{ $room->last_message_content }}</div>
+                            <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
                         </div>
                     </li>
                     @endforeach
@@ -42,179 +46,16 @@
                         <p>대화 목록에서 업체를 선택하여 메세지를 확인하세요.</p>
                     </div>
                 </div>
-
-                <!-- 채팅방 클릭 후 
-                <div class="top_info">
-                    <div class="top_search">
-                        <a href="javascript:;" class="prev_btn">
-                            <svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg>
-                        </a>
-                        <div class="input_form">
-                            <svg><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                            <input type="text" placeholder="대화 내용을 검색해주세요.">
-                        </div>
-                    </div>
-                    <div class="title">
-                        <div class="img_box">
-                            <img src="/img/profile_img.svg" alt="">
-                        </div>
-                        <h5>갑부가구산업</h5>
-                        <span>알림 꺼짐</span>
-                        <button class="company_info_btn"><img src="/img/icon/filter_arrow.svg" alt=""></button>
-                    </div>
-                    <div class="right_link">
-                        <button class="right_search_btn"><svg><use xlink:href="/img/icon-defs.svg#Search_dark"></use></svg></button>
-                        <div class="more_btn">
-                            <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                            <div>
-                                <a href="javascript:;">알림켜기</a>
-                                <a href="javascript:;">신고하기</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company_info">
-                        <div class="add">경기 포천시 가산면 정금로 476번길 134-34 갑부가구산업</div>
-                        <p>010-0000-0000</p>
-                        <a href="/company_detail.php">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
-                    </div>
-                </div>
-                <div class="chatting_list">
-                    <div class="date"><span>2023년 11월 15일 수요일</span></div>
-                    <div class="chatting right">
-                        <div class="chat_box">상품 문의드립니다.</div>
-                        <div class="timestamp">18:38</div>
-                    </div>
-                    <div class="chatting left">
-                        <div class="chat_box">상품 문의드립니다.</div>
-                        <div class="timestamp">18:38</div>
-                    </div>
-                    <div class="chatting right">
-                        <div class="chat_box">               
-                            <div class="flex flex-col">
-                                <span>[ 견적문의가 도착했습니다 ]</span>             
-                                <button class="flex flex-col mt-1">
-                                    <p class="bg-primary p-2 rounded-md flex items-center text-white">
-                                        바로가기
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                    </p>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="timestamp">18:38</div>
-                    </div>
-                </div>
-                <div class="message_form">
-                    <div class="file_box">
-                        <input type="file" id="img_file">
-                        <label for="img_file">
-                            <img class="mx-auto" src="/img/member/img_icon.svg" alt="">
-                        </label>
-                    </div>
-                    <input type="text" class="input-form" placeholder="메시지를 입력해주세요.">
-                    <button class="btn btn-primary">전송</button>
-                </div>
-            -->
+                <!-- Ajax include -->
             </div>
         </div>
     </section>
-
-</div>
-
-<div id="msg_alarm" class="modal">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="modal__desc">
-                        <p class="modal__text">
-                            해당 업체의 메세지 알림을 <span id="push-text">해제 하시겠습니까?</span>
-                        </p>
-                    </div>
-                    <div class="modal__buttons">
-                        <a onclick="closeModal('#msg_alarm')" role="button" class="modal__button modal__button--gray"><span>취소</span></a>
-                        <a onclick="toggleAlarmPush()" role="button" id="confirmTogglePushBtn" class="modal__button"><span>확인</span></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="msg_report-submit" class="modal">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="modal__desc">
-                        <p class="modal__text">
-                            해당 업체 신고가 완료되었습니다.
-                        </p>
-                    </div>
-                    <div class="modal__buttons">
-                        <input type="button" onclick="closeModal('#msg_report-submit')" class="modal__button" value="확인" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="msg_report" class="modal modal-conversation">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container" style="width:480px;">
-                <div class="modal-box__content">
-                    <div class="header">
-                        <p>업체 신고</p>
-                    </div>
-                    <div class="content">
-                        <div class="content__inner">
-                            <p class="modal-box__heading">해당 업체를 신고하시겠습니까?</p>
-                            <div class="textfield">
-                                <textarea rows="10" class="textarea textfield__input" name="content" id="content" placeholder="신고 사유를 입력해주세요." onkeyup="writeReportContent()"></textarea>
-                                <div class="textarea__count"><span class="textarea__count-meta" id="contentCount">0</span><i>/</i><span>100</span></div>
-                            </div>
-                            <div class="modal-box__bottom">
-                                <input type="button" class="button" id="confirmReportBtn" disabled data-company-idx="" data-company-type="" onclick="report(this)" value="완료" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footer"></div>
-                    <div class="modal-close" onclick="closeModal('#msg_report')">
-                        <button type="button" class="modal__close-button"><span class="a11y">닫기</span></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="msg_imgviewer" class="modal">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="header"></div>
-                    <div class="content">
-                        <!-- 가로로 긴 이미지 -->
-                        <!-- <div class="content__inner" style="background-image: url(/images/temp/msg_imgviewer_1.png);"></div> -->
-                        <!--// 가로로 긴 이미지 -->
-                        <!-- 세로로 긴 이미지 -->
-                        <div class="content__inner" id="image_content" style="background-image: url(/images/temp/msg_imgviewer_2.png);"></div>
-                        <!--// 세로로 긴 이미지 -->
-                    </div>
-                    <div class="footer"></div>
-                    <div class="modal-close" onclick="closeModal('#msg_imgviewer')">
-                        <button type="button" class="modal__close-button"><div class="ico__delete14"><span class="a11y">닫기</span></div></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
     <!-- pusher -->
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
-    Pusher.logToConsole = true;
+    Pusher.logToConsole = false;
     </script>
 
     <script>
@@ -273,7 +114,7 @@
         }
 
         {{-- 대화방 내용 가져오기 --}}
-        const visibleRoom = idx => {
+        const visibleRoom = (idx) => {
             
             let params = {room_idx: idx}
             
@@ -284,6 +125,7 @@
             if (document.getElementById('chatting_keyword')) {
                 params['keyword'] = document.getElementById('chatting_keyword').value;
             }
+            pageNo = 1;
             
             fetch('/message/room?' + new URLSearchParams(params)).then(response => {
                 
@@ -300,9 +142,55 @@
                 document.querySelector('.message__section').innerHTML = html;
                 loadEvent(idx);
                 document.querySelector('.chat-box:last-child').focus();
+                
+                setTimeout(() => {
+                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+                }, 100);
             }).catch(error => {
             })
+        }
+        var pageNo = 1;
+        const getChatting = (idx) => {
             
+            let params = {room_idx: idx, pageNo: pageNo}
+            
+            @if($product_idx)
+                params['product_idx'] = '{{ $product_idx }}';
+            @endif
+                
+            if (document.getElementById('chatting_keyword')) {
+                params['keyword'] = document.getElementById('chatting_keyword').value;
+            }
+            pageNo = pageNo + 1;
+            
+            fetch('/message/getChatting?' + new URLSearchParams(params)).then(response => {
+                
+                if (response.ok) {
+                    return response.json();
+                }
+                
+                throw new Error('Sever Error');
+                
+            }).then(data => {
+                if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
+                    document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
+                }
+                const $btntag = $('#btnGetChatMore')[0].outerHTML;
+                $('#btnGetChatMore').remove();
+                document.querySelector('.chatting_list').innerHTML = $btntag + data.data.chattingHtml + document.querySelector('.chatting_list').innerHTML;
+                if(data.data.chattingCount > (pageNo-1)*30) {
+                    $('#btnGetChatMore').show();
+                } else {
+                    $('#btnGetChatMore').hide();
+                }
+                loadEvent(idx);
+                document.querySelector('.chat-box:last-child').focus();
+                
+                setTimeout(() => {
+                    $('.chatting_list').scrollTop(0);
+                }, 100);
+            }).catch(error => {
+            })
         }
         const loadEvent = (roomIdx) => {
                     
@@ -325,10 +213,8 @@
             });
 
             var channel = pusher.subscribe('chat-' + roomIdx);
-            channel.bind('chat-event-' + roomIdx, function(data) {
-                console.log(JSON.stringify(data));
-
-                const messages = JSON.parse(data);
+            channel.bind('chat-event-' + roomIdx, function(messages) {
+                console.log(JSON.stringify(messages));
 
                 var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
                 const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
@@ -338,6 +224,9 @@
                     $('.chatting_list').html($('.chatting_list').html() + dateTag);
                 }
                 $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+                
+                $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+                $('._room'+roomIdx+'LastMent').text(messages.title);
             });
         };
 
@@ -351,7 +240,7 @@
             } else {
                 document.getElementById('push-text').innerText = '받으시겠습니까?';
             }
-            openModal('#msg_alarm');
+            modalOpen('#alarm_on_modal');
         }
 
         {{-- 알림 켜기/끄기 처리 --}}
@@ -370,27 +259,25 @@
             }).then(json => {
                 if (json.result === 'success') {
                     if (json.code === 'INSERT_SUCCESS') {
-//                        document.querySelector('.alarm').classList.remove('alarm--off');
-//                        document.querySelector('.alarm').classList.add('alarm--on');
                         document.querySelector('.notification_status_txt[data-company-idx='+company_idx+']').textContent = '알림 켜짐';
                         document.getElementById('notification_status_btn[data-company-idx='+company_idx+']').textContent = '알림끄기';
                     } else {
-//                        document.querySelector('.alarm').classList.remove('alarm--on');
-//                        document.querySelector('.alarm').classList.add('alarm--off');
                         document.querySelector('.notification_status_txt[data-company-idx='+company_idx+']').textContent = '알림 꺼짐';
                         document.getElementById('notification_status_btn[data-company-idx='+company_idx+']').textContent = '알림켜기';
                     }
                     document.querySelector('.usermenu-toggle').click();
-                    closeModal('#msg_alarm');
                 }
+                modalClose('#alarm_on_modal');
             })
         }
 
         {{-- 이미지 팝업 띄우기 --}}
+        /*
         const openImageModal = imageUrl => {
             document.getElementById('image_content').setAttribute('style', 'background-image: url('+imageUrl+');')
             openModal('#msg_imgviewer');
         }
+        */
 
         {{-- 이미지 버튼 클릭 시 --}}
         const selectImage = () => {
@@ -506,11 +393,12 @@
             const btn = document.getElementById('confirmReportBtn');
             btn.dataset.companyIdx= company_idx;
             btn.dataset.companyType = company_type;
-            openModal('#msg_report');
+            openModal('#declaration_modal');
         }
 
-        const writeReportContent = () => {
-            if (document.getElementById('content').value) {
+        const writeReportContent = (ele) => {
+            if (ele.value) {
+                document.getElementById('reportReasonTextCount').innerText = ele.value.length;
                 document.getElementById('confirmReportBtn').removeAttribute('disabled');
             } else {
                 document.getElementById('confirmReportBtn').setAttribute('disabled', 'disabled');
@@ -527,7 +415,7 @@
                 body: JSON.stringify({
                     company_idx: elem.dataset.companyIdx,
                     company_type: elem.dataset.companyType,
-                    content: document.getElementById('content').value,
+                    content: document.getElementById('alltalkReportContent').value,
                 })
             }).then(response => {
                 if (response.ok) {
@@ -537,20 +425,11 @@
             }).then(json => {
                 if (json.result === 'success') {
                     alert('신고되었습니다.');
-                    closeModal('#msg_report');
+                    closeModal('#declaration_modal');
                 }
             }).catch(error => {
             })
         }
-
-        $(document).on('keypress keyup', '#content', function(e) {
-            if ($(this).val().length <= 100) {
-                $('#contentCount').text($(this).val().length);
-                return true;
-            } else {
-                return false;
-            }
-        });
 
         {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
         document.getElementById('keyword').addEventListener('keyup', e => {
@@ -639,34 +518,6 @@
         @if ($product_idx && $room_idx)
             visibleRoom({{ $room_idx }});
         @endif
-
-        const sendMessageHelpCenter = room_idx => {
-            fetch('/message/send/message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{csrf_token()}}'
-                },
-                body: JSON.stringify({
-                    'company_idx': 1,
-                    'company_type': 'A',
-                    'templateType' : 'CS',
-                    'templateDetailType': 'CS'
-                })
-            }).then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw new Error('Sever Error');
-            }).then(json => {
-                if (json.result === 'success') {
-                    visibleRoom(room_idx)
-                } else {
-                    alert(json.message);
-                }
-            }).catch(error => {
-            })
-        }
     </script>
 
 
