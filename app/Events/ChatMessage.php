@@ -13,28 +13,28 @@ class ChatMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $roomIdx;
     public $message;
+    public $contentHtml;
+    public $date;
+    public $times;
 
-    public function __construct($message)
+    public function __construct($roomIdx, $message, $contentHtml, $date, $times)
     {
+        $this->roomIdx = $roomIdx;
         $this->message = $message;
-//        $this->dontBroadcastToCurrentUser();
+        $this->contentHtml = $contentHtml;
+        $this->date = $date;
+        $this->times = $times;
     }
 
     public function broadcastOn()
     {
-        return new PrivateChannel('chat-' . $this->message['room_idx']);
+        return ['chat-' . $this->roomIdx];
     }
 
     public function broadcastAs()
     {
-        return 'chat-event-' . $this->message['room_idx'];
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'message' => $this->message['content']
-        ];
+        return 'chat-event-' . $this->roomIdx;
     }
 }

@@ -468,6 +468,58 @@ class MessageService
         ];
     }
 
+    public function convertHtmlContentByMessage($chat){
+        $contentHtml = '';
+        $user = Auth::user();
+
+        $chatContent = json_decode($chat->content, true);
+        if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
+            // 단순 텍스트
+            $contentHtml = $chatContent['text'];
+        } else if($chatContent['type'] == 'attach') {
+            // 첨부
+            $contentHtml = '<div class="flex flex-col"><img src="'.$chatContent['imgUrl'].'"></div>';
+        } else if($chatContent['type'] == 'inquiry') {
+            // 상담
+            $contentHtml = '<div class="flex flex-col">
+                                    <span>[ 상담문의가 도착했습니다 ] '.$chatContent['productName'].'</span>
+                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                        <img src="'.$chatContent['productThumbnailURL'].'">
+                                            바로가기
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                        </p>
+                                    </button>
+                                </div>';
+        } else if($chatContent['type'] == 'order') {
+            // 주문
+            $contentHtml = '<div class="flex flex-col">
+                                    <span>[ 거래가 확정되었습니다. ] '.$chatContent['order_group_code'].'</span>
+                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['order_group_code'].'\'">
+                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                            바로가기
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                        </p>
+                                    </button>
+                                </div>';
+        } else if($chatContent['type'] == 'estimate') {
+            // 견적
+            $contentHtml = '<div class="flex flex-col">
+                                    <span>[ 견적문의가 도착했습니다. ]</span>
+                                    <button class="flex flex-col mt-1" click="location.href=\'/estimate/detail/'.$chatContent['estimate_idx'].'\'">
+                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                            바로가기
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                        </p>
+                                    </button>
+                                </div>';
+        }
+        return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+                    <div class="chat_box">' . $contentHtml . '</div>
+                    <div class="timestamp">' . date('H:i') . '</div>
+                </div>';
+    }
+
     /**
      * 메시지 전송
      * @param Request $request
@@ -559,20 +611,18 @@ class MessageService
             $message->save();
         }
 
-        event(new ChatMessage([
-            'room_idx' => $params['room_idx'],
-            'type' => $params['room_idx'],
-            'sender_company_type' => $user['type'],
-            'sender_company_idx' => $user['company_idx'],
-            'user_idx' => $user['idx'],
-            'content' => $params['message'],
-            'created_at' => date('Y-m-d H:i:s')
-        ]));
+        // TODO: pusher service 로 이동
+        event(new ChatMessage($message->room_idx, 
+            $message->content, 
+            $this->convertHtmlContentByMessage($message),
+            date('Y년 m월 d일'),
+            date('H:i')
+        ));
         
         return [
             'result' => 'success',
-            'message' => '',
-            'roomIdx' => $params['room_idx']
+            'message' => $message->content,
+            'roomIdx' => $message->room_idx
         ];
     }
 

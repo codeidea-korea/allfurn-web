@@ -327,6 +327,18 @@
             var channel = pusher.subscribe('chat-' + roomIdx);
             channel.bind('chat-event-' + roomIdx, function(data) {
                 console.log(JSON.stringify(data));
+
+                const messages = JSON.parse(data);
+                
+                var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+                const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
+
+                if(messages.date != lastCommunicatedDate) {
+                    lastCommunicatedDate = messages.date;
+                    const dateTag = '<div class="date"><span>'+lastCommunicatedDate+' '+messages.dateOfWeek+'요일</span></div>';
+                    $('.chatting_list').html($('.chatting_list').html() + dateTag);
+                }
+                $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
             });
         };
 
