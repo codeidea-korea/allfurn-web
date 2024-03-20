@@ -1,4 +1,4 @@
-@if(!Str::contains(url()->current(), ['/magazine/daily/detail', '/magazine/furniture/detail']))
+@if(!Str::contains(url()->current(), ['/magazine/daily/detail', '/magazine/furniture/detail', '/magazine/detail']))
     <footer>
         <div class="inner">
             <ul class="fnb flex">

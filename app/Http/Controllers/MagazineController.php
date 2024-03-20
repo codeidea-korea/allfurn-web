@@ -96,7 +96,7 @@ class MagazineController extends BaseController
         // TODO: TODO: 카테고리 생성된 후 변경 
         $data['article']['board_name'] = '카테고리 없음';
 
-        return view('magazine.simple-detail', $data);
+        return view(getDeviceType().'magazine.simple-detail', $data);
         // return view('magazine.detail', $data);
     }
 }
