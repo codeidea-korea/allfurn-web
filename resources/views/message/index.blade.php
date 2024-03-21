@@ -3,7 +3,6 @@
 @section('content')
 @include('layouts.header')
 
-
 <div id="content">
     <section class="sub_section message_con01">
         <div class="inner">
@@ -21,7 +20,9 @@
                         <button ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
                     </div>
                 </div>
-                <ul class="message_list">
+                <ul class="message_list _chatting_rooms">
+                    <!-- Ajax include -->
+
                     @foreach($rooms as $room)
                     <li onclick="searchKeywordRoom({{ $room->idx }})">
                         <div class="img_box">
@@ -66,6 +67,7 @@
             };
         });
         
+        /*
         {{-- 검색어 전체 삭제 --}}
         const deleteAllKeyword = () => {
             if(confirm('전체 삭제하시겠습니까?')) {
@@ -112,6 +114,7 @@
             // TODO: 요청사항 있을시 ajax 로 변경해야함 -> UX 가 새로고침이 아님
             location.href='/message?' + new URLSearchParams({keyword:keyword});
         }
+        */
 
         {{-- 대화방 내용 가져오기 --}}
         const visibleRoom = (idx) => {
@@ -285,19 +288,6 @@
             document.getElementById('image').click();
         }
 
-        {{-- 미리보기 이미지 삭제 --}}
-        const deletePreviewImage = () => {
-            document.getElementById('image').value = "";
-            document.getElementById('preview').removeAttribute('style');
-            document.querySelector('.section__bottom').classList.remove('section__bottom--photo', 'section__bottom--photo-text');
-            document.getElementById('previewWrap').classList.remove('textfield--photo');
-            document.querySelector('[name=chat_message]').classList.remove('message-input--photo', 'message-input--photo-text');
-            document.getElementById('selectedImagePreview').classList.add('hidden');
-            if (document.getElementById('chat_message').value.length < 1) {
-                document.getElementById('submitBtn').setAttribute('disabled', 'true');
-            }
-        }
-
         function keyupMessage(e) {
             if (window.event.keyCode === 13) { // enter key
                 submitMessage(document.getElementById('submitBtn'));
@@ -350,39 +340,6 @@
             }).catch(error => {
                 delete elem.dataset.processing;
             })
-        }
-
-        {{-- 대화방 리스트 카운트 업데이트 --}}
-        const reloadRoomsCount = () => {
-            let room_idxes = [];
-            const entries = document.querySelectorAll('.aside-list__item').entries();
-            for(const entry of entries) {
-                room_idxes.push(entry[1].dataset.roomIdx);
-            }
-            fetch('/message/rooms/count?' + new URLSearchParams({room_idxes: room_idxes}), {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{csrf_token()}}'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Sever Error');
-            }).then(json => {
-                if (json.result === 'success') {
-                    for(const room of json.list) {
-                        document.querySelector('.aside-list__item[data-room-idx="'+room.room_idx+'"] .new').classList.remove('hidden');
-                        document.querySelector('.aside-list__item[data-room-idx="'+room.room_idx+'"] .new').textContent = room.unread_count;
-                    }
-                }
-            }).catch(error => {
-            })
-        }
-
-        {{-- 상품 삭제 --}}
-        const deleteRoomProduct = elem => {
-            location.href='/message';
         }
 
         {{-- 대화방 키워드 검색하기 --}}
@@ -456,6 +413,7 @@
             }
         })
 
+        /*
         {{-- 이미지 미리보기 --}}
         $(document).on('change', '#image', function(evt) {
              if (evt.currentTarget.files.length > 0) { // 이미지 선택
@@ -480,6 +438,7 @@
                  }
              }
         });
+        */
 
         {{-- 메시지 입력 시 --}}
         $(document).on('keyup', '#chat_message', function(evt) {
@@ -510,11 +469,6 @@
             $('.chatting_box .chatting_intro').addClass('hidden')
             $(this).addClass('active').siblings().removeClass('active')
         })
-        
-        
-
-        {{-- 대화방 리스트 카운트 업데이트 --}}
-        setInterval(() => reloadRoomsCount(), 10000);
 
         @if ($product_idx && $room_idx)
             visibleRoom({{ $room_idx }});
