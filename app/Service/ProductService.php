@@ -540,6 +540,20 @@ class ProductService
             $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
+        // if (isset($param['location']) && !empty($param['location'])) {
+        //     $location = explode('|', $param['location']);
+        //     $list->where(function ($query) use ($location) {
+        //         foreach ($location as $key => $loc) {
+        //             $clause = $key == 0 ? 'where' : 'orWhere';
+        //             $query->$clause('AF_wholesale.business_address', 'like', "$loc%");
+        //             if (!empty($relativeTables)) {
+        //                 $this->filterByRelationship($query, 'AF_wholesale.business_address',
+        //                     $relativeTables);
+        //             }
+        //         }
+        //     });
+        // }
+
         return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
     }
 
