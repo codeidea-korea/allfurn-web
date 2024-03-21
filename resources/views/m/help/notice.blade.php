@@ -68,6 +68,9 @@
             @endif
         </div>
     </div>
+
+    {{-- 올펀 이용 가이드 모달 --}}
+    @include('m.help.index-ext')
 </div>
 <script>
     $(document).ready(function() {
