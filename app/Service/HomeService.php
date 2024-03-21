@@ -174,8 +174,10 @@ class HomeService
 
         // 할인 상품
         $data['plandiscount_ad'] = Banner::select('AF_banner_ad.*', 
-            DB::raw('
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
+            DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
+                WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
             ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));

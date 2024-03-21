@@ -90,7 +90,8 @@ class AlarmService
                     ELSE DATE_FORMAT(AF_notification.send_date, '%m월 %d일')
                 END send_date")
             );*/
-        
+
+
         $data['count'] = $logs->count();
         $data['list'] = $logs->orderBy('AF_notification.idx', 'desc')->offset($offset)->limit($limit)->get();
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
