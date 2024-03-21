@@ -1,7 +1,7 @@
 @extends('layouts.app_m')
 
 @section('content')
-@include('layouts.header_m')
+{{-- @include('layouts.header_m') --}}
 
 <div id="content">
 
