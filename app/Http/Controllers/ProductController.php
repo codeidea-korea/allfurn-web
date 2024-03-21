@@ -389,7 +389,12 @@ class ProductController extends BaseController
     public function thisMonth() {
         return $this->productService->thisMonth();
     }
-    
+
+    // 이 달의 도매 모아보기 가져오기
+    public function thisMonthDetail() {
+
+        return view('product.thisMonthDetail', []);
+    }
     
     public function getCategoryBanners() {
 

@@ -75,6 +75,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/search', 'ProductController@listBySearch');
     Route::get('/searchBar', 'ProductController@listBySearch2');
     Route::get('/thisMonth', 'ProductController@thisMonth');
+    Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
 });
 
