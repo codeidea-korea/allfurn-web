@@ -44,7 +44,7 @@
 <div class="header_category {{ ($header_depth=='like' || $header_depth=='mypage' || $header_depth=='category' || $header_depth=='prodlist') ? 'hidden' : '' }} {{ $only_quick == 'yes' ? 'hidden':'' }}">
     <div class="relative">
         <ul class="gnb flex items-center">
-            <!-- <li><button class="flex items-center category_btn"><svg><use xlink:href="/img/icon-defs.svg#Hamicon"></use></svg>카테고리</button></li> -->
+            {{-- <li><button class="flex items-center category_btn"><svg><use xlink:href="/img/icon-defs.svg#Hamicon"></use></svg>카테고리</button></li> --}}
             <li class="{{ $header_depth=='home' ? 'active':'' }}"><a href="/">홈</a></li>
             <li class="{{ $header_depth=='new_arrival' ? 'active':'' }}"><a href="/product/new">신상품</a></li>
             <li class="{{ $header_depth=='wholesaler' ? 'active':'' }}"><a href="/wholesaler">도매업체</a></li>
@@ -60,11 +60,11 @@
 
 <div class="quick_menu">
     <ul class="menu">
-        <li class="{{$header_depth=='category'?'active':'' }}"><a href="./category.php"><svg><use xlink:href="/img/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
-        <li class="{{$header_depth=='like'?'active':'' }}"><a href="./like_prod.php"><svg><use xlink:href="/img/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
-        <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="./index.php"><svg><use xlink:href="/img/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
-        <li class="{{$header_depth=='talk'?'active':'' }}"><a href="/message"><svg><use xlink:href="/img/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
-        <li class="{{$header_depth=='mypage'?'active':'' }}"><a href="/mypage/deal"><svg><use xlink:href="/img/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
+        <li class="{{$header_depth=='category'?'active':'' }}"><a href="/category.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
+        <li class="{{$header_depth=='like'?'active':'' }}"><a href="/like_prod.php"><svg><use xlink:href="/img/m/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
+        <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="/"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
+        <li class="{{$header_depth=='talk'?'active':'' }}"><a href="/message"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
+        <li class="{{$header_depth=='mypage'?'active':'' }}"><a href="/mypage/deal"><svg><use xlink:href="/img/m/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
     </ul>
 </div>
 
