@@ -247,7 +247,7 @@ class HomeService
         // 올펀패밀리
         $data['family_ad'] = FamilyAd::select('AF_family_ad.*', 
             DB::raw('
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as videoUrl'
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
             ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));

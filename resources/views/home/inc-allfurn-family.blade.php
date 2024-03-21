@@ -1,0 +1,19 @@
+<section class="main_section main_family">
+    <div class="inner">
+        <div class="main_tit mb-2 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <h3>올펀 패밀리</h3>
+            </div>
+        </div>
+        <ul class="grid grid-cols-4">
+            @foreach($data['family_ad'] as $key => $family)
+                <li>
+                    <a href='#'>
+                        <div class="img_box"><img style="width:131px" src="{{ $family->imgUrl }}" alt=""></div>
+                        <p>{{ $family->family_name }}</p>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+</section>  

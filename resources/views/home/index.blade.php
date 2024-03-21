@@ -156,39 +156,9 @@
     {{-- 할인 상품 --}}
     @include('home.inc-plan-discount')
 
+    {{-- 동영상 광고 --}}
+    @include('home.inc-video')
     
-
-    <section class="main_section video_prod">
-        <div class="inner">
-            <div class="main_tit mb-8 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>동영상으로 도매 업체/상품 알아보기</h3>
-                </div>
-            </div>
-            <div class="video_box">
-                <div class="txt_box">
-                    <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파</span></h4>
-                </div>
-                <div class="slide_box overflow-hidden">
-                    <ul class="swiper-wrapper">
-                        <li class="swiper-slide">
-                            <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
-                        </li>
-                        <li class="swiper-slide">
-                            <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
-                        </li>
-                        <li class="swiper-slide">
-                            <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="count_pager"><b>1</b> / 12</div>
-                <button class="slide_arrow type02 prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-                <button class="slide_arrow type02 next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-            </div>
-        </div>
-    </section>
-
     <section class="main_section main_board">
         <div class="inner">
             <div class="board_wrap">
@@ -281,46 +251,8 @@
         </div>
     </section>
 
-    <section class="main_section main_family">
-        <div class="inner">
-            <div class="main_tit mb-2 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>올펀 패밀리</h3>
-                </div>
-            </div>
-            <ul class="grid grid-cols-4">
-                <li>
-                    <div class="img_box"><img style="width:131px" src="./img/main/family_logo_1.png" alt=""></div>
-                    <p>조달가구</p>
-                </li>
-                <li>
-                    <div class="img_box"><img style="width:153px" src="./img/main/family_logo_2.png" alt=""></div>
-                    <p>3D사진관</p>
-                </li>
-                <li>
-                    <div class="img_box"><img style="width:148px" src="./img/main/family_logo_3.png" alt=""></div>
-                    <p>대한가구협동조합</p>
-                </li>
-                <li>
-                    <div class="img_box"><img style="width:159px" src="./img/main/family_logo_4.png" alt=""></div>
-                    <p>코펀 KOFURN</p>
-                </li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- 동영상 모달 -->
-    <div class="modal" id="video-modal">
-        <div class="modal_bg" onclick="modalClose('#video-modal')"></div>
-        <div class="modal_inner modal-auto video_wrap">
-            <button class="close_btn" onclick="modalClose('#video-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body">
-            <iframe width="1244" height="700" src="https://www.youtube.com/embed/IJT51et7owQ" title="2 시간 지브리 음악 🌍 치유, 공부, 일, 수면을위한 편안한 배경 음악 지브리 스튜디오" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-
-    
+    {{-- 올펀 패밀리 광고 --}}
+    @include('home.inc-allfurn-family')  
 </div>
 
 
