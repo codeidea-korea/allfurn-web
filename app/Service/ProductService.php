@@ -512,6 +512,9 @@ class ProductService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
+                (CASE WHEN AF_product.company_type = "W" THEN (select SUBSTRING_INDEX(aw.business_address, " ", 1) from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select SUBSTRING_INDEX(ar.business_address, " ", 1) from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as location,
                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
                 (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))

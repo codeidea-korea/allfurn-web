@@ -278,6 +278,10 @@
         return categories;
     }
 
+    function getIndexesOfSelectedLocation() {
+
+    }
+
     function displayNewProducts(productArr, target, needsEmptying) {
         if(needsEmptying) {
             target.empty();

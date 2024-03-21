@@ -337,62 +337,12 @@
         <div class="modal_body filter_body">
             <h4>소재지 선택</h4>
             <ul class="filter_list">
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_01">
-                    <label for="filter_cate_2_01">서울</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_02">
-                    <label for="filter_cate_2_02">부산</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_03">
-                    <label for="filter_cate_2_03">대구</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_04">
-                    <label for="filter_cate_2_04">인천</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_05">
-                    <label for="filter_cate_2_05">광주</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_06">
-                    <label for="filter_cate_2_06">대전</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_07">
-                    <label for="filter_cate_2_07">울산</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_08">
-                    <label for="filter_cate_2_08">세종</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_09">
-                    <label for="filter_cate_2_09">경기</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_10">
-                    <label for="filter_cate_2_10">강원</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_11">
-                    <label for="filter_cate_2_11">충청</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_12">
-                    <label for="filter_cate_2_12">전라</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_13">
-                    <label for="filter_cate_2_13">경상</label>
-                </li>
-                <li>
-                    <input type="checkbox" class="check-form" id="filter_cate_2_14">
-                    <label for="filter_cate_2_14">제주</label>
-                </li>
+                @foreach(config('constants.REGIONS.KR') as $key => $location)
+                    <li>
+                        <input type="checkbox" class="check-form" id="category__check-2-{{$key + 1}}" data-location="{{$location}}" >
+                        <label for="category__check-2-{{$key + 1}}">{{$location}}</label>
+                    </li>
+                @endforeach
             </ul>
             <div class="btn_bot">
                 <button class="btn btn-line3 refresh_btn" onclick="refreshHandle(this)"><svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg>초기화</button>

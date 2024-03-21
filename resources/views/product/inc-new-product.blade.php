@@ -9,7 +9,8 @@
         <div class="sub_filter">
             <div class="filter_box">
                 <button class="" onclick="modalOpen('#filter_category-modal')">카테고리</button>
-                <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button>
+                {{-- <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button> --}}
+                <button class="" onclick="modalOpen('#filter_location-modal')">소재지</button>
                 <button onclick="modalOpen('#filter_align-modal')">최신순</button>
             </div>
             <div class="total">전체 {{ number_format($total, 0) }}개</div>
@@ -18,8 +19,9 @@
             <div class="filter_on_box">
                 <div class="category"></div>
                 <div class="location">
-                    <span>인천 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
-                    <span>광주 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
+                    {{-- <span>인천 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
+                    <span>광주 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span> --}}
+
                 </div>
             </div>
             <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
