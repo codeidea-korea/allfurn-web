@@ -1,197 +1,62 @@
-@extends('layouts.master')
-
-@section('header')
-    @include('layouts.header.main-header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
-<div id="container" class="container" style="min-height: 100%;">
-    <div class="message">
+@include('layouts.header')
+
+
+<div id="content">
+    <section class="sub_section message_con01">
         <div class="inner">
-            <div class="message__container">
-                <div class="message__aside">
-                    <div class="content">
-                        <div class="content__head">
-                            <h2 class="content__title">올톡</h2>
-                            <div class="content__head-button">
-                                <a role="button" class="head-button list-insearch-toggle" aria-checked="{{ count($keywords) < 1 ? 'false' : 'true' }}"><div class="ico__search ico__search--gray"><span class="a11y">검색</span></div></a>
-                            </div>
-                            <div class="list-insearch" aria-hidden="{{ count($keywords) < 1 ? 'true' : 'false' }}">
-                                <a role="button" class="head-button list-insearch-close"><div class="ico__arrow--big_left24"><span class="a11y">뒤로 가기</span></div></a>
-                                <div class="textfield {{ request()->get('keyword') ? 'textfield--active' : ''}}">
-                                    <div class="textfield__icon ico__search"><span class="a11y">검색</span></div>
-                                    <input type="text" class="textfield__search" name="keyword" id="keyword" value="{{ request()->get('keyword') }}" placeholder="업체명 및 대화 내용을 검색해주세요." />
-                                    <button type="button" class="textfield__icon--delete ico__sdelete">
-                                        <span class="a11y">삭제하기</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="aside" style="overflow-y: scroll">
-                            
-                            @if(count($keywords) < 1)
-                                <!-- 검색 기록 없음 -->
-                                <div id="recent_keyword" class="list-insearch-history list-insearch-history--empty">
-                                    <div class="row">
-                                        <div class="title">최근 검색어</div>
-                                    </div>
-                                    <div class="empty">최근 검색한 내역이 없습니다.</div>
-                                </div>
-                                <!--// 검색 기록 없음 -->
-                            @else
-                                <div id="recent_keyword" class="list-insearch-history" style="position: unset; display:none">
-                                    <div class="row">
-                                        <div class="title">최근 검색어</div>
-                                        <div class="head-button"><a role="button" class="head-button" onclick="deleteAllKeyword()">전체 삭제</a></div>
-                                    </div>
-                                    @foreach($keywords as $keyword)
-                                    <div class="row">
-                                        <div onclick="searchKeyword('{{ $keyword->keyword }}')" style="cursor:pointer;">{{ $keyword->keyword }}</div>
-                                        <a role="button" href="javascript:void(0)" onclick="deleteKeyword(this)" data-idx="{{ $keyword->idx }}">
-                                            <div class="ico__delete10"><span class="a11y">삭제하기</span></div>
-                                        </a>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                            
-                            <ul class="aside-list" style="margin-bottom: 100px; overflow-y: hidden;">
-                                @if(auth()->user()->type === 'N')
-                                <li class="notice-box">
-                                    <ul>
-                                        <li><div class="ico__info"><span class="a11y">정보 아이콘</span></div>
-                                            일반 회원은 메세지 전송이 불가합니다. 마이 올펀 > 계정 관리에서 정회원 승격 요청을 진행해주세요.
-                                        </li>
-                                    </ul>
-                                </li>
-                                @endif
-                                @foreach($rooms as $room)
-                                <li class="aside-list__item" data-room-idx="{{ $room->idx }}" onclick="visibleRoom({{ $room->idx }})">
-                                    <figure class="profile"><img src="{{ $room->profile_image }}"></figure>
-                                    <div class="aside-list__content">
-                                        <div class="list__info">
-                                            <div class="title">{{ $room->name }}</div>
-                                            <div class="timestamp">
-                                                <div class="row">
-                                                    @if(strpos($room->last_message_time,":") !== false)
-                                                        <span>{{ explode(':', $room->last_message_time)[0] }}</span><span>:</span><span>{{ explode(':', $room->last_message_time)[1] }}</span>
-                                                    @else
-                                                        <span>{{ $room->last_message_time }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="list__badge">
-                                            <div class="preview">{{ $room->last_message_content }}</div>
-                                            <div class="new {{ $room->unread_count < 1 ? 'hidden' : '' }}" data-room-idx="{{ $room->idx }}">{{ $room->unread_count }}</div>
-                                        </div>
-                                    </div>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
+            <div class="list_box">
+                <div class="top_search">
+                    <a href="javascript:;">
+                        <svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg>
+                    </a>
+                    <div class="input_form">
+                        <svg style="cursor: pointer;" onclick="searchKeyword($('#chatting_keyword').val())"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
+                        <input type="text" placeholder="업체명 및 대화 내용을 검색해주세요." id="chatting_keyword" name="keyword" value="{{ request()->get('keyword') }}">
+                    </div>
+                    <div class="flex items-center gap-2 ml-3 talk_search_arrow">
+                        <button class="active"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg></button>
+                        <button ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
                     </div>
                 </div>
-                <div class="message__section">
-                    <div class="content content--empty">
-                        <div class="ico__dialogue"><span class="a11y">대화 아이콘</span></div>
-                        <div class="empty">대화 목록에서 업체를 선택하여 메세지를 확인하세요.</div>
+                <ul class="message_list">
+                    @foreach($rooms as $room)
+                    <li onclick="searchKeywordRoom({{ $room->idx }})">
+                        <div class="img_box">
+                            <img src="/img/profile_img.svg" alt="">
+                        </div>
+                        <div class="txt_box">
+                            <h3>
+                                {{ $room->name }}
+                                <span>{{ $room->last_message_time }}</span>
+                            </h3>
+                            <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            <div class="chatting_box message__section">
+                <!-- 채팅방 클릭 전 -->
+                <div class="chatting_intro">
+                    <div class="message_box">
+                        <i><svg><use xlink:href="/img/icon-defs.svg#message"></use></svg></i>
+                        <p>대화 목록에서 업체를 선택하여 메세지를 확인하세요.</p>
                     </div>
                 </div>
+                <!-- Ajax include -->
             </div>
         </div>
-        <div id="msg_alarm" class="modal">
-            <div class="modal__container">
-                <div class="modal__content">
-                    <div class="modal-box__container">
-                        <div class="modal-box__content">
-                            <div class="modal__desc">
-                                <p class="modal__text">
-                                    해당 업체의 메세지 알림을 <span id="push-text">해제 하시겠습니까?</span>
-                                </p>
-                            </div>
-                            <div class="modal__buttons">
-                                <a onclick="closeModal('#msg_alarm')" role="button" class="modal__button modal__button--gray"><span>취소</span></a>
-                                <a onclick="toggleAlarmPush()" role="button" id="confirmTogglePushBtn" class="modal__button"><span>확인</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="msg_report-submit" class="modal">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="modal__desc">
-                        <p class="modal__text">
-                            해당 업체 신고가 완료되었습니다.
-                        </p>
-                    </div>
-                    <div class="modal__buttons">
-                        <input type="button" onclick="closeModal('#msg_report-submit')" class="modal__button" value="확인" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="msg_report" class="modal modal-conversation">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container" style="width:480px;">
-                <div class="modal-box__content">
-                    <div class="header">
-                        <p>업체 신고</p>
-                    </div>
-                    <div class="content">
-                        <div class="content__inner">
-                            <p class="modal-box__heading">해당 업체를 신고하시겠습니까?</p>
-                            <div class="textfield">
-                                <textarea rows="10" class="textarea textfield__input" name="content" id="content" placeholder="신고 사유를 입력해주세요." onkeyup="writeReportContent()"></textarea>
-                                <div class="textarea__count"><span class="textarea__count-meta" id="contentCount">0</span><i>/</i><span>100</span></div>
-                            </div>
-                            <div class="modal-box__bottom">
-                                <input type="button" class="button" id="confirmReportBtn" disabled data-company-idx="" data-company-type="" onclick="report(this)" value="완료" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footer"></div>
-                    <div class="modal-close" onclick="closeModal('#msg_report')">
-                        <button type="button" class="modal__close-button"><span class="a11y">닫기</span></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>
 
-<div id="msg_imgviewer" class="modal">
-    <div class="modal__container">
-        <div class="modal__content">
-            <div class="modal-box__container">
-                <div class="modal-box__content">
-                    <div class="header"></div>
-                    <div class="content">
-                        <!-- 가로로 긴 이미지 -->
-                        <!-- <div class="content__inner" style="background-image: url(/images/temp/msg_imgviewer_1.png);"></div> -->
-                        <!--// 가로로 긴 이미지 -->
-                        <!-- 세로로 긴 이미지 -->
-                        <div class="content__inner" id="image_content" style="background-image: url(/images/temp/msg_imgviewer_2.png);"></div>
-                        <!--// 세로로 긴 이미지 -->
-                    </div>
-                    <div class="footer"></div>
-                    <div class="modal-close" onclick="closeModal('#msg_imgviewer')">
-                        <button type="button" class="modal__close-button"><div class="ico__delete14"><span class="a11y">닫기</span></div></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- pusher -->
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+    Pusher.logToConsole = false;
+    </script>
 
     <script>
         $(document).ready(function(){
@@ -244,11 +109,12 @@
 
         {{-- 대화방 리스트 검색어 찾기 --}}
         const searchKeyword = keyword => {
+            // TODO: 요청사항 있을시 ajax 로 변경해야함 -> UX 가 새로고침이 아님
             location.href='/message?' + new URLSearchParams({keyword:keyword});
         }
 
         {{-- 대화방 내용 가져오기 --}}
-        const visibleRoom = idx => {
+        const visibleRoom = (idx) => {
             
             let params = {room_idx: idx}
             
@@ -259,6 +125,7 @@
             if (document.getElementById('chatting_keyword')) {
                 params['keyword'] = document.getElementById('chatting_keyword').value;
             }
+            pageNo = 1;
             
             fetch('/message/room?' + new URLSearchParams(params)).then(response => {
                 
@@ -272,24 +139,110 @@
                 if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
                     document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
                 }
-                document.querySelector('.message__section').outerHTML = html;
+                document.querySelector('.message__section').innerHTML = html;
+                loadEvent(idx);
+            
+                const pusher = new Pusher('51b26f4641d16394d3fd', {
+                cluster: 'ap3'
+                });
+
+                const roomIdx = idx;
+                var channel = pusher.subscribe('chat-' + roomIdx);
+                channel.bind('chat-event-' + roomIdx, function(messages) {
+                    console.log(JSON.stringify(messages));
+
+                    var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+                    const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
+
+                    if(messages.date != lastCommunicatedDate) {
+                        const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
+                        $('.chatting_list').html($('.chatting_list').html() + dateTag);
+                    }
+                    $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+                    
+                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+                    $('._room'+roomIdx+'LastMent').text(messages.title);
+                });
+                setTimeout(() => {
+                    document.querySelector('.chatting_list').focus();
+                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+                }, 100);
                 document.querySelector('.chat-box:last-child').focus();
+                
             }).catch(error => {
             })
-            
         }
+        var pageNo = 1;
+        const getChatting = (idx) => {
+            
+            let params = {room_idx: idx, pageNo: pageNo}
+            
+            @if($product_idx)
+                params['product_idx'] = '{{ $product_idx }}';
+            @endif
+                
+            if (document.getElementById('chatting_keyword')) {
+                params['keyword'] = document.getElementById('chatting_keyword').value;
+            }
+            pageNo = pageNo + 1;
+            
+            fetch('/message/chatting?' + new URLSearchParams(params)).then(response => {
+                
+                if (response.ok) {
+                    return response.json();
+                }
+                
+                throw new Error('Sever Error');
+                
+            }).then(data => {
+                if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
+                    document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
+                }
+                const $btntag = $('#btnGetChatMore')[0].outerHTML;
+                $('#btnGetChatMore').remove();
+                document.querySelector('.chatting_list').innerHTML = $btntag + data.data.chattingHtml + document.querySelector('.chatting_list').innerHTML;
+                if(data.data.chattingCount > (pageNo-1)*30) {
+                    $('#btnGetChatMore').show();
+                } else {
+                    $('#btnGetChatMore').hide();
+                }
+                loadEvent(idx);
+                document.querySelector('.chat-box:last-child').focus();
+                
+                setTimeout(() => {
+                    $('.chatting_list').scrollTop(0);
+                }, 100);
+            }).catch(error => {
+            })
+        }
+        const loadEvent = (roomIdx) => {
+                    
+            // 우측 검색아이콘 클릭시
+            $('.chatting_box .right_search_btn').off().on('click',function(){
+                $('.chatting_box .top_search').addClass('active')
+            });
+            $('.chatting_box .top_search .prev_btn').off().on('click',function(){
+                $('.chatting_box .top_search').removeClass('active')
+            });
+
+            // 업체 주소
+            $('.chatting_box .company_info_btn').off().on('click',function(){
+                $(this).toggleClass('active')
+                $('.chatting_box .top_info .company_info').toggleClass('active');
+            });
+        };
 
 
         {{-- 알림 켜기/끄기 모달 띄우기 --}}
         const toggleAlarmModal = (company_type, company_idx) => {
             document.getElementById('confirmTogglePushBtn').dataset.companyType = company_type;
             document.getElementById('confirmTogglePushBtn').dataset.companyIdx = company_idx;
-            if (document.querySelector('.alarm').textContent == '알림 켜짐') {
-                document.getElementById('push-text').textContent = '해제 하시겠습니까?';
+            if (document.querySelector('.notification_status_txt').innerText == '알림 켜짐') {
+                document.getElementById('push-text').innerText = '해제 하시겠습니까';
             } else {
-                document.getElementById('push-text').textContent = '받으시겠습니까?';
+                document.getElementById('push-text').innerText = '받으시겠습니까';
             }
-            openModal('#msg_alarm');
+            modalOpen('#alarm_on_modal');
         }
 
         {{-- 알림 켜기/끄기 처리 --}}
@@ -308,27 +261,24 @@
             }).then(json => {
                 if (json.result === 'success') {
                     if (json.code === 'INSERT_SUCCESS') {
-                        document.querySelector('.alarm').classList.remove('alarm--off');
-                        document.querySelector('.alarm').classList.add('alarm--on');
-                        document.querySelector('.alarm').textContent = '알림 켜짐';
-                        document.getElementById('alarmBtn').textContent = '알림끄기';
+                        document.querySelector('.notification_status_txt').innerText = '알림 켜짐';
+                        document.querySelector('.notification_status_btn').innerText = '알림끄기';
                     } else {
-                        document.querySelector('.alarm').classList.remove('alarm--on');
-                        document.querySelector('.alarm').classList.add('alarm--off');
-                        document.querySelector('.alarm').textContent = '알림 꺼짐';
-                        document.getElementById('alarmBtn').textContent = '알림켜기';
+                        document.querySelector('.notification_status_txt').innerText = '알림 꺼짐';
+                        document.querySelector('.notification_status_btn').innerText = '알림켜기';
                     }
-                    document.querySelector('.usermenu-toggle').click();
-                    closeModal('#msg_alarm');
                 }
+                modalClose('#alarm_on_modal');
             })
         }
 
         {{-- 이미지 팝업 띄우기 --}}
+        /*
         const openImageModal = imageUrl => {
             document.getElementById('image_content').setAttribute('style', 'background-image: url('+imageUrl+');')
             openModal('#msg_imgviewer');
         }
+        */
 
         {{-- 이미지 버튼 클릭 시 --}}
         const selectImage = () => {
@@ -348,6 +298,16 @@
             }
         }
 
+        function keyupMessage(e) {
+            if (window.event.keyCode === 13) { // enter key
+                submitMessage(document.getElementById('submitBtn'));
+                document.getElementById('chat_message').value = '';
+            }
+        }
+        function clickMessage(e) {
+            submitMessage(document.getElementById('submitBtn'));
+            document.getElementById('chat_message').value = '';
+        }
         {{-- 메시지 전송 --}}
         const submitMessage = elem => {
             if (elem.dataset.processing) {
@@ -361,7 +321,7 @@
             if (message) {
                 data.append('message', message);
             }
-            const imageFiles = document.getElementById('image').files;
+            const imageFiles = document.getElementById('img_file').files;
             if (imageFiles.length > 0) {
                 data.append('message_image', imageFiles[0]);
             }
@@ -385,7 +345,7 @@
                 throw new Error('Sever Error');
             }).then(json => {
                 if (json.result === 'success') {
-                    visibleRoom(roomIdx);
+//                    visibleRoom(roomIdx);
                 }
             }).catch(error => {
                 delete elem.dataset.processing;
@@ -434,11 +394,12 @@
             const btn = document.getElementById('confirmReportBtn');
             btn.dataset.companyIdx= company_idx;
             btn.dataset.companyType = company_type;
-            openModal('#msg_report');
+            modalOpen('#declaration_modal');
         }
 
-        const writeReportContent = () => {
-            if (document.getElementById('content').value) {
+        const writeReportContent = (ele) => {
+            if (ele.value) {
+                document.getElementById('reportReasonTextCount').innerText = ele.value.length;
                 document.getElementById('confirmReportBtn').removeAttribute('disabled');
             } else {
                 document.getElementById('confirmReportBtn').setAttribute('disabled', 'disabled');
@@ -455,7 +416,7 @@
                 body: JSON.stringify({
                     company_idx: elem.dataset.companyIdx,
                     company_type: elem.dataset.companyType,
-                    content: document.getElementById('content').value,
+                    content: document.getElementById('alltalkReportContent').value,
                 })
             }).then(response => {
                 if (response.ok) {
@@ -465,20 +426,11 @@
             }).then(json => {
                 if (json.result === 'success') {
                     alert('신고되었습니다.');
-                    closeModal('#msg_report');
+                    modalClose('#declaration_modal');
                 }
             }).catch(error => {
             })
         }
-
-        $(document).on('keypress keyup', '#content', function(e) {
-            if ($(this).val().length <= 100) {
-                $('#contentCount').text($(this).val().length);
-                return true;
-            } else {
-                return false;
-            }
-        });
 
         {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
         document.getElementById('keyword').addEventListener('keyup', e => {
@@ -553,6 +505,11 @@
             
         })
         
+        // 채팅방 클릭시
+        $('.message_con01 .list_box .message_list li').on('click',function(){
+            $('.chatting_box .chatting_intro').addClass('hidden')
+            $(this).addClass('active').siblings().removeClass('active')
+        })
         
         
 
@@ -562,36 +519,10 @@
         @if ($product_idx && $room_idx)
             visibleRoom({{ $room_idx }});
         @endif
-
-        const sendMessageHelpCenter = room_idx => {
-            fetch('/message/send/message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{csrf_token()}}'
-                },
-                body: JSON.stringify({
-                    'company_idx': 1,
-                    'company_type': 'A',
-                    'templateType' : 'CS',
-                    'templateDetailType': 'CS'
-                })
-            }).then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw new Error('Sever Error');
-            }).then(json => {
-                if (json.result === 'success') {
-                    visibleRoom(room_idx)
-                } else {
-                    alert(json.message);
-                }
-            }).catch(error => {
-            })
-        }
     </script>
 
 
 
 @endsection
+
+@include('message.modal')

@@ -75,6 +75,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/search', 'ProductController@listBySearch');
     Route::get('/searchBar', 'ProductController@listBySearch2');
     Route::get('/thisMonth', 'ProductController@thisMonth');
+    Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
 });
 
@@ -151,6 +152,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::get('/', 'MessageController@index');
     Route::get('/room/detail', 'MessageController@index');
     Route::get('/room', 'MessageController@room');
+    Route::get('/chatting', 'MessageController@getChatting');
     Route::delete('/keyword/{idx}', 'MessageController@deleteKeyword');
     Route::post('/company/push', 'MessageController@toggleCompanyPush');
     Route::post('/send', 'MessageController@sendMessage');

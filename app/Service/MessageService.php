@@ -14,6 +14,7 @@ use App\Models\Report;
 use App\Models\User;
 use App\Models\UserNormal;
 use App\Models\UserPushSet;
+use App\Events\ChatMessage;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -146,27 +147,69 @@ class MessageService
     public function getChatting(array $params) {
         
         $user = Auth::user();
+
+        $offset = 0;
+        $limit = 30;
+
+        if(isset($params['offset'])) {
+            $offset = $params['offset'];
+        }
+        if(isset($params['limit'])) {
+            $limit = $params['limit'];
+        }
+        if(isset($params['pageNo'])) {
+            $offset = ($params['pageNo'] - 1) * $limit;
+        }
         
         $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
-            ->orderBy('AF_message_room.register_time', 'DESC')
+            ->orderBy('AF_message.register_time', 'DESC')
+            ->offset($offset)
+            ->limit($limit)
             ->select('AF_message.*'
                 , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
-                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H') AS message_register_hour")
-                , DB::raw("DATE_FORMAT(AF_message.register_time, '%i') AS message_register_min")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
+                , DB::raw("DAYOFWEEK(AF_message.register_time) AS message_register_day_of_week")
                 , DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') AS message_register_day")
             );
             
-        // if (isset($params['keyword']) && !empty($params['keyword'])) {
-        //     $chatting->where(function($query) use($params) {
-        //         $query->whereRaw('IF(AF_message.type=3,AF_message.content->"$.text",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "product",AF_message.content->"$.name",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "product",AF_message.content->"$.price",AF_message.content) LIKE "%'.$params['keyword'].'%"')
-        //             ->orWhereRaw('IF(AF_message.type=3 AND AF_message.content->"$.type" = "order",AF_message.content->"$.order_group_code",AF_message.content) LIKE "%'.$params['keyword'].'%"');
-        //     });
-        // }
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+             $chatting->where(function($query) use($params) {
+                 $query->whereRaw('AF_message_room.room_name LIKE "%'.$params['keyword'].'%"')
+                     ->orWhereRaw('AF_message.content LIKE "%'.$params['keyword'].'%"');
+             });
+        }
         
-        return $chatting->get();
+        return $chatting->get()->reverse()->values();
+    }
+    
+
+    /**
+     * 채팅 수량 가져오기
+     * @param array $params
+     * @return mixed
+     */
+    public function getChattingCount(array $params) {
+        
+        $user = Auth::user();
+        
+        $chatting = MessageRoom::where('AF_message_room.idx', $params['room_idx'])
+            ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
+            ->select('AF_message.*'
+                , DB::raw("IF(AF_message.user_idx != '{$user['idx']}' OR AF_message.sender_company_idx = 1, 'left', 'right') AS arrow")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') AS message_register_times")
+                , DB::raw("DAYOFWEEK(AF_message.register_time) AS message_register_day_of_week")
+                , DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') AS message_register_day")
+            );
+            
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+             $chatting->where(function($query) use($params) {
+                 $query->whereRaw('AF_message_room.room_name LIKE "%'.$params['keyword'].'%"')
+                     ->orWhereRaw('AF_message.content LIKE "%'.$params['keyword'].'%"');
+             });
+        }
+        
+        return $chatting->count();
     }
 
 
@@ -199,7 +242,7 @@ class MessageService
                         'company_type' => $messageRoom->other_company_type,
                         'message_type' => $room->type,
                         'unread_count' => $room->unread_count,
-                        'last_message_content' => $this->getRoomLastMessage($room->type, $room->content),
+                        'last_message_content' => $this->getRoomMessageTitle($room->content),
                         'last_message_time' => $room->register_time,
                     ];
                     break;
@@ -251,7 +294,7 @@ class MessageService
                     'company_type' => $messageRoom->other_company_type,
                     'message_type' => $room->type,
                     'unread_count' => $room->unread_count ?? 0,
-                    'last_message_content' => $this->getRoomLastMessage($room->type, $room->content),
+                    'last_message_content' => $this->getRoomMessageTitle($room->content),
                     'last_message_time' => $room->register_time ?? "",
                 ];
             }
@@ -302,41 +345,41 @@ class MessageService
     }
 
     /**
-     * 대화방 리스트에 표시되는 마지막 대화 내용 가져오기
-     * @param $type
+     * 대화방 리스트에 표시되는 대화 내용 파싱해서 가져오기
      * @param $content
      * @return mixed
      */
-    public function getRoomLastMessage($type, $content): string
+    public function getRoomMessageTitle($content): string
     {
         $message = '';
-        switch($type) {
-            case '1': // 일반 메시지
-                $message = $content;
-                break;
-            case '2': // 이미지
-                $message = '이미지';
-                break;
-            case '3': // JSON
-                $content = json_decode($content, true);
-                switch($content['type']) {
-                    case 'welcome':
-                        $message = "올펀 가입을 축하드립니다.";
-                        break;
-                    case 'cs':
-                        $message = "올펀 고객센터";
-                        break;
-                    case 'inquiry':
-                        $message = "상품 문의드립니다.";
-                        break;
-                    case 'order_complete':
-                        $message = "주문이 완료되었습니다.";
-                        break;
-                    default:
-                        $message = isset($content['title']) ? $content['title'] : strip_tags($content['text'] ?? '');
-                        break;
-                }
-                break;
+
+        try{
+            $decodedContent = json_decode($content, true);
+            
+            switch($decodedContent['type']) {
+                case 'welcome':
+                    $message = "올펀 가입을 축하드립니다.";
+                    break;
+                case 'cs':
+                    $message = "올펀 고객센터";
+                    break;
+                case 'inquiry':
+                    $message = "상품 문의드립니다.";
+                    break;
+                case 'estimate':
+                    $message = "견적 문의드립니다.";
+                    break;
+                case 'order':
+                case 'order_complete':
+                    $message = "주문이 완료되었습니다.";
+                    break;
+                default:
+                    $message = isset($content['title']) ? $content['title'] : strip_tags($content['text'] ?? '');
+                    break;
+            }
+        } catch(Exception $e) {
+            // 디코드 실패할 경우
+            $message = $content;
         }
         return $message;
     }
@@ -357,6 +400,7 @@ class MessageService
      * 검색어 저장
      * @param $keyword
      */
+        /*
     public function storeSearchKeyword($keyword)
     {
         MessageKeyword::where('user_idx', Auth::user()['idx'])->where('keyword', $keyword)->delete();
@@ -365,12 +409,14 @@ class MessageService
         $messageKeyword->keyword = $keyword;
         $messageKeyword->save();
     }
+        */
 
     /**
      * 검색어 삭제
      * @param $idx
      * @return array
      */
+    /*
     public function deleteKeyword($idx): array
     {
         if ($idx === 'all') {
@@ -385,6 +431,7 @@ class MessageService
             'message' => ''
         ];
     }
+    */
 
     /**
      * 알림 켜기/끄기
@@ -434,11 +481,11 @@ class MessageService
     public function reporting($params): array
     {
         $targetUser = User::where('company_idx', $params['company_idx'])
-            ->where('parent_idx', 0)
+//            ->where('parent_idx', 0)
             ->where('type', $params['company_type'])->first();
         $report = new Report;
         $report->report_type = 'M';
-        $report->target_idx = $targetUser->idx;
+        $report->target_idx = $targetUser->idx ?? 1;
         $report->reason = $params['content'];
         $report->state = 1; // 미처리
         $report->user_idx = Auth::user()['idx'];
@@ -449,6 +496,96 @@ class MessageService
             'result' => 'success',
             'message' => ''
         ];
+    }
+
+    public function convertHtmlContentByMessage($chat){
+        $contentHtml = '';
+        $user = Auth::user();
+
+        $chatContent = json_decode($chat->content, true);
+        if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
+            // 단순 텍스트
+            $contentHtml = $chatContent['text'];
+        } else if($chatContent['type'] == 'attach') {
+            // 첨부
+            $extension = explode('.', $chatContent['imgUrl']);
+            $extension = end($extension);
+            $extension = strtolower($extension);
+
+            if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+                // 이미지
+                return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+                            <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
+                            <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
+                        </div>';
+            } else if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+                // PDF
+                $contentHtml = '<div class="flex gap-3 items-center"><a href="'.$chatContent['imgUrl'].'" target="_blank">
+                                    <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text text-stone-400"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                                    </div>
+                                    <div class="font-medium w-[260px]">
+                                        <span class="text-sm text-stone-400">PDF</span>
+                                        <p class="truncate">'.$chatContent['originName'].'</p>
+                                    </div></a>
+                                </div>';
+            } else if(in_array($extension, ['zip', 'egg', 'tar', 'tar.gz', '7zip'])) {
+                // 압축 파일
+                $contentHtml = '<div class="flex gap-3 items-center"><a href="'.$chatContent['imgUrl'].'" target="_blank">
+                                    <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-archive text-stone-400"><circle cx="15" cy="19" r="2"/><path d="M20.9 19.8A2 2 0 0 0 22 18V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h5.1"/><path d="M15 11v-1"/><path d="M15 17v-2"/></svg>
+                                    </div>
+                                    <div class="font-medium w-[260px]">
+                                        <span class="text-sm text-stone-400">ZIP</span>
+                                        <p class="truncate">'.$chatContent['originName'].'</p>
+                                    </div></a>
+                                </div>';
+            }
+        } else if($chatContent['type'] == 'inquiry') {
+            // 상담
+            $contentHtml = '<div class="flex flex-col">
+                                    <span>[ 상담문의가 도착했습니다 ] '.$chatContent['productName'].'</span>
+                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
+                                        <img src="'.$chatContent['productThumbnailURL'].'">
+                                            바로가기
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                        </p>
+                                    </button>
+                                </div>';
+        } else if($chatContent['type'] == 'order') {
+            // 주문
+            $contentHtml = '<div class="font-medium w-[260px]">
+                                    <p class="truncate">주문번호 : '.$chatContent['order_group_code'].'</p>
+                                    <div class="mt-2">
+                                        <p class="text-sm font-basic">거래가 확정되었습니다.</p>
+                                        <p class="text-sm font-basic">상품이 준비중이니 기다려주세요!</p>
+                                    </div>
+                                    <a href="/product/detail/'.$chatContent['order_group_code'].'" class="block w-full mt-2 py-3 border rounded-md text-primary text-center hover:bg-stone-50">주문 현황 보러가기</a>
+                                </div>';
+
+        } else if($chatContent['type'] == 'estimate') {
+            // 견적
+            $contentHtml = '<a href="/estimate/detail/'.$chatContent['estimate_idx'].'">
+                                <p class="font-bold">상품 문의드립니다.</p>
+                                <div class="flex gap-3 items-center mt-2">
+                                    <img src="'.$chatContent['product_image'].'" alt="" class="border rounded-md object-cover w-[48px] h-[48px] shrink-0">
+                                    <!-- 이미지 없을 때 -->
+                                    <!-- <div class="rounded-md w-[48px] h-[48px] bg-stone-100 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-off text-stone-400"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" x2="6" y1="13.5" y2="21"/><line x1="18" x2="21" y1="12" y2="15"/><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></svg>
+                                    </div> -->
+                                    <div class="font-medium w-[260px]">
+                                        <p class="truncate">'.$chatContent['product_name'].'</p>
+                                        <span class="text-sm text-stone-400">'.$chatContent['memo'].'</span>
+                                    </div>
+                                </div>
+                            </a>';
+        }
+
+        return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+                    <div class="chat_box">' . $contentHtml . '</div>
+                    <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
+                </div>';
     }
 
     /**
@@ -480,7 +617,12 @@ class MessageService
             $message->sender_company_type = $user['type'];
             $message->sender_company_idx = $user['company_idx'];
             $message->user_idx = $user['idx'];
-            $message->content = $imageUrl;
+            $message->content = json_encode((object)[
+                'type' => 'attach',
+                'imgUrl' => $imageUrl,
+                'ext' => pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION),
+                'originName' => $image->getClientOriginalName()
+            ], JSON_UNESCAPED_UNICODE); ;
             $message->save();
         }
         
@@ -532,14 +674,27 @@ class MessageService
             $message->sender_company_type = $user['type'];
             $message->sender_company_idx = $user['company_idx'];
             $message->user_idx = $user['idx'];
-            $message->content = $params['message'];
+            $message->content = json_encode((object)[
+                'type' => 'normal',
+                'text' => $params['message'],
+            ], JSON_UNESCAPED_UNICODE);
             $message->save();
         }
+
+        setlocale(LC_ALL, "ko_KR.utf-8");
+        event(new ChatMessage($message->room_idx, 
+            $message->content, 
+            $this->convertHtmlContentByMessage($message),
+            date('Y년 m월 d일'),
+            substr(date('H:i:s'), 0, 5),
+            ["일","월","화","수","목","금","토"][date('w', time())],
+            $this->getRoomMessageTitle($message)
+        ));
         
         return [
             'result' => 'success',
-            'message' => '',
-            'roomIdx' => $params['room_idx']
+            'message' => $message->content,
+            'roomIdx' => $message->room_idx
         ];
     }
 

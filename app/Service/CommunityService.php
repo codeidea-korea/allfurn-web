@@ -43,7 +43,7 @@ class CommunityService {
         }
         // 키워드 검색일 때
         if (!empty($params['keyword'])) {
-            $this->getStoreSearchKeyWord($params['keyword']);
+            $this->getStoreSearchKeyWord($params['keyword'], $params['board_name']);
             $data['keyword'] = $params['keyword'];
         }
         // 게시글 리스트 가져오기
@@ -205,11 +205,14 @@ class CommunityService {
      * 키워드 검색 - 같은 키워드 검색 시 기존에 검색된 키워드를 삭제하고 최근 검색어로 저장
      * @param string $keyword
      */
-    public function getStoreSearchKeyWord(string $keyword)
+    public function getStoreSearchKeyWord(string $keyword, String $boardName)
     {
         if (Auth::check()) {
+
+            $keywordType = $boardName == '일일 가구 뉴스' ? 'D' : 'C';
+
             $duplicateSearchKeyword = UserSearch::where('user_idx', Auth::user()['idx'])
-                ->where('type','C')->where('keyword', $keyword)->first();
+                ->where('type', $keywordType)->where('keyword', $keyword)->first();
             // 중복된 키워드 삭제
             if (isset($duplicateSearchKeyword['idx'])) {
                 $this->deleteSearchKeyword($duplicateSearchKeyword['idx']);
@@ -217,7 +220,7 @@ class CommunityService {
             // 검색 키워드 저장
             $userSearch = new UserSearch;
             $userSearch->user_idx = Auth::user()['idx'];
-            $userSearch->type = 'C';
+            $userSearch->type = $keywordType;
             $userSearch->keyword = $keyword;
             $userSearch->save();
         }
