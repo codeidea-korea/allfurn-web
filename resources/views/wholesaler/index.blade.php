@@ -5,631 +5,47 @@
 <div id="content">
     <section class="sub_section sub_section_top wholesaler_con01">
         <div class="inner">
-            <div class="relative popular_prod">
-                <div class="slide_box overflow-hidden">
-                    <div class="swiper-wrapper">
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="swiper-slide">
-                            <li class="popular_banner">
-                                <div class="txt_box">
-                                    <p>
-                                        <b>친환경 아이들을 위한 가구</b><br/>
-                                        모던 스타일의 트랜디한 소파
-                                    </p>
-                                    <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                            <li class="prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </li>
-                        </ul>
 
-                    </div>
-                </div>
-                <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-                <button class="slide_arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-            </div>
-            <div class="bottom_box">
-                <div class="bot_slide ">
-                    <button class="arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-                    <div class="pager_box overflow-hidden">
-                        <ul class="swiper-wrapper">
-                            <li class="swiper-slide"><button>올펀가구</button></li>
-                            <li class="swiper-slide"><button>까마시아</button></li>
-                            <li class="swiper-slide"><button>한샘</button></li>
-                            <li class="swiper-slide"><button>지누스</button></li>
-
-                            <li class="swiper-slide"><button>올펀가구</button></li>
-                            <li class="swiper-slide"><button>까마시아</button></li>
-                            <li class="swiper-slide"><button>한샘</button></li>
-                            <li class="swiper-slide"><button>지누스</button></li>
-
-                            <li class="swiper-slide"><button>올펀가구</button></li>
-                            <li class="swiper-slide"><button>까마시아</button></li>
-                            <li class="swiper-slide"><button>한샘</button></li>
-                            <li class="swiper-slide"><button>지누스</button></li>
-
-                            <li class="swiper-slide"><button>올펀가구</button></li>
-                            <li class="swiper-slide"><button>까마시아</button></li>
-                            <li class="swiper-slide"><button>한샘</button></li>
-                            <li class="swiper-slide"><button>지누스</button></li>
-                        </ul>
-                    </div>
-                    <button class="arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-                </div>
-                <div class="right_box">
-                    <div class="count_pager"><b>1</b> / 12</div>
-                    <a href="javascript:;">모아보기</a>
-                </div>
-            </div>
+            {{-- 인기 브랜드 --}}
+            @include('wholesaler.inc-popular-brand')
         </div>
     </section>
 
+    @if( count( $bannerList['banner'] ) > 0 )
     <section class="sub_section nopadding">
         <div class="inner">
             <div class="line_common_banner">
                 <ul class="swiper-wrapper">
+                    @foreach( $bannerList['banner'] AS $key => $banner )
                     <li class="swiper-slide" style="background-color:#475872; ">
-                        <a href="javascript:;">
+                        <?php
+                            $link = '';
+                            switch ($banner->web_link_type) {
+                                case 0: //Url
+                                    $link = $banner->web_link;
+                                    break;
+                                case 1: //상품
+                                    $link = '/product/detail/'.$banner->web_link;
+                                    break;
+                                case 2: //업체
+                                    $link = '/wholesaler/detail/'.$banner->web_link;
+                                    break;
+                                case 3: //커뮤니티
+                                    $link = $banner->web_link;
+                                    break;
+                                default: //공지사항
+                                    $link = '/help/notice/';
+                                    break;
+                            }
+                        ?>
+                        <a href="{{$link}}">
                             <div class="txt_box">
-                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                                <span>매달 5일과 15일에 게시됩니다.</span>
+                                <p>{{$banner->subtext1}}<br />{{$banner->subtext2}}</p>
+                                <span></span>
                             </div>
                         </a>
                     </li>
-                    <li class="swiper-slide" style="background-color:#6D5C64; ">
-                        <a href="javascript:;">
-                            <div class="txt_box">
-                                <p>[가구,가구인] <br/>가구인의 인터뷰 시리즈를 확인해보세요!</p>
-                                <span>매달 5일과 15일에 게시됩니다.</span>
-                            </div>
-                        </a>
-                    </li>
+                    @endforeach
                 </ul>
                 <div class="count_pager"><b>1</b> / 12</div>
                 <button class="slide_arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
@@ -637,7 +53,9 @@
             </div>
         </div>
     </section>
+    @endif
 
+    @if((count($bannerList['product_4']) + count($bannerList['product_6'])) > 0)
     <section class="sub_section wholesaler_con03">
         <div class="inner">
             <div class="main_tit mb-8 flex justify-between items-center">
@@ -652,12 +70,14 @@
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper obtain_list type02">
+                        @if( count( $bannerList['product_4'] ) > 0 )
+                        @foreach( $bannerList['product_4'] AS $key => $item )
                         <li class="swiper-slide">
                             <div class="txt_box">
                                 <div class="flex items-center justify-between">
-                                    <a href="javascript:;">
+                                    <a href="/product/detail/{{$item->idx}}">
                                         <img src="./img/icon/crown.png" alt="">
-                                        올펀 프리미엄 가구
+                                        {{$item->companyName}}
                                         <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
                                     </a>
                                     <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
@@ -686,12 +106,16 @@
                                 </div>
                             </div>
                         </li>
+                        @endforeach
+                        @endif
+                        @if( count( $bannerList['product_6'] ) > 0 )
+                        @foreach( $bannerList['product_6'] AS $key => $item )
                         <li class="swiper-slide">
                             <div class="txt_box">
                                 <div class="flex items-center justify-between">
-                                    <a href="javascript:;">
+                                    <a href="/product/detail/{{$item->idx}}">
                                         <img src="./img/icon/crown.png" alt="">
-                                        올펀 프리미엄 가구
+                                        {{$item->companyName}}
                                         <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
                                     </a>
                                     <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
@@ -720,108 +144,8 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="swiper-slide">
-                            <div class="txt_box">
-                                <div class="flex items-center justify-between">
-                                    <a href="javascript:;">
-                                        <img src="./img/icon/crown.png" alt="">
-                                        올펀 프리미엄 가구
-                                        <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
-                                    </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div class="tag">
-                                        <span>소파/거실</span>
-                                        <span>침대/매트리스</span>
-                                        <span>식탁/의자</span>
-                                    </div>
-                                    <i>서울</i>
-                                </div>
-                            </div>
-                            <div class="prod_box">
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/zoom_thumb.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb4.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb5.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide">
-                            <div class="txt_box">
-                                <div class="flex items-center justify-between">
-                                    <a href="javascript:;">
-                                        <img src="./img/icon/crown.png" alt="">
-                                        올펀 프리미엄 가구
-                                        <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
-                                    </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div class="tag">
-                                        <span>소파/거실</span>
-                                        <span>침대/매트리스</span>
-                                        <span>식탁/의자</span>
-                                    </div>
-                                    <i>서울</i>
-                                </div>
-                            </div>
-                            <div class="prod_box">
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/zoom_thumb.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb4.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb5.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="swiper-slide">
-                            <div class="txt_box">
-                                <div class="flex items-center justify-between">
-                                    <a href="javascript:;">
-                                        <img src="./img/icon/crown.png" alt="">
-                                        올펀 프리미엄 가구
-                                        <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
-                                    </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div class="tag">
-                                        <span>소파/거실</span>
-                                        <span>침대/매트리스</span>
-                                        <span>식탁/의자</span>
-                                    </div>
-                                    <i>서울</i>
-                                </div>
-                            </div>
-                            <div class="prod_box">
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/zoom_thumb.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb4.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb5.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </div>
-                        </li>
+                        @endforeach
+                        @endif
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
@@ -829,6 +153,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     <section class="sub_section">
         <div class="inner">

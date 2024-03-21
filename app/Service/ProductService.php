@@ -929,7 +929,7 @@ class ProductService
         $banner_limit = $ret->banner;
         $keyword_limit = $ret->keyword;
         
-        $data['product_4'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx',
+        $data['product_4'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx',
         DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
             (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
                     WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
@@ -956,7 +956,7 @@ class ProductService
             array_push($idxList, $item->idx);
         }
         
-        $data['product_6'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx',
+        $data['product_6'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx',
             DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
             (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
                     WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
@@ -996,10 +996,12 @@ class ProductService
             ->orderByRaw('price desc, RAND()')
             ->limit($keyword_limit)                
             ->get();
+
+        return $data;
             
-        return view('product.thisMonth', [
+        /*return view('product.thisMonth', [
             'data'=>$data
-        ]);
+        ]);*/
     }
 
     public function makeOrderGroupCode($length)

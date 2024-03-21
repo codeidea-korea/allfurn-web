@@ -33,7 +33,12 @@ class WholesalerService {
         }
 
         // 신상품 랜덤 8개
-        $list = CompanyWholesale::select('AF_wholesale.idx as companyIdx', 'AF_wholesale.company_name as companyName', 'ap.name as productName', 'ap.idx as productIdx', 'ap.state',
+        $list = CompanyWholesale::select(
+            'AF_wholesale.idx as companyIdx',
+            'AF_wholesale.company_name as companyName',
+            'ap.name as productName',
+            'ap.idx as productIdx',
+            'ap.state',
         DB::raw('COUNT(ao.idx) as orderCnt, 
             COUNT(ap.idx) as productCnt,
             Max(ap.register_time) as register_time,
@@ -152,6 +157,38 @@ class WholesalerService {
                 ->limit(4);
 
             $data['list'][$key]['imgList'] = $imgList->get();
+        }
+
+        // 인기 브랜드
+        $data['popularbrand_ad'] = Banner::select('AF_banner_ad.*',
+            DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
+                WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));
+            })
+            ->where('AF_banner_ad.state', 'G')
+            ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_banner_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_banner_ad.ad_location', 'popularbrand')
+            ->where('AF_banner_ad.is_delete', 0)
+            ->where('AF_banner_ad.is_open', 1)
+            ->orderby('idx', 'desc')->get();
+
+        foreach($data['popularbrand_ad'] as $brand){
+            $brand_product_interest = array();
+            $brand_product_info = json_decode($brand->product_info, true);
+            $brand->product_info = $brand_product_info;
+            foreach ($brand_product_info as $key => $info) {
+                $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
+                    ->where('product_idx', $info['mdp_gidx'])
+                    ->where('user_idx', Auth::user()->idx)
+                    ->first();
+                $brand_product_interest[$info['mdp_gidx']] = $tmpInterest->interest;
+            }
+            $brand->product_interest = $brand_product_interest;
         }
 
         return $data;

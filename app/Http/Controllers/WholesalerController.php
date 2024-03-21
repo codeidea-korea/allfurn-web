@@ -39,7 +39,14 @@ class WholesalerController extends BaseController
         $data = $this->wholesalerService->getWholesalerData($target);
         $categoryList = $this->productService->getCategoryList();
 
-        return view('wholesaler.index', ['data'=>$data, 'categoryList'=>$categoryList, 'query'=>$target]);
+        $banner = $this->productService->thisMonth();
+
+        return view('wholesaler.index', [
+            'data'=>$data,
+            'categoryList'=>$categoryList,
+            'bannerList'=>$banner,
+            'query'=>$target
+        ]);
     }
 
 
