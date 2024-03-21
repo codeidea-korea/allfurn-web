@@ -39,7 +39,7 @@ class HelpController extends BaseController
         $data['categories'] = $this->helpService->getFaqCategories();
         $data['category_idx'] = $params['category_idx'] = $request->input('category_idx');
         $data = array_merge($data, $this->helpService->getFaqList($params));
-        return view('help.index', $data);
+        return view(getDeviceType().'help.index', $data);
     }
 
     /**
