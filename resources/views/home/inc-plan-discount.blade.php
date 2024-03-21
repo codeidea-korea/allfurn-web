@@ -15,159 +15,26 @@
                     @foreach ($data['plandiscount_ad'] as $key => $goods)
                         <li class="swiper-slide prod_item type02">
                             <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
+                                <a href="{{ $goods->web_link }}">
+                                    <img src="{{ $goods->imgUrl }}" alt="">
+                                    <span><b>{{ $goods->subtext1 }}</b><br/>{{ $goods->subtext2 }}</span>
                                 </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                @if ($goods->gidx != "")
+                                    <button class="zzim_btn prd_{{ $goods->gidx }} {{ ($goods->interest == 1) ? 'active' : '' }}" pidx="{{ $goods->gidx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                @endif 
                             </div>
                             <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
+                                <a href="{{ $goods->web_link }}">
+                                    <strong>{{ $goods->content }}</strong>
+                                    <span>{{ $goods->companyName }}</span>
                                 </a>
                             </div>
                         </li>
                     @endforeach 
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide prod_item type02">
-                        <div class="img_box">
-                            <a href="./prod_detail.php">
-                                <img src="./img/sale_thumb.png" alt="">
-                                <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="./prod_detail.php">
-                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                <span>올펀가구</span>
-                            </a>
-                        </div>
-                    </li>
                 </ul>
             </div>
-            <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-            <button class="slide_arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
         </div>
     </div>
 </section>

@@ -190,6 +190,21 @@ class HomeService
             ->where('AF_banner_ad.is_open', 1)
             ->orderby('idx', 'desc')->get();
 
+        foreach($data['plandiscount_ad'] as $goods){
+            if (!is_null($goods->web_link)){
+                $tmp_web_link = explode('/', $goods->web_link);
+                $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
+                    ->where('product_idx', $tmp_web_link[3])
+                    ->where('user_idx', Auth::user()->idx)
+                    ->first();
+                $goods->interest = $tmpInterest->interest;
+                $goods->gidx = $tmp_web_link[3];
+            }else{
+                $goods->interest = '0';
+                $goods->gidx = '';
+            }
+        }
+
         // 동영상 광고
         $data['video_ad'] = VideoAd::select('AF_video_ad.*', 
             DB::raw('
