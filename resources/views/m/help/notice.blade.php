@@ -1,5 +1,10 @@
 @extends('layouts.app_m')
-
+@php
+    $only_quick = '';
+    $header_depth = 'mypage';
+    $top_title = '공지사항';
+    $header_banner = '';
+@endphp
 @section('content')
 @include('layouts.header_m')
 <div id="content" class="bg-stone-100">
@@ -18,7 +23,7 @@
         </div>
         <div class="flex mt-4 gap-2">
             <button class="rounded-sm border h-[42px] text-center w-full" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button>
-            <button class="rounded-sm border h-[42px] text-center w-full">1:1문의</button>
+            <button class="rounded-sm border h-[42px] text-center w-full" onclick="location.href='/help/inquiry'">1:1문의</button>
         </div>
     </div>
     <div class="mt-4 bg-white">

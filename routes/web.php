@@ -217,6 +217,7 @@ Route::prefix('help')->name('help')->middleware('auth')->group(function() {
     Route::get('/faq', 'HelpController@faq')->name('.faq');
     Route::get('/notice', 'HelpController@notice')->name('.notice');
     Route::get('/inquiry', 'HelpController@inquiry');
+    Route::get('/inquiry/detail/{idx}', 'HelpController@inquiryDetail');
     Route::get('/inquiry/form/{idx?}', 'HelpController@inquiryForm');
     Route::post('/inquiry', 'HelpController@registerInquiry');
     Route::delete('/inquiry/{idx}', 'HelpController@removeInquiry');

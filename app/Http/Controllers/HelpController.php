@@ -69,7 +69,20 @@ class HelpController extends BaseController
 
         $data = array_merge($data, $this->helpService->getInquiries($params));
 
-        return view('help.inquiry', $data);
+        return view(getDeviceType().'help.inquiry', $data);
+    }
+
+    // 1:1 문의하기 상세 (모바일 전용)
+    public function inquiryDetail(int $idx)
+    {
+        if ($idx) {
+            if(!$this->helpService->isInquiryOfUser($idx) || $this->helpService->isDeleted($idx)) {
+                return redirect('/help/inquiry');
+            }
+
+            $data = $this->helpService->getInquiryDetail($idx);
+            return view("m.help.inquiry-detail", $data);
+        }
     }
 
     /**
@@ -89,7 +102,7 @@ class HelpController extends BaseController
             $data['detail'] = $this->helpService->getSavedInquiry($idx);
         }
         $data['categories'] = $this->helpService->getInquiryCategories();
-        return view('help.inquiry-form', $data);
+        return view(getDeviceType().'help.inquiry-form', $data);
     }
 
 

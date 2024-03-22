@@ -85,6 +85,19 @@ class HelpService
         return $data;
     }
 
+    public function getInquiryDetail($idx) {
+        
+        $query = Inquiry::where('AF_inquiry.is_delete', 0)
+            ->where('user_idx', Auth::user()['idx'])
+            ->where('AF_inquiry.idx', $idx)
+            ->has('category')
+            ->select('AF_inquiry.*', 'AF_inquiry_category.name')
+            ->join('AF_inquiry_category','AF_inquiry_category.idx', 'AF_inquiry.category_idx')
+            ->first();
+        
+        return $query;
+    }
+
     /**
      * 1:1문의 카테고리 가져오기
      * @return mixed

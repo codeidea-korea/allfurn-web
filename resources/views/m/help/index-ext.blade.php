@@ -1,7 +1,7 @@
 <div class="modal" id="writing_guide_modal">
     <div class="modal_bg" onclick="modalClose('#writing_guide_modal')"></div>
     <div class="modal_inner inner_full">
-        <button class="close_btn" onclick="modalClose('#writing_guide_modal')"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#writing_guide_modal')"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
         <div class="modal_body fix_full">
             <div class="p-5">
                 <p class="text-lg font-bold text-left">이용 가이드</p>
@@ -9,7 +9,7 @@
                     <div class="relative">
                         <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center mt-3">
                             <p>이용가이드</p>
-                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                         </a>
                         <div class="filter_dropdown_wrap guide_list w-full h-[300px] overflow-y-scroll bg-white" style="display: none;">
                             <ul>
