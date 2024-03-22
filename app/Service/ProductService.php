@@ -1071,5 +1071,46 @@ class ProductService
         return $code.$string_generated;
     }
 
+    // 도매업체 > 이달의 도매 ( kr.kevin.kang 2024.03.22 )
+    public function getThisMonth(array $param = [])
+    {
+        $data = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx', 'ac.name AS category_name',
+            DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+            (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
+                    WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
+                    ELSE "" END) as companyName,
+            (CASE WHEN ap.company_type = "W" THEN (select aw.inquiry_count from AF_wholesale as aw where aw.idx = ap.company_idx)
+			        WHEN ap.company_type = "R" THEN (select ar.inquiry_count from AF_retail as ar where ar.idx = ap.company_idx)
+			        ELSE "" END) as inquiry_count,
+	        (CASE WHEN (SELECT ROUND( SUM(banner_price)/100000 ) * 100000 FROM AF_banner_ad WHERE company_idx=	ap.company_idx) > 300000 THEN 300000 * 0.0001
+		            ELSE (SELECT ( ROUND( SUM(banner_price)/100000 ) * 100000 ) * 0.0001 FROM AF_banner_ad WHERE company_idx=	ap.company_idx)
+		            END) AS banner_price,
+            (CASE WHEN ap.company_type = "W" THEN (select LEFT( aw.business_address, 2 ) from AF_wholesale as aw where aw.idx = ap.company_idx)
+			        WHEN ap.company_type = "R" THEN (select LEFT( ar.business_address, 2 ) from AF_retail as ar where ar.idx = ap.company_idx)
+			        ELSE "" END) as companyRegion'
+            ))
+            ->leftjoin('AF_product as ap', function ($query) {
+                $query->on('ap.idx', 'AF_product_ad.product_idx');
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', 'ap.category_idx');
+            })
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
+            ->where('AF_product_ad.start_date', '<=', DB::raw('now()'))
+            ->where('AF_product_ad.end_date', '>=', DB::raw('now()'))
+            //->groupBy('ap.company_idx')
+            ->orderByRaw('banner_price DESC')
+            ->orderByRaw('AF_product_ad.price desc, RAND()')
+            ->limit(50)
+            ->get();
+
+        return $data;
+    }
+
 
 }

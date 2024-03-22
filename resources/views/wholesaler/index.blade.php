@@ -55,7 +55,7 @@
     </section>
     @endif
 
-    @if((count($bannerList['product_4']) + count($bannerList['product_6'])) > 0)
+    @if((count($companyList) > 0) )
     <section class="sub_section wholesaler_con03">
         <div class="inner">
             <div class="main_tit mb-8 flex justify-between items-center">
@@ -70,86 +70,46 @@
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper obtain_list type02">
-                        @if( count( $bannerList['product_4'] ) > 0 )
-                        @foreach( $bannerList['product_4'] AS $key => $item )
+                        @if( count( $companyList ) > 0 )
+                        @foreach( $companyList['info'] AS $key => $company )
                         <li class="swiper-slide">
                             <div class="txt_box">
                                 <div class="flex items-center justify-between">
-                                    <a href="/product/detail/{{$item->idx}}">
+                                    <a href="/wholesaler/detail/{{$company['company_idx']}}">
                                         <img src="./img/icon/crown.png" alt="">
-                                        {{$item->companyName}}
-                                        <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
+                                        {{$company['companyName']}}
+                                        <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                     </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                    <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
+                                @if( count( $company['category_name'] ) > 0 || $company['companyRegion'] != '' )
                                 <div class="flex items-center justify-between">
                                     <div class="tag">
-                                        <span>소파/거실</span>
-                                        <span>침대/매트리스</span>
-                                        <span>식탁/의자</span>
+                                        @foreach( $company['category_name'] AS $category_name )
+                                        <span>{{$category_name}}</span>
+                                        @endforeach
                                     </div>
-                                    <i>서울</i>
+                                    <i>{{$company['companyRegion']}}</i>
                                 </div>
+                                @endif
                             </div>
+                            @if( count( $company['items'] ) > 0 )
                             <div class="prod_box">
+                                @foreach( $company['items'] AS $i => $item )
                                 <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/zoom_thumb.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                    <a href="javascript:;"><img src="{{$item['imgUrl']}}" alt="{{$item['name']}}"></a>
+                                    <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb4.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb5.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
+                                @endforeach
                             </div>
-                        </li>
-                        @endforeach
-                        @endif
-                        @if( count( $bannerList['product_6'] ) > 0 )
-                        @foreach( $bannerList['product_6'] AS $key => $item )
-                        <li class="swiper-slide">
-                            <div class="txt_box">
-                                <div class="flex items-center justify-between">
-                                    <a href="/product/detail/{{$item->idx}}">
-                                        <img src="./img/icon/crown.png" alt="">
-                                        {{$item->companyName}}
-                                        <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>
-                                    </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div class="tag">
-                                        <span>소파/거실</span>
-                                        <span>침대/매트리스</span>
-                                        <span>식탁/의자</span>
-                                    </div>
-                                    <i>서울</i>
-                                </div>
-                            </div>
-                            <div class="prod_box">
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/zoom_thumb.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb4.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="./img/prod_thumb5.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                            </div>
+                            @endif
                         </li>
                         @endforeach
                         @endif
                     </ul>
                 </div>
-                <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-                <button class="slide_arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+                <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
+                <button class="slide_arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
             </div>
         </div>
     </section>
