@@ -140,28 +140,6 @@
 
 </div>
 
-<script>
-    // 채팅방 클릭시
-    $('.message_con01 .list_box .message_list li').on('click',function(){
-        $(this).addClass('active').siblings().removeClass('active')
-    })
-
-    // 우측 검색아이콘 클릭시
-    $('.chatting_box .right_search_btn').on('click',function(){
-        $('.chatting_box .top_search').addClass('active')
-    })
-    $('.chatting_box .top_search .prev_btn').on('click',function(){
-        $('.chatting_box .top_search').removeClass('active')
-    })
-
-    // 업체 주소
-    $('.chatting_box .company_info_btn').on('click',function(){
-        $(this).toggleClass('active')
-        $('.chatting_box .top_info .company_info').toggleClass('active');
-    })
-
-</script>
-
 @endsection
 
 @include('m.message.modal')

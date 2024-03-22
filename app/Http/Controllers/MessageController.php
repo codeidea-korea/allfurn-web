@@ -34,11 +34,11 @@ class MessageController extends BaseController
         $data['keywords'] = $this->messageService->getSearchKeywords();
         $data['product_idx'] = $request->input('product_idx');
         $data['room_idx'] = $request->input('room_idx');
-        return view('message.index', $data);
+        return view(getDeviceType() . 'message.index', $data);
     }
 
     /**
-     * 대화방 내용 가져오기
+     * pc > 대화방 내용 가져오기
      * @param Request $request
      * @return Redirector|View
      */

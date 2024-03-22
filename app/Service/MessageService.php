@@ -374,7 +374,7 @@ class MessageService
                     $message = "주문이 완료되었습니다.";
                     break;
                 default:
-                    $message = isset($content['title']) ? $content['title'] : strip_tags($content['text'] ?? '');
+                    $message = isset($decodedContent['title']) ? $decodedContent['title'] : strip_tags($decodedContent['text'] ?? '');
                     break;
             }
         } catch(Exception $e) {
