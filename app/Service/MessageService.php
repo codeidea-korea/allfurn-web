@@ -683,6 +683,7 @@ class MessageService
 
         setlocale(LC_ALL, "ko_KR.utf-8");
         event(new ChatMessage($message->room_idx, 
+            $message->user_idx, 
             $message->content, 
             $this->convertHtmlContentByMessage($message),
             date('Y년 m월 d일'),

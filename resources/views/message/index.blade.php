@@ -57,6 +57,53 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
     Pusher.logToConsole = false;
+
+    var roomIdx = 0;
+    var channel = pusher.subscribe('user-chat-{{ user_chatting_token }}');
+    channel.bind('user-chat-event-{{ user_chatting_token }}', function(messages) {
+        console.log(JSON.stringify(messages));
+
+        const rooms = $('._chatting_rooms > li');
+        const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
+
+        if(newestRoom) {
+            rooms.prepend(newestRoom);
+        } else {
+            const tmpChattingRoom = 
+                    '<li onclick="searchKeywordRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                    +'    <div class="img_box">'
+                    +'        <img src="/img/profile_img.svg" alt="">'
+                    +'    </div>'
+                    +'    <div class="txt_box">'
+                    +'        <h3>'
+                    +'            '+messages.roomName
+                    +'            <span>'+messages.title+'</span>'
+                    +'        </h3>'
+                    +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+                    +'    </div>'
+                    +'</li>';
+            $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+        }
+        // 활성화 처리 및 텍스트 변경
+        $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+
+        if(messages.room_idx != roomIdx) {
+            // 보고 있는 채팅방이 아닌 다른 곳에서 메시지가 오는 경우.
+            return;
+        }
+
+        var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+        const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
+
+        if(messages.date != lastCommunicatedDate) {
+            const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
+            $('.chatting_list').html($('.chatting_list').html() + dateTag);
+        }
+        $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+        
+        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+        $('._room'+roomIdx+'LastMent').text(messages.title);
+    });
     </script>
 
     <script>
@@ -149,23 +196,7 @@
                 cluster: 'ap3'
                 });
 
-                const roomIdx = idx;
-                var channel = pusher.subscribe('chat-' + roomIdx);
-                channel.bind('chat-event-' + roomIdx, function(messages) {
-                    console.log(JSON.stringify(messages));
-
-                    var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
-                    const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
-
-                    if(messages.date != lastCommunicatedDate) {
-                        const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
-                        $('.chatting_list').html($('.chatting_list').html() + dateTag);
-                    }
-                    $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
-                    
-                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-                    $('._room'+roomIdx+'LastMent').text(messages.title);
-                });
+                roomIdx = idx;
                 setTimeout(() => {
                     document.querySelector('.chatting_list').focus();
                     $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);

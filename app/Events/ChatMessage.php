@@ -14,31 +14,35 @@ class ChatMessage implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $roomIdx;
+    public $userIdx;
     public $message;
     public $contentHtml;
     public $date;
     public $times;
     public $dateOfWeek;
     public $title;
+    public $roomName;
 
-    public function __construct($roomIdx, $message, $contentHtml, $date, $times, $dateOfWeek, $title)
+    public function __construct($roomIdx, $userIdx, $message, $contentHtml, $date, $times, $dateOfWeek, $title, $roomName)
     {
         $this->roomIdx = $roomIdx;
+        $this->userIdx = $userIdx;
         $this->message = $message;
         $this->contentHtml = $contentHtml;
         $this->date = $date;
         $this->times = $times;
         $this->dateOfWeek = $dateOfWeek;
         $this->title = $title;
+        $this->roomName = $roomName;
     }
 
     public function broadcastOn()
     {
-        return ['chat-' . $this->roomIdx];
+        return ['user-chat-' . $this->userIdx];
     }
 
     public function broadcastAs()
     {
-        return 'chat-event-' . $this->roomIdx;
+        return 'user-chat-event-' . $this->userIdx;
     }
 }
