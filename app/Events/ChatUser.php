@@ -9,7 +9,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class ChatMessage implements ShouldBroadcast
+class ChatUser implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -38,11 +38,11 @@ class ChatMessage implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return ['chat-' . $this->roomIdx];
+        return ['user-cmd-' . $this->userIdx];
     }
 
     public function broadcastAs()
     {
-        return 'chat-event-' . $this->roomIdx;
+        return 'user-cmd-event-' . $this->userIdx;
     }
 }
