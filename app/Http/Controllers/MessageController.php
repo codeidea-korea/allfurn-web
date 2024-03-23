@@ -33,7 +33,7 @@ class MessageController extends BaseController
         
         $data['keywords'] = $this->messageService->getSearchKeywords();
         $data['product_idx'] = $request->input('product_idx');
-        $data['room_idx'] = $request->input('room_idx');
+        $data['user_idx'] = $this->messageService->getUserIdx();
         return view(getDeviceType() . 'message.index', $data);
     }
 
@@ -70,7 +70,7 @@ class MessageController extends BaseController
                         $lastCommunicatedDate = $chat->message_register_day;
 
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
-                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week - 1].'요일</span></div>';
                     }
                     $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
@@ -88,7 +88,12 @@ class MessageController extends BaseController
             $data['product'] = $this->messageService->getProduct($params['product_idx']);
         }
 
-        return view('message.message-section', $data);
+        if(getDeviceType() == "") {
+            // PC 인 경우.
+            return view('message.message-section', $data);
+        } else {
+            return view(getDeviceType() . 'message.detail', $data);
+        }
     }
 
 
@@ -128,7 +133,7 @@ class MessageController extends BaseController
                         $lastCommunicatedDate = $chat->message_register_day;
 
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
-                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week].'요일</span></div>';
+                            $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week - 1].'요일</span></div>';
                     }
                     $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
@@ -162,6 +167,30 @@ class MessageController extends BaseController
     public function deleteKeyword($idx): JsonResponse
     {
         return response()->json($this->messageService->deleteKeyword($idx));
+    }
+
+    /**
+     * 나의 검색어 조회
+     * @param $idx
+     * @return JsonResponse
+     */
+    public function getMyKeyword(): JsonResponse
+    {
+        return response()->json($this->messageService->getMyKeyword());
+    }
+
+    /**
+     * 검색어로 채팅방(업체명 or 채팅 내용) 조회
+     * @param $idx
+     * @return JsonResponse
+     */
+    public function getRooms(Request $request): JsonResponse
+    {
+        $params = $request->all();
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+            $this->messageService->storeSearchKeyword($params['keyword']);
+        }
+        return response()->json($this->messageService->getRoomsByKeyword($params));
     }
 
     /**

@@ -4,12 +4,12 @@
             <svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg>
         </a>
         <div class="input_form">
-            <svg><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-            <input type="text" placeholder="대화 내용을 검색해주세요.">
+            <svg style="cursor: pointer;" onclick="searchKeywordInRoom()"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
+            <input type="text" id="chatting_keyword_inroom" name="keyword" value="{{ request()->get('keyword') }}" onkeyup="searchKeywordInRoom()" placeholder="대화 내용을 검색해주세요.">
         </div>
         <div class="flex items-center gap-2 ml-3 talk_search_arrow">
-            <button class="active"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg></button>
-            <button ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
+            <button id="btnPrevSearchInroom" onclick="prevBoldSearchKeywordInRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg></button>
+            <button id="btnNextSearchInroom" onclick="nextBoldSearchKeywordInRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
         </div>
     </div>
     <div class="title">
@@ -52,7 +52,7 @@
 </div>
 <div class="chatting_list" style="overflow-y: scroll;">
     @if($chattingCount > 30)
-    <div class="flex justify-center mt-2" id="btnGetChatMore">
+    <div class="flex justify-center mt-2" id="btnGetChatMore" data-key="{{ $room_idx }}">
         <button class="border rounded-full bg-white px-2 h-[32px] flex items-center gap-1" onclick="getChatting({{ $room_idx }})">
             더보기
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>

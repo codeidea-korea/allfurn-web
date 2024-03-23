@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserNormal;
 use App\Models\UserPushSet;
 use App\Events\ChatMessage;
+use App\Events\ChatUser;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -333,7 +334,7 @@ class MessageService
                 $message->leftJoin('AF_retail AS company', 'company.idx', 'AF_message.sender_company_idx');
             }
             $message->where(function($query) use ($keyword, $company) {
-                $query->whereRaw('IF(AF_message.type=3,AF_message.content->"$.text",AF_message.content) LIKE "%'.$keyword.'%"');
+                $query->whereRaw('IF(JSON_VALID(AF_message.content),JSON_EXTRACT(AF_message.content, "$.text"),AF_message.content) LIKE "%'.$keyword.'%"');
                 if ($company) {
                     $query->orWhere('company.company_name', 'like', "%{$keyword}%");
                 }
@@ -373,6 +374,9 @@ class MessageService
                 case 'order_complete':
                     $message = "주문이 완료되었습니다.";
                     break;
+                case 'normal':
+                    $message = $decodedContent['text'];
+                    break;
                 default:
                     $message = isset($decodedContent['title']) ? $decodedContent['title'] : strip_tags($decodedContent['text'] ?? '');
                     break;
@@ -400,7 +404,6 @@ class MessageService
      * 검색어 저장
      * @param $keyword
      */
-        /*
     public function storeSearchKeyword($keyword)
     {
         MessageKeyword::where('user_idx', Auth::user()['idx'])->where('keyword', $keyword)->delete();
@@ -409,14 +412,12 @@ class MessageService
         $messageKeyword->keyword = $keyword;
         $messageKeyword->save();
     }
-        */
 
     /**
      * 검색어 삭제
      * @param $idx
      * @return array
      */
-    /*
     public function deleteKeyword($idx): array
     {
         if ($idx === 'all') {
@@ -426,13 +427,48 @@ class MessageService
                 ->where('idx', $idx)
                 ->delete();
         }
+
         return [
             'result' => 'success',
             'message' => ''
         ];
     }
-    */
 
+    /**
+     * 나의 검색어 조회
+     * @param $idx
+     * @return array
+     */
+    public function getMyKeyword(): array
+    {
+        // 최신 5개만 조회
+        $keywords = MessageKeyword::where('user_idx', Auth::user()['idx'])
+            ->orderBy('register_time', 'desc')
+            ->offset(0)
+            ->limit(5)
+            ->get();
+
+        return [
+            'result' => 'success',
+            'message' => 'success',
+            'data' => $keywords
+        ];
+    }
+
+    /**
+     * 검색어로 채팅방(업체명 or 채팅 내용) 조회
+     * @param $idx
+     * @return array
+     */
+    public function getRoomsByKeyword($params): array
+    {
+        return [
+            'result' => 'success',
+            'message' => 'success',
+            'data' => $this->getRooms($params)
+        ];
+    }
+    
     /**
      * 알림 켜기/끄기
      * @param array $params
@@ -682,6 +718,8 @@ class MessageService
         }
 
         setlocale(LC_ALL, "ko_KR.utf-8");
+        // echo
+        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx]);
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $message->content, 
@@ -689,8 +727,10 @@ class MessageService
             date('Y년 m월 d일'),
             substr(date('H:i:s'), 0, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
-            $this->getRoomMessageTitle($message)
+            $this->getRoomMessageTitle($message->content),
+            $companyInfo->company_name
         ));
+
         
         return [
             'result' => 'success',
@@ -824,6 +864,7 @@ class MessageService
         ,CONCAT(second_company_idx,',',second_company_type),CONCAT(first_company_idx,',',first_company_type)) AS other_company"))
         ->first();
 
+        $isCreated = false;
         if (!$room) {
             $room = new MessageRoom;
             $room->first_company_idx = $messageParam['first_company_idx'];
@@ -834,6 +875,7 @@ class MessageService
 
             $sender_company_idx = $messageParam['second_company_idx'];
             $sender_company_type = $messageParam['second_company_type'];
+            $isCreated = true;
         } else {
             $otherCompany = explode(',',$room->other_company);
             $sender_company_idx = $otherCompany[0];
@@ -874,10 +916,59 @@ class MessageService
         $message->content = $content;
         $message->save();
 
+
+        setlocale(LC_ALL, "ko_KR.utf-8");
+        // 대상 업체 메시지 전달
+        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx]);
+        event(new ChatMessage($message->room_idx, 
+            $message->user_idx, 
+            $message->content, 
+            $this->convertHtmlContentByMessage($message),
+            date('Y년 m월 d일'),
+            substr(date('H:i:s'), 0, 5),
+            ["일","월","화","수","목","금","토"][date('w', time())],
+            $this->getRoomMessageTitle($message->content),
+            $companyInfo->company_name
+        ));
+        if($isCreated) {
+            // 방을 최초 개설한 경우, 기존 채팅방 목록에 노출되지 않았을 수 있음. 
+            // 이 경우, 해당하는 회사의 모든 사용자 웹소켓으로 전달하여 접속한 소켓(=접속중인 경우)이 있을때 즉시 이벤트 처리가 가능하게 함
+
+            $targetUsers = User::where('company_idx', $companyInfo->idx)
+                ->where('is_delete', 0)
+                ->get();
+
+            if(isset($targetUsers) && is_array($targetUsers)) {
+                foreach($targetUsers as $key => $targetUser) {
+                    event(new ChatUser($message->room_idx, 
+                        $targetUser->idx, 
+                        $message->content, 
+                        $this->convertHtmlContentByMessage($message),
+                        date('Y년 m월 d일'),
+                        substr(date('H:i:s'), 0, 5),
+                        ["일","월","화","수","목","금","토"][date('w', time())],
+                        $this->getRoomMessageTitle($message->content),
+                        $companyInfo->company_name
+                    ));
+                }
+            }
+        }
+        
         return [
             'result' => 'success',
-            'message' => ''
+            'message' => $message->content,
+            'roomIdx' => $message->room_idx
         ];
+    }
+
+    /**
+     * 채팅용 사용자 토큰 생성
+     * @return string
+     */
+    public function getUserIdx(): string
+    {
+        $user = Auth::user();
+        return $user['idx'];
     }
 
     /**
