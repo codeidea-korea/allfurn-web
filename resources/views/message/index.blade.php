@@ -213,6 +213,7 @@
                     $('._room'+roomIdx+'LastMent').text(messages.title);
 
                     if($('#chatting_keyword').val() != '') {
+                        $('#chatting_keyword_inroom').val($('#chatting_keyword').val());
                         boldSearchKeywordInRoom();
                     }
                 });

@@ -389,7 +389,7 @@ class MessageService
     }
 
     /**
-     * 검색이 리스트 가져오기
+     * 검색어 리스트 가져오기
      * @return mixed
      */
     public function getSearchKeywords()

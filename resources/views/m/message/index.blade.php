@@ -1,5 +1,14 @@
 @extends('layouts.app_m')
 
+@php
+
+$header_depth = 'talk';
+$only_quick = 'yes';
+$top_title = '';
+$header_banner = '';
+
+@endphp
+
 @section('content')
 @include('layouts.header_m')
 
@@ -14,7 +23,7 @@
                 
                 <ul class="message_list _chatting_rooms">
                     @foreach($rooms as $room)
-                    <li onclick="searchKeywordRoom({{ $room->idx }})">
+                    <li onclick="searchKeywordRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
                         <div class="img_box">
                             <img src="/img/profile_img.svg" alt="">
                         </div>
@@ -37,7 +46,7 @@
                         </a>
                         <div class="input_form">
                             <svg style="cursor: pointer;" onclick="searchKeyword($('#chatting_keyword').val())"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                            <input type="text" placeholder="업체명 및 대화 내용을 검색해주세요." id="chatting_keyword" name="keyword" value="{{ request()->get('keyword') }}">
+                            <input type="text" placeholder="업체명 및 대화 내용을 검색해주세요." id="chatting_keyword" name="keyword" value="{{ request()->get('keyword') }}" onkeyup="searchKeywordByKeyup()">
                         </div>
                     </div>
                     <div class="search_result">
@@ -46,29 +55,41 @@
                                 <p>최근 검색어</p>
                                 <button onclick="deleteAllKeyword()">전체 삭제</button>
                             </div>
-                            <div class="record_list">
-                                <p onclick="">
-                                    문
-                                    <button data-idx="1" onclick="deleteKeyword()"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
-                                </p>
-                            </div>
+                            @if(is_array($keywords) && !empty($keywords))
+                                <div class="record_list">
+                                    @foreach($keywords as $keyword)
+                                    <p>
+                                        <span click="searchKeywordByRecorded('{{ $keyword->keyword }}')"> {{ $keyword->keyword }} </span>
+                                        <button data-idx="{{ $keyword->idx }}" onclick="deleteKeyword()"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
+                                    </p>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="record_list">
+                                    <div class="empty">최근 검색한 내역이 없습니다.</div>
+                                </div>
+                            @endif
                         </div>
 
-                        <ul class="message_list">
-                            <li>    
-                                <a href="/message.php">
+                        <ul class="message_list _chatting_rooms">
+                            @foreach($rooms as $room)
+                            <li onclick="searchKeywordRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
+                                <a href="javascript:searchKeywordRoom({{ $room->idx }})">
                                     <div class="img_box">
                                         <img src="/img/profile_img.svg" alt="">
                                     </div>
                                     <div class="txt_box">
                                         <h3>
-                                            갑부가구산업
-                                            <span>11월 15일</span>
+                                            {{ $room->name }}
+                                            <span>{{ $room->last_message_time }}</span>
                                         </h3>
-                                        <div class="desc">상품 문의드립니다</div>
+                                        <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
                                     </div>
                                 </a>
                             </li>
+                            @endforeach
+                            <!-- Ajax include -->
+
                             <!-- 검색 결과 없을떄 -->
                             <li class="no_result">
                                 검색된 메시지가 없습니다.
@@ -102,11 +123,6 @@
         $(this).toggleClass('active')
         $('.chatting_box .top_info .company_info').toggleClass('active');
     })
-
-    {{-- 대화방 키워드 검색하기 --}}
-    const searchKeywordRoom = idx => {
-        window.location.href = '/m/message/room?room_idx=' + (idx);
-    }
 </script>
 
     <!-- pusher -->
@@ -118,18 +134,18 @@
         cluster: 'ap3'
     });
 
-    var cchannel = pusher.subscribe('user-cmd-{{ user_idx }}');
-    cchannel.bind('user-cmd-event-{{ user_idx }}', function(messages) {
+    var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
+    cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
         console.log(JSON.stringify(messages));
 
-        const rooms = $('._chatting_rooms > li');
+        const rooms = $($('._chatting_rooms')[0]).find('li');
         const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
 
         if(newestRoom) {
             rooms.prepend(newestRoom);
         } else {
             const tmpChattingRoom = 
-                    '<li onclick="searchKeywordRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                    '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
                     +'    <div class="img_box">'
                     +'        <img src="/img/profile_img.svg" alt="">'
                     +'    </div>'
@@ -144,11 +160,21 @@
             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
         }
         // 활성화 처리 및 텍스트 변경
-        $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+        $($($('._chatting_rooms')[0]).find('li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+        $($($('._chatting_rooms')[1]).find('li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
     });
     </script>
 
     <script>
+        $('._chatting_rooms > .no_result').hide();
+        const searchKeywordByKeyup = () => {
+//            console.log(this);
+            if (window.event.key == 'Enter') { // enter key
+//                searchKeyword();
+            }
+            searchKeyword();
+        }
+        
         {{-- 검색어 전체 삭제 --}}
         const deleteAllKeyword = () => {
             if(confirm('전체 삭제하시겠습니까?')) {
@@ -189,30 +215,68 @@
                 }
             })
         }
-
-        {{-- 대화방 리스트 검색어 찾기 --}}
-        const searchKeyword = keyword => {
-            // TODO: 요청사항 있을시 ajax 로 변경해야함 -> UX 가 새로고침이 아님
-            location.href='/m/message?' + new URLSearchParams({keyword:keyword});
+        const searchKeywordByRecorded = (text) => {
+            $('#chatting_keyword').val(text);
+            searchKeyword(text);
         }
 
-        {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
-        document.getElementById('keyword').addEventListener('keyup', e => {
+        {{-- 대화방 이동 --}}
+        const visibleRoom = (idx) => {
             
-            if ( $('#keyword').val() === '' ) {
-                $('#recent_keyword').show();
-            } else {
-                $('#recent_keyword').hide();
-            }
+            let params = {room_idx: idx}
             
-            if (e.key === 'Enter') { // enter key
-                const params = {};
-                params['keyword'] = e.currentTarget.value;
-                location.href='/message?' + new URLSearchParams(params);
-            }
-        })
-    </script>
+            @if($product_idx)
+                params['product_idx'] = '{{ $product_idx }}';
+            @endif
 
+            windows.location.href = location.pathname + '/room?' + new URLSearchParams({ room_idx: {{ $room_idx }}, chatting_keyword: $('#chatting_keyword').val() });
+        }
+
+        {{-- 대화방 리스트 검색어 찾기 --}}
+        const searchKeyword = () => {
+            // 현재 존재하는 내용에서 조회한다. - 소켓으로 받는 데이터도 계속 갱신된다는 가정 chatting_keyword
+            const keyword = $('#chatting_keyword').val();
+            if(!keyword || keyword == '' || keyword.trim() == '') {
+                const rooms = $('.message_list > li');
+                for(var jnx = 0; jnx < rooms.length; jnx++) {
+                    $(rooms[jnx]).show();
+                }
+            }
+            fetch('/message/rooms?' + new URLSearchParams({ keyword: keyword }), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Sever Error');
+            }).then(json => {
+                if (json.result === 'success') {
+                    const rooms = $($('.message_list')[1]).find('li');
+                    var isAnyShow = false;
+                    $($('.message_list')[1]).find('li').hide();
+                    $('._chatting_rooms > .no_result').hide();
+                    
+                    for(var inx = 0; inx < json.data.length; inx++) {
+                        for(var jnx = 0; jnx < rooms.length; jnx++) {
+                            if(rooms[jnx].dataset.key == json.data[inx].idx) {
+                                $(rooms[jnx]).show();
+                                isAnyShow = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // 하나도 조회되지 않은 경우
+                    if(!isAnyShow) $('._chatting_rooms > .no_result').show();
+                }
+            }).catch(error => {
+            })
+        }
+    </script>
 @endsection
 
 @include('m.message.modal')

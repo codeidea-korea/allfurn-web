@@ -50,6 +50,8 @@ class MessageController extends BaseController
         }
         
         $data['keyword'] = isset($params['keyword']) ? $params['keyword'] : '';
+        $data['chatting_keyword'] = isset($params['chatting_keyword']) ? $params['chatting_keyword'] : '';
+        
         $data['room_idx'] = $params['room_idx'];
         $this->messageService->readRoomAlarmCount($data['room_idx']);
         $data['company'] = $this->messageService->getCompany($params);

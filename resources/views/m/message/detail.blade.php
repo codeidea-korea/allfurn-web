@@ -12,8 +12,12 @@
                         <svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg>
                     </a>
                     <div class="input_form">
-                        <svg><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                        <input type="text" placeholder="대화 내용을 검색해주세요.">
+                        <svg onclick="searchKeywordInRoom()"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
+                        <input type="text" placeholder="대화 내용을 검색해주세요." id="chatting_keyword_inroom" name="keyword" value="{{ request()->get('keyword') }}" onkeyup="searchKeywordInRoom()">
+                    </div>
+                    <div class="flex items-center gap-2 ml-3 talk_search_arrow">
+                        <button id="btnPrevSearchInroom" onclick="prevBoldSearchKeywordInRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg></button>
+                        <button id="btnNextSearchInroom" onclick="nextBoldSearchKeywordInRoom()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg></button>
                     </div>
                 </div>
                 <div class="title">
@@ -56,7 +60,7 @@
             <div class="chatting_list" style="overflow-y: scroll;">
 
                 @if($chattingCount > 30)
-                <div class="flex justify-center mt-2" id="btnGetChatMore">
+                <div class="flex justify-center mt-2" id="btnGetChatMore" data-key="{{ $room_idx }}">
                     <button class="border rounded-full bg-white px-2 h-[32px] flex items-center gap-1" onclick="getChatting({{ $room_idx }})">
                         더보기
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
@@ -92,7 +96,7 @@
 
     <script>
         $(document).ready(function(){
-            visibleRoom({{ $room_idx }});
+            visibleRoom({{$room_idx}});
         });
 
         {{-- 대화방 내용 가져오기 --}}
@@ -103,10 +107,7 @@
             @if($product_idx)
                 params['product_idx'] = '{{ $product_idx }}';
             @endif
-                
-            if (document.getElementById('chatting_keyword')) {
-                params['keyword'] = document.getElementById('chatting_keyword').value;
-            }
+            
             pageNo = 1;
             
             fetch('/message/room?' + new URLSearchParams(params)).then(response => {
@@ -118,23 +119,16 @@
                 throw new Error('Sever Error');
                 
             }).then(html => {
-                /*
                 if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
                     document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
                 }
                 document.querySelector('.message__section').innerHTML = html;
-                */
                 loadEvent(idx);
 
                 const roomIdx = idx;
                 var channel = pusher.subscribe('chat-' + roomIdx);
                 channel.bind('chat-event-' + roomIdx, function(messages) {
                     console.log(JSON.stringify(messages));
-
-                    // 활성화 처리 및 텍스트 변경
-                    /*
-                    $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
-                    */
 
                     var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
                     const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
@@ -144,11 +138,14 @@
                         $('.chatting_list').html($('.chatting_list').html() + dateTag);
                     }
                     $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
-                    $('.font-medium').removeClass('w-[260px]');
-                    $('.font-medium').addClass('min-w-[100px]');
                     
                     $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
                     $('._room'+roomIdx+'LastMent').text(messages.title);
+
+                    if('{{$chatting_keyword}}' != '') {
+                        $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
+                        boldSearchKeywordInRoom();
+                    }
                 });
                 setTimeout(() => {
                     document.querySelector('.chatting_list').focus();
@@ -168,9 +165,6 @@
                 params['product_idx'] = '{{ $product_idx }}';
             @endif
                 
-            if (document.getElementById('chatting_keyword')) {
-                params['keyword'] = document.getElementById('chatting_keyword').value;
-            }
             pageNo = pageNo + 1;
             
             fetch('/message/chatting?' + new URLSearchParams(params)).then(response => {
@@ -194,13 +188,9 @@
                     $('#btnGetChatMore').hide();
                 }
                 loadEvent(idx);
+                boldSearchKeywordInRoom();
                 document.querySelector('.chat-box:last-child').focus();
-                $('.font-medium').removeClass('w-[260px]');
-                $('.font-medium').addClass('min-w-[100px]');
                 
-                setTimeout(() => {
-                    $('.chatting_list').scrollTop(0);
-                }, 100);
             }).catch(error => {
             })
         }
@@ -329,8 +319,99 @@
         }
 
         {{-- 대화방 키워드 검색하기 --}}
-        const searchKeywordRoom = idx => {
-            visibleRoom(idx);
+        var keywordCursorInRoom = -1;
+        const prevBoldSearchKeywordInRoom = () => {
+            const keyword = $('#chatting_keyword_inroom').val();
+            const targets = $('.chatting_list > .chatting > .chat_box:contains("'+keyword+'")');
+
+            if(keywordCursorInRoom >= targets.length - 1) {
+                keywordCursorInRoom = targets.length - 1;
+
+                if($('#btnGetChatMore').is(':visible')) {
+                    getChatting($('#btnGetChatMore')[0].dataset.key);
+                } else {
+                    $('#btnPrevSearchInroom').removeClass('active');
+                }
+                return;
+            }
+            
+            if(!$('#btnNextSearchInroom').hasClass('active')) {
+                $('#btnNextSearchInroom').addClass('active');
+            }
+            keywordCursorInRoom = keywordCursorInRoom + 1;
+
+            $('.text-white.bg-stone-900').removeClass('cursorthis');
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+                - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
+            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML = 
+                $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML.replaceAll('text-white bg-stone-900', 'text-white bg-stone-900 cursorthis');
+        }
+        const nextBoldSearchKeywordInRoom = () => {
+            const keyword = $('#chatting_keyword_inroom').val();
+            const targets = $('.chatting_list > .chatting > .chat_box:contains("'+keyword+'")');
+            if(targets.length < 1) {
+                return;
+            }
+            if(keywordCursorInRoom == 0) {
+                $('#btnNextSearchInroom').removeClass('active');
+                return;
+            }
+            if(!$('#btnPrevSearchInroom').hasClass('active')) {
+                $('#btnPrevSearchInroom').addClass('active');
+            }
+            keywordCursorInRoom = keywordCursorInRoom - 1;
+
+            $('.text-white.bg-stone-900').removeClass('cursorthis');
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+                - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
+            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML = 
+                $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML.replaceAll('text-white bg-stone-900', 'text-white bg-stone-900 cursorthis');
+        }
+        const cleanBoldKeyword = (tag) => {
+            if(tag.children && tag.children.length > 0) {
+                for(var idx = 0; idx < tag.children.length; idx++) {
+                    cleanBoldKeyword(tag.children[idx]);
+                }
+                return;
+            }
+            if($(tag).hasClass('bg-stone-900')) {
+                const txt = $(tag).text();
+                tag.outerHTML = txt;
+            }
+        }
+        const searchKeywordInRoom = () => {
+            keywordCursorInRoom = 0;
+            boldSearchKeywordInRoom();
+        }
+        const boldSearchKeywordInRoom = () => {
+            const ttag = $('.chat_box > .text-white.bg-stone-900');
+            for(var idx = 0; idx < ttag.length; idx++) {
+                cleanBoldKeyword(ttag[idx]);
+            }
+            $('#btnPrevSearchInroom').removeClass('active');
+            $('#btnNextSearchInroom').removeClass('active');
+
+            // 대화방 안에서 검색입력이 되어 있다면 검색어 강조 표기를 한다.
+            const keyword = $('#chatting_keyword_inroom').val();
+            if(keyword == '') {
+                keywordCursorInRoom = 0;
+                return;
+            }
+
+            const targets = $('.chatting_list > .chatting > .chat_box:contains("'+keyword+'")');
+            if(targets.length < 1) {
+                $('#btnNextSearchInroom').removeClass('active');
+                if(!$('#btnGetChatMore').is(':visible')) {
+                    $('#btnPrevSearchInroom').removeClass('active');
+                }
+            }
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+                - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
+            for(var idx = 0; idx < targets.length; idx++) {
+                targets[idx].outerHTML = targets[idx].outerHTML.replaceAll(keyword, '<span class="text-white bg-stone-900">'+keyword+'</span>');
+            }
+            $('#btnNextSearchInroom').removeClass('active');
+            $('#btnPrevSearchInroom').addClass('active');
         }
 
         const reportModal = (company_idx, company_type) => {
@@ -436,21 +517,7 @@
                 }
             }
         })
-
-
-        $(document).on('keyup', '#chatting_keyword', function(evt) {
-            
-            if (evt.key === 'Enter') { // enter key
-                
-                const roomIdx = evt.currentTarget.dataset.roomIdx;
-                
-                searchKeywordRoom(roomIdx);
-                
-            }
-            
-        })
     </script>
-
 
 @endsection
 
