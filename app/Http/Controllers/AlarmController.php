@@ -31,7 +31,7 @@ class AlarmController extends BaseController
 
         $data['type'] = $params['type'] = $type;
         $data = array_merge($data, $this->alarmService->getList($params));
-        return view('alarm.index', $data);
+        return view(getDeviceType().'alarm.index', $data);
     }
 
 

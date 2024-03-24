@@ -159,6 +159,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::get('/rooms/count', 'MessageController@getRoomsCount');
     Route::post('/report', 'MessageController@report');
     Route::post('/send/message', 'MessageController@sendRoomMessage');
+    Route::get('/rooms', 'MessageController@getRooms');
 });
 
 Route::prefix('community')->name('community')->middleware('auth')->group(function() {
