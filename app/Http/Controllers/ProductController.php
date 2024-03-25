@@ -236,7 +236,7 @@ class ProductController extends BaseController
     public function bestNewProduct(Request $request)
     {
         $bestNewProducts = $this->productService->getBestNewProductList();
-        return view('product.best-new-product', [
+        return view(getDeviceType().'product.best-new-product', [
             'bestNewProducts' => $bestNewProducts,
         ]);
     }
