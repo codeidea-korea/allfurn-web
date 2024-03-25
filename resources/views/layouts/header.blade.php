@@ -7,7 +7,7 @@
                 <li><a href="/message">올톡</a></li>
                 <li><a href="/mypage/deal">마이올펀</a></li>
                 <li><a href="./like_prod.php">좋아요</a></li>
-                <li><a class="alarm_btn" href="/alarm"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span hidden></span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
@@ -38,40 +38,64 @@
 </div>
 
 <script>
-function getCategoryList() {
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url				: '/product/getCategoryListV2',
-        data			: {},
-        type			: 'POST',
-        dataType		: 'json',
-        success		: function(result) {
-            let htmlText = '<ul>';
-            result.forEach(function (e, idx) {
-                htmlText += '<li>';
-                htmlText += '<a href="javascript:;">';
-                htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
-                htmlText += '<span>' + e.name + '</span>';
-                htmlText += '</a>';
-                htmlText += '<ul class="depth2">';
-                e.depth2.forEach(function (e2, idx2) {
-                    htmlText += '<li><a href="/product/category?ca=' + e2.idx + '&pre='+e2.parent_idx+'">' + e2.name + '</a></li>';
+
+    $(document).ready(function(){
+        getCategoryList();
+        checkAlert();
+        //getCategoryBanners();
+    });
+
+    function getCategoryList() {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/product/getCategoryListV2',
+            data			: {},
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                let htmlText = '<ul>';
+                result.forEach(function (e, idx) {
+                    htmlText += '<li>';
+                    htmlText += '<a href="javascript:;">';
+                    htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
+                    htmlText += '<span>' + e.name + '</span>';
+                    htmlText += '</a>';
+                    htmlText += '<ul class="depth2">';
+                    e.depth2.forEach(function (e2, idx2) {
+                        htmlText += '<li><a href="/product/category?ca=' + e2.idx + '&pre='+e2.parent_idx+'">' + e2.name + '</a></li>';
+                    })
+                    htmlText += '</ul>';
+                    htmlText += '</li>';
                 })
                 htmlText += '</ul>';
-                htmlText += '</li>';
-            })
-            htmlText += '</ul>';
-            $('.category_list').html(htmlText);
-        }
-    });
-}
+                $('.category_list').html(htmlText);
+            }
+        });
+    }
 
-function goCategoryList(category) {
-    location.href = "/product/category?pre=" + category;
-} 
+    function goCategoryList(category) {
+        location.href = "/product/category?pre=" + category;
+    } 
 
-$(document).ready(function(){
-    getCategoryList();
-    //getCategoryBanners();
-});
+    function checkAlert() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method : 'POST',
+            url : '/checkAlert',
+            success : function(result) {
+                if(result.success === true && result.alarm > 0) {
+                    $(".alarm_btn span").text(result.alarm);
+                    $(".alarm_btn span").show(result.alarm);
+                } else {
+                    $(".alarm_btn span").hide();
+                }
+            },
+            error : function() {
+                $(".alarm_btn span").hide();
+            }
+        })
+    }
+    
 </script>
