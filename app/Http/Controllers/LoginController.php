@@ -99,7 +99,7 @@ class LoginController extends BaseController
     }
 
     /**
-     * 인즌번호 처리
+     * 인증번호 처리
      * @param Request $request
      * @return JsonResponse
      */
@@ -129,6 +129,21 @@ class LoginController extends BaseController
         Auth::logout();
 
         return Redirect('/');
+    }
+    
+
+    /**
+     * 사용자 fcm token 갱신
+     * @return JsonResponse()
+     */
+    public function updateFcmToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+        ]);
+        $token = $request->input('token');
+
+        return response()->json($this->loginService->updateFcmToken($token));
     }
 }
 

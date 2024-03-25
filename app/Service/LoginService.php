@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\PushToken;
 use DateTime;
 
 class LoginService
@@ -117,5 +118,41 @@ class LoginService
                 ['phone_number', $phone_number]
             ])->first();
         return $user;
+    }
+
+
+    /**
+     * 사용자 fcm token 갱신
+     * 
+     * @param string $fcmToken
+     * @return json array
+     */
+    public function updateFcmToken($fcmToken): array
+    {
+        $user = Auth::user();
+        if(empty($user)) {
+            // 비인증 사용자 또는 서버 토큰이 만료된 사용자
+            return [
+                'result' => 'failure',
+                'message' => '갱신에 실패하였습니다. 전문을 다시 전송해주세요.'
+            ];
+        }
+        $pushTokenCount = PushToken::where('user_idx', $user['idx'])->count();
+
+        if($pushTokenCount > 0) {
+            // update
+            PushToken::where('user_idx', '=', $user['idx'])->update(['push_token' => $fcmToken]);
+        } else {
+            // insert
+            $pushToken = new PushToken;
+            $pushToken->user_idx = $user['idx'];
+            $pushToken->push_token = $fcmToken;
+            $userPushSet->save();
+        }
+
+        return [
+            'result' => 'success',
+            'message' => '성공'
+        ];
     }
 }
