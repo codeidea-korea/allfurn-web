@@ -9,104 +9,24 @@
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper">
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
+                        @if(isset($banners))
+                            @foreach($banners as $banner)
+                            <li class="swiper-slide prod_item type03">
+                                <div class="img_box">
+                                    <a href="/product/detail/{{ $banner->idx }}"><img src="{{ $banner->imgUrl }}" alt=""></a>
+                                    <button class="zzim_btn prd_{{ $banner->idx }} {{ ($banner->isInterest == 1) ? 'active' : '' }}" pidx="{{ $banner->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                </div>
+                                <div class="txt_box">
+                                    <a href="/product/detail/{{ $banner->idx }}">
+                                        <strong>{{ $banner->content }}</strong>
+                                        <span>{{ $banner->companyName }}</span>
+                                        <p>{{ $banner->name }}</p>
+                                        <b>{{ number_format($banner->price, 0) }}원</b>
+                                    </a>
+                                </div>
+                            </li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
