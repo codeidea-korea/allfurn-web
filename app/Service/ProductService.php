@@ -504,7 +504,7 @@ class ProductService
     }
 
     //신규 등록 상품
-    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
     public function getNewAddedProductList($params) {
         $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
             'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
@@ -533,6 +533,9 @@ class ProductService
                     GROUP BY product_idx) AS api'), function($query) {
                         $query->on('AF_product.idx', '=', 'api.product_idx');
             })
+            ->leftjoin('AF_wholesale as aw', function($query){
+                $query->on('aw.idx', 'AF_product.company_idx');
+            })
             ->where('AF_product.is_new_product', 1)
             ->whereIn('AF_product.state', ['S', 'O']);
             
@@ -540,19 +543,19 @@ class ProductService
             $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        // if (isset($param['location']) && !empty($param['location'])) {
-        //     $location = explode('|', $param['location']);
-        //     $list->where(function ($query) use ($location) {
-        //         foreach ($location as $key => $loc) {
-        //             $clause = $key == 0 ? 'where' : 'orWhere';
-        //             $query->$clause('AF_wholesale.business_address', 'like', "$loc%");
-        //             if (!empty($relativeTables)) {
-        //                 $this->filterByRelationship($query, 'AF_wholesale.business_address',
-        //                     $relativeTables);
-        //             }
-        //         }
-        //     });
-        // }
+        if(isset($params['locations']) && !empty($params['locations'] != "")) {
+            $location = explode(",", $params['locations']);
+            $new_product->where(function ($query) use ($location) {
+                foreach ($location as $key => $loc) {
+                    $clause = $key == 0 ? 'where' : 'orWhere';
+                    $query->$clause('aw.business_address', 'like', "$loc%");
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'aw.business_address',
+                            $relativeTables);
+                    }
+                }
+            });
+        }
 
         return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
     }

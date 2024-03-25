@@ -245,6 +245,7 @@ class ProductController extends BaseController
     public function newAddedProduct(Request $request)
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['locations'] = $request->locations == null ? "" : $request->locations;
         $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
         $list = $this->productService->getNewAddedProductList($data);
 
