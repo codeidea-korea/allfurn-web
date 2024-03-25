@@ -144,11 +144,10 @@
                 'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             },
             success: function (result) {
-                if(result.data.length > 0) {
-                    displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                    displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                    $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
-                }
+
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
                 
                 isLastPage = currentPage === result.last_page;
             },
@@ -185,10 +184,9 @@
                 'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             }, 
             success: function(result) {
-                if(result.data.length > 0) {
-                    displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
-                    displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
-                }
+
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
                 
                 isLastPage = currentPage === result.last_page;
             }, 
@@ -215,11 +213,10 @@
                 $this.prop("disabled", true);
             },
             success: function (result) {
-                if(result.data.length > 0) {
-                    displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                    displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                    $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
-                }
+                
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
                 
                 isLastPage = currentPage === result.last_page;
                 
@@ -354,5 +351,39 @@
         $(".sub_filter .filter_box button").eq(2)
             .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
     }
+
+    //초기화
+    $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_location-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+        displaySelectedCategories();
+        displaySelectedLocation();
+        displaySelectedOrders();
+        toggleFilterBox();
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/newAddedProduct',
+            type : 'GET',
+            data : {
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocation().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+            },
+            success: function (result) {
+
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
+                
+                isLastPage = currentPage === result.last_page;
+                
+            }, 
+            complete : function () {
+                currentPage = 1;
+            }
+        });
+    });
 </script>
 @endsection
