@@ -220,7 +220,7 @@ class ProductController extends BaseController
         $bestNewProducts = $this->productService->getBestNewProductList();
         $company = $this->productService->getRecentlyAddedProductCompanyList();
 
-        return view('product.newProduct', [
+        return view(getDeviceType().'product.newProduct', [
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
