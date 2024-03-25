@@ -207,18 +207,24 @@ class HomeService
 
         // 동영상 광고
         $data['video_ad'] = VideoAd::select('AF_video_ad.*', 
-            DB::raw('
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as videoUrl'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_video_ad.video_attachment_idx, ",", 1)'));
-            })
+            DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
+            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_video_ad.web_attachment_idx')
             ->where('AF_video_ad.state', 'G')
             ->where('AF_video_ad.start_date', '<', DB::raw("now()"))
             ->where('AF_video_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_video_ad.is_delete', 0)
             ->where('AF_video_ad.is_open', 1)
             ->orderby('idx', 'desc')->get();
+        foreach($data['video_ad'] as $video){
+            if ($video->video_upload_type == '1'){
+                $tmpVideo = DB::table('AF_attachment')->selectRaw('CONCAT("'.preImgUrl().'", folder, "/", filename) as video_url')
+                    ->where('idx', $video->video_attachment_idx)
+                    ->first();
+                $video->video_url = $tmpVideo->video_url;
+            }else{
+                $video->video_url = "";
+            }
+        }
 
         // 매거진
         $data['magazine'] = Magazine::select('AF_magazine.*',
