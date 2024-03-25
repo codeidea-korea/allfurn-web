@@ -12,22 +12,22 @@
                         <div class="txt_box">
                             <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파1</span></h4>
                         </div>
-                        <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
+                        {{-- <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video> --}}
+                        <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
                     </li>
                     <li class="swiper-slide">
                         <div class="txt_box">
                             <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파2</span></h4>
                         </div>
-                        <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
+                        {{-- <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video> --}}
+                        <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
                     </li>
                     <li class="swiper-slide">
                         <div class="txt_box">
                             <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파3</span></h4>
                         </div>
-                        <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
+                        {{-- <video controls src="https://design07.codeidea.io/allfurn/pc/img/ex_video.mp4"></video> --}}
+                        <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a>
                     </li>
                 </ul>
             </div>

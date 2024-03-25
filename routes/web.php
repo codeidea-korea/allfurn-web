@@ -79,6 +79,10 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
 });
 
+Route::prefix('estimate') -> name('estimate') -> group(function(){
+    Route::post('/makeGroupCode', 'EstimateController@makeGroupCode');
+});
+
 Route::prefix('order')->name('order')->group(function() {
     Route::get('/', 'OrderController@orderForm2');
     Route::get('/{cartIdx?}', 'OrderController@orderForm');
