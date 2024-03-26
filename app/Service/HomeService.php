@@ -36,12 +36,14 @@ class HomeService
     public function getHomeData()
     {
         // 배너 상단
-        $banner_top = Banner::select('AF_banner_ad.company_idx', 'AF_banner_ad.company_type', 'AF_banner_ad.web_link_type', 'AF_banner_ad.web_link', 'ac.folder', 'ac.filename')
+        $banner_top_query = Banner::select('AF_banner_ad.company_idx', 'AF_banner_ad.company_type', 'AF_banner_ad.web_link_type', 'AF_banner_ad.web_link', 'ac.folder', 'ac.filename');
+        if (getDeviceType() == "m.") {
+            $banner_top_query->join('AF_attachment as ac', 'ac.idx', 'AF_banner_ad.appbig_attachment_idx');
+        }else{
+            $banner_top_query->join('AF_attachment as ac', 'ac.idx', 'AF_banner_ad.web_attachment_idx');
+        }
+        $banner_top = $banner_top_query->where('start_date', '<', DB::raw('now()'))
             ->where('ad_location', 'alltop')
-            ->join('AF_attachment as ac', function ($query) {
-                $query->on('ac.idx', 'AF_banner_ad.web_attachment_idx');
-            })
-            ->where('start_date', '<', DB::raw('now()'))
             ->where('end_date', '>', DB::raw('now()'))
             ->where('state', 'G')
             ->where('is_delete', 0)
