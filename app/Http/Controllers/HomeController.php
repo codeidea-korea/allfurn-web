@@ -40,8 +40,19 @@ class HomeController extends BaseController
         }
 
         if ($chkMobile) {
+
+            if (Auth::check()) {
+                
+                $data = $this->homeService->getHomeData();
+
+                return view('m/home/index', ['data'=>$data]);
+                
+            } else {
+                
+                return view('home/mWelcome');
+                
+            }
             
-            return view('home/mWelcome');
             
         } else {
             
