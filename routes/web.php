@@ -81,6 +81,7 @@ Route::prefix('product')->name('product')->group(function() {
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::post('/makeGroupCode', 'EstimateController@makeGroupCode');
+    Route::post('/insertRequest', 'EstimateController@insertRequest');
 });
 
 Route::prefix('order')->name('order')->group(function() {
@@ -144,6 +145,9 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/logo/image', 'MypageController@deleteLogoImage');
     Route::put('/represent/product/{idx}', 'MypageController@toggleRepresentProduct');
     Route::get('/check/new/badge', 'MypageController@getCheckNewBadge');
+    Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
+    Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
+    Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
 });
 
 
