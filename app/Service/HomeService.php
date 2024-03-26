@@ -19,6 +19,7 @@ use App\Models\UserSearch;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Magazine;
+use App\Models\LikeCompany;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -475,5 +476,108 @@ class HomeService
                 'success'=>false
             ]);
         }
+    }
+
+    public function getFamilyMember($idx) {
+        $data['family'] = FamilyAd::select(
+            'AF_family_ad.*', 'afac.company_idx', 'afac.company_name',
+            DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'),
+            DB::raw('CASE afac.company_type
+                        WHEN "도매" THEN "W"
+                        WHEN "소매" THEN "R"
+                        ELSE "" 
+                    END AS companyType'),
+            DB::raw('CASE afac.company_type
+                        WHEN "도매" THEN (SELECT SUBSTRING_INDEX(business_address, " ", 1) FROM AF_wholesale WHERE idx = afac.company_idx)
+                        WHEN "소매" THEN (SELECT SUBSTRING_INDEX(business_address, " ", 1) FROM AF_retail WHERE idx = afac.company_idx )
+                        ELSE ""
+                    END AS location'),
+            DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList'),
+            DB::raw('(SELECT if(count(*) > 0, 1, 0)
+                      FROM AF_company_like AS acl 
+                      WHERE acl.company_idx = afac.company_idx
+                        AND acl.user_idx = '.Auth::user()->idx.'
+                    ) AS isCompanyInterest')
+        )
+        ->leftjoin('AF_attachment AS at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
+        })
+        ->leftjoin('AF_family_ad_company AS afac', function($query) {
+            $query->on('afac.family_ad_idx', 'AF_family_ad.idx');
+        })
+        ->leftjoin('AF_product AS ap', function($query){
+            $query->on('ap.company_idx','afac.company_idx')
+            ->whereNotNull('access_date');
+        })
+        ->leftjoin('AF_category AS ac', function ($query) {
+            $query->on('ac.idx', 'ap.category_idx');
+        })
+        ->leftjoin('AF_category AS ac2', function ($query) {
+            $query->on('ac2.idx', 'ac.parent_idx');
+        })
+        ->where('AF_family_ad.idx', $idx)
+        ->where('AF_family_ad.state', 'G')
+        ->where('AF_family_ad.start_date', '<', DB::raw("now()"))
+        ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
+        ->where('AF_family_ad.is_delete', 0)
+        ->where('AF_family_ad.is_open', 1)
+        ->groupBy('AF_family_ad.idx', 'afac.company_idx')
+        ->get();
+
+
+        //멤버별 상품 3개 - 대표상품 먼저
+        foreach($data['family'] as $key => $value) {
+            $data['family'][$key]['productList'] = 
+                DB::table(DB::raw('(select * from AF_product where company_idx = '. $value->company_idx .') AS ap'))
+                ->leftjoin('AF_attachment as at', function($query) {
+                    $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
+                })
+                ->select('ap.idx AS productIdx', 
+                    DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'),
+                    DB::raw('(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'),
+                )
+                ->limit(3)
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.register_time','desc')
+                ->get();
+        }
+
+        return $data;
+    }
+
+    function toggleCompanyLike($params) {
+
+        $type = $params->type;
+        $companyIdx = $params->idx;
+
+        $cnt = LikeCompany::where([
+            'company_type'=> $type,
+            'company_idx' => $companyIdx,
+            'user_idx'=>Auth::user()->idx
+        ])->count();
+        
+        $isLike = 0;
+        $like = new LikeCompany;
+
+        if ($cnt > 0) {
+            $like->where([
+                'company_type'=> $type,
+                'company_idx' => $companyIdx,
+                'user_idx'=>Auth::user()->idx
+            ])->delete();
+        } else {
+            $like->user_idx = Auth::user()->idx;
+            $like->company_type = $type;
+            $like->company_idx  = $companyIdx;
+            $like->register_time = DB::raw('now()');
+            $like->save();
+
+            $isLike = 1;
+        }
+            
+        return response()->json([
+            'success'=>true,
+            'like'=>$isLike
+        ]);
     }
 }
