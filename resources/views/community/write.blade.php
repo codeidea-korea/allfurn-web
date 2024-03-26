@@ -20,7 +20,7 @@
                 <input type="hidden" id="selectBoard" name="selectBoard" value="{{ $idx ? $detail->board_idx : '' }}" />
             <div class="community_write_con01">
                 <div class="dropdown_wrap">
-                    <button class="dropdown_btn">게시판 선택</button>
+                    <button class="dropdown_btn" {{ $idx ? 'disabled' : '' }} >{{ $idx ? $detail->board->name  : '게시판 선택' }}</button>
                     <div class="dropdown_list">
                         @foreach($boards as $board)
                             <div class="dropdown_item" onclick="writeFormSelectBoard({{$board->idx}})">{{$board->name}}</div>

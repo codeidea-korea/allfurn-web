@@ -22,8 +22,8 @@
     <section class="sub_section_bot community_write">
         <div class="join_inner">
             <div class="community_write_con01">
-                <div class="dropdown_wrap">
-                    <button class="dropdown_btn">게시판 선택</button>
+                <div class="dropdown_wrap" {{ $idx ? 'disabled' : '' }}>
+                    <button class="dropdown_btn">{{ $idx ? $detail->board->name  : '게시판 선택' }}</button>
                     <div class="dropdown_list">
                         @foreach($boards as $board)
                             <div class="dropdown_item" onclick="writeFormSelectBoard({{$board->idx}})">{{$board->name}}</div>
