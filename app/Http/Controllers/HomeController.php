@@ -132,5 +132,16 @@ class HomeController extends BaseController
     {
         return $this->homeService->checkAlert();
     }
+
+    //올펀 패밀리 상세
+    public function getFamilyMember($idx) {
+        $data = $this->homeService->getFamilyMember($idx);
+        return view('family.index', $data);
+    }
+
+    //올펀 패밀리 상세 - 업체 좋아요
+    public function toggleCompanyLike(Request $params) {
+        return $this->homeService->toggleCompanyLike($params);
+    }
 }
 

@@ -44,6 +44,11 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 
 Route::post('checkAlert', 'HomeController@checkAlert');
 
+Route::prefix('/family')->name('family')->group(function() {
+    Route::get('/{idx}', 'HomeController@getFamilyMember');
+    Route::post('/like', 'HomeController@toggleCompanyLike');
+});
+
 Route::prefix('/member')->name('member')->group(function() {
     Route::post('/createUser', 'MemberController@createUser');
     Route::post('/checkUsingEmail', 'MemberController@checkUsingEmail');

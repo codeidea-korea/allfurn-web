@@ -12,7 +12,7 @@
             <div class="filter_box">
                 <button onclick="modalOpen('#filter_category-modal')">카테고리</button>
                 <button onclick="modalOpen('#filter_location-modal')">소재지</button>
-                <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                <button onclick="modalOpen('#filter_align-modal')">최신순</button>
                 <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
             </div>
             <div class="total">전체 {{ number_format($total, 0) }}개</div>

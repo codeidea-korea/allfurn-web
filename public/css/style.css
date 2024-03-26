@@ -40,9 +40,9 @@ section.sub_section_bot {padding:70px 0 140px; }
 .obtain_list li .txt_box .zzim_btn.active svg {stroke:var(--main_color); fill:var(--main_color); }
 
 .obtain_list li .prod_box {display:grid; grid-template-columns:repeat(3,1fr); gap:20px; width:50%; }
-.obtain_list li .prod_box .img_box {position:relative; }
-.obtain_list li .prod_box .img_box img {border-radius:3px; }
-.obtain_list li .prod_box .img_box .zzim_btn {position:absolute; right:12px; bottom:12px; }
+.obtain_list li .prod_box .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:3px; background-color:#dfdfdf; }
+.obtain_list li .prod_box .img_box img {position:absolute; left:0; top:0; right:0; bottom:0; margin:auto; border-radius:3px; }
+.obtain_list li .prod_box .img_box .zzim_btn {z-index:2; position:absolute; right:12px; bottom:12px; }
 
 .obtain_list.type02 li {flex-direction:column; gap:14px; }
 .obtain_list.type02 li .txt_box {width:100%; gap:10px; }

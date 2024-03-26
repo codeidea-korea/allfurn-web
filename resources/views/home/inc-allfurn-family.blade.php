@@ -8,7 +8,7 @@
         <ul class="grid grid-cols-4">
             @foreach($data['family_ad'] as $key => $family)
                 <li>
-                    <a href='#'>
+                    <a href='/family/{{$family->idx}}'>
                         <div class="img_box"><img style="width:131px" src="{{ $family->imgUrl }}" alt=""></div>
                         <p>{{ $family->family_name }}</p>
                     </a>
