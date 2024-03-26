@@ -38,16 +38,24 @@ class WholesalerController extends BaseController
 
         $data = $this->wholesalerService->getWholesalerData($target);
         $categoryList = $this->productService->getCategoryList();
-        $bannerList = $this->productService->thisMonth();
-        $companyList = $this->productService->getThisMonth();
+
+        $bannerList = $this->productService->getThisDealList('dealmiddle');
+
+        $companyList = $this->productService->getThisMonth('product');
+        $companyRank = $this->productService->getThisMonth('company');
         $companyList = setArrayNumer( $companyList );
+
+        $company = $this->productService->wholesalerRankList();
+        //print_re( $company );
 
         return view('wholesaler.index', [
             'data'=>$data,
-            'categoryList'=>$categoryList,
-            'bannerList'=>$bannerList,
-            'companyList'=>$companyList,
-            'query'=>$target
+            'categoryList'  => $categoryList,
+            'bannerList'    => $bannerList,
+            'companyList'   => $companyList,
+            'companyRank'   => $companyRank,
+            'companyProductList' => $company,
+            'query'         => $target
         ]);
     }
 
@@ -83,6 +91,16 @@ class WholesalerController extends BaseController
         if ($wholesalerIdx == null) { return; }
 
         return $this->wholesalerService->likeToggle($wholesalerIdx);
+    }
+
+    // 도메업체 > BEST 신상품
+    public function best()
+    {
+        $product = $this->productService->getThisDealList('plandiscount');
+
+        return view('wholesaler.best', [
+            'productList'   => $product
+        ]);
     }
 
 

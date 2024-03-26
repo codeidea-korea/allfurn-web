@@ -138,1086 +138,23 @@
     @php $bestNewProducts = $data['productAd']; @endphp
     @include('m.home.inc-best-new-product')
 
+    {{-- 신규 등록 상품 --}}
+    @include('m.home.inc-new-product')
+
+    {{-- MD가 추천하는 테마별 상품 --}}
+    @include('m.home.inc-md-product')
+
+    {{-- 인기 브랜드 --}}
+    @include('m.home.inc-popular-brand')
+
+    {{-- 할인 상품 --}}
+    @include('m.home.inc-plan-discount')
+
+    {{-- 동영상 광고 --}}
+    @include('m.home.inc-video')
+
     
-
-    <section class="main_section new_prod overflow-hidden">
-        <div class="inner">
-            <div class="main_tit mb-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>신규 등록 상품</h3>
-                </div>
-                <div class="flex items-center gap-7">
-                    <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="./img/icon-defs.svg#zoom"></use></svg>확대보기</button>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="slide_box prod_slide-2">
-                    <ul class="swiper-wrapper">
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>112,500원</b>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                
-            </div>
-            <a href="./prod_list_new.php" class="btn btn-line4 mt-4">더보기</a>
-        </div>
-    </section>
-
-    <section class="main_section theme_prod overflow-hidden">
-        <div class="inner">
-            <div class="main_tit mb-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>MD가 추천하는 테마별 상품</h3>
-                </div>
-            </div>
-            <div class="tab_layout">
-                <ul class="swiper-wrapper">
-                    <li class="swiper-slide active"><a href="javascript:;">1인 가구 모음</a></li>
-                    <li class="swiper-slide"><a href="javascript:;">호텔형 침대 모음</a></li>
-                    <li class="swiper-slide"><a href="javascript:;">펫 하우스</a></li>
-                    <li class="swiper-slide"><a href="javascript:;">옷장/수납장</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="inner overflow-hidden">
-            <div class="tab_content">
-                <!-- 1인가구 모음 -->
-                <div class="tab_01 relative active">
-                    <div class="title">
-                        <div class="bg" style="background-color:#D6B498; "></div>
-                        <h4>내 침실을 휴향지 호텔 처럼!</h4>
-                        <p>1인 가구 모음</p>
-                    </div>
-                    <div class="slide_box">
-                        <ul class="swiper-wrapper">
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- 호텔형 침대 모음 -->
-                <div class="tab_02 relative">
-                    <div class="title">
-                        <div class="bg" style="background-color:#D6B498; "></div>
-                        <h4>내 침실을 휴향지 호텔 처럼!</h4>
-                        <p>호텔형 침대 모음</p>
-                    </div>
-                    <div class="slide_box">
-                        <ul class="swiper-wrapper">
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- 펫 하우스 -->
-                <div class="tab_03 relative">
-                    <div class="title">
-                        <div class="bg" style="background-color:#D6B498; "></div>
-                        <h4>내 침실을 휴향지 호텔 처럼!</h4>
-                        <p>펫 하우스</p>
-                    </div>
-                    <div class="slide_box">
-                        <ul class="swiper-wrapper">
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- 옷장/수납장 -->
-                <div class="tab_04 relative">
-                    <div class="title">
-                        <div class="bg" style="background-color:#D6B498; "></div>
-                        <h4>내 침실을 휴향지 호텔 처럼!</h4>
-                        <p>옷장/수납장</p>
-                    </div>
-                    <div class="slide_box">
-                        <ul class="swiper-wrapper">
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="swiper-slide prod_item">
-                                <div class="img_box">
-                                    <a href="./prod_detail.php"><img src="./img/prod_thumb3.png" alt=""></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                <div class="txt_box">
-                                    <a href="./prod_detail.php">
-                                        <span>올펀가구</span>
-                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                        <b>112,500원</b>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="main_section popular_prod">
-        <div class="inner">
-            <div class="main_tit mb-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>인기 브랜드</h3>
-                </div>
-            </div>
-        </div>
-        <div class="relative">
-            <div class="slide_box overflow-hidden">
-                <div class="swiper-wrapper">
-                    <ul class="swiper-slide">
-                        <li class="popular_banner">
-                            <div class="txt_box">
-                                <p>
-                                    <b>친환경 아이들을 위한 가구</b><br/>
-                                    모던 스타일의 트랜디한 소파
-                                </p>
-                                <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                    </ul>
-                    <ul class="swiper-slide">
-                        <li class="popular_banner">
-                            <div class="txt_box">
-                                <p>
-                                    <b>친환경 아이들을 위한 가구</b><br/>
-                                    모던 스타일의 트랜디한 소파
-                                </p>
-                                <a href="javascript:;"><b>꿈꾸는나무 </b> 홈페이지 가기</a>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                        <li class="prod_item">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="./img/prod_thumb2.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="inner">
-            <div class="flex items-center justify-center mt-4">
-                <div class="count_pager"><b>1</b> / 12</div>
-            </div>
-            <a href="./prod_list_popular.php" class="btn btn-line4 mt-4">더보기</a>
-        </div>
-    </section>
-
-    <section class="main_section sale_prod overflow-hidden">
-        <div class="inner">
-            <div class="main_tit mb-5 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>할인 상품이 필요하신가요?</h3>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="slide_box ">
-                    <ul class="swiper-wrapper">
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="./prod_detail.php">
-                                    <img src="./img/sale_thumb.png" alt="">
-                                    <span><b>분위기 있는 친환경 수납장</b><br/>#한정 할인 특가 #분위기있는</span>
-                                </a>
-                                <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                    <span>올펀가구</span>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <a href="./prod_list_best2.php" class="btn btn-line4 mt-7">더보기</a>
-        </div>
-    </section>
-
-    <section class="main_section video_prod">
-        <div class="inner">
-            <div class="main_tit mb-8 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>동영상으로 도매 업체/상품 알아보기</h3>
-                </div>
-            </div>
-        </div>
-        <div class="video_box overflow-hidden">
-            <div class="slide_box">
-                <ul class="swiper-wrapper">
-                    <li class="swiper-slide">
-                        <div class="txt_box">
-                            <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파</span></h4>
-                        </div>
-                        <video controls src="./img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="txt_box">
-                            <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파</span></h4>
-                        </div>
-                        <video controls src="./img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="txt_box">
-                            <h4>올펀 프리미엄 가구<br/><span>모던 스타일의 트랜디한 소파</span></h4>
-                        </div>
-                        <video controls src="./img/ex_video.mp4"></video>
-                        <!-- <a href="javascript:;" onclick="modalOpen('#video-modal')"><img src="./img/video_thumb.png" alt=""></a> -->
-                    </li>
-                </ul>
-            </div>
-            <div class="count_pager"><b>1</b> / 12</div>
-        </div>
-    </section>
+    
 
     <section class="main_section main_board">
         <div class="inner">
@@ -1227,33 +164,17 @@
                         <h3>매거진</h3>
                     </div>
                     <ul class="main_board_list2">
-                        <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
-                            <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
-                            <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
-                                </a>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="img_box"><a href="javascript:;"><img src="./img/magazin_thumb.png" alt=""></a></div>
-                            <div class="txt_box">
-                                <a href="javascript:;">
-                                    <b>[가구,가구인] 서울경인가구공동협동조합 이사장 이정우 대표</b>
-                                    <span>2023.10.05</span>
-                                </a>
-                            </div>
-                        </li>
+                        @foreach($data['magazine'] as $item)
+                            <li>
+                                <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
+                                <div class="txt_box">
+                                    <a href="/magazine/detail/{{ $item->idx }}">
+                                        <b>{{$item->title}}</b>
+                                        <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                                    </a>
+                                </div>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
                 <div>
@@ -1261,42 +182,17 @@
                         <h3>커뮤니티</h3>
                     </div>
                     <ul class="main_board_list">
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>상품문의</span>
-                                    <p>이 제품을 찾고있습니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>홍보</span>
-                                    <p>20개조 한정으로 소파 할인 행사</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>상품문의</span>
-                                    <p>집 인테리어에 어울릴까요?</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>홍보</span>
-                                    <p>친환경 침대 특별 할인 행사 진행</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
+                        @foreach($data['community'] as $item)
+                            <li>
+                                <div class="title">
+                                    <a href="/community/detail/{{$item->idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
                     </ul>
 
                     <div class="main_tit mb-5 mt-14 flex justify-center items-center">
@@ -1333,197 +229,192 @@
                     </ul>
                 </div>
             </div>
-            
         </div>
     </section>
 
-    <section class="main_section main_family">
-        <div class="inner">
-            <div class="main_tit mb-2 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>올펀 패밀리</h3>
-                </div>
-            </div>
-            <ul class="grid grid-cols-2">
-                <li>
-                    <div class="img_box"><img src="./img/main/family_logo_1.png" alt=""></div>
-                    <p>조달가구</p>
-                </li>
-                <li>
-                    <div class="img_box"><img src="./img/main/family_logo_2.png" alt=""></div>
-                    <p>3D사진관</p>
-                </li>
-                <li>
-                    <div class="img_box"><img src="./img/main/family_logo_3.png" alt=""></div>
-                    <p>대한가구협동조합</p>
-                </li>
-                <li>
-                    <div class="img_box"><img src="./img/main/family_logo_4.png" alt=""></div>
-                    <p>코펀 KOFURN</p>
-                </li>
-            </ul>
-        </div>
-    </section>
+    {{-- 올펀 패밀리 광고 --}}
+    @include('m.home.inc-allfurn-family')  
 
-    <!-- 동영상 모달 -->
-    <div class="modal" id="video-modal">
-        <div class="modal_bg" onclick="modalClose('#video-modal')"></div>
-        <div class="modal_inner video_wrap">
-            <button class="close_btn" onclick="modalClose('#video-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body">
-                <div class="video_box">
-                    <iframe  src="https://www.youtube.com/embed/IJT51et7owQ" title="2 시간 지브리 음악 🌍 치유, 공부, 일, 수면을위한 편안한 배경 음악 지브리 스튜디오" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
 </div>
 
 
 <script>
 
-    // main_visual 
-    const main_visual = new Swiper(".main_visual .slide_box", {
-        slidesPerView: 1,
-        pagination: {
-            el: ".main_visual .count_pager",
-            type: "fraction",
+// main_visual 
+const main_visual = new Swiper(".main_visual .slide_box", {
+    slidesPerView: 1,
+    pagination: {
+        el: ".main_visual .count_pager",
+        type: "fraction",
+    },
+    on: {
+        slideChangeTransitionEnd: function () {
+            let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
+            $('.main_visual .bottom_box p').text(brand)
         },
-        on: {
-            slideChangeTransitionEnd: function () {
-                let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
-                $('.main_visual .bottom_box p').text(brand)
-            },
-        },
-    });
+    },
+});
 
 
-    // main_mid_banner
-    const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
-        slidesPerView: 'auto',
-        spaceBetween: 8,
-    });
+// main_mid_banner
+const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+});
 
-    // category_banner
-    const category_banner = new Swiper(".category_banner .slide_box", {
-        slidesPerView: 'auto',
-        spaceBetween: 17,
-    });
+// category_banner
+const category_banner = new Swiper(".category_banner .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 17,
+});
 
-    $('.category_banner li').on('click',function(){
-        $(this).addClass('on').siblings().removeClass('on')
+$('.category_banner li').on('click',function(){
+    $(this).addClass('on').siblings().removeClass('on')
+})
+
+
+// best_prod 
+const best_prod = new Swiper(".best_prod .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+    grid: {
+        rows: 2,
+    },
+    pagination: {
+        el: ".best_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+// best_prod_modal
+const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: "#zoom_view-modal .slide_arrow.next",
+        prevEl: "#zoom_view-modal .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal .count_pager",
+        type: "fraction",
+    },
+});
+
+// new_prod 
+const new_prod = new Swiper(".new_prod .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+    grid: {
+        rows: 2,
+    },
+    pagination: {
+        el: ".new_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+// new_prod_modal
+const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    slidesPerGroup: 1,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: "#zoom_view-modal-new .slide_arrow.next",
+        prevEl: "#zoom_view-modal-new .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal-new .count_pager",
+        type: "fraction",
+    },
+});
+
+// 테마별상품 탭
+$('.theme_prod .tab_layout li').on('click',function(){
+    let liN = $(this).index();
+    $(this).addClass('active').siblings().removeClass('active');
+    $('.theme_prod .tab_content').each(function(){
+        $(this).find('>div').eq(liN).addClass('active').siblings().removeClass('active');
     })
+})
 
+const theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+});
 
-    // best_prod 
-    const best_prod = new Swiper(".best_prod .slide_box", {
-        slidesPerView: 'auto',
-        spaceBetween: 8,
-        grid: {
-            rows: 2,
-        },
-        pagination: {
-            el: ".best_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// theme_prod 
+const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_01.count_pager",
+        type: "fraction",
+    },
+});
 
-    // new_prod 
-    const new_prod = new Swiper(".new_prod .slide_box", {
-        slidesPerView: 'auto',
-        spaceBetween: 8,
-        grid: {
-            rows: 2,
-        },
-        pagination: {
-            el: ".new_prod .count_pager",
-            type: "fraction",
-        },
-    });
+const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_02.count_pager",
+        type: "fraction",
+    },
+});
 
-    // 테마별상품 탭
-    $('.theme_prod .tab_layout li').on('click',function(){
-        let liN = $(this).index();
-        $(this).addClass('active').siblings().removeClass('active');
-        $('.theme_prod .tab_content').each(function(){
-            $(this).find('>div').eq(liN).addClass('active').siblings().removeClass('active');
-        })
-    })
+const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_03.count_pager",
+        type: "fraction",
+    },
+});
 
-    const theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
-        slidesPerView: 'auto',
-        spaceBetween: 10,
-    });
+const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_04.count_pager",
+        type: "fraction",
+    },
+});
 
-    // theme_prod 
-    const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
-        slidesPerView: 1.3,
-        spaceBetween: 12,
-        slidesPerGroup: 1,
-        pagination: {
-            el: ".theme_prod .tab_01.count_pager",
-            type: "fraction",
-        },
-    });
+// popular_prod 
+const popular_prod = new Swiper(".popular_prod .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    pagination: {
+        el: ".popular_prod .count_pager",
+        type: "fraction",
+    },
+});
 
-    const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
-        slidesPerView: 1.3,
-        spaceBetween: 12,
-        slidesPerGroup: 1,
-        pagination: {
-            el: ".theme_prod .tab_02.count_pager",
-            type: "fraction",
-        },
-    });
+// sale_prod 
+const sale_prod = new Swiper(".sale_prod .slide_box", {
+    slidesPerView: 1.1,
+    spaceBetween: 12,
+    
+});
 
-    const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
-        slidesPerView: 1.3,
-        spaceBetween: 12,
-        slidesPerGroup: 1,
-        pagination: {
-            el: ".theme_prod .tab_03.count_pager",
-            type: "fraction",
-        },
-    });
-
-    const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
-        slidesPerView: 1.3,
-        spaceBetween: 12,
-        slidesPerGroup: 1,
-        pagination: {
-            el: ".theme_prod .tab_04.count_pager",
-            type: "fraction",
-        },
-    });
-
-    // popular_prod 
-    const popular_prod = new Swiper(".popular_prod .slide_box", {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        pagination: {
-            el: ".popular_prod .count_pager",
-            type: "fraction",
-        },
-    });
-
-    // sale_prod 
-    const sale_prod = new Swiper(".sale_prod .slide_box", {
-        slidesPerView: 1.1,
-        spaceBetween: 12,
-     
-    });
-
-    // video_prod 
-    const video_prod = new Swiper(".video_prod .slide_box", {
-        slidesPerView: 1,
-        spaceBetween: 10,
-        pagination: {
-            el: ".video_prod .count_pager",
-            type: "fraction",
-        },
-    });
+// video_prod 
+const video_prod = new Swiper(".video_prod .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    pagination: {
+        el: ".video_prod .count_pager",
+        type: "fraction",
+    },
+});
 
 </script>
 
