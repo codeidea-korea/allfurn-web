@@ -77,38 +77,32 @@
             <div class="slide_box overflow-hidden">
                 <ul class="swiper-wrapper">
                     <li class="swiper-slide">
-                         <a href="javascript:;">
-                            <img src="./img/main/best_icon.png" alt="">
-                            <span>BEST신상품</span>
+                         <a href="/product/best-new">
+                            <img src="/img/main/best_icon.png" alt="">
+                            <span>BEST 신상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                          <a href="javascript:;">
-                            <img src="./img/main/search_icon.png" alt="">
+                            <img src="/img/main/search_icon.png" alt="">
                             <span>쉬운 상품 찾기</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                          <a href="javascript:;">
-                            <img src="./img/main/event_icon.png" alt="">
+                            <img src="/img/main/event_icon.png" alt="">
                             <span>할인/이벤트 상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                          <a href="javascript:;">
-                            <img src="./img/main/news_icon.png" alt="">
+                            <img src="/img/main/news_icon.png" alt="">
                             <span>일일 가구 뉴스</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                          <a href="javascript:;">
-                            <img src="./img/main/message_icon.png" alt="">
-                            <span>상품 문의</span>
-                         </a>
-                    </li>
-                    <li class="swiper-slide">
-                         <a href="javascript:;">
-                            <img src="./img/main/message_icon.png" alt="">
+                            <img src="/img/main/message_icon.png" alt="">
                             <span>상품 문의</span>
                          </a>
                     </li>
