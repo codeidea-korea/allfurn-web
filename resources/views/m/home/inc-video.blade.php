@@ -37,7 +37,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         <div class="modal_bg" onclick="videoModalClose_{{ $key }}('#video-modal_{{ $key }}')"></div>
         <div class="modal_inner video_wrap">
             <button class="close_btn" onclick="videoModalClose_{{ $key }}('#video-modal_{{ $key }}')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body">
+            <div class="modal_body" >
                 <div class="video_box" id="player_{{ $key }}"></div>
                 @if ($video->video_upload_type == 0)
                     <script>
@@ -85,7 +85,7 @@ function onYouTubeIframeAPIReady() {
     @foreach($data['video_ad'] as $key => $video)
         @if ($video->video_upload_type == 0)
             player_{{ $key }} = new YT.Player('player_{{ $key }}', {
-                height: '100%',  //변경가능-영상 높이
+                //height: '400',  //변경가능-영상 높이
                 width: '100%',  //변경가능-영상 너비
                 videoId: '{{ $video->youtube_link }}',  //변경-영상ID
                 playerVars: {
