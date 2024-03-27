@@ -210,6 +210,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholefsalerController@listBySearch');
+    Route::get('/thismonth', 'WholesalerController@getThinMonthWholesaler');
 });
 
 Route::prefix('download')->name('download')->group(function() {

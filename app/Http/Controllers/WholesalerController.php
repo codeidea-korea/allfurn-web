@@ -138,4 +138,9 @@ class WholesalerController extends BaseController
             return false;
     }
     
+    public function getThinMonthWholesaler()
+    {
+        $data = $this->wholesalerService->getThinMonthWholesaler();
+        return view(getDeviceType().'wholesaler.thisMonth', $data);
+    }
 }

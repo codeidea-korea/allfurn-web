@@ -316,4 +316,83 @@ class WholesalerService {
         ]);*/
         return $data;
     }
+
+    //TODO: 전화문의, 올톡문의 점수가 추가되어야 함.
+    function getThinMonthWholesaler()
+    {
+        $data['wholesalerList'] = DB::table(DB::raw(
+            '(SELECT idx, company_type, company_idx, ad_location ,category_idx, MAX(banner_price) AS banner_price
+              FROM AF_banner_ad 
+              WHERE ad_location = "wholesaletop"
+              AND DATE(start_date) <= CURDATE() AND DATE(end_date) >= CURDATE()
+              AND state = "G"
+              AND is_delete = 0
+              AND is_open = 1
+              GROUP BY company_idx
+            ) AS aba'
+        ))
+        ->select(
+             'aba.*', 'aw.company_name'
+            , DB::raw('SUM(ap.inquiry_count) AS productInquiryCount') // 상품문의수
+            , DB::raw('SUM(ap.access_count)  AS productAccessCount')  // 상품조회수
+            , DB::raw('aw.inquiry_count      AS companyInquiryCount') // 업체문의(올톡??) -> 확인필요
+            , DB::raw('aw.access_count       AS companyAccessCount')  // 업체조회수
+            , DB::raw('CAST(banner_price * 0.01 * (banner_price / 100000) AS UNSIGNED) AS addtionalPoint') // 가산점
+            , DB::raw('(SUM(ap.inquiry_count) + SUM(ap.access_count) + aw.inquiry_count  + aw.access_count + CAST(banner_price * 0.01 * (banner_price / 100000) AS UNSIGNED) ) AS score') // 총점수
+            , DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList')
+            , DB::raw('(SELECT if(count(*) > 0, 1, 0)
+                        FROM AF_company_like AS acl 
+                        WHERE acl.company_idx = aba.company_idx
+                            AND acl.user_idx = '.Auth::user()->idx.'
+                        ) AS isCompanyInterest')
+            , DB::raw('(SELECT SUBSTRING_INDEX(business_address, " ", 1) 
+                        FROM AF_wholesale 
+                        WHERE idx = aba.company_idx
+                        ) AS location')
+        )
+        ->leftJoin('AF_wholesale AS aw', function($query) {
+            $query->on('aw.idx', 'aba.company_idx');
+        })
+        ->leftjoin('AF_product AS ap', function($query) {
+            $query->on('ap.company_idx', 'aba.company_idx');
+        })
+        ->leftjoin('AF_category AS ac', function ($query) {
+            $query->on('ac.idx', 'ap.category_idx');
+        })
+        ->leftjoin('AF_category AS ac2', function ($query) {
+            $query->on('ac2.idx', 'ac.parent_idx');
+        })
+        ->groupBy('company_idx')
+        ->orderByRaw('score desc')
+        ->limit(50)
+        ->get();
+
+
+        // 업체별 상품 3개 - 대표 상품 먼저
+        foreach($data['wholesalerList'] as $key => $value) {
+            
+            $data['wholesalerList'][$key]->productList = 
+                DB::table(DB::raw(
+                '(select * from AF_product where company_idx = '. $value->company_idx .') AS ap'
+            ))
+            ->select(
+                    'ap.idx AS productIdx'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
+                , DB::raw('(SELECT if(count(idx) > 0, 1, 0) 
+                            FROM AF_product_interest pi 
+                            WHERE pi.product_idx = ap.idx 
+                                AND pi.user_idx = '.Auth::user()->idx.'
+                            ) as isInterest')
+            )
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
+            })
+            ->orderByRaw('ap.is_represent = 1 desc')
+            ->orderBy('ap.register_time','desc')
+            ->limit(3)
+            ->get();
+        }
+
+        return $data;
+    } 
 }
