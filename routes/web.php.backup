@@ -34,6 +34,7 @@ Route::prefix('signup')->group(function() {
 });
 
 Route::get('/signout', 'LoginController@signOut')->name('signOut');
+Route::post('/user/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 Route::get('/terms', 'MemberController@terms')->name('terms');
 Route::post('/saveTerms', 'MemberController@saveTerms')->name('saveTerms');
 Route::get('/passwordRequest', function () {
@@ -44,11 +45,6 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 
 Route::post('checkAlert', 'HomeController@checkAlert');
 
-Route::prefix('/family')->name('family')->group(function() {
-    Route::get('/{idx}', 'HomeController@getFamilyMember');
-    Route::post('/like', 'HomeController@toggleCompanyLike');
-});
-
 Route::prefix('/member')->name('member')->group(function() {
     Route::post('/createUser', 'MemberController@createUser');
     Route::post('/checkUsingEmail', 'MemberController@checkUsingEmail');
@@ -56,8 +52,6 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
-    
-    Route::post('/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 });
 
 Route::prefix('product')->name('product')->group(function() {
@@ -84,11 +78,6 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/thisMonth', 'ProductController@thisMonth');
     Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
-});
-
-Route::prefix('estimate') -> name('estimate') -> group(function(){
-    Route::post('/makeGroupCode', 'EstimateController@makeGroupCode');
-    Route::post('/insertRequest', 'EstimateController@insertRequest');
 });
 
 Route::prefix('order')->name('order')->group(function() {
@@ -152,9 +141,6 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/logo/image', 'MypageController@deleteLogoImage');
     Route::put('/represent/product/{idx}', 'MypageController@toggleRepresentProduct');
     Route::get('/check/new/badge', 'MypageController@getCheckNewBadge');
-    Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
-    Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
-    Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
 });
 
 
@@ -212,7 +198,6 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholefsalerController@listBySearch');
-    Route::get('/thismonth', 'WholesalerController@getThinMonthWholesaler');
 });
 
 Route::prefix('download')->name('download')->group(function() {

@@ -356,7 +356,7 @@ class MessageService
 
         try{
             $decodedContent = json_decode($content, true);
-            
+            if(!isset($decodedContent) && empty($decodedContent['type'])) { return $content; }
             switch($decodedContent['type']) {
                 case 'welcome':
                     $message = "올펀 가입을 축하드립니다.";
@@ -389,7 +389,7 @@ class MessageService
     }
 
     /**
-     * 검색어 리스트 가져오기
+     * 검색이 리스트 가져오기
      * @return mixed
      */
     public function getSearchKeywords()
@@ -538,8 +538,11 @@ class MessageService
         $contentHtml = '';
         $user = Auth::user();
 
-        $chatContent = json_decode($chat->content, true);
-        if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
+	$chatContent = json_decode($chat->content, true);
+	
+	if(!isset($decodedContent) && empty($decodedContent['type'])) { $contentHtml = $chat->content; }
+       
+	else if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
             // 단순 텍스트
             $contentHtml = $chatContent['text'];
         } else if($chatContent['type'] == 'attach') {
