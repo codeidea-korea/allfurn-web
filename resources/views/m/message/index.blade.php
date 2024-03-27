@@ -23,17 +23,19 @@ $header_banner = '';
                 
                 <ul class="message_list _chatting_rooms">
                     @foreach($rooms as $room)
-                    <li onclick="searchKeywordRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
-                        <div class="img_box">
-                            <img src="/img/profile_img.svg" alt="">
-                        </div>
-                        <div class="txt_box">
-                            <h3>
-                                {{ $room->name }}
-                                <span>{{ $room->last_message_time }}</span>
-                            </h3>
-                            <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
-                        </div>
+                    <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
+                        <a href="javascript:;">
+                            <div class="img_box">
+                                <img src="/img/profile_img.svg" alt="">
+                            </div>
+                            <div class="txt_box">
+                                <h3>
+                                    {{ $room->name }}
+                                    <span>{{ $room->last_message_time }}</span>
+                                </h3>
+                                <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
+                            </div>
+                        </a>
                     </li>
                     @endforeach
                     <!-- Ajax include -->
@@ -73,8 +75,8 @@ $header_banner = '';
 
                         <ul class="message_list _chatting_rooms">
                             @foreach($rooms as $room)
-                            <li onclick="searchKeywordRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
-                                <a href="javascript:searchKeywordRoom({{ $room->idx }})">
+                            <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
+                                <a href="javascript:visibleRoom({{ $room->idx }})">
                                     <div class="img_box">
                                         <img src="/img/profile_img.svg" alt="">
                                     </div>
@@ -146,7 +148,7 @@ $header_banner = '';
         } else {
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
-                    +'    <div class="img_box">'
+                    +'    <a  href="javascript:;"><div class="img_box">'
                     +'        <img src="/img/profile_img.svg" alt="">'
                     +'    </div>'
                     +'    <div class="txt_box">'
@@ -155,7 +157,7 @@ $header_banner = '';
                     +'            <span>'+messages.title+'</span>'
                     +'        </h3>'
                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
-                    +'    </div>'
+                    +'    </div></a>'
                     +'</li>';
             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
         }
@@ -224,12 +226,8 @@ $header_banner = '';
         const visibleRoom = (idx) => {
             
             let params = {room_idx: idx}
-            
-            @if($product_idx)
-                params['product_idx'] = '{{ $product_idx }}';
-            @endif
 
-            windows.location.href = location.pathname + '/room?' + new URLSearchParams({ room_idx: {{ $room_idx }}, chatting_keyword: $('#chatting_keyword').val() });
+            window.location.href = location.pathname + '/room?' + new URLSearchParams({ room_idx: idx, chatting_keyword: $('#chatting_keyword').val() });
         }
 
         {{-- 대화방 리스트 검색어 찾기 --}}

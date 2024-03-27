@@ -1,119 +1,181 @@
-@extends('layouts.master')
-
-@section('header')
-    @include('layouts.header.main-header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
-<div id="container" class="container">
-    <div class="my my-page">
-        <div class="inner">
-            <div class="my__container">
-                {{--- 로그인한 회원의 요약 정보 ---}}
-                <div class="my__top">
-                    @if($user->type === 'W') {{--- 도매 유저인 경우 ---}}
-                    
-                    <div class="my__profile">
-                        <div class="user-type ico__mybadge-wholesaler"><span class="a11y">제조/도매</span></div>
-                        <div>
-                            <h3 class="user-name">{{ $user->company_name }}</h3>
-                            @if($user->parent_idx !== 0)
-                            <p class="user-name-text">{{ $user->name }}</p>
-                            @endif
+    @include('layouts.header')
+
+    <div id="content">
+        <div class="my_top_area inner flex items-center justify-between">
+            @if($user -> type === 'W')
+            <div class="profile flex gap-4 items-center">
+                <img src="/img/mypage/ws_profile.png" alt="" />
+                <a href="javascript: ;">
+                    <div class="flex items-center">
+                        <p class="profile_id">{{ $user -> company_name }}</p>
+                        @if($user -> parent_idx !== 0)
+                        <p class="user-name-text">{{ $user -> name }}</p>
+                        @endif
+                        <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                    </div>
+                </a>
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="status_zone flex gap-3.5 items-center">
+                    <div class="flex items-center flex-col gap-1">
+                        <div>좋아요 수</div>
+                        <div class="font-bold text-2xl">{{ $user -> like_count }}</div>
+                    </div>
+                    <p class="line"></p>
+                    <div class="flex items-center flex-col gap-1">
+                        <div>문의 수</div>
+                        <div class="font-bold text-2xl">{{ $user -> inquiry_count }}</div>
+                    </div>
+                    <p class="line"></p>
+                    <div class="flex items-center flex-col gap-1">
+                        <div>방문 수</div>
+                        <div class="font-bold text-2xl">{{ $user -> access_count }}</div>
+                    </div>
+                </div>
+                @elseif($user -> type === 'R')
+                <div class="profile flex gap-4 items-center">
+                    <img src="/img/mypage/ws_profile.png" alt="" />
+                    <a href="javascript: ;">
+                        <div class="flex items-center">
+                            <p class="profile_id">{{ $user -> company_name }}</p>
+                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
-                    </div>
-                    
-                    <ul class="my__count-wrap">
-                        <li>
-                            <p class="text">좋아요 수</p>
-                            <p class="num">{{ $user->like_count }}</p>
-                        </li>
-                        <li>
-                            <p class="text">문의 수</p>
-                            <p class="num">{{ $user->inquiry_count }}</p>
-                        </li>
-                        <li>
-                            <p class="text">방문 수</p>
-                            <p class="num">{{ $user->access_count }}</p>
-                        </li>
-                    </ul>
-                    @elseif($user->type === 'R') {{--- 소매 유저인 경우 ---}}
-                    <div class="my__profile">
-                        <div class="user-type ico__mybadge-retail"><span class="a11y">소매</span></div>
-                        <div>
-                            <h3 class="user-name">{{ $user->company_name }}</h3>
+                    </a>
+                </div>
+                @else
+                <div class="profile flex gap-4 items-center">
+                    <img src="/img/mypage/ws_profile.png" alt="" />
+                    <a href="javascript: ;">
+                        <div class="flex items-center">
+                            <p class="profile_id">{{ $user -> name }}</p>
+                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
+                    </a>
+                </div>
+                @endif
+                <div class="my_point_area flex items-center justify-between">
+                    <p>올펀 포인트</p>
+                    <div>
+                        <span class="text-2xl main_color font-bold">350,000</span>
+                        <span class="font-bold">P</span>
                     </div>
-                    @else {{--- 일반 유저인 경우 ---}}
-                    <div class="my__profile">
-                        <div class="user-type ico__mybadge"><span class="a11y">일반</span></div>
-                        <h3 class="user-name">{{ $user->name }}</h3>
-                    </div>
+                    <a class="fs14 flex items-center txt-gray" href="javascript: ;">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
+                </div>
+            </div>
+        </div>
+        <div class="flex inner gap-10 mb-[100px]">
+            <div>
+                <h3 class="text-xl font-bold">마이 올펀</h3>
+                <ul class="my_menu_list mt-5">
+                    @if(auth() -> user() -> type !== 'N')
+                        @if(auth() -> user() -> type === 'W')
+                        <li class="{{ $pageType === 'deal' ? 'active' : '' }}">
+                            <a href="/mypage/deal" class="flex p-4 justify-between">
+                                <p>판매 현황</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                            </a>
+                        </li>
+                        @endif
+                    <li class="{{ $pageType === 'purchase' ? 'active' : ''}}">
+                        <a href="/mypage/purchase" class="flex p-4 justify-between border_b">
+                            <p>구매 현황</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
                     @endif
-                </div>
-                {{--- lnb ---}}
-                <div class="my__aside">
-                    <div class="content">
-                        <div class="aside">
-                            <h2 class="aside__title">마이 올펀</h2>
-                            <div class="post-list">
-                                @if(auth()->user()->type !== 'N')
-                                    @if(auth()->useR()->type === 'W')
-                                    <div class="post-list__item {{ $pageType === 'deal' ? 'post-list__item--active' : '' }}">
-                                        <a href="/mypage/deal">거래 현황<i class="badge__new hidden" id="deal-new_badge"></i></a>
-                                        <div class="ico__list-link {{ $pageType === 'deal' ? 'ico__list-link--active' : ''}}"></div>
-                                    </div>
-                                    @endif
-                                <div class="post-list__item {{ $pageType === 'purchase' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/purchase">주문 현황<i class="badge__new hidden" id="purchase-new_badge"></i></a>
-                                    <div class="ico__list-link {{ $pageType === 'purchase' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                <div class="post-list__line"></div>
-                                @endif
-                                <div class="post-list__item {{ $pageType === 'interest' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/interest">관심 상품</a>
-                                    <div class="ico__list-link {{ $pageType === 'interest' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                <div class="post-list__item {{ $pageType === 'like' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/like">좋아요</a>
-                                    <div class="ico__list-link {{ $pageType === 'like' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                <div class="post-list__item {{ $pageType === 'recent' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/recent">최근 본 상품</a>
-                                    <div class="ico__list-link {{ $pageType === 'recent' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                <div class="post-list__line {{ $pageType === 'recent' ? 'post-list__item--active' : ''}}"></div>
-                                @if($user->type === 'W')
-                                <div class="post-list__item {{ $pageType === 'company' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/company ">업체 관리</a>
-                                    <div class="ico__list-link {{ $pageType === 'company' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                <div class="post-list__item {{ $pageType === 'product' ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/product">상품 관리</a>
-                                    <div class="ico__list-link {{ $pageType === 'product' ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                @endif
-                                @if($user->parent_idx === 0)
-                                <div class="post-list__item {{ in_array($pageType,['withdrawal', 'account', 'company-account', 'normal-account']) ? 'post-list__item--active' : ''}}">
-                                    <a href="/mypage/account">계정 관리</a>
-                                    <div class="ico__list-link {{ in_array($pageType,['withdrawal', 'account', 'company-account', 'normal-account']) ? 'ico__list-link--active' : ''}}"></div>
-                                </div>
-                                @endif
+                    <li class="{{ $pageType === 'interest' ? 'active' : ''}}">
+                        <a href="/mypage/interest" class="flex p-4 justify-between">
+                            <p>좋아요 상품</p>
+                            <div class="flex items-center">
+                                <p class="text-sm">52개</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                             </div>
-                            <div class="aside__bottom">
-                                <button type="button" class="button" onclick="openModal('#modal-logout')">
-                                    <div class="ico__logout"></div>
-                                    <span>로그아웃</span>
-                                </button>
+                        </a>
+                    </li>
+                    <li class="{{ $pageType === 'like' ? 'active' : ''}}">
+                        <a href="/mypage/like" class="flex p-4 justify-between">
+                            <p>좋아요 업체</p>
+                            <div class="flex items-center">
+                                <p class="text-sm">27개</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                             </div>
-                        </div>
+                        </a>
+                    </li>
+                    <li class="{{ $pageType === 'recent' ? 'active' : ''}}">
+                        <a href="/mypage/recent" class="flex p-4 justify-between">
+                            <p>최근 본 상품</p>
+                            <div class="flex items-center">
+                                <p class="text-sm">124개</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./message.php" class="flex p-4 justify-between border_b">
+                            <p>문의 내역</p>
+                            <div class="flex items-center">
+                                <p class="text-sm main_color">5건</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </a>
+                    </li>
+                    @if($user -> type === 'W')
+                    <li class="{{ $pageType === 'company' ? 'active' : ''}}">
+                        <a href="/mypage/company" class="flex p-4 justify-between">
+                            <p>홈페이지 관리</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                    <li class="{{ $pageType === 'product' ? 'active' : ''}}">
+                        <a href="/mypage/product?order=DESC" class="flex p-4 justify-between">
+                            <p>상품 등록 관리</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                    @endif
+                    <li class="{{ $pageType === 'estimate' ? 'active' : ''}}">
+                        <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
+                            <p>견적서 관리 / <span class="main_color">견적서 보내기</span></p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                    @if($user -> parent_idx === 0)
+                    <li class="{{ in_array($pageType,['withdrawal', 'account', 'company-account', 'normal-account']) ? 'active' : ''}}">
+                        <a href="/mypage/account" class="flex p-4 justify-between border_b">
+                            <p>계정관리</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                    @endif
+                    <li>
+                        <a href="javascript: ;" class="flex p-4 justify-between">
+                            <p>고객센터</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript: ;" class="flex p-4 justify-between" onclick="location.href='/signout';">
+                            <p>로그아웃</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        </a>
+                    </li>
+                </ul>
+                <a href="javascript: ;" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
+                    <div>
+                        <p class="text-white">함께 올펀을 사용해보세요!</p>
+                        <p class="text-sm">올펀 알려주기</p>
                     </div>
-                </div>
-                {{--- include body ---}}
-                @include('mypage.'.$pageType)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                </a>
             </div>
 
-            {{-- 거래 확정 완료 modal --}}
+            {{--- Include Body ---}}
+            @include('mypage.'.$pageType)
+
+            {{-- 거래 확정 완료 Modal --}}
             <div id="modal-deal" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -121,19 +183,19 @@
                             <div class="modal-box__content">
                                 <div class="modal__desc">
                                     <p class="modal__text">
-                                        거래가 확정되었습니다.<br>
+                                        거래가 확정되었습니다.<br />
                                         상품이 준비되면 발송 버튼을 눌러주세요.
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="location.reload();" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button" onClick="location.reload();"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- 거래 취소 modal --}}
+            {{-- 거래 취소 Modal --}}
             <div id="modal-cancel" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -145,14 +207,14 @@
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="location.reload();" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button" onClick="location.reload();"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- 상품 발송 시작 modal --}}
+            {{-- 상품 발송 시작 Modal --}}
             <div id="modal-send-start" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -160,19 +222,19 @@
                             <div class="modal-box__content">
                                 <div class="modal__desc">
                                     <p class="modal__text">
-                                        상품 발송을 시작합니다.<br>
+                                        상품 발송을 시작합니다.<br />
                                         배송이 완료되면 발송 완료 버튼을 눌러주세요.
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="location.reload();" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button" onClick="location.reload();"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- 상품 발송 완료 modal --}}
+            {{-- 상품 발송 완료 Modal --}}
             <div id="modal-send-complete" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -180,20 +242,20 @@
                             <div class="modal-box__content">
                                 <div class="modal__desc">
                                     <p class="modal__text">
-                                        발송 완료 처리되었습니다.<br>
-                                        구매자가 구매 확정을 누르면 거래 상태가<br>
+                                        발송 완료 처리되었습니다.<br />
+                                        구매자가 구매 확정을 누르면 거래 상태가<br />
                                         완료 처리됩니다.
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="location.reload();" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button" onClick="location.reload();"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- 로그아웃 confirm modal --}}
+            {{-- 로그아웃 Modal --}}
             <div id="modal-logout" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -201,19 +263,19 @@
                             <div class="modal-box__content">
                                 <div class="modal__desc">
                                     <p class="modal__text">
-                                        로그아웃 하시겠습니까?
+                                        로그아웃을 하시겠습니까?
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="closeModal('#modal-logout');" class="modal__button modal__button--gray"><span>취소</span></button>
-                                    <button type="button" onclick="location.href='/signout/'" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button modal__button--gray" onClick="closeModal('#modal-logout');"><span>취소</span></button>
+                                    <button type="button" class="modal__button" onClick="location.href='/signout/'"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- 주문 취소 거래 확정 불가 modal --}}
+            {{-- 주문 취소 > 거래 확정 불가 Modal --}}
             <div id="modal-deal-error" class="modal">
                 <div class="modal__container" style="width: 350px;">
                     <div class="modal__content">
@@ -221,12 +283,12 @@
                             <div class="modal-box__content">
                                 <div class="modal__desc">
                                     <p class="modal__text">
-                                        해당 주문이 취소 처리되어<br>
+                                        해당 주문이 취소 처리되어<br />
                                         거래 확정이 불가합니다.
                                     </p>
                                 </div>
                                 <div class="modal__util">
-                                    <button type="button" onclick="closeModal('#modal-deal-error');" class="modal__button"><span>확인</span></button>
+                                    <button type="button" class="modal__button" onClick="closeModal('#modal-deal-error');"><span>확인</span></button>
                                 </div>
                             </div>
                         </div>
@@ -235,38 +297,11 @@
             </div>
         </div>
     </div>
-</div>
-<script>
-function openModal(name) {
-	$(`${name}`).css('display', 'block');
-	$('body').css('overflow', 'hidden');
-}
-</script>
-@endsection
-@push('scripts')
+
     <script>
-        $(document).ready(function() {
-            setInterval(checkNewBadge, 10000);
-        })
-        function checkNewBadge() {
-            fetch('/mypage/check/new/badge')
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Sever Error');
-                }).then(json => {
-                if (json.deal === 'Y') {
-                    document.getElementById('deal-new_badge').classList.remove('hidden');
-                }
-                if (json.purchase === 'Y') {
-                    document.getElementById('purchase-new_badge').classList.remove('hidden');
-                }
-            }).catch(error => {
-
-            })
+        function openModal(name) {
+            $(`${name}`).css('display', 'block');
+            $('body').css('overflow', 'hidden');
         }
-
-
     </script>
-@endpush
+@endsection

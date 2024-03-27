@@ -31,7 +31,7 @@ class LoginController extends BaseController
         if(Auth::check()) {
             return redirect('/');
         }
-        return view('login.login');
+        return view(getDeviceType() . 'login.login');
     }
 
     /**
@@ -51,26 +51,26 @@ class LoginController extends BaseController
         $userInfo = $this->loginService->getUserInfo($data);
 
         if (empty($userInfo)) {
-            return view('login.login')
+            return view(getDeviceType() . 'login.login')
                 ->withInput($request->only('account'))
                 ->withErrors([
                     'not_match' => 'The provided credentials do not match our records.',
                 ]);
         } else if ( $userInfo->state == "D") {
-            return view('login.login')
+            return view(getDeviceType() . 'login.login')
                 ->withInput($request->only('account'))
                 ->withErrors([
                     'withdrawal' => 'withdrawal account.',
                 ]);
         } else if ( $userInfo->state != "JS" && $userInfo->state != "UW" ) {
-            return view('login.login')
+            return view(getDeviceType() . 'login.login')
                 ->withInput($request->only('account'))
                 ->withErrors([
                     'not_approve' => 'use after approve.',
                 ]);
         } else {
             if ( $userInfo->is_owner == 1 && $userInfo->isNeedAgreement > 0 ) {
-                return view('login.login')
+                return view(getDeviceType() . 'login.login')
                     ->withErrors([
                         'need_terms' => $userInfo->idx,
                     ]);
@@ -78,7 +78,7 @@ class LoginController extends BaseController
                 $this->loginService->getAuthToken($userInfo->idx);
 
                 if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
-                    return redirect('/mypage');
+                    return redirect(getDeviceType() . '/mypage');
                 } else {
                     return redirect('/');
                 }
@@ -128,7 +128,7 @@ class LoginController extends BaseController
         Session::flush();
         Auth::logout();
 
-        return Redirect('/');
+        return Redirect('/signin');
     }
     
 

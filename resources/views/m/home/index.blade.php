@@ -421,4 +421,36 @@ const video_prod = new Swiper(".video_prod .slide_box", {
 
 
 
+<script>
+        function callLogin(){
+
+            var jsonStr = '{ "type" : "login", "session" : "{{csrf_token()}}"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
+
+            var isMobile = {
+            Android: function () {
+            return navigator.userAgent.match(/Chrome/) == null ? false : true;
+            },
+            iOS: function () {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+            },
+            any: function () {
+            return (isMobile.Android() || isMobile.iOS());
+            }
+            };
+
+            try{
+            if(isMobile.any()) {
+                if(isMobile.Android()) {
+                // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
+                window.AppWebview.postMessage(jsonStr);
+                } else if (isMobile.iOS()) {
+                window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                }
+            }
+            } catch (e){
+            console.log(e)
+            }
+        }
+        callLogin();
+    </script>
 @endsection

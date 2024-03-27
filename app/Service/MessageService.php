@@ -16,11 +16,13 @@ use App\Models\UserNormal;
 use App\Models\UserPushSet;
 use App\Events\ChatMessage;
 use App\Events\ChatUser;
+use App\Events\PushToken;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Service\PushService;
 
 class MessageService
 {
@@ -540,7 +542,7 @@ class MessageService
 
 	$chatContent = json_decode($chat->content, true);
 	
-	if(!isset($decodedContent) && empty($decodedContent['type'])) { $contentHtml = $chat->content; }
+	if(!isset($chatContent) && empty($chatContent['type'])) { $contentHtml = $chat->content; }
        
 	else if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
             // 단순 텍스트
@@ -733,8 +735,22 @@ class MessageService
             $this->getRoomMessageTitle($message->content),
             $companyInfo->company_name
         ));
-
         
+        $pushService = new PushService;
+        // 대상 회사에 소속된 사용자 조회
+        $targetUsers = User::where('company_idx', $companyInfo->idx)
+            ->where('is_delete', 0)
+            ->get();
+        if(isset($targetUsers) && is_array($targetUsers)) {
+            foreach($targetUsers as $key => $targetUser) {
+                $pushToken = PushToken::where('user_idx', $targetUser->idx)
+                    ->orderBy('register_time', 'DESC')
+                    ->first();
+                $pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $message->content, 
+                    $targetUser->idx, $pushToken->push_token, $type = 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+            }
+        }
+
         return [
             'result' => 'success',
             'message' => $message->content,

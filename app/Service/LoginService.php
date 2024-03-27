@@ -147,7 +147,7 @@ class LoginService
             $pushToken = new PushToken;
             $pushToken->user_idx = $user['idx'];
             $pushToken->push_token = $fcmToken;
-            $userPushSet->save();
+            $pushToken->save();
         }
 
         return [
