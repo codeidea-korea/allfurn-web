@@ -117,11 +117,11 @@
                     <p class="mt-1">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</p>
                 </div>
             </div>
-            <div class="sub_filter">
+            {{-- <div class="sub_filter">
                 <div class="filter_box">
                     <button onclick="modalOpen('#filter_align-modal')">최신 등록 순</button>
                 </div>
-            </div>
+            </div> --}}
             <ul class="magazine_list">
                 @foreach ($list as $row)
                     <li>

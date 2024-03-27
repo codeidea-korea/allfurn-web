@@ -15,7 +15,7 @@
         <div class="inner">
             <div class="title">
                 <div class="tag">
-                    <span>{{$article->board_name}}</span>
+                    <span>{{$article->category_list}}</span>
                 </div>
                 <h3>{{$article->title}}</h3>
                 <p>{{ $article->is_admin ? '관리자' : $article->writer }}</p>

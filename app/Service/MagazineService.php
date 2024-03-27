@@ -61,6 +61,8 @@ class MagazineService
      */
     public function detail($idx)
     {
+        Magazine::where('idx', $idx)->increment('hit');
+        
         return Magazine::where('AF_magazine.idx', $idx)
             ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
             ->select('AF_magazine.*'

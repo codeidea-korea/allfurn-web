@@ -122,11 +122,11 @@
                     <h3>매거진</h3>
                     <p class="mt-1">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</p>
                 </div>
-                <div class="sub_filter">
+                {{-- <div class="sub_filter">
                     <div class="filter_box">
-                        <button onclick="modalOpen('#filter_align-modal')">최신 등록 순</button>
+                        <button onclick="modalOpen('#magazine_filter_align-modal')">최신 등록 순</button>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <ul class="magazine_list">
                 @foreach ($list as $row)
@@ -134,8 +134,11 @@
                     <div class="txt_box">
                         <a href="/magazine/detail/{{$row->idx}}">
                             <div class="top">
-                                {{--TODO: 카테고리 생성된 후 변경 --}}
-                                <span>카테고리 없음</span>
+                                @if ($row->category_list == "")
+                                    <span>카테고리 없음</span>
+                                @else 
+                                    <span>{{ $row->category_list }}</span>
+                                @endif 
                                 <b>{{ Carbon\Carbon::parse($row->register_time)->format('Y.m.d') }}</b>
                             </div>
                             <div class="tit">{{$row->title}}</div>
@@ -147,6 +150,29 @@
             </ul>
         </div>
     </section>
+</div>
+
+<div class="modal" id="magazine_filter_align-modal">
+    <div class="modal_bg" onclick="modalClose('#magazine_filter_align-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#magazine_filter_align-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body filter_body">
+            <h4>정렬 선택</h4>
+            <ul class="filter_list">
+                <li>
+                    <input type="radio" class="radio-form" name="mfa" id="filter_register_time" value="r" checked>
+                    <label for="filter_register_time">최신순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="mfa" id="filter_access_count" value="c">
+                    <label for="filter_access_count">조회순</label>
+                </li>
+            </ul>
+            <div class="btn_bot">
+                <button class="btn btn-primary full btnMagazineAlign" >선택 완료</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -232,7 +258,7 @@
             '        <div class="txt_box">'+
             '            <a href="/magazine/detail/' + magazine.idx + '">' +
             '                <div class="top">' +
-            '                   <span>카테고리 없음</span>'+
+            '                   <span>' + magazine.category_list + '</span>'+
             '                   <b>' + formatDate(magazine.register_time) + '</b>' +
             '               </div>' +
             '               <div class="tit">' + magazine.title + '</div>' +
