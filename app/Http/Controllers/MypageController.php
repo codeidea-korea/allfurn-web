@@ -38,30 +38,17 @@ class MypageController extends BaseController
     }
 
     /**
-     * 거래 현황 마이페이지
+     * 판매 현황
      * @param Request $request
      * @return Response
      */
-    public function deal(Request $request): Response
-    {
-        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
-        $params['limit'] = $data['limit'] = $this->limit;
+    public function deal(Request $request): Response {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = $this -> limit;
+        $params = array_merge($params, $request -> all());
 
-        $data['dealStatus'] = config('constants.ORDER.STATUS.S');
-
-        $params = array_merge($params, $request->all());
-
-        // 판매자 거래 총 수량 가져오기
-        $countParams['orderType'] = $params['orderType'] = 'S';
-        $data['orderCount'] = $this->mypageService->getTotalOrderCount($countParams);
-        $data['pageType'] = 'deal';
-
-        if($this->user == null) { $this->getLoginUser(); }
-
-        $data['user'] = $this->getLoginUser();
-
-        // 전체 주문 리스트
-        switch($request->input('keywordType')) {
+        // 키워드 검색
+        switch($request -> input('keywordType')) {
             case 'orderNum':
                 $data['keywordTypeText'] = "주문번호";
                 break;
@@ -76,8 +63,18 @@ class MypageController extends BaseController
                 break;
         }
 
-        $data = array_merge($this->mypageService->getOrderList($params), $data);
-        return response()->view('mypage.mypage', $data)->withCookie(Cookie::forget('cocw'));
+        // 전체 개수
+        $countParams['orderType'] = $params['orderType'] = 'S';
+        $data['orderCount'] = $this -> mypageService -> getTotalOrderCount($countParams);
+
+        if($this -> user == null) { $this -> getLoginUser(); }
+        $data['user'] = $this -> getLoginUser();
+
+        $data['pageType'] = 'deal';
+        $data['dealStatus'] = config('constants.ORDER.STATUS.S');
+        $data = array_merge($this -> mypageService -> getOrderList($params), $data);
+
+        return response() -> view(getDeviceType() . 'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
     /**
@@ -118,7 +115,7 @@ class MypageController extends BaseController
 
         // 전체 주문 리스트
         $data = array_merge($this->mypageService->getOrderList($params), $data);
-        return response()->view('mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
+        return response()->view(getDeviceType() . 'mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
     }
 
     /**
@@ -212,46 +209,45 @@ class MypageController extends BaseController
      * @param Request $request
      * @return View
      */
-    public function interest(Request $request): View
-    {
-        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
+    public function interest(Request $request): View {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
         $params['limit'] = $data['limit'] = 40;
-        $params = array_merge($params, $request->all());
+        $params = array_merge($params, $request -> all());
+
         $data['checked_categories'] = [];
         if(isset($params['categories'])) {
-            $data['checked_categories'] = explode(',',$params['categories']);
+            $data['checked_categories'] = explode(',', $params['categories']);
         }
-        $data['pageType'] = 'interest';
-        $data['user'] = $this->getLoginUser();
-        $data['folders'] = $this->mypageService->getMyFolders();
-        $data['categories'] = $this->mypageService->getCategories();
-        $data = array_merge($data,$this->mypageService->getInterestProducts($params));
 
-        return view('mypage.mypage', $data);
+        $data['pageType'] = 'interest';
+        $data['user'] = $this -> getLoginUser();
+        $data['categories'] = $this->mypageService->getCategories();
+        $data['folders'] = $this -> mypageService -> getMyFolders();
+        $data = array_merge($data, $this -> mypageService -> getInterestProducts($params));
+
+        return view(getDeviceType() . 'mypage.mypage', $data);
     }
 
     /**
-     * 좋아요한 업체
+     * 좋아요
      * @param Request $request
      * @return View
      */
-    public function like(Request $request): View
-    {
-        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
-        $params['limit'] = $data['limit'] = 10;
-
-        $params = array_merge($params, $request->all());
+    public function like(Request $request): View {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = 40;
+        $params = array_merge($params, $request -> all());
 
         $data['checked_categories'] = [];
         if(isset($params['categories'])) {
-            $data['checked_categories'] = explode(',',$params['categories']);
+            $data['checked_categories'] = explode(',', $params['categories']);
         }
 
         $data['pageType'] = 'like';
-        $data['user'] = $this->getLoginUser();
-        $data['categories'] = $this->mypageService->getCategories();
-        $data['regions'] = $request->input('regions') ? explode(',', $request->input('regions')) : [];
-        $data = array_merge($data, $this->mypageService->getLikeCompanies($params));
+        $data['user'] = $this -> getLoginUser();
+        $data['categories'] = $this -> mypageService -> getCategories();
+        $data['regions'] = $request -> input('regions') ? explode(',', $request -> input('regions')) : [];
+        $data = array_merge($data, $this -> mypageService -> getLikeCompanies($params));
 
         return view('mypage.mypage', $data);
     }
@@ -262,17 +258,19 @@ class MypageController extends BaseController
      * @return View
      */
     public function recent(Request $request): View {
-        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
         $params['limit'] = $data['limit'] = 40;
-        $params = array_merge($params, $request->all());
+        $params = array_merge($params, $request -> all());
+
         $data['checked_categories'] = [];
         if(isset($params['categories'])) {
-            $data['checked_categories'] = explode(',',$params['categories']);
+            $data['checked_categories'] = explode(',', $params['categories']);
         }
+
         $data['pageType'] = 'recent';
-        $data['user'] = $this->getLoginUser();
-        $data['categories'] = $this->mypageService->getCategories();
-        $data = array_merge($data,$this->mypageService->getRecentProducts($params));
+        $data['user'] = $this -> getLoginUser();
+        $data['categories'] = $this -> mypageService -> getCategories();
+        $data = array_merge($data, $this -> mypageService -> getRecentProducts($params));
 
         return view('mypage.mypage', $data);
     }
@@ -349,47 +347,50 @@ class MypageController extends BaseController
     }
 
     /**
-     * 업체 관리
+     * 홈페이지 관리
      * @return View
      */
-    public function company(): View
-    {
+    public function company(): View {
+        $data['user'] = $this -> getLoginUser();
+        
         $data['pageType'] = 'company';
-        $data['user'] = $this->getLoginUser();
-        $data['info'] = $this->mypageService->getCompany();
+        $data['info'] = $this -> mypageService -> getCompany();
+
         return view('mypage.mypage', $data);
     }
 
     /**
-     * 상품 관리
+     * 상품 등록 관리
      * @param Request $request
      * @return View
      */
     public function product(Request $request): View
     {
-        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
         $params['limit'] = $data['limit'] = 10;
-        $params = array_merge($params, $request->all());
+        $params = array_merge($params, $request -> all());
+
+        $data['checked_state'] = [];
+        if(isset($params['state'])) {
+            $data['checked_state'] = explode(',', $params['state']);
+        }
 
         $data['checked_categories'] = [];
         if(isset($params['categories'])) {
-            $data['checked_categories'] = explode(',',$params['categories']);
+            $data['checked_categories'] = explode(',', $params['categories']);
         }
-        $data['categories'] = $this->mypageService->getCategories();
 
-        $data['checked_states'] = [];
-        if(isset($params['state'])) {
-            $data['checked_states'] = explode(',',$params['state']);
-        }
-        $data['categories'] = $this->mypageService->getCategories();
+        // 최근 등록순 / 등록순
+        $data['order'] = $params['order'];
+
         $data['pageType'] = 'product';
-        $data['user'] = $this->getLoginUser();
-
-        // 대표 상품 가져오기
-        $data['represents'] = $this->mypageService->getRepresentProducts($params);
-        // 등록한 상품 가져오기
-        $data = array_merge($data,$this->mypageService->getRegisterProducts($params));
-        $data = array_merge($data,$this->mypageService->getTotalProductCount());
+        $data['user'] = $this -> getLoginUser();
+        $data['categories'] = $this -> mypageService -> getCategories();
+        // 추천 상품 가져오기
+        $data['represents'] = $this -> mypageService -> getRepresentProducts($params);
+        // 전체 가져오기
+        $data = array_merge($data, $this -> mypageService -> getRegisterProducts($params));
+        $data = array_merge($data, $this -> mypageService -> getTotalProductCount());
 
         return view('mypage.mypage', $data);
     }
@@ -502,24 +503,21 @@ class MypageController extends BaseController
     }
 
     /**
-     * 이메일 인증 번호 보내기
+     * (이메일/휴대폰) 인증번호 전송
      * @param Request $request
      * @return JsonResponse
      */
     public function sendAuthEmail(Request $request): JsonResponse {
-        
-        if (Auth::user()['account'] !== $request->input('email')) {
-            return response()->json([
-                'result' => 'fail',
-                'code' => '99',
-                'message' => '일치하는 계정이 없습니다. 다시 확인해주세요.'
+        if (Auth::user()['account'] !== $request -> input('email')) {
+            return response() -> json([
+                'result'    => 'fail',
+                'code'      => '99',
+                'message'   => '일치하는 계정이 존재하지 않습니다. 다시한번 확인해주세요.'
             ]);
         }
         
-        $tmp_p["phone_number"] = Auth::user()['phone_number'];
-        
-        return response()->json($this->mypageService->sendAuth($tmp_p));
-        
+        $tmp_p['phone_number'] = Auth::user()['phone_number'];
+        return response() -> json($this -> mypageService -> sendAuth($tmp_p));
     }
 
     /**
@@ -763,5 +761,99 @@ class MypageController extends BaseController
         $result['deal'] = $this->mypageService->checkNewBadge('W');
         $result['purchase'] = $this->mypageService->checkNewBadge('R');
         return response()->json($result);
+    }
+
+    // 견적서 관리 (현황)
+    public function getEstimateInfo(): View {
+        $data['user'] = $this -> getLoginUser();
+        $data['pageType'] = 'estimate';
+
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+
+        return view('mypage.mypage', $data);
+    }
+
+    // 견적서 관리 (요청한 목록)
+    public function getRequestEstimate(Request $request): Response {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = $this -> limit;
+        $params = array_merge($params, $request -> all());
+
+        // 키워드 검색
+        switch($request -> input('keywordType')) {
+            case 'estimateCode':
+                $data['keywordTypeText'] = '견적번호';
+                break;
+            case 'productName':
+                $data['keywordTypeText'] = '견적상품';
+                break;
+            case 'companyName':
+                $data['keywordTypeText'] = '견적업체';
+                break;
+            default:
+                $data['keywordTypeText'] = '전체';
+                break;
+        }
+
+        $data['user'] = $this -> getLoginUser();
+        $data['pageType'] = 'estimate-request';
+
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['request'] = array_merge($this -> mypageService -> getRequestEstimate($params), $data);
+
+        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 견적서 관리 (요청한 상세)
+    public function getRequestEstimateDetail(Request $request): JsonResponse {
+        $data = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+
+        return 
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
+    }
+
+    // 견적서 관리 (요청받은 목록)
+    public function getResponseEstimate(Request $request): Response {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = $this -> limit;
+        $params = array_merge($params, $request -> all());
+
+        // 키워드 검색
+        switch($request -> input('keywordType')) {
+            case 'estimateCode':
+                $data['keywordTypeText'] = '견적번호';
+                break;
+            case 'productName':
+                $data['keywordTypeText'] = '견적상품';
+                break;
+            case 'companyName':
+                $data['keywordTypeText'] = '견적업체';
+                break;
+            default:
+                $data['keywordTypeText'] = '전체';
+                break;
+        }
+
+        $data['user'] = $this -> getLoginUser();
+        $data['pageType'] = 'estimate-response';
+
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['response'] = array_merge($this -> mypageService -> getResponseEstimate($params), $data);
+
+        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 견적서 관리 (요청받은 상세)
+    public function getResponseEstimateDetail(Request $request): JsonResponse {
+        $data = $this -> mypageService -> getResponseEstimateDetail($request -> all());
+
+        return 
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
     }
 }
