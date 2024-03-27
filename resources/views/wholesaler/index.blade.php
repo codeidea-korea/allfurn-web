@@ -70,50 +70,45 @@
                 </div>
                 <div class="flex items-center gap-7">
                     <div class="count_pager"><b>1</b> / 12</div>
-                    <a class="more_btn flex items-center" href="/wholesaler/best">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
+                    <a class="more_btn flex items-center" href="/wholesaler/thismonth">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
                 </div>
             </div>
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper obtain_list type02">
-                        @if( count( $companyList ) > 0 )
-                        @foreach( $companyList['info'] AS $key => $company )
-                        <li class="swiper-slide">
-                            <div class="txt_box">
-                                <div class="flex items-center justify-between">
-                                    <a href="/wholesaler/detail/{{$company['company_idx']}}">
-                                        @if( $company['isCrown'] )
-                                        <img src="./img/icon/crown.png" alt="">
-                                        @endif
-                                        {{$company['companyName']}}
-                                        <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
-                                    </a>
-                                    <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                                </div>
-                                @if( count( $company['category_name'] ) > 0 || $company['companyRegion'] != '' )
-                                <div class="flex items-center justify-between">
-                                    <div class="tag">
-                                        @foreach( $company['category_name'] AS $category_name )
-                                        <span>{{$category_name}}</span>
-                                        @endforeach
+                        @foreach ($companyList['wholesalerList'] as $wholesaler)
+                            <li class="swiper-slide">
+                                <div class="txt_box">
+                                    <div class="flex items-center justify-between">
+                                        <a href="/wholesaler/detail/{{ $wholesaler->company_idx }}">
+                                            <img src="/img/icon/crown.png" alt="">
+                                            {{ $wholesaler->company_name }}
+                                            <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
+                                        </a>
+                                        <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->company_idx}}' onclick="toggleCompanyLike({{$wholesaler->company_idx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
-                                    <i>{{$company['companyRegion']}}</i>
+                                    <div class="flex items-center justify-between">
+                                        <div class="tag">
+                                            @php
+                                                $companyCategoryList = explode(',', $wholesaler->categoryList);
+                                            @endphp
+                                            @foreach ( $companyCategoryList as $category )
+                                                <span>{{ $category }}</span>
+                                            @endforeach
+                                        </div>
+                                        <i class="shrink-0">{{ $wholesaler->location }}</i>
+                                    </div>
                                 </div>
-                                @endif
-                            </div>
-                            @if( count( $company['items'] ) > 0 )
-                            <div class="prod_box">
-                                @foreach( $company['items'] AS $i => $item )
-                                <div class="img_box">
-                                    <a href="javascript:;"><img src="{{$item['imgUrl']}}" alt="{{$item['name']}}"></a>
-                                    <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                <div class="prod_box">
+                                    @foreach ($wholesaler->productList as $product)
+                                        <div class="img_box">
+                                            <a href="/product/detail/{{ $product->productIdx }}"><img src="{{ $product->imgUrl }}" alt=""></a>
+                                            <button class="zzim_btn prd_{{ $product->productIdx }} {{ $product->isInterest == 1 ? 'active' : '' }}" pidx="{{ $product->productIdx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                        </div>
+                                    @endforeach
                                 </div>
-                                @endforeach
-                            </div>
-                            @endif
-                        </li>
+                            </li>
                         @endforeach
-                        @endif
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
@@ -218,6 +213,25 @@
             type: "fraction",
         },
     });
+
+    function toggleCompanyLike(idx) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url : '/wholesaler/like/' + idx,
+            method: 'POST',
+            success : function(result) {
+                if (result.success) {
+                    if (result.like === 0) {
+                        $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                    } else {
+                        $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                    }
+                }
+            }
+        })
+    }
 </script>
 
 

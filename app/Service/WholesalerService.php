@@ -318,7 +318,7 @@ class WholesalerService {
     }
 
     //TODO: 전화문의, 올톡문의 점수가 추가되어야 함.
-    function getThinMonthWholesaler()
+    function getThinMonthWholesaler(int $limit)
     {
         $data['wholesalerList'] = DB::table(DB::raw(
             '(SELECT idx, company_type, company_idx, ad_location ,category_idx, MAX(banner_price) AS banner_price
@@ -364,7 +364,7 @@ class WholesalerService {
         })
         ->groupBy('company_idx')
         ->orderByRaw('score desc')
-        ->limit(50)
+        ->limit($limit)
         ->get();
 
 

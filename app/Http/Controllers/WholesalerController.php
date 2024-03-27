@@ -41,9 +41,10 @@ class WholesalerController extends BaseController
 
         $bannerList = $this->productService->getThisDealList('dealmiddle');
 
-        $companyList = $this->productService->getThisMonth('product');
+        // $companyList = $this->productService->getThisMonth('product');
+        // $companyList = setArrayNumer( $companyList );
+        $companyList = $this->wholesalerService->getThinMonthWholesaler(20);
         $companyRank = $this->productService->getThisMonth('company');
-        $companyList = setArrayNumer( $companyList );
 
         $company = $this->productService->wholesalerRankList();
         //print_re( $company );
@@ -140,7 +141,7 @@ class WholesalerController extends BaseController
     
     public function getThinMonthWholesaler()
     {
-        $data = $this->wholesalerService->getThinMonthWholesaler();
+        $data = $this->wholesalerService->getThinMonthWholesaler(50);
         return view(getDeviceType().'wholesaler.thisMonth', $data);
     }
 }
