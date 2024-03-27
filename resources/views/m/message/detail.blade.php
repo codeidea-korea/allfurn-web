@@ -1,5 +1,14 @@
 @extends('layouts.app_m')
 
+@php
+
+$header_depth = 'talk';
+$only_quick = 'yes';
+$top_title = '';
+$header_banner = '';
+
+@endphp
+
 @section('content')
 @include('layouts.header_m')
 
@@ -36,7 +45,7 @@
                     <button class="right_search_btn"><svg><use xlink:href="/img/icon-defs.svg#Search_black"></use></svg></button>
                     <div class="more_btn">
                         <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                        <div style="z-index:99">\
+                        <div style="z-index:99">
                             @if($company->is_alarm === 'Y')
                                 <a class="notification_status_btn" data-company-idx="{{ $company->idx }}" href="javascript:toggleAlarmModal('{{ $company->company_type }}', {{ $company->idx }});">알림끄기</a>
                             @else
@@ -87,27 +96,46 @@
     <!-- pusher -->
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
-    Pusher.logToConsole = false;
+    Pusher.logToConsole = true;
             
     const pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
     });
+    var channel = pusher.subscribe('chat-{{ $room_idx }}');
+    channel.bind('chat-event-{{ $room_idx }}', function(messages) {
+        console.log(JSON.stringify(messages));
+
+        var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+        const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
+
+        if(messages.date != lastCommunicatedDate) {
+            const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
+            $('.chatting_list').html($('.chatting_list').html() + dateTag);
+        }
+        $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+        
+        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+        $('._room{{ $room_idx }}LastMent').text(messages.title);
+
+        if('{{$chatting_keyword}}' != '') {
+            $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
+            boldSearchKeywordInRoom();
+        }
+    });
+    setTimeout(() => {
+        document.querySelector('.chatting_list').focus();
+        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+    }, 100);
+    document.querySelector('.chat-box:last-child').focus();
     </script>
 
     <script>
-        $(document).ready(function(){
-            visibleRoom({{$room_idx}});
-        });
 
         {{-- 대화방 내용 가져오기 --}}
         const visibleRoom = (idx) => {
             
             let params = {room_idx: idx}
-            
-            @if($product_idx)
-                params['product_idx'] = '{{ $product_idx }}';
-            @endif
-            
+                        
             pageNo = 1;
             
             fetch('/message/room?' + new URLSearchParams(params)).then(response => {
@@ -126,32 +154,6 @@
                 loadEvent(idx);
 
                 const roomIdx = idx;
-                var channel = pusher.subscribe('chat-' + roomIdx);
-                channel.bind('chat-event-' + roomIdx, function(messages) {
-                    console.log(JSON.stringify(messages));
-
-                    var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
-                    const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
-
-                    if(messages.date != lastCommunicatedDate) {
-                        const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
-                        $('.chatting_list').html($('.chatting_list').html() + dateTag);
-                    }
-                    $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
-                    
-                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-                    $('._room'+roomIdx+'LastMent').text(messages.title);
-
-                    if('{{$chatting_keyword}}' != '') {
-                        $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
-                        boldSearchKeywordInRoom();
-                    }
-                });
-                setTimeout(() => {
-                    document.querySelector('.chatting_list').focus();
-                    $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-                }, 100);
-                document.querySelector('.chat-box:last-child').focus();
                 
             }).catch(error => {
             })
@@ -160,11 +162,7 @@
         const getChatting = (idx) => {
             
             let params = {room_idx: idx, pageNo: pageNo}
-            
-            @if($product_idx)
-                params['product_idx'] = '{{ $product_idx }}';
-            @endif
-                
+                            
             pageNo = pageNo + 1;
             
             fetch('/message/chatting?' + new URLSearchParams(params)).then(response => {
@@ -194,7 +192,7 @@
             }).catch(error => {
             })
         }
-        const loadEvent = (roomIdx) => {
+        const loadEvent = () => {
                     
             // 우측 검색아이콘 클릭시
             $('.chatting_box .right_search_btn').off().on('click',function(){
@@ -205,12 +203,12 @@
             });
 
             // 업체 주소
-            $('.chatting_box .company_info_btn').off().on('click',function(){
+            $('.company_info_btn').off().on('click',function(){
                 $(this).toggleClass('active')
                 $('.chatting_box .top_info .company_info').toggleClass('active');
             });
         };
-
+        loadEvent();
 
         {{-- 알림 켜기/끄기 모달 띄우기 --}}
         const toggleAlarmModal = (company_type, company_idx) => {
@@ -456,6 +454,7 @@
             })
         }
 
+        /*
         {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
         document.getElementById('keyword').addEventListener('keyup', e => {
             
@@ -471,6 +470,7 @@
                 location.href='/message?' + new URLSearchParams(params);
             }
         })
+        */
         
 
         $(document).on('keyup', '#chat_message', function(e) {

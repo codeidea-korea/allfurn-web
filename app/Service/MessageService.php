@@ -540,7 +540,7 @@ class MessageService
 
 	$chatContent = json_decode($chat->content, true);
 	
-	if(!isset($decodedContent) && empty($decodedContent['type'])) { $contentHtml = $chat->content; }
+	if(!isset($chatContent) && empty($chatContent['type'])) { $contentHtml = $chat->content; }
        
 	else if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
             // 단순 텍스트
