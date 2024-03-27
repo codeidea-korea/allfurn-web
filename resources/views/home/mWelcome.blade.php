@@ -42,7 +42,10 @@
                             있는</strong>
                         <h2>올펀(All-Furn)을 만나보세요</h2>
                         <div class="button-wrap">
-                            <button type="button" onclick="download()" class="button  button--solid">올펀 앱 다운로드 <i class="ico__arrow--right18"></i></button>
+                            <button type="button" class="button" style="border:1px solid #dedede" onclick="location.href='/signin'">모바일로 로그인</button>
+                            <button type="button" onclick="download()" class="button  button--solid" style="margin-top:10px;">올펀 앱 다운로드 
+                                {{-- <i class="ico__arrow--right18"></i> --}}
+                            </button>
                         </div>
                     </div>
                 </div>
