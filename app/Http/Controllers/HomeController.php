@@ -40,8 +40,19 @@ class HomeController extends BaseController
         }
 
         if ($chkMobile) {
+
+            if (Auth::check()) {
+                
+                $data = $this->homeService->getHomeData();
+
+                return view('m/home/index', ['data'=>$data]);
+                
+            } else {
+                
+                return view('home/mWelcome');
+                
+            }
             
-            return view('home/mWelcome');
             
         } else {
             
@@ -120,6 +131,17 @@ class HomeController extends BaseController
     public function checkAlert()
     {
         return $this->homeService->checkAlert();
+    }
+
+    //올펀 패밀리 상세
+    public function getFamilyMember($idx) {
+        $data = $this->homeService->getFamilyMember($idx);
+        return view(getDeviceType().'family.index', $data);
+    }
+
+    //올펀 패밀리 상세 - 업체 좋아요
+    public function toggleCompanyLike(Request $params) {
+        return $this->homeService->toggleCompanyLike($params);
     }
 }
 

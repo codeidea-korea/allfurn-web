@@ -5,7 +5,7 @@
             <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt=""></a></h1>
             <button class="search_btn" onclick="modalOpen('#search_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 검색어를 입력하세요</button>
             <ul class="right_link flex items-center">
-                <li><a class="alarm_btn" href="/alarm"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span hidden>1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
@@ -15,7 +15,7 @@
             <h3 class="title">{{ $top_title}}</h3>
             <ul class="right_link flex items-center">
                 <li><a href="javascript:;" onclick="modalOpen('#search-modal')"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#Search_black"></use></svg></a></li>
-                <li><a class="alarm_btn" href="/alarm"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span hidden>1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
@@ -27,7 +27,7 @@
             </div>
             <ul class="right_link flex items-center">
                 <li><a href="javascript:;" onclick="modalOpen('#search-modal')"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#Search_black"></use></svg></a></li>
-                <li><a class="alarm_btn" href="/alarm"><span>10</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span hidden>1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
@@ -166,6 +166,10 @@
 </div>
 
 <script>
+    $(document).ready(function(){
+        checkAlert();
+    });
+
     var search_swhiper = new Swiper(".search_swhiper", {
         autoplay: {
             delay: 2500,
@@ -180,4 +184,25 @@
             type: "fraction",
         },
     });
+
+    function checkAlert() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method : 'POST',
+            url : '/checkAlert',
+            success : function(result) {
+                if(result.success === true && result.alarm > 0) {
+                    $(".alarm_btn span").text(result.alarm);
+                    $(".alarm_btn span").show(result.alarm);
+                } else {
+                    $(".alarm_btn span").hide();
+                }
+            },
+            error : function() {
+                $(".alarm_btn span").hide();
+            }
+        })
+    }
 </script>

@@ -28,7 +28,7 @@ class AlarmService
             dd("Query executed in {$query->time}ms: {$query->sql}");
         });*/
 
-
+        DB::enableQueryLog();
         $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
@@ -95,6 +95,8 @@ class AlarmService
         $data['count'] = $logs->count();
         $data['list'] = $logs->orderBy('AF_notification.idx', 'desc')->offset($offset)->limit($limit)->get();
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
+        
+        dd(DB::getQueryLog());
 
         Push::where([
             'target_company_type' => Auth::user()['type'],

@@ -35,7 +35,7 @@ $( function() {
                 url : '/community/like-article',
                 method: 'POST',
                 data : {
-                    articleId : + articleIndex
+                    articleId : articleIndex
                 },
                 success : function(result) {
                     if(result.result == 'success') {

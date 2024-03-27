@@ -44,6 +44,11 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 
 Route::post('checkAlert', 'HomeController@checkAlert');
 
+Route::prefix('/family')->name('family')->group(function() {
+    Route::get('/{idx}', 'HomeController@getFamilyMember');
+    Route::post('/like', 'HomeController@toggleCompanyLike');
+});
+
 Route::prefix('/member')->name('member')->group(function() {
     Route::post('/createUser', 'MemberController@createUser');
     Route::post('/checkUsingEmail', 'MemberController@checkUsingEmail');
@@ -147,7 +152,9 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/logo/image', 'MypageController@deleteLogoImage');
     Route::put('/represent/product/{idx}', 'MypageController@toggleRepresentProduct');
     Route::get('/check/new/badge', 'MypageController@getCheckNewBadge');
-    Route::get('/estimate', 'MypageController@getEstimate');
+    Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
+    Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
+    Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
 });
 
 
@@ -205,7 +212,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholefsalerController@listBySearch');
-    Route::get('/best', 'WholesalerController@best');
+    Route::get('/thismonth', 'WholesalerController@getThinMonthWholesaler');
 });
 
 Route::prefix('download')->name('download')->group(function() {

@@ -10,8 +10,8 @@
                 <ul class="company_list swiper-wrapper">
                     @foreach($company as $item)
                         <li class="swiper-slide">
-                            <a href="javascript:;">
-                                <b>{{$item->company_name}} </b>
+                            <a href="/wholesaler/detail/{{$item->idx}}">
+                                <b>{{$item->company_name}}</b>
                                 <div class="tag">
                                     @php $categoryList = explode(',', $item->categoryList); @endphp
                                     <span>{{$categoryList[0]}}</span>

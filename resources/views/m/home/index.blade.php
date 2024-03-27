@@ -1,0 +1,424 @@
+@extends('layouts.app_m')
+@php
+    $only_quick = '';
+    $header_depth = 'home';
+    $top_title = '';
+    $header_banner = '';
+@endphp
+@section('content')
+@include('layouts.header_m')
+
+<div id="content">
+    <div class="main_visual">
+        <div class="slide_box">
+            <ul class="swiper-wrapper">
+                @foreach($data['banner_top'] as $item)
+                    <?php
+                    $link = '';
+                    switch ($item->web_link_type) {
+                        case 0: //Url
+                            $link = $item->web_link;
+                            break;
+                            
+                        case 1: //상품
+                            if ( strpos($item->web_link, 'product/detail') !== false ) {
+                                $link = $item->web_link;
+                            } else {
+                                $link = '/product/detail/'.$item->web_link;
+                            }
+                            break;
+                            
+                        case 2: //업체
+                            if ( strpos($item->web_link, 'wholesaler/detail') !== false ) {
+                                $link = $item->web_link;
+                            } else {
+                                $link = '/wholesaler/detail/'.$item->web_link;    
+                            } 
+                            break;
+                        case 3: //커뮤니티
+                            if ( strpos($item->web_link, 'community/detail') !== false ) {
+                                $link = $item->web_link;
+                            } else {
+                                $link = '/community/detail/'.$item->web_link;
+                            } 
+                            break;
+                        case 4:
+                            $link = '/help/notice/';
+                            break;
+                        default: //공지사항
+                            $link = $item->web_link;
+                            break;
+                    }
+                    ?>
+                    @if(isset($item->folder) && isset($item->filename))
+                        <li class="swiper-slide" style="background-image:url('{{preImgUrl().$item->folder."/".$item->filename}}')">
+                    @else 
+                        <li class="swiper-slide" style="background-image:url('/img/main_visual.png')">
+                    @endif
+                        <a href="{{$link}}">
+                            <span class="brand">{{ $item->company_name }}</span>
+                            <p><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+            <div class="bottom_box">
+                <p>올펀가구</p>
+                <div class="flex items-center ">
+                    <div class="count_pager"><b>1</b> / 12</div>
+                    {{-- <a href="javascript:;">모아보기</a> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main_mid_banner overflow-hidden">
+        <div class="inner">
+            <div class="slide_box">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide">
+                         <a href="/product/best-new">
+                            <img src="./img/main/best_icon.png" alt="">
+                            <span>BEST<br/>신상품</span>
+                         </a>
+                    </li>
+                    <li class="swiper-slide">
+                         <a href="javascript:;">
+                            <img src="/img/main/search_icon.png" alt="">
+                            <span>쉬운<br/> 상품 찾기</span>
+                         </a>
+                    </li>
+                    <li class="swiper-slide">
+                         <a href="javascript:;">
+                            <img src="/img/main/event_icon.png" alt="">
+                            <span>할인/이벤트<br/> 상품</span>
+                         </a>
+                    </li>
+                    <li class="swiper-slide">
+                         <a href="javascript:;">
+                            <img src="/img/main/news_icon.png" alt="">
+                            <span>일일 <br/>가구 뉴스</span>
+                         </a>
+                    </li>
+                    <li class="swiper-slide">
+                         <a href="javascript:;">
+                            <img src="/img/main/message_icon.png" alt="">
+                            <span>상품 문의</span>
+                         </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="category_banner overflow-hidden">
+        <div class="inner">
+            <div class="slide_box ">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide active">
+                        <a href="javascript:;">
+                            <i><b>ALL</b></i>
+                            <span>전체</span>
+                        </a>
+                    </li>
+                    @foreach($data['categoryAlist'] as $item)
+                        <li class="swiper-slide">
+                            <a href="/product/category?pre={{ $item->idx }}">
+                                <i><img src="{{ $item->imgUrl }}"></i>
+                                <span>{{ $item->name }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {{-- 베스트 신상품 --}}
+    @php $bestNewProducts = $data['productAd']; @endphp
+    @include('m.home.inc-best-new-product')
+
+    {{-- 신규 등록 상품 --}}
+    @include('m.home.inc-new-product')
+
+    {{-- MD가 추천하는 테마별 상품 --}}
+    @include('m.home.inc-md-product')
+
+    {{-- 인기 브랜드 --}}
+    @include('m.home.inc-popular-brand')
+
+    {{-- 할인 상품 --}}
+    @include('m.home.inc-plan-discount')
+
+    {{-- 동영상 광고 --}}
+    @include('m.home.inc-video')
+
+    
+    
+
+    <section class="main_section main_board">
+        <div class="inner">
+            <div class="board_wrap">
+                <div>
+                    <div class="main_tit mb-8 flex justify-center items-center">
+                        <h3>매거진</h3>
+                    </div>
+                    <ul class="main_board_list2">
+                        @foreach($data['magazine'] as $item)
+                            <li>
+                                <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
+                                <div class="txt_box">
+                                    <a href="/magazine/detail/{{ $item->idx }}">
+                                        <b>{{$item->title}}</b>
+                                        <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                                    </a>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div>
+                    <div class="main_tit mb-5 mt-14 flex justify-center items-center">
+                        <h3>커뮤니티</h3>
+                    </div>
+                    <ul class="main_board_list">
+                        @foreach($data['community'] as $item)
+                            <li>
+                                <div class="title">
+                                    <a href="/community/detail/{{$item->idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="main_tit mb-5 mt-14 flex justify-center items-center">
+                        <h3>가구 모임</h3>
+                    </div>
+                    <ul class="main_board_list">
+                        <li>
+                            <div class="title">
+                                <a href="javascript:;">
+                                    <span>골프모임</span>
+                                    <p>12월 정모 일자 알려드립니다.</p>
+                                </a>
+                            </div>
+                            <span>23.10.04</span>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <a href="javascript:;">
+                                    <span>소파 업체 모임</span>
+                                    <p>패브릭 소파 판매현황이 어떤가요?</p>
+                                </a>
+                            </div>
+                            <span>23.10.04</span>
+                        </li>
+                        <li>
+                            <div class="title">
+                                <a href="javascript:;">
+                                    <span>매출 증진 모임</span>
+                                    <p>이번달 매출액입니다.</p>
+                                </a>
+                            </div>
+                            <span>23.10.04</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- 올펀 패밀리 광고 --}}
+    @include('m.home.inc-allfurn-family')  
+
+</div>
+
+
+<script>
+
+// main_visual 
+const main_visual = new Swiper(".main_visual .slide_box", {
+    slidesPerView: 1,
+    pagination: {
+        el: ".main_visual .count_pager",
+        type: "fraction",
+    },
+    on: {
+        slideChangeTransitionEnd: function () {
+            let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
+            $('.main_visual .bottom_box p').text(brand)
+        },
+    },
+});
+
+
+// main_mid_banner
+const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+});
+
+// category_banner
+const category_banner = new Swiper(".category_banner .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 17,
+});
+
+$('.category_banner li').on('click',function(){
+    $(this).addClass('on').siblings().removeClass('on')
+})
+
+
+// best_prod 
+const best_prod = new Swiper(".best_prod .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+    grid: {
+        rows: 2,
+    },
+    pagination: {
+        el: ".best_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+// best_prod_modal
+const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: "#zoom_view-modal .slide_arrow.next",
+        prevEl: "#zoom_view-modal .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal .count_pager",
+        type: "fraction",
+    },
+});
+
+// new_prod 
+const new_prod = new Swiper(".new_prod .slide_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 8,
+    grid: {
+        rows: 2,
+    },
+    pagination: {
+        el: ".new_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+// new_prod_modal
+const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 120,
+    slidesPerGroup: 1,
+    grid: {
+        rows: 1,
+    },
+    navigation: {
+        nextEl: "#zoom_view-modal-new .slide_arrow.next",
+        prevEl: "#zoom_view-modal-new .slide_arrow.prev",
+    },
+    pagination: {
+        el: "#zoom_view-modal-new .count_pager",
+        type: "fraction",
+    },
+});
+
+// 테마별상품 탭
+$('.theme_prod .tab_layout li').on('click',function(){
+    let liN = $(this).index();
+    $(this).addClass('active').siblings().removeClass('active');
+    $('.theme_prod .tab_content').each(function(){
+        $(this).find('>div').eq(liN).addClass('active').siblings().removeClass('active');
+    })
+})
+
+const theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+});
+
+// theme_prod 
+const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_01.count_pager",
+        type: "fraction",
+    },
+});
+
+const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_02.count_pager",
+        type: "fraction",
+    },
+});
+
+const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_03.count_pager",
+        type: "fraction",
+    },
+});
+
+const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+    slidesPerView: 1.3,
+    spaceBetween: 12,
+    slidesPerGroup: 1,
+    pagination: {
+        el: ".theme_prod .tab_04.count_pager",
+        type: "fraction",
+    },
+});
+
+// popular_prod 
+const popular_prod = new Swiper(".popular_prod .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 0,
+    pagination: {
+        el: ".popular_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+// sale_prod 
+const sale_prod = new Swiper(".sale_prod .slide_box", {
+    slidesPerView: 1.1,
+    spaceBetween: 12,
+    
+});
+
+// video_prod 
+const video_prod = new Swiper(".video_prod .slide_box", {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    pagination: {
+        el: ".video_prod .count_pager",
+        type: "fraction",
+    },
+});
+
+</script>
+
+
+
+
+@endsection

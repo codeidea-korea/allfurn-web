@@ -150,6 +150,14 @@ textarea{
   margin-top: 40px;
   margin-bottom: 60px;
 }
+.my_top_area.type02 {
+  margin-bottom:0; 
+  min-height:170px; 
+}
+.my_top_area.type02 .profile img {
+  width:120px; height:auto; 
+}
+
 .profile img {
   width: 75px;
   height: 75px;

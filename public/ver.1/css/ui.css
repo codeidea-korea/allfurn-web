@@ -395,7 +395,7 @@ div:focus {
 	line-height: 12px;
 }
 .head__gnb .gnb__category .category-banner .swiper-button-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -544px -380px;
 	width: 72px;
 	height: 72px;
@@ -408,7 +408,7 @@ div:focus {
 	left: 2px;
 }
 .head__gnb .gnb__category .category-banner .swiper-button-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -616px -380px;
 	width: 72px;
 	height: 72px;
@@ -495,7 +495,7 @@ div:focus {
 	padding-bottom: 34px;
 }
 .footer .foo__wrap .foo__logo {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -552px -300px;
 	width: 168px;
 	height: 36px;
@@ -964,7 +964,7 @@ i {
 
 .head__logo {
 	display: inline-block;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -156px;
 	width: 208px;
 	height: 44px;
@@ -976,7 +976,7 @@ i {
 
 .head__logo--large {
 	display: inline-block;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px 0px;
 	width: 292px;
 	height: 60px;
@@ -987,7 +987,7 @@ i {
 }
 
 .foo__logo {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -552px -300px;
 	width: 168px;
 	height: 36px;
@@ -998,7 +998,7 @@ i {
 }
 
 .ico__alram {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -329px -452px;
 	width: 48px;
 	height: 48px;
@@ -1009,7 +1009,7 @@ i {
 }
 
 .ico__basket {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -521px -452px;
 	width: 48px;
 	height: 48px;
@@ -1020,7 +1020,7 @@ i {
 }
 
 .ico__close28 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -386px -388px;
 	width: 56px;
 	height: 56px;
@@ -1031,7 +1031,7 @@ i {
 }
 
 .ico__search {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -604px;
 	width: 48px;
 	height: 48px;
@@ -1042,7 +1042,7 @@ i {
 }
 
 .ico__search20 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -596px -336px;
 	width: 44px;
 	height: 44px;
@@ -1053,7 +1053,7 @@ i {
 }
 
 .ico__info {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -238px -652px;
 	width: 32px;
 	height: 32px;
@@ -1064,7 +1064,7 @@ i {
 }
 
 .ico__email {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -688px -380px;
 	width: 72px;
 	height: 72px;
@@ -1075,7 +1075,7 @@ i {
 }
 
 .ico__delete10 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -442px -420px;
 	width: 24px;
 	height: 24px;
@@ -1086,7 +1086,7 @@ i {
 }
 
 .ico__delete16 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -494px -652px;
 	width: 28px;
 	height: 28px;
@@ -1097,7 +1097,7 @@ i {
 }
 
 .ico__viewcnt {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -72px -652px;
 	width: 36px;
 	height: 36px;
@@ -1108,7 +1108,7 @@ i {
 }
 
 .ico__like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -600px -604px;
 	width: 36px;
 	height: 36px;
@@ -1119,7 +1119,7 @@ i {
 }
 
 .ico__like-line {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -624px -556px;
 	width: 48px;
 	height: 48px;
@@ -1130,7 +1130,7 @@ i {
 }
 
 .ico__like--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -636px -604px;
 	width: 36px;
 	height: 36px;
@@ -1141,7 +1141,7 @@ i {
 }
 
 .ico__reply {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -36px -652px;
 	width: 36px;
 	height: 36px;
@@ -1152,7 +1152,7 @@ i {
 }
 
 .ico__refresh {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -522px -652px;
 	width: 28px;
 	height: 28px;
@@ -1172,7 +1172,7 @@ i {
 }
 
 .badge__new {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -442px -388px;
 	width: 30px;
 	height: 32px;
@@ -1183,7 +1183,7 @@ i {
 }
 
 .badge__new--big {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -680px -156px;
 	width: 44px;
 	height: 44px;
@@ -1194,7 +1194,7 @@ i {
 }
 
 .ico__filter {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -578px -652px;
 	width: 24px;
 	height: 24px;
@@ -1205,7 +1205,7 @@ i {
 }
 
 .ico__furniture {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -508px;
 	width: 48px;
 	height: 48px;
@@ -1216,7 +1216,7 @@ i {
 }
 
 .ico__sdelete {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -336px;
 	width: 40px;
 	height: 40px;
@@ -1227,7 +1227,7 @@ i {
 }
 
 .ico__check-gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -728px -97px;
 	width: 36px;
 	height: 36px;
@@ -1238,7 +1238,7 @@ i {
 }
 
 .ico__check-white {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -604px;
 	width: 36px;
 	height: 36px;
@@ -1249,7 +1249,7 @@ i {
 }
 
 .ico__more {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -280px -452px;
 	width: 49px;
 	height: 48px;
@@ -1260,7 +1260,7 @@ i {
 }
 
 .ico__more--black {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -604px;
 	width: 48px;
 	height: 48px;
@@ -1271,7 +1271,7 @@ i {
 }
 
 .ico__recomment {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -652px;
 	width: 36px;
 	height: 36px;
@@ -1282,7 +1282,7 @@ i {
 }
 
 .ico__gallery-image {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -452px;
 	width: 56px;
 	height: 56px;
@@ -1293,7 +1293,7 @@ i {
 }
 
 .ico__form-check {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -548px -280px;
 	width: 22px;
 	height: 17px;
@@ -1304,7 +1304,7 @@ i {
 }
 
 .ico__arrow--right18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -728px -60px;
 	width: 36px;
 	height: 37px;
@@ -1315,7 +1315,7 @@ i {
 }
 
 .ico__arrow--right14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -354px -652px;
 	width: 28px;
 	height: 28px;
@@ -1326,7 +1326,7 @@ i {
 }
 
 .ico__list-link {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -452px -184px;
 	width: 16px;
 	height: 28px;
@@ -1337,7 +1337,7 @@ i {
 }
 
 .ico__list-link--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -452px -156px;
 	width: 16px;
 	height: 28px;
@@ -1348,7 +1348,7 @@ i {
 }
 
 .ico__arrow--down20 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -640px -336px;
 	width: 40px;
 	height: 40px;
@@ -1359,7 +1359,7 @@ i {
 }
 
 .ico__arrow--down14-red {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -326px -652px;
 	width: 28px;
 	height: 28px;
@@ -1370,7 +1370,7 @@ i {
 }
 
 .ico__arrow--down14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -298px -652px;
 	width: 28px;
 	height: 28px;
@@ -1381,7 +1381,7 @@ i {
 }
 
 .ico__bookmark24--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -617px -452px;
 	width: 48px;
 	height: 48px;
@@ -1392,7 +1392,7 @@ i {
 }
 
 .ico__bookmark24--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -569px -452px;
 	width: 48px;
 	height: 48px;
@@ -1403,7 +1403,7 @@ i {
 }
 
 .ico__share24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -604px;
 	width: 48px;
 	height: 48px;
@@ -1414,7 +1414,7 @@ i {
 }
 
 .ico__share28 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -168px -452px;
 	width: 56px;
 	height: 56px;
@@ -1425,7 +1425,7 @@ i {
 }
 
 .ico__shop24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -604px;
 	width: 48px;
 	height: 48px;
@@ -1436,7 +1436,7 @@ i {
 }
 
 .ico__delete12 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -466px -652px;
 	width: 28px;
 	height: 28px;
@@ -1447,7 +1447,7 @@ i {
 }
 
 .ico__delete14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -206px -652px;
 	width: 32px;
 	height: 32px;
@@ -1458,7 +1458,7 @@ i {
 }
 
 .ico__delete18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -564px -604px;
 	width: 36px;
 	height: 36px;
@@ -1469,7 +1469,7 @@ i {
 }
 
 .ico__count--minus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -142px -652px;
 	width: 32px;
 	height: 32px;
@@ -1480,7 +1480,7 @@ i {
 }
 
 .ico__count--plus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -174px -652px;
 	width: 32px;
 	height: 32px;
@@ -1491,7 +1491,7 @@ i {
 }
 
 .ico__notice24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -604px;
 	width: 48px;
 	height: 48px;
@@ -1502,7 +1502,7 @@ i {
 }
 
 .ico__arrow--big_left24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -377px -452px;
 	width: 48px;
 	height: 48px;
@@ -1513,7 +1513,7 @@ i {
 }
 
 .ico__arrow--down24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -425px -452px;
 	width: 48px;
 	height: 48px;
@@ -1524,7 +1524,7 @@ i {
 }
 
 .ico__arrow--up24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -473px -452px;
 	width: 48px;
 	height: 48px;
@@ -1535,7 +1535,7 @@ i {
 }
 
 .ico__refresh {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -522px -652px;
 	width: 28px;
 	height: 28px;
@@ -1546,7 +1546,7 @@ i {
 }
 
 .ico__search--white {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -604px;
 	width: 48px;
 	height: 48px;
@@ -1557,7 +1557,7 @@ i {
 }
 
 .ico__search--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -604px;
 	width: 48px;
 	height: 48px;
@@ -1568,7 +1568,7 @@ i {
 }
 
 .ico__arrow--black18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -256px;
 	width: 40px;
 	height: 22px;
@@ -1579,7 +1579,7 @@ i {
 }
 
 .ico__arrow--gray18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -316px -292px;
 	width: 40px;
 	height: 22px;
@@ -1590,7 +1590,7 @@ i {
 }
 
 .ico__banner-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -200px;
 	width: 76px;
 	height: 100px;
@@ -1601,7 +1601,7 @@ i {
 }
 
 .ico__banner-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -380px;
 	width: 72px;
 	height: 72px;
@@ -1612,7 +1612,7 @@ i {
 }
 
 .ico__furniture1 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -508px;
 	width: 48px;
 	height: 48px;
@@ -1623,7 +1623,7 @@ i {
 }
 
 .ico__furniture1--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -576px -508px;
 	width: 48px;
 	height: 48px;
@@ -1634,7 +1634,7 @@ i {
 }
 
 .ico__furniture2 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -624px -508px;
 	width: 48px;
 	height: 48px;
@@ -1645,7 +1645,7 @@ i {
 }
 
 .ico__furniture2--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -508px;
 	width: 48px;
 	height: 48px;
@@ -1656,7 +1656,7 @@ i {
 }
 
 .ico__furniture3 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -508px;
 	width: 48px;
 	height: 48px;
@@ -1667,7 +1667,7 @@ i {
 }
 
 .ico__furniture3--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -576px -556px;
 	width: 48px;
 	height: 48px;
@@ -1678,7 +1678,7 @@ i {
 }
 
 .ico__furniture4 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -556px;
 	width: 48px;
 	height: 48px;
@@ -1689,7 +1689,7 @@ i {
 }
 
 .ico__furniture4--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -556px;
 	width: 48px;
 	height: 48px;
@@ -1700,7 +1700,7 @@ i {
 }
 
 .ico__furniture5 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -556px;
 	width: 48px;
 	height: 48px;
@@ -1711,7 +1711,7 @@ i {
 }
 
 .ico__furniture5--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -556px;
 	width: 48px;
 	height: 48px;
@@ -1722,7 +1722,7 @@ i {
 }
 
 .ico__furniture6 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -556px;
 	width: 48px;
 	height: 48px;
@@ -1733,7 +1733,7 @@ i {
 }
 
 .ico__furniture6--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -556px;
 	width: 48px;
 	height: 48px;
@@ -1744,7 +1744,7 @@ i {
 }
 
 .ico__furniture7 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -556px;
 	width: 48px;
 	height: 48px;
@@ -1755,7 +1755,7 @@ i {
 }
 
 .ico__furniture7--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -556px;
 	width: 48px;
 	height: 48px;
@@ -1766,7 +1766,7 @@ i {
 }
 
 .ico__furniture8 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -556px;
 	width: 48px;
 	height: 48px;
@@ -1777,7 +1777,7 @@ i {
 }
 
 .ico__furniture8--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -556px;
 	width: 48px;
 	height: 48px;
@@ -1788,7 +1788,7 @@ i {
 }
 
 .ico__furniture9 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -556px;
 	width: 48px;
 	height: 48px;
@@ -1799,7 +1799,7 @@ i {
 }
 
 .ico__furniture9--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -556px;
 	width: 48px;
 	height: 48px;
@@ -1810,7 +1810,7 @@ i {
 }
 
 .ico__furniture10 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -508px;
 	width: 48px;
 	height: 48px;
@@ -1821,7 +1821,7 @@ i {
 }
 
 .ico__furniture10--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -508px;
 	width: 48px;
 	height: 48px;
@@ -1832,7 +1832,7 @@ i {
 }
 
 .ico__furniture11 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -508px;
 	width: 48px;
 	height: 48px;
@@ -1843,7 +1843,7 @@ i {
 }
 
 .ico__furniture11--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -508px;
 	width: 48px;
 	height: 48px;
@@ -1854,7 +1854,7 @@ i {
 }
 
 .ico__furniture12 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -508px;
 	width: 48px;
 	height: 48px;
@@ -1865,7 +1865,7 @@ i {
 }
 
 .ico__furniture12--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -508px;
 	width: 48px;
 	height: 48px;
@@ -1876,7 +1876,7 @@ i {
 }
 
 .ico__furniture13 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -508px;
 	width: 48px;
 	height: 48px;
@@ -1887,7 +1887,7 @@ i {
 }
 
 .ico__furniture13--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -508px;
 	width: 48px;
 	height: 48px;
@@ -1898,7 +1898,7 @@ i {
 }
 
 .ico__furniture14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -508px;
 	width: 48px;
 	height: 48px;
@@ -1909,7 +1909,7 @@ i {
 }
 
 .ico__furniture14--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -508px;
 	width: 48px;
 	height: 48px;
@@ -1920,7 +1920,7 @@ i {
 }
 
 .ico__search-circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -60px;
 	width: 96px;
 	height: 96px;
@@ -1931,7 +1931,7 @@ i {
 }
 
 .ico__refresh--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -680px -336px;
 	width: 40px;
 	height: 40px;
@@ -1942,7 +1942,7 @@ i {
 }
 
 .ico__heart {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -112px -452px;
 	width: 56px;
 	height: 56px;
@@ -1953,7 +1953,7 @@ i {
 }
 
 .ico__unheart {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -224px -452px;
 	width: 56px;
 	height: 56px;
@@ -1964,7 +1964,7 @@ i {
 }
 
 .ico__logout {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -556px;
 	width: 48px;
 	height: 48px;
@@ -1975,7 +1975,7 @@ i {
 }
 
 .ico__dialogue {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px 0px;
 	width: 160px;
 	height: 160px;
@@ -1986,7 +1986,7 @@ i {
 }
 
 .ico__check-gray--border {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -300px;
 	width: 36px;
 	height: 36px;
@@ -1997,7 +1997,7 @@ i {
 }
 
 .ico__bookmark28--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -330px -388px;
 	width: 56px;
 	height: 56px;
@@ -2008,7 +2008,7 @@ i {
 }
 
 .ico__bookmark28--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -200px;
 	width: 56px;
 	height: 56px;
@@ -2019,7 +2019,7 @@ i {
 }
 
 .ico__mybadge {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -160px 0px;
 	width: 156px;
 	height: 156px;
@@ -2030,7 +2030,7 @@ i {
 }
 
 .ico__mybadge-wholesaler {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -316px 0px;
 	width: 156px;
 	height: 156px;
@@ -2041,7 +2041,7 @@ i {
 }
 
 .ico__mybadge-retail {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -156px -160px;
 	width: 156px;
 	height: 156px;
@@ -2052,7 +2052,7 @@ i {
 }
 
 .ico__warning {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -300px;
 	width: 80px;
 	height: 80px;
@@ -2063,7 +2063,7 @@ i {
 }
 
 .ico__profile {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -604px;
 	width: 48px;
 	height: 48px;
@@ -2074,7 +2074,7 @@ i {
 }
 
 .ico__share {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -604px;
 	width: 48px;
 	height: 48px;
@@ -2085,7 +2085,7 @@ i {
 }
 
 .ico__community-arrow {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -410px -652px;
 	width: 28px;
 	height: 28px;
@@ -2096,7 +2096,7 @@ i {
 }
 
 .ico__community-arrow--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -438px -652px;
 	width: 28px;
 	height: 28px;
@@ -2107,7 +2107,7 @@ i {
 }
 
 .ico__plus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -604px;
 	width: 48px;
 	height: 48px;
@@ -2118,7 +2118,7 @@ i {
 }
 
 .ico__radio--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -604px;
 	width: 36px;
 	height: 36px;
@@ -2129,7 +2129,7 @@ i {
 }
 
 .ico__radio--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -604px;
 	width: 36px;
 	height: 36px;
@@ -2140,7 +2140,7 @@ i {
 }
 
 .ico__gallery--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -548px -200px;
 	width: 80px;
 	height: 80px;
@@ -2151,7 +2151,7 @@ i {
 }
 
 .ico__add--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -724px -156px;
 	width: 40px;
 	height: 40px;
@@ -2162,7 +2162,7 @@ i {
 }
 
 .ico__delete--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -552px -336px;
 	width: 44px;
 	height: 44px;
@@ -2173,7 +2173,7 @@ i {
 }
 
 .ico__add28--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -272px -388px;
 	width: 58px;
 	height: 58px;
@@ -2184,7 +2184,7 @@ i {
 }
 
 .ico__delete24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -713px -452px;
 	width: 48px;
 	height: 48px;
@@ -2195,7 +2195,7 @@ i {
 }
 
 .ico__burger24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -665px -452px;
 	width: 48px;
 	height: 48px;
@@ -2206,7 +2206,7 @@ i {
 }
 
 .ico__set {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -508px;
 	width: 40px;
 	height: 40px;
@@ -2217,7 +2217,7 @@ i {
 }
 
 .ico__setting {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -556px;
 	width: 40px;
 	height: 40px;
@@ -2228,7 +2228,7 @@ i {
 }
 
 .ico__exclamation {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -648px -60px;
 	width: 80px;
 	height: 80px;
@@ -2239,7 +2239,7 @@ i {
 }
 
 .ico__star--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -604px;
 	width: 48px;
 	height: 48px;
@@ -2250,7 +2250,7 @@ i {
 }
 
 .ico__star--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -604px;
 	width: 48px;
 	height: 48px;
@@ -2261,7 +2261,7 @@ i {
 }
 
 .ico__check--blue {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -382px -652px;
 	width: 28px;
 	height: 28px;
@@ -2272,7 +2272,7 @@ i {
 }
 
 .ico__check--red {
-    background-image: url(/images/sprite/sprite.png);
+    background-image: url(/img/sprite.png);
     width: 14px;
     height: 14px;
     background-position: -217px -1015px;
@@ -2280,7 +2280,7 @@ i {
 }
 
 .ico__gallery28--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -56px -452px;
 	width: 56px;
 	height: 56px;
@@ -2291,7 +2291,7 @@ i {
 }
 
 .ico_circle_delete {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -408px -316px;
 	width: 64px;
 	height: 64px;
@@ -2302,7 +2302,7 @@ i {
 }
 
 .ico_back {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -568px -60px;
 	width: 80px;
 	height: 80px;
@@ -2313,7 +2313,7 @@ i {
 }
 
 .ico_next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -628px -200px;
 	width: 80px;
 	height: 80px;
@@ -2324,7 +2324,7 @@ i {
 }
 
 .ico__mybadge--normal {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -160px;
 	width: 156px;
 	height: 156px;
@@ -2335,7 +2335,7 @@ i {
 }
 
 .ico__carousel-left {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -272px -316px;
 	width: 68px;
 	height: 72px;
@@ -2346,7 +2346,7 @@ i {
 }
 
 .ico__carousel-right {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -340px -316px;
 	width: 68px;
 	height: 72px;
@@ -2357,7 +2357,7 @@ i {
 }
 
 .ico__chevron--left {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -544px -380px;
 	width: 72px;
 	height: 72px;
@@ -2368,7 +2368,7 @@ i {
 }
 
 .ico__chevron--right {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -616px -380px;
 	width: 72px;
 	height: 72px;
@@ -2379,7 +2379,7 @@ i {
 }
 
 .btn__floating--chat {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -316px;
 	width: 136px;
 	height: 136px;
@@ -2390,7 +2390,7 @@ i {
 }
 
 .btn__floating--pencil {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -136px -316px;
 	width: 136px;
 	height: 136px;
@@ -2401,7 +2401,7 @@ i {
 }
 
 .ico__arrow-mo-footer-down {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -270px -652px;
 	width: 28px;
 	height: 28px;
@@ -2413,7 +2413,7 @@ i {
 
 .ico__camera {
 	padding-bottom: 2px;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -108px -652px;
 	width: 34px;
 	height: 34px;
@@ -2880,7 +2880,7 @@ i {
 	margin-right: 5px;
 	vertical-align: text-top;
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -652px;
 	width: 36px;
 	height: 36px;
@@ -2913,7 +2913,7 @@ i {
 	margin-left: 8px;
 	vertical-align: text-top;
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -442px -388px;
 	width: 30px;
 	height: 32px;
@@ -3013,7 +3013,7 @@ i {
 	width: 17px !important;
 	height: 17px !important;
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -728px -97px;
 	width: 36px;
 	height: 36px;
@@ -3034,7 +3034,7 @@ i {
 	width: 18px;
 	height: 18px;
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -604px;
 	width: 36px;
 	height: 36px;
@@ -5112,7 +5112,7 @@ button.swiper-pagination-bullet {
 	right: -10px;
 }
 .eventkeyvisual .swiper-button-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -380px;
 	width: 72px;
 	height: 72px;
@@ -5122,7 +5122,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .eventkeyvisual .swiper-button-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -200px;
 	width: 76px;
 	height: 100px;
@@ -6272,7 +6272,7 @@ button.swiper-pagination-bullet {
 	font-weight: 500;
 }
 #main-event .swiper-button-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -380px;
 	width: 72px;
 	height: 72px;
@@ -6282,7 +6282,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 #main-event .swiper-button-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -200px;
 	width: 76px;
 	height: 100px;
@@ -6587,7 +6587,7 @@ button.swiper-pagination-bullet {
 	width: 100%;
 	height: 255px;
 	padding: 0;
-	background-image: url(/images/home/mo_allfurn_intro.png);
+	background-image: url(/img/mo_allfurn_intro.png);
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -6595,6 +6595,8 @@ button.swiper-pagination-bullet {
 .allfurn-introduction .mo-wrap .footer .foo__wrap {
 	flex-direction: column;
 	padding-bottom: 12px;
+	padding-left:24px;
+	padding-right:24px;
 }
 .allfurn-introduction .mo-wrap .footer .foo__wrap .foo__logo {
 	margin-bottom: 15px;
@@ -6638,7 +6640,7 @@ button.swiper-pagination-bullet {
 }
 .allfurn-introduction .mo-wrap .footer .foo__util {
 	height: auto;
-	padding: 16px 0 72px;
+	padding: 16px 24px 72px;
 }
 
 .member .tab__item {
@@ -7065,7 +7067,7 @@ button.swiper-pagination-bullet {
 }
 .category-btn__text::after {
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -298px -652px;
 	width: 28px;
 	height: 28px;
@@ -7085,7 +7087,7 @@ button.swiper-pagination-bullet {
 	color: #1B1B1B;
 }
 .category-btn--active .category-btn__text::after {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -326px -652px;
 	width: 28px;
 	height: 28px;
@@ -7480,7 +7482,7 @@ button.swiper-pagination-bullet {
 	margin-top: 6px;
 }
 .product-detail .right-wrap__title ul li.product-bookmark .bookmark {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -200px;
 	width: 56px;
 	height: 56px;
@@ -7490,7 +7492,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .product-detail .right-wrap__title ul li.product-bookmark.active .bookmark {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -330px -388px;
 	width: 56px;
 	height: 56px;
@@ -7704,7 +7706,7 @@ button.swiper-pagination-bullet {
 	color: #1B1B1B;
 }
 .product-detail__order-info li .order-info__title .ico__arrow {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -425px -452px;
 	width: 48px;
 	height: 48px;
@@ -7714,7 +7716,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .product-detail__order-info li .order-info__title.active .ico__arrow {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -473px -452px;
 	width: 48px;
 	height: 48px;
@@ -9102,7 +9104,7 @@ button.swiper-pagination-bullet {
 	position: absolute;
 	left: 0;
 	top: 0px;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -300px;
 	width: 36px;
 	height: 36px;
@@ -9112,7 +9114,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .checkbox__checked:checked + span::after {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -604px;
 	width: 36px;
 	height: 36px;
@@ -9122,7 +9124,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .checkbox__checked[type=radio] + span::after {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -604px;
 	width: 36px;
 	height: 36px;
@@ -9132,7 +9134,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .checkbox__checked[type=radio]:checked + span::after {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -604px;
 	width: 36px;
 	height: 36px;
@@ -9773,7 +9775,7 @@ button.swiper-pagination-bullet {
 	position: absolute;
 	top: 10px;
 	right: 12px;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -494px -652px;
 	width: 28px;
 	height: 28px;
@@ -10135,7 +10137,7 @@ button.swiper-pagination-bullet {
 	position: absolute;
 	top: 10px;
 	right: 12px;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -494px -652px;
 	width: 28px;
 	height: 28px;
@@ -11445,7 +11447,7 @@ button.swiper-pagination-bullet {
 	background-position: center center;
 }
 .community .swiper-container .swiper-button-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -380px;
 	width: 72px;
 	height: 72px;
@@ -11455,7 +11457,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .community .swiper-container .swiper-button-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -200px;
 	width: 76px;
 	height: 100px;
@@ -11841,7 +11843,7 @@ button.swiper-pagination-bullet {
 	margin-left: -22px;
 	vertical-align: text-top;
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -652px;
 	width: 36px;
 	height: 36px;
@@ -12315,7 +12317,7 @@ button.swiper-pagination-bullet {
 }
 .category-btn--order .category-btn__text::before {
 	content: "";
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -578px -652px;
 	width: 24px;
 	height: 24px;
@@ -12505,7 +12507,7 @@ button.swiper-pagination-bullet {
 	margin-top: 8px;
 }
 .wholesaler__company .company__like .like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -224px -452px;
 	width: 56px;
 	height: 56px;
@@ -12515,7 +12517,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .wholesaler__company .company__like.active .like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -112px -452px;
 	width: 56px;
 	height: 56px;
@@ -12957,7 +12959,7 @@ button.swiper-pagination-bullet {
 	border-radius: 5px;
 }
 .my__like .like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -224px -452px;
 	width: 56px;
 	height: 56px;
@@ -12967,7 +12969,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .my__like.active .like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -112px -452px;
 	width: 56px;
 	height: 56px;
@@ -15224,7 +15226,7 @@ button.swiper-pagination-bullet {
 }
 
 .recommend-btn {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -604px;
 	width: 48px;
 	height: 48px;
@@ -15234,7 +15236,7 @@ button.swiper-pagination-bullet {
 	background-size: 382px 344px;
 }
 .recommend-btn.active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -604px;
 	width: 48px;
 	height: 48px;
@@ -16880,7 +16882,7 @@ i {
 
 .head__logo {
 	display: inline-block;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -156px;
 	width: 208px;
 	height: 44px;
@@ -16892,7 +16894,7 @@ i {
 
 .head__logo--large {
 	display: inline-block;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px 0px;
 	width: 292px;
 	height: 60px;
@@ -16903,7 +16905,7 @@ i {
 }
 
 .foo__logo {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -552px -300px;
 	width: 168px;
 	height: 36px;
@@ -16914,7 +16916,7 @@ i {
 }
 
 .ico__alram {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -329px -452px;
 	width: 48px;
 	height: 48px;
@@ -16925,7 +16927,7 @@ i {
 }
 
 .ico__basket {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -521px -452px;
 	width: 48px;
 	height: 48px;
@@ -16936,7 +16938,7 @@ i {
 }
 
 .ico__close28 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -386px -388px;
 	width: 56px;
 	height: 56px;
@@ -16947,7 +16949,7 @@ i {
 }
 
 .ico__search {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -604px;
 	width: 48px;
 	height: 48px;
@@ -16958,7 +16960,7 @@ i {
 }
 
 .ico__search20 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -596px -336px;
 	width: 44px;
 	height: 44px;
@@ -16969,7 +16971,7 @@ i {
 }
 
 .ico__info {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -238px -652px;
 	width: 32px;
 	height: 32px;
@@ -16980,7 +16982,7 @@ i {
 }
 
 .ico__email {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -688px -380px;
 	width: 72px;
 	height: 72px;
@@ -16991,7 +16993,7 @@ i {
 }
 
 .ico__delete10 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -442px -420px;
 	width: 24px;
 	height: 24px;
@@ -17002,7 +17004,7 @@ i {
 }
 
 .ico__delete16 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -494px -652px;
 	width: 28px;
 	height: 28px;
@@ -17013,7 +17015,7 @@ i {
 }
 
 .ico__viewcnt {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -72px -652px;
 	width: 36px;
 	height: 36px;
@@ -17024,7 +17026,7 @@ i {
 }
 
 .ico__like {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -600px -604px;
 	width: 36px;
 	height: 36px;
@@ -17035,7 +17037,7 @@ i {
 }
 
 .ico__like-line {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -624px -556px;
 	width: 48px;
 	height: 48px;
@@ -17046,7 +17048,7 @@ i {
 }
 
 .ico__like--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -636px -604px;
 	width: 36px;
 	height: 36px;
@@ -17057,7 +17059,7 @@ i {
 }
 
 .ico__reply {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -36px -652px;
 	width: 36px;
 	height: 36px;
@@ -17068,7 +17070,7 @@ i {
 }
 
 .ico__refresh {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -522px -652px;
 	width: 28px;
 	height: 28px;
@@ -17088,7 +17090,7 @@ i {
 }
 
 .badge__new {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -442px -388px;
 	width: 30px;
 	height: 32px;
@@ -17099,7 +17101,7 @@ i {
 }
 
 .badge__new--big {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -680px -156px;
 	width: 44px;
 	height: 44px;
@@ -17110,7 +17112,7 @@ i {
 }
 
 .ico__filter {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -578px -652px;
 	width: 24px;
 	height: 24px;
@@ -17121,7 +17123,7 @@ i {
 }
 
 .ico__furniture {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -508px;
 	width: 48px;
 	height: 48px;
@@ -17132,7 +17134,7 @@ i {
 }
 
 .ico__sdelete {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -336px;
 	width: 40px;
 	height: 40px;
@@ -17143,7 +17145,7 @@ i {
 }
 
 .ico__check-gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -728px -97px;
 	width: 36px;
 	height: 36px;
@@ -17154,7 +17156,7 @@ i {
 }
 
 .ico__check-white {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -604px;
 	width: 36px;
 	height: 36px;
@@ -17165,7 +17167,7 @@ i {
 }
 
 .ico__more {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -280px -452px;
 	width: 49px;
 	height: 48px;
@@ -17176,7 +17178,7 @@ i {
 }
 
 .ico__more--black {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -604px;
 	width: 48px;
 	height: 48px;
@@ -17187,7 +17189,7 @@ i {
 }
 
 .ico__recomment {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -652px;
 	width: 36px;
 	height: 36px;
@@ -17198,7 +17200,7 @@ i {
 }
 
 .ico__gallery-image {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -452px;
 	width: 56px;
 	height: 56px;
@@ -17209,7 +17211,7 @@ i {
 }
 
 .ico__form-check {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -548px -280px;
 	width: 22px;
 	height: 17px;
@@ -17220,7 +17222,7 @@ i {
 }
 
 .ico__arrow--right18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -728px -60px;
 	width: 36px;
 	height: 37px;
@@ -17231,7 +17233,7 @@ i {
 }
 
 .ico__arrow--right14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -354px -652px;
 	width: 28px;
 	height: 28px;
@@ -17242,7 +17244,7 @@ i {
 }
 
 .ico__list-link {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -452px -184px;
 	width: 16px;
 	height: 28px;
@@ -17253,7 +17255,7 @@ i {
 }
 
 .ico__list-link--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -452px -156px;
 	width: 16px;
 	height: 28px;
@@ -17264,7 +17266,7 @@ i {
 }
 
 .ico__arrow--down20 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -640px -336px;
 	width: 40px;
 	height: 40px;
@@ -17275,7 +17277,7 @@ i {
 }
 
 .ico__arrow--down14-red {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -326px -652px;
 	width: 28px;
 	height: 28px;
@@ -17286,7 +17288,7 @@ i {
 }
 
 .ico__arrow--down14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -298px -652px;
 	width: 28px;
 	height: 28px;
@@ -17297,7 +17299,7 @@ i {
 }
 
 .ico__bookmark24--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -617px -452px;
 	width: 48px;
 	height: 48px;
@@ -17308,7 +17310,7 @@ i {
 }
 
 .ico__bookmark24--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -569px -452px;
 	width: 48px;
 	height: 48px;
@@ -17319,7 +17321,7 @@ i {
 }
 
 .ico__share24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -604px;
 	width: 48px;
 	height: 48px;
@@ -17330,7 +17332,7 @@ i {
 }
 
 .ico__share28 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -168px -452px;
 	width: 56px;
 	height: 56px;
@@ -17341,7 +17343,7 @@ i {
 }
 
 .ico__shop24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -604px;
 	width: 48px;
 	height: 48px;
@@ -17352,7 +17354,7 @@ i {
 }
 
 .ico__delete12 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -466px -652px;
 	width: 28px;
 	height: 28px;
@@ -17363,7 +17365,7 @@ i {
 }
 
 .ico__delete14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -206px -652px;
 	width: 32px;
 	height: 32px;
@@ -17374,7 +17376,7 @@ i {
 }
 
 .ico__delete18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -564px -604px;
 	width: 36px;
 	height: 36px;
@@ -17385,7 +17387,7 @@ i {
 }
 
 .ico__count--minus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -142px -652px;
 	width: 32px;
 	height: 32px;
@@ -17396,7 +17398,7 @@ i {
 }
 
 .ico__count--plus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -174px -652px;
 	width: 32px;
 	height: 32px;
@@ -17407,7 +17409,7 @@ i {
 }
 
 .ico__notice24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -604px;
 	width: 48px;
 	height: 48px;
@@ -17418,7 +17420,7 @@ i {
 }
 
 .ico__arrow--big_left24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -377px -452px;
 	width: 48px;
 	height: 48px;
@@ -17429,7 +17431,7 @@ i {
 }
 
 .ico__arrow--down24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -425px -452px;
 	width: 48px;
 	height: 48px;
@@ -17440,7 +17442,7 @@ i {
 }
 
 .ico__arrow--up24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -473px -452px;
 	width: 48px;
 	height: 48px;
@@ -17451,7 +17453,7 @@ i {
 }
 
 .ico__refresh {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -522px -652px;
 	width: 28px;
 	height: 28px;
@@ -17462,7 +17464,7 @@ i {
 }
 
 .ico__search--white {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -604px;
 	width: 48px;
 	height: 48px;
@@ -17473,7 +17475,7 @@ i {
 }
 
 .ico__search--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -604px;
 	width: 48px;
 	height: 48px;
@@ -17484,7 +17486,7 @@ i {
 }
 
 .ico__arrow--black18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -256px;
 	width: 40px;
 	height: 22px;
@@ -17495,7 +17497,7 @@ i {
 }
 
 .ico__arrow--gray18 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -316px -292px;
 	width: 40px;
 	height: 22px;
@@ -17506,7 +17508,7 @@ i {
 }
 
 .ico__banner-next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -200px;
 	width: 76px;
 	height: 100px;
@@ -17517,7 +17519,7 @@ i {
 }
 
 .ico__banner-prev {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -380px;
 	width: 72px;
 	height: 72px;
@@ -17528,7 +17530,7 @@ i {
 }
 
 .ico__furniture1 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -508px;
 	width: 48px;
 	height: 48px;
@@ -17539,7 +17541,7 @@ i {
 }
 
 .ico__furniture1--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -576px -508px;
 	width: 48px;
 	height: 48px;
@@ -17550,7 +17552,7 @@ i {
 }
 
 .ico__furniture2 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -624px -508px;
 	width: 48px;
 	height: 48px;
@@ -17561,7 +17563,7 @@ i {
 }
 
 .ico__furniture2--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -508px;
 	width: 48px;
 	height: 48px;
@@ -17572,7 +17574,7 @@ i {
 }
 
 .ico__furniture3 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -508px;
 	width: 48px;
 	height: 48px;
@@ -17583,7 +17585,7 @@ i {
 }
 
 .ico__furniture3--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -576px -556px;
 	width: 48px;
 	height: 48px;
@@ -17594,7 +17596,7 @@ i {
 }
 
 .ico__furniture4 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -556px;
 	width: 48px;
 	height: 48px;
@@ -17605,7 +17607,7 @@ i {
 }
 
 .ico__furniture4--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -48px -556px;
 	width: 48px;
 	height: 48px;
@@ -17616,7 +17618,7 @@ i {
 }
 
 .ico__furniture5 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -556px;
 	width: 48px;
 	height: 48px;
@@ -17627,7 +17629,7 @@ i {
 }
 
 .ico__furniture5--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -556px;
 	width: 48px;
 	height: 48px;
@@ -17638,7 +17640,7 @@ i {
 }
 
 .ico__furniture6 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -556px;
 	width: 48px;
 	height: 48px;
@@ -17649,7 +17651,7 @@ i {
 }
 
 .ico__furniture6--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -556px;
 	width: 48px;
 	height: 48px;
@@ -17660,7 +17662,7 @@ i {
 }
 
 .ico__furniture7 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -556px;
 	width: 48px;
 	height: 48px;
@@ -17671,7 +17673,7 @@ i {
 }
 
 .ico__furniture7--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -556px;
 	width: 48px;
 	height: 48px;
@@ -17682,7 +17684,7 @@ i {
 }
 
 .ico__furniture8 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -556px;
 	width: 48px;
 	height: 48px;
@@ -17693,7 +17695,7 @@ i {
 }
 
 .ico__furniture8--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -556px;
 	width: 48px;
 	height: 48px;
@@ -17704,7 +17706,7 @@ i {
 }
 
 .ico__furniture9 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -556px;
 	width: 48px;
 	height: 48px;
@@ -17715,7 +17717,7 @@ i {
 }
 
 .ico__furniture9--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -556px;
 	width: 48px;
 	height: 48px;
@@ -17726,7 +17728,7 @@ i {
 }
 
 .ico__furniture10 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -508px;
 	width: 48px;
 	height: 48px;
@@ -17737,7 +17739,7 @@ i {
 }
 
 .ico__furniture10--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -508px;
 	width: 48px;
 	height: 48px;
@@ -17748,7 +17750,7 @@ i {
 }
 
 .ico__furniture11 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -192px -508px;
 	width: 48px;
 	height: 48px;
@@ -17759,7 +17761,7 @@ i {
 }
 
 .ico__furniture11--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -240px -508px;
 	width: 48px;
 	height: 48px;
@@ -17770,7 +17772,7 @@ i {
 }
 
 .ico__furniture12 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -288px -508px;
 	width: 48px;
 	height: 48px;
@@ -17781,7 +17783,7 @@ i {
 }
 
 .ico__furniture12--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -336px -508px;
 	width: 48px;
 	height: 48px;
@@ -17792,7 +17794,7 @@ i {
 }
 
 .ico__furniture13 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -384px -508px;
 	width: 48px;
 	height: 48px;
@@ -17803,7 +17805,7 @@ i {
 }
 
 .ico__furniture13--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -508px;
 	width: 48px;
 	height: 48px;
@@ -17814,7 +17816,7 @@ i {
 }
 
 .ico__furniture14 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -508px;
 	width: 48px;
 	height: 48px;
@@ -17825,7 +17827,7 @@ i {
 }
 
 .ico__furniture14--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -528px -508px;
 	width: 48px;
 	height: 48px;
@@ -17836,7 +17838,7 @@ i {
 }
 
 .ico__search-circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -60px;
 	width: 96px;
 	height: 96px;
@@ -17847,7 +17849,7 @@ i {
 }
 
 .ico__refresh--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -680px -336px;
 	width: 40px;
 	height: 40px;
@@ -17858,7 +17860,7 @@ i {
 }
 
 .ico__heart {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -112px -452px;
 	width: 56px;
 	height: 56px;
@@ -17869,7 +17871,7 @@ i {
 }
 
 .ico__unheart {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -224px -452px;
 	width: 56px;
 	height: 56px;
@@ -17880,7 +17882,7 @@ i {
 }
 
 .ico__logout {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -556px;
 	width: 48px;
 	height: 48px;
@@ -17891,7 +17893,7 @@ i {
 }
 
 .ico__dialogue {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px 0px;
 	width: 160px;
 	height: 160px;
@@ -17902,7 +17904,7 @@ i {
 }
 
 .ico__check-gray--border {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -300px;
 	width: 36px;
 	height: 36px;
@@ -17913,7 +17915,7 @@ i {
 }
 
 .ico__bookmark28--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -330px -388px;
 	width: 56px;
 	height: 56px;
@@ -17924,7 +17926,7 @@ i {
 }
 
 .ico__bookmark28--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -200px;
 	width: 56px;
 	height: 56px;
@@ -17935,7 +17937,7 @@ i {
 }
 
 .ico__mybadge {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -160px 0px;
 	width: 156px;
 	height: 156px;
@@ -17946,7 +17948,7 @@ i {
 }
 
 .ico__mybadge-wholesaler {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -316px 0px;
 	width: 156px;
 	height: 156px;
@@ -17957,7 +17959,7 @@ i {
 }
 
 .ico__mybadge-retail {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -156px -160px;
 	width: 156px;
 	height: 156px;
@@ -17968,7 +17970,7 @@ i {
 }
 
 .ico__warning {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -472px -300px;
 	width: 80px;
 	height: 80px;
@@ -17979,7 +17981,7 @@ i {
 }
 
 .ico__profile {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -604px;
 	width: 48px;
 	height: 48px;
@@ -17990,7 +17992,7 @@ i {
 }
 
 .ico__share {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -144px -604px;
 	width: 48px;
 	height: 48px;
@@ -18001,7 +18003,7 @@ i {
 }
 
 .ico__community-arrow {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -410px -652px;
 	width: 28px;
 	height: 28px;
@@ -18012,7 +18014,7 @@ i {
 }
 
 .ico__community-arrow--active {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -438px -652px;
 	width: 28px;
 	height: 28px;
@@ -18023,7 +18025,7 @@ i {
 }
 
 .ico__plus {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -96px -604px;
 	width: 48px;
 	height: 48px;
@@ -18034,7 +18036,7 @@ i {
 }
 
 .ico__radio--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -708px -604px;
 	width: 36px;
 	height: 36px;
@@ -18045,7 +18047,7 @@ i {
 }
 
 .ico__radio--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -672px -604px;
 	width: 36px;
 	height: 36px;
@@ -18056,7 +18058,7 @@ i {
 }
 
 .ico__gallery--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -548px -200px;
 	width: 80px;
 	height: 80px;
@@ -18067,7 +18069,7 @@ i {
 }
 
 .ico__add--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -724px -156px;
 	width: 40px;
 	height: 40px;
@@ -18078,7 +18080,7 @@ i {
 }
 
 .ico__delete--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -552px -336px;
 	width: 44px;
 	height: 44px;
@@ -18089,7 +18091,7 @@ i {
 }
 
 .ico__add28--circle {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -272px -388px;
 	width: 58px;
 	height: 58px;
@@ -18100,7 +18102,7 @@ i {
 }
 
 .ico__delete24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -713px -452px;
 	width: 48px;
 	height: 48px;
@@ -18111,7 +18113,7 @@ i {
 }
 
 .ico__burger24 {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -665px -452px;
 	width: 48px;
 	height: 48px;
@@ -18122,7 +18124,7 @@ i {
 }
 
 .ico__set {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -508px;
 	width: 40px;
 	height: 40px;
@@ -18133,7 +18135,7 @@ i {
 }
 
 .ico__setting {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -720px -556px;
 	width: 40px;
 	height: 40px;
@@ -18144,7 +18146,7 @@ i {
 }
 
 .ico__exclamation {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -648px -60px;
 	width: 80px;
 	height: 80px;
@@ -18155,7 +18157,7 @@ i {
 }
 
 .ico__star--off {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -432px -604px;
 	width: 48px;
 	height: 48px;
@@ -18166,7 +18168,7 @@ i {
 }
 
 .ico__star--on {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -480px -604px;
 	width: 48px;
 	height: 48px;
@@ -18177,7 +18179,7 @@ i {
 }
 
 .ico__check--blue {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -382px -652px;
 	width: 28px;
 	height: 28px;
@@ -18188,7 +18190,7 @@ i {
 }
 
 .ico__gallery28--gray {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -56px -452px;
 	width: 56px;
 	height: 56px;
@@ -18199,7 +18201,7 @@ i {
 }
 
 .ico_circle_delete {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -408px -316px;
 	width: 64px;
 	height: 64px;
@@ -18210,7 +18212,7 @@ i {
 }
 
 .ico_back {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -568px -60px;
 	width: 80px;
 	height: 80px;
@@ -18221,7 +18223,7 @@ i {
 }
 
 .ico_next {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -628px -200px;
 	width: 80px;
 	height: 80px;
@@ -18232,7 +18234,7 @@ i {
 }
 
 .ico__mybadge--normal {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -160px;
 	width: 156px;
 	height: 156px;
@@ -18243,7 +18245,7 @@ i {
 }
 
 .ico__carousel-left {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -272px -316px;
 	width: 68px;
 	height: 72px;
@@ -18254,7 +18256,7 @@ i {
 }
 
 .ico__carousel-right {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -340px -316px;
 	width: 68px;
 	height: 72px;
@@ -18265,7 +18267,7 @@ i {
 }
 
 .ico__chevron--left {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -544px -380px;
 	width: 72px;
 	height: 72px;
@@ -18276,7 +18278,7 @@ i {
 }
 
 .ico__chevron--right {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -616px -380px;
 	width: 72px;
 	height: 72px;
@@ -18287,7 +18289,7 @@ i {
 }
 
 .btn__floating--chat {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: 0px -316px;
 	width: 136px;
 	height: 136px;
@@ -18298,7 +18300,7 @@ i {
 }
 
 .btn__floating--pencil {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -136px -316px;
 	width: 136px;
 	height: 136px;
@@ -18309,7 +18311,7 @@ i {
 }
 
 .ico__arrow-mo-footer-down {
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -270px -652px;
 	width: 28px;
 	height: 28px;
@@ -18321,7 +18323,7 @@ i {
 
 .ico__camera {
 	padding-bottom: 2px;
-	background-image: url(/images/sprite/sprite.png);
+	background-image: url(/img/sprite.png);
 	background-position: -108px -652px;
 	width: 34px;
 	height: 34px;

@@ -9,104 +9,24 @@
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper">
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="swiper-slide prod_item type03">
-                            <div class="img_box">
-                                <a href="./prod_detail.php"><img src="/img/prod_thumb3.png" alt=""></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                            </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
-                                    <strong>판매 1위의 라텍스 침대!<br/>7존 매트리스로  편안한 잠자리를 침대입니다. </strong>
-                                    <span>올펀가구</span>
-                                    <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                    <b>542,000원</b>
-                                </a>
-                            </div>
-                        </li>
+                        @if(isset($banners))
+                            @foreach($banners as $banner)
+                            <li class="swiper-slide prod_item type03">
+                                <div class="img_box">
+                                    <a href="/product/detail/{{ $banner->idx }}"><img src="{{ $banner->imgUrl }}" alt=""></a>
+                                    <button class="zzim_btn prd_{{ $banner->idx }} {{ ($banner->isInterest == 1) ? 'active' : '' }}" pidx="{{ $banner->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                </div>
+                                <div class="txt_box">
+                                    <a href="/product/detail/{{ $banner->idx }}">
+                                        <strong>{{ $banner->content }}</strong>
+                                        <span>{{ $banner->companyName }}</span>
+                                        <p>{{ $banner->name }}</p>
+                                        <b>{{ number_format($banner->price, 0) }}원</b>
+                                    </a>
+                                </div>
+                            </li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
@@ -122,7 +42,7 @@
     {{-- 신규 상품 등록 업체 --}}
     @include('product.inc-new-product-company')
 
-    {{-- 신규 등록 업체 --}}
+    {{-- 신규 등록 상품 --}}
     @include('product.inc-new-product')
     @php $product = $list @endphp
     @include('product.new-product-ext')
@@ -207,34 +127,71 @@
     });
 
     const filterRemove = (item)=>{
+        //해당 버튼 삭제
         $(item).parents('span').remove();
+
+        //모달 안 체크박스에서 check 해제
+        $("#" + $(item).data('id')).prop('checked', false);
+
+        //데이터 불러오기
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/newAddedProduct',
+            type : 'GET',
+            data : {
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocation().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+            },
+            success: function (result) {
+
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
+                
+                isLastPage = currentPage === result.last_page;
+            },
+            complete : function () {
+                displaySelectedCategories();
+                displaySelectedLocation();
+                toggleFilterBox();
+                displaySelectedOrders();
+                currentPage = 1;
+            }
+        });
     }
 
     $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !flag) {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
             loadNewProductList();
         }
     });
 
-    let flag = false;
+    let isLoading = false;
+    let isLastPage = false;
     let currentPage = 1;
     function loadNewProductList() {
-        flag = true;
+        isLoading = true;
 
         $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/product/newAddedProduct',
             method: 'GET',
             data: { 
                 'page': ++currentPage,
-                'categories' : getIndexesOfSelectedCategory().join(','), 
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocation().join(','),
                 'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             }, 
             success: function(result) {
+
                 displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
                 displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
+                
+                isLastPage = currentPage === result.last_page;
             }, 
             complete : function () {
-                flag = false;
+                isLoading = false;
             }
         })
     }
@@ -246,22 +203,29 @@
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/product/newAddedProduct',
+            type : 'GET',
             data : {
                 'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocation().join(','),
                 'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             },
-            type : 'GET',
             beforeSend : function() {
                 $this.prop("disabled", true);
             },
             success: function (result) {
+                
                 displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
                 displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');       
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
+                
+                isLastPage = currentPage === result.last_page;
+                
             }, 
             complete : function () {
                 $this.prop("disabled", false);
                 displaySelectedCategories();
+                displaySelectedLocation();
+                toggleFilterBox();
                 displaySelectedOrders();
                 modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
                 currentPage = 1;
@@ -279,7 +243,12 @@
     }
 
     function getIndexesOfSelectedLocation() {
+        let locations = [];
+        $("#filter_location-modal .check-form:checked").each(function(){
+            locations.push($(this).data('location'));
+        });
 
+        return locations;
     }
 
     function displayNewProducts(productArr, target, needsEmptying) {
@@ -291,7 +260,7 @@
             target.append(  '<li class="prod_item">'+
                             '   <div class="img_box">'+
                             '       <a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
-                            '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
+                            '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] === 1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
                             '   </div>'+
                             '   <div class="txt_box">'+
                             '       <a href="/product/detail/' + product['idx'] + '">'+
@@ -314,7 +283,7 @@
             target.appendSlide( '<li class="swiper-slide">' +
                                 '   <div class="img_box">' +
                                 '       <img src="'+ product['imgUrl'] +'" alt="">' +
-                                '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] ==1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                                '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] === 1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
                                 '   </div>' +
                                 '   <div class="txt_box">' +
                                 '       <div>' +
@@ -334,13 +303,13 @@
         let html = "";  
         $("#filter_category-modal .check-form:checked").each(function(){
             html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() + 
-                    "   <button onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                    "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
                     "</span>";
         });
         $(".filter_on_box .category").empty().append(html);
 
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
-        if(totalOfSelectedCategories == 0) {
+        if(totalOfSelectedCategories === 0) {
             $(".sub_filter .filter_box button").eq(0).html("카테고리");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
@@ -349,9 +318,72 @@
         }
     }
 
+    function displaySelectedLocation() {
+        let html = "";
+
+        $("#filter_location-modal .check-form:checked").each(function() {
+            html += '<span>'+ $(this).data('location') + 
+                    '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                    '</span>';
+        });
+        $(".filter_on_box .location").empty().append(html);
+
+        let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
+        if(totalOfSelectedLocations === 0) {
+            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).removeClass('on');
+            
+        } else {
+            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).addClass('on');
+        }
+    }    
+
+    function toggleFilterBox() {
+        if($(".modal .check-form:checked").length === 0){
+            $(".sub_filter_result").hide();
+        } else {
+            $(".sub_filter_result").css('display', 'flex');
+        }
+    }
+
     function displaySelectedOrders() {
         $(".sub_filter .filter_box button").eq(2)
             .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
     }
+
+    //초기화
+    $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_location-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+        displaySelectedCategories();
+        displaySelectedLocation();
+        displaySelectedOrders();
+        toggleFilterBox();
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/newAddedProduct',
+            type : 'GET',
+            data : {
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocation().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+            },
+            success: function (result) {
+
+                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
+                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
+                
+                isLastPage = currentPage === result.last_page;
+                
+            }, 
+            complete : function () {
+                currentPage = 1;
+            }
+        });
+    });
 </script>
 @endsection

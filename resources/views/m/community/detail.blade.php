@@ -11,7 +11,8 @@
                 <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
                 <div>
                     @if( $article->is_admin || $article->user_idx === auth()->user()->idx)
-                        <a href="javascript:;" onclick="deleteArticle({{ $articleId }})">삭제</a>
+                        <div><a href="/community/write/{{$articleId}}">수정</a></div>
+                        <div><a href="javascript:;" onclick="deleteArticle({{ $articleId }})">삭제</a></div>
                     @else
                         <a href="javascript:;" onclick="setReportedArticleInfoAndModalOpen({{ $article->idx }}, {{ $article->company_idx }}, '{{ $article->company_type }}')">신고하기</a>
                     @endif

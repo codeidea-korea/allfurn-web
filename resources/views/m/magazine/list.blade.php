@@ -13,14 +13,20 @@
         <div class="line_common_banner">
             <ul class="swiper-wrapper">
                 @foreach($banners as $banner)
-                    <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
-                        <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
-                            <div class="txt_box type02">
-                                <p>{{ $banner->subtext1 }}</p>
-                                <span>{{ $banner->subtext2 }}</span>
-                            </div>
-                        </a>
-                    </li>
+                    @if($banner->banner_type === 'img')
+                        <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
+                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
+                        </li>
+                    @else
+                        <li class="swiper-slide" style="background-color:{{$banner->bg_color}};">
+                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                                <div class="txt_box type02" style="color:{{ $banner->font_color }};">
+                                    <p>{{ $banner->subtext1 }}<br/>{{ $banner->subtext2 }}</p>
+                                    <span>{{ $banner->content }}</span>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
                 @endforeach
             </ul>
             <div class="count_pager"><b>1</b> / 12</div>

@@ -20,7 +20,7 @@
                             <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="txt_box">
-                            <a href="./prod_detail.php">
+                            <a href="/product/detail/{{ $item->idx }}">
                                 <span>{{ $item->companyName }}</span>
                                 <p>{{ $item->name }}</p>
                                 <b>{{ number_format($item->price, 0) }}원</b>

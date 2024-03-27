@@ -382,15 +382,34 @@ class ProductService
 
     public function getBannerList()
     {
-        return Banner::where('ad_location', 'newproducttop')
-            ->where('start_date', '<', DB::raw('now()'))
-            ->where('end_date', '>', DB::raw('now()'))
-            ->where('state', 'G')
-            ->where('is_delete', 0)
-            ->where('is_open', 1)
+        return Banner::where('ad_location', 'newproducttop2')
+            ->where('AF_banner_ad.start_date', '<', DB::raw('now()'))
+            ->where('AF_banner_ad.end_date', '>', DB::raw('now()'))
+            ->where('AF_banner_ad.state', 'G')
+            ->where('AF_banner_ad.is_delete', 0)
+            ->where('AF_banner_ad.is_open', 1)
+            ->leftjoin('AF_product', function ($query) {
+                $query->on('AF_product.idx', DB::raw('SUBSTRING_INDEX(web_link, "/", -1)'));
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin(
+                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+                    FROM AF_product_interest
+                    GROUP BY product_idx) AS api'), function($query) {
+                        $query->on('AF_product.idx', '=', 'api.product_idx');
+            })
             ->orderByRaw('banner_price desc, RAND()')
             ->limit(20)
             ->has('attachment')
+            ->select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_banner_ad.content',
+                DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
             ->get();
     }
 
@@ -504,7 +523,7 @@ class ProductService
     }
 
     //신규 등록 상품
-    //TODO: 소재지, 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
     public function getNewAddedProductList($params) {
         $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
             'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
@@ -533,6 +552,9 @@ class ProductService
                     GROUP BY product_idx) AS api'), function($query) {
                         $query->on('AF_product.idx', '=', 'api.product_idx');
             })
+            ->leftjoin('AF_wholesale as aw', function($query){
+                $query->on('aw.idx', 'AF_product.company_idx');
+            })
             ->where('AF_product.is_new_product', 1)
             ->whereIn('AF_product.state', ['S', 'O']);
             
@@ -540,19 +562,19 @@ class ProductService
             $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        // if (isset($param['location']) && !empty($param['location'])) {
-        //     $location = explode('|', $param['location']);
-        //     $list->where(function ($query) use ($location) {
-        //         foreach ($location as $key => $loc) {
-        //             $clause = $key == 0 ? 'where' : 'orWhere';
-        //             $query->$clause('AF_wholesale.business_address', 'like', "$loc%");
-        //             if (!empty($relativeTables)) {
-        //                 $this->filterByRelationship($query, 'AF_wholesale.business_address',
-        //                     $relativeTables);
-        //             }
-        //         }
-        //     });
-        // }
+        if(isset($params['locations']) && !empty($params['locations'] != "")) {
+            $location = explode(",", $params['locations']);
+            $new_product->where(function ($query) use ($location) {
+                foreach ($location as $key => $loc) {
+                    $clause = $key == 0 ? 'where' : 'orWhere';
+                    $query->$clause('aw.business_address', 'like', "$loc%");
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'aw.business_address',
+                            $relativeTables);
+                    }
+                }
+            });
+        }
 
         return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(8);
     }
