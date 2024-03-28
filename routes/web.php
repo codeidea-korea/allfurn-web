@@ -27,7 +27,7 @@ Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
-    Route::get('/sendAuthCode', 'LoginController@sendAuthCode');
+    Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
     Route::get('/success', function () {
         return view('login/success');

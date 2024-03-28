@@ -15,11 +15,21 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserAuthCode;
 use App\Models\PushToken;
+
 use DateTime;
+use App\Service\PushService;
 
 class LoginService
 {
+    private $pushService;
+
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
+
     public function getUserInfo(array $params = [])
     {
         $user = DB::table('AF_user', 'u')
@@ -68,25 +78,23 @@ class LoginService
             ];
         }
 
-        $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode';
-        $response = Http::asForm()->post($url, [
-            'data' => '{"type":"'.$param['type'].'", "target":"'.$param['target'].'"}',
+        $authcode = rand(101013, 987987);
+        UserAuthCode::insert([
+            'type' => 'S',
+            'target' => $param['target'],
+            'authcode' => $authcode,
+            'is_authorized' => 0,
+            'register_time' => DB::raw('now()')
         ]);
-        Log::info($response->body());
-        $body = json_decode($response->body(), true);
-        if ($body['code'] === '0') {
-            return [
-                'success' => true,
-                'code' => '20',
-                'message' => ''
-            ];
-        } else {
-            return [
-                'success' => fail,
-                'code' => $body['code'],
-                'message' => $body['msg']['ko']
-            ];
-        }
+        $this->pushService->sendSMS('핸드폰 번호 인증', '올펀 서비스 ['.$authcode.'] 본인확인 인증번호를 입력하세요.', $param['target']);
+
+        return [
+            'success' => true,
+            'message' => '',
+            'target' => $param['target'],
+            'authcode' => $authcode
+            
+        ];
     }
 
     public function checkAuthCode(array $params = [])

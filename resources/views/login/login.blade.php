@@ -65,7 +65,7 @@
                         <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
                     </ul>
 
-                    <button id="btn_smscode_confirm" class="btn w-full btn-primary" disabled type="button">인증완료</button>
+                    <button id="btn_smscode_confirm" class="btn w-full btn-primary" onclick="confirmAuthCode()" disabled type="button">인증완료</button>
                     <button id="btn_selected_id_login" class="btn w-full btn-primary mt-2.5" style="display:none;" type="button">선택한 아이디로 로그인</button>
                 </div>
                 <!-- 전화번호로 로그인 -->
@@ -158,6 +158,35 @@ $( document ).ready( function() {
     });
 });
 
+function confirmAuthCode() {
+        if ($('.time').text() == '0:00'){
+            modalOpen('#smscode_time_over');
+        } else {
+            var data = new Object() ;
+            data.target = $('#cellphone').val().replace(/-/g, '');
+            data.type = "S" ;
+            data.code = $('#smscode').val();
+
+            $.ajax({
+                url				: '/signup/confirmAuthCode',
+                contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+                data			: data,
+                type			: 'POST',
+                dataType		: 'json',
+                xhrFields: {
+                    withCredentials: false
+                },
+                success : function(result) {
+                    if (result.success) {
+                        window.location.replace('/');
+                    } else {
+                        time = 1;
+                        alert(result.message);
+                    }
+                }
+            });
+        }
+    }
 function startTimer() {
     var time = 179; 
     var timerInterval = setInterval(function () {

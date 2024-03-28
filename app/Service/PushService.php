@@ -22,15 +22,14 @@ class PushService
      * 
      * @param string $title
      * @param string $msg
-     * @param string $sender
      * @param string $receiver (, 로 구분)
      */
-    public function sendSMS($title, $msg, $sender, $receiver)
+    public function sendSMS($title, $msg, $receiver)
     {
         $pushMessage = new SmsHistory;
         $pushMessage->title = $title;
         $pushMessage->content = $msg;
-        $pushMessage->sender = $sender;
+        $pushMessage->sender = '010-5440-5414';
         $pushMessage->receiver = $receiver;
         $pushMessage->save();
 
@@ -39,21 +38,24 @@ class PushService
         $userId = "codeidea";
 
         $data = "key=" . $key . "&user_id=" . $userId 
-            . "&sender=" . ($sender) . "&receiver=" . ($receiver) . "&msg=" . ($msg) 
-            . "&msg_type=SMS&testmode_yn=Y";
+            . "&sender=" . urlencode('010-5440-5414') . "&receiver=" . urlencode($receiver) . "&msg=" . urlencode($msg) 
+            . "&msg_type=SMS";
     
         $ch = curl_init();
     
         curl_setopt($ch, CURLOPT_URL, 'https://apis.aligo.in/send/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, urlencode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
         curl_setopt($ch, CURLOPT_POST, 1);
+//        curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
         $headers = array();
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     
         $result = curl_exec($ch);
+//        echo curl_error($ch);
+//        echo $result;
         curl_close ($ch);
     }
 

@@ -26,6 +26,12 @@ use App\Service\PushService;
 
 class MessageService
 {
+    private $pushService;
+
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
     /**
      * 대화방 리스트 가져오기
      * @param array $params
@@ -736,7 +742,6 @@ class MessageService
             $companyInfo->company_name
         ));
         
-        $pushService = new PushService;
         // 대상 회사에 소속된 사용자 조회
         $targetUsers = User::where('company_idx', $companyInfo->idx)
             ->where('is_delete', 0)
@@ -746,7 +751,7 @@ class MessageService
                 $pushToken = PushToken::where('user_idx', $targetUser->idx)
                     ->orderBy('register_time', 'DESC')
                     ->first();
-                $pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $message->content, 
+                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $message->content, 
                     $targetUser->idx, $pushToken->push_token, $type = 5, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
             }
         }
