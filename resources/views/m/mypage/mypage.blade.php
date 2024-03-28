@@ -12,6 +12,40 @@ $header_banner = '';
 @section('content')
 @include('layouts.header_m')
 
+<script>
+        function callLogin(){
+
+            var jsonStr = '{ "type" : "login", "accessToken" : "{{xtoken}}"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
+
+            var isMobile = {
+            Android: function () {
+            return navigator.userAgent.match(/Chrome/) == null ? false : true;
+            },
+            iOS: function () {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+            },
+            any: function () {
+            return (isMobile.Android() || isMobile.iOS());
+            }
+            };
+
+            try{
+            if(isMobile.any()) {
+                if(isMobile.Android()) {
+                // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
+                window.AppWebview.postMessage(jsonStr);
+                } else if (isMobile.iOS()) {
+                window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                }
+            }
+            } catch (e){
+            console.log(e)
+            }
+        }
+        callLogin();
+    </script>
+
+
 
 <div id="content">
     <div class="my_top_area">

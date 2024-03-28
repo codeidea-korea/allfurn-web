@@ -424,7 +424,7 @@ const video_prod = new Swiper(".video_prod .slide_box", {
 <script>
         function callLogin(){
 
-            var jsonStr = '{ "type" : "login", "session" : "{{csrf_token()}}"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
+            var jsonStr = '{ "type" : "login", "accessToken" : "{{xtoken}}"}';
 
             var isMobile = {
             Android: function () {

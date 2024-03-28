@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use App\Service\ProductService;
 use App\Service\MypageService;
+use App\Service\LoginService;
 
 
 class HomeController extends BaseController
@@ -21,13 +22,15 @@ class HomeController extends BaseController
     private $homeService;
     private $productService;
     private $mypageService;
+    private $loginService;
     
 
-    public function __construct(HomeService $homeService, ProductService $productService, MypageService $mypageService)
+    public function __construct(HomeService $homeService, ProductService $productService, MypageService $mypageService, LoginService $loginService)
     {
         $this->homeService = $homeService;
         $this -> productService = $productService;
         $this->mypageService = $mypageService;
+        $this->loginService = $loginService;
     }
 
 
@@ -52,8 +55,9 @@ class HomeController extends BaseController
             if (Auth::check()) {
                 
                 $data = $this->homeService->getHomeData();
+                $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 
-                return view('m/home/index', ['data'=>$data]);
+                return view('m/home/index', ['data'=>$data, 'xtoken' => $xtoken]);
                 
             } else {
                 

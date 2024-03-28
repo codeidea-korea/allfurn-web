@@ -89,6 +89,15 @@ class LoginController extends BaseController
     public function sendAuthCode(Request $request) {
         Log::info("***** LoginController > sendAuthCode :: $request->target");
         $user = $this->loginService->getUserByPhoneNumber($request->target);
+
+        if(empty($user)) {
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
+        }
+
         $target = "$user->phone_number";
         Log::info($request->target);
         
@@ -103,7 +112,7 @@ class LoginController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function confirmAuthCode(Request $request) :JsonResponse
+    public function confirmAuthCode(Request $request)
     {
         $request->validate([
             'target' => 'required',
@@ -111,13 +120,25 @@ class LoginController extends BaseController
             'code' => 'required',
         ]);
 
-        $user = $this->loginService->getUserById($request->target);
+        $user = $this->loginService->getUserByPhoneNumber($request->target);
+
+        if(empty($user)) {
+            return response()->json([
+                'success' => false,
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
+        }
         
         $new_param['target'] = $user->phone_number;
         $new_param['type'] = 'S';
         $new_param['code'] = $request->code;
         
         $confirm = $this->loginService->checkAuthCode($new_param);
+
+        if($confirm == 1) {
+            $this->loginService->getAuthToken($user->idx);
+        }
 
         return response()->json([
             'success' => $confirm == 1 ? true : false
@@ -138,12 +159,18 @@ class LoginController extends BaseController
      */
     public function updateFcmToken(Request $request)
     {
-        $request->validate([
-            'token' => 'required',
-        ]);
-        $token = $request->input('token');
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = '실패';
+        $result['code'] = 'E0001';
 
-        return response()->json($this->loginService->updateFcmToken($token));
+        if (!$request->expectsJson()) {
+            $result['msg'] = $result['msg'] . ' - json 형식으로 보내주시기 바랍니다.';
+        }
+        $accessToken = $request->bearerToken();
+        $fcmToken = $request->input('token');
+
+        return response()->json($this->loginService->updateFcmToken($accessToken, $fcmToken));
     }
 }
 

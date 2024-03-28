@@ -14,17 +14,20 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use App\Service\LoginService;
 use \Exception;
 use Session;
 
 class MypageController extends BaseController
 {
     private $mypageService;
+    private $loginService;
     private $limit = 20;
     private $user;
-    public function __construct(MypageService $mypageService)
+    public function __construct(MypageService $mypageService, LoginService $loginService)
     {
         $this->mypageService = $mypageService;
+        $this->loginService = $loginService;
     }
 
     public function index(): RedirectResponse
@@ -73,8 +76,10 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'deal';
         $data['dealStatus'] = config('constants.ORDER.STATUS.S');
-	$data = array_merge($this -> mypageService -> getOrderList($params), $data); 
-	$data['xtoken'] = session()->get('token');
+	    $data = array_merge($this -> mypageService -> getOrderList($params), $data); 
+
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+	    $data['xtoken'] = $xtoken;
 
         return response() -> view(getDeviceType() . 'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
@@ -116,8 +121,11 @@ class MypageController extends BaseController
         }
 
         // 전체 주문 리스트
-	$data = array_merge($this->mypageService->getOrderList($params), $data);
-	 $data['xtoken'] = session()->get('token');
+        $data = array_merge($this->mypageService->getOrderList($params), $data);
+
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+        $data['xtoken'] = $xtoken;
+
         return response()->view(getDeviceType() . 'mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
     }
 
@@ -228,7 +236,9 @@ class MypageController extends BaseController
         $data['folders'] = $this -> mypageService -> getMyFolders();
         $data = array_merge($data, $this -> mypageService -> getInterestProducts($params));
 
-	 $data['xtoken'] = session()->get('token');
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+	    $data['xtoken'] = $xtoken;
+
         return view(getDeviceType() . 'mypage.mypage', $data);
     }
 

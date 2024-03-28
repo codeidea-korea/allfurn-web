@@ -15,11 +15,21 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserAuthCode;
 use App\Models\PushToken;
+
 use DateTime;
+use App\Service\PushService;
 
 class LoginService
 {
+    private $pushService;
+
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
+
     public function getUserInfo(array $params = [])
     {
         $user = DB::table('AF_user', 'u')
@@ -68,25 +78,23 @@ class LoginService
             ];
         }
 
-        $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode';
-        $response = Http::asForm()->post($url, [
-            'data' => '{"type":"'.$param['type'].'", "target":"'.$param['target'].'"}',
+        $authcode = rand(101013, 987987);
+        UserAuthCode::insert([
+            'type' => 'S',
+            'target' => $param['target'],
+            'authcode' => $authcode,
+            'is_authorized' => 0,
+            'register_time' => DB::raw('now()')
         ]);
-        Log::info($response->body());
-        $body = json_decode($response->body(), true);
-        if ($body['code'] === '0') {
-            return [
-                'success' => true,
-                'code' => '20',
-                'message' => ''
-            ];
-        } else {
-            return [
-                'success' => fail,
-                'code' => $body['code'],
-                'message' => $body['msg']['ko']
-            ];
-        }
+        $this->pushService->sendSMS('핸드폰 번호 인증', '올펀 서비스 ['.$authcode.'] 본인확인 인증번호를 입력하세요.', $param['target']);
+
+        return [
+            'success' => true,
+            'message' => '',
+            'target' => $param['target'],
+            'authcode' => $authcode
+            
+        ];
     }
 
     public function checkAuthCode(array $params = [])
@@ -124,35 +132,50 @@ class LoginService
     /**
      * 사용자 fcm token 갱신
      * 
+     * @param string $accessToken
      * @param string $fcmToken
      * @return json array
      */
-    public function updateFcmToken($fcmToken): array
+    public function updateFcmToken($accessToken, $fcmToken): array
     {
-        $user = Auth::user();
-        if(empty($user)) {
-            // 비인증 사용자 또는 서버 토큰이 만료된 사용자
-            return [
-                'result' => 'failure',
-                'message' => '갱신에 실패하였습니다. 전문을 다시 전송해주세요.'
-            ];
-        }
-        $pushTokenCount = PushToken::where('user_idx', $user['idx'])->count();
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = '실패';
+        $result['code'] = 'EA001';
 
-        if($pushTokenCount > 0) {
-            // update
-            PushToken::where('user_idx', '=', $user['idx'])->update(['push_token' => $fcmToken]);
-        } else {
-            // insert
-            $pushToken = new PushToken;
-            $pushToken->user_idx = $user['idx'];
-            $pushToken->push_token = $fcmToken;
-            $pushToken->save();
+        if (empty($accessToken)) {
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
         }
+        $authToken = AuthToken::where('token', $accessToken)->orderBy('register_time', 'DESC')->first();
 
-        return [
-            'result' => 'success',
-            'message' => '성공'
-        ];
+        if (empty($authToken)) {
+            $result['code'] = 'EA002';
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
+        }
+        // insert
+        $pushToken = new PushToken;
+        $pushToken->user_idx = $authToken['user_idx'];
+        $pushToken->push_token = $fcmToken;
+        $pushToken->save();
+
+        $result['code'] = 'S001';
+        $result['success'] = true;
+        $result['msg'] = '성공';
+
+        return $result;
+    }
+
+    /**
+     * 사용자 fcm token 가져오기
+     * 
+     * @param long $userIdx
+     * @return string
+     */
+    public function getFcmToken($userIdx): string
+    {
+        $authToken = AuthToken::where('user_idx', $userIdx)->orderBy('register_time', 'DESC')->first();
+        return empty($authToken) ? '' : $authToken->token;
     }
 }

@@ -27,7 +27,7 @@ Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
-    Route::get('/sendAuthCode', 'LoginController@sendAuthCode');
+    Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
     Route::get('/success', function () {
         return view('login/success');
@@ -57,8 +57,8 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
-    Route::post('/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 });
+Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
 Route::prefix('product')->name('product')->group(function() {
     Route::get('/best-new', 'ProductController@bestNewProduct')->name('.best-new');
