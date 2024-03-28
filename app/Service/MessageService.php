@@ -747,7 +747,7 @@ class MessageService
                     ->orderBy('register_time', 'DESC')
                     ->first();
                 $pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $message->content, 
-                    $targetUser->idx, $pushToken->push_token, $type = 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+                    $targetUser->idx, $pushToken->push_token, $type = 5, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
             }
         }
 
