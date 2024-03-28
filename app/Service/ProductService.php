@@ -967,7 +967,7 @@ class ProductService
         $product_6_limit = $ret->second;
         $banner_limit = $ret->banner;
         $keyword_limit = $ret->keyword;
-        
+
         $data['product_4'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx',
         DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
             (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
@@ -1033,7 +1033,7 @@ class ProductService
             ) and is_open = 1 and is_delete = 0 and start_date < now() and end_date > now()')
             ->groupBy('company_idx')
             ->orderByRaw('price desc, RAND()')
-            ->limit($keyword_limit)                
+            ->limit($keyword_limit)
             ->get();
 
         return $data;
@@ -1094,45 +1094,285 @@ class ProductService
     }
 
     // 도매업체 > 이달의 도매 ( kr.kevin.kang 2024.03.22 )
-    public function getThisMonth(array $param = [])
+    public function getThisMonth($vType='product')
     {
-        $data = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx', 'ac.name AS category_name',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-            (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
-                    WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
-                    ELSE "" END) as companyName,
-            (CASE WHEN ap.company_type = "W" THEN (select aw.inquiry_count from AF_wholesale as aw where aw.idx = ap.company_idx)
-			        WHEN ap.company_type = "R" THEN (select ar.inquiry_count from AF_retail as ar where ar.idx = ap.company_idx)
-			        ELSE "" END) as inquiry_count,
-	        (CASE WHEN (SELECT ROUND( SUM(banner_price)/100000 ) * 100000 FROM AF_banner_ad WHERE company_idx=	ap.company_idx) > 300000 THEN 300000 * 0.0001
-		            ELSE (SELECT ( ROUND( SUM(banner_price)/100000 ) * 100000 ) * 0.0001 FROM AF_banner_ad WHERE company_idx=	ap.company_idx)
-		            END) AS banner_price,
-            (CASE WHEN ap.company_type = "W" THEN (select LEFT( aw.business_address, 2 ) from AF_wholesale as aw where aw.idx = ap.company_idx)
-			        WHEN ap.company_type = "R" THEN (select LEFT( ar.business_address, 2 ) from AF_retail as ar where ar.idx = ap.company_idx)
-			        ELSE "" END) as companyRegion'
+        $sql = "
+            SELECT 
+                AF_product_ad.*, 
+                ap.name, 
+                ap.idx as idx, 
+                ap.company_idx, 
+                ac.name as category_name, 
+                CONCAT('https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/', at.folder,'/', at.filename) as imgUrl,
+                (
+                    CASE 
+                        WHEN ap.company_type = 'W' 
+                            THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
+                        WHEN ap.company_type = 'R' 
+                            THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
+                        ELSE '' 
+                    END
+                ) as companyName,
+                (
+                    CASE 
+                        WHEN ap.company_type = 'W' 
+                            THEN (select aw.inquiry_count from AF_wholesale as aw where aw.idx = ap.company_idx)
+                        WHEN ap.company_type = 'R' 
+                            THEN (select ar.inquiry_count from AF_retail as ar where ar.idx = ap.company_idx)
+                        ELSE '' 
+                    END
+                ) as inquiry_count,
+                (
+                    CASE 
+                        WHEN (SELECT ROUND( SUM(banner_price)/100000 ) * 100000 FROM AF_banner_ad WHERE company_idx=	ap.company_idx) > 300000 
+                            THEN 300000 * 0.0001
+                        ELSE (SELECT ( ROUND( SUM(banner_price)/100000 ) * 100000 ) * 0.0001 FROM AF_banner_ad WHERE company_idx=	ap.company_idx)
+                    END
+                ) AS banner_price,
+                (
+                    CASE 
+                        WHEN ap.company_type = 'W' 
+                            THEN (select LEFT( aw.business_address, 2 ) from AF_wholesale as aw where aw.idx = ap.company_idx)
+                        WHEN ap.company_type = 'R' 
+                            THEN (select LEFT( ar.business_address, 2 ) from AF_retail as ar where ar.idx = ap.company_idx)
+                        ELSE '' 
+                    END
+                ) as companyRegion 
+	        FROM 
+		        AF_product_ad 
+		        left join AF_product as ap on ap.idx = AF_product_ad.product_idx 
+		        left join AF_attachment as at on at.idx = SUBSTRING_INDEX(ap.attachment_idx, ',', 1) 
+		        left join AF_category as ac on ac.idx = ap.category_idx 
+	        WHERE 
+		        AF_product_ad.state = 'G'
+                and AF_product_ad.is_delete = 0
+                and AF_product_ad.is_open = 1";
+
+//                and AF_product_ad.start_date <= now()
+//                and AF_product_ad.end_date >= now()
+//	        ORDER BY banner_price DESC, AF_product_ad.price DESC, RAND()";
+
+        if( $vType == 'product' ) {
+            $sql .= " 
+                and AF_product_ad.start_date <= now()
+                and AF_product_ad.end_date >= now()
+            ";
+        } else {
+            $sql .= " 
+                GROUP BY ap.company_idx
+            ";
+        }
+
+        $sql .= "        
+                ORDER BY banner_price DESC, AF_product_ad.price DESC, RAND()
+                LIMIT 20
+        ";
+
+        $data = DB::select($sql);
+        return $data;
+    }
+
+    /**
+     * 배너광고 AF_banner_ad
+     * @param $state : 배너광고 구분값
+     * alltop : 홈 - 전체 상단.
+     * allbottom : 홈 - 전체 하단.
+     * magazinetop : 홈 - 매거진 상단.
+     * newproducttop : 홈 - 신상품 상단.
+     * popularbrand: 홈 - 도매업체(인기브랜드)
+     * plandiscount: 홈 - 기획전 - 할인상품
+     * dealbrand: 이달의딜 - 인기브랜드
+     * dealmiddle: 이달의딜 - 중간 이미지 배너
+     * wholesaletop : 도메업체 - 인기브랜드 하단 배너.
+     * searchbottom : 검색 상세 하단
+     * communitytop : 커뮤니티 상단
+     * category : 카테고리
+     */
+    public function getThisDealList($state, $cIdx='', $limit=20)
+    {
+        $data = Banner::select(
+                'AF_banner_ad.idx',
+                'AF_banner_ad.company_idx',
+                'AF_banner_ad.subtext1',
+                'AF_banner_ad.subtext2',
+                'AF_banner_ad.content',
+                'AF_banner_ad.product_info',
+                'AF_banner_ad.banner_type',
+                'AF_banner_ad.bg_color',
+                'AF_banner_ad.font_color',
+                'AF_banner_ad.web_link_type',
+                'AF_banner_ad.web_link',
+                'aw.company_name',
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest',
             ))
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('AF_banner_ad.web_attachment_idx', 'at.idx');
+            })
+            ->leftjoin('AF_wholesale as aw', function($query) {
+                $query->on('AF_banner_ad.company_idx', 'aw.idx');
+            })
             ->leftjoin('AF_product as ap', function ($query) {
+                $query->on('ap.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_link, "/", -1)'));
+            })
+            ->where('AF_banner_ad.ad_location',$state)
+            ->where('AF_banner_ad.state','G')
+            ->where('AF_banner_ad.is_delete',0)
+            ->where('AF_banner_ad.is_open',1);
+
+        if( $cIdx ) {
+            $data->where('AF_banner_ad.company_idx', $cIdx);
+        }
+
+            return $data->limit($limit)->get();
+    }
+
+    /**
+     * 상품광고 AF_product_ad
+     * @param $limit
+     * @return mixed
+     */
+    public function getThisProductList($limit=20)
+    {
+        $data = ProductAd::select(
+            'AF_product_ad.product_idx',
+            'AF_product_ad.content',
+            'ap.name',
+            'ap.price',
+            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
+            (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
+                  WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
+                  ELSE "" END) as companyName,
+            (CASE WHEN ap.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = ap.company_idx)
+                  WHEN ap.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = ap.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
+                  COUNT(DISTINCT pi.idx) as isInterest
+            '
+            ))
+            ->leftjoin('AF_product as ap', function( $query ) {
                 $query->on('ap.idx', 'AF_product_ad.product_idx');
             })
-            ->leftjoin('AF_attachment as at', function($query) {
+            ->leftjoin('AF_product_interest as pi', function ($query) {
+                $query->on('pi.product_idx', 'ap.idx')->where('pi.user_idx', Auth::user()->idx);
+            })
+            ->leftjoin('AF_attachment as at', function ($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
             })
-            ->leftjoin('AF_category as ac', function($query) {
-                $query->on('ac.idx', 'ap.category_idx');
+            ->leftjoin('AF_wholesale as aw', function($query) {
+                $query->on('ap.company_idx', 'aw.idx');
             })
-            ->where('AF_product_ad.state', 'G')
-            ->where('AF_product_ad.is_delete', 0)
-            ->where('AF_product_ad.is_open', 1)
-            ->where('AF_product_ad.start_date', '<=', DB::raw('now()'))
-            ->where('AF_product_ad.end_date', '>=', DB::raw('now()'))
-            //->groupBy('ap.company_idx')
-            ->orderByRaw('banner_price DESC')
-            ->orderByRaw('AF_product_ad.price desc, RAND()')
-            ->limit(50)
+            ->where('AF_product_ad.state','G')
+            ->where('AF_product_ad.is_delete',0)
+            ->where('AF_product_ad.is_open',1)
+            ->whereRaw('AF_product_ad.start_date >= DATE_FORMAT(NOW(), "%Y-%m-01")' )
+            ->whereRaw('AF_product_ad.end_date >= LAST_DAY(NOW() - interval 1 month)' )
+            ->limit($limit)
             ->get();
 
         return $data;
     }
 
+    public function getThisBestWholesaler($params=array())
+    {
+        $sql = "
+            SELECT
+                ap.prd_idx,
+                ap.prd_idx_list,
+                aw.idx,
+                aw.company_name,
+                LEFT( aw.business_address, 2 ) as region,
+                aw.business_address,
+                aw.register_time,
+                SUM(ab.banner_price) AS price,	
+                ap.category_name,
+                ap.category_idx,
+                ap.isInterest,
+                GROUP_CONCAT(CONCAT('https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/', at.folder,'/', at.filename) SEPARATOR '|' ) as imgUrl
+            FROM 	
+                AF_banner_ad AS ab
+                LEFT JOIN AF_wholesale AS aw ON aw.idx=ab.company_idx	
+                LEFT JOIN 
+                (
+                    SELECT 
+                        AF_product.idx as prd_idx,
+                        GROUP_CONCAT(DISTINCT AF_product.idx SEPARATOR '|') as prd_idx_list,
+                        AF_product.company_idx,
+                        AF_product.attachment_idx,
+                        (SELECT COUNT(pi.idx) AS cnt FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '".Auth::user()->idx."') as isInterest,
+                        ac2.name, 
+                        ac2.idx, 
+                        count(ac2.idx) as cnt,
+                        GROUP_CONCAT( DISTINCT ac2.name SEPARATOR '|' ) AS category_name,
+                        GROUP_CONCAT( DISTINCT ac2.idx SEPARATOR '|' ) AS category_idx
+                    FROM 
+                        AF_product 
+                        left join AF_category as ac on ac.idx = AF_product.category_idx 
+                        left join AF_category as ac2 on ac2.idx = ac.parent_idx 
+                    WHERE 
+                        company_type = 'W'
+                    group by AF_product.company_idx 
+                    order by cnt DESC
+                ) AS ap ON ap.company_idx=ab.company_idx
+               left join AF_attachment AS at ON at.idx IN (ap.attachment_idx)
+            WHERE
+                ab.state='G'
+                AND ab.is_delete=0
+                AND ab.is_open=1";
 
+        if( isset( $params['locations'] ) && $params['locations'] != "" ) {
+            $sloc = explode('|', $params['locations'] );
+            $sql .= " AND("; $lmp = 0;
+            foreach( $sloc AS $l ) {
+                if( $lmp == 0 )
+                    $sql .= " LEFT( aw.business_address, 2 )='".$l."'";
+                else
+                    $sql .= " OR LEFT( aw.business_address, 2 )='".$l."'";
+                $lmp++;
+            }
+            $sql .= ")";
+        }
+
+        if(isset( $params['categories'] ) && $params['categories'] != "") {
+            $sCate = explode('|', $params['categories'] );
+            $sql .= " AND("; $cmp = 0;
+            foreach( $sCate AS $c ) {
+                if( $cmp == 0 )
+                    $sql .= " FIND_IN_SET('".$c."', REPLACE(ap.category_idx, '|', ',')) = 1";
+                else
+                    $sql .= " OR FIND_IN_SET('".$c."', REPLACE(ap.category_idx, '|', ',')) = 1";
+                $cmp++;
+            }
+            $sql .= ")";
+        }
+
+        $sql .= "
+                AND ab.start_date >= DATE_FORMAT(NOW(), '%Y-%m-01')
+                AND ab.end_date >= LAST_DAY(NOW() - interval 1 month)
+            GROUP BY ab.company_idx";
+
+        if(isset( $params['orderedElement'] ) && $params['orderedElement'] != "") {
+            $sql .= " ORDER BY ".$params['orderedElement']." DESC, price DESC, RAND()";
+        } else {
+            $sql .= " ORDER BY price DESC, RAND()";
+        }
+
+        $order = DB::select($sql);
+        $data['total_count'] = count($order);
+        $data['query']  = DB::select($sql.' LIMIT 3');
+
+        return $data;
+    }
+
+    public function isInterest( $idx )
+    {
+        $isInterest = '';
+        $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
+            ->where('product_idx', $idx)
+            ->where('user_idx', Auth::user()->idx)
+            ->first();
+
+        $isInterest = $tmpInterest->interest;
+
+        return $isInterest;
+    }
 }

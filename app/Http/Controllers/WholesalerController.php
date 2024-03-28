@@ -32,10 +32,7 @@ class WholesalerController extends BaseController
      */
     public function index(Request $request)
     {
-        $target['category'] = $request->query('ca');
-        $target['location'] = $request->query('lo');
-        $target['sort'] = $request->query('so');
-
+        $target['orderedElement'] =  $request->orderedElement == null ? "banner_price" : str_replace("filter_", "", $request->orderedElement);
         $data = $this->wholesalerService->getWholesalerData($target);
         $categoryList = $this->productService->getCategoryList();
 
@@ -43,29 +40,24 @@ class WholesalerController extends BaseController
 
         // $companyList = $this->productService->getThisMonth('product');
         // $companyList = setArrayNumer( $companyList );
-        $companyList = $this->wholesalerService->getThinMonthWholesaler(20);
-        $companyRank = $this->productService->getThisMonth('company');
+        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);
 
-        $company = $this->productService->wholesalerRankList();
-        //print_re( $company );
+        $company = $this->wholesalerService->getThisMonthWholesaler($target);
 
-        return view('wholesaler.index', [
+        return view(getDeviceType().'wholesaler.index', [
             'data'=>$data,
             'categoryList'  => $categoryList,
             'bannerList'    => $bannerList,
             'companyList'   => $companyList,
-            'companyRank'   => $companyRank,
-            'companyProductList' => $company,
+            'companyProduct'=> $company,
             'query'         => $target
         ]);
     }
 
-
     // 도매업체 상세정보 가져오기
-    public function detail(Request $request, int $wholesalerIdx) {
-        
-        Log::debug('-------- WholesalerController > detail ');
-        
+    public function detail(Request $request, int $wholesalerIdx)
+    {
+
         $data['wholesalerIdx'] = $wholesalerIdx;
         $data['sort'] = $request->query('so');
 
@@ -78,7 +70,7 @@ class WholesalerController extends BaseController
 
         $data['info']->place = substr( $data['info']->business_address, 0, 6 );
 
-        return view('wholesaler.detail', [
+        return view(getDeviceType().'wholesaler.detail', [
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
@@ -86,6 +78,15 @@ class WholesalerController extends BaseController
         ]);
     }
 
+    // 도매업체 모아보기
+    public function gather()
+    {
+        $data = $this->wholesalerService->getWholesalerData();
+
+        return view('wholesaler.gether', [
+            'data'=>$data
+        ]);
+    }
 
     public function likeToggle(int $wholesalerIdx)
     {
@@ -128,7 +129,7 @@ class WholesalerController extends BaseController
     public function wholesalerAddProduct(Request $request)
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
-        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        $data['orderedElement'] =  $request->orderedElement == null ? "banner_price" : str_replace("filter_", "", $request->orderedElement);
         $data['company_idx'] = $request->company_idx;
 
         $list = $this->productService->getWholesalerAddedProductList($data);

@@ -42,7 +42,7 @@
                         </div>
                         <div class="btn_box">
                             <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
-                            <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
+                            <button class="btn btn-primary" onClick="location.href='/message';"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
                         </div>
                     </div>
                 </div>

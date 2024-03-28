@@ -83,7 +83,7 @@
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:;">
+                         <a href="javascript:modalOpen('#search-modal')">
                             <img src="/img/main/search_icon.png" alt="">
                             <span>쉬운 상품 찾기</span>
                          </a>
@@ -95,13 +95,13 @@
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:;">
+                         <a href="/magazine/daily">
                             <img src="/img/main/news_icon.png" alt="">
                             <span>일일 가구 뉴스</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:;">
+                         <a href="/community?board_name=상품문의">
                             <img src="/img/main/message_icon.png" alt="">
                             <span>상품 문의</span>
                          </a>

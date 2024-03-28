@@ -12,14 +12,22 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use App\Service\ProductService;
+use App\Service\MypageService;
 
 
 class HomeController extends BaseController
 {
     private $homeService;
-    public function __construct(HomeService $homeService)
+    private $productService;
+    private $mypageService;
+    
+
+    public function __construct(HomeService $homeService, ProductService $productService, MypageService $mypageService)
     {
         $this->homeService = $homeService;
+        $this -> productService = $productService;
+        $this->mypageService = $mypageService;
     }
 
 
@@ -142,6 +150,44 @@ class HomeController extends BaseController
     //올펀 패밀리 상세 - 업체 좋아요
     public function toggleCompanyLike(Request $params) {
         return $this->homeService->toggleCompanyLike($params);
+    }
+
+    public function likeProduct(Request $request){
+        $data['pageType'] = 'product';
+        $data['categoryList'] = $this->productService->getCategoryList();
+        
+        // print_re($request['offset']);
+        // dd($request['offset']);
+        if($request->ajax()) {
+            $params['offset'] = $request->offset;
+            $params['limit'] = 2;
+            $data = $this->mypageService->getInterestProducts($params);
+
+            return response()->json($data);
+        } else {
+            $params['offset'] = 1;
+            $params['limit'] = 2;
+            $data['productList'] = $this->mypageService->getInterestProducts($params);
+            return view(getDeviceType().'mypage.likePage', $data);
+        }
+        
+        // print_re($data['productList']);
+        
+        
+    }
+
+    public function likeCompany() {
+        $data['pageType'] = 'company';
+        $data['categoryList'] = $this->productService->getCategoryList();
+        // $data = $this->homeService->likeCompany();
+
+        return view(getDeviceType().'mypage.likePage', $data);
+    }
+
+    public function searchResult()
+    {
+        return view(getDeviceType().'home.search-result', [
+        ]);
     }
 }
 

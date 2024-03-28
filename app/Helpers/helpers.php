@@ -70,7 +70,16 @@ function setArrayNumer( $arr )
 
         $cnt[$cIdx] = ( !isset( $cnt[$cIdx] ) ) ? 0 : $cnt[$cIdx] + 1;
 
+        // 50개만 데이터 세팅
+        if( count( $cnt ) > 50 )
+            continue;
+
         if( empty( $nData['info'][$cIdx] ) ) {
+            // 앞 20개는 왕관표시
+            $nData['info'][$cIdx]['isCrown'] = false;
+            if( $cnt[$cIdx] < 20 )
+                $nData['info'][$cIdx]['isCrown'] = true;
+
             $nData['info'][$cIdx]['company_idx'] = $data->company_idx;
             $nData['info'][$cIdx]['companyName'] = $data->companyName;
             $nData['info'][$cIdx]['companyRegion'] = $data->companyRegion;

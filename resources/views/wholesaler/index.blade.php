@@ -6,7 +6,7 @@
     <section class="sub_section sub_section_top wholesaler_con01">
         <div class="inner">
 
-            {{-- 인기 브랜드 --}}
+            {{-- 상단 인기브랜드 --}}
             @include('wholesaler.inc-popular-brand')
         </div>
     </section>
@@ -54,8 +54,8 @@
                     @endforeach
                 </ul>
                 <div class="count_pager"><b>1</b> / 12</div>
-                <button class="slide_arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-                <button class="slide_arrow next type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
             </div>
         </div>
     </section>
@@ -76,7 +76,7 @@
             <div class="relative">
                 <div class="slide_box overflow-hidden">
                     <ul class="swiper-wrapper obtain_list type02">
-                        @foreach ($companyList['wholesalerList'] as $wholesaler)
+                        @foreach ($companyList as $wholesaler)
                             <li class="swiper-slide">
                                 <div class="txt_box">
                                     <div class="flex items-center justify-between">
@@ -118,7 +118,7 @@
     </section>
     @endif
 
-    @if( count( $companyRank ) > 0 )
+    @if( count( $companyProduct ) > 0 )
     <section class="sub_section">
         <div class="inner">
             <div class="main_tit mb-8 flex justify-between items-center">
@@ -128,16 +128,17 @@
             </div>
             <div class="ranking_box">
                 <ul>
-                    @foreach( $companyRank AS $key => $company )
+                    @foreach( $companyProduct AS $key => $company )
                         @if( $key != 0 && $key%5 == 0 )
                         </ul><ul{{( $key > 9 ) ? ' hidden' : ''}}>
                         @endif
                     <li><a href="javascript:;">
                             <i>{{$key+1}}</i>
-                            <p>{{$company->companyName}}</p>
+                            <p>{{$company->company_name}}</p>
                             <div class="tag">
-                                <span>침대</span>
-                                <span>매트리스</span>
+                                @foreach( explode( ',', $company->categoryList ) AS $cate )
+                                    <span>{{$cate}}</span>
+                                @endforeach
                             </div>
                         </a>
                     </li>
@@ -145,7 +146,7 @@
                 </ul>
             </div>
             <div class="mt-8 text-center ">
-                <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="./img/icon/filter_arrow.svg" alt=""></a>
+                <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
             </div>
         </div>
     </section>
@@ -241,14 +242,14 @@
     <div class="modal_bg" onclick="modalClose('#zoom_view-modal')"></div>
     <div class="modal_inner modal-lg zoom_view_wrap">
         <div class="count_pager dark_type"><b>1</b> / 12</div>
-        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body">
             <div class="slide_box zoom_prod_list">
                 <ul class="swiper-wrapper">
                     <li class="swiper-slide">
                         <div class="img_box">
-                            <img src="./img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                            <img src="/img/zoom_thumb.png" alt="">
+                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="txt_box">
                             <div>
@@ -261,8 +262,8 @@
                     </li>
                     <li class="swiper-slide">
                         <div class="img_box">
-                            <img src="./img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                            <img src="/img/zoom_thumb.png" alt="">
+                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="txt_box">
                             <div>
@@ -275,8 +276,8 @@
                     </li>
                     <li class="swiper-slide">
                         <div class="img_box">
-                            <img src="./img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                            <img src="/img/zoom_thumb.png" alt="">
+                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="txt_box">
                             <div>
@@ -289,13 +290,17 @@
                     </li>
                 </ul>
             </div>
-            <button class="slide_arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-            <button class="slide_arrow next type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
         </div>
     </div>
 </div>
 
 <script>
+    let isLoading = false;
+    let isLastPage = false;
+    let currentPage = 1;
+
     // zoom_prod_list
     const zoom_prod_list = new Swiper(".zoom_prod_list", {
         slidesPerView: 1,
@@ -335,14 +340,9 @@
                 $this.prop("disabled", true);
             },
             success: function (result) {
-                console.log( result.query );
-                if( result.total_count > 0 ) {
-                    displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), true);
-                    //displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                } else {
-                    // 목록이 없을경우
-                }
-                $(".total").text('전체 ' + result.total_count.toLocaleString('ko-KR') + '개');
+                displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), true);
+                //displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
+                $(".total").text('전체 ' + result.total_count + '개');
             },
             complete : function () {
                 $this.prop("disabled", false);
@@ -355,6 +355,43 @@
             }
         });
     });
+
+    function refresAllhHandle()
+    {
+        console.log('asfasefas');
+        $('#filter_category-modal .filter_list').find('input').each(function(){
+            $(this).prop("checked",false);
+        });
+
+        $('#filter_location-modal .filter_list').find('input').each(function(){
+            $(this).prop("checked",false);
+        });
+    }
+
+    function loadNewProductList() {
+        isLoading = true;
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/getJsonThisBestWholesaler',
+            method: 'GET',
+            data: {
+                'page': ++currentPage,
+                'categories' : getIndexesOfSelectedCategory().join(','),
+                'locations' : getIndexesOfSelectedLocations().join(','),
+                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+            },
+            success: function(result) {
+
+                displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), false);
+
+                isLastPage = currentPage === result.last_page;
+            },
+            complete : function () {
+                isLoading = false;
+            }
+        })
+    }
 
     function getIndexesOfSelectedCategory() {
         let categories = [];
@@ -390,10 +427,10 @@
                 '               ' + product.company_name +
                 '               <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>' +
                 '           </a>' +
-                '           <i>' + product.region + '</i>' +
+                '           <i>' + product.location + '</i>' +
                 '               <div class="tag"> ';
 
-            product.category_name.split('|').forEach(function(cate) {
+            product.categoryList.split(',').forEach(function(cate) {
                 html += '<span>' + cate + '</span>';
             });
 
@@ -404,9 +441,9 @@
                 '   </div>' +
                 '   <div class="prod_box">';
 
-            product.imgUrl.split('|').forEach(function(img) {
+            product.productList.forEach(function(img) {
                 html += '<div class="img_box">' +
-                    '       <a href="javascript:;"><img src="' + img + '" alt=""></a>' +
+                    '       <a href="javascript:;"><img src="' + img.imgUrl + '" alt=""></a>' +
                     '       <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
                     '   </div>';
             });
@@ -475,5 +512,11 @@
         $(".sub_filter .filter_box button").eq(2)
             .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
     }
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+            loadNewProductList();
+        }
+    });
 </script>
 @endsection

@@ -19,6 +19,7 @@ Route::prefix('home')->group(function() {
     Route::get('/welcome', 'HomeController@welcome');
     Route::put('/search/{keyword}', 'HomeController@putSearchKeyword');
     Route::delete('/search/{idx}', 'HomeController@deleteSearchKeyword');
+    Route::get('/searchResult', 'HomeController@searchResult');
     Route::post('/getNewProduct', 'HomeController@getNewProduct');
 });
 Route::get('/signin', 'LoginController@index')->name('signIn');
@@ -56,7 +57,6 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
-    
     Route::post('/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 });
 
@@ -84,11 +84,14 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/thisMonth', 'ProductController@thisMonth');
     Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
+    Route::get('/getJsonThisBestWholesaler', 'ProductController@getJsonThisBestWholesaler');
 });
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::post('/makeGroupCode', 'EstimateController@makeGroupCode');
     Route::post('/insertRequest', 'EstimateController@insertRequest');
+    Route::post('/updateResponse', 'EstimateController@updateResponse');
+    Route::put('/hold', 'EstimateController@hold');
 });
 
 Route::prefix('order')->name('order')->group(function() {
@@ -104,6 +107,10 @@ Route::prefix('order')->name('order')->group(function() {
     Route::get('/success/{orderGroupCode}', 'OrderController@success')->name('success');
 });
 Route::get('/cart', 'OrderController@cart')->name('cart');
+
+//마이페이지 작업시간과 겹치지 않을 때, HomeController->MypageController로 수정(서비스도 동일하게 수정)
+Route::get('/like/product', 'HomeController@likeProduct');
+Route::get('/like/company', 'HomeController@likeCompany');
 
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
     Route::get('/', 'MypageController@index');
@@ -155,6 +162,8 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
     Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
     Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
+    Route::get('/responseEstimate', 'MypageController@getResponseEstimate');
+    Route::post('/responseEstimateDetail', 'MypageController@getresponseEstimateDetail');
 });
 
 
@@ -212,6 +221,8 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholefsalerController@listBySearch');
+    Route::get('/best', 'WholesalerController@best');
+    Route::get('/gather', 'WholesalerController@gather');
     Route::get('/thismonth', 'WholesalerController@getThinMonthWholesaler');
 });
 

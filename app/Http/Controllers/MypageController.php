@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use \Exception;
+use Session;
 
 class MypageController extends BaseController
 {
@@ -72,7 +73,8 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'deal';
         $data['dealStatus'] = config('constants.ORDER.STATUS.S');
-        $data = array_merge($this -> mypageService -> getOrderList($params), $data);
+	$data = array_merge($this -> mypageService -> getOrderList($params), $data); 
+	$data['xtoken'] = session()->get('token');
 
         return response() -> view(getDeviceType() . 'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
@@ -114,7 +116,8 @@ class MypageController extends BaseController
         }
 
         // 전체 주문 리스트
-        $data = array_merge($this->mypageService->getOrderList($params), $data);
+	$data = array_merge($this->mypageService->getOrderList($params), $data);
+	 $data['xtoken'] = session()->get('token');
         return response()->view(getDeviceType() . 'mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
     }
 
@@ -225,6 +228,7 @@ class MypageController extends BaseController
         $data['folders'] = $this -> mypageService -> getMyFolders();
         $data = array_merge($data, $this -> mypageService -> getInterestProducts($params));
 
+	 $data['xtoken'] = session()->get('token');
         return view(getDeviceType() . 'mypage.mypage', $data);
     }
 
@@ -782,13 +786,13 @@ class MypageController extends BaseController
         // 키워드 검색
         switch($request -> input('keywordType')) {
             case 'estimateCode':
-                $data['keywordTypeText'] = '견적번호';
+                $data['keywordTypeText'] = '요청번호';
                 break;
             case 'productName':
-                $data['keywordTypeText'] = '견적상품';
+                $data['keywordTypeText'] = '상품명';
                 break;
             case 'companyName':
-                $data['keywordTypeText'] = '견적업체';
+                $data['keywordTypeText'] = '판매 업체';
                 break;
             default:
                 $data['keywordTypeText'] = '전체';
@@ -827,10 +831,10 @@ class MypageController extends BaseController
                 $data['keywordTypeText'] = '견적번호';
                 break;
             case 'productName':
-                $data['keywordTypeText'] = '견적상품';
+                $data['keywordTypeText'] = '상품명';
                 break;
             case 'companyName':
-                $data['keywordTypeText'] = '견적업체';
+                $data['keywordTypeText'] = '구매 업체';
                 break;
             default:
                 $data['keywordTypeText'] = '전체';

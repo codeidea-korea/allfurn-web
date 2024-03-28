@@ -4,6 +4,7 @@
             @foreach($data['popularbrand_ad'] as $key => $brand)
                 <ul class="swiper-slide">
                     <li class="popular_banner">
+                        <img src="{{$brand->imgUrl}}" class="h-[595px]" alt="{{ $brand->companyName }}">
                         <div class="txt_box">
                             <p>
                                 <b>{{ $brand->subtext1 }}</b><br/>{{ $brand->subtext2 }}</b>
@@ -41,7 +42,7 @@
     </div>
     <div class="right_box">
         <div class="count_pager"><b>1</b> / 12</div>
-        <a href="./">모아보기</a>
+        <!-- a href="/wholesaler/gather">모아보기</a //-->
     </div>
 </div>
 @endif

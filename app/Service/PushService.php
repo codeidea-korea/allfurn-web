@@ -23,7 +23,7 @@ class PushService
      * @param string $fcmToken
      * @return json array
      */
-    public function sendPush($title, $msg, $to, $token, $type = 5, $applink = '', $weblink = '')
+    public function sendPush($title, $msg, $to, $token, $from, $type = 5, $applink = '', $weblink = '')
     {
         $insertValue['type'] = 'normal';
 
@@ -55,7 +55,6 @@ class PushService
             "priority" =>  "high",
             "data" => [
                 "scheme" => $applink,
-                "web_link"  => $weblink,
                 "title"  => $title,
                 "body"  => $msg,
                 "content" => $msg

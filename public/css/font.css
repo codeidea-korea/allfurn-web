@@ -61,3 +61,10 @@
     font-display: swap;
     src: local("Pretendard Thin"), url("/fonts/Pretendard-Thin.woff2") format("woff2"), url("/fonts/Pretendard-Thin.woff") format("woff");
 }
+
+@font-face {
+    font-family: "Pretendard Variable";
+    font-weight: 100;
+    font-display: swap;
+    src: local("Pretendard Variable"), url("/fonts/PretendardVariable.woff2") format("woff2"), url("/fonts/PretendardVariable.woff") format("woff");
+}

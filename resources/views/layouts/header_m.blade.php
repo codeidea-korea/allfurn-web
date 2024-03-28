@@ -165,8 +165,8 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function(){
+<script type="text/javascript">
+    $(document).ready(function() {
         checkAlert();
     });
 

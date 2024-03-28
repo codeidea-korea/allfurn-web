@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\CategoryProperty;
 use App\Models\LikeCompany;
 use App\Models\Product;
+use App\Models\ProductAd;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\ProductInterest;
@@ -17,9 +18,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class WholesalerService {
-    
+
     public function getWholesalerData(array $param = []) {
-        
+
         if(!isset($param['keyword'])) {
             $data['banner_top'] = Banner::where('ad_location', 'wholesaletop')
                 ->where('start_date', '<', DB::raw('now()'))
@@ -130,7 +131,7 @@ class WholesalerService {
         $data['list'] = $list->paginate(5);
 
         foreach ($data['list'] as $key=>$item) {
-            
+
             $imgList = Product::select('AF_product.idx',
                 DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
                 (SELECT COUNT(DISTINCT pa.idx) cnt FROM AF_product_ad pa WHERE pa.idx = AF_product.idx AND pa.state = "G"
@@ -268,6 +269,31 @@ class WholesalerService {
             ->orderBy('cnt', 'desc')
             ->get();
 
+        // 인기 상품
+        // 광고중인 상품( isAd=1 ) 이면서 좋아요( isInterest ) 가 있는 상품
+        $data['event'] = DB::table(DB::raw(
+            '(SELECT 
+		        AF_product.*, 
+		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+		        (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd ,
+		        (SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = 1648) as isInterest
+	        FROM 
+		        AF_product 
+		        left join AF_attachment as at on at.idx = SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1) 
+	        WHERE 
+		        AF_product.company_type = "W" 
+		        and AF_product.company_idx = "'.$param['wholesalerIdx'].'" 
+		        and AF_product.state = "S") AS t
+        '))
+            ->select(
+                't.*'
+            )
+            ->where('t.isInterest', 1)
+            ->where('t.isAd', 1)
+            ->orderby('t.idx', 'desc')
+            ->limit(5)->get();
+
+        // 추천 상품
         $data['recommend'] = Product::select('AF_product.*',
             DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
             (SELECT count(*)cnt FROM AF_product_interest WHERE idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest,
@@ -285,6 +311,7 @@ class WholesalerService {
             ->limit(5)
             ->get();
 
+        // 판매중인 상품
         $list = Product::select('AF_product.*',
             DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl,
                                 IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew,
@@ -318,10 +345,10 @@ class WholesalerService {
     }
 
     //TODO: 전화문의, 올톡문의 점수가 추가되어야 함.
-    function getThinMonthWholesaler(int $limit)
+    function getThisMonthWholesaler(array $params = [])
     {
-        $data['wholesalerList'] = DB::table(DB::raw(
-            '(SELECT idx, company_type, company_idx, ad_location ,category_idx, MAX(banner_price) AS banner_price
+        $list = DB::table(DB::raw(
+            '(SELECT idx, company_type, company_idx, ad_location ,category_idx, MAX(banner_price) AS banner_price, start_date, end_date, register_time
               FROM AF_banner_ad 
               WHERE ad_location = "wholesaletop"
               AND DATE(start_date) <= CURDATE() AND DATE(end_date) >= CURDATE()
@@ -361,17 +388,40 @@ class WholesalerService {
         })
         ->leftjoin('AF_category AS ac2', function ($query) {
             $query->on('ac2.idx', 'ac.parent_idx');
-        })
-        ->groupBy('company_idx')
-        ->orderByRaw('score desc')
-        ->limit($limit)
-        ->get();
+        });
 
+        if (isset($params['categoryIdx']) && !empty($params['categoryIdx'])) {
+            $location = explode(',', $params['categoryIdx']);
+            $list->where(function ($query) use ($location) {
+                $query->where('ac2.code', 'REGEXP', implode('|', $location) );
+            });
+        }
+
+        if (isset($params['locationIdx']) && !empty($params['locationIdx'])) {
+            $location = explode(',', $params['locationIdx']);
+            $list->where(function ($query) use ($location) {
+                foreach ($location as $key => $loc) {
+                    $clause = $key == 0 ? 'where' : 'orWhere';
+                    $query->$clause('aw.business_address', 'like', "$loc%");
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'aw.business_address',
+                            $relativeTables);
+                    }
+                }
+            });
+        }
+
+        $list->groupBy('company_idx')
+            ->orderBy($params['orderedElement'], 'desc')
+            ->limit(50)
+            ->paginate(3);
+
+        $list = $list->get();
 
         // 업체별 상품 3개 - 대표 상품 먼저
-        foreach($data['wholesalerList'] as $key => $value) {
-            
-            $data['wholesalerList'][$key]->productList = 
+        foreach($list as $key => $value) {
+
+            $list[$key]->productList =
                 DB::table(DB::raw(
                 '(select * from AF_product where company_idx = '. $value->company_idx .') AS ap'
             ))
@@ -393,6 +443,6 @@ class WholesalerService {
             ->get();
         }
 
-        return $data;
-    } 
+        return $list;
+    }
 }
