@@ -138,12 +138,18 @@ class LoginController extends BaseController
      */
     public function updateFcmToken(Request $request)
     {
-        $request->validate([
-            'token' => 'required',
-        ]);
-        $token = $request->input('token');
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = '실패';
+        $result['code'] = 'E0001';
 
-        return response()->json($this->loginService->updateFcmToken($token));
+        if (!$request->expectsJson()) {
+            $result['msg'] = $result['msg'] . ' - json 형식으로 보내주시기 바랍니다.';
+        }
+        $accessToken = $request->bearerToken();
+        $fcmToken = $request->input('token');
+
+        return response()->json($this->loginService->updateFcmToken($accessToken, $fcmToken));
     }
 }
 

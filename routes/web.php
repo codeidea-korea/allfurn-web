@@ -57,8 +57,8 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
-    Route::post('/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 });
+Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
 Route::prefix('product')->name('product')->group(function() {
     Route::get('/best-new', 'ProductController@bestNewProduct')->name('.best-new');

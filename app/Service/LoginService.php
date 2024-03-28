@@ -124,35 +124,50 @@ class LoginService
     /**
      * 사용자 fcm token 갱신
      * 
+     * @param string $accessToken
      * @param string $fcmToken
      * @return json array
      */
-    public function updateFcmToken($fcmToken): array
+    public function updateFcmToken($accessToken, $fcmToken): array
     {
-        $user = Auth::user();
-        if(empty($user)) {
-            // 비인증 사용자 또는 서버 토큰이 만료된 사용자
-            return [
-                'result' => 'failure',
-                'message' => '갱신에 실패하였습니다. 전문을 다시 전송해주세요.'
-            ];
-        }
-        $pushTokenCount = PushToken::where('user_idx', $user['idx'])->count();
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = '실패';
+        $result['code'] = 'EA001';
 
-        if($pushTokenCount > 0) {
-            // update
-            PushToken::where('user_idx', '=', $user['idx'])->update(['push_token' => $fcmToken]);
-        } else {
-            // insert
-            $pushToken = new PushToken;
-            $pushToken->user_idx = $user['idx'];
-            $pushToken->push_token = $fcmToken;
-            $pushToken->save();
+        if (empty($accessToken)) {
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
         }
+        $authToken = AuthToken::where('token', $accessToken)->orderBy('register_time', 'DESC')->first();
 
-        return [
-            'result' => 'success',
-            'message' => '성공'
-        ];
+        if (empty($authToken)) {
+            $result['code'] = 'EA002';
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
+        }
+        // insert
+        $pushToken = new PushToken;
+        $pushToken->user_idx = $authToken['user_idx'];
+        $pushToken->push_token = $fcmToken;
+        $pushToken->save();
+
+        $result['code'] = 'S001';
+        $result['success'] = true;
+        $result['msg'] = '성공';
+
+        return $result;
+    }
+
+    /**
+     * 사용자 fcm token 가져오기
+     * 
+     * @param long $userIdx
+     * @return string
+     */
+    public function getFcmToken($userIdx): string
+    {
+        $authToken = AuthToken::where('user_idx', $userIdx)->orderBy('register_time', 'DESC')->first();
+        return empty($authToken) ? '' : $authToken->token;
     }
 }
