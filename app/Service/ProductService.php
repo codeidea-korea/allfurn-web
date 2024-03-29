@@ -403,7 +403,7 @@ class ProductService
             ->orderByRaw('banner_price desc, RAND()')
             ->limit(20)
             ->has('attachment')
-            ->select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_banner_ad.content',
+            ->select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_banner_ad.content', 'AF_product.is_price_open', 'AF_product.price_text',
                 DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
@@ -497,7 +497,7 @@ class ProductService
     /** 베스트상품 목록 */
     public function getBestNewProductList(array $param = [])
     {
-        $bestNewProducts = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 
+        $bestNewProducts = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
