@@ -106,19 +106,18 @@ class LoginController extends BaseController
     }
 
     public function sendAuthCode(Request $request) {
-        Log::info("***** LoginController > sendAuthCode :: $request->target");
-        $user = $this->loginService->getUserByPhoneNumber($request->target);
-
+        Log::info("***** LoginController > sendAuthCode :: $request->input('target')");
+        if(($request->has('target'))) {
+            $user = $this->loginService->getUserByPhoneNumber($request->input('target'));
+        } else if(($request->has('userid'))) {
+            $user = $this->loginService->getUserById($request->input('userid'));
+        }
         if(empty($user)) {
-            $user = $this->loginService->getUserById($request->userid);
-
-            if(empty($user)) {
-                return response()->json([
-                    'result' => 'fail',
-                    'code' => 102,
-                    'message' => '해당 번호로 가입된 회원 없음'
-                ]);
-            }
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
         }
 
         $target = "$user->phone_number";
@@ -142,34 +141,33 @@ class LoginController extends BaseController
             'type' => 'required',
             'code' => 'required',
         ]);
-
-        $user = $this->loginService->getUserByPhoneNumber($request->target);
-
+        Log::info("***** LoginController > sendAuthCode :: $request->input('target')");
+        if($request->has('target')) {
+            $user = $this->loginService->getUserByPhoneNumber($request->input('target'));
+        } else if($request->has('userid')) {
+            $user = $this->loginService->getUserById($request->input('userid'));
+        }
         if(empty($user)) {
-            $user = $this->loginService->getUserById($request->userid);
-
-            if(empty($user)) {
-                return response()->json([
-                    'success' => false,
-                    'code' => 102,
-                    'message' => '해당 번호로 가입된 회원 없음'
-                ]);
-            }
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
         }
         
         $new_param['target'] = $user->phone_number;
-        $new_param['type'] = 'S';
+        $new_param['type'] = $request->type;
         $new_param['code'] = $request->code;
         
         $confirm = $this->loginService->checkAuthCode($new_param);
 
-        if($confirm == 1) {
+        if($confirm == 1 && $request->type == 'A') {
             $this->loginService->getAuthToken($user->idx);
         }
 
         return response()->json([
             'success' => $confirm == 1 ? true : false,
-            'users' => $this->loginService->getUsersByPhoneNumber($request->target)
+            'users' => $this->loginService->getUsersByPhoneNumber($user->phone_number)
         ]);
     }
 
@@ -208,14 +206,13 @@ class LoginController extends BaseController
     public function updatePassword(Request $request)
     {
         $userid = $request->input('userid');
-        $w_userpw = $request->input('w_userpw');
-        $new_userpw = $request->input('new_userpw');
+        $w_userpw = $request->input('userpw');
         $smscode = $request->input('smscode');
 
-        return response()->json($this->memberService->updatePassword([
+        return response()->json($this->memberService->passwordRequest([
             'account' => $userid,
             'code' => $smscode,
-            'repw' => $new_userpw
+            'repw' => $w_userpw
         ]));
     }
 }

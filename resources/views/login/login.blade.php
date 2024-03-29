@@ -43,7 +43,7 @@
                         <label for="smscode">인증번호</label>
                         <div class="flex gap-2 mt-1.5 mb-4">
                             <div class="certify_box">
-                                <input type="text" id="smscode" class="input-form w-full" placeholder="인증번호 6자리">
+                                <input type="text" id="smscode" maxLength="6" class="input-form w-full" placeholder="인증번호 6자리">
                                 <span class="time">2:59</span>
                             </div>
                             <button id="btnResendSMS" class="btn btn-line" type="button">재발송</button>
@@ -113,7 +113,7 @@ $( document ).ready( function() {
     $("#btnSendSMS, #btnResendSMS").on("click", function () {
         var data = new Object() ;
         data.target = $('#cellphone').val().replace(/-/g, '');
-        data.type = "S" ;
+        data.type = "A" ;
         $.ajax({
             url				: '/signup/sendAuthCode',
             contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
@@ -164,7 +164,7 @@ function confirmAuthCode() {
         } else {
             var data = new Object() ;
             data.target = $('#cellphone').val().replace(/-/g, '');
-            data.type = "S" ;
+            data.type = "A" ;
             data.code = $('#smscode').val();
 
             $.ajax({

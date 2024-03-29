@@ -80,7 +80,7 @@ class LoginService
 
         $authcode = rand(101013, 987987);
         UserAuthCode::insert([
-            'type' => 'S',
+            'type' => $param['type'],
             'target' => $param['target'],
             'authcode' => $authcode,
             'is_authorized' => 0,

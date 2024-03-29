@@ -33,7 +33,7 @@ class MemberController extends BaseController {
         if (Auth::check()) {
             return redirect('/');
         }
-        return view('login.signup');
+        return view(getDeviceType() . 'login.signup');
     }
 
     /**

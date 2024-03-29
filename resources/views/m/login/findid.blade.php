@@ -29,7 +29,7 @@ $header_banner = '';
                 <label for="smscode">인증번호</label>
                 <div class="flex gap-2 mt-1.5 mb-4">
                     <div class="certify_box">
-                        <input type="text" id="smscode" class="input-form w-full" placeholder="인증번호 6자리">
+                        <input type="text" id="smscode" class="input-form w-full" maxlength="6" placeholder="인증번호 6자리">
                         <span class="time">03:00</span>
                     </div>
                     <button id="btnResendSMS" class="btn btn-line">재발송</button>
@@ -56,7 +56,7 @@ $header_banner = '';
                 <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
             </ul>
 
-            <button class="btn w-full btn-primary" disabled>인증완료</button>
+            <button id="btn_smscode_confirm" class="btn w-full btn-primary" disabled onclick="confirmAuthCode()">인증완료</button>
             <div class="btn_box flex gap-2 mt-2.5">
                 <a href="javascript:;" onclick="gotoFindpw()" class="btn w-full btn-line2">비밀번호 재설정</a>
                 <a href="/signin" class="btn w-full btn-primary">로그인 하러가기</a>
@@ -73,6 +73,7 @@ $header_banner = '';
     </section>
 </div>
 
+<script src="/js/jquery-1.12.4.js?20240329113305"></script>
 <script>
     $('.tab_layout li').on('click',function(){
         let liN = $(this).index();
@@ -81,17 +82,16 @@ $header_banner = '';
     })
 </script>
 
-
 <script>
+
+    
+$( document ).ready( function() {
     $('._step2').hide();
     $('.tab_layout li').on('click',function(){
         let liN = $(this).index();
         $(this).addClass('active').siblings().removeClass('active')
         $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active')
     })
-
-    
-$( document ).ready( function() {
 
     $("#cellphone").on("keyup", function () {
         $(this).val($(this).val().replace(/[^0-9]/g, ''));
@@ -122,6 +122,9 @@ $( document ).ready( function() {
                     $('._step2').hide();
                     $('#smscode').val('');
                     $('.time').text('2:59');
+                    $('#cellphone').prop("disabled", true);
+                    $('#btnSendSMS').prop("disabled", true);
+                    $('#smscode').prop("disabled", false);
                     
                     // $(base + ' .form__list.' + type + '_auth').css('display','flex');
                     // $(base + ' .input-guid__input.'+type+', [aria-hidden="false"] .input-guid__button.'+type).removeAttr('disabled');
@@ -130,6 +133,7 @@ $( document ).ready( function() {
 
                     startTimer();
                 } else {
+                    isAuthCodeCheckAfter = true;
                     alert(result.message);
                 }
             }
@@ -154,49 +158,58 @@ $( document ).ready( function() {
 });
 
 function gotoFindpw() {
-                const joined_id = $('input[name=joined_id]').val();
-                window.location.href = '/findpw?id=' + (joined_id ? joined_id : '');
-            }
+    const joined_id = $('input[name=joined_id]:checked').val();
+    window.location.href = '/findpw?id=' + (joined_id ? joined_id : '');
+}
 function confirmAuthCode() {
-        if ($('.time').text() == '0:00'){
-            modalOpen('#smscode_time_over');
-        } else {
-            var data = new Object() ;
-            data.target = $('#cellphone').val().replace(/-/g, '');
-            data.type = "S" ;
-            data.code = $('#smscode').val();
-            $('.joined_id').html('');
+    if ($('.time').text() == '0:00'){
+        modalOpen('#smscode_time_over');
+    } else {
+        var data = new Object() ;
+        data.target = $('#cellphone').val().replace(/-/g, '');
+        data.type = "S" ;
+        data.code = $('#smscode').val();
+        $('.joined_id').html('');
+        $('#smscode').prop("disabled", true);
 
-            $.ajax({
-                url				: '/signup/confirmAuthCode',
-                contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
-                data			: data,
-                type			: 'POST',
-                dataType		: 'json',
-                xhrFields: {
-                    withCredentials: false
-                },
-                success : function(result) {
-                    if (result.success) {
-                        $('._step2').show();
+        $.ajax({
+            url				: '/signup/confirmAuthCode',
+            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+            data			: data,
+            type			: 'POST',
+            dataType		: 'json',
+            xhrFields: {
+                withCredentials: false
+            },
+            success : function(result) {
+                if (result.success) {
+                    $('._step2').show();
+                    isAuthCodeCheckAfter = true;
+                    $('#cellphone').prop("disabled", true);
+                    $('#btnSendSMS').prop("disabled", true);
+                    $('#btnResendSMS').prop("disabled", true);
+                    $("#btn_smscode_confirm").hide();
+                    
+                    let tmpHtml = '';
+                    for(var idx=0; idx<result.users.length; idx++) {
                         
-                        let tmpHtml = '';
-                        for(var idx=0; idx<result.users.length; idx++) {
-                            
-                            tmpHtml += '<li>'
-                                    +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" class="radio-form">'
-                                    +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
-                                    +'</li>';
-                        }
-                        $('.joined_id').html(tmpHtml);
-                    } else {
-                        time = 1;
-                        alert(result.message);
+                        tmpHtml += '<li>'
+                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" class="radio-form">'
+                                +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
+                                +'</li>';
                     }
+                    $('.joined_id').html(tmpHtml);
+                } else {
+                    isAuthCodeCheckAfter = true;
+                    $('#btnResendSMS').prop("disabled", false);
+                    $('#smscode').prop("disabled", false);
+                    alert('인증번호가 맞지 않습니다.');
                 }
-            });
-        }
+            }
+        });
     }
+}
+var isAuthCodeCheckAfter = false;
 function startTimer() {
     var time = 179; 
     var timerInterval = setInterval(function () {
@@ -204,9 +217,11 @@ function startTimer() {
         var seconds = time % 60;
         $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
         time--;
-        if (time < 0) {
+        if (time < 0 || isAuthCodeCheckAfter) {
             clearInterval(timerInterval);
         }
     }, 1000);
 }
 </script>
+
+@endsection

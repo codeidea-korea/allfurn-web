@@ -1,574 +1,605 @@
-@extends('layouts.app')
+@extends('layouts.app_m')
+
+@php
+
+$header_depth = 'login';
+$only_quick = 'yes';
+$top_title = '';
+$header_banner = '';
+
+@endphp
 
 @section('content')
-<div class="join_header sticky top-0 h-16 bg-white flex items-center">
+
+
+<div class="join_header sticky top-0 bg-white flex items-center">
     <div class="inner">
-        <a class="inline-flex" href="/"><img class="logo" src="./img/logo.svg" alt=""></a>
+        <h3>회원 구분</h3>
+        <a class="close_btn" href="/signin"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></a>
     </div>
 </div>
 
 <div id="content">
     <section class="join_common">
-        <form id="frm" >
             <div class="join_inner">
-                <div class="title">
-                    <h3>회원가입</h3>
-                    <div class="info">
-                        <div class="flex items-center gap-1">
-                            <img class="w-4" src="./img/member/info_icon.svg" alt="">
-                            <p>회원 가입 후 관리자 승인 여부에 따라 서비스 이용이 가능합니다.</p>
+                
+                <div class="form_box step1">
+                    <h4>회원 구분을 선택해주세요.</h4>
+                    <div class="title">
+                        <div class="info">
+                            <div class="flex items-start gap-1">
+                                <img class="w-3 mt-0.5" src="/img/member/info_icon.svg" alt="">
+                                <p>회원 가입 후 관리자 승인 여부에 따라 서비스 이용이 가능합니다.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="form_box">
-                    <h4>회원 구분을 선택해주세요.</h4>
-                    <div class="join_type grid grid-cols-2">
+                    <div class="join_type">
                         <div>
                             <p>가구 사업자</p>
-                            <div class="grid grid-cols-2">
-                                <div>
-                                    <button type="button" data-num="0">제조/도매</button>
-                                    <span>상품 등록이 가능한 사업자 대표 계정입니다.</span>
-                                </div>
-                                <div>
-                                    <button type="button" data-num="1">판매/매장</button>
-                                    <span>상품 구매, 업체 연락이 가능한 사업자 대표 계정입니다.</span>
-                                </div>
+                            <div>
+                                <button type="button" data-num="0">제조/도매</button>
+                                <span>상품 등록이 가능한 사업자 대표 계정입니다.</span>
+                            </div>
+                            <div>
+                                <button type="button" data-num="1">판매/매장</button>
+                                <span>상품 구매, 업체 연락이 가능한 사업자 대표 계정입니다.</span>
                             </div>
                         </div>
                         <div>
                             <p>사업자 외(직원)</p>
-                            <div class="grid grid-cols-2">
-                                <div>
-                                    <button type="button" data-num="2">가구 업종</button>
-                                    <span>가구 제조/도매, 판매/매장, 유통의 임직원 계정입니다.</span>
-                                </div>
-                                <div>
-                                    <button type="button" data-num="3">기타 가구 관련 업종</button>
-                                    <span>가구와 연관된 기타 업종 전체(기타 사업자 포함) 입니다.</span>
-                                </div>
+                            <div>
+                                <button type="button" data-num="2">가구 업종</button>
+                                <span>가구 제조/도매, 판매/매장, 유통의 임직원 계정입니다.</span>
+                            </div>
+                            <div>
+                                <button type="button" data-num="3">기타 가구 관련 업종</button>
+                                <span>가구와 연관된 기타 업종 전체(기타 사업자 포함) 입니다.</span>
                             </div>
                         </div>
                     </div>
                     <div class="text-center txt-danger py-7 fs14">일반 소비자는 회원가입이 불가합니다.</div>
+                    <button type="button" class="btn w-full btn-primary step1_next" onclick="modalOpen('#step1-modal')">다음 (1/3)</button>
+                    
                 </div>
-                
-                <div class="form_tab_content">
-                    <!-- 제조/도매일때 -->
-                    <div class="form_box hidden" id="wholesale-tab-pane" data-usertype="W">
-                        <h4>회원 정보를 입력해주세요.</h4>
-                        <div class="info_box flex items-center gap-1 mt-2.5 mb-8">
-                            <img class="w-4" src="./img/member/info_icon.svg" alt="">
-                            가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">사업자 등록 번호</dt>
-                                <dd class="flex gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="w_businesscode" name="businesscode" required maxlength="12" class="input-form w-full input-guid__input" placeholder="사업자 등록 번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,2})(\d{0,5})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                    </div>
-                                    <button type="button" class="btn btn-black-line input-guid__button" disabled onclick="checkBeforeAuthCode('business_regist_number', 'w')">중복체크</button>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">명함 또는 사업자 등록증</dt>
-                                <dd>
-                                    <div class="file-form vertical">
-                                        <input type="file" id="w_certificate" name="certificate" required class="input-guid__input">
-                                        <div class="text">
-                                            <img id="w_img" class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                            <p id="w_file-input" class="mt-1">이미지 추가</p>
-                                        </div>
-                                    </div>
-                                    <div class="info_box mt-2.5">
-                                        ・권장 형식: jpg, jpeg, png
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">업체명</dt>
-                                <dd>
-                                    <input type="text" id="w_businessname" name="businessname" class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요." required>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">대표자</dt>
-                                <dd>
-                                    <input type="text" id="w_username" name="username" required class="input-form w-full input-guid__input" placeholder="대표자를 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">휴대폰 번호</dt>
-                                <dd class="flex gap-1">
-                                    @include('login._country_phone_number', ['id'=>'w_phone_country_number'])
-                                    <div class="flex-1">
-                                        <input type="text" id="w_contact" name="contact" required class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                        <button data-phone-key="w_contact" data-key="1" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
-                                    </div>
 
-                                    <div class="smscodeDiv" style='display:none;'>
-                                        <label for="smscode">인증번호</label>
-                                        <div class="flex gap-2 mt-1.5 mb-4">
-                                            <div class="certify_box">
-                                                <input type="text" id="smscode1" class="input-form w-full" placeholder="인증번호 6자리">
-                                                <span class="time">2:59</span>
-                                            </div>
-                                            <button data-phone-key="w_contact" data-key="1" id="btnResendSMS1" class="btn btn-line btnSendSMS" type="button">재발송</button>
+                <form id="frm2">
+                    <div class="form_tab_content hidden step2">
+                        <!-- 제조/도매일때 -->
+                        <div class="form_box hidden" id="wholesale-tab-pane" data-usertype="W">
+                            <h4>회원 정보를 입력해주세요.</h4>
+                            <div class="info_box flex items-start gap-1 mb-5">
+                                <img class="w-3 mt-1" src="/img/member/info_icon.svg" alt="">
+                                가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">사업자 등록 번호</dt>
+                                    <dd class="flex gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="w_businesscode" name="businesscode" required maxlength="12" class="input-form w-full input-guid__input" placeholder="사업자 등록 번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,2})(\d{0,5})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                            <label for="w_businesscode" class="error">사업자번호를 정확히 입력해주세요</label>
                                         </div>
-                                        <button data-phone-key="w_contact" data-key="1" id="btn_smscode_confirm1" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">사업자 주소</dt>
-                                <dd>
-                                    <div class="flex gap-5 py-2">
-                                        <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)"><label for="add_1_1">국내</label></p>
-                                        <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)"><label for="add_1_2">해외</label></p>
-                                    </div>
-                                    <div class="add_tab">
-                                        <!-- 국내 -->
-                                        <div class="flex gap-1">
-                                            <input type="text" id="w_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('w')">
-                                            <button type="button" class="btn btn-black-line" onclick="execPostCode('w')">주소 검색</button>
-                                        </div>
-                                        <!-- 해외 -->
-                                        <div class="dropdown_wrap hidden">
-                                            <button type="button" class="dropdown_btn">지역</button>
-                                            <div class="dropdown_list">
-                                                <div class="dropdown_item">아시아</div>
-                                                <div class="dropdown_item">아프리카</div>
-                                                <div class="dropdown_item">북아메리카</div>
-                                                <div class="dropdown_item">남아메리카</div>
-                                                <div class="dropdown_item">유럽</div>
-                                                <div class="dropdown_item">오세아니아</div>
+                                        <button type="button" type="button" class="btn btn-black-line input-guid__button" disabled onclick="checkBeforeAuthCode('business_regist_number', 'w')">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">명함 또는 사업자 등록증</dt>
+                                    <dd>
+                                        <div class="file-form vertical">
+                                            <input type="file" id="w_certificate" name="certificate" required class="input-guid__input">
+                                            <div class="text">
+                                                <img id="w_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
+                                                <p id="w_file-input" class="mt-1">이미지 추가</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="mt-2 w-2/3">
-                                        <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
-                                    </div>
-                                </dd>
-                            </dl>
+                                        <div class="info_box mt-2.5">
+                                            ・권장 형식: jpg, jpeg, png
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">업체명</dt>
+                                    <dd>
+                                        <input type="text" id="w_businessname" name="businessname" class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요." required>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">대표자</dt>
+                                    <dd>
+                                        <input type="text" id="w_username" name="username" required class="input-form w-full input-guid__input" placeholder="대표자를 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">휴대폰 번호</dt>
+                                    <dd class="flex gap-1">
+                                        @include('login._country_phone_number', ['id'=>'w_phone_country_number'])
+                                        <div class="flex-1">
+                                            <input type="text" id="w_contact" name="contact" required class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl class="">
+                                    <dt class="necessary">인증 번호</dt>
+                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
+                                        <div class="flex-1 certify_box">
+                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
+                                            <span class="time">2:59</span>
+                                        </div>
+                                        <button type="button" type="button" data-key="1" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
+                                        <button type="button" type="button" data-key="1" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">사업자 주소</dt>
+                                    <dd>
+                                        <div class="flex gap-5 py-2">
+                                            <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)"><label for="add_1_1">국내</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)"><label for="add_1_2">해외</label></p>
+                                        </div>
+                                        <div class="add_tab">
+                                            <!-- 국내 -->
+                                            <div class="flex gap-1">
+                                                <input type="text" id="w_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('w')">
+                                                <button type="button" type="button" class="btn btn-black-line" onclick="execPostCode('w')">주소 검색</button>
+                                            </div>
+                                            <!-- 해외 -->
+                                            <div class="dropdown_wrap hidden">
+                                                <button type="button" type="button" class="dropdown_btn">지역</button>
+                                                <div class="dropdown_list">
+                                                    <div class="dropdown_item">아시아</div>
+                                                    <div class="dropdown_item">아프리카</div>
+                                                    <div class="dropdown_item">북아메리카</div>
+                                                    <div class="dropdown_item">남아메리카</div>
+                                                    <div class="dropdown_item">유럽</div>
+                                                    <div class="dropdown_item">오세아니아</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 w-2/3">
+                                            <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">아이디</dt>
+                                    <dd class="flex gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="w_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
+                                        </div>
+                                        <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'w')" type="button">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호</dt>
+                                    <dd>
+                                        <input type="password" id="w_userpw" name="userpw" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
+                                        <div class="info_box mt-2.5">
+                                            ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호 확인</dt>
+                                    <dd>
+                                        <input type="password" id="w_userpwcheck" name="w_userpwcheck" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+
                         </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">아이디</dt>
-                                <dd class="flex gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="w_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
-                                    </div>
-                                    <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'w')" type="button">중복체크</button>
-                                </dd>
-                            </dl>
+                        <!-- 판매/매장일때 -->
+                        <div class="form_box hidden" id="retail-tab-pane" data-usertype="R">
+                            <h4>회원 정보를 입력해주세요.</h4>
+                            <div class="info_box flex items-start gap-1 mb-5">
+                                <img class="w-3 mt-1" src="/img/member/info_icon.svg" alt="">
+                                가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">사업자 등록 번호</dt>
+                                    <dd class="flex gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="r_businesscode" name="businesscode" required maxlength="12" class="input-form w-full input-guid__input" placeholder="사업자 등록 번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,2})(\d{0,5})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        </div>
+                                        <button type="button" class="btn btn-black-line input-guid__button" disabled onclick="checkBeforeAuthCode('business_regist_number', 'r')" type="button">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">명함 또는 사업자 등록증</dt>
+                                    <dd>
+                                        <div class="file-form vertical">
+                                            <input id="r_certificate" name="certificate" type="file" required class="input-guid__input">
+                                            <div class="text">
+                                                <img id="r_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
+                                                <p id="r_file-input" class="mt-1">이미지 추가</p>
+                                            </div>
+                                        </div>
+                                        <div class="info_box mt-2.5">
+                                            ・권장 형식: jpg, jpeg, png
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">업체명</dt>
+                                    <dd>
+                                        <input id="r_businessname" name="businessname" type="text" required class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">대표자</dt>
+                                    <dd>
+                                        <input id="r_username" name="username" type="text" required class="input-form w-full input-guid__input" placeholder="대표자를 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">휴대폰 번호</dt>
+                                    <dd class="flex gap-1">
+                                        @include('login._country_phone_number', ['id'=>'r_phone_country_number'])
+                                        <div class="flex-1">
+                                            <input id="r_contact" name="contact" type="text" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl class="flex">
+                                    <dt class="necessary">인증 번호</dt>
+                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
+                                        <div class="flex-1 certify_box">
+                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
+                                            <span class="time">2:59</span>
+                                        </div>
+                                        <button type="button" type="button" data-key="2" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
+                                        <button type="button" type="button" data-key="2" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">사업자 주소</dt>
+                                    <dd>
+                                        <div class="flex gap-5 py-2">
+                                            <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)"><label for="add_1_3">국내</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)"><label for="add_1_4">해외</label></p>
+                                        </div>
+                                        <div class="add_tab">
+                                            <!-- 국내 -->
+                                            <div class="flex gap-1">
+                                                <input type="text" id="r_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('r')">
+                                                <button type="button" type="button" class="btn btn-black-line" onclick="execPostCode('r')" type="button">주소 검색</button>
+                                            </div>
+                                            <!-- 해외 -->
+                                            <div class="dropdown_wrap hidden">
+                                                <button type="button" type="button" class="dropdown_btn">지역</button>
+                                                <div class="dropdown_list">
+                                                    <div class="dropdown_item">아시아</div>
+                                                    <div class="dropdown_item">아프리카</div>
+                                                    <div class="dropdown_item">북아메리카</div>
+                                                    <div class="dropdown_item">남아메리카</div>
+                                                    <div class="dropdown_item">유럽</div>
+                                                    <div class="dropdown_item">오세아니아</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 w-2/3">
+                                            <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">아이디</dt>
+                                    <dd class="flex gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="r_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <label for="" class="error"></label>
+                                        </div>
+                                        <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'r')" type="button">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호</dt>
+                                    <dd>
+                                        <input id="r_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
+                                        <div class="info_box mt-2.5">
+                                            ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호 확인</dt>
+                                    <dd>
+                                        <input type="password" id="r_userpwcheck" name="r_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+
+                        </div>
+                        <!-- 가구업종일때 -->
+                        <div class="form_box hidden" id="furn-sectors-tab-pane" data-usertype="S">
+                            <h4>회원 정보를 입력해주세요.</h4>
+                            <div class="info_box flex items-start gap-1 mb-5">
+                                <img class="w-3 mt-1" src="/img/member/info_icon.svg" alt="">
+                                가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">명함 첨부</dt>
+                                    <dd>
+                                        <div class="file-form horizontal">
+                                            <input type="file" id="s_certificate" name="certificate" required class="input-guid__input">
+                                            <div class="text">
+                                                <img id="s_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
+                                                <p id="s_file-input" class="mt-1">이미지 추가</p>
+                                            </div>
+                                        </div>
+                                        <div class="info_box mt-2.5">
+                                            ・권장 형식: jpg, jpeg, png
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">업체명</dt>
+                                    <dd>
+                                        <input type="text" id="s_businessname" name="businessname" required class="input-form  w-full input-guid__input" placeholder="업체명을 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">성명/직위</dt>
+                                    <dd>
+                                        <input type="text" id="s_username" name="username" required class="input-form w-full input-guid__input" placeholder="성명/직위를 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">휴대폰 번호</dt>
+                                    <dd class="flex gap-1">
+                                        @include('login._country_phone_number', ['id'=>'s_phone_country_number'])
+                                        <div class="flex-1">
+                                            <input type="text" id="s_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl class="flex">
+                                    <dt class="necessary">인증 번호</dt>
+                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
+                                        <div class="flex-1 certify_box">
+                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
+                                            <span class="time">2:59</span>
+                                        </div>
+                                        <button type="button" type="button" data-key="3" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
+                                        <button type="button" type="button" data-key="3" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">아이디</dt>
+                                    <dd class="flex  gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="s_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                        </div>
+                                        <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 's')" type="button">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호</dt>
+                                    <dd>
+                                        <input id="s_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
+                                        <div class="info_box mt-2.5">
+                                            ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호 확인</dt>
+                                    <dd>
+                                        <input id="s_userpwcheck" name="s_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+
+                        </div>
+                        <!-- 기타 가구 관련 업종 일때 -->
+                        <div class="form_box hidden" id="normal-tab-pane" data-usertype="N">
+                            <h4>회원 정보를 입력해주세요.</h4>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">명함 첨부</dt>
+                                    <dd>
+                                        <div class="file-form horizontal">
+                                            <input type="file" id="n_certificate" name="certificate" required class="input-guid__input">
+                                            <div class="text">
+                                                <img id="n_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
+                                                <p id="n_file-input" class="mt-1">이미지 추가</p>
+                                            </div>
+                                        </div>
+                                        <div class="info_box mt-2.5">
+                                            ・권장 형식: jpg, jpeg, png
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">업체명</dt>
+                                    <dd>
+                                        <input type="text" id="n_businessname" name="businessname" required class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">성명/직위</dt>
+                                    <dd>
+                                        <input type="text" id="n_username" name="username" required class="input-form w-full input-guid__input" placeholder="성명/직위를 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">휴대폰 번호</dt>
+                                    <dd class="flex gap-1">
+                                        @include('login._country_phone_number', ['id'=>'n_phone_country_number'])
+                                        <div class="flex-1">
+                                            <input type="text" id="n_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl class="flex">
+                                    <dt class="necessary">인증 번호</dt>
+                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
+                                        <div class="flex-1 certify_box">
+                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
+                                            <span class="time">2:59</span>
+                                        </div>
+                                        <button type="button" type="button" data-key="4" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
+                                        <button type="button" type="button" data-key="4" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">아이디</dt>
+                                    <dd class="flex  gap-1">
+                                        <div class="flex-1">
+                                            <input type="text" id="n_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                        </div>
+                                        <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'n')" type="button">중복체크</button>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호</dt>
+                                    <dd>
+                                        <input id="n_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
+                                        <div class="info_box mt-2.5">
+                                            ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-3">
+                                <dl>
+                                    <dt class="necessary">비밀번호 확인</dt>
+                                    <dd>
+                                        <input id="n_userpwcheck" name="n_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
+                                    </dd>
+                                </dl>
+                            </div>
+
                         </div>
 
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호</dt>
-                                <dd>
-                                    <input type="password" id="w_userpw" name="userpw" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
-                                    <div class="info_box mt-2.5">
-                                        ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호 확인</dt>
-                                <dd>
-                                    <input type="password" id="w_userpwcheck" name="w_userpwcheck" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
-                                </dd>
-                            </dl>
+                        <div class="flex gap-2 mt-5 nextBtn">
+                            <button type="button" class="btn btn-primary-line step2_prev w-1/3">이전</button>
+                            <button type="button" class="btn btn-primary step2_next w-2/3">다음 (2/3)</button>
                         </div>
 
                     </div>
-                    <!-- 판매/매장일때 -->
-                    <div class="form_box hidden" id="retail-tab-pane" data-usertype="R">
-                        <h4>회원 정보를 입력해주세요.</h4>
-                        <div class="info_box flex items-center gap-1 mt-2.5 mb-8">
-                            <img class="w-4" src="./img/member/info_icon.svg" alt="">
-                            가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">사업자 등록 번호</dt>
-                                <dd class="flex gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="r_businesscode" name="businesscode" required maxlength="12" class="input-form w-full input-guid__input" placeholder="사업자 등록 번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,2})(\d{0,5})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                    </div>
-                                    <button class="btn btn-black-line input-guid__button" disabled onclick="checkBeforeAuthCode('business_regist_number', 'r')" type="button">중복체크</button>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">명함 또는 사업자 등록증</dt>
-                                <dd>
-                                    <div class="file-form vertical">
-                                        <input id="r_certificate" name="certificate" type="file" required class="input-guid__input">
-                                        <div class="text">
-                                            <img id="r_img" class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                            <p id="r_file-input" class="mt-1">이미지 추가</p>
-                                        </div>
-                                    </div>
-                                    <div class="info_box mt-2.5">
-                                        ・권장 형식: jpg, jpeg, png
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">업체명</dt>
-                                <dd>
-                                    <input id="r_businessname" name="businessname" type="text" required class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">대표자</dt>
-                                <dd>
-                                    <input id="r_username" name="username" type="text" required class="input-form w-full input-guid__input" placeholder="대표자를 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">휴대폰 번호</dt>
-                                <dd class="flex gap-1">
-                                    @include('login._country_phone_number', ['id'=>'r_phone_country_number'])
-                                    <div class="flex-1">
-                                        <input id="r_contact" name="contact" type="text" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                        <button data-phone-key="r_contact" data-key="2" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
-                                    </div>
+                </form>
 
-                                    <div class="smscodeDiv" style='display:none;'>
-                                        <label for="smscode">인증번호</label>
-                                        <div class="flex gap-2 mt-1.5 mb-4">
-                                            <div class="certify_box">
-                                                <input type="text" id="smscode2" class="input-form w-full" placeholder="인증번호 6자리">
-                                                <span class="time">2:59</span>
-                                            </div>
-                                            <button data-phone-key="r_contact" data-key="2" id="btnResendSMS2" class="btn btn-line btnSendSMS" type="button">재발송</button>
-                                        </div>
-                                        <button data-phone-key="r_contact" data-key="2" id="btn_smscode_confirm2" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
+                <form id="frm3">
+                    <div class="form_bottom hidden step3">
+                        <div class="form_box">
+                            <div class="agree_wrap mb-3">
+                                <h3>올펀 약관에 동의해주세요.</h3>
+                                <div class="agree_box">
+                                    <div class="agree_item all">
+                                        <p><input type="checkbox" class="check-form" name="all_check" id="all"><label for="all">필수 약관 전체 동의</label></p>
                                     </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">사업자 주소</dt>
-                                <dd>
-                                    <div class="flex gap-5 py-2">
-                                        <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)"><label for="add_1_3">국내</label></p>
-                                        <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)"><label for="add_1_4">해외</label></p>
+                                    <div class="agree_item">
+                                        <p><input type="checkbox" class="check-form checkbox__input--necessary" id="register-agreement_1"><label for="register-agreement_1">서비스 이용 약관 동의 (필수)</label></p>
+                                        <button type="button" onclick="modalOpen('#agree01-modal')">상세보기</button>
                                     </div>
-                                    <div class="add_tab">
-                                        <!-- 국내 -->
-                                        <div class="flex gap-1">
-                                            <input type="text" id="r_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('r')">
-                                            <button type="button" class="btn btn-black-line" onclick="execPostCode('r')" type="button">주소 검색</button>
-                                        </div>
-                                        <!-- 해외 -->
-                                        <div class="dropdown_wrap hidden">
-                                            <button type="button" class="dropdown_btn">지역</button>
-                                            <div class="dropdown_list">
-                                                <div class="dropdown_item">아시아</div>
-                                                <div class="dropdown_item">아프리카</div>
-                                                <div class="dropdown_item">북아메리카</div>
-                                                <div class="dropdown_item">남아메리카</div>
-                                                <div class="dropdown_item">유럽</div>
-                                                <div class="dropdown_item">오세아니아</div>
-                                            </div>
-                                        </div>
+                                    <div class="agree_item">
+                                        <p><input type="checkbox" class="check-form checkbox__input--necessary" id="register-agreement_2"><label for="register-agreement_2">개인정보 활용 동의 (필수)</label></p>
+                                        <button type="button" onclick="modalOpen('#agree02-modal')">상세보기</button>
                                     </div>
-                                    <div class="mt-2 w-2/3">
-                                        <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                    <div class="agree_item">
+                                        <p><input type="checkbox" class="check-form" id="register-agreement_1"><label for="register-agreement_3">마케팅 정보 활용 동의 (선택)</label></p>
+                                        <button type="button" onclick="modalOpen('#agree03-modal')">상세보기</button>
                                     </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">아이디</dt>
-                                <dd class="flex gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="r_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
-                                        <label for="" class="error"></label>
+                                    <div class="agree_item">
+                                        <p><input type="checkbox" class="check-form" id="register-agreement_4"><label for="register-agreement_4">광고성 이용 동의 (선택)</label></p>
+                                        <button type="button" onclick="modalOpen('#agree04-modal')">상세보기</button>
                                     </div>
-                                    <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'r')" type="button">중복체크</button>
-                                </dd>
-                            </dl>
-                        </div>
-
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호</dt>
-                                <dd>
-                                    <input id="r_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
-                                    <div class="info_box mt-2.5">
-                                        ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호 확인</dt>
-                                <dd>
-                                    <input type="password" id="r_userpwcheck" name="r_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-
-                    </div>
-                    <!-- 가구업종일때 -->
-                    <div class="form_box hidden" id="furn-sectors-tab-pane" data-usertype="S">
-                        <h4>회원 정보를 입력해주세요.</h4>
-                        <div class="info_box flex items-center gap-1 mt-2.5 mb-8">
-                            <img class="w-4" src="./img/member/info_icon.svg" alt="">
-                            가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">명함 첨부</dt>
-                                <dd>
-                                    <div class="file-form horizontal">
-                                        <input type="file" id="s_certificate" name="certificate" required class="input-guid__input">
-                                        <div class="text">
-                                            <img id="s_img" class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                            <p id="s_file-input" class="mt-1">이미지 추가</p>
-                                        </div>
-                                    </div>
-                                    <div class="info_box mt-2.5">
-                                        ・권장 형식: jpg, jpeg, png
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">업체명</dt>
-                                <dd>
-                                    <input type="text" id="s_businessname" name="businessname" required class="input-form  w-full input-guid__input" placeholder="업체명을 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">성명/직위</dt>
-                                <dd>
-                                    <input type="text" id="s_username" name="username" required class="input-form w-full input-guid__input" placeholder="성명/직위를 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">휴대폰 번호</dt>
-                                <dd class="flex gap-1">
-                                    @include('login._country_phone_number', ['id'=>'s_phone_country_number'])
-                                    <div class="flex-1">
-                                        <input type="text" id="s_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                        <button  data-phone-key="s_contact" data-key="3" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
-                                    </div>
-
-                                    <div class="smscodeDiv" style='display:none;'>
-                                        <label for="smscode">인증번호</label>
-                                        <div class="flex gap-2 mt-1.5 mb-4">
-                                            <div class="certify_box">
-                                                <input type="text" id="smscode3" class="input-form w-full" placeholder="인증번호 6자리">
-                                                <span class="time">2:59</span>
-                                            </div>
-                                            <button data-phone-key="s_contact" data-key="3" id="btnResendSMS3" class="btn btn-line btnSendSMS" type="button">재발송</button>
-                                        </div>
-                                        <button data-phone-key="s_contact" data-key="3" id="btn_smscode_confirm3" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">아이디</dt>
-                                <dd class="flex  gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="s_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
-                                    </div>
-                                    <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 's')" type="button">중복체크</button>
-                                </dd>
-                            </dl>
-                        </div>
-
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호</dt>
-                                <dd>
-                                    <input id="s_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
-                                    <div class="info_box mt-2.5">
-                                        ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호 확인</dt>
-                                <dd>
-                                    <input id="s_userpwcheck" name="s_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-
-                    </div>
-                    <!-- 기타 가구 관련 업종 일때 -->
-                    <div class="form_box hidden" id="normal-tab-pane" data-usertype="N">
-                        <h4>회원 정보를 입력해주세요.</h4>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">명함 첨부</dt>
-                                <dd>
-                                    <div class="file-form horizontal">
-                                        <input type="file" id="n_certificate" name="certificate" required class="input-guid__input">
-                                        <div class="text">
-                                            <img id="n_img" class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                            <p id="n_file-input" class="mt-1">이미지 추가</p>
-                                        </div>
-                                    </div>
-                                    <div class="info_box mt-2.5">
-                                        ・권장 형식: jpg, jpeg, png
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">업체명</dt>
-                                <dd>
-                                    <input type="text" id="n_businessname" name="businessname" required class="input-form w-full input-guid__input" placeholder="업체명을 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">성명/직위</dt>
-                                <dd>
-                                    <input type="text" id="n_username" name="username" required class="input-form w-full input-guid__input" placeholder="성명/직위를 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">휴대폰 번호</dt>
-                                <dd class="flex gap-1">
-                                    @include('login._country_phone_number', ['id'=>'n_phone_country_number'])
-                                    <div class="flex-1">
-                                        <input type="text" id="n_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                        <button data-phone-key="n_contact" data-key="4" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
-                                    </div>
-
-                                    <div class="smscodeDiv" style='display:none;'>
-                                        <label for="smscode">인증번호</label>
-                                        <div class="flex gap-2 mt-1.5 mb-4">
-                                            <div class="certify_box">
-                                                <input type="text" id="smscode4" class="input-form w-full" placeholder="인증번호 6자리">
-                                                <span class="time">2:59</span>
-                                            </div>
-                                            <button data-phone-key="n_contact" data-key="4" id="btnResendSMS4" class="btn btn-line btnSendSMS" type="button">재발송</button>
-                                        </div>
-                                        <button data-phone-key="n_contact" data-key="4" id="btn_smscode_confirm4" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">아이디</dt>
-                                <dd class="flex  gap-1">
-                                    <div class="flex-1">
-                                        <input type="text" id="n_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
-                                    </div>
-                                    <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'n')" type="button">중복체크</button>
-                                </dd>
-                            </dl>
-                        </div>
-
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호</dt>
-                                <dd>
-                                    <input id="n_userpw" name="userpw" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 입력해주세요.">
-                                    <div class="info_box mt-2.5">
-                                        ・영문 및 숫자 혼합하여 8자리 이상 입력해주세요.
-                                    </div>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="mb-8">
-                            <dl class="flex">
-                                <dt class="necessary">비밀번호 확인</dt>
-                                <dd>
-                                    <input id="n_userpwcheck" name="n_userpwcheck" type="password" required minlength="8" class="input-form w-full input-guid__input" placeholder="비밀번호를 다시 입력해주세요.">
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form_bottom hidden">
-                    <div class="form_box">
-                        <div class="agree_wrap mb-8">
-                            <h3>올펀 약관에 동의해주세요.</h3>
-                            <div class="agree_box">
-                                <div class="agree_item all">
-                                    <p><input type="checkbox" class="check-form" name="all_check" id="all"><label for="all">필수 약관 전체 동의</label></p>
-                                </div>
-                                <div class="agree_item">
-                                    <p><input type="checkbox" class="check-form checkbox__input--necessary" id="register-agreement_1"><label for="register-agreement_1">서비스 이용 약관 동의 (필수)</label></p>
-                                    <button type="button" onclick="modalOpen('#agree01-modal')">상세보기</button>
-                                </div>
-                                <div class="agree_item">
-                                    <p><input type="checkbox" class="check-form checkbox__input--necessary" id="register-agreement_2"><label for="register-agreement_2">개인정보 활용 동의 (필수)</label></p>
-                                    <button type="button" onclick="modalOpen('#agree02-modal')">상세보기</button>
-                                </div>
-                                <div class="agree_item">
-                                    <p><input type="checkbox" class="check-form" id="register-agreement_3"><label for="register-agreement_3">마케팅 정보 활용 동의 (선택)</label></p>
-                                    <button type="button" onclick="modalOpen('#agree03-modal')">상세보기</button>
-                                </div>
-                                <div class="agree_item">
-                                    <p><input type="checkbox" class="check-form" id="register-agreement_4"><label for="register-agreement_4">광고성 이용 동의 (선택)</label></p>
-                                    <button type="button" onclick="modalOpen('#agree04-modal')">상세보기</button>
                                 </div>
                             </div>
                         </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn btn-primary-line step3_prev w-1/3">이전</button>
+                            <button type="button" class="btn btn-primary w-2/3" id="register_form-submit" onclick="submitAction()">가입 완료</button>
+                        </div>
                     </div>
-                    <div class="btn_box">
-                        <button type="button" id="register_form-submit" class="btn w-[300px] btn-primary" onclick="$('#frm').valid(); submitAction()">가입 완료</button>
-                    </div>
-                </div>
+                </form>
             </div>
-        </form>
     </section>
 
 
+    <div class="modal" id="step1-modal">
+        <div class="modal_bg" onclick="modalClose('#step1-modal')"></div>
+        <div class="modal_inner">
+            <button type="button" class="close_btn" onclick="modalClose('#step1-modal')"><svg><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4">필수 항목이 선택되지 않았습니다.<br/> 다시 확인해주세요</p>
+                <button type="button" class="btn w-full btn-primary-line mt-5" onclick="modalClose('#step1-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="agree01-modal">
         <div class="modal_bg" onclick="modalClose('#agree01-modal')"></div>
-        <div class="modal_inner">
-            <button class="close_btn" onclick="modalClose('#agree01-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_inner inner_full">
+            <button type="button" class="close_btn" onclick="modalClose('#agree01-modal')"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
             <div class="modal_body agree_modal_body">
                 <h3>서비스 이용 약관</h3>
                 <iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
@@ -578,8 +609,8 @@
 
     <div class="modal" id="agree02-modal">
         <div class="modal_bg" onclick="modalClose('#agree02-modal')"></div>
-        <div class="modal_inner">
-            <button class="close_btn" onclick="modalClose('#agree02-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_inner inner_full">
+            <button type="button" class="close_btn" onclick="modalClose('#agree02-modal')"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
             <div class="modal_body agree_modal_body">
                 <h3>개인정보 활용 동의</h3>
                 <iframe src="https://api.all-furn.com/res/agreement/privacy.html"></iframe>
@@ -589,8 +620,8 @@
 
     <div class="modal" id="agree03-modal">
         <div class="modal_bg" onclick="modalClose('#agree03-modal')"></div>
-        <div class="modal_inner">
-            <button class="close_btn" onclick="modalClose('#agree03-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_inner inner_full">
+            <button type="button" class="close_btn" onclick="modalClose('#agree03-modal')"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
             <div class="modal_body agree_modal_body">
                 <h3>개인정보 활용 동의</h3>
                 <iframe src="https://api.all-furn.com/res/agreement/marketing.html"></iframe>
@@ -600,8 +631,8 @@
 
     <div class="modal" id="agree04-modal">
         <div class="modal_bg" onclick="modalClose('#agree04-modal')"></div>
-        <div class="modal_inner">
-            <button class="close_btn" onclick="modalClose('#agree04-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_inner inner_full">
+            <button type="button" class="close_btn" onclick="modalClose('#agree04-modal')"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
             <div class="modal_body agree_modal_body">
                 <h3>광고성 이용 동의</h3>
                 <iframe src=""></iframe>
@@ -613,20 +644,54 @@
 
 <script>
 let inN = '0';
-let base = '';
-let phoneAuthorized = false; // 인증 여부
+var base = '';
+let isAuthAfter = false;
+
+let join_tit = ['제조/도매','판매/매장','가구 업종','기타 가구 관련 업종']
+let join_num = 0;
+// step 변경
+$('.step2_next').on('click',function(){
+    if(!$('#frm').valid()) {
+        return;
+    }
+    $('.join_header h3').text('약관 동의')
+    $('.step2').addClass('hidden')
+    $('.step3').removeClass('hidden')
+})
+$('.step2_prev').on('click',function(){
+    $('.step2').addClass('hidden')
+    $('.step3').addClass('hidden')
+    $('.step1').removeClass('hidden')
+})
+$('.step3_prev').on('click',function(){
+    $('.join_header h3').text(`${join_tit[join_num]} 가입`)
+    $('.step3').addClass('hidden')
+    $('.step2').removeClass('hidden')
+    $('.nextBtn').removeClass('hidden')
+})
 // 탭변경
 $('.join_type button').on('click', function() {
-    $('.form_bottom').removeClass('hidden')
+    $('.step1').addClass('hidden')
+    $('.step2').removeClass('hidden')
+    $('.nextBtn').removeClass('hidden')
+    $('.step3').addClass('hidden')
+
+//    $('.form_bottom').removeClass('hidden')
     inN = $(this).data('num')
     $('.join_type button').removeClass('on')
     $(this).addClass('on');
-    $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden');
-    phoneAuthorized = false;
+    $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden')
 
-    $('#frm')[0].reset();
+    $('#frm2')[0].reset();
+    $('#frm3')[0].reset();
     $('#register_form-submit').attr('disabled', true);
     if (inN === 0) { $('#add_1_1').prop('checked', true);  } else { $('#add_1_3').prop('checked', true); }
+
+    $('.smscode').val('');
+    $(".btnSendSMS").prop("disabled", false);
+    $(".btnResendSMS").prop("disabled", false);
+    isAuthAfter = false;
+    $('.nextBtn').removeClass('hidden')
 
     if (inN === 0) {
         base  = '#wholesale-tab-pane';
@@ -718,7 +783,7 @@ $(document).ready(function() {
     });
 
     // validation
-    $('#frm').validate({
+    $('#frm2').validate({
         rules: {
             businesscode: {required:true, minlength:12, businessCodeDupCheck: true},
             certificate: {required:true},
@@ -784,8 +849,131 @@ $(document).ready(function() {
             }
         }
     });
-});
+    
+    $("#w_contact #r_contact #s_contact #n_contact").on("keyup", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        isAuthAfter = false;
+        if ($(this).val().length >= 10) {
+            $(".btnSendSMS").prop("disabled", false);
+            $(".btnResendSMS").prop("disabled", false);
+        } else {
+            $(".btnSendSMS").prop("disabled", true);
+            $(".btnResendSMS").prop("disabled", true);
+        }
+    });
+    $(".smscode").on("keyup", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        if ($(this).val().length >= 6) {
+            $(".btn_smscode_confirm").prop("disabled", false);
+        } else {
+            $(".btn_smscode_confirm").prop("disabled", true);
+        }
+    });
 
+    $(".btn_smscode_confirm").on("click", function () {
+        if ($('.time').text() == '0:00'){
+            modalOpen('.smscode_time_over');
+        }
+    });
+});
+function sendAuthCode(el) {
+    var data = new Object();
+    const keyCode = el.dataset.key;
+    if(keyCode == 1) {
+        data.target = $('#w_contact').val().replace(/-/g, '');
+    } else if(keyCode == 2) {
+        data.target = $('#r_contact').val().replace(/-/g, '');
+    } else if(keyCode == 3) {
+        data.target = $('#s_contact').val().replace(/-/g, '');
+    } else if(keyCode == 4) {
+        data.target = $('#n_contact').val().replace(/-/g, '');
+    }
+    data.type = 'S';
+
+    $.ajax({
+        url				: '/signup/sendAuthCode',
+        contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+        data			: data,
+        type			: 'POST',
+        dataType		: 'json',
+        xhrFields: {
+            withCredentials: false
+        },
+        success : function(result) {
+            if (result.success) {
+                $('.smscode').val('');
+                isAuthAfter = false;
+                $('.time').text('2:59');
+                $('.btnSendSMS').prop("disabled", true);
+                $('.smscode').prop("disabled", false);
+                
+                startTimer();
+            } else {
+                alert(result.message);
+            }
+        }
+    });
+}
+function confirmAuthCode(el) {
+    if ($('.time').text() == '0:00'){
+        modalOpen('#smscode_time_over');
+    } else {
+        var data = new Object() ;
+        const keyCode = el.dataset.key;
+        if(keyCode == 1) {
+            data.target = $('#w_contact').val().replace(/-/g, '');
+        } else if(keyCode == 2) {
+            data.target = $('#r_contact').val().replace(/-/g, '');
+        } else if(keyCode == 3) {
+            data.target = $('#s_contact').val().replace(/-/g, '');
+        } else if(keyCode == 4) {
+            data.target = $('#n_contact').val().replace(/-/g, '');
+        }
+        data.type = "S" ;
+        data.code = $('.smscode')[keyCode-1].value;
+
+        $.ajax({
+            url				: '/signup/confirmAuthCode',
+            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+            data			: data,
+            type			: 'POST',
+            dataType		: 'json',
+            xhrFields: {
+                withCredentials: false
+            },
+            success : function(result) {
+                if (result.success) {
+                    isAuthCodeCheckAfter = true;
+                    $('#cellphone').prop("disabled", true);
+                    $('.btnSendSMS').prop("disabled", true);
+                    $('.btnResendSMS').prop("disabled", true);
+                    $('#userid').prop("disabled", true);
+                    $($('.smscode')[keyCode-1]).prop("disabled", true);
+                    isAuthAfter = true;
+                } else {
+                    isAuthCodeCheckAfter = true;
+                    isAuthAfter = false;
+                    $('#btnResendSMS').prop("disabled", false);
+                    $('#smscode').prop("disabled", false);
+                    alert('인증번호가 맞지 않습니다.');
+                }
+            }
+        });
+    }
+}
+var isAuthCodeCheckAfter = false;
+function startTimer() {
+    var time = 179; 
+    var timerInterval = setInterval(function () {
+        var minutes = Math.floor(time / 60);
+        var seconds = time % 60;
+        $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+        time--;
+        if (time < 0 || isAuthCodeCheckAfter) {
+            clearInterval(timerInterval);
+        }
+    }, 1000);
+}
 
 $.validator.addMethod('eng_number', function( value ) {
     return /[a-z]/.test(value) && /[0-9]/.test(value)
@@ -868,111 +1056,9 @@ function checkBeforeAuthCode(type, t) {
     }
 }
 
-
-    $("input[name=contact]").on("keyup", function () {
-        $(this).val($(this).val().replace(/[^0-9]/g, ''));
-        if ($(this).val().length >= 10) {
-            $(".btnSendSMS").prop("disabled", false);
-        } else {
-            $(".btnSendSMS").prop("disabled", true);
-        }
-    });
-
-    $(".btnSendSMS").on("click", function () {
-        phoneAuthorized = false;
-        const btnKey = this.dataset.key;
-        var data = new Object() ;
-        data.target = $('#' + this.dataset.phoneKey).val().replace(/-/g, '');
-        data.type = "S" ;
-        $.ajax({
-            url				: '/signup/sendAuthCode',
-            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
-            data			: data,
-            type			: 'POST',
-            dataType		: 'json',
-            xhrFields: {
-                withCredentials: false
-            },
-            success : function(result) {
-                if (result.success) {
-                    $('.smscodeDiv').show();
-                    $('#smscode' + btnKey).val('');
-                    $('.time').text('2:59');
-                    
-                    // $(base + ' .form__list.' + type + '_auth').css('display','flex');
-                    // $(base + ' .input-guid__input.'+type+', [aria-hidden="false"] .input-guid__button.'+type).removeAttr('disabled');
-                    // $(base + ' .form__notification.'+type+'_auth').css('display','none');
-                    // $(base + ' .get_code-'+type).text('인증번호 재전송');
-
-                    $("#smscode" + btnKey).off().on("keyup", function () {
-                        $(this).val($(this).val().replace(/[^0-9]/g, ''));
-                        if ($(this).val().length >= 6) {
-                            $("#btn_smscode_confirm" + btnKey).prop("disabled", false);
-                        } else {
-                            $("#btn_smscode_confirm" + btnKey).prop("disabled", true);
-                        }
-                    });
-                    startTimer();
-                } else {
-                    alert(result.message);
-                }
-            }
-        });
-    });
-
-    
-function confirmAuthCode(el) {
-    if ($('.time').text() == '0:00'){
-        modalOpen('#smscode_time_over');
-    } else {
-        const btnKey = el.dataset.key;
-        var data = new Object() ;
-        data.target = $('#' + el.dataset.phoneKey).val().replace(/-/g, '');
-        data.type = "S" ;
-        data.code = $('#smscode' + btnKey).val();
-
-        $.ajax({
-            url				: '/signup/confirmAuthCode',
-            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
-            data			: data,
-            type			: 'POST',
-            dataType		: 'json',
-            xhrFields: {
-                withCredentials: false
-            },
-            success : function(result) {
-                if (result.success) {
-                    phoneAuthorized = true;
-                } else {
-                    time = 1;
-                    alert(result.message);
-                }
-            }
-        });
-    }
-}
-var time = 179; 
-function startTimer() {
-    time = 179; 
-    var timerInterval = setInterval(function () {
-        var minutes = Math.floor(time / 60);
-        var seconds = time % 60;
-        $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-        time--;
-        if (time < 0) {
-            clearInterval(timerInterval);
-        }
-    }, 1000);
-}
-
-
 // 가입완료 처리
 function submitAction() {
     if (isProc) {
-        return;
-    }
-    if(!phoneAuthorized) {
-        alert('먼저 휴대폰 번호를 인증해주세요.');
         return;
     }
     isProc = true;
@@ -1083,35 +1169,6 @@ function handleImgFileSelect(e) {
 }
 </script>
 
-<div class="modal" id="modal-email--duplicated">
-    <div class="modal_bg" onclick="modalClose('#modal-email--duplicated')"></div>
-    <div class="modal_inner modal-sm">
-        <button type="button" class="close_btn" onclick="modalClose('#modal-email--duplicated')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <p class="text-center py-4"><b id='email_dupcheck_ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
-            <div class="flex gap-2 justify-center">
-                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-email--duplicated');">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal" id="smscode_time_over">
-    <div class="modal_bg" onclick="modalClose('#smscode_time_over')"></div>
-    <div class="modal_inner modal-sm">
-        <button class="close_btn" onclick="modalClose('#smscode_time_over')" type="button"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <p class="text-center py-4"><b>유효시간이 만료되었습니다.<br>인증코드를 재발송해주세요.</b></p>
-            <div class="flex gap-2 justify-center">
-                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#smscode_time_over')" type="button">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
-
-
-
 
