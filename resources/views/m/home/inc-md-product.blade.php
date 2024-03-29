@@ -34,7 +34,7 @@
                                         <a href="/product/detail/{{ $goods['mdp_gidx'] }}">
                                             <span>{{ $goods['mdp_gcompany'] }}</span>
                                             <p>{{ $goods['mdp_gname'] }}</p>
-                                            <b>{{ number_format($goods['mdp_gprice'],0) }}원</b>
+                                            <b>{{ $goods['mdp_gprice'] }}</b>
                                         </a>
                                     </div>
                                 </li>
