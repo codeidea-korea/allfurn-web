@@ -24,11 +24,16 @@ Route::prefix('home')->group(function() {
 });
 Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
+Route::get('/findid', 'LoginController@findid')->name('findid');
+Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
     Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
+    
+    Route::post('/update-password', 'LoginController@updatePassword');
+
     Route::get('/success', function () {
         return view('login/success');
     })->name('signup.success');

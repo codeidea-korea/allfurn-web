@@ -1,13 +1,4 @@
-@extends('layouts.app_m')
-
-@php
-
-$header_depth = 'login';
-$only_quick = 'yes';
-$top_title = '';
-$header_banner = '';
-
-@endphp
+@extends('layouts.app')
 
 @section('content')
 
@@ -56,7 +47,7 @@ $header_banner = '';
                 <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
             </ul>
 
-            <button class="btn w-full btn-primary" disabled>인증완료</button>
+            <button id="btn_smscode_confirm" class="btn w-full btn-primary" disabled onclick="confirmAuthCode()">인증완료</button>
             <div class="btn_box flex gap-2 mt-2.5">
                 <a href="javascript:;" onclick="gotoFindpw()" class="btn w-full btn-line2">비밀번호 재설정</a>
                 <a href="/signin" class="btn w-full btn-primary">로그인 하러가기</a>
@@ -65,22 +56,13 @@ $header_banner = '';
             <a href="/signup" class="btn w-full mt-2.5 btn-line2">올펀 가입하기</a>
 
             <div class="link_box flex items-center justify-center">
-                <a href="/findid">아이디 찾기</a>
-                <a href="/findpw">비밀번호 재설정</a>
+                <a href="/findid.php">아이디 찾기</a>
+                <a href="/findpw.php">비밀번호 재설정</a>
                 <a href="javascript:;">서비스 이용 문의</a>
             </div>
         </div>
     </section>
 </div>
-
-<script>
-    $('.tab_layout li').on('click',function(){
-        let liN = $(this).index();
-        $(this).addClass('active').siblings().removeClass('active')
-        $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active')
-    })
-</script>
-
 
 <script>
     $('._step2').hide();
