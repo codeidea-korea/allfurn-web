@@ -8,11 +8,11 @@
         </div>
         <div class="sub_filter">
             <div class="filter_box">
-                <button class="" onclick="modalOpen('#filter_category-modal')">카테고리</button>
-                <button class="" onclick="modalOpen('#filter_location-modal')">소재지</button>
+                <button class="" onclick="modalOpen('#filter_category-modal')">카테고리<b class='txt-primary'></b></button>
+                <button class="" onclick="modalOpen('#filter_location-modal')">소재지<b class='txt-primary'></b></button>
                 <button onclick="modalOpen('#filter_align-modal')">최신순</button>
             </div>
-            <div class="total">전체 {{ number_format($total, 0) }}개</div>
+            <div class="total">전체 0개</div>
         </div>
         <div class="sub_filter_result" hidden>
             <div class="filter_on_box">
@@ -23,23 +23,7 @@
         </div>
 
         <div class="relative">
-            <ul class="prod_list">
-                @foreach ($list as $item )
-                    <li class="prod_item">
-                        <div class="img_box">
-                            <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
-                            <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <a href="/product/detail/{{ $item->idx }}">
-                                <span>{{$item->companyName}}</span>
-                                <p>{{ $item->name }}</p>
-                                <b>{{ number_format($item->price, 0) }}원</b>
-                            </a>
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
+            <ul class="prod_list"></ul>
         </div>
     </div>
 </section>

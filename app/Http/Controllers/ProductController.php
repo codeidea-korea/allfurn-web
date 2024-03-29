@@ -213,7 +213,7 @@ class ProductController extends BaseController
     }
 
 
-    // 신상품 데이터 가져오기
+    // 신상품 페이지 데이터 가져오기
     public function newProduct(Request $request)
     {
         // 상단 배너
@@ -224,11 +224,6 @@ class ProductController extends BaseController
         // $data['target'] = $request->query('ca') != null ? $request->query('ca') : "ALL";
         // $list = $this->productService->getNewProductList($data);
 
-        $data['categories'] = $request->categories == null ? "" : $request->categories;
-        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
-        $list = $this->productService->getNewAddedProductList($data);
-        $total = $list->total();
-
         $bestNewProducts = $this->productService->getBestNewProductList();
         $company = $this->productService->getRecentlyAddedProductCompanyList();
 
@@ -236,10 +231,8 @@ class ProductController extends BaseController
             'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
-            'list'=>$list,
             'bestNewProducts' => $bestNewProducts,
             'company' => $company,
-            'total'=>$total,
         ]);
     }
 
@@ -259,7 +252,13 @@ class ProductController extends BaseController
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
         $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        
         $list = $this->productService->getNewAddedProductList($data);
+
+        $html = view('product.inc-product-common', [ 'list'=> $list ] )->render();
+        $modalHtml = view('product.inc-product-modal-common', [ 'product'=> $list ] )->render();
+        $list['html'] = $html;
+        $list['modalHtml'] = $modalHtml;
 
         return response()->json($list);
     }
