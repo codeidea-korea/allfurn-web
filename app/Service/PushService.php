@@ -73,7 +73,7 @@ class PushService
     public function sendPush($title, $msg, $to, $token, $type = 5, $applink = '', $weblink = '')
     {
         $pushMessage = new PushQ;
-        $pushMessage->type = 'normal';
+        $pushMessage->type = 'push';
         $pushMessage->title = $title;
         $pushMessage->content = $msg;
         $pushMessage->push_info = $msg;
@@ -96,6 +96,7 @@ class PushService
             "priority" =>  "high",
             "data" => [
                 "scheme" => $applink,
+                "weburl" => $weblink,
                 "title"  => $title,
                 "body"  => $msg,
                 "content" => $msg

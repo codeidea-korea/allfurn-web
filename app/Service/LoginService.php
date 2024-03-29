@@ -127,6 +127,13 @@ class LoginService
             ])->first();
         return $user;
     }
+    
+    public function getUsersByPhoneNumber(string $phone_number) {
+        $user = User::select("*")->where([
+                ['phone_number', $phone_number]
+            ])->get();
+        return $user;
+    }
 
 
     /**

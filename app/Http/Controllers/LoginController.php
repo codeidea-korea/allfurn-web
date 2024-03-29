@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Service\CommunityService;
 use App\Service\LoginService;
+use App\Service\MemberService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,9 +22,11 @@ use Session;
 class LoginController extends BaseController
 {
     private $loginService;
-    public function __construct(LoginService $loginService)
+    private $memberService;
+    public function __construct(LoginService $loginService, MemberService $memberService)
     {
         $this->loginService = $loginService;
+        $this->memberService = $memberService;
     }
 
     public function index()
@@ -32,6 +35,22 @@ class LoginController extends BaseController
             return redirect('/');
         }
         return view(getDeviceType() . 'login.login');
+    }
+
+    public function findid()
+    {
+        if(Auth::check()) {
+            return redirect('/');
+        }
+        return view(getDeviceType() . 'login.findid');
+    }
+
+    public function findpw()
+    {
+        if(Auth::check()) {
+            return redirect('/');
+        }
+        return view(getDeviceType() . 'login.findpw');
     }
 
     /**
@@ -91,11 +110,15 @@ class LoginController extends BaseController
         $user = $this->loginService->getUserByPhoneNumber($request->target);
 
         if(empty($user)) {
-            return response()->json([
-                'result' => 'fail',
-                'code' => 102,
-                'message' => '해당 번호로 가입된 회원 없음'
-            ]);
+            $user = $this->loginService->getUserById($request->userid);
+
+            if(empty($user)) {
+                return response()->json([
+                    'result' => 'fail',
+                    'code' => 102,
+                    'message' => '해당 번호로 가입된 회원 없음'
+                ]);
+            }
         }
 
         $target = "$user->phone_number";
@@ -115,7 +138,7 @@ class LoginController extends BaseController
     public function confirmAuthCode(Request $request)
     {
         $request->validate([
-            'target' => 'required',
+//            'target' => 'required',
             'type' => 'required',
             'code' => 'required',
         ]);
@@ -123,11 +146,15 @@ class LoginController extends BaseController
         $user = $this->loginService->getUserByPhoneNumber($request->target);
 
         if(empty($user)) {
-            return response()->json([
-                'success' => false,
-                'code' => 102,
-                'message' => '해당 번호로 가입된 회원 없음'
-            ]);
+            $user = $this->loginService->getUserById($request->userid);
+
+            if(empty($user)) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 102,
+                    'message' => '해당 번호로 가입된 회원 없음'
+                ]);
+            }
         }
         
         $new_param['target'] = $user->phone_number;
@@ -141,7 +168,8 @@ class LoginController extends BaseController
         }
 
         return response()->json([
-            'success' => $confirm == 1 ? true : false
+            'success' => $confirm == 1 ? true : false,
+            'users' => $this->loginService->getUsersByPhoneNumber($request->target)
         ]);
     }
 
@@ -171,6 +199,24 @@ class LoginController extends BaseController
         $fcmToken = $request->input('token');
 
         return response()->json($this->loginService->updateFcmToken($accessToken, $fcmToken));
+    }
+    
+    /**
+     * 사용자 비밀번호 갱신
+     * @return JsonResponse()
+     */
+    public function updatePassword(Request $request)
+    {
+        $userid = $request->input('userid');
+        $w_userpw = $request->input('w_userpw');
+        $new_userpw = $request->input('new_userpw');
+        $smscode = $request->input('smscode');
+
+        return response()->json($this->memberService->updatePassword([
+            'account' => $userid,
+            'code' => $smscode,
+            'repw' => $new_userpw
+        ]));
     }
 }
 
