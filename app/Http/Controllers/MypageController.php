@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use App\Service\LoginService;
+use App\Service\ProductService;
+use App\Service\TmpLikeService;
 use \Exception;
 use Session;
 
@@ -22,12 +24,16 @@ class MypageController extends BaseController
 {
     private $mypageService;
     private $loginService;
+    private $productService;
+    private $tmpLikeService;
     private $limit = 20;
     private $user;
-    public function __construct(MypageService $mypageService, LoginService $loginService)
+    public function __construct(MypageService $mypageService, LoginService $loginService, ProductService $productService, TmpLikeService $tmpLikeService)
     {
         $this->mypageService = $mypageService;
         $this->loginService = $loginService;
+        $this -> productService = $productService;
+        $this->tmpLikeService = $tmpLikeService;
     }
 
     public function index(): RedirectResponse
@@ -869,5 +875,44 @@ class MypageController extends BaseController
                 'result'    => 'success',
                 'data'      => $data
             ]);
+    }
+
+    public function likeProduct(Request $request){
+        $data['pageType'] = 'product';
+        
+        if($request->ajax()) {
+            $params['offset'] = $request->offset;
+            $params['limit'] = 12;
+            $params = array_merge($params, $request -> all());
+
+            $data = $this->tmpLikeService->getInterestProducts($params);
+            $data['html'] = view('mypage.inc-like-product-common', $data )->render();
+
+            return response()->json($data);
+        }
+        
+        $data['categoryList'] = $this->productService->getCategoryList();
+
+        return view(getDeviceType().'mypage.likePage', $data);
+    }
+
+    public function likeCompany(Request $request) {
+        $data['pageType'] = 'company';
+        
+        if($request->ajax()) {
+            $params['offset'] = $request->offset;
+            $params['limit'] = 12;
+            $params = array_merge($params, $request -> all());
+
+            $data = array_merge($data , $this->tmpLikeService->getLikeCompanies($params));
+            $data['html'] = view('mypage.inc-like-company-common', $data)->render();
+
+            return response()->json($data);
+        }
+
+        $data['categoryList'] = $this->productService->getCategoryList();
+
+        return view(getDeviceType().'mypage.likePage', $data);
+        
     }
 }

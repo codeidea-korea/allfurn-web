@@ -113,9 +113,8 @@ Route::prefix('order')->name('order')->group(function() {
 });
 Route::get('/cart', 'OrderController@cart')->name('cart');
 
-//마이페이지 작업시간과 겹치지 않을 때, HomeController->MypageController로 수정(서비스도 동일하게 수정)
-Route::get('/like/product', 'HomeController@likeProduct');
-Route::get('/like/company', 'HomeController@likeCompany');
+Route::get('/like/product', 'MypageController@likeProduct');
+Route::get('/like/company', 'MypageController@likeCompany');
 
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
     Route::get('/', 'MypageController@index');
