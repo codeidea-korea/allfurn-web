@@ -256,7 +256,7 @@ class ProductController extends BaseController
         $list = $this->productService->getNewAddedProductList($data);
 
         $html = view('product.inc-product-common', [ 'list'=> $list ] )->render();
-        $modalHtml = view('product.inc-product-modal-common', [ 'product'=> $list ] )->render();
+        $modalHtml = view(getDeviceType().'product.inc-product-modal-common', [ 'product'=> $list ] )->render();
         $list['html'] = $html;
         $list['modalHtml'] = $modalHtml;
 
