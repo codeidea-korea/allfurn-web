@@ -74,8 +74,8 @@
             <a href="{{ route('signUp') }}" class="btn w-full mt-2.5 btn-line2">올펀 가입하기</a>
 
             <div class="link_box flex items-center justify-center">
-                <a href="./findid.php">아이디 찾기</a>
-                <a href="./findpw.php">비밀번호 재설정</a>
+                <a href="/findid">아이디 찾기</a>
+                <a href="/findpw">비밀번호 재설정</a>
                 <a href="javascript:;">서비스 이용 문의</a>
             </div>
         </div>

@@ -113,6 +113,19 @@
                                     @include('login._country_phone_number', ['id'=>'w_phone_country_number'])
                                     <div class="flex-1">
                                         <input type="text" id="w_contact" name="contact" required class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        <button data-phone-key="w_contact" data-key="1" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
+                                    </div>
+
+                                    <div class="smscodeDiv" style='display:none;'>
+                                        <label for="smscode">인증번호</label>
+                                        <div class="flex gap-2 mt-1.5 mb-4">
+                                            <div class="certify_box">
+                                                <input type="text" id="smscode1" class="input-form w-full" placeholder="인증번호 6자리">
+                                                <span class="time">2:59</span>
+                                            </div>
+                                            <button data-phone-key="w_contact" data-key="1" id="btnResendSMS1" class="btn btn-line btnSendSMS" type="button">재발송</button>
+                                        </div>
+                                        <button data-phone-key="w_contact" data-key="1" id="btn_smscode_confirm1" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
                                     </div>
                                 </dd>
                             </dl>
@@ -241,6 +254,19 @@
                                     @include('login._country_phone_number', ['id'=>'r_phone_country_number'])
                                     <div class="flex-1">
                                         <input id="r_contact" name="contact" type="text" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        <button data-phone-key="r_contact" data-key="2" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
+                                    </div>
+
+                                    <div class="smscodeDiv" style='display:none;'>
+                                        <label for="smscode">인증번호</label>
+                                        <div class="flex gap-2 mt-1.5 mb-4">
+                                            <div class="certify_box">
+                                                <input type="text" id="smscode2" class="input-form w-full" placeholder="인증번호 6자리">
+                                                <span class="time">2:59</span>
+                                            </div>
+                                            <button data-phone-key="r_contact" data-key="2" id="btnResendSMS2" class="btn btn-line btnSendSMS" type="button">재발송</button>
+                                        </div>
+                                        <button data-phone-key="r_contact" data-key="2" id="btn_smscode_confirm2" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
                                     </div>
                                 </dd>
                             </dl>
@@ -359,6 +385,19 @@
                                     @include('login._country_phone_number', ['id'=>'s_phone_country_number'])
                                     <div class="flex-1">
                                         <input type="text" id="s_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        <button  data-phone-key="s_contact" data-key="3" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
+                                    </div>
+
+                                    <div class="smscodeDiv" style='display:none;'>
+                                        <label for="smscode">인증번호</label>
+                                        <div class="flex gap-2 mt-1.5 mb-4">
+                                            <div class="certify_box">
+                                                <input type="text" id="smscode3" class="input-form w-full" placeholder="인증번호 6자리">
+                                                <span class="time">2:59</span>
+                                            </div>
+                                            <button data-phone-key="s_contact" data-key="3" id="btnResendSMS3" class="btn btn-line btnSendSMS" type="button">재발송</button>
+                                        </div>
+                                        <button data-phone-key="s_contact" data-key="3" id="btn_smscode_confirm3" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
                                     </div>
                                 </dd>
                             </dl>
@@ -439,6 +478,19 @@
                                     @include('login._country_phone_number', ['id'=>'n_phone_country_number'])
                                     <div class="flex-1">
                                         <input type="text" id="n_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                        <button data-phone-key="n_contact" data-key="4" class="btn btn-primary-line btnSendSMS" disabled type="button">인증번호 받기</button>
+                                    </div>
+
+                                    <div class="smscodeDiv" style='display:none;'>
+                                        <label for="smscode">인증번호</label>
+                                        <div class="flex gap-2 mt-1.5 mb-4">
+                                            <div class="certify_box">
+                                                <input type="text" id="smscode4" class="input-form w-full" placeholder="인증번호 6자리">
+                                                <span class="time">2:59</span>
+                                            </div>
+                                            <button data-phone-key="n_contact" data-key="4" id="btnResendSMS4" class="btn btn-line btnSendSMS" type="button">재발송</button>
+                                        </div>
+                                        <button data-phone-key="n_contact" data-key="4" id="btn_smscode_confirm4" class="btn w-full btn-primary btn_smscode_confirm" onclick="confirmAuthCode(this)" disabled type="button">인증완료</button>
                                     </div>
                                 </dd>
                             </dl>
@@ -562,13 +614,15 @@
 <script>
 let inN = '0';
 let base = '';
+let phoneAuthorized = false; // 인증 여부
 // 탭변경
 $('.join_type button').on('click', function() {
     $('.form_bottom').removeClass('hidden')
     inN = $(this).data('num')
     $('.join_type button').removeClass('on')
     $(this).addClass('on');
-    $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden')
+    $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden');
+    phoneAuthorized = false;
 
     $('#frm')[0].reset();
     $('#register_form-submit').attr('disabled', true);
@@ -814,9 +868,111 @@ function checkBeforeAuthCode(type, t) {
     }
 }
 
+
+    $("input[name=contact]").on("keyup", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        if ($(this).val().length >= 10) {
+            $(".btnSendSMS").prop("disabled", false);
+        } else {
+            $(".btnSendSMS").prop("disabled", true);
+        }
+    });
+
+    $(".btnSendSMS").on("click", function () {
+        phoneAuthorized = false;
+        const btnKey = this.dataset.key;
+        var data = new Object() ;
+        data.target = $('#' + this.dataset.phoneKey).val().replace(/-/g, '');
+        data.type = "S" ;
+        $.ajax({
+            url				: '/signup/sendAuthCode',
+            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+            data			: data,
+            type			: 'POST',
+            dataType		: 'json',
+            xhrFields: {
+                withCredentials: false
+            },
+            success : function(result) {
+                if (result.success) {
+                    $('.smscodeDiv').show();
+                    $('#smscode' + btnKey).val('');
+                    $('.time').text('2:59');
+                    
+                    // $(base + ' .form__list.' + type + '_auth').css('display','flex');
+                    // $(base + ' .input-guid__input.'+type+', [aria-hidden="false"] .input-guid__button.'+type).removeAttr('disabled');
+                    // $(base + ' .form__notification.'+type+'_auth').css('display','none');
+                    // $(base + ' .get_code-'+type).text('인증번호 재전송');
+
+                    $("#smscode" + btnKey).off().on("keyup", function () {
+                        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+                        if ($(this).val().length >= 6) {
+                            $("#btn_smscode_confirm" + btnKey).prop("disabled", false);
+                        } else {
+                            $("#btn_smscode_confirm" + btnKey).prop("disabled", true);
+                        }
+                    });
+                    startTimer();
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+    });
+
+    
+function confirmAuthCode(el) {
+    if ($('.time').text() == '0:00'){
+        modalOpen('#smscode_time_over');
+    } else {
+        const btnKey = el.dataset.key;
+        var data = new Object() ;
+        data.target = $('#' + el.dataset.phoneKey).val().replace(/-/g, '');
+        data.type = "S" ;
+        data.code = $('#smscode' + btnKey).val();
+
+        $.ajax({
+            url				: '/signup/confirmAuthCode',
+            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+            data			: data,
+            type			: 'POST',
+            dataType		: 'json',
+            xhrFields: {
+                withCredentials: false
+            },
+            success : function(result) {
+                if (result.success) {
+                    phoneAuthorized = true;
+                } else {
+                    time = 1;
+                    alert(result.message);
+                }
+            }
+        });
+    }
+}
+var time = 179; 
+function startTimer() {
+    time = 179; 
+    var timerInterval = setInterval(function () {
+        var minutes = Math.floor(time / 60);
+        var seconds = time % 60;
+        $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+        time--;
+        if (time < 0) {
+            clearInterval(timerInterval);
+        }
+    }, 1000);
+}
+
+
 // 가입완료 처리
 function submitAction() {
     if (isProc) {
+        return;
+    }
+    if(!phoneAuthorized) {
+        alert('먼저 휴대폰 번호를 인증해주세요.');
         return;
     }
     isProc = true;
@@ -939,6 +1095,21 @@ function handleImgFileSelect(e) {
         </div>
     </div>
 </div>
+
+
+<div class="modal" id="smscode_time_over">
+    <div class="modal_bg" onclick="modalClose('#smscode_time_over')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#smscode_time_over')" type="button"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>유효시간이 만료되었습니다.<br>인증코드를 재발송해주세요.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#smscode_time_over')" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 
