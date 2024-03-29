@@ -21,7 +21,7 @@
                                         <strong>{{ $banner->content }}</strong>
                                         <span>{{ $banner->companyName }}</span>
                                         <p>{{ $banner->name }}</p>
-                                        <b>{{ number_format($banner->price, 0) }}원</b>
+                                        <b>{{$banner->is_price_open ? number_format($banner->price, 0).'원': $banner->price_text}}</b>
                                     </a>
                                 </div>
                             </li>
@@ -44,11 +44,12 @@
 
     {{-- 신규 등록 상품 --}}
     @include('product.inc-new-product')
-    @php $product = $list @endphp
     @include('product.new-product-ext')
 </div>
 
 <script>
+    /**** swiper 관련 script ****/
+
     // new_arrival_con01 
     const new_arrival_con01 = new Swiper(".new_arrival_con01 .slide_box", {
         slidesPerView: 3,
@@ -126,40 +127,12 @@
         },
     });
 
-    const filterRemove = (item)=>{
-        //해당 버튼 삭제
-        $(item).parents('span').remove();
-
-        //모달 안 체크박스에서 check 해제
-        $("#" + $(item).data('id')).prop('checked', false);
-
-        //데이터 불러오기
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/product/newAddedProduct',
-            type : 'GET',
-            data : {
-                'categories' : getIndexesOfSelectedCategory().join(','),
-                'locations' : getIndexesOfSelectedLocation().join(','),
-                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
-            },
-            success: function (result) {
-
-                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
-                
-                isLastPage = currentPage === result.last_page;
-            },
-            complete : function () {
-                displaySelectedCategories();
-                displaySelectedLocation();
-                toggleFilterBox();
-                displaySelectedOrders();
-                currentPage = 1;
-            }
-        });
-    }
+    /* ----------------------------- */
+    $(document).ready(function(){
+        setTimeout(() => {
+            loadNewProductList();
+        }, 50);
+    })
 
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
@@ -169,9 +142,10 @@
 
     let isLoading = false;
     let isLastPage = false;
-    let currentPage = 1;
-    function loadNewProductList() {
+    let currentPage = 0;
+    function loadNewProductList(needEmpty, target) {
         isLoading = true;
+        if(needEmpty) currentPage = 0;
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -183,54 +157,60 @@
                 'locations' : getIndexesOfSelectedLocation().join(','),
                 'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
             }, 
+            beforeSend : function() {
+                if(target) {
+                    target.prop("disabled", true);
+                }
+            },
             success: function(result) {
-
-                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), false);
-                displayNewProductsOnModal(result['data'], zoom_view_modal_new, false);        
+                if(needEmpty) {
+                    $(".prod_list").empty();
+                    zoom_view_modal_new.removeAllSlides();
+                    zoom_view_modal_new.slideTo(0);
+                }
                 
+                $(".prod_list").append(result.data.html);
+                zoom_view_modal_new.appendSlide(result.data.modalHtml);
+
+                $(".total").text('전체 ' + result.total.toLocaleString('ko-KR') + '개');
+
+                if(target) {
+                    target.prop("disabled", false);
+                    modalClose('#' + target.parents('[id^="filter"]').attr('id'));
+                }
+
                 isLastPage = currentPage === result.last_page;
             }, 
             complete : function () {
+                displaySelectedCategories();
+                displaySelectedLocation();
+                displaySelectedOrders();
+                toggleFilterBox();
                 isLoading = false;
             }
         })
     }
 
-    // 신규 등록 상품 카테고리
+    // 신규 등록 상품 - 카테고리 선택
     $(document).on('click', '[id^="filter"] .btn-primary', function() { 
-        let $this = $(this);
+        loadNewProductList(true, $(this));
+    });
 
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/product/newAddedProduct',
-            type : 'GET',
-            data : {
-                'categories' : getIndexesOfSelectedCategory().join(','),
-                'locations' : getIndexesOfSelectedLocation().join(','),
-                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
-            },
-            beforeSend : function() {
-                $this.prop("disabled", true);
-            },
-            success: function (result) {
-                
-                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
-                
-                isLastPage = currentPage === result.last_page;
-                
-            }, 
-            complete : function () {
-                $this.prop("disabled", false);
-                displaySelectedCategories();
-                displaySelectedLocation();
-                toggleFilterBox();
-                displaySelectedOrders();
-                modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
-                currentPage = 1;
-            }
-        });
+    // 신규 등록 상품 - 카테고리 삭제
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
+
+        loadNewProductList(true);
+    }
+
+     // 초기화
+     $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_location-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+        
+        loadNewProductList(true);
     });
 
     function getIndexesOfSelectedCategory() {
@@ -251,53 +231,6 @@
         return locations;
     }
 
-    function displayNewProducts(productArr, target, needsEmptying) {
-        if(needsEmptying) {
-            target.empty();
-        }
-
-        productArr.forEach(function(product, index) {
-            target.append(  '<li class="prod_item">'+
-                            '   <div class="img_box">'+
-                            '       <a href="/product/detail/'+ product['idx'] + '"><img src="' + product['imgUrl'] + '" alt=""></a>'+
-                            '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] === 1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>'+
-                            '   </div>'+
-                            '   <div class="txt_box">'+
-                            '       <a href="/product/detail/' + product['idx'] + '">'+
-                            '           <span>' + product['companyName'] +'</span>'+
-                            '           <p>' + product['name']+'</p>'+
-                            '           <b>' + product['price'].toLocaleString('ko-KR') + '원</b>'+
-                            '       </a>'+
-                            '   </div>'+
-                            '</li>'
-            );
-        });
-    };
-
-    function displayNewProductsOnModal(productArr, target, needsEmptying) {
-        if(needsEmptying) {
-            target.removeAllSlides();
-        }
-
-        productArr.forEach(function(product, index) {
-            target.appendSlide( '<li class="swiper-slide">' +
-                                '   <div class="img_box">' +
-                                '       <img src="'+ product['imgUrl'] +'" alt="">' +
-                                '       <button class="zzim_btn prd_' + product['idx'] + (product['isInterest'] === 1 ? ' active': '') + '" pidx="' + product['idx'] + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                                '   </div>' +
-                                '   <div class="txt_box">' +
-                                '       <div>' +
-                                '           <h5>' + product['companyName'] +'</h5>' +
-                                '           <p>' + product['name']+'</p>' +
-                                '           <b>' + product['price'].toLocaleString('ko-KR') + '원</b>' +
-                                '       </div>' +
-                                '       <a href="/product/detail/' + product['idx'] + '">제품상세보기</a>' +
-                                '   </div>' +
-                                '</li>'
-            );
-        });
-    }
-
     function displaySelectedCategories() {
         
         let html = "";  
@@ -310,10 +243,10 @@
 
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
         }
     }
@@ -330,14 +263,19 @@
 
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
             
         } else {
-            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }    
+
+    function displaySelectedOrders() {
+        $(".sub_filter .filter_box button").eq(2)
+            .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
+    }
 
     function toggleFilterBox() {
         if($(".modal .check-form:checked").length === 0){
@@ -346,44 +284,5 @@
             $(".sub_filter_result").css('display', 'flex');
         }
     }
-
-    function displaySelectedOrders() {
-        $(".sub_filter .filter_box button").eq(2)
-            .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
-    }
-
-    //초기화
-    $(".refresh_btn").on('click', function() {
-        $("#filter_category-modal .check-form:checked").prop('checked', false);
-        $("#filter_location-modal .check-form:checked").prop('checked', false);
-        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
-        displaySelectedCategories();
-        displaySelectedLocation();
-        displaySelectedOrders();
-        toggleFilterBox();
-
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/product/newAddedProduct',
-            type : 'GET',
-            data : {
-                'categories' : getIndexesOfSelectedCategory().join(','),
-                'locations' : getIndexesOfSelectedLocation().join(','),
-                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
-            },
-            success: function (result) {
-
-                displayNewProducts(result['data'], $(".sub_section_bot .prod_list"), true);
-                displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                $(".total").text('전체 ' + result['total'].toLocaleString('ko-KR') + '개');
-                
-                isLastPage = currentPage === result.last_page;
-                
-            }, 
-            complete : function () {
-                currentPage = 1;
-            }
-        });
-    });
 </script>
 @endsection

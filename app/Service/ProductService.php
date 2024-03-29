@@ -403,7 +403,7 @@ class ProductService
             ->orderByRaw('banner_price desc, RAND()')
             ->limit(20)
             ->has('attachment')
-            ->select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_banner_ad.content',
+            ->select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_banner_ad.content', 'AF_product.is_price_open', 'AF_product.price_text',
                 DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
@@ -497,7 +497,7 @@ class ProductService
     /** 베스트상품 목록 */
     public function getBestNewProductList(array $param = [])
     {
-        $bestNewProducts = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 
+        $bestNewProducts = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
@@ -525,7 +525,7 @@ class ProductService
     //신규 등록 상품
     //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
     public function getNewAddedProductList($params) {
-        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time',
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time', 'AF_product.is_price_open', 'AF_product.price_text',
             'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx',
             DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
@@ -553,7 +553,10 @@ class ProductService
                         $query->on('AF_product.idx', '=', 'api.product_idx');
             })
             ->leftjoin('AF_wholesale as aw', function($query){
-                $query->on('aw.idx', 'AF_product.company_idx');
+                $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
+            })
+            -> leftJoin('AF_retail as ar', function($query) {
+                $query -> on('ar.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
             })
             ->where('AF_product.is_new_product', 1)
             ->whereIn('AF_product.state', ['S', 'O']);
@@ -566,11 +569,17 @@ class ProductService
             $location = explode(",", $params['locations']);
             $new_product->where(function ($query) use ($location) {
                 foreach ($location as $key => $loc) {
-                    $clause = $key == 0 ? 'where' : 'orWhere';
-                    $query->$clause('aw.business_address', 'like', "$loc%");
+                    // $clause = $key == 0 ? 'where' : 'orWhere';
+                    if($key == 0) {
+                        $query->where('aw.business_address', 'like', "$loc%");
+                        $query->orWhere('ar.business_address', 'like', "$loc%");
+                    } else {
+                        $query->orWhere('aw.business_address', 'like', "$loc%");
+                        $query->orWhere('ar.business_address', 'like', "$loc%");
+                    }
                     if (!empty($relativeTables)) {
-                        $this->filterByRelationship($query, 'aw.business_address',
-                            $relativeTables);
+                        $this->filterByRelationship($query, 'aw.business_address', $relativeTables);
+                        $this->filterByRelationship($query, 'ar.business_address',$relativeTables);
                     }
                 }
             });

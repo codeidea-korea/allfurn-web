@@ -17,7 +17,7 @@
                                 <div>
                                     <h5>{{ $item->companyName }}</h5>
                                     <p>{{ $item->name }}</p>
-                                    <b>{{ number_format($item->price, 0) }}원</b>
+                                    <b>{{$item->is_price_open ? number_format($item->price, 0).'원': $item->price_text}}</b>
                                 </div>
                             </div>
                         </li>
