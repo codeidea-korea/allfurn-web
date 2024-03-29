@@ -79,7 +79,7 @@ class HomeService
 
 
         // 베스트 신상품 목록
-        $data['productAd'] = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 
+        $data['productAd'] = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
@@ -104,7 +104,7 @@ class HomeService
        
 
         // 신상품 목록 
-        $data['new_product'] = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price',
+        $data['new_product'] = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
