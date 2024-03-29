@@ -164,6 +164,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
     Route::get('/responseEstimate', 'MypageController@getResponseEstimate');
     Route::post('/responseEstimateDetail', 'MypageController@getresponseEstimateDetail');
+    Route::post('/requestOrderDetail', 'MypageController@getRequestOrderDetail');
 });
 
 
