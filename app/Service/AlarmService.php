@@ -20,15 +20,19 @@ class AlarmService
      * 알람 리스트 가져오기
      * @param array $params
      * @return array
+     * 쿼리 실행 속도 개선 : 백업 테이블 생성 1달(매월 1일기준) 백업 이벤트 진행
+     *                  최근 3개월 데이터만 남기고 나머진 백업 테이블로 이동
+     *                  관련 프로시저, 이벤트 명
+     *                  procedure : notification_backup
+     *                  event : notificaton_backup_and_delete_event
      */
-    // TODO: 쿼리 조회 시간 확인 필요
     public function getList(array $params): array {
 
         /*DB::listen(function ($query) {
             dd("Query executed in {$query->time}ms: {$query->sql}");
         });*/
 
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
@@ -96,7 +100,7 @@ class AlarmService
         $data['list'] = $logs->orderBy('AF_notification.idx', 'desc')->offset($offset)->limit($limit)->get();
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
         
-        dd(DB::getQueryLog());
+        //dd(DB::getQueryLog());
 
         Push::where([
             'target_company_type' => Auth::user()['type'],
