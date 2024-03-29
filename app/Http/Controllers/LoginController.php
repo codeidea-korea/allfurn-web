@@ -91,11 +91,15 @@ class LoginController extends BaseController
         $user = $this->loginService->getUserByPhoneNumber($request->target);
 
         if(empty($user)) {
-            return response()->json([
-                'result' => 'fail',
-                'code' => 102,
-                'message' => '해당 번호로 가입된 회원 없음'
-            ]);
+            $user = $this->loginService->getUserById($request->userid);
+
+            if(empty($user)) {
+                return response()->json([
+                    'result' => 'fail',
+                    'code' => 102,
+                    'message' => '해당 번호로 가입된 회원 없음'
+                ]);
+            }
         }
 
         $target = "$user->phone_number";
@@ -115,7 +119,7 @@ class LoginController extends BaseController
     public function confirmAuthCode(Request $request)
     {
         $request->validate([
-            'target' => 'required',
+//            'target' => 'required',
             'type' => 'required',
             'code' => 'required',
         ]);
@@ -123,11 +127,15 @@ class LoginController extends BaseController
         $user = $this->loginService->getUserByPhoneNumber($request->target);
 
         if(empty($user)) {
-            return response()->json([
-                'success' => false,
-                'code' => 102,
-                'message' => '해당 번호로 가입된 회원 없음'
-            ]);
+            $user = $this->loginService->getUserById($request->userid);
+
+            if(empty($user)) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 102,
+                    'message' => '해당 번호로 가입된 회원 없음'
+                ]);
+            }
         }
         
         $new_param['target'] = $user->phone_number;
