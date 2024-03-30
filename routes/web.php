@@ -97,6 +97,7 @@ Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::post('/insertRequest', 'EstimateController@insertRequest');
     Route::post('/updateResponse', 'EstimateController@updateResponse');
     Route::put('/hold', 'EstimateController@hold');
+    Route::post('/insertOrder', 'EstimateController@insertOrder');
 });
 
 Route::prefix('order')->name('order')->group(function() {
@@ -169,6 +170,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::get('/responseEstimate', 'MypageController@getResponseEstimate');
     Route::post('/responseEstimateDetail', 'MypageController@getresponseEstimateDetail');
     Route::post('/requestOrderDetail', 'MypageController@getRequestOrderDetail');
+    Route::post('/responseOrderDetail', 'MypageController@getResponseOrderDetail');
 });
 
 
