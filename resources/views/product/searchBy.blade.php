@@ -1,362 +1,301 @@
-@extends('layouts.master')
-
-@section('header')
-    @include('layouts.header.main-header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
-    <div id="container" class="container category">
-        <div class="inner">
-            <p class="inner__type">
-                ‘<span>{{$_GET['kw']}}</span>' 검색 결과
-            </p>
-            <div class="inner__category">
-                <div class="sub-category sub-category--type-2">
-                    <p class="sub-category__item sub-category__item--active"><a>상품</a></p>
-                    <p class="sub-category__item"><a href="/wholesaler/search?kw={{$_GET['kw']}}">업체</a></p>
+@include('layouts.header')
+    <div id="content">
+        <section class="sub">
+            <div class="inner">
+                <div class="main_tit mb-8 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <h3><span class="font-base">‘{{$_GET['kw']}}'</span>검색결과</h3>
+                    </div>
                 </div>
-            </div>
-            <div class="category-menu category-menu--modify">
-                <div>
-                    <p class="category-menu__title">
-                        <a>
-                            @if(isset($_GET['pre']) && $_GET['pre'] != null)
-                                @foreach($productList['category1'] as $item)
-                                    @if($item->idx == $_GET['pre'])
-                                        {{$item->name}}
-                                    @endif
-                                @endforeach
-                                @if(isset($_GET['ca']) && $_GET['ca'] != null)
-                                    @foreach($productList['category2'] as $item)
-                                        @if($item->idx == $_GET['ca'])
-                                            > {{$item->name}}
-                                        @endif
-                                    @endforeach
-                                @endif
-                            @else
-                                카테고리
-                            @endif
+                <div class="sub_category">
+                    <ul>
+                        <li class="active"><a href="./full_results_prod.php">상품</a></li>
+                        <li><a href="/wholesaler/search?kw={{$_GET['kw']}}">업체</a></li>
+                    </ul>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div>
+                        <a href="javascript:;" class="h-[48px] px-3 border rounded-sm inline-block filter_border filter_dropdown w-[250px] flex justify-between items-center">
+                            <p>카테고리</p>
+                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                         </a>
-                    </p>
-                    <div class="category-menu__wrap">
-                        <div class="category-menu__main">
-                            @foreach($productList['category1'] as $item)
-                                <div class="category-menu__item">
-                                    <a href="#" class="category-menu__link" data-category_idx={{$item->idx}} >
-                                        <img class="category__ico" src="{{$item->imgUrl}}"/>
-                                        {{$item->name}}
-                                    </a>
-                                </div>
-                            @endforeach
+                        <div class="full_search filter_dropdown_wrap w-[360px]" style="display: none;">
+                            <div class="category_list" style="display: block;">
+                                <ul>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><img class="category__ico" src="https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/product/65eb364492edcb02df94fb038753c10868ecf25416b2963ce8bf92c626b7eed2.png"></i>
+                                            <span>침대/매트리스</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">침대프레임</a></li>
+                                            <li><a href="javascript:;">스프링매트리스</a></li>
+                                            <li><a href="javascript:;">폼매트리스</a></li>
+                                            <li><a href="javascript:;">기능성매트리스</a></li>
+                                            <li><a href="javascript:;">협탁</a></li>
+                                            <li><a href="javascript:;">돌침대/흙침대</a></li>
+                                            <li><a href="javascript:;">기타기능성침대</a></li>
+                                            <li><a href="javascript:;">라텍스매트리스</a></li>
+                                            <li><a href="javascript:;">토퍼</a></li>
+                                            <li><a href="javascript:;">베개/커버</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_sofa"></use></svg></i>
+                                            <span>소파/거실</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">가죽소파</a></li>
+                                            <li><a href="javascript:;">인조가죽소파</a></li>
+                                            <li><a href="javascript:;">일반패브릭소파</a></li>
+                                            <li><a href="javascript:;">기능성패브릭소파</a></li>
+                                            <li><a href="javascript:;">리클라이너 소파</a></li>
+                                            <li><a href="javascript:;">1인용 소파</a></li>
+                                            <li><a href="javascript:;">1인용 리클라이너</a></li>
+                                            <li><a href="javascript:;">소파베드</a></li>
+                                            <li><a href="javascript:;">좌식소파</a></li>
+                                            <li><a href="javascript:;">소파테이블</a></li>
+                                            <li><a href="javascript:;">거실장</a></li>
+                                            <li><a href="javascript:;">TV스탠드</a></li>
+                                            <li><a href="javascript:;">돌소파/흙소파</a></li>
+                                            <li><a href="javascript:;">기타</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_table"></use></svg></i>
+                                            <span>식탁/의자</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">우드 식탁</a></li>
+                                            <li><a href="javascript:;">세라믹 식탁</a></li>
+                                            <li><a href="javascript:;">대리석 식탁</a></li>
+                                            <li><a href="javascript:;">기타소재 식탁</a></li>
+                                            <li><a href="javascript:;">식탁의자</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_closet"></use></svg></i>
+                                            <span>옷장</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">장롱</a></li>
+                                            <li><a href="javascript:;">붙박이장</a></li>
+                                            <li><a href="javascript:;">드레스룸</a></li>
+                                            <li><a href="javascript:;">캐비닛</a></li>
+                                            <li><a href="javascript:;">서랍장</a></li>
+                                            <li><a href="javascript:;">수납장</a></li>
+                                            <li><a href="javascript:;">행거</a></li>
+                                            <li><a href="javascript:;">주방수납장</a></li>
+                                            <li><a href="javascript:;">진열장</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_study"></use></svg></i>
+                                            <span>서재/공부방</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">책상</a></li>
+                                            <li><a href="javascript:;">의자</a></li>
+                                            <li><a href="javascript:;">책장/책꽂이</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_dressing"></use></svg></i>
+                                            <span>화장대/콘솔</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">화장대</a></li>
+                                            <li><a href="javascript:;">콘솔</a></li>
+                                            <li><a href="javascript:;">전신거울</a></li>
+                                            <li><a href="javascript:;">벽거울</a></li>
+                                            <li><a href="javascript:;">탁상거울</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_kids"></use></svg></i>
+                                            <span>키즈/주니어</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">일반침대프레임</a></li>
+                                            <li><a href="javascript:;">2층침대프레임</a></li>
+                                            <li><a href="javascript:;">책상</a></li>
+                                            <li><a href="javascript:;">의자</a></li>
+                                            <li><a href="javascript:;">키즈소파</a></li>
+                                            <li><a href="javascript:;">옷장</a></li>
+                                            <li><a href="javascript:;">서랍/수납장</a></li>
+                                            <li><a href="javascript:;">층간소음방지매트</a></li>
+                                            <li><a href="javascript:;">놀이가구</a></li>
+                                            <li><a href="javascript:;">안전문</a></li>
+                                            <li><a href="javascript:;">책장/책꽂이</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_display"></use></svg></i>
+                                            <span>진열장/장식장</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">진열장/장식장</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_office"></use></svg></i>
+                                            <span>사무용가구</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">책상</a></li>
+                                            <li><a href="javascript:;">의자</a></li>
+                                            <li><a href="javascript:;">파티션/패널</a></li>
+                                            <li><a href="javascript:;">책장/수납</a></li>
+                                            <li><a href="javascript:;">소파</a></li>
+                                            <li><a href="javascript:;">테이블</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><img src="/img/main/obtain_icon.png" alt=""></i>
+                                            <span>조달가구</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">사무용가구</a></li>
+                                            <li><a href="javascript:;">중역용가구</a></li>
+                                            <li><a href="javascript:;">교육용가구</a></li>
+                                            <li><a href="javascript:;">사무용의자</a></li>
+                                            <li><a href="javascript:;">사무용소파</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i><svg><use xlink:href="/img/icon-defs.svg#category_business"></use></svg></i>
+                                            <span>업소용가구</span>
+                                        </a>
+                                        <ul class="depth2">
+                                            <li><a href="javascript:;">테이블</a></li>
+                                            <li><a href="javascript:;">의자</a></li>
+                                            <li><a href="javascript:;">주문가구</a></li>
+                                            <li><a href="javascript:;">기타</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="category-refresh">
-                    <a onclick="resetCategory()" class="category-filter__refresh">
-                        <i class="ico__refresh--gray"></i>
+                    <button class="flex items-center gap-1 h-[48px] px-3 border rounded-sm inline-block filter_border">
+                        <svg class="h-4 w-4 text-stone-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                         <span>초기화</span>
-                    </a>
+                    </button>
                 </div>
-            </div>
 
-            @if(isset($productList['property']))
-                <div class="category-filter category-filter--active">
-                    <a href="#" class="category-filter__title">속성</a>
-                    <div class="category-filter__wrap">
-                            <?php
-                            $propertyList = [];
-                            foreach($productList['property'] as $item) {
-                                if ($item['name'] != null) {
-                                    $item['list'] = [];
-                                    array_push($propertyList, $item);
-                                }
-                            }
-                            $selectedFilterList = [];
-                            ?>
-                        @foreach($propertyList as $key=>$prop)
-                                <?php $arr = array(); ?>
-                            @if(isset($_GET['prop']))
-                                    <?php $arr = explode('|', $_GET['prop']); ?>
-                            @endif
-
-                            <div class="category-filter__item">
-                                <div class="category-filter__sub-title">{{$prop->name}}
-                                    <a href="#" class="category-filter__arrow"></a>
-                                </div>
-                                <div class="category-filter__box">
-                                    <div>
-                                        @foreach($productList['property'] as $item)
-                                            @if($prop->idx == $item->parent_idx)
-                                                <p @if(in_array($item->idx, $arr)) class="select-button" {{array_push($selectedFilterList, ['idx'=>$item->idx, 'name'=>$item->property_name])}}@endif>
-                                                    <button type="button" class="prop_btn" data-property_idx="{{$item->idx}}">{{$item->property_name}}</button>
-                                                </p>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="category-filter__footer @if(count($selectedFilterList) > 0) active @endif ">
-                        <div class="category-filter__util">
-                            <div class="category-filter__data">
-                                @if(count($selectedFilterList) > 0)
-                                    @foreach($selectedFilterList as $item)
-                                        <button type='button' data-idx="{{$item['idx']}}"><span>{{$item['name']}}</span></button>
-                                    @endforeach
-                                @endif
-                            </div>
-                            <a class="category-filter__refresh" id="property_reset">
-                                초기화
-                                <i class="ico__refresh"></i>
-                            </a>
-                        </div>
+                <div class="sub_filter mt-5">
+                    <div class="total"><span>‘{{$_GET['kw']}}'</span> 검색 결과 총 {{number_format($productList['list']->total())}}개의 상품</div>
+                    <div class="filter_box">
+                        <button onclick="modalOpen('#filter_align-modal02')">신상품순</button>
                     </div>
                 </div>
-            @endif
-
-            @if($productList['list']->total() > 0)
-                <div class="contents">
-                    <div class="product">
-                        <div class="product__text--wrap">
-                            <p class="product__count">‘{{$_GET['kw']}}' 검색 결과 총 <?php echo number_format($productList['list']->total()); ?>개의 상품</p>
-                            <a href="#" class="product__filter" onclick="openModal('#modal-type--basic')">
-                                <i class="ico__filter"><span class="a11y">필터 아이콘</span></i>
-                                <span>
-                                    @if(isset($_GET['so']))
-                                        @switch($_GET['so'])
-                                            @case('search')
-                                                검색 많은 순
-                                                @break
-                                            @case('order')
-                                                주문 많은 순
-                                                @break
-                                            @default
-                                                신상품순
-                                                @break
-                                        @endswitch
-                                    @else
-                                        신상품순
-                                    @endif
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <ul class="product-list">
+                @if($productList['list']->total() > 0)
+                <div class="relative">
+                    <ul class="prod_list">
                         @foreach($productList['list'] as $item)
-                            <li class="product-list__card" style="position: relative;">
-                                <div class="card__bookmark">
-                                    <i class="@if($item->isInterest == 1)ico__bookmark24--on @else ico__bookmark24--off @endif" onclick="addInterestByList('{{$item->idx}}')" data-product_idx="{{$item->idx}}"><span class="a11y">스크랩 off</span></i>
-                                </div>
-                                <a href="/product/detail/{{$item->idx}}" title="{{$item->name}} 상세 화면으로 이동">
-                                    <div class="card__img--wrap">
-                                        <img class="card__img" src="{{$item->imgUrl}}" alt="{{$item->name}}" style="height:100%">
-                                        @if($item->isAd == 1)
-                                            <div class="card__badge">AD</div>
+                        <li class="prod_item">
+                            <div class="img_box">
+                                <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                            </div>
+                            <div class="txt_box">
+                                <a href="./prod_detail.php">
+                                    <span>{{$item->companyName}}</span>
+                                    <p>{{$item->name}}</p>
+                                    <b>
+                                        @if( $item->is_price_open == 1 )
+                                            {{number_format( $item->price )}}원
+                                        @else
+                                            {{$item->price_text}}
                                         @endif
-                                    </div>
-                                    <div class="card__text--wrap">
-                                        <p class="card__brand">{{$item->companyName}}</p>
-                                        <p class="card__name">@if($item->state == 'O')(품절) @endif{{$item->name}}</p>
-                                        <p class="card__price">
-                                            @if($item->is_price_open != 0)
-                                                <?php echo number_format($item->price, 0); ?> 원
-                                            @else
-                                                {{$item->price_text}}
-                                            @endif
-                                        </p>
-                                    </div>
+                                    </b>
                                 </a>
-                                @if($item->state == 'O')
-                                    <a class="dim" style="position:absolute;width:100%;height:100%;top:0;left:0;background-color: #ffffff80" href="/product/detail/{{$item->idx}}"></a>
-                                @endif
-                            </li>
+                            </div>
+                        </li>
                         @endforeach
                     </ul>
-
-                    <div class="pagenation pagination--center mt0">
-                        {{ $productList['list']->withQueryString()->links() }}
-                    </div>
-                </div>
-            @else
-                <!--data 없을때-->
-                <div class="no-data">
-                  <p>
-                    <i class="ico__search-circle"></i>
-                    ‘{{$_GET['kw']}}’ 에 대한 상품 검색 결과가 없습니다.
-                  </p>
-                  <a href="{{route('product.new')}}">올펀 상품 보러가기</a>
-                </div>
-            @endif
-        </div>
-        <div id="modal-type--basic" class="modal">
-            <div class="modal__container">
-                <div class="modal__content">
-                    <div class="modal-box__container" style="width: 480px">
-                        <div class="modal-box__content">
-                            <div class="header">
-                                <p>정렬 선택</p>
-                            </div>
-                            <div class="content">
-                                <div class="radio">
-                                    <label class="radio__item">
-                                        <input type="radio" name="filter" data-sort="new" @if(!isset($_GET['so'])) checked @elseif($_GET['so'] == 'new') checked @endif>
-                                        <span>신상품순</span>
-                                    </label>
-                                    <label class="radio__item">
-                                        <input type="radio" name="filter" data-sort="search" @if(isset($_GET['so']) && $_GET['so'] == 'search') checked @endif>
-                                        <span>검색 많은 순</span>
-                                    </label>
-                                    <label class="radio__item">
-                                        <input type="radio" name="filter" data-sort="order" @if(isset($_GET['so']) && $_GET['so'] == 'order') checked @endif>
-                                        <span>주문 많은 순</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="footer" style="height: 42px">
-                                <button type="button" class="sort_btn">선택 완료</p>
-                            </div>
-                            <div class="modal-close">
-                                <button type="button" class="modal__close-button" onclick="closeModal('#modal-type--basic')"><span class="a11y">close</span></button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </div>
+            @endif
+        </section>
     </div>
-@endsection
 
-@section('script')
     <script>
-        var swiper = new Swiper('#eventkvSwipe', {
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
-            },
-            loop: true,
-            slidesPerView: 1,
-            spaceBetween: 0,
-            paginationClickable: true,
-            keyboard: true,
-            speed: 400,
-            pagination: {
-                el: '#eventkvSwipe .swiper-pagination',
-                type: 'fraction',
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-        $('#eventkvSwipe').hover(function(){
-            swiper.autoplay.stop();
-        }, function(){
-            swiper.autoplay.start();
+        // 카테고리 클릭시
+        $('.sub_category li').on('click',function(){
+            $(this).addClass('active').siblings().removeClass('active')
+        })
+
+        // 속성 선택시
+        $('.sub_option .dropdown_btn').on('click',function(){
+            $(this).toggleClass('active')
+            $(this).parent('.sub_option').toggleClass('active')
+        })
+
+        // 드롭다운 토글
+        $(".filter_dropdown").click(function(event) {
+            var $thisDropdown = $(this).next(".filter_dropdown_wrap");
+            $(this).toggleClass('active');
+            $thisDropdown.toggle();
+            $(this).find("svg").toggleClass("active");
+            event.stopPropagation(); // 이벤트 전파 방지
         });
 
-        $('.category-menu').on('click', function () {
-            if ($(this).is('.category-menu--active')) {
-                $(this).removeClass('category-menu--active');
-            } else {
-                $(this).addClass('category-menu--active');
+        // 드롭다운 항목 선택 이벤트
+        $(".filter_dropdown_wrap ul li a").click(function(event) {
+            var selectedText = $(this).text();
+            var $dropdown = $(this).closest('.filter_dropdown_wrap').prev(".filter_dropdown");
+            $dropdown.find("p").text(selectedText);
+            $(this).closest(".filter_dropdown_wrap").hide();
+            $dropdown.removeClass('active');
+            $dropdown.find("svg").removeClass("active");
+
+            // '직접 입력' 선택 시 direct_input_2 표시
+            if ($(this).data('target') === "direct_input_2") {
+                $('.direct_input_2').show();
             }
-        })
-
-        $('body').on('mouseover', '.category-menu__link', function () {
-            $('.category-menu__item.selected').removeClass('selected');
-
-            $(this).parent().addClass('selected');
-            bodyCategoryList($(this).data('category_idx'));
-        })
-        $('body').on('mouseleave', '.category-menu__wrap', function () {
-            $('.category-menu.category-menu--active').removeClass('category-menu--active');
-        })
-
-        function bodyCategoryList(category_idx) {
-            $.ajax({
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: '/product/getCategoryList/' + category_idx,
-                data: {},
-                type: 'POST',
-                dataType: 'json',
-                success: function (result) {
-                    $('.category-menu__sub').remove();
-                    var htmlText = '<div class="category-menu__sub active" style="background:white;max-height: 400px;">' +
-                        '<p class="category-menu__sub-item">' +
-                        '<a href="/product/search?kw={{$_GET['kw']}}&pre=' + category_idx + '" >전체</a>' +
-                        '</p>';
-                    result.forEach(function (e) {
-                    htmlText += '<p class="category-menu__sub-item">' +
-                        '<a href="/product/search?kw={{$_GET['kw']}}&ca=' + e.idx + '&pre=' + category_idx + '" >' + e.name + '</a>' +
-                        '</p>';
-                    })
-                    htmlText += '</div>';
-                    $('.category-menu__wrap').css('width', '500px');
-                    $('.category-menu__item.selected').append(htmlText);
-                }
-            });
-        }
-
-        function resetCategory() {
-            urlSearch = new URLSearchParams(location.search);
-            url = '/product/search?kw='+urlSearch.get('kw');
-
-            location.replace(url);
-        }
-
-        function selectCategory() {
-            var query = "?ca=";
-            $('.content__list.category li input:checked').map(function() {
-                query += $(this).data('category_code') + "|";
-            })
-
-            closeModal('#default-modal');
-            location.replace('/product/new'+query.slice(0, -1));
-        }
-
-        $('body').on('click', '.prop_btn, .category-filter__footer button, .sort_btn, #property_reset', function () {
-            closeModal('#modal-type--basic');
-
-            if ($(this).is('.category-filter__footer')) {
-                text = $(this).find('span').text();
-                $(this).remove();
-
-                $('.select-button').map(function () {
-                    if ($(this).text() == text) {
-                        $(this).parent().removeClass('select-button');
-                    }
-                })
-            } else if ('#property_reset'){
-                $('.category-filter__footer .category-filter__data').html('');
-                $('.select-button').map(function () {
-                    $(this).removeClass('.select-button');
-                })
-            } else if (!'.sort_btn'){
-                $(this).parent().addClass('select-button');
+            // '소비자 직배 가능' 또는 '매장 배송' 선택 시 direct_input_2 숨김
+            else if ($(this).hasClass('direct_input_2_hidden')) {
+                $('.direct_input_2').hide();
             }
+            // '무료' 또는 '착불' 선택 시 direct_input_2의 상태 변경 없음
 
-            var prop = '';
+            event.stopPropagation(); // 이벤트 전파 방지
+        });
 
-            $('.select-button').map(function () {
-                prop += $(this).find('button').data('property_idx').toString() + "|";
-            })
 
-            url = '/product/search?';
-            urlSearch = new URLSearchParams(location.search);
-            if (urlSearch.get('ca') != null) {
-                url += 'ca='+urlSearch.get('ca');
+        // 드롭다운 영역 밖 클릭 시 드롭다운 닫기
+        $(document).click(function(event) {
+            if (!$(event.target).closest('.filter_dropdown, .filter_dropdown_wrap').length) {
+                $('.filter_dropdown_wrap').hide();
+                $('.filter_dropdown').removeClass('active');
+                $('.filter_dropdown svg').removeClass("active");
             }
-            if (urlSearch.get('pre') != null) {
-                url += '&pre='+urlSearch.get('pre');
-            }
-            if (urlSearch.get('kw') != null) {
-                url += '&kw='+urlSearch.get('kw');
-            }
-            url += '&so='+$('input[name="filter"]:checked').data('sort')
+        });
 
-            location.replace(url+'&prop='+prop.slice(0, -1));
-        })
+        $('.guide_list a').click(function() {
+            // 클릭된 항목의 data-target 값 가져오기
+            var targetId = $(this).data('target');
+
+            // 모든 가이드 내용 숨기기
+            $('.guide_con').hide();
+
+            // 해당하는 ID를 가진 가이드 내용만 보여주기
+            $('#' + targetId).show();
+        });
+
     </script>
 @endsection
