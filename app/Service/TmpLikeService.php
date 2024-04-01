@@ -49,7 +49,7 @@ class TmpLikeService
                 $query->on('AF_product.idx', '=', 'api.product_idx');
             })
             ->select( 'AF_product.idx', 'AF_product.name AS product_name', 'AF_product.is_price_open', 'AF_product.price', 'AF_product.price_text'
-                    , 'AF_product_interest_folder.name AS folder_name'
+                    , 'AF_product_interest_folder.name AS folder_name', 'AF_product.access_count'
             , DB::raw('IF(AF_wholesale.idx IS NOT NULL, AF_wholesale.company_name, AF_retail.company_name) AS company_name')
             , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) AS product_image')
             , DB::raw('(interest + AF_product.inquiry_count) AS popularity'));
@@ -91,7 +91,7 @@ class TmpLikeService
 
         $count = $query -> get() -> count();
 
-        $params['orderedElement'] =  in_array($params['orderedElement'], [null, 'filter_register_time']) ? "AF_product_interest.idx" : str_replace("filter_", "", $params['orderedElement']);
+        $params['orderedElement'] =  in_array($params['orderedElement'], [null, 'register_time']) ? "AF_product_interest.idx" : $params['orderedElement'];
         $list = $query -> orderBy($params['orderedElement'], 'desc') -> offset($offset) -> limit($limit) -> get();
 
         $data['count'] = $count;
