@@ -410,11 +410,21 @@ class WholesalerService {
                 }
             });
         }
+        
+        if(isset($params['orderedElement'])) {
+            $list->groupBy('company_idx')
+                ->orderBy($params['orderedElement'], 'desc');
+        } else {
+            $list->groupBy('company_idx')
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.register_time','desc');
+        }
 
-        $list->groupBy('company_idx')
-            ->orderBy($params['orderedElement'], 'desc')
-            ->limit(50)
-            ->paginate(3);
+        if( isset( $params['limit'] ) && $params['limit'] > 0 ) {
+            $list->limit($params['limit']);
+        } else {
+            $list->paginate(3);
+        }
 
         $list = $list->get();
 

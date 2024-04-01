@@ -232,7 +232,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/search', 'WholefsalerController@listBySearch');
     Route::get('/best', 'WholesalerController@best');
     Route::get('/gather', 'WholesalerController@gather');
-    Route::get('/thismonth', 'WholesalerController@getThinMonthWholesaler');
+    Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
 });
 
 Route::prefix('download')->name('download')->group(function() {

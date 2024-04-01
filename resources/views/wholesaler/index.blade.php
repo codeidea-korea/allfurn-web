@@ -150,7 +150,7 @@
             </div>
         </div>
     </section>
-    @endif;
+    @endif
 
     @include('wholesaler.inc-company_product')
 </div>

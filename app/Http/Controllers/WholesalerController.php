@@ -40,8 +40,8 @@ class WholesalerController extends BaseController
 
         // $companyList = $this->productService->getThisMonth('product');
         // $companyList = setArrayNumer( $companyList );
-        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);
-
+        $target['limit'] = 20;
+        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);        
         $company = $this->wholesalerService->getThisMonthWholesaler($target);
 
         return view(getDeviceType().'wholesaler.index', [
@@ -140,9 +140,10 @@ class WholesalerController extends BaseController
             return false;
     }
     
-    public function getThinMonthWholesaler()
+    public function getThisMonthWholesaler()
     {
-        $data = $this->wholesalerService->getThinMonthWholesaler(50);
-        return view(getDeviceType().'wholesaler.thisMonth', $data);
+        $target['limit'] = 50;
+        $data = $this->wholesalerService->getThisMonthWholesaler($target);
+        return view(getDeviceType().'wholesaler.thisMonth', [ 'wholesalerList' => $data]);
     }
 }
