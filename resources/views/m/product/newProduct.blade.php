@@ -137,7 +137,7 @@
                 'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','),
                 'locations' : getIndexesOfSelectedLocation().join(','),
-                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
             },
             beforeSend : function() {
                 if(target) {
@@ -182,7 +182,7 @@
     $(".refresh_btn").on('click', function() {
         $("#filter_category-modal .check-form:checked").prop('checked', false);
         $("#filter_location-modal .check-form:checked").prop('checked', false);
-        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+        $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
         
         loadNewProductList(true);
     });
@@ -230,7 +230,7 @@
 
     function displaySelectedOrders() {
         $(".sub_filter .filter_box button").eq(2)
-            .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
+        .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
     }
 </script>
 @endsection

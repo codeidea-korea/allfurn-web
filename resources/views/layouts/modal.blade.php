@@ -77,7 +77,7 @@
             </div>
             <ul class="search_btn_list">
                 <li data-next="search_popular"><button><b>인기 상품</b> 모아보기</button></li>
-                <li data-next="search_new"><button><b>신상품</b> 모아보기</button></li>
+                <li data-next="search_new" ><button><b>신상품</b> 모아보기</button></li>
                 <li data-next="search_sale"><button><b>할인/행사 상품</b> 모아보기</button></li>
                 <li data-next="search_company"><button><b>인기 도매 업체 상품</b> 모아보기</button></li>
                 <li data-next="search_popcategory"><button><b>인기 카테고리</b>로 상품 찾기</button></li>
@@ -361,14 +361,28 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_register_time" checked>
-                    <label for="filter_register_time">최신순</label>
-                </li><li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_access_count">
-                    <label for="filter_access_count">조회순</label>
-                </li><li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter_popularity">
-                    <label for="filter_popularity">인기순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_01">추천순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_02">최신 상품 등록순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_03">검색 많은 순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_04">거래 많은 순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_05">상품 많은 순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_3_06">가나다 순</label>
                 </li>
             </ul>
             <div class="btn_bot">
@@ -378,10 +392,59 @@
     </div>
 </div>
 
+<!-- 필터 : 정렬선택02 -->
+<div class="modal" id="filter_align-modal02">
+    <div class="modal_bg" onclick="modalClose('#filter_align-modal02')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#filter_align-modal02')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body filter_body">
+            <h4>정렬 선택</h4>
+            <ul class="filter_list">
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_100_01">신상품순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_100_02">검색 많은 순</label>
+                </li>
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
+                    <label for="filter_cate_100_03">주문 많은 순</label>
+                </li>
+            </ul>
+            <div class="btn_bot">
+                <button class="btn btn-primary full">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-
-
+<!-- 필터 : 정렬선택 -->
+<div class="modal" id="filter_align-modal03">
+    <div class="modal_bg" onclick="modalClose('#filter_align-modal03')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#filter_align-modal03')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body filter_body">
+            <h4>정렬 선택</h4>
+            <ul class="filter_list">
+                <li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter03_register_time" value="register_time" checked>
+                    <label for="filter03_register_time">최신순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter03_access_count" value="access_count">
+                    <label for="filter03_access_count">조회순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter03_popularity" value="popularity">
+                    <label for="filter03_popularity">인기순</label>
+                </li>
+            </ul>
+            <div class="btn_bot">
+                <button class="btn btn-primary full">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- 검색모달 -->
 <div class="modal" id="search-modal">

@@ -10,7 +10,7 @@
             <div class="filter_box">
                 <button class="" onclick="modalOpen('#filter_category-modal')">카테고리<b class='txt-primary'></b></button>
                 <button class="" onclick="modalOpen('#filter_location-modal')">소재지<b class='txt-primary'></b></button>
-                <button onclick="modalOpen('#filter_align-modal')">최신순</button>
+                <button onclick="modalOpen('#filter_align-modal03')">최신순</button>
             </div>
             <div class="total">전체 0개</div>
         </div>
