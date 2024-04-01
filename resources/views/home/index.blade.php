@@ -60,7 +60,7 @@
                     @endforeach
                 </ul>
                 <div class="bottom_box">
-                    <p>{{ $data['banner_top'][0]->company_name }}</p>
+                    <p>{{ isset($data['banner_top'][0]) ? $data['banner_top'][0]->company_name : '' }}</p>
                     <div class="flex items-center ">
                         <div class="count_pager"><b>1</b> / {{ count($data['banner_top']) }}</div>
                         {{-- <a href="javascript:;">모아보기</a> --}}
