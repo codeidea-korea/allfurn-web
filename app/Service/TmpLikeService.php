@@ -118,7 +118,7 @@ class TmpLikeService
         $where = "";
         // 카테고리 추가할 위치
         if (isset($params['regions'])) {
-            $where .= " AND (wl.sido REGEXP '".str_replace(',', '|', $params['regions'])."' OR rl.sido REGEXP '".str_replace(',', '|', $params['regions'])."')";
+            $where .= " AND (SUBSTRING_INDEX(IF(w.idx IS NOT NULL, w.business_address, r.business_address), ' ', 1) REGEXP '".str_replace(',', '|', $params['regions'])."')";
         }
 
         $outerWhere = "";
@@ -129,30 +129,56 @@ class TmpLikeService
             $outerWhere = " AND (".rtrim($outerWhere, 'OR').') ';
         }
 
+        $orderBy = "ORDER BY ";
+        if(!isset($params['orderedElement']) || $params['orderedElement'] == 'register_time') {
+            $orderBy .= 'cl.idx DESC';
+        } else {
+            $orderBy .= $params['orderedElement'] ." DESC";
+        }
+        // dd($orderBy);
+
         $fromSql = 
             "SELECT
-                `cl`.`idx`, `cl`.`company_idx`, `cl`.`company_type`,
-                IF(w.idx IS NOT NULL, w.company_name, r.company_name) AS company_name,
-                IF(attach.idx IS NOT NULL, CONCAT('".preImgUrl()."', attach.folder, '/', attach.filename),  '')
-                 AS profile_image,
-                GROUP_CONCAT(SUBSTRING_INDEX(IF(w.idx IS NOT NULL, wl.sido, rl.sido), ' ', 1)) AS region,
-                IF(TIMESTAMPDIFF(SECOND, cl.register_time, now() < 2592000), 'Y', 'N') 
-                AS is_new,
-                (SELECT SUBSTRING_INDEX(GROUP_CONCAT(JSON_OBJECT('name', ap.name, 'idx', ap.idx, 'image', CONCAT('".preImgUrl()."', aa.folder, '/', aa.filename)) ORDER BY ap.register_time DESC), '},', 4) FROM AF_product ap LEFT JOIN AF_attachment aa ON SUBSTRING_INDEX(ap.attachment_idx, ',', 1) = aa.idx WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx) AS products,
-                (SELECT GROUP_CONCAT(DISTINCT ac2.name) FROM AF_category ac INNER JOIN AF_product ap ON ac.idx = ap.category_idx INNER JOIN AF_category ac2 ON ac2.idx = ac.parent_idx WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx)
-                AS category_names
-            FROM `AF_company_like` AS `cl`
+                cl.idx, cl.company_idx, cl.company_type
+                , IF(w.idx IS NOT NULL, w.company_name, r.company_name) AS company_name
+                , IF(attach.idx IS NOT NULL, CONCAT('".preImgUrl()."', attach.folder, '/', attach.filename),  '') AS profile_image
+                , SUBSTRING_INDEX(IF(w.idx IS NOT NULL, w.business_address, r.business_address), ' ', 1) AS region
+                , IF(w.idx IS NOT NULL, w.access_count, r.access_count) AS access_count
+                , IF(TIMESTAMPDIFF(SECOND, cl.register_time, now() < 2592000), 'Y', 'N') AS is_new
+                , (SELECT 
+                    SUBSTRING_INDEX(GROUP_CONCAT(
+                        JSON_OBJECT(
+                          'name', ap.name
+                         ,'idx', ap.idx 
+                         ,'image', CONCAT('".preImgUrl()."', aa.folder,'/', aa.filename)
+                         ,'isInterest', (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.user_idx = ".Auth::user()->idx." AND pi.product_idx = ap.idx)
+                        ) ORDER BY ap.is_represent = 1 DESC, ap.register_time DESC), '},', 3
+                    ) FROM AF_product ap 
+                    LEFT JOIN AF_attachment aa 
+                    ON SUBSTRING_INDEX(ap.attachment_idx, ',', 1) = aa.idx 
+                    WHERE ap.company_type = cl.company_type 
+                        AND ap.company_idx = cl.company_idx
+                    ) AS products
+                ,(SELECT GROUP_CONCAT(DISTINCT ac2.name) 
+                  FROM AF_category ac 
+                  INNER JOIN AF_product ap 
+                  ON ac.idx = ap.category_idx 
+                  INNER JOIN AF_category ac2 
+                  ON ac2.idx = ac.parent_idx 
+                  WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx
+                ) AS category_names
+            FROM AF_company_like AS cl
             LEFT JOIN 
-                (`AF_wholesale` AS `w` LEFT JOIN `AF_location` AS `wl` ON `wl`.`company_idx` = `w`.`idx` AND `wl`.`company_type` = 'W')
-            ON `w`.`idx` = `cl`.`company_idx` AND `cl`.`company_type` = 'W'
+                (AF_wholesale AS w LEFT JOIN AF_location AS wl ON wl.company_idx = w.idx AND wl.company_type = 'W')
+            ON w.idx = cl.company_idx AND cl.company_type = 'W'
             LEFT JOIN 
-                (`AF_retail` AS `r` LEFT JOIN `AF_location` AS `rl` ON `rl`.`company_idx` = `r`.`idx` AND `rl`.`company_type` = 'R')
-            ON `r`.`idx` = `cl`.`company_idx` AND `cl`.`company_type` = 'R'
-            LEFT JOIN `AF_attachment` AS `attach`
-            ON 
-                `attach`.`idx` = `w`.`profile_image_attachment_idx` OR `attach`.`idx` = r.profile_image_attachment_idx
-            WHERE `cl`.`user_idx` = ".Auth::user()['idx']." {$where}
-            group by `cl`.`company_idx`, `cl`.`company_type` ORDER BY `cl`.idx DESC";
+                (AF_retail AS r LEFT JOIN AF_location AS rl ON rl.company_idx = r.idx AND rl.company_type = 'R')
+            ON r.idx = cl.company_idx AND cl.company_type = 'R'
+            LEFT JOIN AF_attachment AS attach
+            ON attach.idx = w.profile_image_attachment_idx OR attach.idx = r.profile_image_attachment_idx
+            WHERE cl.user_idx = ".Auth::user()['idx']." {$where}
+            group by cl.company_idx, cl.company_type ".$orderBy;
+
         $sql = "SELECT * FROM ({$fromSql}) AS tb WHERE 1 = 1 {$outerWhere}";
         $result = DB::select($sql);
 

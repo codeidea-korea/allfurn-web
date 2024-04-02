@@ -1,25 +1,19 @@
-<section class="sub">
+<section class="sub_section">
     <div class="inner">
         <div class="sub_filter">
             <div class="filter_box">
-                <button onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
-                <button onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
+                <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+                <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                 <button onclick="modalOpen('#filter_align-modal03')">최신순</button>
+                <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
             </div>
-            <div class="total txt-gray">전체 0개</div>
+            <div class="total">전체 0개</div>
         </div>
-        <div class="sub_filter_result" hidden>
-            <div class="filter_on_box">
-                <div class="category"></div>
-                <div class="location"></div>
-            </div>
-            <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
-        </div>
-        <ul class="obtain_list"></ul>
     </div>
+    <ul class="obtain_list type02"></ul>
 </section>
 <script>
-     $(document).ready(function(){
+    $(document).ready(function(){
         $("#filter_align-modal03 .filter_list li").eq(2).remove();
 
         setTimeout(() => {
@@ -74,7 +68,6 @@
                 displaySelectedCategories();
                 displaySelectedLocation();
                 displaySelectedOrders();
-                toggleFilterBox();
                 isLoading = false;
             }
         })
@@ -83,14 +76,6 @@
     $(document).on('click', '[id^="filter"] .btn-primary', function() { 
         loadLikeCompany(true, $(this));
     })
-
-    // 카테고리 - 삭제
-    function filterRemove(item) {
-        $(item).parents('span').remove();
-        $("#" + $(item).data('id')).prop('checked', false);
-
-        loadLikeCompany(true);
-    }
 
     // 초기화
     $(".refresh_btn").on('click', function() {
@@ -160,14 +145,6 @@
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }    
-
-    function toggleFilterBox() {
-        if($(".modal .check-form:checked").length === 0){
-            $(".sub_filter_result").hide();
-        } else {
-            $(".sub_filter_result").css('display', 'flex');
-        }
-    }
 
     function displaySelectedOrders() {
         $(".sub_filter .filter_box button").eq(2)

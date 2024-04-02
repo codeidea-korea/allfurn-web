@@ -905,7 +905,7 @@ class MypageController extends BaseController
             $params = array_merge($params, $request -> all());
 
             $data = array_merge($data , $this->tmpLikeService->getLikeCompanies($params));
-            $data['html'] = view('mypage.inc-like-company-common', $data)->render();
+            $data['html'] = view(getDeviceType().'mypage.inc-like-company-common', $data)->render();
 
             return response()->json($data);
         }
