@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use App\Models\PushQ;
 use App\Models\SmsHistory;
+use App\Models\AlimtalkTemplate;
 use DateTime;
 
 class PushService
@@ -28,6 +29,7 @@ class PushService
     {
         $pushMessage = new SmsHistory;
         $pushMessage->title = $title;
+        $pushMessage->type = 'M';
         $pushMessage->content = $msg;
         $pushMessage->sender = '010-5440-5414';
         $pushMessage->receiver = $receiver;
@@ -57,6 +59,107 @@ class PushService
 //        echo curl_error($ch);
 //        echo $result;
         curl_close ($ch);
+    }
+
+    private function generateToken(): string{
+        $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
+        $userid = 'codeidea';
+        $data = "apikey=" . $apikey . "&userid=" . $userId;
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/token/create/30/s/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+    //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+    //        echo curl_error($ch);
+    //        echo $result;
+        curl_close ($ch);
+
+        $res = json_decode( $result );
+        if($res['code'] == 0) {
+            return $res['token'];
+        } else {
+            throw new \Exception( "알리고 카카오 알림톡 토큰 생성 실패 " . json_encode($res), 500 );
+        }
+    }
+
+    /**
+     * 알림톡 발송 sendKakaoAlimtalk
+     * 
+     * @param string $templateCode
+     * @param string $replaceParams 대치코드별 값이 들어 있는 연관 배열
+     * @param string $receiver (, 로 구분)
+     * @return map { code : 0 이 정상, 나머지 오류, message : 연동 메시지 }
+     */
+    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver): array
+    {
+        // 템플릿을 템플릿 코드로 조회한다.
+        $alimtalkTemplate = AlimtalkTemplate::where('template_code', '=', $templateCode)->orderBy('register_time', 'DESC')->first();
+        if(empty($alimtalkTemplate)) {
+            // 템플릿이 없음
+            throw new \Exception( "알리고 카카오 알림톡 템플릿 코드 조회 실패 코드 : " . $templateCode, 500 );
+        }
+        if(!empty($replaceParams) && is_array($replaceParams)) {
+            foreach($replaceParams as $key => $value) {
+                $alimtalkTemplate->template = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->template);
+            }
+            foreach($replaceParams as $key => $value) {
+                $alimtalkTemplate->btn = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->btn);
+            }
+        }
+
+        $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
+        $userid = 'codeidea';
+        $token = $this->generateToken();
+        $senderkey = urlencode('a2c2d74285465d194fdbfb2d35aa5d2e59e11e50');
+        $tpl_code = urlencode($templateCode);
+        $sender = urlencode('010-5440-5414');
+        $receiver_1 = urlencode($receiver);
+        $subject_1 = urlencode($title);
+        $message_1 = urlencode($alimtalkTemplate->template);
+        $button_1 = urlencode($alimtalkTemplate->btn);
+        $failover = 'Y';
+        $fsubject_1 = urlencode($title);
+        $fmessage_1 = urlencode($alimtalkTemplate->template);
+
+        $pushMessage = new SmsHistory;
+        $pushMessage->title = $title;
+        $pushMessage->type = 'A';
+        $pushMessage->content = $msg;
+        $pushMessage->sender = '010-5440-5414';
+        $pushMessage->receiver = $receiver;
+        $pushMessage->save();
+
+        $data = "apikey=" . $apikey . "&userid=" . $userId . "&token=" . $token . "&senderkey=" . $senderkey
+            . "&tpl_code=" . $tpl_code . "&sender=" . $sender . "&receiver_1=" . $receiver_1 . "&subject_1=" . $subject_1 . "&message_1=" . $message_1
+            . "&button_1=" . $button_1 . "&failover=" . $failover . "&fsubject_1=" . $fsubject_1 . "&fmessage_1=" . $fmessage_1;
+    
+        $ch = curl_init();
+    
+        curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/alimtalk/send/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+//        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    
+        $headers = array();
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+        $result = curl_exec($ch);
+//        echo curl_error($ch);
+//        echo $result;
+        curl_close ($ch);
+
+        return json_decode( $result );
     }
 
     /**
