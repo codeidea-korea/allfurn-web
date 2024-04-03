@@ -437,10 +437,10 @@
                 .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
         }
 
-        $(window).scroll(function() {
-            if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
-                loadNewProductList();
-            }
-        });
+        window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
+            loadNewProductList();
+        }
+    });
     </script>
 @endsection

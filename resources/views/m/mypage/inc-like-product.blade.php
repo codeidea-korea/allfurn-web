@@ -4,7 +4,7 @@
             <div class="filter_box">
                 <button onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                 <button onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                <button onclick="modalOpen('#filter_align-modal03')">최신 상품 등록순</button>
+                <button onclick="modalOpen('#filter_align-modal03')">최신순</button>
             </div>
             <div class="total txt-gray">전체 0개</div>
         </div>
@@ -24,8 +24,8 @@
         location.reload();
     });
 
-    $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
             loadNewProductList();
         }
     });

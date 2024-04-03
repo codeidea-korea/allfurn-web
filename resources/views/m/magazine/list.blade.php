@@ -166,8 +166,8 @@
     });
 
     // 매거진 스크롤 로딩
-    $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !loading) {
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight) {
             loadMagazineList();
         }
     });

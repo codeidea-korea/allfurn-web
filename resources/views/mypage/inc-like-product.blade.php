@@ -31,8 +31,8 @@
         location.reload();
     });
 
-    $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
             loadNewProductList();
         }
     });
