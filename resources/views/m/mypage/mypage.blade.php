@@ -7,6 +7,11 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
     $top_title = '';
     $only_quick = 'yes';
     $header_banner = 'hidden';
+} else if(strpos($_SERVER['REQUEST_URI'], 'mypage/like')) {
+    $header_depth = 'mypage';
+    $top_title = '좋아요 업체';
+    $only_quick = '';
+    $header_banner = 'hidden';
 } else {
     $header_depth = 'mypage';
     $top_title = '마이올펀';
@@ -140,7 +145,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
             </a>
         </li>
         <li>
-            <a href="./my_ws_like_company.php" class="flex p-4 justify-between">
+            <a href="/mypage/like" class="flex p-4 justify-between">
                 <p>좋아요 업체</p>
                 <div class="flex items-center">
                     <p class="text-sm">27개</p>

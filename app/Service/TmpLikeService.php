@@ -13,7 +13,7 @@ class TmpLikeService
 
 
     /**
-     * 관심 상품 목록 가져오기
+     * 좋아요 상품 목록 가져오기
      * @param array $params
      * @return Array
      */
@@ -109,7 +109,7 @@ class TmpLikeService
 
 
     /**
-     * 좋아요 목록 가져오기
+     * 좋아요 업체 목록 가져오기
      * @param array $params
      * @return array
      */
