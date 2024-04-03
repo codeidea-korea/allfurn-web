@@ -54,6 +54,9 @@ class TmpLikeService
             , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) AS product_image')
             , DB::raw('(interest + AF_product.inquiry_count) AS popularity'));
 
+        
+        $data['countAll'] = $query -> get() -> count();
+            
         if (isset($params['folder'])) {
             $query -> where('AF_product_interest.folder_idx', $params['folder']);
         }
@@ -91,7 +94,9 @@ class TmpLikeService
 
         $count = $query -> get() -> count();
 
-        $params['orderedElement'] =  in_array($params['orderedElement'], [null, 'register_time']) ? "AF_product_interest.idx" : $params['orderedElement'];
+        if(!isset($params['orderedElement']) || $params['orderedElement'] == 'register_time') {
+            $params['orderedElement'] = "AF_product_interest.idx";
+        }
         $list = $query -> orderBy($params['orderedElement'], 'desc') -> offset($offset) -> limit($limit) -> get();
 
         $data['count'] = $count;

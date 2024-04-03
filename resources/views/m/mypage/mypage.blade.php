@@ -2,16 +2,26 @@
 
 @php
 
-$header_depth = 'mypage';
-$top_title = '마이올펀';
-$only_quick = 'yes';
-$header_banner = '';
+if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
+    $header_depth = '';
+    $top_title = '';
+    $only_quick = 'yes';
+    $header_banner = 'hidden';
+} else {
+    $header_depth = 'mypage';
+    $top_title = '마이올펀';
+    $only_quick = 'yes';
+    $header_banner = '';
+}
 
 @endphp
 
 @section('content')
 @include('layouts.header_m')
 
+@if(in_array($pageType, ['interest', 'like']))
+    @include('m.mypage.'.$pageType)
+@else
 <script>
         function callLogin(){
 
@@ -121,7 +131,7 @@ $header_banner = '';
         <li class="bottom_type">
         </li>
         <li>
-            <a href="./my_ws_like_product.php" class="flex p-4 justify-between">
+            <a href="/mypage/interest" class="flex p-4 justify-between">
                 <p>좋아요 상품</p>
                 <div class="flex items-center">
                     <p class="text-sm">52개</p>
@@ -268,4 +278,5 @@ $header_banner = '';
             $('body').css('overflow', 'hidden');
         }
     </script>
+@endif
 @endsection
