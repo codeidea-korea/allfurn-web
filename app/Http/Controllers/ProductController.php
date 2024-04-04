@@ -29,23 +29,24 @@ class ProductController extends BaseController
     private $wholesalerService;
 
     public function __construct(
-        ProductService $productService,
-        HomeService $homeService,
-        MypageService $mypageService,
+        ProductService    $productService,
+        HomeService       $homeService,
+        MypageService     $mypageService,
         WholesalerService $wholesalerService
-    ) {
-        $this -> middleware('auth');
+    )
+    {
+        $this->middleware('auth');
 
-        $this -> productService = $productService;
-        $this -> homeService = $homeService;
-        $this -> mypageService = $mypageService;
-        $this -> wholesalerService = $wholesalerService;
+        $this->productService = $productService;
+        $this->homeService = $homeService;
+        $this->mypageService = $mypageService;
+        $this->wholesalerService = $wholesalerService;
     }
 
     // 상품 수정 - 상품 정보 가져오기
     public function modify(int $productIdx, Request $request)
     {
-        $type = $request->get('type') ?? '' ;
+        $type = $request->get('type') ?? '';
 
         return view('product.product-registration', [
             'productIdx' => $productIdx,
@@ -63,8 +64,8 @@ class ProductController extends BaseController
         $data = $this->productService->getProductData($productIdx, $type);
 
         return response()->json([
-            'success'=>true,
-            'data'=>$data
+            'success' => true,
+            'data' => $data
         ]);
     }
 
@@ -102,23 +103,24 @@ class ProductController extends BaseController
      * @param Request $request
      * @return JsonResponse
      */
-    public function saveProduct(Request $request) {
+    public function saveProduct(Request $request)
+    {
 
         $data = $request->all();
 
         if (isset($data['files'])) {
             $attachmentIdx = '';
             foreach ($data['files'] as $file) {
-                if(is_file($file)) {
+                if (is_file($file)) {
                     $filePath = $file->store('product', 's3');
-                    $attachmentIdx .= $this->productService->saveAttachment($filePath).',';
+                    $attachmentIdx .= $this->productService->saveAttachment($filePath) . ',';
                 }
             }
 
             if (isset($data['attachmentIdx'])) {
-                $data['attachmentIdx'] .= ','.substr($attachmentIdx, 0,-1);
+                $data['attachmentIdx'] .= ',' . substr($attachmentIdx, 0, -1);
             } else {
-                $data['attachmentIdx'] = substr($attachmentIdx, 0,-1);
+                $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
             }
         }
 
@@ -129,10 +131,9 @@ class ProductController extends BaseController
         }
 
         return response()->json([
-            'success'=>$prductIdx != null ? true : false,
+            'success' => $prductIdx != null ? true : false,
         ]);
     }
-
 
 
     /**
@@ -143,10 +144,10 @@ class ProductController extends BaseController
     {
 
         return view('product.product-registration', [
-            'banners'=>$this->productService->getBannerList(),
-            'todayCount'=>$this->productService->getTodayCount(),
-            'categoryList'=> $this->productService->getCategoryList(),
-            'productList'=> $this->getMyProductList()
+            'banners' => $this->productService->getBannerList(),
+            'todayCount' => $this->productService->getTodayCount(),
+            'categoryList' => $this->productService->getCategoryList(),
+            'productList' => $this->getMyProductList()
         ]);
     }
 
@@ -158,7 +159,7 @@ class ProductController extends BaseController
     public function modifyProduct(Request $request)
     {
         return response()->json([
-            'success'=> true,
+            'success' => true,
         ]);
     }
 
@@ -186,7 +187,7 @@ class ProductController extends BaseController
         $imgIdx = $this->productService->saveAttachment($file);
 
         return response()->json([
-            'link' => preImgUrl().$file,
+            'link' => preImgUrl() . $file,
             'idx' => $imgIdx
         ]);
     }
@@ -194,7 +195,7 @@ class ProductController extends BaseController
     // 상품 등록/수정 - 에디터 이미지 삭제
     public function imageDelete(Request $request)
     {
-        $imgPath = ($request->src).str_replace(env.AWS_S3_URL, '');
+        $imgPath = ($request->src) . str_replace(env . AWS_S3_URL, '');
         Storage::disk('s3')->delete($imgPath);
 
         $this->productService->deleteImage($request->idx);
@@ -207,7 +208,9 @@ class ProductController extends BaseController
     // 상품 즐겨찾기
     public function interestToggle(int $productIdx)
     {
-        if ($productIdx == null) { return; }
+        if ($productIdx == null) {
+            return;
+        }
 
         return $this->productService->interestToggle($productIdx);
     }
@@ -227,10 +230,10 @@ class ProductController extends BaseController
         $bestNewProducts = $this->productService->getBestNewProductList();
         $company = $this->productService->getRecentlyAddedProductCompanyList();
 
-        return view(getDeviceType().'product.newProduct', [
-            'banners'=>$banners,
-            'todayCount'=>$todayCount,
-            'categoryList'=>$categoryList,
+        return view(getDeviceType() . 'product.newProduct', [
+            'banners' => $banners,
+            'todayCount' => $todayCount,
+            'categoryList' => $categoryList,
             'bestNewProducts' => $bestNewProducts,
             'company' => $company,
         ]);
@@ -241,7 +244,7 @@ class ProductController extends BaseController
     public function bestNewProduct(Request $request)
     {
         $bestNewProducts = $this->productService->getBestNewProductList();
-        return view(getDeviceType().'product.best-new-product', [
+        return view(getDeviceType() . 'product.best-new-product', [
             'bestNewProducts' => $bestNewProducts,
         ]);
     }
@@ -251,12 +254,12 @@ class ProductController extends BaseController
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
-        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : $request->orderedElement;
-        
+        $data['orderedElement'] = $request->orderedElement == null ? "register_time" : $request->orderedElement;
+
         $list = $this->productService->getNewAddedProductList($data);
 
-        $html = view('product.inc-product-common', [ 'list'=> $list ] )->render();
-        $modalHtml = view(getDeviceType().'product.inc-product-modal-common', [ 'product'=> $list ] )->render();
+        $html = view('product.inc-product-common', ['list' => $list])->render();
+        $modalHtml = view(getDeviceType() . 'product.inc-product-modal-common', ['product' => $list])->render();
         $list['html'] = $html;
         $list['modalHtml'] = $modalHtml;
 
@@ -265,7 +268,8 @@ class ProductController extends BaseController
 
 
     // 상품 상세 데이터 가져오기
-    public function detail(int $productIdx) {
+    public function detail(int $productIdx)
+    {
         $data = $this->productService->getProductData($productIdx);
 
         $propArray = [];
@@ -279,16 +283,17 @@ class ProductController extends BaseController
 
         // 인증정보 Property에 추가.
         // Log::debug("-------- auth_info ::: {} ");
-        if ($data['detail']->auth_info !== '' && isSet($data['detail']->auth_info)) {
-            $propArray["인증정보"] =  $data['detail']->auth_info;
+        if ($data['detail']->auth_info !== '' && isset($data['detail']->auth_info)) {
+            $propArray["인증정보"] = $data['detail']->auth_info;
         }
 
         $data['detail']->propertyArray = $propArray;
 
         // 신상품 처리 최근등록일 기준 ( 30일 )
-        $date1 = Carbon::parse( $data['detail']->register_time);
-        $date2 = Carbon::parse( now() );
+        $date1 = Carbon::parse($data['detail']->register_time);
+        $date2 = Carbon::parse(now());
 
+        // 신상품( is_new_product ==1 ) 이면서 등록된지 1달 이내의 상품
         $data['detail']->diff = $date1->diffInDays($date2);
 
         // 상단 배너
@@ -298,33 +303,34 @@ class ProductController extends BaseController
 
         // 견적서 > 업체 유형 / 이름 등의 정보를 얻기 위함
         $data['user'] = Auth::user();
-        $data['company'] = $this -> mypageService -> getCompanyAccount();
+        $data['company'] = $this->mypageService->getCompanyAccount();
 
-        return view(getDeviceType().'product.detail', [
-            'banners'=>$banners,
-            'todayCount'=>$todayCount,
-            'categoryList'=>$categoryList,
-            'data'=>$data
+        return view(getDeviceType() . 'product.detail', [
+            'banners' => $banners,
+            'todayCount' => $todayCount,
+            'categoryList' => $categoryList,
+            'data' => $data
         ]);
     }
 
 
     // 카테고리 검색 (상품 리스트 가져오기)
-    public function listByCategory(Request $request) {
+    public function listByCategory(Request $request)
+    {
 
         $data['categoryIdx'] = $request->query('ca');
         $data['parentIdx'] = $request->query('pre');
         $data['property'] = $request->query('prop');
-        $data['sort'] = $request->query('so');
+        $data['sort'] = $request->query('so') == null ? "reg_time" : str_replace("filter_", "", $request->query('so'));
         $data['jn'] = $request->query('jn');
 
-        if( $data['jn'] ) {
+        if ($data['jn']) {
 
             $categoryList = $this->productService->getCategoryAll();
             $cateArray = array();
 
-            foreach($categoryList as $category) {
-                if( $category->parent_idx ) {
+            foreach ($categoryList as $category) {
+                if ($category->parent_idx) {
                     $cateArray[$category->parent_idx][$category->idx]['idx'] = $category->idx;
                     $cateArray[$category->parent_idx][$category->idx]['name'] = $category->name;
                 } else {
@@ -334,22 +340,22 @@ class ProductController extends BaseController
             }
 
             $cateChoiceName = '';
-            if( $data['parentIdx'] ) {
+            if ($data['parentIdx']) {
                 $cateChoiceName .= $cateArray[$data['parentIdx']]['name'];
-                $cateChoiceName .= ' > '.$cateArray[$data['parentIdx']][$data['categoryIdx']]['name'];
+                $cateChoiceName .= ' > ' . $cateArray[$data['parentIdx']][$data['categoryIdx']]['name'];
             } else {
                 $cateChoiceName .= $cateArray[$data['categoryIdx']]['name'];
             }
 
-            $ret['name']    = $cateChoiceName;
-            $ret['cate_idx']= $data['categoryIdx'];
+            $ret['name'] = $cateChoiceName;
+            $ret['cate_idx'] = $data['categoryIdx'];
 
-            return json_encode( $ret );
+            return json_encode($ret);
 
         } else {
             $list = $this->productService->listByCategory($data);
 
-            return view('product.categoryBy', [
+            return view(getDeviceType().'product.categoryBy', [
                 'data' => $list
             ]);
         }
@@ -357,7 +363,8 @@ class ProductController extends BaseController
 
 
     // 키워드 검색 (상품 리스트 가져오기)
-    public function listBySearch(Request $request) {
+    public function listBySearch(Request $request)
+    {
 
         Log::debug("----------- ProductController / listBySearch -----------------");
 
@@ -370,13 +377,14 @@ class ProductController extends BaseController
         $productList = $this->productService->listByCategory($data);
 
         return view('product.searchBy', [
-            'productList'=>$productList
+            'productList' => $productList
         ]);
     }
 
     // 카테고리 검색 (상품 리스트 가져오기)
     // 상품리스트 없을 경우 업체 리스트 검색 리스트 존재시 업체 검색페이지로 이동
-    public function listBySearch2(Request $request) {
+    public function listBySearch2(Request $request)
+    {
 
         Log::debug("----------- ProductController / listBySearch2 -----------------");
 
@@ -392,22 +400,23 @@ class ProductController extends BaseController
             $wholesalesCnt = $this->productService->countSearchWholesales($data['keyword']);
 
             if ($wholesalesCnt > 1) {
-                return redirect('/wholesaler/search?kw='.$data['keyword']);
+                return redirect(getDeviceType().'/wholesaler/search?kw=' . $data['keyword']);
             }
         }
 
-        return view('product.searchBy', [
-            'productList'=>$productList
+        return view(getDeviceType().'product.searchBy', [
+            'productList' => $productList
         ]);
     }
 
     // 이 달의 도매 데이터 가져오기
-    public function thisMonth(Request $request) {
+    public function thisMonth(Request $request)
+    {
         $categoryList = $this->productService->getCategoryList();
 
         $dealBanner['dealbrand'] = $this->productService->getThisDealList('dealbrand');
         $data = array();
-        foreach( $dealBanner['dealbrand'] AS $key => $banner ) {
+        foreach ($dealBanner['dealbrand'] as $key => $banner) {
             $data[$key] = new \stdClass();
 
             $data[$key]->idx = $banner['idx'];
@@ -424,10 +433,10 @@ class ProductController extends BaseController
             $data[$key]->company_name = $banner['company_name'];
             $data[$key]->imgUrl = $banner['imgUrl'];
 
-            $productInfo = json_decode( $banner['product_info'] );
+            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
-            foreach( $productInfo AS $i => $info ) {
+            foreach ($productInfo as $i => $info) {
                 $interestArr[$info->mdp_gidx] = $this->productService->isInterest($info->mdp_gidx);
             }
             $data[$key]->isInterest = $interestArr;
@@ -435,23 +444,35 @@ class ProductController extends BaseController
         $dealBanner['dealbrand'] = $data;
 
         $dealBanner['plandiscount'] = $this->productService->getThisDealList('plandiscount');
-        $dealBanner['dealmiddle']  = $this->productService->getThisDealList('dealmiddle');
+        $dealBanner['dealmiddle'] = $this->productService->getThisDealList('dealmiddle');
 
         $target['thisMonth'] = date('m');
-        $dealBanner['product']  = $this->productService->getBestNewProductList($data);
+        $dealBanner['product'] = $this->productService->getBestNewProductList($data);
 
         $target['categoryIdx'] = $request->query('categories');
         $target['locationIdx'] = $request->query('locations');
-        $target['orderedElement'] =  $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
+        $target['orderedElement'] = $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
         $company = $this->wholesalerService->getThisMonthWholesaler($target);
 
-        return view(getDeviceType().'product.thisMonth', [
-            'categoryList'      => $categoryList,
-            'dealbrand'         => $dealBanner['dealbrand'],
-            'plandiscount'      => $dealBanner['plandiscount'],
-            'dealmiddle'        => $dealBanner['dealmiddle'],
-            'productBest'       => $dealBanner['product'],
-            'companyProduct'    => $company
+        return view(getDeviceType() . 'product.thisMonth', [
+            'categoryList' => $categoryList,
+            'dealbrand' => $dealBanner['dealbrand'],
+            'plandiscount' => $dealBanner['plandiscount'],
+            'dealmiddle' => $dealBanner['dealmiddle'],
+            'productBest' => $dealBanner['product'],
+            'companyProduct' => $company
+        ]);
+    }
+
+    /**
+     * 이달의딜 > 기획전 더보기
+     */
+    public function planDiscountDetail()
+    {
+        $dealBanner['plandiscount'] = $this->productService->getThisDealList('plandiscount');
+
+        return view(getDeviceType() . 'product.plan_discount_list', [
+            'list'  => $dealBanner['plandiscount']
         ]);
     }
 
@@ -466,7 +487,7 @@ class ProductController extends BaseController
 
         $dealBanner = $this->productService->getThisDealList('dealbrand', $cidx);
         $data = array();
-        foreach( $dealBanner AS $key => $banner ) {
+        foreach ($dealBanner as $key => $banner) {
             $data[$key] = new \stdClass();
 
             $data[$key]->idx = $banner['idx'];
@@ -483,17 +504,17 @@ class ProductController extends BaseController
             $data[$key]->company_name = $banner['company_name'];
             $data[$key]->imgUrl = $banner['imgUrl'];
 
-            $productInfo = json_decode( $banner['product_info'] );
+            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
-            foreach( $productInfo AS $i => $info ) {
+            foreach ($productInfo as $i => $info) {
                 $interestArr[$info->mdp_gidx] = $this->productService->isInterest($info->mdp_gidx);
             }
             $data[$key]->isInterest = $interestArr;
         }
 
         // 확대보기의경우 cIdx 유무를 확인
-        if( !$cidx ) {
+        if (!$cidx) {
             // 모아보기 view
             return view('product.thisMonthDetail', [
                 'dealbrand' => $data,
@@ -506,19 +527,59 @@ class ProductController extends BaseController
         }
     }
 
+    // 인기상품 모아보기
+    public function getPopularSumList()
+    {
+        $target['categoryIdx'] = [1, 2, 3, 14];
+        $popularList = $this->productService->getPopularList($target);
+        return view('product.popular-sum-list', [
+            'lists' => $popularList
+        ]);
+    }
+
     // xx월 Best 도매업체 json
     public function getJsonThisBestWholesaler(Request $request)
     {
         $data['categoryIdx'] = $request->categories == null ? "" : $request->categories;
         $data['locationIdx'] = $request->locations == null ? "" : $request->locations;
-        $data['orderedElement'] =  $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
+        $data['orderedElement'] = $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
 
         $list = $this->wholesalerService->getThisMonthWholesaler($data);
 
-        $data['query']  = $list;
+        $data['query'] = $list;
 
         return response()->json($data);
     }
 
+    // 카테고리 검색 (상품 리스트 가져오기)
+    public function getJsonListByCategory(Request $request)
+    {
 
+        $data['categoryIdx'] = $request->query('ca');
+        $data['parentIdx'] = $request->query('pre');
+        $data['property'] = $request->query('prop');
+        $data['sort'] = $request->query('so') == null ? "reg_time" : str_replace("filter_", "", $request->query('so'));
+
+        $list = $this->productService->listByCategory($data);
+
+        $data['query'] = $list['list'];
+
+        return response()->json($data);
+    }
+    // 카테고리 검색 (상품 리스트 가져오기)
+    // 상품리스트 없을 경우 업체 리스트 검색 리스트 존재시 업체 검색페이지로 이동
+    public function getJsonListBySearch(Request $request)
+    {
+        $data['keyword'] = $request->query('kw');
+        $data['categoryIdx'] = $request->query('ca');
+        $data['parentIdx'] = $request->query('pre');
+        $data['property'] = $request->query('prop');
+        $data['sort'] = $request->query('so');
+
+        $productList = $this->productService->listByCategory($data);
+
+        $data['query'] = $productList['list'];
+
+        return response()->json($data);
+    }
 }

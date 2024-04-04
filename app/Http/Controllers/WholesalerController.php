@@ -66,6 +66,8 @@ class WholesalerController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $todayCount = $this->productService->getTodayCount();
 
+        $target['categoryIdx'] = $request->query('categories');
+        $target['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
         $data = $this->wholesalerService->detail($data);
 
         $data['info']->place = substr( $data['info']->business_address, 0, 6 );
@@ -117,7 +119,7 @@ class WholesalerController extends BaseController
         $data = $this->wholesalerService->getWholesalerData($query);
         $categoryList = $this->productService->getCategoryList();
 
-        return view('wholesaler.searchBy', [
+        return view(getDeviceType().'wholesaler.searchBy', [
             'data'=>$data,
             'query'=>$query,
             'categoryList'=>$categoryList,
@@ -129,7 +131,7 @@ class WholesalerController extends BaseController
     public function wholesalerAddProduct(Request $request)
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
-        $data['orderedElement'] =  $request->orderedElement == null ? "banner_price" : str_replace("filter_", "", $request->orderedElement);
+        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
         $data['company_idx'] = $request->company_idx;
 
         $list = $this->productService->getWholesalerAddedProductList($data);
