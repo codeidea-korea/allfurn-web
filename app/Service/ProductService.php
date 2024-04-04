@@ -663,9 +663,9 @@ class ProductService
 
 
     public function listByCategory(array $param = []) {
-        
+
         Log::debug(" * ProductService / listByCategory");
-        
+
         $categoryIdxArr = array();
 
         if(isset($param['keyword'])) {
@@ -674,7 +674,7 @@ class ProductService
                 ->where('is_delete', 0)
                 ->leftjoin('AF_attachment as ah', function($query){
                     $query->on('ah.idx', 'AF_category.icon_attachment_idx');
-                    })
+                })
                 ->orderBy('order_idx', 'asc')->get();
             $data['category2'] = Category::whereNotNull('parent_idx')->where('is_delete', 0)->orderBy('order_idx', 'asc')->get();
         }
@@ -709,11 +709,12 @@ class ProductService
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
                                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 0 as orderCnt,
                                 1 as isAd,
                                 AF_product_ad.price as ad_price,
                                 NULL as reg_time'
-                                ))
+            ))
             ->where('AF_product_ad.state', 'G')
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
             ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
@@ -741,7 +742,7 @@ class ProductService
             $list_a->where(function ($query) use ($keyword) {
                 $query->where('AF_product.name', 'like', "%{$keyword}%")
                     ->orWhere('AF_product.product_detail', 'like', "%{$keyword}%");
-                    // ->orWhere('AF_product.product_option', 'like', "%{$keyword}%");
+                // ->orWhere('AF_product.product_option', 'like', "%{$keyword}%");
             });
             // ->orWhere(function ($query) use ($keyword) {
             //     $query->where('cp.property_name', 'like', "%{$keyword}%")
@@ -750,18 +751,19 @@ class ProductService
             // ->leftjoin('AF_category_property as cp', function($query) {
             //     $query->on('cp.category_idx', 'AF_product.category_idx');
             // });
-            
-        }
-        
 
-   
-        
+        }
+
+
+
+
         $list_b = Product::select('AF_product.*',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
                                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
                                 (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt,
+                                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 0 as isAd,
                                 0 as ad_price,
                                 AF_product.register_time as reg_time
@@ -783,7 +785,7 @@ class ProductService
             $list_b->where(function ($query) use ($keyword) {
                 $query->where('AF_product.name', 'like', "%{$keyword}%")
                     ->orWhere('AF_product.product_detail', 'like', "%{$keyword}%");
-                    // ->orWhere('AF_product.product_option', 'like', "%{$keyword}%");
+                // ->orWhere('AF_product.product_option', 'like', "%{$keyword}%");
             });
             // ->orWhere(function ($query) use ($keyword) {
             //     $query->where('cp.property_name', 'like', "%{$keyword}%")
@@ -792,9 +794,9 @@ class ProductService
             // ->leftjoin('AF_category_property as cp', function($query) {
             //     $query->on('cp.category_idx', 'AF_product.category_idx');
             // });
-            
+
         }
-        
+
 
         if (isset($param['property'])) {
             $props = explode('|', $param['property']);
@@ -811,10 +813,10 @@ class ProductService
             });
         }
 
-        $list = $list_a->union($list_b)->orderBy('isAd', 'desc')->orderBy('ad_price', 'desc'); 
+        $list = $list_a->union($list_b)->orderBy('isAd', 'desc')->orderBy('ad_price', 'desc');
 
         if (isset($param['sort'])) {
-            
+
             switch($param['sort']) {
                 case 'order':
                     $list->orderBy('orderCnt', 'desc');
@@ -829,13 +831,13 @@ class ProductService
         } else {
             $list->orderBy('reg_time', 'desc');
         }
-        
+
         $list->inRandomOrder();
 
         Log::debug("---------------------------------------");
-        $data['list'] = $list->distinct()->paginate(32);
+        $data['list'] = $list->distinct()->paginate(20);
         Log::debug("---------------------------------------");
-        
+
         return $data;
     }
 
@@ -1233,7 +1235,7 @@ class ProductService
             $data->where('AF_banner_ad.company_idx', $cIdx);
         }
 
-            return $data->limit($limit)->get();
+        return $data->limit($limit)->get();
     }
 
     /**
@@ -1383,5 +1385,49 @@ class ProductService
         $isInterest = $tmpInterest->interest;
 
         return $isInterest;
+    }
+
+    public function getPopularList(array $params = [])
+    {
+        $list = DB::table(DB::raw(
+            '(SELECT
+                ap.idx,
+                ap.name,
+                ap.company_idx,	
+                ap.access_count,
+                ap.is_price_open,
+                ap.price,
+                ap.price_text,
+                ac2.idx AS category_idx,
+                ac2.name AS category_name,
+                aw.company_name, 
+		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+                (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
+                (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
+            FROM
+                AF_product AS ap
+                LEFT JOIN AF_wholesale AS aw ON aw.idx=ap.company_idx
+                LEFT JOIN AF_category AS ac1 ON ac1.idx=ap.category_idx
+                LEFT JOIN AF_category AS ac2 ON ac2.idx=ac1.parent_idx
+                LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
+            ) as t'
+        ))
+        ->select('t.*'
+            , DB::raw('(SELECT t.access_count + t.ordCnt ) AS score')
+        )
+        ->whereIn('t.category_idx', $params['categoryIdx'])
+        ->orderBy('score', 'desc')
+        ->limit(400)
+        ->get();
+
+        $data['lists'] = $list;
+        if( count( $data['lists'] ) > 0 ) {
+            foreach( $data['lists'] AS $k => $row ) {
+                $data['category'][$row->category_idx][] = $row;
+            }
+        }
+
+        return $data;
+
     }
 }

@@ -95,15 +95,15 @@
                                 <li class="prod_item type02">
                                     <div class="img_box">
                                         <a href="/product/detail/{{$event->idx}}">
-                                            <img src="{{$event->imgUrl}}" alt="">
+                                            <img src="{{$event->imgUrl}}" alt="{{$item->name}}">
                                             <!-- span><b>호텔같은 내 침실로!</b><br>#20조 한정 할인 특가 #호텔형 침대</span //-->
                                         </a>
                                         <button class="zzim_btn prd_{{$event->idx}} {{ ($event->isInterest == 1) ? 'active' : '' }}" pidx="{{$event->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
                                     <div class="txt_box">
                                         <a href="./prod_detail.php">
-                                            <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                            <span>올펀가구</span>
+                                            <strong>{{$item->name}}</strong>
+                                            <span>{{$data['info']->company_name}}</span>
                                         </a>
                                     </div>
                                 </li>
