@@ -4,9 +4,9 @@
             <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
 
             <div class="product_search relative">
-                <form name="search_form" id="search_form" action="/home/searchResult" method="GET">
+                <form name="search_form" id="search_form" action="/product/searchBar" method="GET">
                 <div class="search_btn">
-                    <svg class="w-11 h-11 ml-2"><use xlink:href="./img/icon-defs.svg#Search"></use></svg> <input name="sKeyword" class="bg-transparent w-full h-full search_active" placeholder="상품및 도매 업체를 검색해주세요">
+                    <svg class="w-11 h-11 ml-2"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> <input name="kw" class="bg-transparent w-full h-full search_active" value="" placeholder="상품및 도매 업체를 검색해주세요" autocomplete="off">
                 </div>
                 </form>
                 <div class="absolute w-full p-4 bg-white rounded-md z-999 shadow-md search_list hidden">
@@ -14,60 +14,26 @@
                         <span class="font-bold">최근 검색어</span>
                         <button class="text-gray-400">전체 삭제</button>
                     </div>
-                    <ul class="flex flex-col gap-4">
-                        <li class="flex items-center justify-between text-sm">
-                            <a href="javascript:;">식탁</a>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </li>
-                        <li class="flex items-center justify-between text-sm">
-                            <a href="javascript:;">테이블</a>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </li>
-                        <li class="flex items-center justify-between text-sm">
-                            <a href="javascript:;">이벤트</a>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </li>
-                        <li class="flex items-center justify-between text-sm">
-                            <a href="javascript:;">키즈가구</a>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </li>
+                    <ul class="flex flex-col gap-4 keywordList">
+                        <!-- 최근 검색어 //-->
                     </ul>
                     <hr class="mt-4">
                     <div class="text-sm flex justify-between mt-2 py-3">
                         <span class="font-bold">인기 카테고리</span>
-                        <span class="text-gray-400">12.01 02:28기준</span>
+                        <span class="text-gray-400">{{date('m.d H:i')}}기준</span>
                     </div>
-                    <ul class="flex flex-col gap-4">
-                        <li class="flex items-center text-sm gap-2">
-                            <span class="text-primary font-bold">1</span>
-                            <a href="javascript:;">침대/매트리스 > 폼매트리스</a>
-                        </li>
-                        <li class="flex items-center text-sm gap-2">
-                            <span class="text-primary font-bold">2</span>
-                            <a href="javascript:;">소파/거실 > 1인용 소파</a>
-                        </li>
-                        <li class="flex items-center text-sm gap-2">
-                            <span class="text-primary font-bold">3</span>
-                            <a href="javascript:;">기타 카테고리</a>
-                        </li>
+                    <ul class="flex flex-col gap-4 cateogry_list">
+                        <!-- 인기 카테고리 //-->
                     </ul>
                     <hr class="mt-4">
                     <div class="text-sm flex mt-2 py-3 gap-1">
                         <span class="font-bold">추천 키워드</span>
                         <span class="text-gray-400 font-bold">AD</span>
                     </div>
-                    <div class="text-sm text-gray-400">
+                    <div class="text-sm text-gray-400 hashtag-list">
                         추천 키워드가 없습니다.
                     </div>
-                    <div class="mt-4 swiper search_swhiper">
+                    <div class="mt-4 swiper search_swhiper " id="headerNavBanner">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide rounded-md overflow-hidden">
                                 <img src="/img/search_img_d.png" class="w-full h-[110px]" alt="">
@@ -91,7 +57,7 @@
             </div>
 
 
-            <!-- button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button //-->
+            {{-- <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button> --}}
             <ul class="right_link flex items-center">
                 <li><a href="/message">올톡</a></li>
                 <li><a href="/mypage/deal">마이올펀</a></li>
@@ -128,80 +94,220 @@
 
 <script>
 
-    $(document).ready(function(f){
-        getCategoryList();
-        checkAlert();
-        //getCategoryBanners();
 
-        if( f.keyCode == 1 ) {
-            if( $('#sKeyword').val() != '' ) {
-                $('form#search_form').submit();
+
+const getSearchData = () => {
+    fetch("/home/getSearchData", {
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        }
+    }).then(response => {
+        return response.json();
+    }).then(json => {
+        var keywordPart = "";
+        if (json['keywords'].length > 0) {
+            for(i=0; i<json['keywords'].length; i++) {
+                keywordPart += '' +
+                    '<li class="flex items-center justify-between text-sm">' +
+                    '   <a href="javascript:;" onClick="clickKeyword(\'' + json['keywords'][i]['keyword'] + '\')" data-idx="' + json['keywords'][i]['keyword'] + '">' + json['keywords'][i]['keyword'] + '</a>' +
+                    '   <button class="a11y">' +
+                    '       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400">' +
+                    '           <path d="M18 6 6 18"></path>' +
+                    '           <path d="m6 6 12 12"></path></svg>' +
+                    '   </button>' +
+                    '</li>';
             }
+            document.querySelector('.keywordList').innerHTML = keywordPart;
+        } else {
+            keywordPart += '<li class="flex items-center text-sm">최근 검색한 내역이 없습니다.</div></li>';
+            document.querySelector('.keywordList').innerHTML = keywordPart;
+        }
+
+        var categoryList = "";
+        if (json['category'].length > 0) {
+            for(i=0; i<json['category'].length; i++) {
+                if (json['category'][i]['parentName'] != null) {
+                    categoryList += '' +
+                        '<li class="flex items-center text-sm gap-2">' +
+                        '   <span class="text-primary font-bold">1</span>' +
+                        '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
+                        '</li>';
+                } else {
+                    categoryList += '' +
+                        '<li class="flex items-center text-sm gap-2">' +
+                        '   <span class="text-primary font-bold">1</span>' +
+                        '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
+                        '</li>';
+                }
+            }
+
+            document.querySelector('.cateogry_list').innerHTML = categoryList;
+        }
+
+        var adKeywordPart = "";
+        if (json['ad_keyword'].length > 0) {
+            for(i=0; i<json['ad_keyword'].length; i++) {
+                if ( json["ad_keyword"][i]["web_link"].indexOf('notice') > 0 ) {
+                    console.log('json["ad_keyword"][i]["web_link"]', json["ad_keyword"][i]["web_link"]);
+                    adKeywordPart += '<div class="hashtag"><a href="/help/notice/">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
+                } else {
+                    adKeywordPart += '<div class="hashtag"><a href="'+json["ad_keyword"][i]["web_link"]+'">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
+                }
+            }
+            document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
+        } else {
+            adKeywordPart += '<div class="row">' +
+                '   <div class="row__text search-list--nodata">추천 키워드가 없습니다.</div>' +
+                '</div>';
+            document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
+        }
+
+        var bannerPart = "";
+        if (json['banner'].length > 0) {
+            for(i=0; i<json['banner'].length; i++) {
+                bannerPart += '<div class="swiper-slide rounded-md overflow-hidden">' +
+                    '   <a href="';
+                switch (json['banner'][i]['web_link_type']) {
+                    case 0:
+                        bannerPart += json['banner'][i]['web_link'];
+                        break;
+                    case 1:
+                        // bannerPart += '/product/detail/'+json['banner'][i]['web_link'];
+                        bannerPart += json['banner'][i]['web_link'];
+                        break;
+                    case 2:
+                        // bannerPart += '/wholesaler/detail/'+json['banner'][i]['web_link'];
+                        bannerPart += json['banner'][i]['web_link'];
+                        break;
+                    case 3:
+                        //bannerPart += '/community/detail/'+json['banner'][i]['web_link'];
+                        bannerPart += json['banner'][i]['web_link'];
+                        break;
+                    case 4:
+                        bannerPart += '/help/notice/';
+                        break;
+                }
+                bannerPart += '">' +
+                    '       <img src="{{preImgUrl()}}' + json['banner'][i]['folder'] + '/' + json['banner'][i]['filename'] + '">' +
+                    '   </a>' +
+                    '</div>';
+            }
+            document.querySelector('#headerNavBanner .swiper-wrapper').innerHTML = bannerPart;
+        } else {
+            bannerPart += '<div class="row">' +
+                '   <div class="row__text search-list--nodata">최근 검색한 내역이 없습니다.</div>' +
+                '</div>';
+            document.querySelector('.keywordList').innerHTML = bannerPart;
         }
     });
+}
 
-    $(document).on('click', function(e) {
-        // .search_active 클릭 시 .search_list 보이기
-        if ($(e.target).closest('.search_active').length) {
-            $('.search_list').show();
-        }
-        // .search_list 외의 영역 클릭 시 숨기기
-        else if (!$(e.target).closest('.search_list').length) {
-            $('.search_list').hide();
-        }
-    });
+$(document).ready(function(f){
+    getCategoryList();
+    checkAlert();
+    //getCategoryBanners();
 
-    function getCategoryList() {
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url				: '/product/getCategoryListV2',
-            data			: {},
-            type			: 'POST',
-            dataType		: 'json',
-            success		: function(result) {
-                let htmlText = '<ul>';
-                result.forEach(function (e, idx) {
-                    htmlText += '<li>';
-                    htmlText += '<a href="javascript:;">';
-                    htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
-                    htmlText += '<span>' + e.name + '</span>';
-                    htmlText += '</a>';
-                    htmlText += '<ul class="depth2">';
-                    e.depth2.forEach(function (e2, idx2) {
-                        htmlText += '<li><a href="/product/category?ca=' + e2.idx + '&pre='+e2.parent_idx+'">' + e2.name + '</a></li>';
-                    })
-                    htmlText += '</ul>';
-                    htmlText += '</li>';
+    if( f.keyCode == 1 ) {
+        if( $('#sKeyword').val() != '' ) {
+            $('form#search_form').submit();
+        }
+    }
+});
+
+// 최상단 검색창 클릭시 최근, 추천 검색어 노출
+$(document).on('click', function(e) {
+    // .search_active 클릭 시 .search_list 보이기
+    if ($(e.target).closest('.search_active').length) {
+        getSearchData();
+        $('.search_list').show();
+    }
+    // .search_list 외의 영역 클릭 시 숨기기
+    else if (!$(e.target).closest('.search_list').length) {
+        $('.search_list').hide();
+    }
+});
+
+function getCategoryList() {
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url				: '/product/getCategoryListV2',
+        data			: {},
+        type			: 'POST',
+        dataType		: 'json',
+        success		: function(result) {
+            let htmlText = '<ul>';
+            result.forEach(function (e, idx) {
+                htmlText += '<li>';
+                htmlText += '<a href="javascript:;">';
+                htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
+                htmlText += '<span>' + e.name + '</span>';
+                htmlText += '</a>';
+                htmlText += '<ul class="depth2">';
+                e.depth2.forEach(function (e2, idx2) {
+                    htmlText += '<li><a href="/product/category?ca=' + e2.idx + '&pre='+e2.parent_idx+'">' + e2.name + '</a></li>';
                 })
                 htmlText += '</ul>';
-                $('.category_list').html(htmlText);
-            }
-        });
-    }
+                htmlText += '</li>';
+            })
+            htmlText += '</ul>';
+            $('.category_list').html(htmlText);
+        }
+    });
+}
 
-    function goCategoryList(category) {
-        location.href = "/product/category?pre=" + category;
-    } 
+function goCategoryList(category) {
+    location.href = "/product/category?pre=" + category;
+}
 
-    function checkAlert() {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            method : 'POST',
-            url : '/checkAlert',
-            success : function(result) {
-                if(result.success === true && result.alarm > 0) {
-                    $(".alarm_btn span").text(result.alarm);
-                    $(".alarm_btn span").show(result.alarm);
-                } else {
-                    $(".alarm_btn span").hide();
-                }
-            },
-            error : function() {
+function checkAlert() {
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        method : 'POST',
+        url : '/checkAlert',
+        success : function(result) {
+            if(result.success === true && result.alarm > 0) {
+                $(".alarm_btn span").text(result.alarm);
+                $(".alarm_btn span").show(result.alarm);
+            } else {
                 $(".alarm_btn span").hide();
             }
-        })
-    }
-    
+        },
+        error : function() {
+            $(".alarm_btn span").hide();
+        }
+    })
+}
+
+function clickKeyword(keyword) {
+    fetch("/home/search/" + keyword, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        }
+    }).then(response => {
+        return response.json();
+    }).then(json => {
+        if (json.success == true) {
+            //location.replace('/product/searchBar?kw=' + keyword);
+            location.replace('/home/searchResult?kw=' + keyword);
+        }
+    });
+}
+
+var search_swhiper = new Swiper(".search_swhiper", {
+    autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+    },
+    navigation: {
+        nextEl: ".search-button-next",
+        prevEl: ".search-button-prev",
+    },
+    pagination: {
+        el: ".count_pagination",
+        type: "fraction",
+    },
+});
 </script>

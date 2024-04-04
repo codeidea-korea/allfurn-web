@@ -66,11 +66,12 @@
 
 
 <!-- 검색모달 -->
+{{--
 <div class="modal" id="search-modal">
     <div class="modal_bg" onclick="modalClose('#search-modal')"></div>
     <div class="modal_inner modal-md search_wrap">
         <button class="close_btn" onclick="modalClose('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        
+
         <div class="search_intro">
             <div class="title">
                 <p>어떤상품이 보고 싶은지 알려주세요!</p>
@@ -145,7 +146,7 @@
 
         <!-- 인기 도매업체 -->
         <div class="search_company hidden">
-            <div class="title_type"> 
+            <div class="title_type">
                 <p>인기 도매 업체</p>
                 <span>2023년 9월 30일 기준</span>
             </div>
@@ -230,13 +231,13 @@
                         <span>매트리스</span>
                     </div>
                 </a></li>
-                
+
             </ul>
         </div>
 
          <!-- 인기 카테고리 -->
          <div class="search_popcategory hidden">
-            <div class="title_type"> 
+            <div class="title_type">
                 <p>인기 카테고리</p>
                 <span>2023년 9월 30일 기준</span>
             </div>
@@ -292,7 +293,7 @@
         </div>
     </div>
 </div>
-
+--}}
 <!-- 동영상모달 -->
 <div class="modal" id="video-modal">
 	<div class="modal_bg" onclick="modalClose('#video-modal')"></div>
@@ -361,28 +362,28 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_01">추천순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count">
+                    <label for="filter_interest_count">추천순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_02">최신 상품 등록순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time">
+                    <label for="filter_register_time">최신 상품 등록순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_03">검색 많은 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_access_count">
+                    <label for="filter_access_count">검색 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_04">거래 많은 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_order_count">
+                    <label for="filter_order_count">거래 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_05">상품 많은 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_count">
+                    <label for="filter_product_count">상품 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_3_06">가나다 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_name">
+                    <label for="filter_product_name">가나다 순</label>
                 </li>
             </ul>
             <div class="btn_bot">
@@ -401,16 +402,16 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_100_01">신상품순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_reg_time">
+                    <label for="filter_reg_time">신상품순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_100_02">검색 많은 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_search">
+                    <label for="filter_search">검색 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_3" id="">
-                    <label for="filter_cate_100_03">주문 많은 순</label>
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_order">
+                    <label for="filter_order">주문 많은 순</label>
                 </li>
             </ul>
             <div class="btn_bot">
@@ -447,6 +448,7 @@
 </div>
 
 <!-- 검색모달 -->
+{{--
 <div class="modal" id="search-modal">
     <div class="modal_bg" onclick="modalClose('#search-modal')"></div>
     <div class="modal_inner modal-md search_wrap">
@@ -673,7 +675,231 @@
         </div>
     </div>
 </div>
+--}}
 
+<!-- 검색모달 -->
+<div class="modal" id="search-modal">
+    <div class="modal_bg" onclick="modalClose('#search-modal')"></div>
+    <div class="modal_inner modal-md search_wrap">
+        <button class="close_btn" onclick="modalClose('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+
+        <div class="search_intro">
+            <div class="title">
+                <p>어떤상품이 보고 싶은지 알려주세요!</p>
+            </div>
+            <!-- <div class="find_product">
+                <div class="flex flex-col gap-2 px-20">
+                    <button class="h-[51px] border border-stone-300 rounded-sm w-full"><b>인기상품</b> 모아보기</button>
+                    <button class="search_new_step h-[51px] border border-stone-300 rounded-sm w-full"><b>신상품</b> 모아보기</button>
+                    <button class="search_sale_step h-[51px] border border-stone-300 rounded-sm w-full"><b>할인/행사 상품</b> 모아보기</button>
+                    <button class="search_sale_step h-[51px] border border-stone-300 rounded-sm w-full"><b>인기 도매 업체 상품</b> 모아보기</button>
+                    <button class="search_company_step h-[51px] border border-stone-300 rounded-sm w-full"><b>인기 카테고리</b>로 상품 찾기</button>
+                    <button class="h-[51px] border border-stone-300 rounded-sm w-full"><b>카테고리</b>로 자세히 상품 찾기</button>
+                </div>
+            </div> -->
+            <ul class="search_btn_list">
+                <li data-url="/product/popularList"><button><b>인기상품</b> 모아보기</button></li>
+                <li data-url="/product/best-new"><button><b>신상품</b> 모아보기</button></li>
+                <li data-next="search_sale"><button><b>할인/행사 상품</b> 모아보기</button></li>
+                <li data-url="/product/planDiscountDetail"><button><b>인기 도매 업체 상품</b> 모아보기</button></li>
+                <li data-next="search_popcategory"><button><b>인기 카테고리</b>로 상품 찾기</button></li>
+                <li data-next="search_category"><button><b>카테고리</b>로 자세히 상품 찾기</button></li>
+            </ul>
+            <button class="btn btn-primary w-full next_btn">다음</button>
+
+        </div>
+
+        <!-- 인기상품 -->
+        <div class="search_popular sch_cate_info hidden">
+            <div class="title">
+                <p><span>인기상품</span> 중에서 <br/>어떤 품목을 보여드릴까요?</p>
+            </div>
+            <ul class="search_btn_list type02">
+                <li class="all_btn"><button>인기 상품 모아보기</button></li>
+                <li><button>전체</button></li>
+                <li><button>소파 / 거실 가구</button></li>
+                <li><button>식탁 / 주방  가구</button></li>
+                <li><button>옷장 / 드레스룸</button></li>
+                <li><button>책상 / 서재 가구</button></li>
+                <li><button>유아동 가구</button></li>
+                <li><button>맞춤 가구</button></li>
+                <li><button>사무 / 업소용 가구</button></li>
+            </ul>
+            <a href="javascript:void(0);" class="btn btn-primary w-full">확인</a>
+        </div>
+
+        <!-- 신상품 -->
+        <div class="search_new sch_cate_info hidden">
+            <div class="title">
+                <p><span>신상품</span> 중에서 <br/>어떤 품목을 보여드릴까요?</p>
+            </div>
+            <ul class="search_btn_list type02">
+                <li class="all_btn"><button>신상품 모아보기</button></li>
+                <li><button>전체</button></li>
+                <li><button>소파 / 거실 가구</button></li>
+                <li><button>식탁 / 주방  가구</button></li>
+                <li><button>옷장 / 드레스룸</button></li>
+                <li><button>책상 / 서재 가구</button></li>
+                <li><button>유아동 가구</button></li>
+                <li><button>맞춤 가구</button></li>
+                <li><button>사무 / 업소용 가구</button></li>
+            </ul>
+            <button class="btn btn-primary w-full ">확인</button>
+        </div>
+
+        <!-- 할인/행사 상품 -->
+        <div class="search_sale sch_cate_info hidden">
+            <div class="title">
+                <p><span>할인/행사 상품</span> 중에서 <br/>어떤 품목을 보여드릴까요?</p>
+            </div>
+            <ul class="search_btn_list type02">
+                <li class="all_btn"><button>할인/행사 상품 모아보기</button></li>
+                <li><button>전체</button></li>
+                <li><button>소파 / 거실 가구</button></li>
+                <li><button>식탁 / 주방 가구</button></li>
+                <li><button>옷장 / 드레스룸</button></li>
+                <li><button>책상 / 서재 가구</button></li>
+                <li><button>유아동 가구</button></li>
+                <li><button>맞춤 가구</button></li>
+                <li><button>사무 / 업소용 가구</button></li>
+            </ul>
+            <button class="btn btn-primary w-full ">확인</button>
+        </div>
+
+        <!-- 인기 도매업체 -->
+        <div class="search_company sch_cate_info hidden">
+            <div class="title_type">
+                <p>인기 도매 업체</p>
+                <span>2023년 9월 30일 기준</span>
+            </div>
+            <ul class="search_list">
+                <li><a href="javascript:;">
+                        <i>1</i>
+                        <p>에이스 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>2</i>
+                        <p>까마시아</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>3</i>
+                        <p>올펀 가구</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>4</i>
+                        <p>아스테리아</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>5</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>6</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>7</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>8</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>9</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+                <li><a href="javascript:;">
+                        <i>10</i>
+                        <p>템퍼 침대</p>
+                        <div class="tag">
+                            <span>침대</span>
+                            <span>매트리스</span>
+                        </div>
+                    </a></li>
+
+            </ul>
+        </div>
+
+        <!-- 인기 카테고리 -->
+        <div class="search_popcategory sch_cate_info hidden">
+            <div class="title_type">
+                <p>인기 카테고리</p>
+                <span>{{date('Y년 m월 d일')}} 기준</span>
+            </div>
+            @if( isset( $schData ) && count( $schData ) > 0 )
+            <ul class="search_list">
+                @foreach( $schData AS $cate )
+                <li><a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}">
+                    @php
+                        if( $cate->parentName ) {
+                            $caName .= "<b>".$cate->categoryName."</b>";
+                        } else {
+                            $caName .= "<b>".$cate->parentName."</b> ".$cate->categoryName;
+                        }
+                    @endphp
+                    <i>1</i>
+                    <p>{{$caName}}</p>
+                </a></li>
+                @endforeach
+            </ul>
+            @endif
+        </div>
+
+        <!-- 카테고리 -->
+        <div class="search_category sch_cate_info hidden">
+            <div class="title">
+                <p><span>카테고리</span> 중에서 <br/>어떤 품목을 보여드릴까요?</p>
+            </div>
+            @if(isset($categoryList) && count( $categoryList ) > 0 )
+            <ul class="search_btn_list type02">
+                <li class="all_btn" data-pre=""><button>카테고리</button></li>
+                <li data-pre=""><button>전체</button></li>
+                @foreach( $categoryList AS $category )
+                <li data-pre="{{$category->idx}}"><button>{{$category->name}}</button></li>
+                @endforeach
+            </ul>
+            <button class="btn btn-primary w-full ">확인</button>
+            @endif
+        </div>
+    </div>
+</div>
 
 <!-- 모달 들어가는곳 : E -->
 

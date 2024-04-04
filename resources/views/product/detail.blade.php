@@ -34,12 +34,14 @@
                 </div>
                 <div class="txt_box">
                     <div class="name">
-                        @if( $data['detail']->diff <= 30 )
+                        @if( ( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 ) || $data['detail']->isAd == 1 )
                             <div class="tag">
-                                @if( $data['detail']->diff <= 30 )
+                                @if( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 )
                                     <span class="new">NEW</span>
                                 @endif
+                                @if( $data['detail']->isAd == 1 )
                                 <span class="event">이벤트</span>
+                                @endif;
                             </div>
                         @endif
                         <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
@@ -265,7 +267,7 @@
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                         <td>
-                                            <select name="" id="" class="input-form w-2/3">
+                                            <select name="product_option" id="product_option" class="input-form w-2/3">
                                                 <option value="0">없음</option>
                                             </select>
                                         </td>
@@ -349,6 +351,8 @@
 
 
 
+
+        
         var storedFiles = [];
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
@@ -371,6 +375,8 @@
 
                     $('#estimate_group_code').text(json.group_code);
                     $('input[name="estimate_group_code"]').val(json.group_code);
+
+                    $('.product_address').text(json.product_address);
 
                     modalOpen('#request_estimate-modal');
                 } else {
@@ -456,7 +462,6 @@
 
             $('.check_btn').addClass('hidden');
 
-            //$('.business_license_modify').removeClass('hidden');
             $('.request_estimate').removeClass('hidden');
             $('.order_prod_list').removeClass('hidden');
             $('.request_estimate_btn').removeClass('hidden');
@@ -524,14 +529,14 @@
         
 
         $(function(){
-            $('.count_box .minus').on('click', function(){
+            $('.count_box .minus').off().on('click', function(){
                 let num = Number($(this).siblings('input').val());
                 if (num !== 1) {
                     $(this).siblings('input').val(`${num - 1}`);
                 }
             });
 
-            $('.count_box .plus').on('click', function(){
+            $('.count_box .plus').off().on('click', function(){
                 let num = Number($(this).siblings('input').val());
                 $(this).siblings('input').val(`${num + 1}`);
             });

@@ -3,7 +3,7 @@
     <div class="header_top {{ ($header_depth=='mypage' || $header_depth=='prodlist') ? 'hidden' : '' }}">
         <div class="inner">
             <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt=""></a></h1>
-            <button class="search_btn" onclick="modalOpen('#search_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 검색어를 입력하세요</button>
+            <button class="search_btn" onclick="getSearchModal();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 검색어를 입력하세요</button>
             <ul class="right_link flex items-center">
                 <li><a class="alarm_btn" href="/alarm"><span hidden>1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
@@ -82,65 +82,51 @@
             <h3>검색</h3>
         </div>
         <div class="px-4">
-            <div class="w-full bg-white search_list">
-                <div class="text-sm flex justify-between py-3">
+
+            <div class="modal_search w-full bg-white search_list">
+                <form name="search_form" id="search_form" action="/product/searchBar" method="GET">
+                <div class="search_btn">
+                    <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
+                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요">
+                </div>
+                </form>
+                <div class="text-sm flex justify-between py-3 mt-3">
                     <span class="font-bold">최근 검색어</span>
                     <button class="text-gray-400">전체 삭제</button>
                 </div>
-                <ul class="flex flex-col gap-4">
-                    <li class="flex items-center justify-between text-sm">
-                        <a href="javascript:;">식탁</a>
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
-                    </li>
-                    <li class="flex items-center justify-between text-sm">
-                        <a href="javascript:;">테이블</a>
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
-                    </li>
-                    <li class="flex items-center justify-between text-sm">
-                        <a href="javascript:;">이벤트</a>
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
-                    </li>
-                    <li class="flex items-center justify-between text-sm">
-                        <a href="javascript:;">키즈가구</a>
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                        </button>
-                    </li>
+                <ul class="flex flex-col gap-4 keywordList">
+                   <!-- 최근 검색어 영역 //-->
                 </ul>
                 <hr class="mt-4">
                 <div class="text-sm flex justify-between mt-2 py-3">
                     <span class="font-bold">인기 카테고리</span>
-                    <span class="text-gray-400">12.01 02:28기준</span>
+                    <span class="text-gray-400">{{date('m.d H:i')}}기준</span>
                 </div>
-                <ul class="flex flex-col gap-4">
-                    <li class="flex items-center text-sm gap-2">
-                        <span class="text-primary font-bold">1</span>
-                        <a href="javascript:;">침대/매트리스 > 폼매트리스</a>
-                    </li>
-                    <li class="flex items-center text-sm gap-2">
-                        <span class="text-primary font-bold">2</span>
-                        <a href="javascript:;">소파/거실 > 1인용 소파</a>
-                    </li>
-                    <li class="flex items-center text-sm gap-2">
-                        <span class="text-primary font-bold">3</span>
-                        <a href="javascript:;">기타 카테고리</a>
-                    </li>
+                <ul class="flex flex-col gap-4 cateogry_list">
+                    <!-- 인기 카테고리 영역 //-->
                 </ul>
                 <hr class="mt-4">
                 <div class="text-sm flex mt-2 py-3 gap-1">
                     <span class="font-bold">추천 키워드</span>
                     <span class="text-gray-400 font-bold">AD</span>
                 </div>
-                <div class="text-sm text-gray-400">
+                <div class="text-sm text-gray-400 hashtag-list">
+                    <!-- 키워드 있을 시 -->
+                    <div class="flex flex-wrap items-center gap-1">
+                        <a href="" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">
+                            #모션데스크
+                        </a>
+                        <a href="" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">
+                            #이태리침대
+                        </a>
+                        <a href="" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">
+                            #모션데스크
+                        </a>
+                    </div>
+                    <!-- 키워드 없을 시 -->
                     추천 키워드가 없습니다.
                 </div>
-                <div class="mt-4 swiper search_swhiper">
+                <div class="mt-4 swiper search_swhiper" id="headerNavBanner">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide rounded-md overflow-hidden">
                             <img src="/img/search_img_d.png" class="w-full h-[110px]" alt="">
@@ -166,8 +152,119 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    const getSearchData = () => {
+        fetch("/home/getSearchData", {
+            headers: {
+                'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            var keywordPart = "";
+            if (json['keywords'].length > 0) {
+                for(i=0; i<json['keywords'].length; i++) {
+                    keywordPart += '' +
+                        '<li class="flex items-center justify-between text-sm">' +
+                        '   <a href="javascript:;" onClick="clickKeyword(\'' + json['keywords'][i]['keyword'] + '\')" data-idx="' + json['keywords'][i]['keyword'] + '">' + json['keywords'][i]['keyword'] + '</a>' +
+                        '   <button>' +
+                        '       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>' +
+                        '   </button>' +
+                    '</li>';
+                }
+                document.querySelector('.keywordList').innerHTML = keywordPart;
+            } else {
+                keywordPart += '<li class="flex items-center text-sm">최근 검색한 내역이 없습니다.</div></li>';
+                document.querySelector('.keywordList').innerHTML = keywordPart;
+            }
+
+            var categoryList = "";
+            if (json['category'].length > 0) {
+                for(i=0; i<json['category'].length; i++) {
+                    if (json['category'][i]['parentName'] != null) {
+                        categoryList += '' +
+                            '<li class="flex items-center text-sm gap-2">' +
+                            '   <span class="text-primary font-bold">1</span>' +
+                            '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
+                            '</li>';
+                    } else {
+                        categoryList += '' +
+                            '<li class="flex items-center text-sm gap-2">' +
+                            '   <span class="text-primary font-bold">1</span>' +
+                            '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
+                            '</li>';
+                    }
+                }
+
+                document.querySelector('.cateogry_list').innerHTML = categoryList;
+            }
+
+            var adKeywordPart = "";
+            if (json['ad_keyword'].length > 0) {
+                adKeywordPart += '<div class="flex flex-wrap items-center gap-1">';
+                for(i=0; i<json['ad_keyword'].length; i++) {
+                    if ( json["ad_keyword"][i]["web_link"].indexOf('notice') > 0 ) {
+                        adKeywordPart += '<a href="/help/notice/" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">' + json['ad_keyword'][i]['keyword_name'] + '</a>';
+                    } else {
+                        adKeywordPart += '<a href="'+json["ad_keyword"][i]["web_link"]+'" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">' + json['ad_keyword'][i]['keyword_name'] + '</a>';
+                    }
+                }
+                adKeywordPart += '</div>';
+                document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
+            } else {
+                adKeywordPart += '<div class="row">' +
+                    '   <div class="row__text search-list--nodata">추천 키워드가 없습니다.</div>' +
+                    '</div>';
+                document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
+            }
+
+            var bannerPart = "";
+            if (json['banner'].length > 0) {
+                for(i=0; i<json['banner'].length; i++) {
+                    bannerPart += '<div class="swiper-slide rounded-md overflow-hidden">' +
+                        '   <a href="';
+                    switch (json['banner'][i]['web_link_type']) {
+                        case 0:
+                            bannerPart += json['banner'][i]['web_link'];
+                            break;
+                        case 1:
+                            // bannerPart += '/product/detail/'+json['banner'][i]['web_link'];
+                            bannerPart += json['banner'][i]['web_link'];
+                            break;
+                        case 2:
+                            // bannerPart += '/wholesaler/detail/'+json['banner'][i]['web_link'];
+                            bannerPart += json['banner'][i]['web_link'];
+                            break;
+                        case 3:
+                            //bannerPart += '/community/detail/'+json['banner'][i]['web_link'];
+                            bannerPart += json['banner'][i]['web_link'];
+                            break;
+                        case 4:
+                            bannerPart += '/help/notice/';
+                            break;
+                    }
+                    bannerPart += '">' +
+                        '       <img src="{{preImgUrl()}}' + json['banner'][i]['folder'] + '/' + json['banner'][i]['filename'] + '">' +
+                        '   </a>' +
+                        '</div>';
+                }
+                document.querySelector('#headerNavBanner .swiper-wrapper').innerHTML = bannerPart;
+            } else {
+                bannerPart += '<div class="row">' +
+                    '   <div class="row__text search-list--nodata">최근 검색한 내역이 없습니다.</div>' +
+                    '</div>';
+                document.querySelector('.keywordList').innerHTML = bannerPart;
+            }
+        });
+    }
+
+    $(document).ready(function(f) {
         checkAlert();
+
+        if( f.keyCode == 1 ) {
+            if( $('#sKeyword').val() != '' ) {
+                $('form#search_form').submit();
+            }
+        }
     });
 
     var search_swhiper = new Swiper(".search_swhiper", {
@@ -184,6 +281,12 @@
             type: "fraction",
         },
     });
+
+    function getSearchModal()
+    {
+        getSearchData();
+        modalOpen('#search_modal')
+    }
 
     function checkAlert() {
         $.ajax({

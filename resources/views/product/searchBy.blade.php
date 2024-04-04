@@ -209,10 +209,10 @@
                         <li class="prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
-                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
-                                <a href="./prod_detail.php">
+                                <a href="/product/detail/{{$item->idx}}">
                                     <span>{{$item->companyName}}</span>
                                     <p>{{$item->name}}</p>
                                     <b>
@@ -234,6 +234,10 @@
     </div>
 
     <script>
+        let isLoading = false;
+        let isLastPage = false;
+        let currentPage = 1;
+
         // 카테고리 클릭시
         $('.sub_category li').on('click',function(){
             $(this).addClass('active').siblings().removeClass('active')
@@ -297,5 +301,74 @@
             $('#' + targetId).show();
         });
 
+
+        function loadNewProductList() {
+            isLoading = true;
+
+            var orderedElement = '';
+            if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
+                orderedElement = $('input[name="filter_cate_2"]:checked').attr('id')
+            }
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: '/product/getJsonListBySearch',
+                method: 'GET',
+                data: {
+                    'page': ++currentPage,
+                    'kw' : "{{$_GET['kw']}}",
+                    'so' : orderedElement,
+                },
+                success: function(result) {
+                    displayNewWholesaler(result.query, $(".relative ul.prod_list"), false);
+
+                    isLastPage = currentPage === result.last_page;
+                },
+                complete : function () {
+                    isLoading = false;
+                }
+            })
+        }
+
+
+        function displayNewWholesaler(productArr, target, needsEmptying) {
+            if(needsEmptying) {
+                target.empty();
+            }
+
+            let html = "";
+            productArr.data.forEach(function(product, index) {
+                console.log(product);
+                html += '' +
+                    '<li class="prod_item">' +
+                    '   <div class="img_box">' +
+                    '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt=""></a>' +
+                    '       <button class="zzim_btn prd_' + product.idx + '" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                    '   </div>' +
+                    '   <div class="txt_box">' +
+                    '       <a href="./prod_detail.php">' +
+                    '           <span>' + product.companyName + '</span>' +
+                    '           <p>' + product.name + '</p>' +
+                    '           <b>';
+                if (product.is_price_open == 1) {
+                    html += product.price.toLocaleString('ko-KR') + '원';
+                } else {
+                    html += product.price_text;
+                }
+                html += '' +
+                    '</b>' +
+                    '       </a>' +
+                    '   </div>' +
+                    '</li>'
+            });
+
+            target.append(html);
+        }
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+                loadNewProductList();
+            }
+        });
     </script>
 @endsection

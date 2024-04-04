@@ -29,7 +29,7 @@
                                                 <img src="{{$product->imgUrl}}" alt="">
                                                 <span><b>{{$product->subtext1}}</b><br/>{{$product->subtext2}}</span>
                                             </a>
-                                            <button class="zzim_btn  prd_{{$product->idx}} {{ ($product->isInterest == 1) ? 'active' : '' }}" pidx="{{$product->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            <button class="zzim_btn prd_{{$product->idx}} {{ ($product->isInterest == 1) ? 'active' : '' }}" pidx="{{$product->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                         </div>
                                         <div class="txt_box">
                                             <a href="./prod_detail.php">

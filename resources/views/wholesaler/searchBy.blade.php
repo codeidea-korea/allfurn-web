@@ -49,8 +49,8 @@
                     <li>
                         <div class="txt_box">
                             <div>
-                                <a href="javascript:;">
-                                    <img src="./img/icon/crown.png" alt="">
+                                <a href="/wholesaler/detail/{{$item->companyIdx}}">
+                                    <img src="/img/icon/crown.png" alt="">
                                     {{$item->companyName}}
                                     <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                 </a>
@@ -525,4 +525,5 @@
             selectCategory();
         })
     </script>
+--}}
 @endsection
