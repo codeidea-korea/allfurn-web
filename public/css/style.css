@@ -96,7 +96,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 /* 가구소식 리스트 */
 .furniture_news {display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }
-.furniture_news li .img_box img {border-radius:3px; }
+.furniture_news li .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:134%; border-radius:3px; background-color: #f0f0f0; }
+.furniture_news li .img_box img {position:absolute; left:0; top:0; bottom:0; right:0; margin:auto;  }
 .furniture_news li .txt_box {border:1px solid #DADDE0; border-top:0 none; }
 .furniture_news li .txt_box a {display:block; padding:25px; }
 .furniture_news li .txt_box .tit {font-size:24px; font-weight:600; line-height:1.3; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
@@ -323,7 +324,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 /* 뉴스정보 */
 .news_con02 dl {display:flex; border-top: 1px solid #46433F; border-bottom: 1px solid #46433F; }
-.news_con02 dl dt {flex-shrink:0; display:flex; align-items: center; /* width:267px; */ padding:0 20px; background: #F5F5F5; text-align:center; }
+.news_con02 dl dt {flex-shrink:0; display:flex; align-items: center; width:267px; padding:0 20px; background: #F5F5F5; text-align:center; }
 .news_con02 dl dt .title h4 {font-size:30px; font-weight:600; color:#000; }
 .news_con02 dl dt .title p {margin-top:10px; font-size:14px; }
 .news_con02 dl dt .title .search_box {position:relative; margin-top:30px; }
