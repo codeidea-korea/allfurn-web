@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\PushQ;
 use App\Models\SmsHistory;
 use App\Models\AlimtalkTemplate;
+use App\Models\PushSendLog;
+
 use DateTime;
 
 class PushService
@@ -61,7 +63,7 @@ class PushService
         curl_close ($ch);
     }
 
-    private function generateToken(): string{
+    public function generateToken(): string{
         $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
         $userid = 'codeidea';
         $data = "apikey=" . $apikey . "&userid=" . $userId;
@@ -223,10 +225,21 @@ class PushService
         
             $headers = array();
             $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Authorization: key=AAAAz0KBYaw:APA91bHlCV092apNbyHu8u6cM23naPxem-Olb3HFNWGlTYCzMMvYD0qwbXFrytIRmd0h0A1GqjjDm3W4HiCTAkfpbSiz0w2qRuOo7GRV2gbajsBIn67W7_h0w0R8FR7MeHSNJ-t4Au4a';
+            $headers[] = 'Authorization: key=AAAA4atg0bQ:APA91bFxmF8ZikIdbyfmMt696pCUKHKO-ceoQMubPGSwu-wT0a21fEV45Lvw-27si_NOirum6nn9NmBekPi-xiqlt8NA2lChXZU84oJSiLkrOO5kkSgruBH9jBdDuQ2bwCT_KuOGutQB';
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
             $result = curl_exec($ch);
+            
+            $sendLog = new PushSendLog();
+            $sendLog->user_idx = $userIdx;
+            $sendLog->push_idx = $pushMessage->idx;
+            $sendLog->push_type = $pushMessage->type;
+            $sendLog->is_send = 1;
+            $sendLog->is_check = 0;
+            $sendLog->send_date = date('Y-m-d H:i:s');
+            $sendLog->response = $result;
+            $sendLog->save();
+
             curl_close ($ch);
         }
     }

@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\PushQ;
+use App\Models\AuthToken;
 
 class Kernel extends ConsoleKernel
 {
@@ -79,14 +80,14 @@ class Kernel extends ConsoleKernel
                 
                     $headers = array();
                     $headers[] = 'Content-Type: application/json';
-                    $headers[] = 'Authorization: key=AAAAz0KBYaw:APA91bHlCV092apNbyHu8u6cM23naPxem-Olb3HFNWGlTYCzMMvYD0qwbXFrytIRmd0h0A1GqjjDm3W4HiCTAkfpbSiz0w2qRuOo7GRV2gbajsBIn67W7_h0w0R8FR7MeHSNJ-t4Au4a';
+                    $headers[] = 'Authorization: key=AAAA4atg0bQ:APA91bFxmF8ZikIdbyfmMt696pCUKHKO-ceoQMubPGSwu-wT0a21fEV45Lvw-27si_NOirum6nn9NmBekPi-xiqlt8NA2lChXZU84oJSiLkrOO5kkSgruBH9jBdDuQ2bwCT_KuOGutQB';
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                 
                     $result = curl_exec($ch);
                     curl_close ($ch);
                 }
             }
-        })->cron('* * * * *');
+        })->cron('* * * * *')->appendOutputTo('/var/www/allfurn-web/logs/batch.log');
     }
 
     /**
