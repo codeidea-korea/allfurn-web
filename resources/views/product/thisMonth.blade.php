@@ -54,18 +54,42 @@
                     <div class="line_common_banner">
                         <ul class="swiper-wrapper">
                             @foreach( $dealmiddle AS $k => $mid )
-                                <li class="swiper-slide" style="background-color:#475872; ">
-                                    <a href="javascript:;">
-                                        <div class="txt_box">
-                                            <p>{{$mid->subtext1}}<br/>{{$mid->subtext2}}</p>
-                                            <span>{{$mid->content}}</span>
-                                        </div>
-                                    </a>
+                                <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->imgUrl . ');' : 'background-color:' . $mid->font_color . ';' }}">
+                                    @php
+                                        $link = '';
+                                        switch ($mid->web_link_type) {
+                                            case 0: //Url
+                                                $link = $mid->web_link;
+                                                break;
+                                            case 1: //상품
+                                                $link = $mid->web_link;
+                                                break;
+                                            case 2: //업체
+                                                $link = $mid->web_link;
+                                                break;
+                                            case 3: //커뮤니티
+                                                $link = $mid->web_link;
+                                                break;
+                                            default: //공지사항
+                                                $link = '/help/notice/';
+                                                break;
+                                        }
+                                    @endphp
+                                    @if( $mid->banner_type == 'img' )
+                                        <a href="{{$link}}"></a>
+                                    @else
+                                        <a href="{{link}}">
+                                            <div class="txt_box" style="color:{{$mid->font_color}}">
+                                                <p>{{$mid->subtext1}} <br/>{{$mid->subtext2}}</p>
+                                                <span>{{$mid->content}}</span>
+                                            </div>
+                                        </a>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
                         <div class="count_pager"><b>1</b> / 12</div>
-                        <button class="slide_arrow prev type03"><svg><use xlink:href="/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                        <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
                         <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
                     </div>
                 </div>
@@ -95,10 +119,10 @@
                                             <button class="zzim_btn prd_{{$best->idx}} {{ ($best->isInterest == 1) ? 'active' : '' }}" pidx="{{$best->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                         </div>
                                         <div class="txt_box">
-                                            <a href="./prod_detail.php">
+                                            <a href="/product/detail/{{$best->idx}}">
                                                 <span>{{$best->companyName}}</span>
-                                                <p>{{$best->name}}
-                                                    <b>{{number_format( $best->price )}}원</b>
+                                                <p>{{$best->name}}</p>
+                                                <b>{{$best->is_price_open ? number_format($best->price, 0).'원': $best->price_text}}</b>
                                             </a>
                                         </div>
                                     </li>
@@ -120,7 +144,7 @@
             <div class="modal_bg" onclick="modalClose('#zoom_view-modal')"></div>
             <div class="modal_inner modal-lg zoom_view_wrap">
                 <div class="count_pager dark_type"><b>1</b> / 12</div>
-                <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="./pc/img/icon-defs.svg#Close"></use></svg></button>
+                <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
                 <div class="modal_body">
                     <div class="slide_box zoom_prod_list">
                         <ul class="swiper-wrapper">
@@ -128,13 +152,13 @@
                             <li class="swiper-slide">
                                 <div class="img_box">
                                     <img src="{{$best->imgUrl}}" alt="">
-                                    <button class="zzim_btn prd_{{$best->idx}} {{ ($best->isInterest == 1) ? 'active' : '' }}" pIdx="{{$best->idx}}"><svg><use xlink:href="./pc/img/icon-defs.svg#zzim"></use></svg></button>
+                                    <button class="zzim_btn prd_{{$best->idx}} {{ ($best->isInterest == 1) ? 'active' : '' }}" pIdx="{{$best->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
                                 <div class="txt_box">
                                     <div>
                                         <h5>{{$best->companyName}}</h5>
                                         <p>{{$best->name}}</p>
-                                        <b>{{number_format( $best->price )}}원</b>
+                                        <b>{{$best->is_price_open ? number_format($best->price, 0).'원': $best->price_text}}</b>
                                     </div>
                                     <a href="/product/detail/{{$best->idx}}">제품상세보기</a>
                                 </div>
@@ -142,8 +166,8 @@
                             @endforeach
                         </ul>
                     </div>
-                    <button class="slide_arrow prev type03"><svg><use xlink:href="./pc/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-                    <button class="slide_arrow next type03"><svg><use xlink:href="./pc/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                    <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                    <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
                 </div>
             </div>
         </div>
