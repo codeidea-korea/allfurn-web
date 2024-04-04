@@ -50,22 +50,30 @@
                             break;
                     }
                     ?>
-                    @if(isset($item->folder) && isset($item->filename))
-                        <li class="swiper-slide" style="background-image:url('{{preImgUrl().$item->folder."/".$item->filename}}')">
-                    @else 
-                        <li class="swiper-slide" style="background-image:url('/img/main_visual.png')">
+                    @if($item->banner_type == 'img')
+                        @if(isset($item->folder) && isset($item->filename))
+                            <li class="swiper-slide" style="background-image:url('{{preImgUrl().$item->folder."/".$item->filename}}')">
+                        @else 
+                            <li class="swiper-slide" style="background-image:url('/img/main_visual.png')">
+                        @endif
+                            <a href="{{$link}}">
+                                <span class="brand">{{ $item->company_name }}</span>
+                            </a>
+                        </li>
+                    @else
+                        <li class="swiper-slide" style="background-color:{{$item->bg_color}};">
+                            <a href="{{$link}}">
+                                <span class="brand">{{ $item->company_name }}</span>
+                                <p style="color:{{ $item->font_color }};"><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
+                            </a>
+                        </li>
                     @endif
-                        <a href="{{$link}}">
-                            <span class="brand">{{ $item->company_name }}</span>
-                            <p><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
-                        </a>
-                    </li>
                 @endforeach
             </ul>
             <div class="bottom_box">
-                <p>올펀가구</p>
+                <p>{{ isset($data['banner_top'][0]) ? $data['banner_top'][0]->company_name : '' }}</p>
                 <div class="flex items-center ">
-                    <div class="count_pager"><b>1</b> / 12</div>
+                    <div class="count_pager"><b>1</b> / {{ count($data['banner_top']) }}</div>
                     {{-- <a href="javascript:;">모아보기</a> --}}
                 </div>
             </div>

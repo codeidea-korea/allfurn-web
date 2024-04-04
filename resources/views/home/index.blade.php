@@ -46,17 +46,25 @@
                                 break;
                         }
                         ?>
-                    <li class="swiper-slide">
-                        <a href="{{$link}}">
-                            <span class="brand">{{ $item->company_name }}</span>
-                            <p><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
-                            @if(isset($item->folder) && isset($item->filename))
-                                <img src="{{preImgUrl().$item->folder."/".$item->filename}}" alt="">
-                            @else 
-                                <img src="/img/main_visual.png" alt="">
-                            @endif
-                        </a>
-                    </li>
+                        @if($item->banner_type == 'img')
+                            <li class="swiper-slide">
+                                <a href="{{$link}}">
+                                    <span class="brand">{{ $item->company_name }}</span>
+                                    @if(isset($item->folder) && isset($item->filename))
+                                        <img src="{{preImgUrl().$item->folder."/".$item->filename}}" alt="">
+                                    @else 
+                                        <img src="/img/main_visual.png" alt="">
+                                    @endif
+                                </a>
+                            </li>
+                        @else
+                            <li class="swiper-slide" style="height:660px;background-color:{{$item->bg_color}};">
+                                <a href="{{$link}}">
+                                    <span class="brand">{{ $item->company_name }}</span>
+                                    <p style="color:{{ $item->font_color }};"><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
+                                </a>
+                            </li>
+                        @endif
                     @endforeach
                 </ul>
                 <div class="bottom_box">
