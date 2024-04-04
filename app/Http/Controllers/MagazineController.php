@@ -55,9 +55,17 @@ class MagazineController extends BaseController
 
         $params['board_name'] = '일일 가구 뉴스';
         $params['keyword'] = $request->keyword ? $request->keyword : "";
+        
+        $params['offset'] = $request->offset ?  $request->offset : 1;
+        $params['limit'] = 10;
 
         $data = $this->communityService->getArticleList($params);
-        return view(getDeviceType().'magazine.dailyNews', $data);
+        if($request->ajax()) {            
+            $data['html'] = view('magazine.inc-dailyNews-common', $data)->render();
+            return response()->json($data);
+        } else {
+            return view(getDeviceType().'magazine.dailyNews', $data);
+        }
     }
 
     public function furnitureNews() {

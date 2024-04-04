@@ -53,6 +53,7 @@ class CommunityService {
 
         if(isset($params['offset']) && isset($params['limit'])) {
             $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+            $data['last_page'] = $data['articleTotalCount'] > 0 ? ceil($data['articleTotalCount'] / $params['limit']) : 1;
         }
 
         return $data;

@@ -42,5 +42,38 @@
     $(".search_box button").on('click', function() {
         window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
     });
+
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage ) {
+            loadDailyNewsList();
+        }
+    });
+
+    let currentPage = 1;
+    let isLoading = false;
+    let isLastPage = currentPage === {{ $last_page }};
+    function loadDailyNewsList() {
+        isLoading = true;
+
+        $.ajax({
+            url: '/magazine/daily',
+            method: 'GET',
+            data: { 
+                'offset': ++currentPage,
+                'keyword' : $(".search_box input").val(),
+            }, 
+            success: function(result) {
+                $(".news_list").append(result.html);
+
+                isLastPage = currentPage === result.last_page;
+            },
+            error : function(e) {
+                currentPage--;
+            },
+            complete : function () {
+                isLoading = false;
+            }
+        })
+    }
 </script>
 @endsection
