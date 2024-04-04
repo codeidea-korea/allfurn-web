@@ -34,6 +34,7 @@ class LoginController extends BaseController
         if(Auth::check()) {
             return redirect('/');
         }
+        echo date('s');
         return view(getDeviceType() . 'login.login');
     }
 

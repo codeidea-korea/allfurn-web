@@ -90,6 +90,10 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');
     Route::get('/getCategoryBanners', 'ProductController@getCategoryBanners');
     Route::get('/getJsonThisBestWholesaler', 'ProductController@getJsonThisBestWholesaler');
+    Route::get('/getJsonListByCategory', 'ProductController@getJsonListByCategory');
+    Route::get('/getJsonListBySearch', 'ProductController@getJsonListBySearch');
+    Route::get('/planDiscountDetail', 'ProductController@planDiscountDetail');
+    Route::get('/popularList', 'ProductController@getPopularSumList');
 });
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){
@@ -98,7 +102,9 @@ Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::post('/updateResponse', 'EstimateController@updateResponse');
     Route::put('/hold', 'EstimateController@hold');
     Route::post('/insertOrder', 'EstimateController@insertOrder');
+
     Route::post('/companyList', 'EstimateController@getCompanyList');
+    Route::post('/updateResponseMulti', 'EstimateController@updateResponseMulti');
 });
 
 Route::prefix('order')->name('order')->group(function() {
@@ -229,10 +235,11 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/', 'WholesalerController@index')->name('.index');
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
-    Route::get('/search', 'WholefsalerController@listBySearch');
+    Route::get('/search', 'WholesalerController@listBySearch');
     Route::get('/best', 'WholesalerController@best');
     Route::get('/gather', 'WholesalerController@gather');
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
+    Route::get('/wholesalerAddProduct', 'WholesalerController@wholesalerAddProduct');
 });
 
 Route::prefix('download')->name('download')->group(function() {
@@ -259,3 +266,5 @@ Route::prefix('help')->name('help')->middleware('auth')->group(function() {
     Route::post('/inquiry', 'HelpController@registerInquiry');
     Route::delete('/inquiry/{idx}', 'HelpController@removeInquiry');
 });
+
+Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
