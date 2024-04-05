@@ -238,7 +238,7 @@ function getCategoryList() {
             let htmlText = '<ul>';
             result.forEach(function (e, idx) {
                 htmlText += '<li>';
-                htmlText += '<a href="javascript:;">';
+                htmlText += '<a href="/product/category?pre='+e.idx+'">';
                 htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
                 htmlText += '<span>' + e.name + '</span>';
                 htmlText += '</a>';
