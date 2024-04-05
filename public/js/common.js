@@ -37,9 +37,47 @@ $( function() {
         $(this).addClass('active').siblings().removeClass('active')
     });
 
-    $('.search_intro .next_btn').on('click',function(){
-        let next = $('.search_intro li.active').data('next')
-        $(`.search_wrap .${next}`).removeClass('hidden').siblings('div').addClass('hidden')
+
+    // 쉬운상품 찾기
+    // 각 버튼 클릭 시
+    $('.search_intro .search_btn_list li button').on('click', function() {
+        let parentLi = $(this).closest('li');
+
+        // 다른 모든 li에서 active 클래스 제거
+        $('.search_intro .search_btn_list li').removeClass('active');
+
+        // 현재 li에 active 클래스 추가
+        parentLi.addClass('active');
+    });
+
+    // 다음 버튼 클릭 시
+    $('.search_intro .next_btn').on('click', function() {
+        let activeLi = $('.search_intro li.active');
+        let next = activeLi.data('next');
+        let url = activeLi.data('url');
+
+        if (next) {
+            $(`.${next}`).removeClass('hidden').siblings('div').addClass('hidden');
+        } else if (url) {
+            window.location.href = url;
+        }
+    });
+
+    // $('.search_intro .next_btn').on('click',function(){
+    //     let next = $('.search_intro li.active').data('next')
+    //     $(`.search_wrap .${next}`).removeClass('hidden').siblings('div').addClass('hidden')
+    // })
+
+    // 주문시 상품수량 변경
+    $('.count_box .minus').on('click',function(){
+        let num = Number($(this).siblings('input').val().split('개')[0]);
+        if(num !== 1){
+            $(this).siblings('input').val(`${num-1}개`)
+        }
+    })
+    $('.count_box .plus').on('click',function(){
+        let num = Number($(this).siblings('input').val().split('개')[0]);
+        $(this).siblings('input').val(`${num+1}개`)
     })
 });
 

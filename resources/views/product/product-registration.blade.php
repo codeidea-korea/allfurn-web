@@ -19,11 +19,12 @@
             <div class="com_setting stting_wrap">
                 <div class="flex items-center pb-5 mb-5 justify-between border-b-2 border-stone-900 ">
                     <h3 class="font-medium text-lg">상품 기본 정보</h3>
-                    @if(sizeof($productList)>0)
+                    {{-- @if(sizeof($productList)>0)
                         <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="getProductList(1);">
                             기본 정보 불러오기
                         </button>
                     @endif
+                    --}}
                     <!-- button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button //-->
                 </div>
                 <div class="mb-5 pb-5 border-b">
