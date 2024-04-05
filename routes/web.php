@@ -21,6 +21,7 @@ Route::prefix('home')->group(function() {
     Route::delete('/search/{idx}', 'HomeController@deleteSearchKeyword');
     Route::get('/searchResult', 'HomeController@searchResult');
     Route::post('/getNewProduct', 'HomeController@getNewProduct');
+    Route::post('/getSpeakerLoud', 'HomeController@getSpeakerLoud');
 });
 Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
@@ -126,7 +127,7 @@ Route::get('/like/product', 'MypageController@likeProduct');
 Route::get('/like/company', 'MypageController@likeCompany');
 
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
-    Route::get('/', 'MypageController@index');
+    Route::get('/', 'MypageController@index')->name('.mypage');;
     Route::get('/deal', 'MypageController@deal')->name('.deal');
     Route::get('/purchase', 'MypageController@purchase')->name('.purchase');
     Route::get('/normal', 'MypageController@normal')->name('.normal');

@@ -189,5 +189,11 @@ class HomeController extends BaseController
             'productList'=>$productList
         ]);
     }
+
+    // 상단 공지
+    public function getSpeakerLoud(Request $request)
+    {
+        return $this->homeService->getSpeakerLoud();
+    }
 }
 

@@ -587,4 +587,13 @@ class HomeService
             'like'=>$isLike
         ]);
     }
+
+    // 상단 공지
+    public function getSpeakerLoud()
+    {
+        $speaker = DB::table('AF_speaker')->where('state', 'G')->where('is_delete', '0')->where('is_open', 1)->first();
+        return response()->json([
+            'speaker'=>$speaker
+        ]);
+    }
 }

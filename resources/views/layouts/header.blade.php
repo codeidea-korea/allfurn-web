@@ -70,7 +70,7 @@
         <div class="inner">
             <a href="javascript:;" class="flex items-center">
                 <svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>
-                내 집에서 호텔 침대를 만나보세요
+                <span id="speakerLoud">내 집에서 호텔 침대를 만나보세요</span>
                 <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg>
             </a>
         </div>
@@ -87,15 +87,11 @@
             <li class="{{ Request::segment(1) == 'magazine' ? 'active' : '' }}"><a href="/magazine">뉴스정보</a></li>
             <li class="{{ Request::segment(1) == 'community' ? 'active' : '' }}"><a href="/community">커뮤니티</a></li>
         </ul>
-
         <div class="category_list"></div>
     </div>
 </div>
 
 <script>
-
-
-
 const getSearchData = () => {
     fetch("/home/getSearchData", {
         headers: {
@@ -206,6 +202,7 @@ $(document).ready(function(f){
     getCategoryList();
     checkAlert();
     //getCategoryBanners();
+    getSpeakerLoud();
 
     if( f.keyCode == 1 ) {
         if( $('#sKeyword').val() != '' ) {
@@ -310,4 +307,37 @@ var search_swhiper = new Swiper(".search_swhiper", {
         type: "fraction",
     },
 });
+
+function getSpeakerLoud() {
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url				: '/home/getSpeakerLoud',
+        data			: {},
+        type			: 'POST',
+        dataType		: 'json',
+        success		: function(result) {
+            console.log(result.speaker.web_link);
+            let speaker_link;
+            switch (result.speaker.web_link_type) {
+                case 0:
+                    speaker_link = result.speaker.web_link;
+                    break;
+                case 1:
+                    speaker_link = result.speaker.web_link;
+                    break;
+                case 2:
+                    speaker_link = result.speaker.web_link;
+                    break;
+                case 3:
+                    speaker_link = result.speaker.web_link;
+                    break;
+                case 4:
+                    speaker_link = '/help/notice/';
+                    break;
+            }
+            let htmlText = `<a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg><span id="speakerLoud">${result.speaker.speaker_text}</span><svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>`;
+            $('.header_banner .inner').html(htmlText);
+        }
+    });
+}
 </script>
