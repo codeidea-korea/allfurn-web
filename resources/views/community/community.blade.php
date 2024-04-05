@@ -107,10 +107,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="mt-6 flex justify-end">
-                <a href="/community/write" class="btn btn-round btn-primary px-4"><svg class="w-5 h-5 mr-1"><use xlink:href="./img/icon-defs.svg#write_add"></use></svg>글쓰기</a>
-            </div>
             <div class="pagenation flex items-center justify-center py-12">
                 @if($pagination['prev'] > 0)
                     <a href="javascript:;" onclick="getArticlesForPage({{$pagination['prev']}})">
