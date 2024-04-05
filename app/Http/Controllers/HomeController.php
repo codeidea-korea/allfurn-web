@@ -50,14 +50,21 @@ class HomeController extends BaseController
             }
         }
 
+        $categoryList = $this->productService->getCategoryList();
         if ($chkMobile) {
 
             if (Auth::check()) {
+                $schData = $this->homeService->getSearchData();
                 
                 $data = $this->homeService->getHomeData();
                 $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 
-                return view('m/home/index', ['data'=>$data, 'xtoken' => $xtoken]);
+                return view('m/home/index', [
+                    'data'=>$data,
+                    'xtoken' => $xtoken,
+                    'categoryList'  => $categoryList,
+                    'schData'   => $schData['category']
+                ]);
                 
             } else {
                 
@@ -73,10 +80,14 @@ class HomeController extends BaseController
             Log::info('--------------------------------------------');
             
             if (Auth::check()) {
-                
+                $schData = $this->homeService->getSearchData();
                 $data = $this->homeService->getHomeData();
 
-                return view('home/index', ['data'=>$data]);
+                return view('home/index', [
+                    'data'=>$data,
+                    'categoryList'  => $categoryList,
+                    'schData'   => $schData['category']
+                ]);
                 
             } else {
                 
@@ -156,41 +167,26 @@ class HomeController extends BaseController
         return $this->homeService->toggleCompanyLike($params);
     }
 
-    public function likeProduct(Request $request){
-        $data['pageType'] = 'product';
-        $data['categoryList'] = $this->productService->getCategoryList();
-        
-        // print_re($request['offset']);
-        // dd($request['offset']);
-        if($request->ajax()) {
-            $params['offset'] = $request->offset;
-            $params['limit'] = 2;
-            $data = $this->mypageService->getInterestProducts($params);
-
-            return response()->json($data);
-        } else {
-            $params['offset'] = 1;
-            $params['limit'] = 2;
-            $data['productList'] = $this->mypageService->getInterestProducts($params);
-            return view(getDeviceType().'mypage.likePage', $data);
-        }
-        
-        // print_re($data['productList']);
-        
-        
-    }
-
-    public function likeCompany() {
-        $data['pageType'] = 'company';
-        $data['categoryList'] = $this->productService->getCategoryList();
-        // $data = $this->homeService->likeCompany();
-
-        return view(getDeviceType().'mypage.likePage', $data);
-    }
-
-    public function searchResult()
+    public function searchResult(Request $request)
     {
+        $data['keyword'] = $request->query('kw');
+        $data['categoryIdx'] = $request->query('ca');
+        $data['parentIdx'] = $request->query('pre');
+        $data['property'] = $request->query('prop');
+        $data['sort'] = $request->query('so');
+
+        $productList = $this->productService->listByCategory($data);
+
+        if ($productList['list']->total() == 0 && $data['categoryIdx'] == null && $data['parentIdx'] == null && $data['property'] == null && $data['sort'] == null) {
+            $wholesalesCnt = $this->productService->countSearchWholesales($data['keyword']);
+
+            if ($wholesalesCnt > 1) {
+                return redirect('/wholesaler/search?kw='.$data['keyword']);
+            }
+        }
+
         return view(getDeviceType().'home.search-result', [
+            'productList'=>$productList
         ]);
     }
 }
