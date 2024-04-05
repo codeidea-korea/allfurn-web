@@ -28,7 +28,7 @@
                         <li class="prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $info['mdp_gidx'] }}"><img src="{{ $info['mdp_gimg'] }}" alt=""></a>
-                                <button class="zzim_btn prd_{{ $info['mdp_gidx'] }} {{ ($brand->product_interest[$info['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $info['mdp_gidx'] }}"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                <button class="zzim_btn prd_{{ $info['mdp_gidx'] }} {{ ($brand->product_interest[$info['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $info['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                         </li>
                         @endforeach
@@ -39,7 +39,7 @@
         </div>
         <div class="bottom_box">
             <div class="bot_slide ">
-                <button class="arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+                <button class="arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
                 <div class="pager_box overflow-hidden">
                     <ul class="swiper-wrapper">
                         @foreach($data['popularbrand_ad'] as $key => $brand)
@@ -47,7 +47,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <button class="arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+                <button class="arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
             </div>
             <div class="right_box">
                 <div class="count_pager"><b>1</b> / 12</div>
@@ -125,7 +125,7 @@
                                     {{ $wholesaler->company_name }}
                                     <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                 </a>
-                                <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->company_idx}}' onclick="toggleCompanyLike({{$wholesaler->company_idx}})"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
+                                <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->company_idx}}' onclick="toggleCompanyLike({{$wholesaler->company_idx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             @php
                                 $companyCategoryList = explode(',', $wholesaler->categoryList);
@@ -191,7 +191,7 @@
             <div class="mt-2 text-right txt-gray fs10">{{date('Y년 m월 d일')}} 기준</div>
             @if( count( $companyProduct ) > 10 )
                 <div class="mt-8 text-center ">
-                    <a href="javascript:;" class="btn btn-line4">더보기 <img src="./img/icon/filter_arrow.svg" alt=""></a>
+                    <a href="javascript:;" class="btn btn-line4">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
                 </div>
             @endif
         </div>
@@ -210,7 +210,7 @@
                     <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                     <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                    <button class="refresh_btn">초기화 <svg><use xlink:href="./img/icon-defs.svg#refresh"></use></svg></button>
+                    <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                 </div>
                 <div class="total">전체 0개</div>
             </div>
