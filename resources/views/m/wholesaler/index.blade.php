@@ -134,6 +134,7 @@
                             <div class="flex items-center justify-between">
                                 <div class="tag">
                                     @foreach ( $companyCategoryList as $category )
+                                        @if($loop->index == 3) @break @endif
                                         <span>{{ $category }}</span>
                                     @endforeach
                                 </div>
@@ -178,6 +179,7 @@
                             <p>{{$company->company_name}}</p>
                             <div class="tag">
                                 @foreach( explode( ',', $company->categoryList ) AS $cate )
+                                    @if($loop->index == 2) @break @endif
                                     <span>{{$cate}}</span>
                                 @endforeach
                             </div>
@@ -187,9 +189,11 @@
                 </ul>
             </div>
             <div class="mt-2 text-right txt-gray fs10">{{date('Y년 m월 d일')}} 기준</div>
-            <div class="mt-8 text-center ">
-                <a href="javascript:;" class="btn btn-line4">더보기 <img src="./img/icon/filter_arrow.svg" alt=""></a>
-            </div>
+            @if( count( $companyProduct ) > 10 )
+                <div class="mt-8 text-center ">
+                    <a href="javascript:;" class="btn btn-line4">더보기 <img src="./img/icon/filter_arrow.svg" alt=""></a>
+                </div>
+            @endif
         </div>
     </section>
     @endif

@@ -93,6 +93,7 @@
                                                 $companyCategoryList = explode(',', $wholesaler->categoryList);
                                             @endphp
                                             @foreach ( $companyCategoryList as $category )
+                                                @if($loop->index == 3) @break @endif
                                                 <span>{{ $category }}</span>
                                             @endforeach
                                         </div>
@@ -109,7 +110,6 @@
                                 </div>
                             </li>
                         @endforeach
-
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
@@ -120,37 +120,40 @@
     @endif
 
     @if( count( $companyProduct ) > 0 )
-    <section class="sub_section">
-        <div class="inner">
-            <div class="main_tit mb-8 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h3>도매 업체 순위</h3>
+        <section class="sub_section">
+            <div class="inner">
+                <div class="main_tit mb-8 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <h3>도매 업체 순위</h3>
+                    </div>
                 </div>
+                <div class="ranking_box">
+                    <ul>
+                        @foreach( $companyProduct AS $key => $company )
+                            @if( $key != 0 && $key%5 == 0 )
+                            </ul><ul{{( $key > 9 ) ? ' hidden' : ''}}>
+                            @endif
+                        <li><a href="javascript:;">
+                                <i>{{$key+1}}</i>
+                                <p>{{$company->company_name}}</p>
+                                <div class="tag">
+                                    @foreach( explode( ',', $company->categoryList ) AS $cate )
+                                        @if($loop->index == 2) @break @endif
+                                        <span>{{$cate}}</span>
+                                    @endforeach
+                                </div>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @if( count( $companyProduct ) > 10 )
+                    <div class="mt-8 text-center ">
+                        <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
+                    </div>
+                @endif
             </div>
-            <div class="ranking_box">
-                <ul>
-                    @foreach( $companyProduct AS $key => $company )
-                        @if( $key != 0 && $key%5 == 0 )
-                        </ul><ul{{( $key > 9 ) ? ' hidden' : ''}}>
-                        @endif
-                    <li><a href="javascript:;">
-                            <i>{{$key+1}}</i>
-                            <p>{{$company->company_name}}</p>
-                            <div class="tag">
-                                @foreach( explode( ',', $company->categoryList ) AS $cate )
-                                    <span>{{$cate}}</span>
-                                @endforeach
-                            </div>
-                        </a>
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-            <div class="mt-8 text-center ">
-                <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
-            </div>
-        </div>
-    </section>
+        </section>
     @endif
 
     <section class="sub_section sub_section_bot">
