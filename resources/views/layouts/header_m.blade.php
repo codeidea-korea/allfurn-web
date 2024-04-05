@@ -35,7 +35,6 @@
         <div class="inner">
             <a href="javascript:;" class="flex items-center">
                 <svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>
-                내 집에서 호텔 침대를 만나보세요
                 <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg>
             </a>
         </div>
@@ -259,6 +258,7 @@
 
     $(document).ready(function(f) {
         checkAlert();
+        getSpeakerLoud();
 
         if( f.keyCode == 1 ) {
             if( $('#sKeyword').val() != '' ) {
@@ -307,5 +307,25 @@
                 $(".alarm_btn span").hide();
             }
         })
+    }
+
+    function getSpeakerLoud() {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/home/getSpeakerLoud',
+            data			: {},
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                let speaker_link;
+                if (result.speaker.web_link == "4"){
+                    speaker_link = '/help/notice/';
+                }else{
+                    speaker_link = result.speaker.web_link;
+                }
+                let htmlText = `<a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>${result.speaker.speaker_text}<svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>`;
+                $('.header_banner .inner').html(htmlText);
+            }
+        });
     }
 </script>
