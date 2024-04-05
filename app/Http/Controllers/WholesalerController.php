@@ -41,17 +41,26 @@ class WholesalerController extends BaseController
         // $companyList = $this->productService->getThisMonth('product');
         // $companyList = setArrayNumer( $companyList );
         $target['limit'] = 20;
-        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);        
-        $company = $this->wholesalerService->getThisMonthWholesaler($target);
-
+        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);
+        
         return view(getDeviceType().'wholesaler.index', [
             'data'=>$data,
             'categoryList'  => $categoryList,
             'bannerList'    => $bannerList,
             'companyList'   => $companyList,
-            'companyProduct'=> $company,
+            'companyProduct'=> $companyList,
             'query'         => $target
         ]);
+    }
+
+    public function getWholesalerList(Request $request)
+    {
+        $data = $request->all();
+        $data['limit'] = 10;
+        $data['list'] = $this->wholesalerService->getWholesalerList($data);
+        $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
+
+        return response()->json($data);
     }
 
     // 도매업체 상세정보 가져오기

@@ -195,6 +195,119 @@ class WholesalerService {
         return $data;
     }
 
+    public function getWholesalerList(array $params = []) {
+
+        $list = CompanyWholesale::select(
+             'AF_wholesale.idx as companyIdx', 'AF_wholesale.company_name as companyName'
+            , 'ap.name as productName', 'ap.idx as productIdx', 'ap.state'
+            , DB::raw('COUNT(ao.idx) as orderCnt')
+            , DB::raw('COUNT(ap.idx) as productCnt')
+            , DB::raw('AF_wholesale.access_count AS companyAccessCount')  // 업체조회수
+            , DB::raw('SUM(ap.access_count)  AS productAccessCount')  // 상품조회수
+            , DB::raw('Max(ap.register_time) as register_time')
+            , DB::raw('SUBSTRING_INDEX(AF_wholesale.business_address, " ", 1) as location')
+            , DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList')
+            , DB::raw('(SELECT if(count(*) > 0, 1, 0)
+                        FROM AF_company_like AS acl 
+                        WHERE acl.company_idx = AF_wholesale.idx
+                            AND acl.user_idx = '.Auth::user()->idx.'
+                        ) AS isCompanyInterest')
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'
+        ))
+        ->join('AF_product as ap', function ($query) {
+            $query->on('ap.company_idx', 'AF_wholesale.idx')
+                ->where('ap.company_type', 'W')
+                ->whereIn('ap.state', ['S', 'O']);
+        })
+        ->leftjoin('AF_category as ac', function ($query) {
+            $query->on('ac.idx', 'ap.category_idx');
+        })
+        ->leftjoin('AF_category as ac2', function ($query) {
+            $query->on('ac2.idx', 'ac.parent_idx');
+        })
+        ->leftjoin('AF_order as ao', function ($query) {
+            $query->on('ao.product_idx', 'ap.idx');
+        })
+        ->leftjoin('AF_attachment as at', function ($query) {
+            $query->on('at.idx', 'AF_wholesale.logo_attachment');
+        })
+        ->groupBy('AF_wholesale.idx');
+
+
+        if (isset($params['locations']) && !empty($params['locations'])) {
+            $locations = explode(',', $params['locations']);
+            $list->where(function ($query) use ($locations) {
+                foreach ($locations as $key => $loc) {
+                    if($key == 0) {
+                        $query->where('AF_wholesale.business_address', 'like', "$loc%");
+                    } else {
+                        $query->orWhere('AF_wholesale.business_address', 'like', "$loc%");
+                    }
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'AF_wholesale.business_address', $relativeTables);
+                    }
+                }
+            });
+        }
+
+        if (isset($params['orderedElement']) && !empty($params['orderedElement'])) {
+            switch ($params['orderedElement']) {
+                //TODO: 추천순 개발 필요
+                case 'recommendation';
+                    $list->orderBy('register_time', 'desc');   
+                    break;
+                case 'word':
+                    $list->orderByRaw('(CASE
+                    WHEN ASCII(SUBSTRING(BINARY(company_name), 1)) BETWEEN 0 AND 64 THEN 4
+                    WHEN ASCII(SUBSTRING(BINARY(company_name), 1)) BETWEEN 65 AND 128 THEN 2
+                    WHEN ASCII(SUBSTRING(BINARY(company_name), 1)) BETWEEN 129 AND 227 THEN 3
+                    ELSE 1 END), BINARY(companyName)');
+                    break;
+                default:
+                    $list->orderBy($params['orderedElement'], 'DESC');
+            }
+        } else {
+            $list->orderBy('register_time', 'desc');
+        }
+
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+            $keyword = $params['keyword'];
+            $list->where(function($query) use($keyword) {
+                $query->where('AF_wholesale.company_name','like',"%{$keyword}%")
+                    ->orWhere('AF_wholesale.owner_name','like',"%{$keyword}%");
+            });
+        }
+        if (isset($params['categories']) && !empty($params['categories'])) {
+            $list->whereIN('ac2.idx', explode(",", $params['categories']));
+        }
+
+        $list = $list->paginate($params['limit']);
+
+        foreach($list as $key => $value) {
+            $list[$key]->productList = DB::table(DB::raw(
+                    '(select * from AF_product where company_idx = '. $value->companyIdx .') AS ap'
+                ))
+                ->select(
+                        'ap.idx AS productIdx'
+                    , DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
+                    , DB::raw('(SELECT if(count(idx) > 0, 1, 0) 
+                                FROM AF_product_interest pi 
+                                WHERE pi.product_idx = ap.idx 
+                                    AND pi.user_idx = '.Auth::user()->idx.'
+                                ) as isInterest')
+                )
+                ->leftjoin('AF_attachment as at', function($query) {
+                    $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
+                })
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.register_time','desc')
+                ->limit(3)
+                ->get();
+        }
+
+        return $list;     
+    }
+
     public function likeToggle(int $wholesalerIdx)
     {
         $cnt = LikeCompany::where([

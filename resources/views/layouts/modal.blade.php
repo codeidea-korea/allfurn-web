@@ -362,27 +362,27 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count" value="recommendation">
                     <label for="filter_interest_count">추천순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time" value="register_time" checked>
                     <label for="filter_register_time">최신 상품 등록순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_access_count">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_access_count" value="companyAccessCount">
                     <label for="filter_access_count">검색 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_order_count">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_order_count" value="orderCnt">
                     <label for="filter_order_count">거래 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_count">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_count" value="productCnt">
                     <label for="filter_product_count">상품 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_name">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_product_name" value="word">
                     <label for="filter_product_name">가나다 순</label>
                 </li>
             </ul>

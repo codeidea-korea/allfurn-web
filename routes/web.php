@@ -234,6 +234,7 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
 
 Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/', 'WholesalerController@index')->name('.index');
+    Route::get('/list', 'WholesalerController@getWholesalerList');
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholesalerController@listBySearch');

@@ -109,6 +109,7 @@
                                 </div>
                             </li>
                         @endforeach
+
                     </ul>
                 </div>
                 <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
@@ -152,7 +153,31 @@
     </section>
     @endif
 
-    @include('wholesaler.inc-company_product')
+    <section class="sub_section sub_section_bot">
+        <div class="inner">
+            <div class="main_tit mb-8 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h3>도매 업체</h3>
+                </div>
+            </div>
+            <div class="sub_filter">
+                <div class="filter_box">
+                    <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+                    <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
+                    <button onclick="modalOpen('#filter_align-modal')">추천순</button>
+                </div>
+                <div class="total">전체 0개</div>
+            </div>
+            <div class="sub_filter_result" hidden>
+                <div class="filter_on_box">
+                    <div class="category"></div>
+                    <div class="location"></div>
+                </div>
+                <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
+            </div>
+            <ul class="obtain_list"></ul>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -183,7 +208,6 @@
         },
     });
 
-
     // line_common_banner
     const line_common_banner = new Swiper(".line_common_banner", {
         slidesPerView: 1,
@@ -197,8 +221,6 @@
             type: "fraction",
         }
     });
-
-
 
     // wholesaler_con03
     const wholesaler_con03 = new Swiper(".wholesaler_con03 .slide_box", {
@@ -214,92 +236,6 @@
             type: "fraction",
         },
     });
-
-    function toggleCompanyLike(idx) {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url : '/wholesaler/like/' + idx,
-            method: 'POST',
-            success : function(result) {
-                if (result.success) {
-                    if (result.like === 0) {
-                        $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
-                    } else {
-                        $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
-                    }
-                }
-            }
-        })
-    }
-</script>
-
-
-
-<!-- 확대보기 -->
-<div class="modal" id="zoom_view-modal">
-    <div class="modal_bg" onclick="modalClose('#zoom_view-modal')"></div>
-    <div class="modal_inner modal-lg zoom_view_wrap">
-        <div class="count_pager dark_type"><b>1</b> / 12</div>
-        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body">
-            <div class="slide_box zoom_prod_list">
-                <ul class="swiper-wrapper">
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <img src="/img/zoom_thumb.png" alt="">
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="txt_box">
-                            <div>
-                                <h5>올펀가구</h5>
-                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                <b>112,500원</b>
-                            </div>
-                            <a href="./prod_detail.php">제품상세보기</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-            <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
-        </div>
-    </div>
-</div>
-
-<script>
-    let isLoading = false;
-    let isLastPage = false;
-    let currentPage = 1;
 
     // zoom_prod_list
     const zoom_prod_list = new Swiper(".zoom_prod_list", {
@@ -321,77 +257,87 @@
         $(this).hide();
     });
 
-    // 카테고리 및 소팅
-    $(document).on('click', '[id^="filter"] .btn-primary', function() {
-        let $this = $(this);
+    // ---------- 도매 업체 --------------
+    $(document).ready(function(){
+        setTimeout(() => {
+            loadWholesalerList();
+        }, 10);
+    })
 
-        var data = {
-            'categories' : getIndexesOfSelectedCategory().join(','),
-            'locations' : getIndexesOfSelectedLocations().join(','),
-            'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id')
-        };
-
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/product/getJsonThisBestWholesaler',
-            data : data,
-            type : 'GET',
-            beforeSend : function() {
-                $this.prop("disabled", true);
-            },
-            success: function (result) {
-                displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), true);
-                //displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                $(".total").text('전체 ' + result.total_count + '개');
-            },
-            complete : function () {
-                $this.prop("disabled", false);
-                displaySelectedCategories();
-                displaySelectedLocation();
-                toggleFilterBox();
-                displaySelectedOrders();
-                modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
-                currentPage = 1;
-            }
-        });
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
+            loadWholesalerList();
+        }
     });
 
-    function refresAllhHandle()
-    {
-        console.log('asfasefas');
-        $('#filter_category-modal .filter_list').find('input').each(function(){
-            $(this).prop("checked",false);
-        });
-
-        $('#filter_location-modal .filter_list').find('input').each(function(){
-            $(this).prop("checked",false);
-        });
-    }
-
-    function loadNewProductList() {
+    let isLoading = false;
+    let isLastPage = false;
+    let currentPage = 0;
+    function loadWholesalerList(needEmpty, target) {
         isLoading = true;
+        if(needEmpty) currentPage = 0;;
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/product/getJsonThisBestWholesaler',
+            url: '/wholesaler/list',
             method: 'GET',
             data: {
                 'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','),
                 'locations' : getIndexesOfSelectedLocations().join(','),
-                'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                'orderedElement' : $("#filter_align-modal .radio-form:checked").val(),
+            },
+            beforeSend : function() {
+                if(target) {
+                    target.prop("disabled", true);
+                }
             },
             success: function(result) {
+                console.log(result);
+                if(needEmpty) {
+                    $(".sub_section_bot .obtain_list").empty();
+                }
 
-                displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), false);
+                $(".sub_section_bot .obtain_list").append(result.html);
+                $(".total").text('전체 ' + result.list.total.toLocaleString('ko-KR') + '개');
 
-                isLastPage = currentPage === result.last_page;
+                if(target) {
+                    target.prop("disabled", false);
+                    modalClose('#' + target.parents('[id^="filter"]').attr('id'));
+                }
+
+                isLastPage = currentPage === result.list.last_page;
             },
             complete : function () {
+                displaySelectedCategories();
+                displaySelectedLocation();
+                displaySelectedOrders();
+                toggleFilterBox();
                 isLoading = false;
             }
         })
     }
+
+    // 카테고리 및 소팅
+    $(document).on('click', '[id^="filter"] .btn-primary', function() {
+        loadWholesalerList(true, $(this))
+    });
+
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
+
+        loadWholesalerList(true);
+    }
+
+    $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_location-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+        
+        loadWholesalerList(true);
+    });
+
 
     function getIndexesOfSelectedCategory() {
         let categories = [];
@@ -410,52 +356,6 @@
 
         return locations;
     }
-
-    function displayNewWholesaler(productArr, target, needsEmptying) {
-        if(needsEmptying) {
-            target.empty();
-        }
-
-        let html = "";
-        productArr.forEach(function(product, index) {
-            html += '' +
-                '<li>' +
-                '   <div class="txt_box">' +
-                '       <div>' +
-                '           <a href="/wholesaler/detail/' + product.idx + '">' +
-                '               <img src="/img/icon/crown.png" alt="">' +
-                '               ' + product.company_name +
-                '               <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>' +
-                '           </a>' +
-                '           <i>' + product.location + '</i>' +
-                '               <div class="tag"> ';
-
-            product.categoryList.split(',').forEach(function(cate) {
-                html += '<span>' + cate + '</span>';
-            });
-
-            html +=
-                '               </div>' +
-                '           </div>' +
-                '       <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg> 좋아요</button>' +
-                '   </div>' +
-                '   <div class="prod_box">';
-
-            product.productList.forEach(function(img) {
-                html += '<div class="img_box">' +
-                    '       <a href="javascript:;"><img src="' + img.imgUrl + '" alt=""></a>' +
-                    '       <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                    '   </div>';
-            });
-
-            html +=
-                '   </div>' +
-                '</li>';
-        });
-
-        target.append(html);
-    }
-
 
     function displaySelectedCategories() {
 
@@ -510,13 +410,26 @@
 
     function displaySelectedOrders() {
         $(".sub_filter .filter_box button").eq(2)
-            .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
+        .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
     }
 
-    window.addEventListener('scroll', function() {
-        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
-            loadNewProductList();
-        }
-    });
+    function toggleCompanyLike(idx) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url : '/wholesaler/like/' + idx,
+            method: 'POST',
+            success : function(result) {
+                if (result.success) {
+                    if (result.like === 0) {
+                        $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                    } else {
+                        $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                    }
+                }
+            }
+        })
+    }
 </script>
 @endsection
