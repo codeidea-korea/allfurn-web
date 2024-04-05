@@ -56,6 +56,7 @@
                     </a>
                 </div>
                 @endif
+                <!--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
@@ -64,6 +65,7 @@
                     </div>
                     <a class="fs14 flex items-center txt-gray" href="javascript: ;">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
+                -->
             </div>
         </div>
         <div class="flex inner gap-10 mb-[100px]">
@@ -145,7 +147,7 @@
                     @if($user -> parent_idx === 0)
                     <li class="{{ in_array($pageType,['withdrawal', 'account', 'company-account', 'normal-account']) ? 'active' : ''}}">
                         <a href="/mypage/account" class="flex p-4 justify-between border_b">
-                            <p>계정관리</p>
+                            <p>계정 관리</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
                     </li>
