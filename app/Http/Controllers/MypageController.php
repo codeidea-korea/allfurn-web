@@ -87,6 +87,8 @@ class MypageController extends BaseController
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 	    $data['xtoken'] = $xtoken;
 
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+
         return response() -> view(getDeviceType() . 'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
@@ -131,6 +133,8 @@ class MypageController extends BaseController
 
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
         $data['xtoken'] = $xtoken;
+
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
 
         return response()->view(getDeviceType() . 'mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
     }
@@ -203,6 +207,8 @@ class MypageController extends BaseController
         $data['orderStatus'] = array_unique(array_map(function($order) {
             return $order['order_state'];
         }, $data['orders']->toArray()));
+
+        $data['pageType'] = 'order-detail';
 
         return view('mypage.order-detail', $data);
     }
@@ -870,12 +876,58 @@ class MypageController extends BaseController
     public function getResponseEstimateDetail(Request $request): JsonResponse {
         $data = $this -> mypageService -> getResponseEstimateDetail($request -> all());
 
+        $user = $this -> getLoginUser();
+
         return 
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data,
+                'user'      => $user
+            ]);
+    }
+
+    // 견적서 관리 (주문하기 상세)
+    public function getRequestOrderDetail() {
+        $data['user'] = $this -> getLoginUser();
+
+        $data['now1'] = date('Y년 m월 d일');
+        $data['now2'] = date('Y-m-d H:i:s');
+
+        return
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data
             ]);
     }
+
+    // 견적서 관리 (주문완료 상세)
+    public function getResponseOrderDetail(Request $request): JsonResponse {
+        $data = $this -> mypageService -> getResponseOrderDetail($request -> all());
+
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
+    }
+
+
+
+
+
+    // 견적서 관리 (견적서 보내기)
+    public function getResponseEstimateMulti(): Response {
+        $data['user'] = $this -> getLoginUser();
+        $data['pageType'] = 'estimate-response-multi';
+
+        $data['response'] = array_merge($this -> mypageService -> getResponseEstimateMulti($data['user']), $data);
+
+        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+
+
+
 
     public function likeProduct(Request $request){
         $data['pageType'] = 'product';

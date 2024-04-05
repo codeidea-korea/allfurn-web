@@ -97,11 +97,12 @@ Route::prefix('product')->name('product')->group(function() {
 });
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){
-    Route::post('/makeGroupCode', 'EstimateController@makeGroupCode');
+    Route::post('/makeEstimateCode', 'EstimateController@makeEstimateCode');
     Route::post('/insertRequest', 'EstimateController@insertRequest');
     Route::post('/updateResponse', 'EstimateController@updateResponse');
-    Route::put('/hold', 'EstimateController@hold');
+    Route::put('/holdEstimate', 'EstimateController@holdEstimate');
     Route::post('/insertOrder', 'EstimateController@insertOrder');
+    Route::put('/checkOrder', 'EstimateController@checkOrder');
 
     Route::post('/companyList', 'EstimateController@getCompanyList');
     Route::post('/updateResponseMulti', 'EstimateController@updateResponseMulti');

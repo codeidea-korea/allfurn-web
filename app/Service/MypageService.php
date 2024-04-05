@@ -73,18 +73,19 @@ class MypageService
     }
 
     /**
-     * 주문/거래 리스트
+     * 판매 현황 / 구매 현황
      * @param array $params
      * @return array
      */
-    public function getOrderList(array $params): array
-    {
-        $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+    public function getOrderList(array $params): array {
+        $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset'] -1 ) * $params['limit'] : 0;
         $limit = $params['limit'];
 
         $where = "";
         $join = "";
-        if (isset($params['keywordType']) && isset($params['keyword'])) { // 키워드검색
+
+        // 키워드 검색
+        if (isset($params['keywordType']) && isset($params['keyword'])) {
             switch($params['keywordType']) {
                 case 'orderNum':
                     $where .= " AND (`order`.order_group_code LIKE '%{$params['keyword']}%' OR `order`.order_code LIKE '%{$params['keyword']}%') ";
@@ -92,7 +93,7 @@ class MypageService
                 case 'productName':
                     $where .= " AND `product`.name LIKE '%{$params['keyword']}%' ";
                     break;
-                case 'purchaser': // 구매자(거래 현황일 때만 나옴)
+                case 'purchaser':   //구매 업체 (판매 현황일 때만 나옴)
                     $where .= " AND ( `wholesale`.company_name LIKE '%{$params['keyword']}%' OR `retail`.company_name LIKE '%{$params['keyword']}%' )";
                     break;
                 case 'dealer':
@@ -101,8 +102,7 @@ class MypageService
                 default:
                     break;
             }
-        }
-        else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
+        } else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
             $orWhere = [];
             $orWhere[] = " (`order`.order_group_code LIKE '%{$params['keyword']}%' OR `order`.order_code LIKE '%{$params['keyword']}%') ";
             $orWhere[] = " `product`.name LIKE '%{$params['keyword']}%' ";
@@ -114,18 +114,22 @@ class MypageService
             }
             $where .= " AND (".join('OR', $orWhere).")";
         }
-        if (isset($params['orderDate'])) { // 주문 일자 검색
-            $orderRegisterDate = explode('-', $params['orderDate']);
+
+        // 기간 검색
+        if (isset($params['orderDate'])) {
+            $orderRegisterDate = explode('~', $params['orderDate']);
             if (isset($orderRegisterDate[0])) {
-                $where .= " AND `order`.register_time >= '".trim(str_replace(".","-",$orderRegisterDate[0]))." 00:00:00' ";
+                $where .= " AND `order`.register_time >= '".trim($orderRegisterDate[0])." 00:00:00' ";
             }
             if (isset($orderRegisterDate[1])) {
-                $where .= " AND `order`.register_time <= '".trim(str_replace(".","-",$orderRegisterDate[1]))." 23:59:59' ";
+                $where .= " AND `order`.register_time <= '".trim($orderRegisterDate[1])." 23:59:59' ";
             }
         }
+
         if (isset($params['status'])) {
             $where .= " AND `order`.order_state = '{$params['status']}' ";
         }
+
         if ($params['orderType'] === 'S') { // 판매자인경우
             $where .= " AND `product`.company_type = '".Auth::user()['type']."' AND `product`.company_idx = ".Auth::user()['company_idx'];
             $join .= " LEFT JOIN AF_wholesale AS `wholesale` ON `wholesale`.idx = `user`.company_idx AND `user`.type = 'W'
@@ -136,26 +140,30 @@ class MypageService
                     LEFT JOIN AF_retail AS `retail` ON `retail`.idx = `product`.company_idx AND `product`.company_type = 'R' ";
         }
 
-
-
-        $sql = "SELECT *
-                     , CONCAT(`order`.product_name
-                         ,IF(COUNT(*) > 1, CONCAT(' 외 ', IF(COUNT(*)-1 > 100, '99+',COUNT(*)-1), ' 건')
-                         ,'')
-                       ) AS product_name, COUNT(*) AS cnt
-                FROM (
-                    SELECT `order`.idx, `order`.order_group_code, `order`.order_code, `order`.product_idx, `product`.name AS product_name
-                       , `order`.order_state, DATE_FORMAT(`order`.register_time, '%Y.%m.%d') AS register_time
-                       , IF(`wholesale`.company_name IS NOT NULL, `wholesale`.company_name, `retail`.company_name) AS company_name
+        $sql = "SELECT 
+                    *,
+                    CONCAT(`order`.product_name, IF(COUNT(*) > 1, CONCAT(' 외 ',
+                    IF(COUNT(*) - 1 > 100, '99+', COUNT(*) - 1), '건'), '')) AS product_name,
+                    COUNT(*) AS cnt,
+                    COUNT(order.order_group_code) - 1 AS group_cnt
+                FROM 
+                (
+                    SELECT 
+                        `order`.idx, `order`.order_group_code, `order`.order_code, `order`.product_idx, `product`.name AS product_name,
+                        `order`.order_state, DATE_FORMAT(`order`.register_time, '%Y.%m.%d') AS register_time,
+                        IF(`wholesale`.company_name IS NOT NULL, `wholesale`.company_name, `retail`.company_name) AS company_name
                     FROM AF_order AS `order`
                     INNER JOIN AF_product AS `product` ON `order`.product_idx = `product`.idx
                     INNER JOIN AF_user AS `user` ON `user`.idx = `order`.user_idx
+                    INNER JOIN AF_estimate AS `estimate` ON `order`.order_code = `estimate`.estimate_code 
                     {$join}
                     WHERE 1 = 1 {$where}
                 ) `order`
                 GROUP BY order.order_group_code
                 ORDER BY `order`.register_time DESC, `order`.idx DESC";
+        Log::info('sql -> '.$sql);
         $orders = DB::select($sql);
+
         $data['orderListCount'] = count($orders);
         $data['orders'] = DB::select($sql . " LIMIT {$offset}, {$limit}");
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['orderListCount']);
@@ -367,23 +375,24 @@ class MypageService
             throw new \Exception();
         }
 
-        $order->join('AF_product', 'AF_product.idx', 'AF_order.product_idx')
-            ->join('AF_user', 'AF_user.idx', 'AF_order.user_idx');
+        $order
+            -> join('AF_estimate', 'AF_estimate.estimate_code', 'AF_order.order_code')
+            -> join('AF_user', 'AF_user.idx', 'AF_order.user_idx')
+            -> join('AF_product', 'AF_product.idx', 'AF_estimate.product_idx');
+
         if ($params['type'] === 'S') {
-                $order->where('AF_product.company_type', 'W')->where('AF_product.company_idx', Auth::user()['company_idx'])
-                ->join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
-                ->select('AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time")
-                    , 'AF_product.pay_notice AS p_pay_notice', 'AF_product.delivery_info AS p_delivery_info'
-                    , 'AF_product.name AS product_name', 'AF_product.price_text', 'AF_product.price AS product_price'
-                    , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) AS product_image')
-                );
+            $order
+                -> select(
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                )
+                -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
+                -> where('AF_product.company_type', 'W') -> where('AF_product.company_idx', Auth::user()['company_idx']);
         } else {
-            $order->where('AF_user.idx', Auth::user()['idx'])
+            $order
+                ->where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
-                ->select('AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time")
-                    , 'AF_product.pay_notice AS p_pay_notice', 'AF_product.delivery_info AS p_delivery_info'
-                    , 'AF_product.name AS product_name', 'AF_product.price_text', 'AF_product.price AS product_price'
-                    , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) AS product_image')
+                -> select(
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF.product.name AS product_name', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 );
         }
         if(isset($params['state'])) {
@@ -391,7 +400,7 @@ class MypageService
                 case 'C': // 취소중
                     $order->where('order_state', 'N')
                         ->addSelect(DB::raw(
-                        "(
+                            "(
                             SELECT
                                 IF(
                                     wholesale.company_name IS NOT NULL,
@@ -414,7 +423,7 @@ class MypageService
         }
 
         $orders = $order->get();
-        if ($order->count() < 1) {
+        if ($orders->count() < 1) {
             throw new Exception('empty order');
         }
 
@@ -751,9 +760,12 @@ class MypageService
             })->leftJoin('AF_attachment AS a', function($query) {
                 $query->on('a.idx', 'w.profile_image_attachment_idx')
                     ->orOn('a.idx','r.profile_image_attachment_idx');
-            })->leftJoin('AF_location AS l', function($query) {
-                $query->on('l.company_idx', 'u.company_idx')->where('l.company_type', 'u.type');
+
+            // 소재지
+            }) -> leftJoin('AF_location AS l', function($query) {
+                $query -> on('l.company_idx', 'u.company_idx') -> on('l.company_type', 'u.type');
             })
+
             ->select(
                 DB::raw("IF(w.idx IS NOT NULL, w.company_name, r.company_name) AS company_name")
                 , DB::raw("IF(w.idx IS NOT NULL, w.introduce, r.introduce) AS introduce")
@@ -770,7 +782,10 @@ class MypageService
                 , DB::raw("IF(w.idx IS NOT NULL, w.etc, r.etc) AS etc")
                 , DB::raw("IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder,'/', a.filename), '') AS profile_image")
                 , DB::raw("(SELECT COUNT(*) FROM AF_product WHERE company_type = u.type AND company_idx = u.company_idx) AS product_count")
-                , DB::raw("GROUP_CONCAT(SUBSTRING_INDEX(l.sido, ' ', 1)) AS regions")
+
+                // 소재지
+                , DB::raw("GROUP_CONCAT(SUBSTRING_INDEX(l.address1, ' ', 1)) AS regions")
+
                 , DB::raw("(SELECT GROUP_CONCAT(DISTINCT ac2.name)
                         FROM AF_category ac
                             INNER JOIN AF_product ap ON ac.idx = ap.category_idx
@@ -979,6 +994,10 @@ class MypageService
             if (isset($params['keyword'])) {
                 $query->where('AF_product.name', 'like', "%{$params['keyword']}%");
             }
+
+            // 최근 등록순 / 등록순
+            $query -> orderBy('AF_product.register_time', $params['order']);
+
             return $query->get();
     }
 
@@ -1037,8 +1056,10 @@ class MypageService
         }
 
         $data['count'] = $query->count();
-        $list = $query->orderBy('p.register_time', 'desc')
-            ->offset($offset)->limit($limit)->get();
+
+        // 최근 등록순 / 등록순
+        $list = $query -> orderBy('p.register_time', $params['order']) -> offset($offset) -> limit($limit) -> get();
+
         $data['list'] = $list;
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
         return $data;
@@ -1686,5 +1707,407 @@ class MypageService
             ->select('AF_wholesale.company_name')
             ->first();
         return $order->company_name;
+    }
+
+
+
+    public function getEstimateInfo() {
+        $user = User::find(Auth::user()['idx']);
+        $sql =
+            "SELECT 
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'N') 
+                AS count_res_n,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'R') 
+                AS count_res_r,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'O') 
+                AS count_res_o,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." AND (estimate_state = 'H' OR estimate_state = 'F')) 
+                AS count_res_f,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'N')
+                AS count_req_n,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'R') 
+                AS count_req_r,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'O')
+                AS count_req_o,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND (estimate_state = 'H' OR estimate_state = 'F')) 
+                AS count_req_f
+            FROM DUAL";
+
+        $estimate = DB::select($sql);
+        return $estimate;
+    }
+
+    public function getRequestEstimate(array $params) {
+        $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
+        $limit = $params['limit'];
+
+        $where = "";
+        // 키워드 검색
+        if (isset($params['keywordType']) && isset($params['keyword'])) {
+            switch($params['keywordType']) {
+                case 'estimateCode':
+                    $where .= " AND e.estimate_code LIKE '%{$params['keyword']}%' ";
+                    break;
+                case 'productName':
+                    $where .= " AND p.name LIKE '%{$params['keyword']}%' ";
+                    break;
+                case 'companyName':
+                    $where .= " AND (w.company_name LIKE '%{$params['keyword']}%' OR r.company_name LIKE '%{$params['keyword']}%')";
+                    break;
+                default:
+                    break;
+            }
+        } else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
+            $orWhere = [];
+
+            $orWhere[] = " e.estimate_code LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " p.name LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " r.company_name LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " w.company_name LIKE '%{$params['keyword']}%' ";
+
+            $where .= ' AND ('.join('OR', $orWhere).')';
+        }
+
+        // 기간 검색
+        if (isset($params['requestDate'])) {
+            $requestDate = explode('~', $params['requestDate']);
+            if (isset($requestDate[0])) {
+                $where .= ' AND e.request_time >= "'.trim($requestDate[0]).' 00:00:00" ';
+            }
+            if (isset($requestDate[1])) {
+                $where .= ' AND e.request_time <= "'.trim($requestDate[1]).' 23:59:59" ';
+            }
+        }
+
+        if (isset($params['status'])) {
+            if($params['status'] === 'F') {
+                $where .= " AND (e.estimate_state = 'H' OR e.estimate_state = 'F') ";
+            } else {
+                $where .= " AND e.estimate_state = '{$params['status']}' ";
+            }
+        }
+
+        $user = User::find(Auth::user()['idx']);
+        $where .= " AND e.request_company_idx = ".$user['company_idx'];
+
+        $sql =
+            "SELECT 
+                *,
+                (COUNT(e.estimate_code) - 1) AS cnt,
+                e.idx AS estimate_idx,
+                DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
+                DATE_FORMAT(e.response_time, '%Y.%m.%d') AS response_time,
+                w.company_name AS response_w_company_name,
+                r.company_name AS response_r_company_name
+            FROM AF_estimate e
+            LEFT JOIN AF_wholesale w ON e.response_company_idx = w.idx 
+            LEFT JOIN AF_retail r ON e.response_company_idx = r.idx 
+            LEFT JOIN AF_product p ON e.product_idx = p.idx
+            WHERE 1 = 1 {$where}
+            GROUP BY e.estimate_code 
+            ORDER BY e.idx DESC";
+        $estimate = DB::select($sql);
+
+        $request['count'] = count($estimate);
+        $request['list'] = DB::select($sql." LIMIT {$offset}, {$limit}");
+        $request['pagination'] = paginate($params['offset'], $params['limit'], $request['count']);
+
+        return $request;
+    }
+
+    public function getRequestEstimateDetail(array $params) {
+        $sql =
+            "SELECT 
+                *,
+
+                e.idx AS estimate_idx,
+
+                DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
+                IF(a1.idx IS NOT NULL, CONCAT('".preImgUrl()."', a1.folder, '/', a1.filename), '') AS business_license,
+
+                DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_time,
+
+                IF(a2.idx IS NOT NULL, CONCAT('".preImgUrl()."', a2.folder, '/', a2.filename), '') AS product_thumbnail,
+                p.name AS product_name,
+                FORMAT(e.product_each_price, 0) AS product_each_price,
+                FORMAT(e.product_total_price, 0) AS product_total_price,
+                CASE 
+                    WHEN p.company_type = 'W' 
+                        THEN CONCAT(w.business_address, ' ', w.business_address_detail)
+                    WHEN p.company_type = 'R' 
+                        THEN CONCAT(r.business_address, ' ', r.business_address_detail)
+                    ELSE ''
+                END AS product_address
+            FROM AF_estimate e
+            LEFT JOIN AF_wholesale w ON e.response_company_idx = w.idx 
+            LEFT JOIN AF_retail r ON e.response_company_idx = r.idx 
+            LEFT JOIN AF_product p ON e.product_idx = p.idx 
+            LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
+            LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
+            WHERE e.idx = ".$params['estimate_idx'];
+        $estimate = DB::select($sql);
+
+        return $estimate;
+    }
+
+    public function getResponseEstimate(array $params) {
+        $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
+        $limit = $params['limit'];
+
+        $where = "";
+        // 키워드 검색
+        if (isset($params['keywordType']) && isset($params['keyword'])) {
+            switch($params['keywordType']) {
+                case 'estimateCode':
+                    $where .= " AND e.estimate_code LIKE '%{$params['keyword']}%' ";
+                    break;
+                case 'productName':
+                    $where .= " AND p.name LIKE '%{$params['keyword']}%' ";
+                    break;
+                case 'companyName':
+                    $where .= " AND (w.company_name LIKE '%{$params['keyword']}%' OR r.company_name LIKE '%{$params['keyword']}%')";
+                    break;
+                default:
+                    break;
+            }
+        } else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
+            $orWhere = [];
+
+            $orWhere[] = " e.estimate_code LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " p.name LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " r.company_name LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " w.company_name LIKE '%{$params['keyword']}%' ";
+
+            $where .= ' AND ('.join('OR', $orWhere).')';
+        }
+
+        // 기간 검색
+        if (isset($params['responseDate'])) {
+            $responseDate = explode('~', $params['responseDate']);
+            if (isset($responseDate[0])) {
+                $where .= ' AND e.response_time >= "'.trim($responseDate[0]).' 00:00:00" ';
+            }
+            if (isset($responseDate[1])) {
+                $where .= ' AND e.response_time <= "'.trim($responseDate[1]).' 23:59:59" ';
+            }
+        }
+
+        if (isset($params['status'])) {
+            if($params['status'] === 'F') {
+                $where .= " AND (e.estimate_state = 'H' OR e.estimate_state = 'F') ";
+            } else {
+                $where .= " AND e.estimate_state = '{$params['status']}' ";
+            }
+        }
+
+        $user = User::find(Auth::user()['idx']);
+        $request['response_company_type'] = $user['type'];
+        $where .= " AND e.response_company_idx = ".$user['company_idx'];
+
+        $sql =
+            "SELECT 
+                *,
+                (COUNT(e.estimate_code) - 1) AS cnt,
+                e.idx AS estimate_idx,
+                DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
+                DATE_FORMAT(e.response_time, '%Y.%m.%d') AS response_time,
+                w.company_name AS request_w_company_name,
+                r.company_name AS request_r_company_name
+            FROM AF_estimate e
+            LEFT JOIN AF_wholesale w ON e.request_company_idx = w.idx 
+            LEFT JOIN AF_retail r ON e.request_company_idx = r.idx 
+            LEFT JOIN AF_product p ON e.product_idx = p.idx
+            WHERE 1 = 1 {$where}
+            GROUP BY e.estimate_code
+            ORDER BY e.idx DESC";
+        $estimate = DB::select($sql);
+        Log::info('sql 12345 -> '.$sql);
+        $request['count'] = count($estimate);
+        $request['list'] = DB::select($sql." LIMIT {$offset}, {$limit}");
+        $request['pagination'] = paginate($params['offset'], $params['limit'], $request['count']);
+
+        return $request;
+    }
+
+    public function getResponseEstimateDetail(array $params) {
+        switch ($params['response_company_type']) {
+            case 'W':
+                $sql =
+                    "SELECT 
+                    *,
+
+                    e.idx AS estimate_idx,
+
+                    e.request_company_name AS response_req_company_name,
+                    e.request_phone_number AS response_req_phone_number,
+                    e.request_business_license_number AS response_req_business_license_number,
+                    e.request_address1 AS response_req_address1,
+
+                    DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_res_time,
+                    IF(e.response_company_name IS NOT NULL, e.response_company_name, w1.company_name) 
+                    AS response_res_company_name,
+                    IF(e.response_business_license_number IS NOT NULL, e.response_business_license_number, w1.business_license_number) 
+                    AS response_res_business_license_number,
+                    IF(e.response_phone_number IS NOT NULL, e.response_phone_number, w1.phone_number) 
+                    AS response_res_phone_number,
+                    IF(e.response_address1 IS NOT NULL, e.response_address1, CONCAT(w1.business_address, ' ', w1.business_address_detail)) 
+                    AS response_res_address1,
+                    e.response_account AS response_res_account,
+                    e.response_memo AS response_res_memo,
+
+                    IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                    FORMAT(e.product_total_price, 0) AS product_total_price,
+                    CASE 
+                        WHEN p.company_type = 'W' 
+                            THEN CONCAT(w1.business_address, ' ', w1.business_address_detail)
+                        WHEN p.company_type = 'R' 
+                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
+                        ELSE ''
+                    END AS product_address,
+                    e.product_delivery_info AS product_delivery_info
+                FROM AF_estimate e
+                LEFT JOIN AF_wholesale w1 ON e.response_company_idx = w1.idx 
+                LEFT JOIN AF_wholesale r1 ON e.response_company_idx = r1.idx 
+                LEFT JOIN AF_product p ON e.product_idx = p.idx 
+                LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx 
+                WHERE e.estimate_code = '".$params['estimate_code']."'";
+                break;
+            case 'R':
+                $sql =
+                    "SELECT 
+                   *,
+
+                    e.idx AS estimate_idx,
+
+                    e.request_company_name AS response_req_company_name,
+                    e.request_phone_number AS response_req_phone_number,
+                    e.request_business_license_number AS response_req_business_license_number,
+                    e.request_address1 AS response_req_address1,
+
+                    DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_res_time,
+                    IF(e.response_company_name IS NOT NULL, e.response_company_name, r1.company_name) 
+                    AS response_res_company_name,
+                    IF(e.response_business_license_number IS NOT NULL, e.response_business_license_number, r1.business_license_number) 
+                    AS response_res_business_license_number,
+                    IF(e.response_phone_number IS NOT NULL, e.response_phone_number, r1.phone_number) 
+                    AS response_res_phone_number,
+                    IF(e.response_address1 IS NOT NULL, e.response_address1, CONCAT(r1.business_address, ' ', r1.business_address_detail)) 
+                    AS response_res_address1,
+                    e.response_account AS response_res_account,
+                    e.response_memo AS response_res_memo,
+
+                    IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                    FORMAT(e.product_total_price, 0) AS product_total_price,
+                    CASE 
+                        WHEN p.company_type = 'W' 
+                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
+                        WHEN p.company_type = 'R' 
+                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
+                        ELSE ''
+                    END AS product_address,
+                    e.product_delivery_info AS product_delivery_info
+                FROM AF_estimate e
+                LEFT JOIN AF_retail r1 ON e.response_company_idx = r1.idx 
+                LEFT JOIN AF_product p ON e.product_idx = p.idx 
+                LEFT JOIN AF_attachment a ON e.request_business_license_attachment_idx = a.idx 
+                WHERE e.estimate_code = '".$params['estimate_code']."'";
+                break;
+            default:
+                break;
+        }
+        $estimate = DB::select($sql);
+
+        $now1 = date('Y년 m월 d일');
+        $now2 = date('Y-m-d H:i:s');
+
+        $estimate[0] -> now1 = $now1;
+        $estimate[0] -> now2 = $now2;
+
+        return $estimate;
+    }
+
+    public function getResponseOrderDetail(array $params) {
+        $sql =
+            "SELECT 
+                *,
+                o.register_time AS register_time,
+                o.name AS name,
+                IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                p.name AS product_name,
+                FORMAT(o.price, 0) AS total_price
+            FROM AF_order o 
+            LEFT JOIN AF_estimate e ON o.order_code = e.estimate_code 
+            LEFT JOIN AF_product p ON e.product_idx = p.idx 
+            LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx 
+            WHERE o.order_code = '".$params['order_code']."'";
+        $estimate = DB::select($sql);
+
+        return $estimate;
+    }
+
+    public function getResponseEstimateMulti(object $params) {
+        switch ($params -> type) {
+            case 'W':
+                $sql =
+                    "SELECT
+                        RANK() OVER (ORDER BY p.idx) AS num,
+                        p.idx,
+                        w.idx AS company_idx,
+                        'W' AS company_type,
+                        w.company_name AS company_name,
+                        w.business_license_number AS business_license_number,
+                        w.phone_number AS phone_number,
+                        CONCAT(w.business_address, ' ', w.business_address_detail) AS address1,
+                        IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                        p.name,
+                        p.price,
+                        p.product_number
+                    FROM AF_user u
+                    LEFT JOIN AF_wholesale w ON u.company_idx = w.idx
+                    LEFT JOIN AF_product p ON u.company_idx = p.company_idx
+                    LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx
+                    WHERE u.idx = ".$params -> idx." 
+                    AND p.state IN ('S', 'O')
+                    ORDER BY p.idx";
+                break;
+            case 'R':
+                $sql =
+                    "SELECT
+                        RANK() OVER (ORDER BY p.idx) AS num,
+                        p.idx,
+                        r.idx AS company_idx,
+                        'R' AS company_type,
+                        r.company_name AS company_name,
+                        r.business_license_number AS business_license_number,
+                        r.phone_number AS phone_number,
+                        CONCAT(r.business_address, ' ', r.business_address_detail) AS address1,
+                        IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                        p.name,
+                        p.price,
+                        p.product_number
+                    FROM AF_user u
+                    LEFT JOIN AF_retail w ON u.company_idx = r.idx
+                    LEFT JOIN AF_product p ON u.company_idx = p.company_idx
+                    LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx
+                    WHERE u.idx = ".$params -> idx." 
+                    AND p.state IN ('S', 'O')
+                    ORDER BY p.idx";
+                break;
+            default:
+                break;
+        }
+        $estimateMulti = DB::select($sql);
+
+        $request['list'] = $estimateMulti;
+
+        return $request;
     }
 }
