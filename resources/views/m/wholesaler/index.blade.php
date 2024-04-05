@@ -58,47 +58,49 @@
     @endif
 
     @if( count( $bannerList ) > 0 )
-    <section class="sub_section nopadding">
-        <div class="line_common_banner">
-            <ul class="swiper-wrapper">
-                @foreach( $bannerList AS $key => $banner)
-                <li class="swiper-slide" style="background-color:#475872; ">
-                <?php
-                    $link = '';
-                    switch ($banner->web_link_type) {
-                        case 0: //Url
-                            $link = $banner->web_link;
-                            break;
-                        case 1: //상품
-                            $link = '/product/detail/'.$banner->web_link;
-                            break;
-                        case 2: //업체
-                            $link = '/wholesaler/detail/'.$banner->web_link;
-                            break;
-                        case 3: //커뮤니티
-                            $link = $banner->web_link;
-                            break;
-                        default: //공지사항
-                            $link = '/help/notice/';
-                            break;
-                    }
-                ?>
-                    <a href="{{$link}}">
-                    @if( $banner->banner_type == 'img' )
-                        <img src="{{$banner->imgUrl}}" alt="">
-                    @else
-                        <div class="txt_box" style="color:{{$banner->font_color}}">
-                            <p>{{$banner->subtext1}} <br/>{{$banner->subtext2}}</p>
-                            <span>{{$banner->content}}</span>
-                        </div>
-                    @endif
-                    </a>
-                </li>
-                @endforeach
-            </ul>
-            <div class="count_pager"><b>1</b> / 12</div>
-        </div>
-    </section>
+        <section class="sub_section nopadding">
+            <div class="line_common_banner">
+                <ul class="swiper-wrapper">
+                    @foreach( $bannerList AS $key => $banner)
+                        <?php
+                            $link = '';
+                            switch ($banner->web_link_type) {
+                                case 0: //Url
+                                    $link = $banner->web_link;
+                                    break;
+                                case 1: //상품
+                                    $link = '/product/detail/'.$banner->web_link;
+                                    break;
+                                case 2: //업체
+                                    $link = '/wholesaler/detail/'.$banner->web_link;
+                                    break;
+                                case 3: //커뮤니티
+                                    $link = $banner->web_link;
+                                    break;
+                                default: //공지사항
+                                    $link = '/help/notice/';
+                                    break;
+                            }
+                        ?>
+                        @if( $banner->banner_type == 'img' )
+                            <li class="swiper-slide" style="background-image:url({{$banner->imgUrl}}) ">
+                                <a href="{{$link}}"></a>
+                            </li>
+                        @else
+                            <li class="swiper-slide" style="color:{{$banner->font_color}};">
+                                <a href="{{$link}}">
+                                    <div class="txt_box">
+                                        <p>{{$banner->subtext1}} <br/>{{$banner->subtext2}}</p>
+                                        <span>{{$banner->content}}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
+                </ul>
+                <div class="count_pager"><b>1</b> / 12</div>
+            </div>
+        </section>
     @endif
 
     @if((count($companyList) > 0) )
