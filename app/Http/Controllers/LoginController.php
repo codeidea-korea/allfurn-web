@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Service\CommunityService;
 use App\Service\LoginService;
 use App\Service\MemberService;
+use App\Service\PushService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,10 +24,12 @@ class LoginController extends BaseController
 {
     private $loginService;
     private $memberService;
-    public function __construct(LoginService $loginService, MemberService $memberService)
+    private $pushService;
+    public function __construct(LoginService $loginService, MemberService $memberService, PushService $pushService)
     {
         $this->loginService = $loginService;
         $this->memberService = $memberService;
+        $this->pushService = $pushService;
     }
 
     public function index()
@@ -268,6 +271,24 @@ class LoginController extends BaseController
             'code' => $smscode,
             'repw' => $w_userpw
         ]));
+    }
+    
+    public function getTemplates(Request $request)
+    {
+        $templateCode = $request->input('templateCode');
+
+        return response()->json($this->pushService->getTemplate($templateCode));
+    }
+    
+    public function asend(Request $request)
+    {
+        $templateCode = $request->input('templateCode');
+        $title = $request->input('title');
+        $replaceParams = $request->input('replaceParams');
+        $receiver = $request->input('receiver');
+
+        return response()->json($this->pushService->sendKakaoAlimtalk(
+            $templateCode, $title, json_decode($replaceParams), $receiver));
     }
 }
 
