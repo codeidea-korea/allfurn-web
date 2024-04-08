@@ -80,7 +80,7 @@ class ExtraApiController extends BaseController
                 curl_setopt($ch, CURLOPT_FAILONERROR, true);
             
                 $headers = array();
-                $headers[] = 'Content-Type: application/json';
+                $headers[] = 'Content-Type: application/json; UTF-8';
                 $headers[] = 'Authorization: key=AAAA4atg0bQ:APA91bFxmF8ZikIdbyfmMt696pCUKHKO-ceoQMubPGSwu-wT0a21fEV45Lvw-27si_NOirum6nn9NmBekPi-xiqlt8NA2lChXZU84oJSiLkrOO5kkSgruBH9jBdDuQ2bwCT_KuOGutQB';
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
             
