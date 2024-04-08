@@ -278,8 +278,8 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_category ul li.active a {font-weight:bold; color:var(--main_color); }
 
 .sub_option {position:relative; margin-bottom:20px;}
-.sub_option .dropdown_btn {position:relative; width:100%; height:48px; padding:0 15px; border:1px solid #DBDBDB; border-radius:5px; font-size:16px; color:#1b1b1b; text-align:left; }
-.sub_option .dropdown_btn:before {content:''; position:absolute; right:20px; top:calc(50% - 4px); width:8px; height:8px; border-top:2px solid #bdbdbd; border-right:2px solid #bdbdbd;  transform:rotate(135deg); }
+.sub_option .dropdown_btn {position:relative; width:100%; height:48px; padding:0 15px; border:1px solid var(--main_color); border-radius:5px; font-size:16px; color:#1b1b1b; text-align:left; }
+.sub_option .dropdown_btn:before {content:''; position:absolute; right:20px; top:calc(50% - 4px); width:8px; height:8px; border-top:2px solid var(--main_color); border-right:2px solid var(--main_color);  transform:rotate(135deg); }
 .sub_option .dropdown_btn:hover:before {border-color:var(--main_color); }
 .sub_option .dropdown_btn:hover,
 .sub_option .dropdown_btn.active {border:1px solid var(--main_color); }
@@ -393,6 +393,16 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .join_common .join_type button {width:100%; padding:5px 0; border:1px solid var(--danger_color); color:var(--danger_color); border-radius:5px; font-size:14px;  }
 .join_common .join_type button.on {background-color: var(--danger_color); color:#fff; }
 .join_common .join_type span {display:block; margin:14px 0; padding:7px; font-size:14px; word-break:keep-all; }
+
+.join_common .certify_box {position:relative; width:100%;  }
+.join_common .certify_box .time {position:absolute; right:10px; top:13px; color:var(--main_color); }
+.join_common .joined_id {overflow-y:auto; max-height:160px; padding:10px 0; margin-bottom:16px; border:1px solid #46433F; border-radius:5px; }
+.join_common .joined_id li {padding:8px 20px; }
+
+.join_comp {padding: 40px 0; min-height: calc(100vh - 331px); }
+.join_comp h4 {font-size:24px; font-weight:600; }
+.join_comp .info_box {padding:20px 40px; background-color:#f7f7f7; border-radius:5px; font-weight:500; }
+.join_comp h5 {font-size:17px; font-weight:600; }
 
 .agree_modal_body {padding:24px; }
 .agree_modal_body h3 {font-size:20px; color:#1b1b1b; }

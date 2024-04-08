@@ -50,8 +50,10 @@
                         <p>업체 문의</p>
                         <hr>
                         <div class="company_info">
-                            <b>{{$data['detail']->companyName}}</b>
-                            <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                            <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">    
+                                <b>{{$data['detail']->companyName}}</b>
+                                <span>업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></span>
+                            </a>
                         </div>
                         <div class="link_box">
                             <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
