@@ -203,7 +203,7 @@
                     </table>
                     <div class="mt-10">
                         <p>사업자등록증 또는 명함 첨부 (필수)</p>
-                        <p class="txt-primary">*사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
+                        <p class="txt-primary">* 사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
                     </div>
                     <div id="previewBusinessLicense" class="file-form full mt-2">
                         <input type="file" name="request_business_license" id="request_business_license" class="file_input" />
@@ -226,7 +226,7 @@
                     <div class="flex justify-end mt-2 request_estimate hidden" style="padding: 10px; font-size: 16px; font-weight: 500; color: #fff; background: #8E8E8E; margin-top: 3.00rem;">
                         아래 상품의 견적을 요청합니다.
                     </div>
-                    <div class="btn_box check_btn mt-10">
+                    <div class="btn_box mt-10 check_btn">
                         <p class="mb-2">
                             <input type="checkbox" id="all_prod" class="radio-form" />
                             <label for="all_prod">위 입력된 사항을 확인했습니다.</label>
@@ -357,7 +357,7 @@
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
         function openEstimateModal() {
-            fetch('/estimate/makeGroupCode', {
+            fetch('/estimate/makeEstimateCode', {
                 method  : 'POST',
                 headers : {
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
