@@ -154,17 +154,33 @@ $( document ).ready( function() {
             $('._step2').hide();
         }
     });
-
-    $("#btn_smscode_confirm").on("click", function () {
-        if ($('.time').text() == '0:00'){
-            modalOpen('#smscode_time_over');
-        }
-    });
 });
 
 function gotoFindpw() {
     const joined_id = $('input[name=joined_id]:checked').val();
-    window.location.href = '/findpw?id=' + (joined_id ? joined_id : '');
+
+    var data = new Object() ;
+    data.phonenumber = $('#cellphone').val().replace(/-/g, '');
+    data.joinedid = joined_id;
+    data.code = $('#smscode').val();
+
+    $.ajax({
+        url				: '/signup/signinAuthCode',
+        contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+        data			: data,
+        type			: 'POST',
+        dataType		: 'json',
+        xhrFields: {
+            withCredentials: false
+        },
+        success : function(result) {
+            if (result.success) {
+                window.location.href = '/';
+            } else {
+                alert(result.msg);
+            }
+        }
+    });
 }
 function confirmAuthCode() {
     if ($('.time').text() == '0:00'){
@@ -199,7 +215,7 @@ function confirmAuthCode() {
                     for(var idx=0; idx<result.users.length; idx++) {
                         
                         tmpHtml += '<li>'
-                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" class="radio-form">'
+                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" value="'+result.users[idx].account+'" class="radio-form">'
                                 +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
                                 +'</li>';
                     }
