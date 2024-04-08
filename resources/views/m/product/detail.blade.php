@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div class="btn_box">
-                        <button class="btn btn-line3" onclick="location.href='/mypage/requestSendEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
+                        <button class="btn btn-line3" onclick="location.href='/mypage/sendRequestEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
                         <button class="btn btn-primary" onClick="location.href='tel:{{$data['detail']->companyPhoneNumber}}';"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
                     </div>
                     <div class="quick_btn_box" onClick="location.href='/message';">
