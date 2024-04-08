@@ -34,7 +34,6 @@ class LoginController extends BaseController
         if(Auth::check()) {
             return redirect('/');
         }
-        echo date('s');
         return view(getDeviceType() . 'login.login');
     }
 
@@ -116,12 +115,15 @@ class LoginController extends BaseController
 
     public function sendAuthCode(Request $request) {
         Log::info("***** LoginController > sendAuthCode :: $request->input('target')");
+        $isUser = true;
         if(($request->has('target'))) {
             $user = $this->loginService->getUserByPhoneNumber($request->input('target'));
         } else if(($request->has('userid'))) {
             $user = $this->loginService->getUserById($request->input('userid'));
+        } else if(($request->has('phoneno'))) {
+            $isUser = false;
         }
-        if(empty($user)) {
+        if($isUser && empty($user)) {
             return response()->json([
                 'result' => 'fail',
                 'code' => 102,
@@ -129,10 +131,14 @@ class LoginController extends BaseController
             ]);
         }
 
-        $target = "$user->phone_number";
-        Log::info($request->target);
-        
-        $new_param['target'] = $target;
+        if($isUser) {
+            $target = "$user->phone_number";
+            Log::info($request->target);
+            
+            $new_param['target'] = $target;
+        } else {
+            $new_param['target'] = $request->input('phoneno');
+        }
         $new_param['type'] = $request->type;
         
         return response()->json($this->loginService->sendAuth($new_param));
@@ -151,12 +157,15 @@ class LoginController extends BaseController
             'code' => 'required',
         ]);
         Log::info("***** LoginController > sendAuthCode :: $request->input('target')");
+        $isUser = true;
         if($request->has('target')) {
             $user = $this->loginService->getUserByPhoneNumber($request->input('target'));
         } else if($request->has('userid')) {
             $user = $this->loginService->getUserById($request->input('userid'));
+        } else if(($request->has('phoneno'))) {
+            $isUser = false;
         }
-        if(empty($user)) {
+        if($isUser && empty($user)) {
             return response()->json([
                 'result' => 'fail',
                 'code' => 102,
@@ -164,7 +173,13 @@ class LoginController extends BaseController
             ]);
         }
         
-        $new_param['target'] = $user->phone_number;
+        $users = [];
+        if($isUser) {
+            $new_param['target'] = $user->phone_number;
+            $users = $this->loginService->getUsersByPhoneNumber($user->phone_number);
+        } else {
+            $new_param['target'] = $request->input('phoneno');
+        }
         $new_param['type'] = $request->type;
         $new_param['code'] = $request->code;
         
@@ -176,7 +191,7 @@ class LoginController extends BaseController
 */
         return response()->json([
             'success' => $confirm == 1 ? true : false,
-            'users' => $this->loginService->getUsersByPhoneNumber($user->phone_number)
+            'users' => $users
         ]);
     }
 
@@ -194,10 +209,9 @@ class LoginController extends BaseController
         ]);
         Log::info("***** LoginController > signinAuthCode :: $request->input('phonenumber')");
 
-        $user = User::select("*")->where([
-            ['phone_number', $request->input('phonenumber')],
-            ['account', $request->input('joinedid')]
-        ])->get();
+        $user = User::where('phone_number', '=', $request->input('phonenumber'))
+            ->where('account', '=', $request->input('joinedid'))
+            ->first();
 
         if(empty($user)) {
             return response()->json([
@@ -208,9 +222,7 @@ class LoginController extends BaseController
         }
         $this->loginService->getAuthToken($user->idx);
 
-        return response()->json([
-            'success' => $confirm == 1 ? true : false
-        ]);
+        return response()->json(['success' => true]);
     }
 
     public function signOut() {

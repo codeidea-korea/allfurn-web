@@ -880,13 +880,13 @@ function sendAuthCode(el) {
     var data = new Object();
     const keyCode = el.dataset.key;
     if(keyCode == 1) {
-        data.target = $('#w_contact').val().replace(/-/g, '');
+        data.phoneno = $('#w_contact').val().replace(/-/g, '');
     } else if(keyCode == 2) {
-        data.target = $('#r_contact').val().replace(/-/g, '');
+        data.phoneno = $('#r_contact').val().replace(/-/g, '');
     } else if(keyCode == 3) {
-        data.target = $('#s_contact').val().replace(/-/g, '');
+        data.phoneno = $('#s_contact').val().replace(/-/g, '');
     } else if(keyCode == 4) {
-        data.target = $('#n_contact').val().replace(/-/g, '');
+        data.phoneno = $('#n_contact').val().replace(/-/g, '');
     }
     data.type = 'S';
 
@@ -921,13 +921,13 @@ function confirmAuthCode(el) {
         var data = new Object() ;
         const keyCode = el.dataset.key;
         if(keyCode == 1) {
-            data.target = $('#w_contact').val().replace(/-/g, '');
+            data.phoneno = $('#w_contact').val().replace(/-/g, '');
         } else if(keyCode == 2) {
-            data.target = $('#r_contact').val().replace(/-/g, '');
+            data.phoneno = $('#r_contact').val().replace(/-/g, '');
         } else if(keyCode == 3) {
-            data.target = $('#s_contact').val().replace(/-/g, '');
+            data.phoneno = $('#s_contact').val().replace(/-/g, '');
         } else if(keyCode == 4) {
-            data.target = $('#n_contact').val().replace(/-/g, '');
+            data.phoneno = $('#n_contact').val().replace(/-/g, '');
         }
         data.type = "S" ;
         data.code = $('.smscode')[keyCode-1].value;
