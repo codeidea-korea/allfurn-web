@@ -54,6 +54,14 @@ class LoginController extends BaseController
         return view(getDeviceType() . 'login.findpw');
     }
 
+    public function signupcomplete()
+    {
+        if (Auth::check()) {
+            return redirect('/');
+        }
+        return view(getDeviceType() . 'login.signupcomplete');
+    }
+
     /**
      * 로그인
      * @return Response()
@@ -161,14 +169,47 @@ class LoginController extends BaseController
         $new_param['code'] = $request->code;
         
         $confirm = $this->loginService->checkAuthCode($new_param);
-
+/*
         if($confirm == 1 && $request->type == 'A') {
             $this->loginService->getAuthToken($user->idx);
         }
-
+*/
         return response()->json([
             'success' => $confirm == 1 ? true : false,
             'users' => $this->loginService->getUsersByPhoneNumber($user->phone_number)
+        ]);
+    }
+
+    /**
+     * 전화번호 로그인 처리
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function signinAuthCode(Request $request)
+    {
+        $request->validate([
+            'phonenumber' => 'required',
+            'joinedid' => 'required',
+            'code' => 'required',
+        ]);
+        Log::info("***** LoginController > signinAuthCode :: $request->input('phonenumber')");
+
+        $user = User::select("*")->where([
+            ['phone_number', $request->input('phonenumber')],
+            ['account', $request->input('joinedid')]
+        ])->get();
+
+        if(empty($user)) {
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
+        }
+        $this->loginService->getAuthToken($user->idx);
+
+        return response()->json([
+            'success' => $confirm == 1 ? true : false
         ]);
     }
 

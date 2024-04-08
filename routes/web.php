@@ -31,13 +31,13 @@ Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
     Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
+    Route::post('/signinAuthCode', 'LoginController@signinAuthCode');
+    
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
     
     Route::post('/update-password', 'LoginController@updatePassword');
 
-    Route::get('/success', function () {
-        return view('login/success');
-    })->name('signup.success');
+    Route::get('/success', 'LoginController@signupcomplete');
 });
 
 Route::get('/signout', 'LoginController@signOut')->name('signOut');
