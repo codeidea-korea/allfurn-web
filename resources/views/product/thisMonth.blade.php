@@ -16,7 +16,7 @@
                         </div>
                         <div class="flex items-center gap-7">
                             <div class="count_pager"><b>1</b> / 12</div>
-                            <a class="more_btn flex items-center" href="javascript:;">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                            <a class="more_btn flex items-center" href="/wholesaler/best">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
                         </div>
                     </div>
                     <div class="relative">

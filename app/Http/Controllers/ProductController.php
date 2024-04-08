@@ -532,9 +532,31 @@ class ProductController extends BaseController
     {
         $target['categoryIdx'] = [1, 2, 3, 14];
         $popularList = $this->productService->getPopularList($target);
-        return view('product.popular-sum-list', [
+        return view(getDeviceType() .'product.popular-sum-list', [
             'lists' => $popularList
         ]);
+    }
+
+    /**
+     * 인기브랜드
+     * 20개씩 노출
+     */
+    public function popularBrandList()
+    {
+        $data = $this->productService->getPoularBrandList();
+        return view(getDeviceType() . 'product.popular-brand-list', [
+            'lists' => $data
+        ]);
+    }
+
+    /**
+     * 인기브랜드 ajsx 호출
+     */
+    public function jsonPopularBrand(Request $request)
+    {
+        $list = $this->productService->getPoularBrandList();
+        $data['query'] = $list;
+        return response()->json($data);
     }
 
     // xx월 Best 도매업체 json

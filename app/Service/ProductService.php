@@ -1213,6 +1213,7 @@ class ProductService
                 'AF_banner_ad.font_color',
                 'AF_banner_ad.web_link_type',
                 'AF_banner_ad.web_link',
+                'ap.idx as product_idx',
                 'aw.company_name',
                 DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
                 (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest',
@@ -1227,15 +1228,17 @@ class ProductService
                 $query->on('ap.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_link, "/", -1)'));
             })
             ->where('AF_banner_ad.ad_location',$state)
-            ->where('AF_banner_ad.state','G')
-            ->where('AF_banner_ad.is_delete',0)
-            ->where('AF_banner_ad.is_open',1);
+            ->where('AF_banner_ad.state', 'G')
+            ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_banner_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_banner_ad.is_delete', 0)
+            ->where('AF_banner_ad.is_open', 1);
 
         if( $cIdx ) {
             $data->where('AF_banner_ad.company_idx', $cIdx);
         }
 
-        return $data->limit($limit)->get();
+        return $data->limit($limit)->orderby('idx', 'desc')->get();
     }
 
     /**
@@ -1429,5 +1432,45 @@ class ProductService
 
         return $data;
 
+    }
+
+    /**
+     * 인기 브랜드
+     * 20개씩 노출
+     */
+    public function getPoularBrandList()
+    {
+        $list = Banner::select('AF_banner_ad.*',
+            DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
+                WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));
+            })
+            ->where('AF_banner_ad.state', 'G')
+            ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_banner_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_banner_ad.ad_location', 'popularbrand')
+            ->where('AF_banner_ad.is_delete', 0)
+            ->where('AF_banner_ad.is_open', 1)
+            ->orderby('idx', 'desc')->paginate(1);
+
+        foreach($list as $brand){
+            $brand_product_interest = array();
+            $brand_product_info = json_decode($brand->product_info, true);
+            $brand->product_info = $brand_product_info;
+            foreach ($brand_product_info as $key => $info) {
+                $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
+                    ->where('product_idx', $info['mdp_gidx'])
+                    ->where('user_idx', Auth::user()->idx)
+                    ->first();
+                $brand_product_interest[$info['mdp_gidx']] = $tmpInterest->interest;
+            }
+            $brand->product_interest = $brand_product_interest;
+        }
+
+        return $list;
     }
 }
