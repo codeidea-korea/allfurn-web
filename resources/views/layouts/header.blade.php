@@ -4,11 +4,9 @@
             <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
 
             <div class="product_search relative">
-                <form name="search_form" id="search_form" action="/product/searchBar" method="GET">
                 <div class="search_btn">
-                    <svg class="w-11 h-11 ml-2"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> <input name="kw" class="bg-transparent w-full h-full search_active" value="" placeholder="상품및 도매 업체를 검색해주세요" autocomplete="off">
+                    <svg class="w-11 h-11 ml-2"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> <input name="kw" id="sKeyword" class="bg-transparent w-full h-full search_active" value="" placeholder="상품및 도매 업체를 검색해주세요" autocomplete="off">
                 </div>
-                </form>
                 <div class="absolute w-full p-4 bg-white rounded-md z-999 shadow-md search_list hidden">
                     <div class="text-sm flex justify-between py-3">
                         <span class="font-bold">최근 검색어</span>
@@ -192,7 +190,7 @@ const getSearchData = () => {
             bannerPart += '<div class="row">' +
                 '   <div class="row__text search-list--nodata">최근 검색한 내역이 없습니다.</div>' +
                 '</div>';
-            document.querySelector('.keywordList').innerHTML = bannerPart;
+            //document.querySelector('.keywordList').innerHTML = bannerPart;
         }
     });
 }
@@ -202,13 +200,52 @@ $(document).ready(function(f){
     checkAlert();
     //getCategoryBanners();
     getSpeakerLoud();
-
-    if( f.keyCode == 1 ) {
-        if( $('#sKeyword').val() != '' ) {
-            $('form#search_form').submit();
-        }
-    }
 });
+
+// 키워드 삭제
+const deleteSearchKeyword = keywordIdx => {
+    fetch("/home/search/" + keywordIdx, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        }
+    }).then(response => {
+        return response.json();
+    }).then(json => {
+        if (json.success == true) {
+            getSearchData();
+        }
+    });
+}
+
+$('body').on('click', '#search_keyword_delete', function () {
+    $('#search_keyword').val('');
+    $(this).removeClass('ico__sdelete');
+    $('#search_keyword').click();
+    $('#search_keyword').focus();
+})
+
+// 검색
+if ($('#sKeyword').length) {
+    document.getElementById('sKeyword').addEventListener('change', evt => {
+        clickKeyword(evt.currentTarget.value);
+    })
+}
+
+function clickKeyword(keyword) {
+    fetch("/home/search/" + keyword, {
+        method: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        }
+    }).then(response => {
+        return response.json();
+    }).then(json => {
+        if (json.success == true) {
+            location.replace('/product/searchBar?kw=' + keyword);
+        }
+    });
+}
 
 // 최상단 검색창 클릭시 최근, 추천 검색어 노출
 $(document).on('click', function(e) {
@@ -274,22 +311,6 @@ function checkAlert() {
             $(".alarm_btn span").hide();
         }
     })
-}
-
-function clickKeyword(keyword) {
-    fetch("/home/search/" + keyword, {
-        method: 'PUT',
-        headers: {
-            'X-CSRF-TOKEN': '{{csrf_token()}}'
-        }
-    }).then(response => {
-        return response.json();
-    }).then(json => {
-        if (json.success == true) {
-            //location.replace('/product/searchBar?kw=' + keyword);
-            location.replace('/home/searchResult?kw=' + keyword);
-        }
-    });
 }
 
 var search_swhiper = new Swiper(".search_swhiper", {
