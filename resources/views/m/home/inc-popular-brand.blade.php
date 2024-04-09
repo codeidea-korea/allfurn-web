@@ -34,6 +34,6 @@
         <div class="flex items-center justify-center mt-4">
             <div class="count_pager"><b>1</b> / 12</div>
         </div>
-        <a href="/product/popularList" class="btn btn-line4 mt-4">더보기</a>
+        <a href="/product/popularBrand" class="btn btn-line4 mt-4">더보기</a>
     </div>
 </section>

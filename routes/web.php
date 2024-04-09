@@ -95,6 +95,8 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/getJsonListBySearch', 'ProductController@getJsonListBySearch');
     Route::get('/planDiscountDetail', 'ProductController@planDiscountDetail');
     Route::get('/popularList', 'ProductController@getPopularSumList');
+    Route::get('/popularBrand', 'ProductController@popularBrandList');
+    Route::get('/jsonPopularBrand', 'ProductController@jsonPopularBrand');
 });
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){
