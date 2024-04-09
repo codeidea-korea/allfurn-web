@@ -15,7 +15,7 @@ use App\Models\PushQ;
 use App\Models\SmsHistory;
 use App\Models\AlimtalkTemplate;
 use App\Models\PushSendLog;
-use App\Models\AuthToken as tblAuthToken;
+use App\Models\PushToken;
 use Google\Client as Google_Client;
 
 use DateTime;
@@ -130,12 +130,12 @@ class PushService
      * @param string $templateCode
      * @param string $replaceParams 대치코드별 값이 들어 있는 연관 배열
      * @param string $receiver (, 로 구분)
-     * @return map { code : 0 이 정상, 나머지 오류, message : 연동 메시지 }
+     * @return object { code : 0 이 정상, 나머지 오류, message : 연동 메시지 }
      */
-    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver): array
+    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver)
     {
         // 템플릿을 템플릿 코드로 조회한다.
-        $alimtalkTemplate = getTemplate($templateCode)->list[0];
+        $alimtalkTemplate = $this->getTemplate($templateCode)->list[0];
         if(empty($alimtalkTemplate)) {
             // 템플릿이 없음
             throw new \Exception( "알리고 카카오 알림톡 템플릿 코드 조회 실패 코드 : " . $templateCode, 500 );
@@ -143,25 +143,43 @@ class PushService
         if(!empty($replaceParams) && is_array($replaceParams)) {
             foreach($replaceParams as $key => $value) {
                 $alimtalkTemplate->templtContent = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->templtContent);
+                $alimtalkTemplate->templtContent = str_replace('#{'.$key.'
+                }', $value, $alimtalkTemplate->templtContent);
+                $alimtalkTemplate->templtContent = str_replace('#{
+                    '.$key.'
+                }', $value, $alimtalkTemplate->templtContent);
             }
             foreach($replaceParams as $key => $value) {
                 for($idx = 0; $idx < count($alimtalkTemplate->buttons); $idx++) {
                     $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
                     $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
+                    
+                    $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{'.$key.'
+                    }', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
+                    $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{'.$key.'
+                    }', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
+                    
+                    $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{
+                        '.$key.'
+                    }', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
+                    $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{
+                        '.$key.'
+                    }', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
                 }
             }
         }
 
         $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
         $userid = 'codeidea';
-        $token = $this->generateToken();
+        $token = urlencode($this->generateToken());
         $senderkey = urlencode('a2c2d74285465d194fdbfb2d35aa5d2e59e11e50');
         $tpl_code = urlencode($templateCode);
         $sender = urlencode('010-5440-5414');
         $receiver_1 = urlencode($receiver);
         $subject_1 = urlencode($title);
         $message_1 = urlencode($alimtalkTemplate->templtContent);
-        $button_1 = urlencode($alimtalkTemplate->buttons);
+        $strjson = json_encode($alimtalkTemplate->buttons);
+        $button_1 = urlencode($strjson);
         $failover = 'Y';
         $fsubject_1 = urlencode($title);
         $fmessage_1 = urlencode($alimtalkTemplate->templtContent);
@@ -178,6 +196,7 @@ class PushService
             . "&tpl_code=" . $tpl_code . "&sender=" . $sender . "&receiver_1=" . $receiver_1 . "&subject_1=" . $subject_1 . "&message_1=" . $message_1
             . "&button_1=" . $button_1 . "&failover=" . $failover . "&fsubject_1=" . $fsubject_1 . "&fmessage_1=" . $fmessage_1;
     
+//        echo $data;
         $ch = curl_init();
     
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/alimtalk/send/');
@@ -225,12 +244,11 @@ class PushService
         $pushMessage->web_link = $weblink;
         $pushMessage->save();
 
-        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
-
         $client = new Google_Client();
-        $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
-        $client->setScopes($scope);
-        $auth_key = $client->fetchAccessTokenWithAssertion();
+        $client->setAuthConfigFile('/var/www/allfurn-web/fcm.json');
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $client->refreshTokenWithAssertion();
+        $auth_key = $client->getAccessToken();
 
         $targets = explode(',', $to);
         for($idx = 0; $idx < count($targets); $idx++) {
@@ -238,14 +256,15 @@ class PushService
             if(empty($userIdx)) {
                 continue;
             }
-            $authToken = tblAuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
+            $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
             $data = [
                 "message" => [
-                    "token" => $authToken->token,
+                    "token"=> $authToken->push_token,
                     "notification"=> [
                         "title"=> $title,
-                        "body"=> $msg
+                        "body"=> $msg,
+                        "sound"=> "default"
                     ],
                     "data"=> [
                         "scheme" => $applink,
@@ -253,18 +272,6 @@ class PushService
                         "title"  => $title,
                         "body"  => $msg,
                         "content" => $msg
-                    ],
-                    "android"=> [
-                        "notification"=> [
-                            "click_action"=> "TOP_STORY_ACTIVITY"
-                        ]
-                    ],
-                    "apns"=> [
-                        "payload"=> [
-                            "aps"=> [
-                                "category" => "NEW_MESSAGE_CATEGORY"
-                            ]
-                        ]
                     ]
                 ]
             ];
@@ -275,6 +282,7 @@ class PushService
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_FAILONERROR, true);
         
             $headers = array();
             $headers[] = 'Content-Type: application/json';
@@ -290,7 +298,7 @@ class PushService
             $sendLog->is_send = 1;
             $sendLog->is_check = 0;
             $sendLog->send_date = date('Y-m-d H:i:s');
-            $sendLog->response = $result;
+            $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
             $sendLog->save();
 
             curl_close ($ch);

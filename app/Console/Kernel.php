@@ -5,7 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\PushQ;
-use App\Models\AuthToken;
+use App\Models\PushToken;
 use Google\Client as Google_Client;
 
 class Kernel extends ConsoleKernel
@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
                     if(empty($userIdx)) {
                         continue;
                     }
-                    $authToken = AuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
+                    $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
                     if(empty($authToken)) {
                         continue;
@@ -64,7 +64,7 @@ class Kernel extends ConsoleKernel
 
                     $data = [
                         "message" => [
-                            "token" => $authToken->token,
+                            "token"=> $authToken->push_token,
                             "notification"=> [
                                 "title"=> $pushq->title,
                                 "body"=> $pushq->content
@@ -75,18 +75,6 @@ class Kernel extends ConsoleKernel
                                 "title"  => $pushq->title,
                                 "body"  => $pushq->content,
                                 "content" => $pushq->content
-                            ],
-                            "android"=> [
-                                "notification"=> [
-                                    "click_action"=> "TOP_STORY_ACTIVITY"
-                                ]
-                            ],
-                            "apns"=> [
-                                "payload"=> [
-                                    "aps"=> [
-                                        "category" => "NEW_MESSAGE_CATEGORY"
-                                    ]
-                                ]
                             ]
                         ]
                     ];
@@ -97,6 +85,7 @@ class Kernel extends ConsoleKernel
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
                     curl_setopt($ch, CURLOPT_POST, 1);
+                    curl_setopt($ch, CURLOPT_FAILONERROR, true);
                 
                     $headers = array();
                     $headers[] = 'Content-Type: application/json';
@@ -112,13 +101,11 @@ class Kernel extends ConsoleKernel
                     $sendLog->is_send = 1;
                     $sendLog->is_check = 0;
                     $sendLog->send_date = date('Y-m-d H:i:s');
-                    $sendLog->response = $result;
+                    $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
                     $sendLog->save();
-
-                    curl_close ($ch);
                 }
             }
-        })->cron('* * * * *')->appendOutputTo('/var/www/allfurn-web/logs/batch.log');
+        })->cron('* * * * *');
     }
 
     /**

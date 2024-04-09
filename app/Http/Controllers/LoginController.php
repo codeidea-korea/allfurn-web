@@ -20,7 +20,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use Session;
 use Google\Client as Google_Client;
-use App\Models\AuthToken as tblAuthToken;
+use App\Models\PushToken;
 use App\Models\PushSendLog;
 
 class LoginController extends BaseController
@@ -276,122 +276,6 @@ class LoginController extends BaseController
         ]));
     }
     
-    public function getTemplates(Request $request)
-    {
-        $templateCode = $request->input('templateCode');
-
-        // push 테스트
-        echo '\n\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n';
-
-
-        $title = 'TEST push';
-        $msg = 'TEST 123';
-        $to = "3380,";
-        $applink = "/";
-        $weblink = "/";
-
-        
-        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
-
-        $client = new Google_Client();
-        $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
-        $client->setScopes($scope);
-        $auth_key = $client->fetchAccessTokenWithAssertion();
-
-        $targets = explode(',', $to);
-        for($idx = 0; $idx < count($targets); $idx++) {
-            $userIdx = $targets[$idx];
-            if(empty($userIdx)) {
-                continue;
-            }
-            $authToken = tblAuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
-
-            $data = [
-                "message": {
-                    "token": $authToken->token,
-                    "notification": {
-                        "title": $title,
-                        "body": $msg
-                    },
-                    "data": {
-                        "scheme" => $applink,
-                        "weburl" => $weblink,
-                        "title"  => $title,
-                        "body"  => $msg,
-                        "content" => $msg
-                    },
-                    "android": {
-                        "notification": {
-                            "click_action": "TOP_STORY_ACTIVITY"
-                        }
-                    },
-                    "apns": {
-                        "payload": {
-                            "aps": {
-                                "category" : "NEW_MESSAGE_CATEGORY"
-                            }
-                        }
-                    }
-                }
-            ];
-        
-            $ch = curl_init();
-        
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-            curl_setopt($ch, CURLOPT_POST, 1);
-        
-            $headers = array();
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
-            $result = curl_exec($ch);
-            
-            $sendLog = new PushSendLog();
-            $sendLog->user_idx = $userIdx;
-            $sendLog->push_idx = 1;
-            $sendLog->push_type = 'S';
-            $sendLog->is_send = 1;
-            $sendLog->is_check = 0;
-            $sendLog->send_date = date('Y-m-d H:i:s');
-            $sendLog->response = $result;
-            $sendLog->save();
-
-            curl_close ($ch);
-        }
-
-        // 알림톡 테스트
-        echo '\n\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n';
-
-        $data = "templateCode=" . urlencode('TS_1850')
-            . "&title=" . urlencode('회원가입이 승인되었습니다')
-            . "&replaceParams=" . urlencode(json_encode([
-                '고객명' => urlencode('리넷')
-            ]))
-            . "&receiver=" . urlencode('01077564321');
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://allfurn-web.codeidea.io/allimtalk/send');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-
-        $headers = array();
-        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($ch);
-        echo curl_error($ch);
-        echo '\n';
-        echo $result;
-        echo '\n';
-        curl_close ($ch);
-        echo '\n\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n';
-    }
-    
     public function asend(Request $request)
     {
         $templateCode = $request->input('templateCode');
@@ -400,7 +284,7 @@ class LoginController extends BaseController
         $receiver = $request->input('receiver');
 
         return response()->json($this->pushService->sendKakaoAlimtalk(
-            $templateCode, $title, json_decode($replaceParams), $receiver));
+            $templateCode, $title, json_decode($replaceParams, true), $receiver));
     }
 }
 
