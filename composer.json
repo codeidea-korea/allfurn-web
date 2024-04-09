@@ -10,6 +10,8 @@
     "require": {
         "php": "^7.2.5|^8.0",
         "fideloper/proxy": "^4.4",
+        "google/apiclient": "^2.12.1",
+        "google/auth": "^1.37",
         "guzzlehttp/guzzle": "^7.5",
         "jenssegers/agent": "*",
         "laravel/framework": "^7.29",
