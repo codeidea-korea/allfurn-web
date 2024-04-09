@@ -16,6 +16,7 @@ use App\Models\SmsHistory;
 use App\Models\AlimtalkTemplate;
 use App\Models\PushSendLog;
 use App\Models\AuthToken as tblAuthToken;
+use Google\Client as Google_Client;
 
 use DateTime;
 
@@ -224,6 +225,13 @@ class PushService
         $pushMessage->web_link = $weblink;
         $pushMessage->save();
 
+        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+        $client = new Google_Client();
+        $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
+        $client->setScopes($scope);
+        $auth_key = $client->fetchAccessTokenWithAssertion();
+
         $targets = explode(',', $to);
         for($idx = 0; $idx < count($targets); $idx++) {
             $userIdx = $targets[$idx];
@@ -233,32 +241,44 @@ class PushService
             $authToken = tblAuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
             $data = [
-                "notification" => [
-                    "title" => $title,
-                    "body"  => $msg,
-                    "content"  => $msg
-                ],
-                "priority" =>  "high",
-                "data" => [
-                    "scheme" => $applink,
-                    "weburl" => $weblink,
-                    "title"  => $title,
-                    "body"  => $msg,
-                    "content" => $msg
-                ],
-                "to" => $authToken->token
+                "message" => [
+                    "token" => $authToken->token,
+                    "notification"=> [
+                        "title"=> $title,
+                        "body"=> $msg
+                    ],
+                    "data"=> [
+                        "scheme" => $applink,
+                        "weburl" => $weblink,
+                        "title"  => $title,
+                        "body"  => $msg,
+                        "content" => $msg
+                    ],
+                    "android"=> [
+                        "notification"=> [
+                            "click_action"=> "TOP_STORY_ACTIVITY"
+                        ]
+                    ],
+                    "apns"=> [
+                        "payload"=> [
+                            "aps"=> [
+                                "category" => "NEW_MESSAGE_CATEGORY"
+                            ]
+                        ]
+                    ]
+                ]
             ];
         
             $ch = curl_init();
         
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             curl_setopt($ch, CURLOPT_POST, 1);
         
             $headers = array();
             $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Authorization: key=AAAA4atg0bQ:APA91bFxmF8ZikIdbyfmMt696pCUKHKO-ceoQMubPGSwu-wT0a21fEV45Lvw-27si_NOirum6nn9NmBekPi-xiqlt8NA2lChXZU84oJSiLkrOO5kkSgruBH9jBdDuQ2bwCT_KuOGutQB';
+            $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
             $result = curl_exec($ch);

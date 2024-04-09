@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Models\PushQ;
 use App\Models\AuthToken;
+use Google\Client as Google_Client;
 
 class Kernel extends ConsoleKernel
 {
@@ -54,36 +55,66 @@ class Kernel extends ConsoleKernel
                         continue;
                     }
                     
+                    $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+                    $client = new Google_Client();
+                    $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
+                    $client->setScopes($scope);
+                    $auth_key = $client->fetchAccessTokenWithAssertion();
+
                     $data = [
-                        "notification" => [
-                            "title" => $pushq->title,
-                            "body"  => $pushq->content,
-                            "content"  => $pushq->content
-                        ],
-                        "priority" =>  "high",
-                        "data" => [
-                            "scheme" => $pushq->app_link,
-                            "weburl" => $pushq->web_link,
-                            "title"  => $pushq->title,
-                            "body"  => $pushq->content,
-                            "content" => $pushq->content
-                        ],
-                        "to" => $authToken->token
+                        "message" => [
+                            "token" => $authToken->token,
+                            "notification"=> [
+                                "title"=> $pushq->title,
+                                "body"=> $pushq->content
+                            ],
+                            "data"=> [
+                                "scheme" => $pushq->app_link,
+                                "weburl" => $pushq->web_link,
+                                "title"  => $pushq->title,
+                                "body"  => $pushq->content,
+                                "content" => $pushq->content
+                            ],
+                            "android"=> [
+                                "notification"=> [
+                                    "click_action"=> "TOP_STORY_ACTIVITY"
+                                ]
+                            ],
+                            "apns"=> [
+                                "payload"=> [
+                                    "aps"=> [
+                                        "category" => "NEW_MESSAGE_CATEGORY"
+                                    ]
+                                ]
+                            ]
+                        ]
                     ];
                 
                     $ch = curl_init();
                 
-                    curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                    curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
                     curl_setopt($ch, CURLOPT_POST, 1);
                 
                     $headers = array();
                     $headers[] = 'Content-Type: application/json';
-                    $headers[] = 'Authorization: key=AAAA4atg0bQ:APA91bFxmF8ZikIdbyfmMt696pCUKHKO-ceoQMubPGSwu-wT0a21fEV45Lvw-27si_NOirum6nn9NmBekPi-xiqlt8NA2lChXZU84oJSiLkrOO5kkSgruBH9jBdDuQ2bwCT_KuOGutQB';
+                    $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                 
                     $result = curl_exec($ch);
+                    
+                    $sendLog = new PushSendLog();
+                    $sendLog->user_idx = $userIdx;
+                    $sendLog->push_idx = $pushMessage->idx;
+                    $sendLog->push_type = $pushMessage->type;
+                    $sendLog->is_send = 1;
+                    $sendLog->is_check = 0;
+                    $sendLog->send_date = date('Y-m-d H:i:s');
+                    $sendLog->response = $result;
+                    $sendLog->save();
+
                     curl_close ($ch);
                 }
             }

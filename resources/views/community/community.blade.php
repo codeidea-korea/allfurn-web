@@ -48,6 +48,11 @@
             </div>
 
             <div class="tab_content">
+                <div class="subscribe_box" style="display: block;">
+                    @if(isset($is_subscribed))
+                        <button type="button" id="subscribe_button" class="{{ $is_subscribed ? 'active' : '' }}" onclick="toggleSubscribeBoard('{{$board_name}}')"><i></i><span>{{ $is_subscribed ? '구독중' : '구독하기' }}</span></button>
+                    @endif
+                </div>
                 <!-- 전체 -->
                 <div class="active">
                     <div class="community_list">
@@ -195,6 +200,37 @@
         if (urlSearch.get('keyword')) bodies.keyword = urlSearch.get('keyword');
         if (urlSearch.get('board_name')) bodies.board_name = urlSearch.get('board_name');
         location.replace("/community?" + new URLSearchParams(bodies));
+    }
+
+    //구독하기
+    function toggleSubscribeBoard(boardName) {
+        fetch('/community/subscribe/board', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+                body: JSON.stringify({
+                    boardName: boardName
+                })
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.result === 'success') {
+                    switch(json.code) {
+                        case 'DEL_SUBSCRIBE':
+                            document.querySelector('#subscribe_button span').textContent = '구독하기';
+                            document.getElementById('subscribe_button').classList.remove('active');
+                            break;
+                        case 'REG_SUBSCRIBE':
+                            document.querySelector('#subscribe_button span').textContent = '구독중';
+                            document.getElementById('subscribe_button').classList.add('active');
+                            break;
+                    }
+                } else {
+                    alert(json.message);
+                }
+            })
     }
 </script>
 

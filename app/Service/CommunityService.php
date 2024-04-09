@@ -468,8 +468,8 @@ class CommunityService {
                 $alarmParams['target_company_idx'] = $user->company_idx;
                 $alarmParams['target_company_type'] = $user->type;
                 $alarmService->sendAlarm($alarmParams);
-                /* $this->pushService->sendPush('올펀 게시글 알림', '구독한 '. $board->name .'에 새 글이 등록되었습니다.', 
-                    $user->company_idx, $type = 3, 'allfurn://community?board_name='.$board->name ,'/community?board_name='.$board->name); */
+                $this->pushService->sendPush('올펀 게시글 알림', '구독한 '. $board->name .'에 새 글이 등록되었습니다.', 
+                    $user->company_idx, $type = 3, 'allfurn://community?board_name='.$board->name ,'/community?board_name='.$board->name);
             }
         }
         return [
