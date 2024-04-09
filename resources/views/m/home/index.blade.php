@@ -91,7 +91,7 @@
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:;">
+                         <a href="javascript:modalOpen('#search-modal');">
                             <img src="/img/main/search_icon.png" alt="">
                             <span>쉬운<br/> 상품 찾기</span>
                          </a>
@@ -423,6 +423,18 @@ const video_prod = new Swiper(".video_prod .slide_box", {
         type: "fraction",
     },
 });
+
+$(document)
+    .on('click', '.sch_cate_info .btn-primary', function() {
+        var pre = $(this).prev().find('li.active').data('pre');
+
+        if( typeof pre != 'undefined' || pre != '' ) {
+            $(location).attr('href', '/product/category?pre=' + pre);
+        } else {
+            //
+        }
+    })
+;
 
 </script>
 

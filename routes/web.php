@@ -132,7 +132,7 @@ Route::get('/like/product', 'MypageController@likeProduct');
 Route::get('/like/company', 'MypageController@likeCompany');
 
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
-    Route::get('/', 'MypageController@index')->name('.mypage');;
+    Route::get('/', 'MypageController@index')->name('.mypage');
     Route::get('/deal', 'MypageController@deal')->name('.deal');
     Route::get('/deal-company', 'MypageController@dealCompany')->name('.deal-company');
     Route::get('/purchase', 'MypageController@purchase')->name('.purchase');
@@ -179,6 +179,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/logo/image', 'MypageController@deleteLogoImage');
     Route::put('/represent/product/{idx}', 'MypageController@toggleRepresentProduct');
     Route::get('/check/new/badge', 'MypageController@getCheckNewBadge');
+
     Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
     Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
     Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
@@ -187,6 +188,13 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/requestOrderDetail', 'MypageController@getRequestOrderDetail');
     Route::post('/responseOrderDetail', 'MypageController@getResponseOrderDetail');
     Route::get('/responseEstimateMulti', 'MypageController@getResponseEstimateMulti');
+
+    Route::get('/sendRequestEstimate/{idx}', 'MypageController@getSendRequestEstimate');
+    Route::get('/sendResponseEstimate/{idx}', 'MypageController@getSendResponseEstimate');
+    Route::get('/checkRuquestEstimate/{idx}', 'MypageController@getCheckRequestEstimate');
+    Route::get('/sendResponseOrder/{code}', 'MypageController@getSendResponseOrder');
+    Route::get('/checkResponseEstimate/{idx}', 'MypageController@getCheckResponseEstimate');
+    Route::get('/checkOrder/{idx}', 'MypageController@getCheckOrder');
 });
 
 
