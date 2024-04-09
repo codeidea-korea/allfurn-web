@@ -1,3 +1,4 @@
+
 /* ------------------------------------
     공통
 ------------------------------------ */
@@ -379,6 +380,13 @@ section.sub_section_bot {padding:30px 0 70px; }
 .community_con01 .write_btn {position:fixed; right:18px; bottom:70px;  }
 .community_con01 .write_btn .btn {height:47px; }
 .community_con01 .write_btn svg {width:25px; height:25px; stroke:#fff; stroke-width:1.5px; }
+
+/* 커뮤니티 구독 */
+.subscribe_box {margin-bottom:10px; text-align:right; }
+.subscribe_box button {display:flex; align-items:center; gap:5px; margin-left:auto; padding:5px 12px; border:1px solid #e0e0e0; border-radius:20px; background-color:#fff; transition:all 0.5s; }
+.subscribe_box button:hover {background-color:#d9d9d9; }
+.subscribe_box button i {display:inline-flex; width:10px; height:5px; border-left:1px solid var(--main_color); border-bottom:1px solid var(--main_color); transform:rotate(-45deg); }
+.subscribe_box button.active {border:1px solid var(--main_color); background-color: #FFF5F6; color:var(--main_color); }
 
 /* 커뮤니티 글쓰기 */
 .community_write {min-height:calc((var(--vh, 1vh) * 100) - 119px); }

@@ -358,6 +358,13 @@ section.sub_section_bot {padding:70px 0 140px; }
 .community_con01 .tab_layout ul {flex-wrap:wrap; justify-content:center; }
 .community_con01 .tab_layout ul li {width:auto; }
 
+/* 커뮤니티 구독 */
+.subscribe_box {margin-bottom:10px; text-align:right; }
+.subscribe_box button {display:flex; align-items:center; gap:5px; margin-left:auto; padding:5px 12px; border:1px solid #e0e0e0; border-radius:20px; background-color:#fff; transition:all 0.5s; }
+.subscribe_box button:hover {background-color:#d9d9d9; }
+.subscribe_box button i {display:inline-flex; width:10px; height:5px; border-left:1px solid var(--main_color); border-bottom:1px solid var(--main_color); transform:rotate(-45deg); }
+.subscribe_box button.active {border:1px solid var(--main_color); background-color: #FFF5F6; color:var(--main_color); }
+
 /* 커뮤니티 글쓰기 */
 .community_write_con01 .title {padding-bottom:10px; border-bottom:1px solid #F2F2F2; margin:10px 0 30px;  }
 .community_write_con01 .title input {width:100%; font-size:18px; }
