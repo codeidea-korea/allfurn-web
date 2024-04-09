@@ -15,6 +15,7 @@ use App\Models\PushQ;
 use App\Models\SmsHistory;
 use App\Models\AlimtalkTemplate;
 use App\Models\PushSendLog;
+use App\Models\AuthToken as tblAuthToken;
 
 use DateTime;
 
@@ -229,7 +230,7 @@ class PushService
             if(empty($userIdx)) {
                 continue;
             }
-            $authToken = AuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
+            $authToken = tblAuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
             $data = [
                 "notification" => [
@@ -261,6 +262,7 @@ class PushService
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
             $result = curl_exec($ch);
+            dd($result);
             
             $sendLog = new PushSendLog();
             $sendLog->user_idx = $userIdx;

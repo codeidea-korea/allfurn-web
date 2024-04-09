@@ -3,7 +3,7 @@
 
 namespace App\Service;
 
-
+use App\Service\PushService;
 use App\Models\Article;
 use App\Models\ArticleLike;
 use App\Models\ArticleView;
@@ -25,6 +25,13 @@ use Illuminate\Support\Facades\Log;
 
 class CommunityService {
     
+    private $pushService;
+
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
+
     
     /**
      * 게시글 리스트 가져오기
@@ -461,6 +468,8 @@ class CommunityService {
                 $alarmParams['target_company_idx'] = $user->company_idx;
                 $alarmParams['target_company_type'] = $user->type;
                 $alarmService->sendAlarm($alarmParams);
+                /* $this->pushService->sendPush('올펀 게시글 알림', '구독한 '. $board->name .'에 새 글이 등록되었습니다.', 
+                    $user->company_idx, $type = 3, 'allfurn://community?board_name='.$board->name ,'/community?board_name='.$board->name); */
             }
         }
         return [
@@ -564,6 +573,16 @@ class CommunityService {
                     $alarmService->sendAlarm($alarmParams);
                 }
             }
+
+            //fcm 푸시
+            if ($parent_idx) {
+                $this->pushService->sendPush('올펀 게시글 알림', '작성한 댓글에 답글이 작성되었습니다.', 
+                    $user->company_idx, $type = 3, 'allfurn://community/detail/'.$re_reply->article_idx  ,'/community/detail/'.$re_reply->article_idx);
+            } else {
+                $this->pushService->sendPush('올펀 게시글 알림', '작성한 게시글에 댓글이 작성되었습니다.', 
+                    $user->company_idx, $type = 3, 'allfurn://community/detail/'.$article->idx  ,'/community/detail/'.$article->idx);
+            }
+            
         }
         return [
             'result' => 'success',
