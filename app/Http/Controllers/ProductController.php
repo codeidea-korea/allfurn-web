@@ -516,7 +516,7 @@ class ProductController extends BaseController
         // 확대보기의경우 cIdx 유무를 확인
         if (!$cidx) {
             // 모아보기 view
-            return view('product.thisMonthDetail', [
+            return view(getDeviceType().'product.thisMonthDetail', [
                 'dealbrand' => $data,
             ]);
         } else {
@@ -533,11 +533,16 @@ class ProductController extends BaseController
         $target['categoryIdx'] = [1, 2, 3, 14];
         $popularList = $this->productService->getPopularList($target);
         $bestNewProducts = $this->productService->getBestNewProductList();
-        //dd($popularList);
-        return view(getDeviceType() .'product.popular-sum-list', [
+        return view('product.popular-sum-list', [
             'lists' => $popularList,
             'bestNewProducts' => $bestNewProducts,
         ]);
+    }
+
+    public function getPopularSumListTab(int $categoryIdx)
+    {
+        $popularList = $this->productService->getPopularListTab($categoryIdx);
+        return $popularList;
     }
 
     /**
@@ -583,7 +588,7 @@ class ProductController extends BaseController
         $data['categoryIdx'] = $request->query('ca');
         $data['parentIdx'] = $request->query('pre');
         $data['property'] = $request->query('prop');
-        $data['sort'] = $request->query('so') == null ? "reg_time" : $request->query('so');
+        $data['sort'] = $request->query('so') == null ? "reg_time" : str_replace("filter_", "", $request->query('so'));
 
         $list = $this->productService->listByCategory($data);
 

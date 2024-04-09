@@ -39,6 +39,8 @@ Route::prefix('signup')->group(function() {
 
     Route::get('/success', 'LoginController@signupcomplete');
 });
+Route::get('/allimtalk/templates', 'LoginController@getTemplates');
+Route::post('/allimtalk/send', 'LoginController@asend');
 
 Route::get('/signout', 'LoginController@signOut')->name('signOut');
 Route::get('/terms', 'MemberController@terms')->name('terms');
@@ -95,6 +97,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/getJsonListBySearch', 'ProductController@getJsonListBySearch');
     Route::get('/planDiscountDetail', 'ProductController@planDiscountDetail');
     Route::get('/popularList', 'ProductController@getPopularSumList');
+    Route::get('/popularListTab/{categoryIdx}', 'ProductController@getPopularSumListTab');
     Route::get('/popularBrand', 'ProductController@popularBrandList');
     Route::get('/jsonPopularBrand', 'ProductController@jsonPopularBrand');
 });
@@ -131,6 +134,7 @@ Route::get('/like/company', 'MypageController@likeCompany');
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
     Route::get('/', 'MypageController@index')->name('.mypage');;
     Route::get('/deal', 'MypageController@deal')->name('.deal');
+    Route::get('/deal-company', 'MypageController@dealCompany')->name('.deal-company');
     Route::get('/purchase', 'MypageController@purchase')->name('.purchase');
     Route::get('/normal', 'MypageController@normal')->name('.normal');
     Route::get('/order/detail/', 'MypageController@detail');
