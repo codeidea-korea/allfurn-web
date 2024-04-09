@@ -532,7 +532,7 @@ class ProductController extends BaseController
     {
         $target['categoryIdx'] = [1, 2, 3, 14];
         $popularList = $this->productService->getPopularList($target);
-        return view(getDeviceType() .'product.popular-sum-list', [
+        return view('product.popular-sum-list', [
             'lists' => $popularList
         ]);
     }

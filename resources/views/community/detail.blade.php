@@ -99,9 +99,12 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="comment_form" id="new_comment">
+                <div class="comment_form mb-8" id="new_comment">
                     <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
                     <button class="btn btn-primary" disabled>등록</button>
+                </div>
+                <div class="flex items-center justify-center">
+                    <a href="javascript:history.back();" class="btn btn-line w-[300px]">목록보기</a>
                 </div>
             </div>
         </div>

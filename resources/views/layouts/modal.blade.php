@@ -402,15 +402,15 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_reg_time">
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_reg_time" value="reg_time" checked>
                     <label for="filter_reg_time">신상품순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_search">
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_search" value="search">
                     <label for="filter_search">검색 많은 순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_order">
+                    <input type="radio" class="radio-form" name="filter_cate_2" id="filter_order" value="order">
                     <label for="filter_order">주문 많은 순</label>
                 </li>
             </ul>

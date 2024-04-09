@@ -41,17 +41,37 @@
                                 @endif
                                 @if( $data['detail']->isAd == 1 )
                                 <span class="event">이벤트</span>
-                                @endif;
+                                @endif
                             </div>
                         @endif
-                        <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
+                        <h4>{{$data['detail']->name}}</h4>
+                        <div class="border-t border-b py-4 mt-4">
+                            @if($data['detail']->product_code != '')
+                                <div class="flex items-center">
+                                    <p class="text-stone-500 w-20 shrink-0 font-medium">상품 코드</p>
+                                    <p class="w-full">{{ $data['detail']->product_code }}</p>
+                                </div>
+                            @endif
+                            <div class="flex items-center mt-2">
+                                <p class="text-stone-500 w-20 shrink-0 font-medium">배송 방법</p>
+                                <p class="w-full">{{ $data['detail']->delivery_info }}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="info">
-                        <p>업체 문의</p>
+                        <p class="product_price">{{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}</p>
                         <hr>
                         <div class="company_info">
-                            <b>{{$data['detail']->companyName}}</b>
-                            <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                            @if($data['detail']->company_type == 'W')
+                                <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">    
+                                    <b>{{$data['detail']->companyName}}</b>
+                                    <span>업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></span>
+                                </a>
+                            @else
+                                <a class="txt-gray">
+                                    <b>{{$data['detail']->companyName}}</b>
+                                </a>
+                            @endif
                         </div>
                         <div class="link_box">
                             <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
@@ -68,10 +88,12 @@
         </div>
         <div class="prod_detail">
             <div class="info_quick">
-                <a href="./company_detail.php" class="btn btn-line4 nohover com_link txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                @if($data['detail']->company_type == 'W')
+                    <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="btn btn-line4 nohover com_link txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                @endif
                 <div class="flex gap-2 my-3">
-                    <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
-                    <button class="btn btn-line4 nohover"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+                    <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                    <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                 </div>
                 <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의하기</button>
                 <button class="btn btn-primary estimate" onclick="openEstimateModal()"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
@@ -111,11 +133,13 @@
     <!-- 공유 팝업 -->
     <div class="modal" id="alert-modal">
         <div class="modal_bg" onclick="modalClose('#alert-modal')"></div>
-        <div class="modal_inner modal-md">
+        <div class="modal_inner modal-sm">
             <button class="close_btn" onclick="modalClose('#alert-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body company_phone_modal">
-                <h4>링크가 복사되었습니다.</h4><br />
-                <button class="btn btn-primary w-full" onclick="modalClose('#alert-modal')">확인</button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>링크가 복사되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#alert-modal')">확인</button>
+                </div>
             </div>
         </div>
     </div>
@@ -134,7 +158,7 @@
                     </tr>
                     <tr>
                         <th>전화번호</th>
-                        <td><b>{{$data['detail']->companyPhoneNumber}}</b></td>
+                        <td><b>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['detail']->companyPhoneNumber); @endphp</b></td>
                     </tr>
                     </tbody></table>
                 <button class="btn btn-primary w-full" onclick="modalClose('#company_phone-modal')">확인</button>
@@ -203,7 +227,7 @@
                     </table>
                     <div class="mt-10">
                         <p>사업자등록증 또는 명함 첨부 (필수)</p>
-                        <p class="txt-primary">*사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
+                        <p class="txt-primary">* 사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
                     </div>
                     <div id="previewBusinessLicense" class="file-form full mt-2">
                         <input type="file" name="request_business_license" id="request_business_license" class="file_input" />
@@ -226,7 +250,7 @@
                     <div class="flex justify-end mt-2 request_estimate hidden" style="padding: 10px; font-size: 16px; font-weight: 500; color: #fff; background: #8E8E8E; margin-top: 3.00rem;">
                         아래 상품의 견적을 요청합니다.
                     </div>
-                    <div class="btn_box check_btn mt-10">
+                    <div class="btn_box mt-10 check_btn">
                         <p class="mb-2">
                             <input type="checkbox" id="all_prod" class="radio-form" />
                             <label for="all_prod">위 입력된 사항을 확인했습니다.</label>
@@ -357,7 +381,7 @@
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
         function openEstimateModal() {
-            fetch('/estimate/makeGroupCode', {
+            fetch('/estimate/makeEstimateCode', {
                 method  : 'POST',
                 headers : {
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'

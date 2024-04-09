@@ -137,6 +137,9 @@ class ProductService
             (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
                   ELSE "" END) as companyPhoneNumber,
+            (CASE WHEN AF_product.company_type = "W" THEN (SELECT CONCAT(aw.business_address, " ", aw.business_address_detail) FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (SELECT CONCAT(ar.business_address, " ", ar.business_address_detail) FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
+                  ELSE "" END) AS product_address,
                   COUNT(DISTINCT pi.idx) as isInterest,
                   COUNT(DISTINCT pa.idx) as isAd'))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
@@ -709,11 +712,11 @@ class ProductService
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
                                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
+                                (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 0 as orderCnt,
                                 1 as isAd,
                                 AF_product_ad.price as ad_price,
-                                NULL as reg_time'
+                                AF_product.register_time as reg_time'
             ))
             ->where('AF_product_ad.state', 'G')
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
@@ -762,8 +765,8 @@ class ProductService
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
                                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                                (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt,
-                                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 0 as isAd,
                                 0 as ad_price,
                                 AF_product.register_time as reg_time
@@ -1392,6 +1395,7 @@ class ProductService
 
     public function getPopularList(array $params = [])
     {
+        // 침대/매트리스, 소파/거실, 식탁/의자, 사무용가구
         $list = DB::table(DB::raw(
             '(SELECT
                 ap.idx,
@@ -1424,11 +1428,77 @@ class ProductService
         ->get();
 
         $data['lists'] = $list;
-        if( count( $data['lists'] ) > 0 ) {
-            foreach( $data['lists'] AS $k => $row ) {
-                $data['category'][$row->category_idx][] = $row;
-            }
-        }
+
+
+
+        $list1 = DB::table(DB::raw(
+            '(SELECT
+                ap.idx,
+                ap.name,
+                ap.company_idx,	
+                ap.access_count,
+                ap.is_price_open,
+                ap.price,
+                ap.price_text,
+                ac2.idx AS category_idx,
+                ac2.name AS category_name,
+                aw.company_name, 
+		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+                (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
+                (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
+            FROM
+                AF_product AS ap
+                LEFT JOIN AF_wholesale AS aw ON aw.idx=ap.company_idx
+                LEFT JOIN AF_category AS ac1 ON ac1.idx=ap.category_idx
+                LEFT JOIN AF_category AS ac2 ON ac2.idx=ac1.parent_idx
+                LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
+            ) as t'
+        ))
+        ->select('t.*'
+            , DB::raw('(SELECT t.access_count + t.ordCnt ) AS score')
+        )
+        ->where('t.category_idx', '1')
+        ->orderBy('score', 'desc')
+        ->limit(100)
+        ->get();
+
+        $data['list1'] = $list1;
+
+
+
+        $list2 = DB::table(DB::raw(
+            '(SELECT
+                ap.idx,
+                ap.name,
+                ap.company_idx,	
+                ap.access_count,
+                ap.is_price_open,
+                ap.price,
+                ap.price_text,
+                ac2.idx AS category_idx,
+                ac2.name AS category_name,
+                aw.company_name, 
+		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+                (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
+                (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
+            FROM
+                AF_product AS ap
+                LEFT JOIN AF_wholesale AS aw ON aw.idx=ap.company_idx
+                LEFT JOIN AF_category AS ac1 ON ac1.idx=ap.category_idx
+                LEFT JOIN AF_category AS ac2 ON ac2.idx=ac1.parent_idx
+                LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
+            ) as t'
+        ))
+        ->select('t.*'
+            , DB::raw('(SELECT t.access_count + t.ordCnt ) AS score')
+        )
+        ->where('t.category_idx', '2')
+        ->orderBy('score', 'desc')
+        ->limit(100)
+        ->get();
+
+        $data['list2'] = $list2;
+        //dd($data);
 
         return $data;
 

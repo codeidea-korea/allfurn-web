@@ -2,64 +2,69 @@
 
 @section('content')
 
+<div class="join_header sticky top-0 h-16 bg-white flex items-center">
+    <div class="inner">
+        <a class="inline-flex" href="/"><img class="logo" src="/img/logo.svg" alt=""></a>
+    </div>
+</div>
 
 <div id="content">
-    <section class="login_common flex items-center">
-        <div class="login_inner">
+    <section class="join_common flex items-center">
+        <div class="join_inner">
             <div class="title">
                 <h3>아이디 찾기</h3>
             </div>
 
-            <label for="phone">전화번호</label>
-            <div class="flex gap-2 mt-1.5 mb-4">
-                <input type="text" id="cellphone" class="input-form w-full" placeholder="전화번호를 입력해주세요">
-                <button id="btnSendSMS" class="btn btn-primary-line" disabled >인증번호 받기</button>
-            </div>
+            <div class="form_box">
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary"><label for="cellphone">전화번호</label></dt>
+                        <dd class="flex gap-1">
+                            <input type="text" id="cellphone" class="input-form w-full" value="" maxLength="13" placeholder="전화번호를 입력해주세요">
+                            <button id="btnSendSMS" class="btn btn-primary-line" disabled>인증번호 받기</button>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8" id="smscodeDiv" style='display:none;'>
+                    <dl class="flex">
+                        <dt class="necessary"><label for="smscode">인증번호</label></dt>
+                        <dd class="flex gap-1">
+                            <div class="certify_box">
+                                <input type="text" id="smscode" class="input-form w-full" maxlength="6" placeholder="인증번호 6자리">
+                                <span class="time">03:00</span>
+                            </div>
+                            <button id="btnResendSMS" class="btn btn-line">재발송</button>
+                        </dd>
+                    </dl>
+                </div>
+                <h4 class="_step2" style='display:none;'>가입된 아이디</h4>
+                <div class="info_box _step2" style='display:none;'>
+                    비밀번호를 분실하셨다면 아이디 선택 후 비밀번호 재설정을 클릭해주세요
+                </div>
 
-            <div id="smscodeDiv" style='display:none;'>
-                <label for="smscode">인증번호</label>
-                <div class="flex gap-2 mt-1.5 mb-4">
-                    <div class="certify_box">
-                        <input type="text" id="smscode" class="input-form w-full" maxlength="6" placeholder="인증번호 6자리">
-                        <span class="time">03:00</span>
-                    </div>
-                    <button id="btnResendSMS" class="btn btn-line">재발송</button>
+                <ul class="joined_id mt-2 _step2" style='display:none;'>
+                    <li>
+                        <input type="radio" name="joined_id" id="joined_id_1" class="radio-form">
+                        <label for="joined_id_1">deee123</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="joined_id" id="joined_id_2" class="radio-form">
+                        <label for="joined_id_2">deee123</label>
+                    </li>
+                </ul>
+
+                <div class="info_box mb-4">
+                    서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.
                 </div>
             </div>
 
-            <div class="title _step2" style='display:none;'>
-                <h3>가입된 아이디</h3>
-                <p>비밀번호를 분실하셨다면 아이디 선택 후 비밀번호 재설정을 클릭해주세요</p>
-            </div>
 
-            <ul class="joined_id _step2" style='display:none;'>
-                <li>
-                    <input type="radio" name="joined_id" id="joined_id_1" class="radio-form">
-                    <label for="joined_id_1">deee123</label>
-                </li>
-                <li>
-                    <input type="radio" name="joined_id" id="joined_id_2" class="radio-form">
-                    <label for="joined_id_2">deee123</label>
-                </li>
-            </ul>
-
-            <ul class="info_box">
-                <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
-            </ul>
-
-            <button id="btn_smscode_confirm" class="btn w-full btn-primary" disabled onclick="confirmAuthCode()">인증완료</button>
+            <button id="btn_smscode_confirm" onclick="confirmAuthCode()" class="btn w-full btn-primary" disabled>인증완료</button>
             <div class="btn_box flex gap-2 mt-2.5">
-                <a href="javascript:;" onclick="gotoFindpw()" class="btn w-full btn-line2">비밀번호 재설정</a>
+                <a href="/findpw" class="btn w-full btn-line2">비밀번호 재설정</a>
                 <a href="/signin" class="btn w-full btn-primary">로그인 하러가기</a>
             </div>
            
-            <a href="/signup" class="btn w-full mt-2.5 btn-line2">올펀 가입하기</a>
-
-            <div class="link_box flex items-center justify-center">
-                <a href="/findid">아이디 찾기</a>
-                <a href="/findpw">비밀번호 재설정</a>
-                <a href="javascript:;">서비스 이용 문의</a>
-            </div>
         </div>
     </section>
 </div>
@@ -121,7 +126,7 @@ $( document ).ready( function() {
         });
     });
 
-    $("#smscode").on("keyup", function () {
+    $("#smscode").on("input", function () {
         $(this).val($(this).val().replace(/[^0-9]/g, ''));
         if ($(this).val().length >= 6) {
             $("#btn_smscode_confirm").prop("disabled", false);
@@ -130,17 +135,33 @@ $( document ).ready( function() {
             $('._step2').hide();
         }
     });
-
-    $("#btn_smscode_confirm").on("click", function () {
-        if ($('.time').text() == '0:00'){
-            modalOpen('#smscode_time_over');
-        }
-    });
 });
 
 function gotoFindpw() {
     const joined_id = $('input[name=joined_id]:checked').val();
-    window.location.href = '/findpw?id=' + (joined_id ? joined_id : '');
+
+    var data = new Object() ;
+    data.phonenumber = $('#cellphone').val().replace(/-/g, '');
+    data.joinedid = joined_id;
+    data.code = $('#smscode').val();
+
+    $.ajax({
+        url				: '/signup/signinAuthCode',
+        contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
+        data			: data,
+        type			: 'POST',
+        dataType		: 'json',
+        xhrFields: {
+            withCredentials: false
+        },
+        success : function(result) {
+            if (result.success) {
+                window.location.href = '/';
+            } else {
+                alert(result.msg);
+            }
+        }
+    });
 }
 function confirmAuthCode() {
     if ($('.time').text() == '0:00'){
@@ -176,7 +197,7 @@ function confirmAuthCode() {
                     for(var idx=0; idx<result.users.length; idx++) {
                         
                         tmpHtml += '<li>'
-                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" class="radio-form">'
+                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" value="'+result.users[idx].account+'" class="radio-form">'
                                 +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
                                 +'</li>';
                     }

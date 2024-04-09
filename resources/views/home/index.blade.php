@@ -287,8 +287,8 @@ const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
 
 // category_banner
 const category_banner = new Swiper(".category_banner .slide_box", {
-    slidesPerView: 12,
-    spaceBetween: 12,
+    slidesPerView: 11.3,
+    spaceBetween: 11,
 });
 
 // best_prod 

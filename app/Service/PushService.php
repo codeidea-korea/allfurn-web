@@ -66,7 +66,7 @@ class PushService
     public function generateToken(): string{
         $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
         $userid = 'codeidea';
-        $data = "apikey=" . $apikey . "&userid=" . $userId;
+        $data = "apikey=" . $apikey . "&userid=" . $userid;
 
         $ch = curl_init();
 
@@ -86,11 +86,40 @@ class PushService
         curl_close ($ch);
 
         $res = json_decode( $result );
-        if($res['code'] == 0) {
-            return $res['token'];
+        if($res->code == 0) {
+            return $res->token;
         } else {
             throw new \Exception( "알리고 카카오 알림톡 토큰 생성 실패 " . json_encode($res), 500 );
         }
+    }
+
+    public function getTemplate($tpl_code = ''): object{
+        $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
+        $userid = 'codeidea';
+        $token = urlencode($this->generateToken());
+        $senderkey = urlencode('a2c2d74285465d194fdbfb2d35aa5d2e59e11e50');
+
+        $data = "apikey=" . $apikey . "&userid=" . $userid . "&token=" . $token . "&senderkey=" . $senderkey
+            . "&tpl_code=" . $tpl_code;
+    
+        $ch = curl_init();
+    
+        curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/template/list/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+//        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    
+        $headers = array();
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+        $result = curl_exec($ch);
+//        echo curl_error($ch);
+//        echo $result;
+        curl_close ($ch);
+
+        return json_decode( $result );
     }
 
     /**
@@ -104,17 +133,20 @@ class PushService
     public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver): array
     {
         // 템플릿을 템플릿 코드로 조회한다.
-        $alimtalkTemplate = AlimtalkTemplate::where('template_code', '=', $templateCode)->orderBy('register_time', 'DESC')->first();
+        $alimtalkTemplate = getTemplate($templateCode)->list[0];
         if(empty($alimtalkTemplate)) {
             // 템플릿이 없음
             throw new \Exception( "알리고 카카오 알림톡 템플릿 코드 조회 실패 코드 : " . $templateCode, 500 );
         }
         if(!empty($replaceParams) && is_array($replaceParams)) {
             foreach($replaceParams as $key => $value) {
-                $alimtalkTemplate->template = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->template);
+                $alimtalkTemplate->templtContent = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->templtContent);
             }
             foreach($replaceParams as $key => $value) {
-                $alimtalkTemplate->btn = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->btn);
+                for($idx = 0; $idx < count($alimtalkTemplate->buttons); $idx++) {
+                    $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
+                    $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
+                }
             }
         }
 
@@ -126,21 +158,21 @@ class PushService
         $sender = urlencode('010-5440-5414');
         $receiver_1 = urlencode($receiver);
         $subject_1 = urlencode($title);
-        $message_1 = urlencode($alimtalkTemplate->template);
-        $button_1 = urlencode($alimtalkTemplate->btn);
+        $message_1 = urlencode($alimtalkTemplate->templtContent);
+        $button_1 = urlencode($alimtalkTemplate->buttons);
         $failover = 'Y';
         $fsubject_1 = urlencode($title);
-        $fmessage_1 = urlencode($alimtalkTemplate->template);
+        $fmessage_1 = urlencode($alimtalkTemplate->templtContent);
 
         $pushMessage = new SmsHistory;
         $pushMessage->title = $title;
         $pushMessage->type = 'A';
-        $pushMessage->content = $msg;
+        $pushMessage->content = $message_1;
         $pushMessage->sender = '010-5440-5414';
         $pushMessage->receiver = $receiver;
         $pushMessage->save();
 
-        $data = "apikey=" . $apikey . "&userid=" . $userId . "&token=" . $token . "&senderkey=" . $senderkey
+        $data = "apikey=" . $apikey . "&userid=" . $userid . "&token=" . $token . "&senderkey=" . $senderkey
             . "&tpl_code=" . $tpl_code . "&sender=" . $sender . "&receiver_1=" . $receiver_1 . "&subject_1=" . $subject_1 . "&message_1=" . $message_1
             . "&button_1=" . $button_1 . "&failover=" . $failover . "&fsubject_1=" . $fsubject_1 . "&fmessage_1=" . $fmessage_1;
     

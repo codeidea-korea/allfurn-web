@@ -49,51 +49,179 @@
             <div class="inner">
                 <div class="tab_layout">
                     <ul>
-                        @php $tmp=0; @endphp
-                        @foreach( $lists['category'] AS $c => $list )
-                        <li class="{{($tmp==0)?'active':''}}"><a href="javascript:;">침대 프레임</a></li>
-                        @php $tmp++; @endphp
-                        @endforeach
+                        <li class="active"><a href="javascript:;">전체</a></li>
+                        <li><a href="javascript:;">침대/매트리스</a></li>
+                        <li><a href="javascript:;">소파/거실</a></li>
+                        <li><a href="javascript:;">식탁/의자</a></li>
+                        <li><a href="javascript:;">사무용가구</a></li>
                     </ul>
                 </div>
                 <div class="relative">
                     <div class="tab_content">
-                        @php $tmp = 1; @endphp
-                        @foreach( $lists['category'] AS $c => $list )
-                        <div class="tab_0{{$tmp}} relative active">
+                        {{-- @php $tmp = 1; @endphp
+                        @foreach( $lists['category'] AS $c => $list ) --}}
+                        <div class="tab_01 relative active">
                             <div class="flex justify-between items-center my-5">
-                                <p class="txt-gray">전체 {{count( $list )}}</p>
+                                <p class="txt-gray">전체 {{count( $lists['lists'] )}}</p>
                                 <p class="txt-gray fs14">{{date('Y년 m월 d일')}} 기준</p>
                             </div>
-                            @if( !empty( $list ) )
-                            <ul class="prod_list">
-                                @foreach( $list AS $p => $item )
-                                <li class="prod_item">
-                                    <div class="img_box">
-                                        <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
-                                        <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                                    </div>
-                                    <div class="txt_box">
-                                        <a href="/product/detail/{{$item->idx}}">
-                                            <span>{{$item->company_name}}</span>
-                                            <p>{{$item->name}}</p>
-                                            <b>
-                                                @if($item->is_price_open == 1)
-                                                    {{number_format( $item->price )}}원
-                                                @else
-                                                    {{$item->price_text}}
-                                                @endif
-                                            </b>
-                                        </a>
-                                    </div>
-                                </li>
-                                @endforeach
-                            </ul>
+                            @if( !empty( $lists['lists'] ) )
+                                <ul class="prod_list">
+                                    @foreach( $lists['lists'] AS $p => $item )
+                                        <li class="prod_item">
+                                            <div class="img_box">
+                                                <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                                <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            </div>
+                                            <div class="txt_box">
+                                                <a href="/product/detail/{{$item->idx}}">
+                                                    <span>{{$item->company_name}}</span>
+                                                    <p>{{$item->name}}</p>
+                                                    <b>
+                                                        @if($item->is_price_open == 1)
+                                                            {{number_format( $item->price )}}원
+                                                        @else
+                                                            {{$item->price_text}}
+                                                        @endif
+                                                    </b>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </div>
-                        @php $tmp++; @endphp
-                        @endforeach
+                        {{-- @php $tmp++; @endphp
+                        @endforeach --}}
+
+                        <div class="tab_02 relative">
+                            <div class="flex justify-between items-center my-5">
+                                <p class="txt-gray">전체 {{count( $lists['list1'] )}}</p>
+                                <p class="txt-gray fs14">{{date('Y년 m월 d일')}} 기준</p>
+                            </div>
+                            @if( !empty( $lists['list1'] ) )
+                                <ul class="prod_list">
+                                    @foreach( $lists['list1'] AS $p => $item )
+                                        <li class="prod_item">
+                                            <div class="img_box">
+                                                <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                                <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            </div>
+                                            <div class="txt_box">
+                                                <a href="/product/detail/{{$item->idx}}">
+                                                    <span>{{$item->company_name}}</span>
+                                                    <p>{{$item->name}}</p>
+                                                    <b>
+                                                        @if($item->is_price_open == 1)
+                                                            {{number_format( $item->price )}}원
+                                                        @else
+                                                            {{$item->price_text}}
+                                                        @endif
+                                                    </b>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
                     </div>
+
+                    <div class="tab_03 relative">
+                        <div class="flex justify-between items-center my-5">
+                            <p class="txt-gray">전체 {{count( $lists['list2'] )}}2</p>
+                            <p class="txt-gray fs14">{{date('Y년 m월 d일')}} 기준</p>
+                        </div>
+                        @if( !empty( $lists['list2'] ) )
+                            <ul class="prod_list">
+                                @foreach( $lists['list2'] AS $p => $item )
+                                    <li class="prod_item">
+                                        <div class="img_box">
+                                            <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                            <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                        </div>
+                                        <div class="txt_box">
+                                            <a href="/product/detail/{{$item->idx}}">
+                                                <span>{{$item->company_name}}</span>
+                                                <p>{{$item->name}}</p>
+                                                <b>
+                                                    @if($item->is_price_open == 1)
+                                                        {{number_format( $item->price )}}원
+                                                    @else
+                                                        {{$item->price_text}}
+                                                    @endif
+                                                </b>
+                                            </a>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+
+                    {{-- <div class="tab_04 relative">
+                        <div class="flex justify-between items-center my-5">
+                            <p class="txt-gray">전체 {{count( $lists['list3'] )}}3</p>
+                            <p class="txt-gray fs14">{{date('Y년 m월 d일')}} 기준</p>
+                        </div>
+                        @if( !empty( $lists['list3'] ) )
+                            <ul class="prod_list">
+                                @foreach( $lists['list3'] AS $p => $item )
+                                    <li class="prod_item">
+                                        <div class="img_box">
+                                            <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                            <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                        </div>
+                                        <div class="txt_box">
+                                            <a href="/product/detail/{{$item->idx}}">
+                                                <span>{{$item->company_name}}</span>
+                                                <p>{{$item->name}}</p>
+                                                <b>
+                                                    @if($item->is_price_open == 1)
+                                                        {{number_format( $item->price )}}원
+                                                    @else
+                                                        {{$item->price_text}}
+                                                    @endif
+                                                </b>
+                                            </a>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+
+                    <div class="tab_05 relative">
+                        <div class="flex justify-between items-center my-5">
+                            <p class="txt-gray">전체 {{count( $lists['list4'] )}}4</p>
+                            <p class="txt-gray fs14">{{date('Y년 m월 d일')}} 기준</p>
+                        </div>
+                        @if( !empty( $lists['list4'] ) )
+                            <ul class="prod_list">
+                                @foreach( $lists['list4'] AS $p => $item )
+                                    <li class="prod_item">
+                                        <div class="img_box">
+                                            <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                            <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                        </div>
+                                        <div class="txt_box">
+                                            <a href="/product/detail/{{$item->idx}}">
+                                                <span>{{$item->company_name}}</span>
+                                                <p>{{$item->name}}</p>
+                                                <b>
+                                                    @if($item->is_price_open == 1)
+                                                        {{number_format( $item->price )}}원
+                                                    @else
+                                                        {{$item->price_text}}
+                                                    @endif
+                                                </b>
+                                            </a>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div> --}}
 
                 </div>
             </div>

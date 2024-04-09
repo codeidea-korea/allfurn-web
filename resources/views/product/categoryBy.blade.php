@@ -70,7 +70,7 @@
                             <div class="category">
                             </div>
                         </div>
-                        <button class="refresh_btn">초기화 <svg><use xlink:href="./img/icon-defs.svg#refresh"></use></svg></button>
+                        <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
             <div class="sub_filter">
                 <div class="total">전체 {{number_format( $data['list']->total() )}}개</div>
                 <div class="filter_box">
-                    <button onclick="modalOpen('#filter_align-modal02')">최신 상품 등록순</button>
+                    <button onclick="modalOpen('#filter_align-modal02')">신상품순</button>
                 </div>
             </div>
             <div class="relative">
@@ -114,9 +114,14 @@
 </div>
 
 <script>
-    let isLoading = false;
-    let isLastPage = false;
-    let currentPage = 1;
+    $(document).ready(function(){
+        urlSearch = new URLSearchParams(location.search);
+        
+        urlSearch.get('so');
+        console.log(urlSearch.get('so'))
+        $('#filter_align-modal02 input[value="'+ urlSearch.get('so') +'"]').prop('checked', true);
+        $(".sub_filter .filter_box button").text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
+    })
 
     // 카테고리 클릭시
     $('.sub_category li').on('click',function(){
@@ -211,7 +216,7 @@
         }
 
         if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
-            url += '&so=' + $('input[name="filter_cate_2"]:checked').attr('id')
+            url += '&so=' +  $("#filter_align-modal02 .radio-form:checked").val();
         }
 
         location.replace(url+'&prop='+prop.slice(0, -1));
@@ -220,18 +225,28 @@
     // 카테고리 정열
     function getIndexesOfSelectedCategory() {
         let categories = [];
-        $("#filter_category-modal .check-form:checked").each(function(){
+        $("#filter_category-modal02 .check-form:checked").each(function(){
             categories.push($(this).attr('id'));
         });
 
         return categories;
     }
 
-    function loadNewProductList() {
+    window.addEventListener('scroll', function() {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
+            loadProductList();
+        }
+    });
+
+    let isLoading = false;
+    let isLastPage = false;
+    let currentPage = 1;
+    function loadProductList() {
         isLoading = true;
 
         var categories = '';
         var parents = '';
+        let property = '';
         var orderedElement = '';
         urlSearch = new URLSearchParams(location.search);
         if (urlSearch.get('ca') != null) {
@@ -240,9 +255,12 @@
         if (urlSearch.get('pre') != null) {
             parents = urlSearch.get('pre');
         }
+        if (urlSearch.get('prop') != null) {
+            property = urlSearch.get('prop');
+        }
 
         if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
-            orderedElement = $('input[name="filter_cate_2"]:checked').attr('id')
+            orderedElement = $("#filter_align-modal02 .radio-form:checked").val();
         }
 
         $.ajax({
@@ -251,15 +269,17 @@
             method: 'GET',
             data: {
                 'page': ++currentPage,
-                'categories' : categories,
-                'parents' : parents,
-                'orderedElement' : orderedElement,
+                'ca' : categories,
+                'pre' : parents,
+                'prop' : property,
+                'so' : orderedElement,
             },
             success: function(result) {
+                console.log(result);
 
-                displayNewWholesaler(result.query, $(".relative ul.prod_list"), false);
+                displayProductList(result.query, $(".relative ul.prod_list"), false);
 
-                isLastPage = currentPage === result.last_page;
+                isLastPage = currentPage === result.query.last_page;
             },
             complete : function () {
                 isLoading = false;
@@ -268,7 +288,7 @@
     }
 
 
-    function displayNewWholesaler(productArr, target, needsEmptying) {
+    function displayProductList(productArr, target, needsEmptying) {
         if(needsEmptying) {
             target.empty();
         }
@@ -279,7 +299,7 @@
                 '<li class="prod_item">' +
                 '   <div class="img_box">' +
                 '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt=""></a>' +
-                '       <button class="zzim_btn prd_' + product.idx + '" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                '       <button class="zzim_btn prd_' + product.idx + ' ' + (product.isInterest== 1 ? 'active' : '')   +'" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
                 '   </div>' +
                 '   <div class="txt_box">' +
                 '       <a href="./prod_detail.php">' +
@@ -300,11 +320,5 @@
 
         target.append(html);
     }
-
-    $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
-            loadNewProductList();
-        }
-    });
 </script>
 @endsection

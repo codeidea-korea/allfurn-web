@@ -2,9 +2,9 @@
     기본셋팅
 ------------------------------------ */
 :root{
-    --main_color:#FB4760;
+    --main_color:#FB4760; 
     --danger_color:#dc3545;
-    --gray_color:#8e8e8e;
+    --gray_color:#8e8e8e; 
 }
 html {background-color: #f9f9f9; ;}
 body {width:640px; max-width:100%; margin:0 auto !important; color:#46433F; font-size:14px; font-family: "Pretendard", "Inter", ui-sans-serif, system-ui, sans-serif; background-color:#fff; }
@@ -149,7 +149,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 
 
 /* ------------------------------------
-    타이틀 공통
+    타이틀 공통 
 ------------------------------------ */
 .main_tit h3 {font-size:18px; font-weight:600; line-height:1.2;}
 .main_tit h3 span {font-weight:400; }
@@ -164,7 +164,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 
 
 /* ------------------------------------
-    상품 공통
+    상품 공통 
 ------------------------------------ */
 /* 상품목록 */
 .prod_list {display:grid; grid-template-columns: repeat(2,1fr); gap:20px 8px; }
@@ -218,7 +218,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .prod_item .txt_box p {margin:3px 0 4px; font-size:14px; font-weight:400; word-break:keep-all; line-height:1.4; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
 .prod_item .txt_box b {font-size:16px; font-weight:700;}
 
-.img_box .zzim_btn svg {width:24px; height:24px; stroke:#fff; fill:#ddd; }
+.img_box .zzim_btn svg {width:24px; height:24px; stroke:#fff; fill:transparent; }
 .img_box .zzim_btn.active svg {stroke:var(--main_color); fill:var(--main_color); }
 
 /* 메인 - 할인상품 */
@@ -261,13 +261,13 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 
 
 /* ------------------------------------
-    필터
+    필터 
 ------------------------------------ */
 .sub_filter {margin-bottom:15px; }
 .sub_filter .filter_box {display:flex; flex-wrap:wrap; align-items:center; gap:8px;  }
 .sub_filter .filter_box button {display:flex; align-items:center; gap:4px; height:32px; border:1px solid var(--gray_color); padding:5px 10px; border-radius:3px; font-size:13px; }
 .sub_filter .filter_box button.on {border:1px solid var(--main_color); background-color:#ffeff1; }
-.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('../../img/icon/filter_arrow.svg') no-repeat center center; }
+.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('/img/icon/filter_arrow.svg') no-repeat center center; }
 .sub_filter .filter_box button.refresh_btn {display:flex; align-items:center; gap:5px; flex-shrink:0; }
 .sub_filter .filter_box button.refresh_btn:after {display:none; }
 .sub_filter .filter_box button.refresh_btn svg {width:14px; height:14px; stroke:#4f4f4f; stroke-width:2px; }
@@ -479,6 +479,12 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .join_common .join_type button.on {background-color: var(--danger_color); color:#fff; }
 .join_common .join_type span {display:block; margin:10px 0; font-size:12px; word-break:keep-all; color:var(--gray_color); }
 
+.join_comp {padding:20px 0; min-height:calc((var(--vh, 1vh) * 100) - 48px); }
+.join_comp h4 {font-size:24px; font-weight:600; }
+.join_comp .info_box {padding:20px 40px; background-color:#f7f7f7; border-radius:5px; font-weight:500; }
+.join_comp h5 {font-size:17px; font-weight:600; }
+
+
 .agree_modal_body {padding:20px 15px; }
 .agree_modal_body h3 {font-size:16px; color:#1b1b1b; }
 .agree_modal_body .scroll_box {margin-top:20px; font-size:10px; }
@@ -529,7 +535,7 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 
 
 /* ------------------------------------
-    테이블 공통 : 마이 페이지
+    테이블 공통 : 마이 페이지 
 ------------------------------------ */
 .table_layout {width:100%; table-layout:fixed; }
 .table_layout thead th,
@@ -563,7 +569,7 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 
 
 /* ------------------------------------
-    서브페이지 배너 : 마이 페이지
+    서브페이지 배너 : 마이 페이지 
 ------------------------------------ */
 .sub_banner {display:flex; align-items:center; justify-content:center; width:100%; height:54px; background-color:var(--main_color); }
 .sub_banner.type02 {background-color:#9462C3; }

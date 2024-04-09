@@ -16,33 +16,43 @@
                     <ul class="swiper-wrapper">
                         @foreach($data['detail']->attachment as $key=>$item)
                         <li class="swiper-slide"><img src="{{$item['imgUrl']}}" alt="{{$data['detail']->name}}"></li>
-                        @endforeach;
+                        @endforeach
                     </ul>
                 </div>
             </div>
             <div class="inner">
                 <div class="txt_box">
                     <div class="name">
+                        @if( ( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 ) || $data['detail']->isAd == 1 )
                         <div class="tag">
+                            @if( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 )
                             <span class="new">NEW</span>
+                            @endif
+                            @if( $data['detail']->isAd == 1 )
                             <span class="event">이벤트</span>
+                            @endif
                         </div>
-                        <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
+                        @endif
+                        <h4>{{$data['detail']->name}}</h4>
                     </div>
                     <div class="info">
-                        <p>업체 문의</p>
+                        <p>
+                            @if( $data['detail']->is_price_open == 1 )
+                                {{$data['detail']->price}}
+                            @else
+                                {{$data['detail']->price_text}}
+                            @endif
+                        </p>
                         <!-- 0325추가 -->
                         <div class="">
+                            @if( $data['detail']['product_code'] != '' )
                             <div class="flex items-center">
                                 <span class="!text-sm text-stone-500 w-16 shrink-0 font-medium">상품 코드</span>
                                 <span class="!text-sm w-full">
-                                @if( $data['detail']['price'] == 0 )
-                                    {{$data['detail']['price_text']}}
-                                @else
-                                    {{number_format( $data['detail']['price'] )}}원
-                                @endif
+                                    {{$data['detail']['product_code']}}
                                 </span>
                             </div>
+                            @endif
                             <div class="flex items-center !mt-2">
                                 <span class="!text-sm text-stone-500 w-16 shrink-0 font-medium">배송 방법</span>
                                 <span class="!text-sm w-full">{{$data['detail']['delivery_info']}}</span>
@@ -79,16 +89,18 @@
                         --}}
                         <hr>
                         <div class="company_info">
-                            <b>{{$data['detail']->companyName}}</b>
-                            <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                            <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">    
+                                <b>{{$data['detail']->companyName}}</b>
+                                <span>업체 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></span>
+                            </a>
                         </div>
                         <div class="link_box">
                             <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
-                            <button class="btn btn-line4 nohover"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+                            <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                         </div>
                     </div>
                     <div class="btn_box">
-                        <button class="btn btn-line3"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
+                        <button class="btn btn-line3" onclick="location.href='/mypage/sendRequestEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
                         <button class="btn btn-primary" onClick="location.href='tel:{{$data['detail']->companyPhoneNumber}}';"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
                     </div>
                     <div class="quick_btn_box" onClick="location.href='/message';">
@@ -187,10 +199,21 @@
             </div>
             <!-- 0325추가 -->
         </div>
+        <!-- 공유 팝업 -->
+        <div class="modal" id="alert-modal">
+            <div class="modal_bg" onclick="modalClose('#alert-modal')"></div>
+            <div class="modal_inner modal-md">
+                <button class="close_btn" onclick="modalClose('#alert-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+                <div class="modal_body company_phone_modal">
+                    <h4>링크가 복사되었습니다.</h4><br />
+                    <button class="btn btn-primary w-full" onclick="modalClose('#alert-modal')">확인</button>
+                </div>
+            </div>
+        </div>
     </div>
 
+<script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
 <script>
-
     // thismonth_con01
     const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
         slidesPerView: 1,
@@ -200,6 +223,19 @@
             type: "fraction",
         },
     });
+
+    function copyUrl() {
+        var dummy   = document.createElement("input");
+        var text    = location.href;
+
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        modalOpen('#alert-modal')
+    }
 
     $(window).on('scroll load',function(e){
         let detailTop = $('.prod_detail').offset().top;
@@ -233,3 +269,4 @@
         // 이미 'active' 상태였다면, 위의 로직에 의해 'active' 클래스가 제거됩니다.
     });
 </script>
+@endsection
