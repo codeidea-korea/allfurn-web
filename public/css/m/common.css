@@ -211,7 +211,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 
 /* 상품아이템 */
 .prod_item .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:4px; background-color:#f5f5f5; }
-.prod_item .img_box img {position:absolute; left:50%; top:50%; max-width:fit-content; height:100%; border-radius:4px; transform:translate(-50%,-50%); }
+.prod_item .img_box img {position:absolute; left:50%; top:50%; width:100%; height:100%; border-radius:4px; transform:translate(-50%,-50%); object-fit:cover; }
 .prod_item .img_box .zzim_btn {position:absolute; right:8px; bottom:8px; }
 .prod_item .txt_box {padding-top:6px ; line-height:1;}
 .prod_item .txt_box span {color:var(--gray_color); font-size:12px; }
@@ -267,7 +267,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_filter .filter_box {display:flex; flex-wrap:wrap; align-items:center; gap:8px;  }
 .sub_filter .filter_box button {display:flex; align-items:center; gap:4px; height:32px; border:1px solid var(--gray_color); padding:5px 10px; border-radius:3px; font-size:13px; }
 .sub_filter .filter_box button.on {border:1px solid var(--main_color); background-color:#ffeff1; }
-.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('/img/icon/filter_arrow.svg') no-repeat center center; }
+.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('../img/icon/filter_arrow.svg') no-repeat center center; }
 .sub_filter .filter_box button.refresh_btn {display:flex; align-items:center; gap:5px; flex-shrink:0; }
 .sub_filter .filter_box button.refresh_btn:after {display:none; }
 .sub_filter .filter_box button.refresh_btn svg {width:14px; height:14px; stroke:#4f4f4f; stroke-width:2px; }
@@ -479,11 +479,15 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .join_common .join_type button.on {background-color: var(--danger_color); color:#fff; }
 .join_common .join_type span {display:block; margin:10px 0; font-size:12px; word-break:keep-all; color:var(--gray_color); }
 
+.join_common .certify_box {position:relative; width:100%;  }
+.join_common .certify_box .time {position:absolute; right:10px; top:13px; color:var(--main_color); }
+.join_common .joined_id {overflow-y:auto; max-height:160px; padding:10px 0; margin-bottom:16px; border:1px solid #46433F; border-radius:5px; }
+.join_common .joined_id li {padding:8px 20px; }
+
 .join_comp {padding:20px 0; min-height:calc((var(--vh, 1vh) * 100) - 48px); }
 .join_comp h4 {font-size:24px; font-weight:600; }
 .join_comp .info_box {padding:20px 40px; background-color:#f7f7f7; border-radius:5px; font-weight:500; }
 .join_comp h5 {font-size:17px; font-weight:600; }
-
 
 .agree_modal_body {padding:20px 15px; }
 .agree_modal_body h3 {font-size:16px; color:#1b1b1b; }
