@@ -9,32 +9,32 @@
 @include('layouts.header_m')
 
 <div id="content">
-    @if( count( $lists['lists'] ) > 0 )
+    @if( count( $bestNewProducts ) > 0 )
         <section class="sub_section overflow-hidden">
             <div class="inner">
                 <div class="search_title main_tit mb-8 flex justify-center items-center">
                     <div class="flex items-center justify-center gap-4">
-                        <h3>인기 상품 모아보기</h3>
+                        <h3>{{date('n')}}월 BEST 신상품</h3>
                     </div>
                 </div>
                 <div class="relative best_prod">
                     <div class="slide_box prod_slide-2">
                         <ul class="swiper-wrapper">
-                            @foreach( $lists['lists'] AS $l => $list )
+                            @foreach( $bestNewProducts AS $product )
                             <li class="swiper-slide prod_item">
                                 <div class="img_box">
-                                    <a href="/product/detail/{{$list->idx}}"><img src="{{$list->imgUrl}}" alt=""></a>
-                                    <button class="zzim_btn prd_{{$list->idx}} {{ ($list->isInterest == 1) ? 'active' : '' }}" pidx="{{$list->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                    <a href="/product/detail/{{$product->idx}}"><img src="{{$product->imgUrl}}" alt=""></a>
+                                    <button class="zzim_btn prd_{{$product->idx}} {{ ($product->isInterest == 1) ? 'active' : '' }}" pidx="{{$product->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
                                 <div class="txt_box">
                                     <a href="./prod_detail.php">
-                                        <span>{{$list->company_name}}</span>
-                                        <p>{{$list->name}}</p>
+                                        <span>{{$product->company_name}}</span>
+                                        <p>{{$product->name}}</p>
                                         <b>
-                                            @if( $list->is_price_open == 1 )
-                                                {{number_format( $list->price )}}원
+                                            @if( $product->is_price_open == 1 )
+                                                {{number_format( $product->price )}}원
                                             @else
-                                                {{$list->price_text}}
+                                                {{$product->price_text}}
                                             @endif
                                         </b>
                                     </a>
