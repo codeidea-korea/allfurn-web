@@ -262,7 +262,6 @@ class PushService
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
             $result = curl_exec($ch);
-            dd($result);
             
             $sendLog = new PushSendLog();
             $sendLog->user_idx = $userIdx;
