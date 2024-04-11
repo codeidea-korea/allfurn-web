@@ -797,11 +797,11 @@ section.sub_section_bot {padding:30px 0 70px; }
     content:"";
     width:24px;
     height:24px;
-    background: url(../img/check_off.svg) center/contain no-repeat;
+    background: url(/img/check_off.svg) center/contain no-repeat;
 }
   
 .custom_input input[type="checkbox"]:checked + label::before{
-    background: url(../img/check_on.svg) center/contain no-repeat;
+    background: url(/img/check_on.svg) center/contain no-repeat;
   }
 
 .list_check_img{

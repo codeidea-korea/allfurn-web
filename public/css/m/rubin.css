@@ -432,11 +432,11 @@
     content:"";
     width:20px;
     height:20px;
-    background: url(../img/check_off.svg) center/contain no-repeat;
+    background: url(/img/check_off.svg) center/contain no-repeat;
   }
   
   .custom_input input[type="checkbox"]:checked + label::before{
-    background: url(../img/check_on.svg) center/contain no-repeat;
+    background: url(/img/check_on.svg) center/contain no-repeat;
   }
   
   .accordion_arrow{
