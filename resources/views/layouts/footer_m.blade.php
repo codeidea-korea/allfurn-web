@@ -1,5 +1,7 @@
 @if(!Str::contains(url()->current(), ['/magazine/daily/detail', '/magazine/furniture/detail', 
-                                      '/magazine/detail', '/community/detail', '/community/write']))
+                                      '/magazine/detail', '/community/detail', '/community/write',
+                                      '/home/category'
+                                      ]))
     <footer>
         <div class="inner">
             <ul class="fnb flex">
