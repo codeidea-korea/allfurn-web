@@ -16,7 +16,7 @@
         </div>
         <div class="link_box">
             <button class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-            <button><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg></button>
+            <button onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg></button>
         </div>
         <div class="inner">
             <div class="info">
@@ -244,7 +244,7 @@
     <div class="modal" id="company_phone-modal">
         <div class="modal_bg" onclick="modalClose('#company_phone-modal')"></div>
         <div class="modal_inner modal-md">
-            <button class="close_btn" onclick="modalClose('#company_phone-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <button class="close_btn" onclick="modalClose('#company_phone-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
             <div class="modal_body company_phone_modal">
                 <h4><b>업체</b> 전화번호</h4>
                 <table>
@@ -258,6 +258,19 @@
                     </tr>
                 </table>
                 <button class="btn btn-primary w-full" onclick="modalClose('#company_phone-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+    <!-- 공유 팝업 -->
+    <div class="modal" id="alert-modal">
+        <div class="modal_bg" onclick="modalClose('#alert-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#alert-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>링크가 복사되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#alert-modal')">확인</button>
+                </div>
             </div>
         </div>
     </div>
@@ -319,6 +332,19 @@
                 isProc = false;
             }
         });
+    }
+
+    function copyUrl() {
+        var dummy   = document.createElement("input");
+        var text    = location.href;
+
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        modalOpen('#alert-modal')
     }
 </script>
 @endsection

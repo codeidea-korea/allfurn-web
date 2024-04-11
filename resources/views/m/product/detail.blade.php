@@ -95,7 +95,7 @@
                             </a>
                         </div>
                         <div class="link_box">
-                            <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                            <button class="btn btn-line4 nohover zzim_btn prd_{{ $data['detail']->idx }} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{ $data['detail']->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
                             <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                         </button>
                         <div class="accordion-body hidden p-4 border-t bg-white" style="display: none;">
                             @if( $data['detail']['is_pay_notice'] == 1 )
-                                {{$data['detail']['pay_notice']}}
+                                {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["pay_notice"]) !!}
                             @else
                                 올톡을 이용하여 문의해주세요
                             @endif
@@ -171,7 +171,7 @@
                         </button>
                         <div class="accordion-body hidden p-4 border-t bg-white" style="display: none;">
                             @if( $data['detail']['is_delivery_notice'] == 1 )
-                                {{$data['detail']['delivery_notice']}}
+                                {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["delivery_notice"]) !!}
                             @else
                                 올톡을 이용하여 문의해주세요
                             @endif
@@ -189,7 +189,7 @@
                         </button>
                         <div class="accordion-body hidden p-4 border-t bg-white" style="display: none;">
                             @if( $data['detail']['is_return_notice'] == 1 )
-                                {{$data['detail']['return_notice']}}
+                                {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["return_notice"]) !!}
                             @else
                                 올톡을 이용하여 문의해주세요
                             @endif
@@ -202,11 +202,13 @@
         <!-- 공유 팝업 -->
         <div class="modal" id="alert-modal">
             <div class="modal_bg" onclick="modalClose('#alert-modal')"></div>
-            <div class="modal_inner modal-md">
+            <div class="modal_inner modal-sm">
                 <button class="close_btn" onclick="modalClose('#alert-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-                <div class="modal_body company_phone_modal">
-                    <h4>링크가 복사되었습니다.</h4><br />
-                    <button class="btn btn-primary w-full" onclick="modalClose('#alert-modal')">확인</button>
+                <div class="modal_body agree_modal_body">
+                    <p class="text-center py-4"><b>링크가 복사되었습니다.</b></p>
+                    <div class="flex gap-2 justify-center">
+                        <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#alert-modal')">확인</button>
+                    </div>
                 </div>
             </div>
         </div>

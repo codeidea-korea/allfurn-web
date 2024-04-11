@@ -53,7 +53,7 @@
             prevEl: "#zoom_view-modal .arrow.prev",
         },
         pagination: {
-            el: "#zoom_view-modal.count_pager",
+            el: "#zoom_view-modal .count_pager",
             type: "fraction",
         },
     });
