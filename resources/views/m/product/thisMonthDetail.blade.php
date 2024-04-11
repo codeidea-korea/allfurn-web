@@ -40,7 +40,7 @@
 <div class="modal" id="zoom_view-modal">
     <div class="modal_bg" onclick="modalClose('#zoom_view-modal')"></div>
     <div class="modal_inner x-full zoom_view_wrap">
-        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#zoom_view-modal')"><svg><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body">
             <div class="slide_box zoom_prod_list">
                 <ul class="swiper-wrapper">
@@ -48,9 +48,9 @@
                 </ul>
             </div>
             <div class="bottom_navi">
-                <button class="arrow prev type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
                 <div class="count_pager dark_type"><b>1</b> / 12</div>
-                <button class="arrow next type03"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
             </div>
         </div>
     </div>
