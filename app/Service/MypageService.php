@@ -351,6 +351,58 @@ class MypageService
 
         }
 
+        $sql =
+            "SELECT au.idx as userIdx, ap.name FROM AF_product ap
+            LEFT JOIN AF_user au
+            ON au.company_idx  = ap.company_idx AND au.parent_idx = 0
+            WHERE ap.idx = " .$orders[0]['product_idx'];
+        $product = DB::select($sql);
+
+        $productName = count($orders) > 1 ?  $product[0]->name .'외 ' .count($params['estimate_idx'])-1 .'개' : $product[0]->name;
+
+        switch($params['status']) {
+            case 'R':
+                $title_request = '상품 준비 중 안내';
+                $message_request = $productName .' 상품이 준비 중입니다.';
+
+                $title_response = '상품 준비 중 안내';
+                $message_response = $productName .' 주문 건이 상품 준비 중 상태로 변경되었습니다.';
+
+                break;
+
+            case 'C':
+                $title_request = '거래 취소 안내';
+                $message_request = $productName .' 상품 거래가 취소되었습니다.';
+
+                $title_response = '주문 취소 안내';
+                $message_response = $productName .' 상품 주문이 취소되었습니다.';
+                break;
+
+            case 'D':
+                $title_request = '배송 중 안내';
+                $message_request = $productName .' 상품의 배송이 시작되었습니다.';
+
+                $title_response = '발송 중 안내';
+                $message_response = $productName .' 주문 건이 발송 중 상태로 변경되었습니다.';
+                break;
+
+            case 'W':
+                $title_request = '구매 확정 요청 안내';
+                $message_request = $productName .' 상품 구매를 확정해주세요.';
+
+                $title_response = '구매 확정 대기 안내';
+                $message_response = $productName .' 주문 건이 구매 확정 대기 상태로 변경되었습니다.';
+                break;
+
+            case 'F':
+                $title_request = '거래 완료 안내';
+                $message_request = $productName .' 상품 거래가 완료되었습니다.';
+
+                $title_response = '거래 완료 안내';
+                $message_response = $productName .' 주문 건 거래가 완료되었습니다.';
+                break;
+        }
+
         $pushService = new PushService();
         // 구매자
         $pushService -> sendPush(
