@@ -267,7 +267,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_filter .filter_box {display:flex; flex-wrap:wrap; align-items:center; gap:8px;  }
 .sub_filter .filter_box button {display:flex; align-items:center; gap:4px; height:32px; border:1px solid var(--gray_color); padding:5px 10px; border-radius:3px; font-size:13px; }
 .sub_filter .filter_box button.on {border:1px solid var(--main_color); background-color:#ffeff1; }
-.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('../img/icon/filter_arrow.svg') no-repeat center center; }
+.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('/img/icon/filter_arrow.svg') no-repeat center center; }
 .sub_filter .filter_box button.refresh_btn {display:flex; align-items:center; gap:5px; flex-shrink:0; }
 .sub_filter .filter_box button.refresh_btn:after {display:none; }
 .sub_filter .filter_box button.refresh_btn svg {width:14px; height:14px; stroke:#4f4f4f; stroke-width:2px; }
