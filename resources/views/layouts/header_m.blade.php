@@ -251,7 +251,7 @@
                 bannerPart += '<div class="row">' +
                     '   <div class="row__text search-list--nodata">최근 검색한 내역이 없습니다.</div>' +
                     '</div>';
-                document.querySelector('.keywordList').innerHTML = bannerPart;
+                //document.querySelector('.keywordList').innerHTML = bannerPart;
             }
         });
     }
@@ -286,6 +286,52 @@
     {
         getSearchData();
         modalOpen('#search_modal')
+    }
+
+
+    // 키워드 삭제
+    const deleteSearchKeyword = keywordIdx => {
+        fetch("/home/search/" + keywordIdx, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            if (json.success == true) {
+                getSearchData();
+            }
+        });
+    }
+
+    $('body').on('click', '#search_keyword_delete', function () {
+        $('#search_keyword').val('');
+        $(this).removeClass('ico__sdelete');
+        $('#search_keyword').click();
+        $('#search_keyword').focus();
+    })
+
+    // 검색
+    if ($('#sKeyword').length) {
+        document.getElementById('sKeyword').addEventListener('change', evt => {
+            clickKeyword(evt.currentTarget.value);
+        })
+    }
+
+    function clickKeyword(keyword) {
+        fetch("/home/search/" + keyword, {
+            method: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': '{{csrf_token()}}'
+            }
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            if (json.success == true) {
+                location.replace('/product/searchBar?kw=' + keyword);
+            }
+        });
     }
 
     function checkAlert() {
