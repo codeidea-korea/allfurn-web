@@ -261,7 +261,7 @@ section.sub_section_bot {padding:30px 0 70px; }
 .video_prod .video_box .txt_box h4 span {font-size:14px; font-weight:400; }
 .video_prod .video_box .slide_box {width:690px; max-width:100%; margin:0 auto; }
 .video_prod .video_box .slide_box a {position:relative; display:block; }
-.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 16px); top:calc(50% - 14.5px); width:32px; height:29px; background:url('../img/icon/play_btn.svg') no-repeat center center / contain; }
+.video_prod .video_box .slide_box a:before {content:''; position:absolute; left:calc(50% - 16px); top:calc(50% - 14.5px); width:32px; height:29px; background:url('/img/icon/play_btn.svg') no-repeat center center / contain; }
 .video_prod .video_box .count_pager {display:inline-block; margin-top:20px; }
 .video_prod .video_box .count_pager .swiper-pagination-current {color:#fff; }
 
