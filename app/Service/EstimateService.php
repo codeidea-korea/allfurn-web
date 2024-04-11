@@ -17,7 +17,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use App\Service\PushService;
+
 class EstimateService {
+    private $pushService;
+
+    public function __construct(PushService $pushService) {
+        $this -> pushService = $pushService;
+    }
+
     public function makeEstimateCode($length) {
         $estimateGroupCode = '';
 
@@ -165,6 +173,28 @@ class EstimateService {
         $order -> register_time = $params['register_time'];
 
         $order -> save();
+
+        $product = DB::select("SELECT name FROM AF_product WHERE idx = ".$estimate['product_idx']);
+        $productName = count($params['estimate_idx']) > 1 ?  $product[0]->name .'외 ' .count($params['estimate_idx'])-1 .'개' : $product[0]->name;
+
+        //구매자
+        $this -> pushService -> sendPush(
+            '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
+            $params['response_estimate_req_user_idx'], $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate', '/mypage/requestEstimate'
+        );
+
+        $sql = 
+            "SELECT * FROM AF_user
+            WHERE type = '".$estimate['response_company_type']."' AND company_idx = ".$estimate['response_company_idx']." AND parent_idx = 0";
+        $user = DB::select($sql);
+
+        // 판매자
+        if(count($user) > 0) {
+            $this -> pushService -> sendPush(
+                '주문완료 안내', $productName.' 신규 주문이 등록되었습니다.',
+                $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/responseEstimate', '/mypage/responseEstimate'
+            );
+        }
 
         return $order -> idx;
     }
