@@ -3,7 +3,7 @@
 @php
 
 if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
-    $header_depth = '';
+    $header_depth = 'mypage';
     $top_title = '';
     $only_quick = 'yes';
     $header_banner = 'hidden';
