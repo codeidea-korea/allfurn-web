@@ -572,11 +572,23 @@ class ProductController extends BaseController
     {
         $data['categoryIdx'] = $request->categories == null ? "" : $request->categories;
         $data['locationIdx'] = $request->locations == null ? "" : $request->locations;
-        $data['orderedElement'] = $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
+        switch($request->orderedElement){
+            case "access_count":
+                $data['orderedElement'] = 'companyAccessCount';
+                break;
 
-        $list = $this->wholesalerService->getThisMonthWholesaler($data);
+            case "register_time" : 
+                $data['orderedElement'] = 'register_time';
+                break;
 
-        $data['query'] = $list;
+            default:
+                $data['orderedElement'] = 'score';
+                break;
+
+        }
+
+        $data['list'] = $this->wholesalerService->getThisMonthWholesaler($data);
+        $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
 
         return response()->json($data);
     }

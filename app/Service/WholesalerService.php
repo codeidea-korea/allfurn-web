@@ -534,12 +534,10 @@ class WholesalerService {
         }
 
         if( isset( $params['limit'] ) && $params['limit'] > 0 ) {
-            $list->limit($params['limit']);
+            $list = $list->limit($params['limit'])->get();
         } else {
-            $list->paginate(3);
+            $list = $list->paginate(5);
         }
-
-        $list = $list->get();
 
         // 업체별 상품 3개 - 대표 상품 먼저
         foreach($list as $key => $value) {

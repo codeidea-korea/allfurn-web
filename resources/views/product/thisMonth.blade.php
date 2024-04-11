@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('layouts.header')
+@include('layouts.header')
     <div id="content">
 
         <!-- 상단 인기딜 //-->
@@ -136,7 +136,31 @@
             </section>
         @endif {{-- $productBest --}}
 
-        @include('product.inc-best_company')
+        <section class="sub_section sub_section_bot">
+            <div class="inner">
+                <div class="main_tit mb-8 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <h3>{{date('n')}}월 BEST 도매 업체</h3>
+                    </div>
+                </div>
+                <div class="sub_filter">
+                    <div class="filter_box">
+                        <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_align-modal03')">최신순</button>
+                    </div>
+                    <div class="total">전체 {{number_format( count( $companyProduct ) )}}개</div>
+                </div>
+                <div class="sub_filter_result hidden">
+                    <div class="filter_on_box">
+                        <div class="category"></div>
+                        <div class="location"> </div>
+                    </div>
+                    <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
+                </div>
+                <ul class="obtain_list"></ul>
+            </div>
+        </section>
 
         <!-- 확대보기 -->
         @if( count( $productBest ) >  0 )
@@ -175,10 +199,6 @@
     </div>
 
     <script>
-        let isLoading = false;
-        let isLastPage = false;
-        let currentPage = 1;
-
         const zoom_prod_list = new Swiper(".zoom_prod_list", {
             slidesPerView: 1,
             spaceBetween: 120,
@@ -267,57 +287,48 @@
             },
         });
 
-        // 카테고리 및 소팅
-        $(document)
-            .on('click', '[id^="filter"] .btn-primary', function() {
-                let $this = $(this);
+        /* ----------------------------- */
+        $(document).ready(function(){
+            setTimeout(() => {
+                loadWholesalerList();
+            }, 50);
+        })
 
-                var data = {
-                    'categories' : getIndexesOfSelectedCategory().join(','),
-                    'locations' : getIndexesOfSelectedLocations().join(','),
-                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id')
-                };
+        window.addEventListener('scroll', function() {
+            if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
+                loadWholesalerList();
+            }
+        });
 
-                $.ajax({
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url: '/product/getJsonThisBestWholesaler',
-                    data : data,
-                    type : 'GET',
-                    beforeSend : function() {
-                        $this.prop("disabled", true);
-                    },
-                    success: function (result) {
-                        displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), true);
-                        //displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                        $(".total").text('전체 ' + result.total_count + '개');
-                    },
-                    complete : function () {
-                        $this.prop("disabled", false);
-                        displaySelectedCategories();
-                        displaySelectedLocation();
-                        toggleFilterBox();
-                        displaySelectedOrders();
-                        modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
-                        currentPage = 1;
-                    }
-                });
-            })
-        ;
+        // 신규 등록 상품 - 카테고리 선택
+        $(document).on('click', '[id^="filter"] .btn-primary', function() { 
+            loadWholesalerList(true, $(this));
+        });
 
-        function refresAllhHandle()
-        {
-            console.log('asfasefas');
-            $('#filter_category-modal .filter_list').find('input').each(function(){
-                $(this).prop("checked",false);
-            });
+        // 신규 등록 상품 - 카테고리 삭제
+        const filterRemove = (item)=>{
+            $(item).parents('span').remove(); //해당 카테고리 삭제
+            $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
 
-            $('#filter_location-modal .filter_list').find('input').each(function(){
-                $(this).prop("checked",false);
-            });
+            loadWholesalerList(true);
         }
 
-        function loadNewProductList() {
+        // 초기화
+        $(".refresh_btn").on('click', function() {
+            $("#filter_category-modal .check-form:checked").prop('checked', false);
+            $("#filter_location-modal .check-form:checked").prop('checked', false);
+            $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
+            
+            loadWholesalerList(true);
+        });
+
+        let isLoading = false;
+        let isLastPage = false;
+        let currentPage = 0;
+        function loadWholesalerList(needEmpty, target) {
             isLoading = true;
+
+            if(needEmpty) currentPage = 0;
 
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -326,16 +337,36 @@
                 data: {
                     'page': ++currentPage,
                     'categories' : getIndexesOfSelectedCategory().join(','),
-                    'locations' : getIndexesOfSelectedLocations().join(','),
-                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                    'locations' : getIndexesOfSelectedLocation().join(','),
+                    'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
+                },
+                beforeSend : function() {
+                    if(target) {
+                        target.prop("disabled", true);
+                    }
                 },
                 success: function(result) {
 
-                    displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), false);
+                    if(needEmpty) {
+                        $(".sub_section_bot ul.obtain_list").empty();
+                    }
 
-                    isLastPage = currentPage === result.last_page;
+                    $(".sub_section_bot ul.obtain_list").append(result.html);
+
+                    $(".total").text('전체 ' + result.list.total.toLocaleString('ko-KR') + '개');
+
+                    if(target) {
+                        target.prop("disabled", false);
+                        modalClose('#' + target.parents('[id^="filter"]').attr('id'));
+                    }     
+                    
+                    isLastPage = currentPage === result.list.last_page;
                 },
                 complete : function () {
+                    displaySelectedCategories();
+                    displaySelectedLocation();
+                    displaySelectedOrders();
+                    toggleFilterBox();
                     isLoading = false;
                 }
             })
@@ -350,7 +381,7 @@
             return categories;
         }
 
-        function getIndexesOfSelectedLocations() {
+        function getIndexesOfSelectedLocation() {
             let locations = [];
             $("#filter_location-modal .check-form:checked").each(function(){
                 locations.push($(this).data('location'));
@@ -359,71 +390,23 @@
             return locations;
         }
 
-        function displayNewWholesaler(productArr, target, needsEmptying) {
-            if(needsEmptying) {
-                target.empty();
-            }
-
-            let html = "";
-            productArr.forEach(function(product, index) {
-                html += '' +
-                    '<li>' +
-                    '   <div class="txt_box">' +
-                    '       <div>' +
-                    '           <a href="/wholesaler/detail/' + product.idx + '">' +
-                    '               <img src="/img/icon/crown.png" alt="">' +
-                    '               ' + product.company_name +
-                    '               <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>' +
-                    '           </a>' +
-                    '           <i>' + product.location + '</i>' +
-                    '               <div class="tag"> ';
-
-                product.categoryList.split(',').forEach(function(cate) {
-                html += '<span>' + cate + '</span>';
-                });
-
-                html +=
-                    '               </div>' +
-                    '           </div>' +
-                    '       <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg> 좋아요</button>' +
-                    '   </div>' +
-                    '   <div class="prod_box">';
-
-                product.productList.forEach(function(img) {
-                    html += '<div class="img_box">' +
-                        '       <a href="javascript:;"><img src="' + img.imgUrl + '" alt=""></a>' +
-                        '       <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                        '   </div>';
-                });
-
-                html +=
-                    '   </div>' +
-                    '</li>';
-            });
-
-            target.append(html);
-        }
-
-
         function displaySelectedCategories() {
-
-            let html = "";
+            
+            let html = "";  
             $("#filter_category-modal .check-form:checked").each(function(){
-                html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
-                    "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
-                    "</span>";
+                html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() + 
+                        "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                        "</span>";
             });
             $(".filter_on_box .category").empty().append(html);
 
             let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
             if(totalOfSelectedCategories === 0) {
-                $(".sub_filter .filter_box button").eq(0).html("카테고리");
+                $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
                 $(".sub_filter .filter_box button").eq(0).removeClass('on');
             } else {
-                $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+                $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
                 $(".sub_filter .filter_box button").eq(0).addClass('on');
-
-                $(".sub_section_bot ul.obtain_list .sub_filter_result").show();
             }
         }
 
@@ -431,21 +414,26 @@
             let html = "";
 
             $("#filter_location-modal .check-form:checked").each(function() {
-                html += '<span>'+ $(this).data('location') +
-                    '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
-                    '</span>';                    "</span>";
+                html += '<span>'+ $(this).data('location') + 
+                        '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                        '</span>';
             });
             $(".filter_on_box .location").empty().append(html);
 
             let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
             if(totalOfSelectedLocations === 0) {
-                $(".sub_filter .filter_box button").eq(1).html("소재지");
+                $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
                 $(".sub_filter .filter_box button").eq(1).removeClass('on');
-
+                
             } else {
-                $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+                $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
                 $(".sub_filter .filter_box button").eq(1).addClass('on');
             }
+        }    
+
+        function displaySelectedOrders() {
+            $(".sub_filter .filter_box button").eq(2)
+                .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
         }
 
         function toggleFilterBox() {
@@ -456,15 +444,23 @@
             }
         }
 
-        function displaySelectedOrders() {
-            $(".sub_filter .filter_box button").eq(2)
-                .text($("label[for='" + $("#filter_align-modal .radio-form:checked").attr('id') + "']").text());
-        }
-
-        window.addEventListener('scroll', function() {
-        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
-            loadNewProductList();
-        }
-    });
+        function toggleCompanyLike(idx) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url : '/wholesaler/like/' + idx,
+            method: 'POST',
+            success : function(result) {
+                if (result.success) {
+                    if (result.like === 0) {
+                        $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                    } else {
+                        $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                    }
+                }
+            }
+        })
+    }
     </script>
 @endsection

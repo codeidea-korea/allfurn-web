@@ -198,65 +198,19 @@
                 </div>
                 <div class="sub_filter">
                     <div class="filter_box">
-                        <button onclick="modalOpen('#filter_category-modal')">카테고리</button>
-                        <button onclick="modalOpen('#filter_location-modal')">소재지</button>
-                        <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                        <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_align-modal03')">최신순 <b class="txt-primary"></b></button>
                     </div>
                 </div>
-                <!-- div class="sub_filter">
-                    <div class="filter_box">
-                        <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
-                        <button class="on" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary">3</b></button>
-                        <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button>
-                        <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                    </div>
-                </div //-->
             </div>
 
-            <ul class="obtain_list type02">
-                @foreach( $companyProduct as $key => $product )
-                <li>
-                    <div class="txt_box">
-                        <div class="flex items-center justify-between">
-                            <a href="javascript:;">
-                                <img src="/img/icon/crown.png" alt="">
-                                {{$product->company_name}}
-                                <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
-                            </a>
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="tag">
-                                @foreach( explode( ',', $product->categoryList ) AS $cate )
-                                    <span>{{$cate}}</span>
-                                @endforeach
-                            </div>
-                            <i>{{$product->location}}</i>
-                        </div>
-                    </div>
-                    @if( !empty( $product->productList ) )
-                    <div class="prod_box">
-                        @foreach( $product->productList AS $key => $url )
-                        @php if( $key > 2 ) continue; @endphp
-                        <div class="img_box">
-                            <a href="/product/detail/{{$url->productIdx}}"><img src="{{$url->imgUrl}}" alt=""></a>
-                            <button class="zzim_btn prd_{{$url->productIdx}}" pIdx="{{$url->productIdx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                        </div>
-                        @endforeach
-                    </div>
-                    @endif
-                </li>
-                @endforeach
-            </ul>
+            <ul class="obtain_list type02"></ul>
         </section>
         @endif
     </div>
 
     <script>
-        let isLoading = false;
-        let isLastPage = false;
-        let currentPage = 1;
-
         // thismonth_con01 - pager
         const thismonth_con01_pager = new Swiper(".thismonth_con01 .pager_box", {
             slidesPerView: 'auto',
@@ -329,45 +283,40 @@
             },
         });
 
-        // 카테고리 및 소팅
-        $(document)
-            .on('click', '[id^="filter"] .btn-primary', function() {
-                let $this = $(this);
+        /* ----------------------------- */
+        $(document).ready(function(){
+            setTimeout(() => {
+                loadWholesalerList();
+            }, 50);
+        });
 
-                var data = {
-                    'categories' : getIndexesOfSelectedCategory().join(','),
-                    'locations' : getIndexesOfSelectedLocations().join(','),
-                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id')
-                };
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+                loadWholesalerList();
+            }
+        });
 
-                $.ajax({
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url: '/product/getJsonThisBestWholesaler',
-                    data : data,
-                    type : 'GET',
-                    beforeSend : function() {
-                        $this.prop("disabled", true);
-                    },
-                    success: function (result) {
-                        displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), true);
-                        //displayNewProductsOnModal(result['data'], zoom_view_modal_new, true);
-                        $(".total").text('전체 ' + result.total_count + '개');
-                    },
-                    complete : function () {
-                        $this.prop("disabled", false);
-                        displaySelectedCategories();
-                        displaySelectedLocation();
-                        toggleFilterBox();
-                        displaySelectedOrders();
-                        modalClose('#' + $this.parents('[id^="filter"]').attr('id'));
-                        currentPage = 1;
-                    }
-                });
-            })
-        ;
+        // 필터링으로 조회
+        $(document).on('click', '[id^="filter"] .btn-primary', function() { 
+            loadWholesalerList(true, $(this));
+        });
 
-        function loadNewProductList() {
+        //초기화
+        $(".refresh_btn").on('click', function() {
+            $("#filter_category-modal .check-form:checked").prop('checked', false);
+            $("#filter_location-modal .check-form:checked").prop('checked', false);
+            $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
+            
+            loadWholesalerList(true);
+        });
+
+        let isLoading = false;
+        let isLastPage = false;
+        let currentPage = 0;
+        function loadWholesalerList(needEmpty, target) {
             isLoading = true;
+
+            if(needEmpty) currentPage = 0;
 
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -376,16 +325,35 @@
                 data: {
                     'page': ++currentPage,
                     'categories' : getIndexesOfSelectedCategory().join(','),
-                    'locations' : getIndexesOfSelectedLocations().join(','),
-                    'orderedElement' : $('input[name="filter_cate_3"]:checked').attr('id'),
+                    'locations' : getIndexesOfSelectedLocation().join(','),
+                    'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
+                },
+                beforeSend : function() {
+                    if(target) {
+                        target.prop("disabled", true);
+                    }
                 },
                 success: function(result) {
 
-                    displayNewWholesaler(result.query, $(".sub_section_bot ul.obtain_list"), false);
+                    if(needEmpty) {
+                        $(".sub_section_bot ul.obtain_list").empty();
+                    }
 
-                    isLastPage = currentPage === result.last_page;
+                    $(".sub_section_bot ul.obtain_list").append(result.html);
+
+                    $(".total").text('전체 ' + result.list.total.toLocaleString('ko-KR') + '개');
+
+                    if(target) {
+                        target.prop("disabled", false);
+                        modalClose('#' + target.parents('[id^="filter"]').attr('id'));
+                    }     
+                    
+                    isLastPage = currentPage === result.list.last_page;
                 },
                 complete : function () {
+                    displaySelectedCategories();
+                    displaySelectedLocation();
+                    displaySelectedOrders();
                     isLoading = false;
                 }
             })
@@ -400,7 +368,7 @@
             return categories;
         }
 
-        function getIndexesOfSelectedLocations() {
+        function getIndexesOfSelectedLocation() {
             let locations = [];
             $("#filter_location-modal .check-form:checked").each(function(){
                 locations.push($(this).data('location'));
@@ -409,74 +377,51 @@
             return locations;
         }
 
-        function displayNewWholesaler(productArr, target, needsEmptying) {
-            if(needsEmptying) {
-                target.empty();
+        function displaySelectedCategories() {
+            let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
+            if(totalOfSelectedCategories === 0) {
+                $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+                $(".sub_filter .filter_box button").eq(0).removeClass('on');
+            } else {
+                $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
+                $(".sub_filter .filter_box button").eq(0).addClass('on');
             }
+        }
 
-            let html = '';
-            productArr.forEach(function(product, index) {
+        function displaySelectedLocation() {
+            let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
+            if(totalOfSelectedLocations === 0) {
+                $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
+                $(".sub_filter .filter_box button").eq(1).removeClass('on');
+                
+            } else {
+                $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
+                $(".sub_filter .filter_box button").eq(1).addClass('on');
+            }
+        }
 
-                html += '' +
-                    '<li>' +
-                    '   <div class="txt_box">' +
-                    '       <div class="flex items-center justify-between">' +
-                    '           <a href="/wholesaler/detail/' + product.idx + '">' +
-                    '               <img src="/img/icon/crown.png" alt="">' + product.company_name +
-                    '               <svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg>' +
-                    '           </a>' +
-                    '           <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>' +
-                    '       </div>' +
-                    '       <div class="flex items-center justify-between">' +
-                    '           <div class="tag">';
+        function displaySelectedOrders() {
+            $(".sub_filter .filter_box button").eq(2)
+            .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
+        }
 
-                product.categoryList.split(',').forEach(function(cate) {
-                    html += '<span>' + cate + '</span>';
-                });
-
-                html += '' +
-                    '           </div>' +
-                    '           <i>' + product.location + '</i>' +
-                    '       </div>' +
-                    '   </div>' +
-                    '   <div class="prod_box">';
-
-                product.productList.forEach(function(img) {
-                    var interst = '';
-                    if( img.isInterest == 1 ) {
-                        interst = 'active';
+        function toggleCompanyLike(idx) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : '/wholesaler/like/' + idx,
+                method: 'POST',
+                success : function(result) {
+                    if (result.success) {
+                        if (result.like === 0) {
+                            $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                        } else {
+                            $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                        }
                     }
-                    html += '' +
-                        '       <div class="img_box">' +
-                        '           <a href="/product/detail/' + img.productIdx + '"><img src="' + img.imgUrl + '" alt=""></a>' +
-                        '           <button class="zzim_btn prd_' + img.productIdx + ' ' + interst + '" pIdx="' + img.productIdx + '"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>' +
-                        '       </div>';
-                });
-
-                html += '' +
-                    '   </div>' +
-                    '</li>';
-            });
-
-            target.append(html);
+                }
+            })
         }
-
-        function refresAllhHandle()
-        {
-            console.log('asfasefas');
-            $('#filter_category-modal .filter_list').find('input').each(function(){
-                $(this).prop("checked",false);
-            });
-
-            $('#filter_location-modal .filter_list').find('input').each(function(){
-                $(this).prop("checked",false);
-            });
-        }
-
-        $(window).scroll(function() {
-            if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
-                loadNewProductList();
-            }
-        });
     </script>
 @endsection

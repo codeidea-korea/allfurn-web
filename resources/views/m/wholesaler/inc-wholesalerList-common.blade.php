@@ -1,13 +1,17 @@
 @foreach ( $list as $wholesaler )
+@php
+    $companyIdx = isset($wholesaler->companyIdx) ? $wholesaler->companyIdx : $wholesaler->company_idx;
+    $companyName = isset($wholesaler->companyName) ? $wholesaler->companyName : $wholesaler->company_name;
+@endphp
 <li>
     <div class="txt_box">
         <div class="flex items-center justify-between">
-            <a href="/wholesaler/detail/{{ $wholesaler->companyIdx }}">
+            <a href="/wholesaler/detail/{{ $companyIdx }}">
                 <img src="/img/icon/crown.png" alt="">
-                {{ $wholesaler->companyName }}
+                {{ $companyName }}
                 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
             </a>
-            <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->companyIdx}}' onclick="toggleCompanyLike({{$wholesaler->companyIdx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+            <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$companyIdx}}' onclick="toggleCompanyLike({{$companyIdx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
         </div>
         <div class="flex items-center justify-between">
             <div class="tag">
