@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@index');
 Route::prefix('home')->group(function() {
     Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/category', 'HomeController@categoryList');
     Route::get('/getSearchData', 'HomeController@getSearchData');
     Route::get('/welcome', 'HomeController@welcome');
     Route::put('/search/{keyword}', 'HomeController@putSearchKeyword');

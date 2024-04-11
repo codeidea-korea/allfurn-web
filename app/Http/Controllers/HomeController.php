@@ -195,5 +195,16 @@ class HomeController extends BaseController
     {
         return $this->homeService->getSpeakerLoud();
     }
+
+    // 모바일 카테고리
+    public function categoryList()
+    {
+        if(getDeviceType() != "m.") {
+            return redirect('/');
+        }
+
+        $categoryList = $this->productService->getCategoryListV2();
+        return view("m.home.category", ['categoryList' => $categoryList]);
+    }
 }
 
