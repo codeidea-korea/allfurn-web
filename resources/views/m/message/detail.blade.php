@@ -30,7 +30,7 @@ $header_banner = '';
                     </div>
                 </div>
                 <div class="title">
-                    <a href="/m/message/">
+                    <a href="/message">
                         <svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg>
                     </a>
                     <h5>{{ $company->company_name }}</h5>

@@ -59,7 +59,7 @@ $header_banner = '';
                         </div>
                     </div>
 
-                    <ul class="joined_id" style='display:none;'>
+                    <ul class="joined_id _step2" style='display:none;'>
                         <li>
                             <input type="radio" name="joined_id" id="joined_id_1" class="radio-form">
                             <label for="joined_id_1">deee123</label>
@@ -189,7 +189,7 @@ function signin() {
 
     var data = new Object() ;
     data.phonenumber = $('#cellphone').val().replace(/-/g, '');
-    data.joined_id = joined_id;
+    data.joinedid = joined_id;
     data.code = 'SE';
 
     $.ajax({
@@ -243,6 +243,7 @@ function confirmAuthCode() {
                                     +'</li>';
                         }
                         $('.joined_id').html(tmpHtml);
+                    $('._step2').show(); $('#btn_smscode_confirm').hide();
                         $('#btn_selected_id_login').show();
                     } else {
                         time = 1;
