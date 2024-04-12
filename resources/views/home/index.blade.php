@@ -97,7 +97,7 @@
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:;">
+                         <a href="/product/planDiscountDetail">
                             <img src="/img/main/event_icon.png" alt="">
                             <span>할인/이벤트 상품</span>
                          </a>
@@ -474,7 +474,7 @@ $(document)
     .on('click', '.sch_cate_info .btn-primary', function() {
         var pre = $(this).prev().find('li.active').data('pre');
 
-        if( typeof pre != 'undefined' || pre != '' ) {
+        if( typeof pre != 'undefined' && pre != '' ) {
             $(location).attr('href', '/product/category?pre=' + pre);
         } else {
             //
