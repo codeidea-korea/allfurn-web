@@ -125,6 +125,68 @@
                 </div>
                 @endif
                 <?php echo str_replace('\"', '', str_replace('width: 300px;', 'width: fit-content;',html_entity_decode($data['detail']->product_detail))); ?>
+                <!-- 0325추가 -->
+                <img src="/img/prod_detail.png" alt="">
+                <!-- 0325추가 -->
+                <div class="pt-8">
+                    <h3 class="text-xl font-bold">상품 주문 정보</h3>
+                    <hr class="mt-4 border-t-2 border-stone-900">
+                    <div class="accordion divide-y divide-gray-200">
+                        <div class="accordion-item">
+                            <button class="accordion-header py-4 w-full text-left" type="button">
+                                <div class="flex justify-between px-4">
+                                    <span class="text-lg font-medium">결제 안내</span>
+                                    <div class="accordion_arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="accordion-body hidden p-6 bg-stone-50" style="display: none;">
+                                    @if( $data['detail']['is_pay_notice'] == 1 )
+                                    {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["pay_notice"]) !!}
+                                    @else
+                                        올톡을 이용하여 문의해주세요
+                                    @endif 
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header py-4 w-full text-left" type="button">
+                                <div class="flex justify-between px-4">
+                                    <span class="text-lg font-medium">배송 안내</span>
+                                    <div class="accordion_arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="accordion-body hidden p-6 bg-stone-50" style="display: none;">
+                                    {{$data["detail"]["delivery_notice"]}}
+
+                                    @if( $data['detail']['is_delivery_notice'] == 1 )
+                                        {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["delivery_notice"]) !!}
+                                    @else
+                                        올톡을 이용하여 문의해주세요
+                                    @endif 
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-header py-4 w-full text-left" type="button">
+                                <div class="flex justify-between px-4">
+                                    <span class="text-lg font-medium">교환/반품/취소 안내</span>
+                                    <div class="accordion_arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="accordion-body hidden p-6 bg-stone-50" style="display: none;">
+                                    @if( $data['detail']['is_return_notice'] == 1 )
+                                        {!! str_replace(["\\\\r\\\\n", "\\r\\n"], '<br>', $data["detail"]["return_notice"]) !!}
+                                    @else
+                                        올톡을 이용하여 문의해주세요
+                                    @endif   
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -333,6 +395,28 @@
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script type="text/javascript">
+
+        $(".accordion-header").click(function() {   
+            // 클릭된 항목의 바디를 토글합니다.
+            var $body = $(this).next(".accordion-body");
+            $body.slideToggle(200);
+
+            // 선택적: 클릭된 헤더와 같은 아코디언 그룹 내의 다른 모든 바디를 닫습니다.
+            $(this).closest('.accordion').find(".accordion-body").not($body).slideUp(200);
+
+            // 클릭된 항목의 .accordion_arrow가 이미 'active' 클래스를 가지고 있는지 체크합니다.
+            var isActive = $(this).find(".accordion_arrow").hasClass('active');
+
+            // 페이지 내의 모든 .accordion_arrow에서 'active' 클래스를 제거합니다.
+            $('.accordion_arrow').removeClass('active');
+
+            // 클릭된 항목의 .accordion_arrow가 이미 'active' 상태가 아니었다면, 'active' 클래스를 추가합니다.
+            if (!isActive) {
+                $(this).find(".accordion_arrow").addClass('active');
+            }
+            // 이미 'active' 상태였다면, 위의 로직에 의해 'active' 클래스가 제거됩니다.
+        });
+
 
         const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
             slidesPerView: 'auto',
