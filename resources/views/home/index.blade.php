@@ -266,6 +266,10 @@ const main_visual = new Swiper(".main_visual .slide_box", {
         nextEl: ".main_visual .slide_arrow.next",
         prevEl: ".main_visual .slide_arrow.prev",
     },
+    autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+    },
     pagination: {
         el: ".main_visual .count_pager",
         type: "fraction",
@@ -276,6 +280,11 @@ const main_visual = new Swiper(".main_visual .slide_box", {
             $('.main_visual .bottom_box p').text(brand)
         },
     },
+});
+$('.main_visual .slide_box').hover(function(){
+    main_visual.autoplay.stop();
+}, function(){
+    main_visual.autoplay.start();
 });
 
 

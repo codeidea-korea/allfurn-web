@@ -255,6 +255,10 @@ const main_visual = new Swiper(".main_visual .slide_box", {
         el: ".main_visual .count_pager",
         type: "fraction",
     },
+    autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+    },
     on: {
         slideChangeTransitionEnd: function () {
             let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
