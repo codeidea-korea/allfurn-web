@@ -170,7 +170,7 @@
                 displaySelectedLocation();
                 displaySelectedOrders();
                 isLoading = false;
-                if(firstLoad) {
+                if(firstLoad && new URLSearchParams(window.location.search).get("scroll")=="true") {
                     window.scrollTo(0, 1430);
                     firstLoad = false;
                 }

@@ -188,7 +188,7 @@
                 displaySelectedOrders();
                 toggleFilterBox();
                 isLoading = false;
-                if(firstLoad) {
+                if(firstLoad && new URLSearchParams(window.location.search).get("scroll")=="true") {
                     window.scrollTo(0, 2100);
                     firstLoad = false;
                 }
