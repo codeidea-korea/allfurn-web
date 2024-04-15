@@ -701,7 +701,7 @@
                 <li data-url="/product/popularList"><button><b>인기상품</b> 모아보기</button></li>
                 <li data-url="/product/best-new"><button><b>신상품</b> 모아보기</button></li>
                 <li data-url="/product/planDiscountDetail"><button><b>할인/행사 상품</b> 모아보기</button></li>
-                <li data-url="/product/planDiscountDetail"><button><b>인기 도매 업체 상품</b> 모아보기</button></li>
+                <li data-url="/wholesaler/thismonth"><button><b>인기 도매 업체 상품</b> 모아보기</button></li>
                 <li data-next="search_popcategory"><button><b>인기 카테고리</b>로 상품 찾기</button></li>
                 <li data-next="search_category"><button><b>카테고리</b>로 자세히 상품 찾기</button></li>
             </ul>
