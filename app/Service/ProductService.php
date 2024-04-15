@@ -1250,7 +1250,7 @@ class ProductService
             $data->where('AF_banner_ad.company_idx', $cIdx);
         }
 
-        return $data->limit($limit)->orderby('idx', 'desc')->get();
+        return $data->limit($limit)->orderByRaw('AF_banner_ad.banner_price desc, RAND()')->get();
     }
 
     /**
