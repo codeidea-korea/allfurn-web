@@ -27,7 +27,7 @@
                                     <button class="zzim_btn prd_{{$product->idx}} {{ ($product->isInterest == 1) ? 'active' : '' }}" pidx="{{$product->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
                                 <div class="txt_box">
-                                    <a href="./prod_detail.php">
+                                    <a href="/product/detail/{{$product->idx}}">
                                         <span>{{$product->company_name}}</span>
                                         <p>{{$product->name}}</p>
                                         <b>
@@ -181,7 +181,7 @@
                         tabInnerHtml += '<div class="txt_box">';
                             tabInnerHtml += '<a href="/product/detail/'+data.lists[i].idx+'"><span>'+data.lists[i].company_name+'</span><p>'+data.lists[i].name+'</p><b>';
                                 if (data.lists[i].is_price_open == 1){
-                                    tabInnerHtml += data.lists[i].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                    tabInnerHtml += data.lists[i].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
                                 }else{
                                     tabInnerHtml += data.lists[i].price_text
                                 }

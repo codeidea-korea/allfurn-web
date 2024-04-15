@@ -1417,6 +1417,7 @@ class ProductService
                 LEFT JOIN AF_category AS ac1 ON ac1.idx=ap.category_idx
                 LEFT JOIN AF_category AS ac2 ON ac2.idx=ac1.parent_idx
                 LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
+            WHERE ap.state IN ("S", "O")
             ) as t'
         ))
         ->select('t.*'
@@ -1455,6 +1456,7 @@ class ProductService
                 LEFT JOIN AF_category AS ac1 ON ac1.idx=ap.category_idx
                 LEFT JOIN AF_category AS ac2 ON ac2.idx=ac1.parent_idx
                 LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
+            WHERE ap.state IN ("S", "O")
             ) as t'
         ))
         ->select('t.*'
