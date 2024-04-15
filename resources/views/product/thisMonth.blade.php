@@ -237,6 +237,10 @@
             thumbs: {
                 swiper: thismonth_con01_pager,
             },
+            speed:2000,
+            autoplay: {
+                delay: 5000,
+            },
         });
 
         // thismonth_con02
