@@ -141,7 +141,8 @@ class ProductService
                   WHEN AF_product.company_type = "R" THEN (SELECT CONCAT(ar.business_address, " ", ar.business_address_detail) FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
                   ELSE "" END) AS product_address,
                   COUNT(DISTINCT pi.idx) as isInterest,
-                  COUNT(DISTINCT pa.idx) as isAd'))
+                  COALESCE(pa.idx, aba.idx, 0) AS isAd'
+                ))
                 ->leftjoin('AF_product_interest as pi', function ($query) {
                     $query->on('pi.product_idx', 'AF_product.idx')->where('pi.user_idx', Auth::user()->idx);
                 })
@@ -156,6 +157,14 @@ class ProductService
                 })
                 ->leftjoin('AF_category as ac2', function($query) {
                     $query->on('ac2.idx', '=', 'ac.parent_idx');
+                })
+                ->leftjoin('AF_banner_ad as aba', function($query) {
+                    $query->on('AF_product.idx', '=', DB::raw("SUBSTRING_INDEX(aba.web_link, '/', -1)"))
+                        ->where('aba.start_date', '<', DB::raw("now()"))
+                        ->where('aba.end_date', '>', DB::raw("now()"))
+                        ->where('aba.ad_location', 'plandiscount')
+                        ->where('aba.is_delete', 0)
+                        ->where('aba.is_open', 1);
                 })
                 ->where('AF_product.idx', $productIdx)
                 ->first();

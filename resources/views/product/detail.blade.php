@@ -34,13 +34,13 @@
                 </div>
                 <div class="txt_box">
                     <div class="name">
-                        @if( ( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 ) || $data['detail']->isAd == 1 )
+                        @if( ( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 ) || $data['detail']->isAd > 0)
                             <div class="tag">
                                 @if( $data['detail']->is_new_product == 1 && $data['detail']->diff <= 30 )
                                     <span class="new">NEW</span>
                                 @endif
-                                @if( $data['detail']->isAd == 1 )
-                                <span class="event">이벤트</span>
+                                @if( $data['detail']->isAd > 0 )
+                                    <span class="event">이벤트</span>
                                 @endif
                             </div>
                         @endif
