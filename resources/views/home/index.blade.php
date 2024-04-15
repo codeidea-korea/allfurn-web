@@ -133,7 +133,13 @@
                         <li class="swiper-slide">
                             <a href="/product/category?pre={{ $item->idx }}">
                                 <i><img src="{{ $item->imgUrl }}"></i>
-                                <span>{{ $item->name }}</span>
+                                @if($item->idx == 4)
+                                    <span>서랍장/옷장</span>
+                                @elseif ($item->idx == 6)
+                                    <span>화장대/거울</span>
+                                @else
+                                    <span>{{$item->name}}</span>
+                                @endif
                             </a>
                         </li>
                     @endforeach
