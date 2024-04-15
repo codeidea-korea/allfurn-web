@@ -21,14 +21,14 @@
                         @foreach( $list AS $l => $item )
                             <li class="prod_item type02">
                                 <div class="img_box">
-                                    <a href="/product/detail/{{$item->idx}}">
+                                    <a href="/product/detail/{{$item->product_idx}}">
                                         <img src="{{$item->imgUrl}}" alt="">
                                         <span><b>{{$item->subtext1}}</b><br/>{{$item->subtext2}}</span>
                                     </a>
-                                    <button class="zzim_btn prd_{{$item->idx}} {{($item->isInterest==1)?'active':''}}" pIdx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                    <button class="zzim_btn prd_{{$item->product_idx}} {{($item->isInterest==1)?'active':''}}" pIdx="{{$item->product_idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
                                 <div class="txt_box">
-                                    <a href="/product/detail/{{$item->idx}}">
+                                    <a href="/product/detail/{{$item->product_idx}}">
                                         <strong>{{$item->content}}</strong>
                                         <span>{{$item->company_name}}</span>
                                     </a>
