@@ -30,7 +30,7 @@
             </div>
             
         </div>
-        <a href="/product/new" class="btn btn-line4 mt-4">더보기</a>
+        <a href="/product/new?scroll=true" class="btn btn-line4 mt-4">더보기</a>
     </div>
 </section>
 @php $list = $data['new_product'] @endphp

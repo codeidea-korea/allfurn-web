@@ -124,6 +124,7 @@
     let isLoading = false;
     let isLastPage = false;
     let currentPage = 0;
+    let firstLoad = true;
     function loadNewProductList(needEmpty, target) {
         isLoading = true;
 
@@ -169,6 +170,10 @@
                 displaySelectedLocation();
                 displaySelectedOrders();
                 isLoading = false;
+                if(firstLoad) {
+                    window.scrollTo(0, 1430);
+                    firstLoad = false;
+                }
             }
         })
     }
