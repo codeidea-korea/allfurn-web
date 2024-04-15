@@ -51,8 +51,6 @@
             <li class="{{ $header_depth=='news' ? 'active':'' }}"><a href="/magazine">뉴스정보</a></li>
             <li class="{{ $header_depth=='community' ? 'active':'' }}"><a href="/community">커뮤니티</a></li>
         </ul>
-
-
     </div>
 </div>
 
@@ -67,9 +65,11 @@
     </ul>
 </div>
 
-<div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk' )?'hidden':'' }}">
-    <a href="./prod_registration.php">상품<br/>등록</a>
-</div>
+@if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+    <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk' )?'hidden':'' }}">
+        <a href="/product/registration">상품<br/>등록</a>
+    </div>
+@endif
 
 <!-- 검색 -->
 <div class="modal" id="search_modal">
