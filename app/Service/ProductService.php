@@ -1228,7 +1228,7 @@ class ProductService
                 'ap.idx as product_idx',
                 'aw.company_name',
                 DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest',
+                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))
             ->leftjoin('AF_attachment as at', function ($query) {
                 $query->on('AF_banner_ad.web_attachment_idx', 'at.idx');
