@@ -107,6 +107,14 @@
             nextEl: ".new_arrival_con03 .slide_arrow.next",
             prevEl: ".new_arrival_con03 .slide_arrow.prev",
         },
+        speed:8000,
+        loop:true,
+        autoplay: {
+            delay: 0,
+            stopOnLastSlide: false,
+            disableOnInteraction: true,
+        },
+        observer:true, observeParents:true,
     });
 
     // 신규 등록 상품 - 확대보기

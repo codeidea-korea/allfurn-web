@@ -307,6 +307,7 @@ section.sub_section_bot {padding:30px 0 70px; }
 
 /* 신상품 */
 .new_arrival_con01 .count_pager {position:absolute; left:50%; bottom:-60px; transform:translateX(-50%); }
+.new_arrival_con03 .swiper-wrapper {transition-timing-function: linear;}
 
 /* 도매업체 */
 .wholesaler_con01 .bottom_box {display:flex; align-items:center; justify-content:space-between; padding:10px 18px 10px 5px; background: #E9E9E8; }

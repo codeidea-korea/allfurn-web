@@ -74,6 +74,14 @@
     const new_arrival_con03 = new Swiper(".new_arrival_con03 .slide_box", {
         slidesPerView: 'auto',
         spaceBetween: 8,
+        speed:8000,
+        loop:true,
+        autoplay: {
+            delay: 0,
+            stopOnLastSlide: false,
+            disableOnInteraction: true,
+        },
+        observer:true, observeParents:true,
     });
 
     // BEST 신상품 - 확대보기
