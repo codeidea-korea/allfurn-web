@@ -3,8 +3,14 @@
 <div id="content">
     <div class="detail_mo_top write_type center_type">
         <div class="inner">
-            <h3>상품 등록</h3>
-            <a class="back_img" href="./index.php"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></a>
+            <h3>
+            @if(Route::current()->getName() == 'product.create')
+                상품 등록
+            @elseif(Route::current()->getName() == 'product.modify')
+                상품 수정
+            @endif
+            </h3>
+            <a class="back_img" href="/"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></a>
         </div>
     </div>
     <!-- <div class="flex gap-4 py-10">
@@ -24,15 +30,19 @@
                 <dl class="mb-3">
                     <dt class="necessary">상품명</dt>
                     <dd>
-                        <input type="text" class="input-form w-full" placeholder="상품명을 입력해주세요.">
+                        <input type="text" name="name" class="input-form w-full" maxlength="50"
+                               @if(@isset($data->name))
+                                   value="{{$data->name}}"
+                               @endif
+                               placeholder="상품명을 입력해주세요.">
                     </dd>
                 </dl>
                 <dl class="mb-3">
                     <dt>상품 이미지</dt>
                     <dd>
-                        <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
                             <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center">
-                                <input type="file" class="file_input">
+                                <input type="file" id="form-list02" name="file" multiple="multiple" class="file_input">
                                 <div>
                                     <div class="file_text flex flex-col items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image text-stone-400"><rect width="20" height="20" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
@@ -50,6 +60,7 @@
                             </div>
 
                             <!-- 이미지 추가 버튼 누른 후 이미지들 시작점  -->
+                            {{--
                             <div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-400">
                                 <img class="w-[150px] h-[150px] object-cover rounded-md" src="https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/product/881e2e2847bf5c63366fad4f668d63c2d1ce278b6f91aa9b37ef8567b194d273.jpg" alt="">
                                 <div class="absolute top-2.5 right-2.5">
@@ -69,7 +80,7 @@
                                     </button>
                                 </div>
                             </div>
-
+                            --}}
                         </div>
                         <div class="info">
                             <div class="">
@@ -87,7 +98,7 @@
                     <dd>
                         <button class="btn btn-line4 nohover flex items-center justify-between !w-full px-3 font-normal" onclick="modalOpen('#prod_category-modal')">
                             카테고리 선택
-                            <svg class="w-6 h-6 stroke-stone-400 -rotate-90"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                            <svg class="w-6 h-6 stroke-stone-400 -rotate-90"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                         </button>
 
                         <div class="mt-3">
@@ -101,12 +112,12 @@
                     <dd>
                         <button class="btn btn-line4 nohover flex items-center justify-between !w-full px-3 font-normal" onclick="modalOpen('#prod_property-modal')">
                             속성 선택
-                            <svg class="w-6 h-6 stroke-stone-400 -rotate-90"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                            <svg class="w-6 h-6 stroke-stone-400 -rotate-90"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                         </button>
 
                         <div class="info">
                             <div class="flex items-start gap-1">
-                                <img class="w-3 mt-1 shrink-0" src="./img/member/info_icon.svg" alt="">
+                                <img class="w-3 mt-1 shrink-0" src="/img/member/info_icon.svg" alt="">
                                 <p>상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="txt-primary">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>
                             </div>
                         </div>
@@ -150,7 +161,7 @@
                                 </div>
                                 <div class="info">
                                     <div class="flex items-center gap-1">
-                                        <img class="w-4" src="./img/member/info_icon.svg" alt="">
+                                        <img class="w-4" src="/img/member/info_icon.svg" alt="">
                                         <p> 가격 대신 선택한 문구가 노출됩니다.</p>
                                     </div>
                                 </div>
@@ -216,7 +227,7 @@
                     <dt>상품 코드</dt>
                     <dd>
                         <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onclick="modalOpen('#prod_shipping-modal')">
-                            <svg class="w-6 h-6 stroke-stone-400"><use xlink:href="./img/icon-defs.svg#plus_white"></use></svg>
+                            <svg class="w-6 h-6 stroke-stone-400"><use xlink:href="/img/icon-defs.svg#plus_white"></use></svg>
                             배송 방법 추가
                         </button>
                     </dd>
@@ -276,15 +287,15 @@
             <div class="inner">
                 <div class="info">
                     <div class="flex items-start gap-1">
-                        <img class="w-4 mt-0.5" src="./img/member/info_icon.svg" alt="">
+                        <img class="w-4 mt-0.5" src="/img/member/info_icon.svg" alt="">
                         <p><span class="text-primary">주문 시 필수로 받아야 하는 옵션은 ‘필수 옵션’을 설정해주세요.</span> 필수 옵션의 경우, 주문 시 상위 옵션을 선택해야 하위 옵션 선택이 가능합니다. 상위 개념의 옵션을 옵션 1로 설정해주세요.</p>
                     </div>
                     <div class="flex items-start gap-1 mt-3">
-                        <img class="w-4 mt-1" src="./img/member/info_icon.svg" alt="">
+                        <img class="w-4 mt-1" src="/img/member/info_icon.svg" alt="">
                         <p><span class="text-primary">등록한 상품 외 추가로 금액 산정이 필요한 구성품인 경우, 옵션값 하단에 반드시 가격을 입력해주세요.</span></p>
                     </div>
                     <div class="flex items-center gap-1 mt-3">
-                        <img class="w-4" src="./img/member/info_icon.svg" alt="">
+                        <img class="w-4" src="/img/member/info_icon.svg" alt="">
                         <p>주문 옵션은 최대 6개까지 추가 가능합니다.</p>
                     </div>
                 </div>
@@ -330,13 +341,13 @@
                     </div>
                     <div class="option_box">
                         <button class="flex items-center justify-center gap-1 w-full h-11 rounded option_add">
-                            <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="./img/icon-defs.svg#plus"></use></svg>
+                            <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/icon-defs.svg#plus"></use></svg>
                             옵션값 추가
                         </button>
                     </div>
                 </div>
                 <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded">
-                    <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="./img/icon-defs.svg#plus_white"></use></svg>
+                    <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/icon-defs.svg#plus_white"></use></svg>
                     주문 옵션 추가
                 </button>
             </div>
@@ -430,7 +441,20 @@
 
 
 
+<link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
 <script>
+    var storedFiles = [];
+    var subCategoryIdx = null;
+    var deleteImage = [];
+    var proc = false;
+    var authList = ['KS 인증', 'ISO 인증', 'KC 인증', '친환경 인증', '외코텍스(OEKO-TEX) 인증', '독일 LGA 인증', 'GOTS(오가닉) 인증', '라돈테스트 인증', '전자파 인증', '전기용품안전 인증'];
+    var oIdx = 0;
+    var _tmp = 0;
+    editer = null;
+
+    init_editor();
+
     // step 이동
     const goStep = (item)=>{
         $(`.prod_regist_box .${item}`).addClass('active').siblings().removeClass('active')
@@ -446,7 +470,69 @@
     }
 
 
-    $(document).ready(function() {
+    $(document).ready(function()
+    {
+        $(document)
+            .on('change', '#form-list02', function() {
+                var files = this.files;
+                var i = 0;
+
+                for (i = 0; i < files.length; i++) {
+                    var readImg = new FileReader();
+                    var file = files[i];
+
+                    if (file.type.match('image.*')){
+                        storedFiles.push(file);
+                        readImg.onload = (function(file) {
+                            return function(e) {
+                                let imgCnt = $('.product-img__add').length + 1;
+
+                                if (imgCnt == 9) {
+                                    openModal('#alert-modal08');
+                                    return;
+                                }
+
+                                $('.desc__product-img-wrap').append(
+                                    '<div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-400">' +
+                                    '   <img class="w-[150px] h-[150px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
+                                    '   <div class="absolute top-2.5 right-2.5">' +
+                                    '       <button class="file_del !w-[28px] !h-[28px] bg-stone-600/50 !rounded-full">' +
+                                    '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
+                                    '       </button>' +
+                                    '   </div>' +
+                                    '   <div class="absolute top-2.5 left-2.5">' +
+                                    '       <p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p>' +
+                                    '   </div>' +
+                                    '</div>'
+                                );
+
+                                if (imgCnt == 1) {
+                                    $('.product-img__add').append(
+                                        '   <div class="absolute top-2.5 left-2.5">' +
+                                        '       <p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p>' +
+                                        '   </div>'
+                                    );
+                                }
+
+                                if (imgCnt == 8) {
+                                    $('.desc__product-img-wrap > div').first().hide();
+                                }
+                            };
+                        })(file);
+                        readImg.readAsDataURL(file);
+
+                    } else {
+                        alert('the file '+ file.name + ' is not an image<br/>');
+                    }
+
+                    if(files.length === (i+1)){
+                        setTimeout(function(){
+                            img_add_order();
+                        }, 1000);
+                    }
+                }
+            })
+        ;
 
         // 버튼 온오프
         $('.btn_select button').on('click',function(){
@@ -517,6 +603,45 @@
         // 페이지 로드 시 .plus_del 요소의 초기 표시 상태 결정
         updatePlusDelVisibility();
     });
+
+    // 에디터 초기화
+    function init_editor() {
+        editer = new FroalaEditor('.textarea-form', {
+            key: "wFE7nG5E4I4D3A11A6eMRPYf1h1REb1BGQOQIc2CDBREJImA11C8D6B5B1G4D3F2F3C8==",
+            requestHeaders: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            // fullPage: true,
+            height:300,
+            useClasses: false,
+
+            imageUploadParam: 'file',
+            imageUploadURL: '/product/image',
+            imageUploadParams: {folder: 'product'},
+            imageUploadMethod: 'POST',
+            imageMaxSize: 20 * 1024 * 1024,
+            imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+
+            events: {
+                'image.inserted': function ($img, response) {
+                    var obj = $.parseJSON(response);
+                    $img.data('idx', obj.idx);
+                },
+                'image.removed': function ($img) {
+                    $.ajax({
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        method: "DELETE",
+                        url: "/product/image",
+                        data: {
+                            src: $img.attr('src'),
+                            idx: $img.data('idx')
+                        }
+                    })
+                },
+            }
+        });
+    }
 </script>
 
 @endsection
