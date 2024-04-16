@@ -16,6 +16,7 @@ use App\Models\Report;
 use App\Models\SubscribeBoard;
 use App\Models\User;
 use App\Models\UserSearch;
+use App\Models\Club;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -95,15 +96,16 @@ class CommunityService {
      * 게시판 배너 리스트 가져오기
      * @return Collection
      */
-    public function getBannerList(): Collection
+    public function getBannerList(string $type): Collection
     {
-        return Banner::where('ad_location', 'communitytop')
+        return Banner::where('ad_location', $type)
             ->where('state', 'G')
             ->where('is_delete', 0)
             ->where('is_open', 1)
             ->where('start_date', '<=', Carbon::now()->format('Y-m-d H:i:s'))
             ->where('end_date', '>=', Carbon::now()->format('Y-m-d H:i:s'))
-            ->has('attachment')->get();
+            ->has('attachment', '>=', 0)
+            ->get();
     }
 
 
@@ -820,6 +822,17 @@ class CommunityService {
             ->where('is_delete', 0)
             ->where('is_open', 1)
             ->orderBy('order_idx')
+            ->get();
+    }
+
+    // 가구인 모임
+    public function getClubList()
+    {
+        return Club::where('is_open', 1)
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
+            })
+            ->select('AF_club.*', DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
             ->get();
     }
 

@@ -35,7 +35,7 @@ class CommunityController extends BaseController
         $params['limit'] = $this->limit;
 
         // 게시판 상단 배너
-        $data['banners'] = $this->communityService->getBannerList();
+        $data['banners'] = $this->communityService->getBannerList('communitytop');
         // lnb 게시판 리스트
         $data['boards'] = $this->communityService->getBoardList($params);
         // 전체 게시판 리스트
@@ -89,7 +89,7 @@ class CommunityController extends BaseController
     public function detail(int $idx): View
     {
         // 게시판 상단 배너
-        $data['banners'] = $this->communityService->getBannerList();
+        $data['banners'] = $this->communityService->getBannerList('communitytop');
         // lnb 게시판 리스트
         $data['boards'] = $this->communityService->getBoardList();
         $data['searches'] = $this->communityService->getSearchList();
@@ -311,5 +311,20 @@ class CommunityController extends BaseController
         $data['order'] = $this->communityService->getDispatchOrders($orderGroupCode);
         $data['orderGroupCode'] = $orderGroupCode;
         return view('community.write', $data);
+    }
+
+
+    // 가구인 모임
+    public function clubList()
+    {
+        $data['banners'] = $this->communityService->getBannerList('clubtop');
+        $data['clubList'] = $this->communityService->getClubList();
+
+        return view('community.club', $data);
+    }
+
+    public function clubDetail(int $idx)
+    {
+        return view('community.clubDetail');
     }
 }
