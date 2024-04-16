@@ -6,7 +6,7 @@
 <div id="content">
     <div class="main_visual">
         <div class="inner">
-            <div class="slide_box">
+            <div class="slide_box bg_gradient">
                 <ul class="swiper-wrapper">
                     @foreach($data['banner_top'] as $item)
                         <?php

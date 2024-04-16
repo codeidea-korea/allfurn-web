@@ -10,7 +10,7 @@
 
 <div id="content">
     <div class="main_visual">
-        <div class="slide_box">
+        <div class="slide_box bg_gradient">
             <ul class="swiper-wrapper">
                 @foreach($data['banner_top'] as $item)
                     <?php
@@ -454,7 +454,7 @@ $(document)
 <script>
         function callLogin(){
 
-            var jsonStr = '{ "type" : "login", "accessToken" : "{{xtoken}}"}';
+            var jsonStr = '{ "type" : "login", "accessToken" : "{{$xtoken}}"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
 
             var isMobile = {
             Android: function () {
