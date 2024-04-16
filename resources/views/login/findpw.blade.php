@@ -250,6 +250,7 @@ function startTimer() {
         $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
         time--;
         if (time < 0 || isAuthCodeCheckAfter) {
+    $('#btnResendSMS').prop("disabled", false);
             clearInterval(timerInterval);
         }
     }, 1000);

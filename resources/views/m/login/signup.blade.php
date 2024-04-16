@@ -128,19 +128,6 @@ $header_banner = '';
                                 </dl>
                             </div>
                             <div class="mb-3">
-                                <dl class="">
-                                    <dt class="necessary">인증 번호</dt>
-                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
-                                        <div class="flex-1 certify_box">
-                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
-                                            <span class="time">2:59</span>
-                                        </div>
-                                        <button type="button" type="button" data-key="1" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
-                                        <button type="button" type="button" data-key="1" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="mb-3">
                                 <dl>
                                     <dt class="necessary">사업자 주소</dt>
                                     <dd>
@@ -269,19 +256,6 @@ $header_banner = '';
                                 </dl>
                             </div>
                             <div class="mb-3">
-                                <dl class="flex">
-                                    <dt class="necessary">인증 번호</dt>
-                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
-                                        <div class="flex-1 certify_box">
-                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
-                                            <span class="time">2:59</span>
-                                        </div>
-                                        <button type="button" type="button" data-key="2" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
-                                        <button type="button" type="button" data-key="2" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="mb-3">
                                 <dl>
                                     <dt class="necessary">사업자 주소</dt>
                                     <dd>
@@ -400,19 +374,6 @@ $header_banner = '';
                                 </dl>
                             </div>
                             <div class="mb-3">
-                                <dl class="flex">
-                                    <dt class="necessary">인증 번호</dt>
-                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
-                                        <div class="flex-1 certify_box">
-                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
-                                            <span class="time">2:59</span>
-                                        </div>
-                                        <button type="button" type="button" data-key="3" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
-                                        <button type="button" type="button" data-key="3" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="mb-3">
                                 <dl>
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex  gap-1">
@@ -489,19 +450,6 @@ $header_banner = '';
                                         <div class="flex-1">
                                             <input type="text" id="n_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                                         </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="mb-3">
-                                <dl class="flex">
-                                    <dt class="necessary">인증 번호</dt>
-                                    <dd class="flex gap-1 login_common" style="min-height:0;padding:0;">
-                                        <div class="flex-1 certify_box">
-                                            <input type="text" maxLength="6" class="input-form w-full smscode" disabled>
-                                            <span class="time">2:59</span>
-                                        </div>
-                                        <button type="button" type="button" data-key="4" class="btn btn-line btnResendSMS" onclick="sendAuthCode(this)" disabled>발송</button>
-                                        <button type="button" type="button" data-key="4" class="btn btn-black-line btn_smscode_confirm" disabled onclick="confirmAuthCode(this)">인증하기</button>
                                     </dd>
                                 </dl>
                             </div>
@@ -645,7 +593,6 @@ $header_banner = '';
 <script>
 let inN = '0';
 var base = '';
-let isAuthAfter = false;
 
 let join_tit = ['제조/도매','판매/매장','가구 업종','기타 가구 관련 업종']
 let join_num = 0;
@@ -687,10 +634,6 @@ $('.join_type button').on('click', function() {
     $('#register_form-submit').attr('disabled', true);
     if (inN === 0) { $('#add_1_1').prop('checked', true);  } else { $('#add_1_3').prop('checked', true); }
 
-    $('.smscode').val('');
-    $(".btnSendSMS").prop("disabled", false);
-    $(".btnResendSMS").prop("disabled", false);
-    isAuthAfter = false;
     $('.nextBtn').removeClass('hidden')
 
     if (inN === 0) {
@@ -849,131 +792,7 @@ $(document).ready(function() {
             }
         }
     });
-    
-    $("#w_contact #r_contact #s_contact #n_contact").on("keyup", function () {
-        $(this).val($(this).val().replace(/[^0-9]/g, ''));
-        isAuthAfter = false;
-        if ($(this).val().length >= 10) {
-            $(".btnSendSMS").prop("disabled", false);
-            $(".btnResendSMS").prop("disabled", false);
-        } else {
-            $(".btnSendSMS").prop("disabled", true);
-            $(".btnResendSMS").prop("disabled", true);
-        }
-    });
-    $(".smscode").on("keyup", function () {
-        $(this).val($(this).val().replace(/[^0-9]/g, ''));
-        if ($(this).val().length >= 6) {
-            $(".btn_smscode_confirm").prop("disabled", false);
-        } else {
-            $(".btn_smscode_confirm").prop("disabled", true);
-        }
-    });
-
-    $(".btn_smscode_confirm").on("click", function () {
-        if ($('.time').text() == '0:00'){
-            modalOpen('.smscode_time_over');
-        }
-    });
 });
-function sendAuthCode(el) {
-    var data = new Object();
-    const keyCode = el.dataset.key;
-    if(keyCode == 1) {
-        data.phoneno = $('#w_contact').val().replace(/-/g, '');
-    } else if(keyCode == 2) {
-        data.phoneno = $('#r_contact').val().replace(/-/g, '');
-    } else if(keyCode == 3) {
-        data.phoneno = $('#s_contact').val().replace(/-/g, '');
-    } else if(keyCode == 4) {
-        data.phoneno = $('#n_contact').val().replace(/-/g, '');
-    }
-    data.type = 'S';
-
-    $.ajax({
-        url				: '/signup/sendAuthCode',
-        contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
-        data			: data,
-        type			: 'POST',
-        dataType		: 'json',
-        xhrFields: {
-            withCredentials: false
-        },
-        success : function(result) {
-            if (result.success) {
-                $('.smscode').val('');
-                isAuthAfter = false;
-                $('.time').text('2:59');
-                $('.btnSendSMS').prop("disabled", true);
-                $('.smscode').prop("disabled", false);
-                
-                startTimer();
-            } else {
-                alert(result.message);
-            }
-        }
-    });
-}
-function confirmAuthCode(el) {
-    if ($('.time').text() == '0:00'){
-        modalOpen('#smscode_time_over');
-    } else {
-        var data = new Object() ;
-        const keyCode = el.dataset.key;
-        if(keyCode == 1) {
-            data.phoneno = $('#w_contact').val().replace(/-/g, '');
-        } else if(keyCode == 2) {
-            data.phoneno = $('#r_contact').val().replace(/-/g, '');
-        } else if(keyCode == 3) {
-            data.phoneno = $('#s_contact').val().replace(/-/g, '');
-        } else if(keyCode == 4) {
-            data.phoneno = $('#n_contact').val().replace(/-/g, '');
-        }
-        data.type = "S" ;
-        data.code = $('.smscode')[keyCode-1].value;
-
-        $.ajax({
-            url				: '/signup/confirmAuthCode',
-            contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
-            data			: data,
-            type			: 'POST',
-            dataType		: 'json',
-            xhrFields: {
-                withCredentials: false
-            },
-            success : function(result) {
-                if (result.success) {
-                    isAuthCodeCheckAfter = true;
-                    $('#cellphone').prop("disabled", true);
-                    $('.btnSendSMS').prop("disabled", true);
-                    $('.btnResendSMS').prop("disabled", true);
-                    $('#userid').prop("disabled", true);
-                    $($('.smscode')[keyCode-1]).prop("disabled", true);
-                    isAuthAfter = true;
-                } else {
-                    isAuthCodeCheckAfter = true;
-                    isAuthAfter = false;
-                    $('#btnResendSMS').prop("disabled", false);
-                    $('#smscode').prop("disabled", false);
-                    alert('인증번호가 맞지 않습니다.');
-                }
-            }
-        });
-    }
-}
-var isAuthCodeCheckAfter = false;
-function startTimer() {
-    var time = 179; 
-    var timerInterval = setInterval(function () {
-        var minutes = Math.floor(time / 60);
-        var seconds = time % 60;
-        $(".time").text(minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-        time--;
-        if (time < 0 || isAuthCodeCheckAfter) {
-            clearInterval(timerInterval);
-        }
-    }, 1000);
-}
 
 $.validator.addMethod('eng_number', function( value ) {
     return /[a-z]/.test(value) && /[0-9]/.test(value)
