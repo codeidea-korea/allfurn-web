@@ -6,9 +6,12 @@
         <div class="company_detail_top">
             <div class="inner">
                 <div class="banner" style="background-image:url('/img/company_banner.png')">
-                    <div class="profile_img">
+                    {{-- <div class="profile_img">
                         <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="썸네일">
                         <!-- img src="/img/profile_img.svg" alt="" //-->
+                    </div> --}}
+                    <div class="profile_img" style="border:inherit!important; background:inherit!important;">
+                        <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="">
                     </div>
                     <div class="link_box">
                         <button class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
