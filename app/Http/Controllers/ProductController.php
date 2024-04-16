@@ -143,10 +143,11 @@ class ProductController extends BaseController
     public function registration()
     {
 
-        return view('product.product-registration', [
+        return view(getDeviceType().'product.product-registration', [
             'banners' => $this->productService->getBannerList(),
             'todayCount' => $this->productService->getTodayCount(),
-            'categoryList' => $this->productService->getCategoryList(),
+            //'categoryList' => $this->productService->getCategoryList(),
+            'categoryList' => $this->productService->getCategoryTree(),
             'productList' => $this->getMyProductList()
         ]);
     }
@@ -376,7 +377,7 @@ class ProductController extends BaseController
 
         $productList = $this->productService->listByCategory($data);
 
-        return view('product.searchBy', [
+        return view(getDeviceType().'product.searchBy', [
             'productList' => $productList
         ]);
     }
