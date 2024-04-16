@@ -7,7 +7,7 @@
                         @foreach( $dealbrand AS $key => $deal )
                             <ul class="swiper-slide">
                                 <li class="popular_banner">
-                                    <img src="{{$deal->imgUrl}}" class="h-[716px]" alt="{{$deal->company_name}}">
+                                    <img src="{{$deal->mainImgUrl}}" class="h-[716px]" alt="{{$deal->company_name}}">
                                     <div class="txt_box">
                                         <p>
                                             <b>{{$deal->subtext1}}</b><br/>

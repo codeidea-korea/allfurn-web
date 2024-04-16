@@ -12,7 +12,7 @@
                     <div class="detail_box">
                         <ul class="">
                             <li class="popular_banner">
-                                <img src="{{$brand->imgUrl}}" class="h-[716px]" alt="{{$brand->company_name}}">
+                                <img src="{{$brand->mainImgUrl}}" class="h-[716px]" alt="{{$brand->company_name}}">
                                 <div class="txt_box">
                                     <p>
                                         <b>{{$brand->subtext1}}</b><br/>

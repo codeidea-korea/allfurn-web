@@ -187,8 +187,11 @@ class HomeService
                 ELSE "" END) as companyName,
                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
             ))
+            ->leftjoin('AF_product as ap', function($query){
+                $query->on('ap.idx', DB::raw("SUBSTRING_INDEX(AF_banner_ad.web_link, '/', -1)"));
+            })
             ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
             })
             ->where('AF_banner_ad.state', 'G')
             ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
@@ -196,7 +199,7 @@ class HomeService
             ->where('AF_banner_ad.ad_location', 'plandiscount')
             ->where('AF_banner_ad.is_delete', 0)
             ->where('AF_banner_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('banner_price desc, RAND()')->get();
 
         foreach($data['plandiscount_ad'] as $goods){
             if (!is_null($goods->web_link)){
