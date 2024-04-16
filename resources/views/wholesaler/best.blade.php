@@ -8,7 +8,7 @@
             <div class="main_tit mb-8 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <h3>BEST 신상품</h3>
-                    <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="./img/icon-defs.svg#zoom"></use></svg>확대보기</button>
+                    <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="/img/icon-defs.svg#zoom"></use></svg>확대보기</button>
                 </div>
             </div>
             <div class="relative">
@@ -17,11 +17,11 @@
                     @foreach( $productList AS $key => $item )
                     <li class="prod_item">
                         <div class="img_box">
-                            <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                            <a href="/product/detail/{{$item->product_idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                            <button class="zzim_btn prd_{{$item->product_idx}} {{($item->isInterest==1)?'active':''}}" pidx="{{$item->product_idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="txt_box">
-                            <a href="/product/detail/{{$item->idx}}">
+                            <a href="/product/detail/{{$item->product_idx}}">
                                 <span>{{$item->companyName}}</span>
                                 <p>{{$item->name}}</p>
                                 <b>{{number_format( $item->price )}}원</b>
