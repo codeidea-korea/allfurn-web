@@ -147,7 +147,7 @@
                     </div>
                     <div class="move_wrap mt-5">
                         <div class="flex items-center justify-between py-4 border-b">
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 productDiv">
                                 <p>전체</p>
                                 <p>[ 상품 <span>{{ $countAll }}</span>개 보유 ]</p>
                             </div>
@@ -155,7 +155,7 @@
                         </div>
                         @foreach($folders as $folder)
                             <div class="flex items-center justify-between py-4 border-b">
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 productDiv">
                                     <p>{{ $folder->name }}</p>
                                     <p>[ 상품 <span>{{ $folder->product_count >= 1000 ? '999+' : ($folder->product_count < 1 ? 0 : $folder->product_count)}}</span>개 보유 ]</p>
                                 </div>
@@ -351,6 +351,10 @@
         $(".custom_input .folder_setting").hide();
         $(".list_check_img").hide();
     }
+
+    $(document).on('click', '.productDiv', function() {
+        moveInterestProduct(this.nextElementSibling);
+    });
 
     function moveInterestProduct(elem) {
         if($(elem).data('btn-type')=='confirm') {
