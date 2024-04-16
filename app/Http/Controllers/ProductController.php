@@ -354,9 +354,11 @@ class ProductController extends BaseController
 
         } else {
             $list = $this->productService->listByCategory($data);
+            $banners = $this->productService->getBannerListByCategory($data);
 
             return view(getDeviceType().'product.categoryBy', [
-                'data' => $list
+                'data' => $list,
+                'banners' => $banners,
             ]);
         }
     }
