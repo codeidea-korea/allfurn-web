@@ -5,15 +5,7 @@
 	<div class="modal_inner">
 		<button class="close_btn" onclick="modalClose('#agree01-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
 		<div class="modal_body agree_modal_body">
-			<h3>서비스 이용 약관</h3>
-			<div class="scroll_box">
-				제1장 총칙<br/><br/>
-				제1조 (목적)<br/>
-				이 약관은 주식회사 올펀(이하 "회사"라 함)이 운영하는 올펀(https://all-furn.com, 모바일 웹/앱; 이하 "올펀"이라 함)에서 
-				제공하는 전자상거래 관련 서비스(이하 "서비스"라 함)를 이용함에 있어 상품 또는 용역을 거래하는 자 간의 권리, 의무 등 기타 필요사항, 
-				원과 회사간의 권리, 의무, 책임사항 및 회원의 서비스 이용절차 등에 관한 사항을 규정함을 목적으로 합니다.<br/>
-				이 약관은 PC통신, 스마트폰(안드로이드폰, 아이폰 등)앱, 제휴 은행 사이트 등을 이용하는 전자상거래에 대해서도 그 성질에 반하지 않는 한 준용됩니다.
-			</div>
+			<iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
 		</div>
 	</div>
 </div>
@@ -25,12 +17,7 @@
 		<div class="modal_body agree_modal_body">
 			<h3>개인정보 활용 동의</h3>
 			<div class="scroll_box">
-				<b>올펀 개인정보 처리방침</b><br/><br/>
-
-				주식회사 올펀(이하 “회사”)은 회사가 운영하는 인터넷 사이트(https://all-furn.com, 이하 올펀)를 이용하는
-				이용자님들의 개인정보를 매우 중요하게 생각하며 아래와 같은 개인정보 처리방침을 가지고 있습니다.<br/>
-				이 개인정보 처리방침은 개인정보와 관련한 법령 또는 지침의 변경이 있는 경우 갱신되고, 올펀 정책의 변화에 따라 달라질 수 있으니 이용자께서는 올펀 사이트를 방문시 수시로 확인하여 주시기 바랍니다.<br/>
-				올펀의 개인정보 처리방침은 다음과 같은 내용을 담고 있습니다.
+				<iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
 			</div>
 		</div>
 	</div>
@@ -41,12 +28,7 @@
 	<div class="modal_inner">
 		<button class="close_btn" onclick="modalClose('#agree03-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
 		<div class="modal_body agree_modal_body">
-			<h3>개인정보 활용 동의</h3>
-			<div class="scroll_box">
-				<b>마케팅 정보 활용 동의</b><br/><br/>
-
-				마케팅 정보 수신 여부 및 마케팅을 위한 개인정보 수집이용을 거부하실 수 있으며, 거부 시에도 올펀 서비스를 이용하실 수 있으나, 동의를 거부한 경우 각종 소식 및 이벤트 참여에 제한이 있을 수 있습니다.
-			</div>
+			<iframe src="https://api.all-furn.com/res/agreement/marketing.html"></iframe>
 		</div>
 	</div>
 </div>
