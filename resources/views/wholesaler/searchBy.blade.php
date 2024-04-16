@@ -18,8 +18,8 @@
                 </div>
                 <div class="sub_filter">
                     <div class="filter_box">
-                        <button class="on" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary">3</b></button>
-                        <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button>
+                        <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                     </div>
                 </div>
                 <div class="sub_filter_result hidden">
@@ -61,14 +61,14 @@
                                     @endforeach
                                 </div>
                             </div>
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg> 좋아요</button>
+                            <button class="zzim_btn {{ $item->isLike == 1 ? 'active' : '' }}" data-company-idx='{{$item->companyIdx}}' onclick="toggleCompanyLike({{$item->companyIdx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg> 좋아요</button>
                         </div>
                         <div class="prod_box">
                             @foreach($item->imgList as $i => $img)
                                 @php if( $i > 2 ) continue; @endphp
                             <div class="img_box">
                                 <a href="/product/detail/{{$img->idx}}"><img src="{{$img->imgUrl}}" alt=""></a>
-                                <button class="zzim_btn prd_{{$img->idx}}" pIdx="{{$img->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                <button class="zzim_btn prd_{{ $img->idx }} {{ ($img->isInterest == 1) ? 'active' : '' }}" pidx="{{ $img->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             @endforeach
                         </div>
@@ -143,6 +143,25 @@
             // 해당하는 ID를 가진 가이드 내용만 보여주기
             $('#' + targetId).show();
         });
+
+        function toggleCompanyLike(idx) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : '/wholesaler/like/' + idx,
+                method: 'POST',
+                success : function(result) {
+                    if (result.success) {
+                        if (result.like === 0) {
+                            $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                        } else {
+                            $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                        }
+                    }
+                }
+            })
+        }
 
     </script>
 

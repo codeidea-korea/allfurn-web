@@ -135,7 +135,9 @@ class WholesalerService {
             $imgList = Product::select('AF_product.idx',
                 DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
                 (SELECT COUNT(DISTINCT pa.idx) cnt FROM AF_product_ad pa WHERE pa.idx = AF_product.idx AND pa.state = "G"
-                                 AND pa.start_date < '.DB::raw("now()").' AND pa.end_date > '.DB::raw("now()").') as isAd'))
+                                 AND pa.start_date < '.DB::raw("now()").' AND pa.end_date > '.DB::raw("now()").') as isAd
+                ,(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+                ))
                 ->where(['AF_product.company_idx'=>$item->companyIdx, 'AF_product.company_type'=> 'W'])
                 ->whereIn('AF_product.state', ['S','O']);
 

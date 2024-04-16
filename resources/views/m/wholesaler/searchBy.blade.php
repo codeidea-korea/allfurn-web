@@ -11,12 +11,12 @@
         <section class="sub !pt-0">
             <div class="sub_category !pb-0 !mb-0">
                 <ul>
-                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="./full_results_prod.php">상품</a></li>
-                    <li class="active w-full"><a class="inline-block w-full py-3 text-center" href="./full_results_company.php">업체</a></li>
+                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="/product/search?kw={{$_GET['kw']}}">상품</a></li>
+                    <li class="active w-full"><a class="inline-block w-full py-3 text-center" href="javascript:(0);">업체</a></li>
                 </ul>
             </div>
             <div class="bg-stone-100 px-[18px] py-3">
-                <p class="text-stone-400"><span>"베드보스"</span> 검색 결과 총 1개의 도매업체</p>
+                <p class="text-stone-400"><span>"{{$_GET['kw']}}"</span> 검색 결과 총 {{number_format($data['list']->total())}}개의 도매업체</p>
             </div>
             <div class="sub_filter px-[18px] mt-3">
                 <div class="filter_box !flex-nowrap whitespace-nowrap overflow-x-auto">
@@ -47,7 +47,7 @@
                                 {{$item->companyName}}
                                 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                             </a>
-                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                            <button class="zzim_btn {{ $item->isLike == 1 ? 'active' : '' }}" data-company-idx='{{$item->companyIdx}}' onclick="toggleCompanyLike({{$item->companyIdx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="tag">
@@ -63,7 +63,7 @@
                         @php if( $i > 2 ) continue; @endphp
                         <div class="img_box">
                             <a href="/product/detail/{{$img->idx}}"><img src="{{$img->imgUrl}}" alt=""></a>
-                            <button class="zzim_btn prd_{{$img->idx}}" pIdx="{{$img->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                            <button class="zzim_btn prd_{{ $img->idx }} {{ ($img->isInterest == 1) ? 'active' : '' }}" pidx="{{ $img->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                         </div>
                         @endforeach
                     </div>
@@ -356,6 +356,25 @@
             $(item).parents('.filter_body').find('input').each(function(){
                 $(this).prop("checked",false);
             });
+        }
+
+        function toggleCompanyLike(idx) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : '/wholesaler/like/' + idx,
+                method: 'POST',
+                success : function(result) {
+                    if (result.success) {
+                        if (result.like === 0) {
+                            $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                        } else {
+                            $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                        }
+                    }
+                }
+            })
         }
 
     </script>

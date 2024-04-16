@@ -10,7 +10,7 @@
                 <div class="absolute w-full p-4 bg-white rounded-md z-999 shadow-md search_list hidden">
                     <div class="text-sm flex justify-between py-3">
                         <span class="font-bold">최근 검색어</span>
-                        <button class="text-gray-400">전체 삭제</button>
+                        <button class="text-gray-400" onclick="deleteSearchKeyword('all')">전체 삭제</button>
                     </div>
                     <ul class="flex flex-col gap-4 keywordList">
                         <!-- 최근 검색어 //-->
@@ -103,7 +103,7 @@ const getSearchData = () => {
                 keywordPart += '' +
                     '<li class="flex items-center justify-between text-sm">' +
                     '   <a href="javascript:;" onClick="clickKeyword(\'' + json['keywords'][i]['keyword'] + '\')" data-idx="' + json['keywords'][i]['keyword'] + '">' + json['keywords'][i]['keyword'] + '</a>' +
-                    '   <button class="a11y">' +
+                    '   <button class="a11y" onclick="deleteSearchKeyword('+ json['keywords'][i]['idx'] +')">' +
                     '       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400">' +
                     '           <path d="M18 6 6 18"></path>' +
                     '           <path d="m6 6 12 12"></path></svg>' +

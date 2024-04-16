@@ -12,7 +12,7 @@
                 </div>
                 <div class="sub_category">
                     <ul>
-                        <li class="active"><a href="./full_results_prod.php">상품</a></li>
+                        <li class="active"><a href="javascript:(0);">상품</a></li>
                         <li><a href="/wholesaler/search?kw={{$_GET['kw']}}">업체</a></li>
                     </ul>
                 </div>
