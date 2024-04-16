@@ -190,7 +190,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .slide_arrow.type03.prev svg {transform:rotate(0); }
 
 /* 상품아이템 */
-.prod_item .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:4px; background-color:#f5f5f5; }
+.prod_item .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:4px; background-color:#f5f5f5; border:1px solid #f5f5f5; }
 .prod_item .img_box img {position:absolute; left:50%; top:50%; width:100%; height:100%; border-radius:4px; transform:translate(-50%,-50%); object-fit:cover; }
 .prod_item .img_box .zzim_btn {position:absolute; right:16px; bottom:16px; }
 .prod_item .txt_box {padding-top:6px ; line-height:1;}
@@ -202,7 +202,9 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .img_box .zzim_btn.active svg {stroke:var(--main_color); fill:var(--main_color); }
 
 /* 메인 - 할인상품 */
-.prod_item.type02 .img_box span {position:absolute; left:40px; bottom:45px; color:#fff; font-size:26px; font-weight:300; }
+.prod_item.type02 .img_box {position:relative; }
+.prod_item.type02 .img_box:before {content:''; position:absolute; left:0; bottom:0; z-index:1; width:100%; height:50%; background:linear-gradient(0, rgba(33, 33, 33, 0.66) 0%, rgba(0, 0, 0, 0) 50.18%); }
+.prod_item.type02 .img_box span {z-index:2; position:absolute; left:0; bottom:0; width:100%; padding:45px 20px 45px 40px; color:#fff; font-size:26px; font-weight:300; }
 .prod_item.type02 .img_box span b {font-size:36px; font-weight:600; }
 .prod_item.type02 .txt_box strong {overflow:hidden; display:block; padding:20px 0 15px; font-size:22px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
 .prod_item.type02 .txt_box span {font-size:16px; }
@@ -244,7 +246,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_filter .filter_box {display:flex; align-items:center; gap:8px;  }
 .sub_filter .filter_box button {display:flex; align-items:center; gap:4px; height:44px; border:0.5px solid var(--gray_color); padding:5px 14px; border-radius:3px; }
 .sub_filter .filter_box button.on {border:1px solid var(--main_color); background-color:#ffeff1; }
-.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('../img/icon/filter_arrow.svg') no-repeat center center; }
+.sub_filter .filter_box button:after {content:''; display:inline-flex; width:20px; height:20px; background:url('/img/icon/filter_arrow.svg') no-repeat center center; }
 .sub_filter .total {font-weight:500; }
 
 .sub_filter_result {display:flex; align-items:center; justify-content:space-between; padding:15px; border:1px solid #dadde0; margin-bottom:24px; border-radius:3px;}
