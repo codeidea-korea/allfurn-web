@@ -3,8 +3,33 @@
 @section('content')
 @include('layouts.header')
 <div id="content">
-    <section class="sub">
+    <section class="sub_section_top">
         <div class="inner">
+            
+            <div class="line_common_banner  mb-14">
+                <ul class="swiper-wrapper">
+                    @foreach($banners as $banner)
+                        @if($banner->banner_type === 'img')
+                            <li class="swiper-slide" style="background-image:url({{ preImgUrl() }}{{$banner->attachment->folder}}/{{$banner->attachment->filename}})">
+                                <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
+                            </li>
+                        @else
+                            <li class="swiper-slide" style="background-color:{{$banner->bg_color}};">
+                                <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                                    <div class="txt_box type02" style="color:{{ $banner->font_color }};">
+                                        <p>{{ $banner->subtext1 }}<br/>{{ $banner->subtext2 }}</p>
+                                        <span>{{ $banner->content }}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
+                </ul>
+                <div class="count_pager" style="width:auto"><b>1</b> / 12</div>
+                <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+                <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            </div>
+
             <div class="main_tit mb-8 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <h3>
@@ -114,6 +139,29 @@
 </div>
 
 <script>
+    const line_common_banner = new Swiper(".line_common_banner", {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: ".line_common_banner .slide_arrow.next",
+            prevEl: ".line_common_banner .slide_arrow.prev",
+        },
+        pagination: {
+            el: ".line_common_banner .count_pager",
+            type: "fraction",
+        }
+    });
+    $('.line_common_banner').hover(function(){
+        line_common_banner.autoplay.stop();
+    }, function(){
+        line_common_banner.autoplay.start();
+    });
+
+
     $(document).ready(function(){
         urlSearch = new URLSearchParams(location.search);
         

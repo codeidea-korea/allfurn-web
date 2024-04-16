@@ -10,7 +10,7 @@
 
 <div id="content">
     <div class="main_visual">
-        <div class="slide_box">
+        <div class="slide_box bg_gradient">
             <ul class="swiper-wrapper">
                 @foreach($data['banner_top'] as $item)
                     <?php
@@ -408,13 +408,33 @@ const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
 });
 
 // popular_prod 
+const popular_prod_pager = new Swiper(".popular_prod .pager_box", {
+    slidesPerView: 'auto',
+    spaceBetween: 10,
+    navigation: {
+        nextEl: ".popular_prod .bottom_box .arrow.next",
+        prevEl: ".popular_prod .bottom_box .arrow.prev",
+    },
+});
+
 const popular_prod = new Swiper(".popular_prod .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     pagination: {
-        el: ".popular_prod .count_pager",
+        el: ".popular_prod .main_tit .count_pager",
         type: "fraction",
     },
+    thumbs: {
+        swiper: popular_prod_pager,
+    },
+    on: {
+        init : function(swiper){
+            $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
+        },
+        slideChange : function(swiper){
+            $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
+        }
+    }
 });
 
 // sale_prod 
@@ -454,7 +474,7 @@ $(document)
 <script>
         function callLogin(){
 
-            var jsonStr = '{ "type" : "login", "accessToken" : "{{xtoken}}"}';
+            var jsonStr = '{ "type" : "login", "accessToken" : "{{$xtoken}}"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
 
             var isMobile = {
             Android: function () {

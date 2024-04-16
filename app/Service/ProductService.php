@@ -446,6 +446,30 @@ class ProductService
             ->get();
     }
 
+    public function getBannerListByCategory(array $param = [])
+    {
+        return Banner::where('ad_location', 'category')
+            ->where('category_idx', $param['parentIdx'])
+            ->where('start_date', '<', DB::raw('now()'))
+            ->where('end_date', '>', DB::raw('now()'))
+            ->where('state', 'G')
+            ->where('is_delete', 0)
+            ->where('is_open', 1)
+            ->orderByRaw('banner_price desc, RAND()')
+            ->has('attachment')
+            ->leftjoin('AF_attachment as app', function($query) {
+                $query->on('app.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.appbig_attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_attachment as app51', function($query) {
+                $query->on('app51.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.app51_attachment_idx, ",", 1)'));
+            })
+            ->select('*'
+                , DB::raw('CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl')
+                , DB::raw('CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl')
+            )
+            ->get();
+    }
+
     public function getTodayCount()
     {
         return Product::whereDate('access_date', DB::raw('date(now())'))

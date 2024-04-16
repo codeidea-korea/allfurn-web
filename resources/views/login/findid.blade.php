@@ -39,7 +39,7 @@
                 </div>
                 <h4 class="_step2" style='display:none;'>가입된 아이디</h4>
                 <div class="info_box _step2" style='display:none;'>
-                    비밀번호를 분실하셨다면 아이디 선택 후 비밀번호 재설정을 클릭해주세요
+                    비밀번호를 분실하셨다면 아이디 확인 후 비밀번호 재설정을 클릭해주세요
                 </div>
 
                 <ul class="joined_id mt-2 _step2" style='display:none;'>
@@ -197,7 +197,7 @@ function confirmAuthCode() {
                     for(var idx=0; idx<result.users.length; idx++) {
                         
                         tmpHtml += '<li>'
-                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" value="'+result.users[idx].account+'" class="radio-form">'
+                                +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" value="'+result.users[idx].account+'" class="radio-form" style="display:none;" '+(idx == 0 ? 'checked' : '')+'>'
                                 +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
                                 +'</li>';
                     }

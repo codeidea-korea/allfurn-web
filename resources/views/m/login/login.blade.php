@@ -85,7 +85,7 @@ $header_banner = '';
             <div class="link_box flex items-center justify-center">
                 <a href="/findid">아이디 찾기</a>
                 <a href="/findpw">비밀번호 재설정</a>
-                <a href="javascript:;">서비스 이용 문의</a>
+                <a href="mailto:cs@all-furn.com">서비스 이용 문의</a>
             </div>
         </div>
     </section>

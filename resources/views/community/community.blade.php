@@ -9,7 +9,21 @@
     
     <section class="sub_section community_con01">
         <div class="inner">
-            <div class="title">
+
+            <div class="tab_layout type02">
+                <ul>
+                    <li class="{{ !isset($board_name) || empty($board_name) ? 'active' : ''}}">
+                        <a href="javascript:;" onclick="getBoardList('전체')">전체</a>
+                    </li>
+                    @foreach ($boards as $board)
+                        <li class="{{ isset($board_name) && $board->name == $board_name ? 'active' : '' }}">
+                            <a href="javascript:;" onclick="getBoardList('{{$board->name}}')">{{$board->name}}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+
+            <div class="title mb-6">
                 <div class="search_box">
                     <input type="text" class="input-form" placeholder="글 제목이나 작성자를 검색해주세요" value={{ isset($keyword) ? $keyword : ''}}>
                     <button><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#news_search"></use></svg></button>
@@ -32,19 +46,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="tab_layout type02">
-                <ul>
-                    <li class="{{ !isset($board_name) || empty($board_name) ? 'active' : ''}}">
-                        <a href="javascript:;" onclick="getBoardList('전체')">전체</a>
-                    </li>
-                    @foreach ($boards as $board)
-                        <li class="{{ isset($board_name) && $board->name == $board_name ? 'active' : '' }}">
-                            <a href="javascript:;" onclick="getBoardList('{{$board->name}}')">{{$board->name}}</a>
-                        </li>
-                    @endforeach
-                </ul>
             </div>
 
             <div class="tab_content">
@@ -73,7 +74,7 @@
                                             <div class="info">
                                                 <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_view"></use></svg>
                                                 <span>{{$article->view_count}}</span>
-                                                <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_up"></use></svg>
+                                                <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#zzim"></use></svg>
                                                 <span>{{$article->like_count}}</span>
                                                 <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#commu_comment"></use></svg>
                                                 <span>{{$article->reply_count}}</span>
@@ -128,6 +129,9 @@
                         >
                     </a>
                 @endif
+            </div>
+            <div class="community_write_btn">
+                <a href="/community/write" class="btn btn-round btn-primary px-4"><svg class="w-5 h-5 mr-1"><use xlink:href="/img/icon-defs.svg#write_add"></use></svg>글쓰기</a>
             </div>
         </div>
         

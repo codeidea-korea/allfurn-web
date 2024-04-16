@@ -1,4 +1,4 @@
-<section class="main_section popular_prod">
+<section class="main_section popular_prod main_popular">
     <div class="inner">
         <div class="main_tit mb-8 flex justify-between items-center">
             <div class="flex items-center gap-4">
@@ -37,8 +37,27 @@
                     @endforeach
                 </div>
             </div>
-            <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
-            <button class="slide_arrow next"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
         </div>
+        @if( count( $data['popularbrand_ad'] ) > 0 )
+            <div class="bottom_box">
+                <div class="bot_slide ">
+                    <button class="arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
+                    <div class="pager_box overflow-hidden">
+                        <ul class="swiper-wrapper">
+                            @foreach( $data['popularbrand_ad'] AS $brand )
+                                <li class="swiper-slide"><button>{{$brand->companyName}}</button></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <button class="arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
+                </div>
+                <div class="right_box">
+                    <div class="count_pager"><b>1</b> / 12</div>
+                    <!-- <a href="javascript:;">모아보기</a> -->
+                </div>
+            </div>
+        @endif
     </div>
 </section>

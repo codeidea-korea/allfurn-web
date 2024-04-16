@@ -1,16 +1,12 @@
 @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
     @if(request()->is(['product/detail/*', 'product/registration', 'magazine/*/detail/*', 
-                        'magazine/detail/*' ,'community/*', 'message/*', 'help/*',
+                        'magazine/detail/*','community','community/*', 'message/*', 'help/*',
                         'signin', 'signup','findid', 'findpw'
                     ]))
         {{-- 아무것도 표시 안함 --}}
     @else
         <div id="prod_regist_btn" class="">
-            @if(Request::segment(1) == 'community') 
-                <a href="/community/write"><svg class="h-8 w-8" style="stroke: #fff;"><use xlink:href="/img/m/icon-defs.svg#write_pencil"></use></svg></a>
-            @else
-                <a href="/product/registration">상품<br>등록</a>
-            @endif
+            <a href="/product/registration">상품<br>등록</a>
         </div>
     @endif
 @endif
