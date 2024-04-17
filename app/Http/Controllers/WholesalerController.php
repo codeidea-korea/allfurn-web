@@ -36,7 +36,7 @@ class WholesalerController extends BaseController
         $data = $this->wholesalerService->getWholesalerData($target);
         $categoryList = $this->productService->getCategoryList();
 
-        $bannerList = $this->productService->getThisDealList('dealmiddle');
+        $bannerList = $this->productService->getThisDealList('wholesaletop');
 
         // $companyList = $this->productService->getThisMonth('product');
         // $companyList = setArrayNumer( $companyList );

@@ -104,7 +104,19 @@ class CommunityService {
             ->where('is_open', 1)
             ->where('start_date', '<=', Carbon::now()->format('Y-m-d H:i:s'))
             ->where('end_date', '>=', Carbon::now()->format('Y-m-d H:i:s'))
-            ->has('attachment', '>=', 0)
+            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_banner_ad.web_attachment_idx')
+            ->leftjoin('AF_attachment as app', function($query) {
+                $query->on('app.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.appbig_attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_attachment as app51', function($query) {
+                $query->on('app51.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.app51_attachment_idx, ",", 1)'));
+            })
+            ->select('AF_banner_ad.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url')
+                , DB::raw('CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl')
+                , DB::raw('CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl')
+            )
+            ->orderByRaw('banner_price desc, RAND()')
             ->get();
     }
 

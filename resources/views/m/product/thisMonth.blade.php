@@ -101,7 +101,7 @@
             <div class="line_common_banner">
                 <ul class="swiper-wrapper">
                     @foreach( $dealmiddle AS $k => $mid )
-                        <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->imgUrl . ');background-size:100%;' : 'background-color:' . $mid->font_color . ';' }}">
+                        <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->appBigImgUrl . ');background-size:100%;' : 'background-color:' . $mid->font_color . ';' }}">
                             @php
                                 $link = '';
                                 switch ($mid->web_link_type) {

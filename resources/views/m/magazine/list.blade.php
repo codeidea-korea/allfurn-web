@@ -14,7 +14,7 @@
             <ul class="swiper-wrapper">
                 @foreach($banners as $banner)
                     @if($banner->banner_type === 'img')
-                        <li class="swiper-slide" style="background-image:url({{ $banner->image_url }})">
+                        <li class="swiper-slide" style="background-image:url({{ $banner->appBigImgUrl }})">
                             <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
                         </li>
                     @else
