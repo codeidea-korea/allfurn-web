@@ -8,15 +8,15 @@
             @if($user -> type === 'W')
             <div class="profile flex gap-4 items-center">
                 <img src="/img/mypage/ws_profile.png" alt="" />
-                <a href="javascript: ;">
+                {{-- <a href="javascript: ;"> --}}
                     <div class="flex items-center">
                         <p class="profile_id">{{ $user -> company_name }}</p>
                         @if($user -> parent_idx !== 0)
                         <p class="user-name-text">{{ $user -> name }}</p>
                         @endif
-                        <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                        {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                     </div>
-                </a>
+                {{-- </a> --}}
             </div>
             <div class="flex items-center gap-5">
                 <div class="status_zone flex gap-3.5 items-center">
@@ -37,26 +37,26 @@
                 </div>
                 @elseif($user -> type === 'R')
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/s_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> company_name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @else
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/r_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @endif
-                <!--
+                {{--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
@@ -65,7 +65,7 @@
                     </div>
                     <a class="fs14 flex items-center txt-gray" href="javascript: ;">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
-                -->
+                --}}
             </div>
         </div>
         <div class="flex inner gap-10 mb-[100px]">
