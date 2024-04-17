@@ -29,7 +29,7 @@
                 </div>
                 <div class="setting_input w-[300px] h-[48px] flex items-center justify-center gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search text-gray-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input type="text" name="keyword" id="keyword" class="w-full" value="{{ request() -> get('keyword') }}" placeholder="검색어를 입력해주세요.">
+                    <input type="text" name="keyword" id="keyword" class="w-full" value="{{ request() -> get('keyword') }}" placeholder="검색어를 입력해주세요." />
                 </div>
             </div>
         </div>
@@ -52,84 +52,84 @@
         @endif
     </div>
 
-    <div class="my_like_tab_section pt-5" id="section01" style="display: block;">
+    <div id="section01" class="my_like_tab_section pt-5" style="display: block;">
         @if(request() -> get('type') !== 'temp')
-        @if (count($represents) < 1 && count($list) < 1 && request() -> get('keyword'))
-        <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
-            <h3 class="font-medium">추천 상품</h3>
-        </div>
-        <ul>
-            <li class="no_prod txt-gray">
-                '{{ request() -> get('keyword') }}' 검색 결과에 해당하는 추천 상품이 없습니다.
-            </li>
-        </ul>
-        @else
-        <div>
-            @if (count($represents) < 1)
+            @if (count($represents) < 1 && count($list) < 1 && request() -> get('keyword'))
             <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
-                <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400"></span></h3>
+                <h3 class="font-medium">추천 상품</h3>
             </div>
-            @if (request() -> get('keyword'))
             <ul>
                 <li class="no_prod txt-gray">
                     '{{ request() -> get('keyword') }}' 검색 결과에 해당하는 추천 상품이 없습니다.
                 </li>
             </ul>
             @else
-            <ul>
-                <li class="no_prod txt-gray">
-                    추천 상품을 선택해주세요.
-                </li>
-            </ul>
-            @endif
-            @else
-            <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
-                <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400">(최대 5개)</span></h3>
-            </div>
-            <ul>
-                @foreach($represents as $represent)
-                <li class="border-b pb-8">
-                    <div class="flex items-center gap-8">
-                        <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                            <button class="state_preview">
-                                <img src="{{ $represent -> product_image }}" alt="item03" />
-                            </button>
-                        </div>
-                        <div class="flex flex-col w-full">
-                            <div class="flex items-center justify-between pb-4 mb-4 border-b">
-                                <span class="text-sm px-2 py-0.5 rounded-sm bg-primary text-white font-medium">{{ config('constants.PRODUCT_STATUS')[$represent -> state] }}</span>
-                                <button type="button" class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div>
+                @if (count($represents) < 1)
+                <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
+                    <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400"></span></h3>
+                </div>
+                    @if (request() -> get('keyword'))
+                    <ul>
+                        <li class="no_prod txt-gray">
+                            '{{ request() -> get('keyword') }}' 검색 결과에 해당하는 추천 상품이 없습니다.
+                        </li>
+                    </ul>
+                    @else
+                    <ul>
+                        <li class="no_prod txt-gray">
+                            추천 상품을 선택해주세요.
+                        </li>
+                    </ul>
+                    @endif
+                @else
+                <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
+                    <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400">(최대 5개)</span></h3>
+                </div>
+                <ul>
+                    @foreach($represents as $represent)
+                    <li class="border-b pb-8">
+                        <div class="flex items-center gap-8">
+                            <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
+                                <button class="state_preview">
+                                    <img src="{{ $represent -> product_image }}" alt="item03" />
                                 </button>
                             </div>
-                            <div class="flex items-start">
-                                <div class="w-full">
-                                    <div class="flex items-center gap-1 text-stone-500">
-                                        <span>{{ $represent -> parent_category }}</span>
-                                        <span>></span>
-                                        <span>{{ $represent -> child_category }}</span>
+                            <div class="flex flex-col w-full">
+                                <div class="flex items-center justify-between pb-4 mb-4 border-b">
+                                    <span class="text-sm px-2 py-0.5 rounded-sm bg-primary text-white font-medium">{{ config('constants.PRODUCT_STATUS')[$represent -> state] }}</span>
+                                    <button type="button" class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-full">
+                                        <div class="flex items-center gap-1 text-stone-500">
+                                            <span>{{ $represent -> parent_category }}</span>
+                                            <span>></span>
+                                            <span>{{ $represent -> child_category }}</span>
+                                        </div>
+                                        <div class="text-lg">{{ $represent -> name }}</div>
                                     </div>
-                                    <div class="text-lg">{{ $represent -> name }}</div>
+                                    <div class="flex items-center gap-2 shrink-0 text-stone-500">
+                                        <a href="/product/modify/{{ $represent -> idx }}">수정</a>
+                                        <span>|</span>
+                                        <button type="button" onClick="deleteProductModal({{ $represent -> idx }})">삭제</button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2 shrink-0 text-stone-500">
-                                    <a href="/product/modify/{{ $represent -> idx }}">수정</a>
-                                    <span>|</span>
-                                    <button type="button" onClick="deleteProductModal({{ $represent -> idx }})">삭제</button>
+                                <div class="flex items-center justify-between py-2.5 bg-stone-100 rounded-md mt-16">
+                                    <div class="w-full text-center text-sm font-medium">관심 {{ $represent -> interest_product_count }}</div>
+                                    <div class="w-full text-center text-sm font-medium">문의 {{ $represent -> inquiry_count }}</div>
+                                    <div class="w-full text-center text-sm font-medium">진입 {{ $represent -> access_count }}</div>
                                 </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2.5 bg-stone-100 rounded-md mt-16">
-                                <div class="w-full text-center text-sm font-medium">관심 {{ $represent -> interest_product_count }}</div>
-                                <div class="w-full text-center text-sm font-medium">문의 {{ $represent -> inquiry_count }}</div>
-                                <div class="w-full text-center text-sm font-medium">진입 {{ $represent -> access_count }}</div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                @endforeach
-            </ul>
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
+            </div>
             @endif
-        </div>
-        @endif
         @endif
 
         <div class="mt-9">
@@ -137,97 +137,97 @@
                 <h3 class="font-medium">전체</h3>
             </div>
             @if ($count < 1)
-            @if (request() -> get('keyword'))
-            <ul>
-                <li class="no_prod txt-gray">
-                    '{{ request() -> get('keyword') }}' 검색 결과에 해당하는 상품이 없습니다.
-                </li>
-            </ul>
-            @else
-            <ul>
-                <li class="no_prod txt-gray">
-                    상품을 등록해주세요.
-                </li>
-                <li class="no_prod txt-gray">
-                    <button type="button" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
-                </li>
-            </ul>
-            @endif
-            @else
-            <ul>
                 @if (request() -> get('keyword'))
-                <li class="no_prod txt-gray">
-                    '{{ request() -> get('keyword') }}' 검색 결과 총 {{ $count }} 개의 상품
-                </li>
-                <br />
+                <ul>
+                    <li class="no_prod txt-gray">
+                        '{{ request() -> get('keyword') }}' 검색 결과에 해당하는 상품이 없습니다.
+                    </li>
+                </ul>
+                @else
+                <ul>
+                    <li class="no_prod txt-gray">
+                        상품을 등록해주세요.
+                    </li>
+                    <li class="no_prod txt-gray">
+                        <button type="button" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
+                    </li>
+                </ul>
                 @endif
-                @foreach($list as $row)
-                <li class="border-b pb-8">
-                    <div class="flex items-center gap-8">
-                        <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                            <button class="state_preview" onClick="modalOpen('#state_preview_modal')">
-                                <img src="{{ $row -> product_image }}" alt="item03" />
-                            </button>
-                        </div>
-                        <div class="flex flex-col w-full">
-                            <div class="flex items-center justify-between pb-4 mb-4 border-b">
-                                <span class="text-sm px-2 py-0.5 rounded-sm bg-stone-200 text-stone-500 font-medium">{{ config('constants.PRODUCT_STATUS')[$row -> state] }}</span>
-                                <button type="button" class="recommend-btn" data-represent-id="{{ $row -> idx }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            @else
+                <ul>
+                    @if (request() -> get('keyword'))
+                    <li class="no_prod txt-gray">
+                    '{{ request() -> get('keyword') }}' 검색 결과 총 {{ $count }} 개의 상품
+                    </li>
+                    <br />
+                    @endif
+                    @foreach($list as $row)
+                    <li class="border-b pb-8">
+                        <div class="flex items-center gap-8">
+                            <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
+                                <button class="state_preview" onClick="modalOpen('#state_preview_modal')">
+                                    <img src="{{ $row -> product_image }}" alt="item03" />
                                 </button>
                             </div>
-                            <div class="flex items-start">
-                                <div class="w-full">
-                                    <div class="flex items-center gap-1 text-stone-500">
-                                        <span>{{ $row -> parent_category }}</span>
-                                        <span>></span>
-                                        <span>{{ $row -> child_category }}</span>
+                            <div class="flex flex-col w-full">
+                                <div class="flex items-center justify-between pb-4 mb-4 border-b">
+                                    <span class="text-sm px-2 py-0.5 rounded-sm bg-stone-200 text-stone-500 font-medium">{{ config('constants.PRODUCT_STATUS')[$row -> state] }}</span>
+                                    <button type="button" class="recommend-btn" data-represent-id="{{ $row -> idx }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-full">
+                                        <div class="flex items-center gap-1 text-stone-500">
+                                            <span>{{ $row -> parent_category }}</span>
+                                            <span>></span>
+                                            <span>{{ $row -> child_category }}</span>
+                                        </div>
+                                        <div class="text-lg">{{ $row -> name }}</div>
                                     </div>
-                                    <div class="text-lg">{{ $row -> name }}</div>
+                                    <div class="flex items-center gap-2 shrink-0 text-stone-500">
+                                        <button onClick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}');">상태 변경</button>
+                                        <span>|</span>
+                                        <a href="/product/registration?temp={{ $row -> idx }}">수정</a>
+                                        <span>|</span>
+                                        <button type="button" onClick="deleteProductModal({{ $row -> idx }})">삭제</button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2 shrink-0 text-stone-500">
-                                    <button onClick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}');">상태 변경</button>
-                                    <span>|</span>
-                                    <a href="/product/registration?temp={{ $row -> idx }}">수정</a>
-                                    <span>|</span>
-                                    <button type="button" onClick="deleteProductModal({{ $row -> idx }})">삭제</button>
+                                <div class="flex items-center justify-between py-2.5 bg-stone-100 rounded-md mt-16">
+                                    <div class="w-full text-center text-sm font-medium">관심 {{ $row -> interest_product_count }}</div>
+                                    <div class="w-full text-center text-sm font-medium">문의 {{ $row -> inquiry_count }}</div>
+                                    <div class="w-full text-center text-sm font-medium">진입 {{ $row -> access_count }}</div>
                                 </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2.5 bg-stone-100 rounded-md mt-16">
-                                <div class="w-full text-center text-sm font-medium">관심 {{ $row -> interest_product_count }}</div>
-                                <div class="w-full text-center text-sm font-medium">문의 {{ $row -> inquiry_count }}</div>
-                                <div class="w-full text-center text-sm font-medium">진입 {{ $row -> access_count }}</div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                @endforeach
-            </ul>
-            <div class="pagenation flex items-center justify-center py-12">
-                @if($pagination['prev'] > 0)
-                <button type="button" id="prev-paginate" class="prev" onClick="moveToList({{$pagination['prev']}});">
-                    <svg width="7" height="12" viewBox="0 0 7 12" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>시
-                @endif
-                @foreach($pagination['pages'] as $paginate)
-                @if ($paginate == $offset)
-                <a href="javascript: void(0);" class="active" onClick="moveToList({{$paginate}});">{{$paginate}}</a>
-                @else
-                <a href="javascript: void(0);" onClick="moveToList({{$paginate}});">{{$paginate}}</a>
-                @endif
-                @endforeach
-                @if($pagination['next'] > 0)
-                <button type="button" id="next-paginate" class="next" onClick="moveToList({{$pagination['next']}});">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button>
-                @endif
-            </div>
+                    </li>
+                    @endforeach
+                </ul>
+                <div class="pagenation flex items-center justify-center py-12">
+                    @if($pagination['prev'] > 0)
+                    <button type="button" id="prev-paginate" class="prev" onClick="moveToList({{$pagination['prev']}});">
+                        <svg width="7" height="12" viewBox="0 0 7 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>시
+                    @endif
+                    @foreach($pagination['pages'] as $paginate)
+                        @if ($paginate == $offset)
+                            <a href="javascript: void(0);" class="active" onClick="moveToList({{$paginate}});">{{$paginate}}</a>
+                        @else
+                            <a href="javascript: void(0);" onClick="moveToList({{$paginate}});">{{$paginate}}</a>
+                        @endif
+                    @endforeach
+                    @if($pagination['next'] > 0)
+                    <button type="button" id="next-paginate" class="next" onClick="moveToList({{$pagination['next']}});">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    @endif
+                </div>
             @endif
         </div>
     </div>
@@ -393,10 +393,10 @@
                     <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
                 </div>
             </div>
-
+            
             <div class="flex justify-center">
                 <button class="btn btn-primary w-1/4 mt-8" onclick="modalClose('#state_preview_modal')">확인</button>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
@@ -427,7 +427,7 @@
                 </div>
                 <div class="flex justify-center">
                     <button id="confirmChangeStatueBtn" class="btn btn-primary w-full mt-8" data-idx="" onClick="changeState();">완료</button>
-                </div>
+                </div> 
             </div>
         </div>
     </div>
@@ -715,10 +715,10 @@
     }
 
 
-
+    
     $(document).ready(function(){
         const urlSearch = new URLSearchParams(location.search);
-
+        
         if(urlSearch.get('order') === 'ASC') {
             $('.order_filter').text('등록순');
         } else {

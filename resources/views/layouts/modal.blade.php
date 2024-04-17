@@ -698,14 +698,14 @@
             </div>
             <ul class="search_btn_list type02">
                 <li class="all_btn"><button>인기 상품 모아보기</button></li>
-                <li><button>전체</button></li>
-                <li><button>소파 / 거실 가구</button></li>
-                <li><button>식탁 / 주방  가구</button></li>
-                <li><button>옷장 / 드레스룸</button></li>
-                <li><button>책상 / 서재 가구</button></li>
-                <li><button>유아동 가구</button></li>
-                <li><button>맞춤 가구</button></li>
-                <li><button>사무 / 업소용 가구</button></li>
+                <li data-pre=""><button>전체</button></li>
+                <li data-pre="1"><button>소파 / 거실 가구</button></li>
+                <li data-pre="3"><button>식탁 / 주방  가구</button></li>
+                <li data-pre="4"><button>옷장 / 드레스룸</button></li>
+                <li data-pre="5"><button>책상 / 서재 가구</button></li>
+                <li data-pre="7"><button>유아동 가구</button></li>
+                <li data-pre=""><button>맞춤 가구</button></li>
+                <li data-pre=""><button>사무 / 업소용 가구</button></li>
             </ul>
             <a href="javascript:void(0);" class="btn btn-primary w-full">확인</a>
         </div>
@@ -879,6 +879,47 @@
             </ul>
             <button class="btn btn-primary w-full ">확인</button>
             @endif
+        </div>
+    </div>
+</div>
+
+
+<!-- 상품 임시 등록 팝업 -->
+<div class="modal" id="product_temp_save_modal">
+    <div class="modal_bg" onclick="modalClose('#product_temp_save_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_temp_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>임시 등록되었습니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 상품 등록 신청 팝업 -->
+<div class="modal" id="product_save_modal">
+    <div class="modal_bg" onclick="modalClose('#product_save_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>상품 등록 신청이 완료되었습니다.<br />등록 승인 결과는 푸시 알림으로 발송됩니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 상품 수정 완료 팝업 -->
+<div class="modal" id="product_update_modal">
+    <div class="modal_bg" onclick="modalClose('#product_update_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_update_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>상품 수정이 완료되었습니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+            </div>
         </div>
     </div>
 </div>

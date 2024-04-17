@@ -142,7 +142,6 @@ class ProductController extends BaseController
      */
     public function registration()
     {
-
         return view(getDeviceType().'product.product-registration', [
             'banners' => $this->productService->getBannerList(),
             'todayCount' => $this->productService->getTodayCount(),
@@ -435,6 +434,7 @@ class ProductController extends BaseController
             $data[$key]->web_link = $banner['web_link'];
             $data[$key]->company_name = $banner['company_name'];
             $data[$key]->imgUrl = $banner['imgUrl'];
+            $data[$key]->mainImgUrl = $banner['mainImgUrl'];
 
             $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
@@ -506,6 +506,7 @@ class ProductController extends BaseController
             $data[$key]->web_link = $banner['web_link'];
             $data[$key]->company_name = $banner['company_name'];
             $data[$key]->imgUrl = $banner['imgUrl'];
+            $data[$key]->mainImgUrl = $banner['mainImgUrl'];
 
             $productInfo = json_decode($banner['product_info']);
             $interestArr = array();

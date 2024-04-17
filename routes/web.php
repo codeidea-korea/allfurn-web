@@ -133,7 +133,7 @@ Route::get('/like/product', 'MypageController@likeProduct');
 Route::get('/like/company', 'MypageController@likeCompany');
 
 Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(function() {
-    Route::get('/', 'MypageController@index')->name('.mypage');
+    Route::get('/', 'MypageController@index')->name('.mypage');;
     Route::get('/deal', 'MypageController@deal')->name('.deal');
     Route::get('/deal-company', 'MypageController@dealCompany')->name('.deal-company');
     Route::get('/purchase', 'MypageController@purchase')->name('.purchase');
@@ -180,7 +180,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/logo/image', 'MypageController@deleteLogoImage');
     Route::put('/represent/product/{idx}', 'MypageController@toggleRepresentProduct');
     Route::get('/check/new/badge', 'MypageController@getCheckNewBadge');
-
+    
     Route::get('/estimateInfo', 'MypageController@getEstimateInfo');
     Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
     Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
@@ -237,9 +237,8 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::post('/reporting', 'CommunityController@reporting');
     Route::get('/write-dispatch/{orderGroupCode}', 'CommunityController@writeDispatch');
 
-    Route::get('/group', function () {
-        return view('community.group');
-    });
+    Route::get('/club', 'CommunityController@clubList');
+    Route::get('/club/detail/{idx}', 'CommunityController@clubDetail');
 
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');

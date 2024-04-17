@@ -1055,7 +1055,7 @@
                             </li>
                         </ul>
                         <div class="btn_bot">
-                            <button class="btn btn-line3 refresh_btn" onclick="refreshHandle(this)"><svg><use xlink:href="./img/icon-defs.svg#refresh"></use></svg>초기화</button>
+                            <button class="btn btn-line3 refresh_btn" onclick="refreshHandle(this)"><svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg>초기화</button>
                             <button class="btn btn-primary">선택 완료</button>
                         </div>
                     </div>
@@ -1078,7 +1078,7 @@
                                         <div class="dropdown step1">
                                             <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center">
                                                 <p>가격 안내 문구 선택</p>
-                                                <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                                <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                                             </a>
                                             <div class="filter_dropdown_wrap w-[456px]" style="display: none;">
                                                 <ul>
@@ -1101,7 +1101,7 @@
                                         <div class="dropdown step2">
                                             <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center mt-3">
                                                 <p>배송가격을 선택해주세요</p>
-                                                <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                                <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                                             </a>
                                             <div class="filter_dropdown_wrap w-[456px] " style="display: none;">
                                                 <ul>
@@ -1196,7 +1196,7 @@
                             <div>
                                 <a href="javascript:;" class="h-[48px] px-3 border rounded-md inline-block filter_border filter_dropdown w-[full] flex justify-between items-center mt-3">
                                     <p>이용가이드</p>
-                                    <svg class="w-6 h-6 filter_arrow"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                    <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                                 </a>
                                 <div class="filter_dropdown_wrap guide_list w-[436px] h-[370px] overflow-y-scroll" style="display: none;">
                                     <ul>
@@ -2021,7 +2021,7 @@
                         <div class="mt-5 h-[450px] overflow-y-auto com_setting">
                             <div class="info">
                                 <div class="flex items-start gap-2">
-                                    <img class="w-4 mt-1" src="./img/member/info_icon.svg" alt="">
+                                    <img class="w-4 mt-1" src="/img/member/info_icon.svg" alt="">
                                     <p>필수 옵션의 경우, 주문 시 상위 옵션을 선택해야 하위 옵션 선택이 가능합니다. 상위 개념의 옵션을 앞 순서로 설정해주세요.</p>
                                 </div>
                             </div>
@@ -2120,7 +2120,7 @@
                                             <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                             <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
                                             <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
-                                            <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li
+                                            <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
                                             <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                         </ul>
                                     </div>
@@ -2205,45 +2205,7 @@
                 </div>
             </div>
         </div>
-        <!-- 임시 등록 팝업 -->
-        <div class="modal" id="shipping_error_modal">
-            <div class="modal_bg" onclick="modalClose('#shipping_error_modal')"></div>
-            <div class="modal_inner modal-sm">
-                <button class="close_btn" onclick="modalClose('#shipping_error_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-                <div class="modal_body agree_modal_body">
-                    <p class="text-center py-4"><b>상품 등록 신청이 완료되었습니다.<br />등록 승인 결과는 푸시 알림으로 발송됩니다.</b></p>
-                    <div class="flex gap-2 justify-center">
-                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 등록 신청 팝업 -->
-        <div class="modal" id="alert-modal06">
-            <div class="modal_bg" onclick="modalClose('#alert-modal06')"></div>
-            <div class="modal_inner modal-sm">
-                <button class="close_btn" onclick="modalClose('#alert-modal06')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-                <div class="modal_body agree_modal_body">
-                    <p class="text-center py-4"><b>임시 등록되었습니다.</b></p>
-                    <div class="flex gap-2 justify-center">
-                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 수정 완료 팝업 -->
-        <div class="modal" id="alert-modal12">
-            <div class="modal_bg" onclick="modalClose('#alert-modal12')"></div>
-            <div class="modal_inner modal-sm">
-                <button class="close_btn" onclick="modalClose('#alert-modal12')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-                <div class="modal_body agree_modal_body">
-                    <p class="text-center py-4"><b>상품 수정이 완료되었습니다.</b></p>
-                    <div class="flex gap-2 justify-center">
-                        <button class="btn btn-primary w-1/2 mt-5" onclick="history.back(-1);">확인</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
 
 
@@ -3221,14 +3183,14 @@
                     proc = false;
                     if (result.success) {
                         switch (regType) {
-                            case 1: //임시저장
-                                openModal('#alert-modal03');
+                            case 1: // 임시저장
+                                modalOpen('#product_temp_save_modal');
                                 break;
-                            case 2: //수정
-                                openModal('#alert-modal12');
+                            case 2: // 수정
+                                modalOpen('#product_update_modal');
                                 break;
-                            default: //상품등록
-                                openModal('#alert-modal06');
+                            default: // 상품등록
+                                modalOpen('#product_save_modal');
                                 break;
                         }
                     }

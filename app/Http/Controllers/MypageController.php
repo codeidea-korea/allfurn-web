@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Estimate;
 use App\Service\MypageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -36,14 +37,24 @@ class MypageController extends BaseController
         $this->tmpLikeService = $tmpLikeService;
     }
 
-    public function index(): RedirectResponse
+    public function index(): Response
     {
-        if (Auth::user()['type'] === 'W') {
-            return redirect()->route('mypage.deal');
-        } else if (Auth::user()['type'] === 'R') {
-            return redirect()->route('mypage.purchase');
+        if (getDeviceType() === 'm.') {
+            $data['xtoken'] = $this -> loginService -> getFcmToken(Auth::user()['idx']);
+            $data['user'] = $this -> getLoginUser();
+
+            $data['info'] = $this -> mypageService -> getEstimateInfo();
+            $data['pageType'] = 'mypage';
+
+            return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
         } else {
-            return redirect()->route('mypage.interest');
+            if (Auth::user()['type'] === 'W') {
+                return redirect() -> route('mypage.deal');
+            } else if (Auth::user()['type'] === 'R') {
+                return redirect() -> route('mypage.purchase');
+            } else {
+                return redirect() -> route('mypage.interest');
+            }
         }
     }
 
@@ -77,19 +88,64 @@ class MypageController extends BaseController
         $countParams['orderType'] = $params['orderType'] = 'S';
         $data['orderCount'] = $this -> mypageService -> getTotalOrderCount($countParams);
 
-        if($this -> user == null) { $this -> getLoginUser(); }
-        $data['user'] = $this -> getLoginUser();
-
-        $data['pageType'] = 'deal';
         $data['dealStatus'] = config('constants.ORDER.STATUS.S');
 	    $data = array_merge($this -> mypageService -> getOrderList($params), $data); 
 
+        if($this -> user == null) { $this -> getLoginUser(); }
+        $data['user'] = $this -> getLoginUser();
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 	    $data['xtoken'] = $xtoken;
 
         $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['pageType'] = 'deal';
 
-        return response() -> view(getDeviceType() . 'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+        $data['point']  = $this->mypageService->getPointList();
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    /**
+     * 판매 현황 > 업체별
+     * @param Request $request
+     * @return Response
+     */
+    public function dealCompany(Request $request): Response {
+        $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = $this -> limit;
+        $params = array_merge($params, $request -> all());
+
+        // 키워드 검색
+        switch($request -> input('keywordType')) {
+            case 'orderNum':
+                $data['keywordTypeText'] = "주문번호";
+                break;
+            case 'productName':
+                $data['keywordTypeText'] = "상품명";
+                break;
+            case 'purchaser':
+                $data['keywordTypeText'] = "구매 업체";
+                break;
+            default:
+                $data['keywordTypeText'] = '전체';
+                break;
+        }
+
+        // 전체 개수
+        $countParams['orderType'] = $params['orderType'] = 'S';
+        $data['orderCount'] = $this -> mypageService -> getTotalOrderCount($countParams);
+
+        $data['dealStatus'] = config('constants.ORDER.STATUS.S');
+	    $data = array_merge($this -> mypageService -> getOrderList($params), $data); 
+
+        if($this -> user == null) { $this -> getLoginUser(); }
+        $data['user'] = $this -> getLoginUser();
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+	    $data['xtoken'] = $xtoken;
+
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['pageType'] = 'deal-company';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
     /**
@@ -109,8 +165,6 @@ class MypageController extends BaseController
         // 구매자 거래 총 수량 가져오기
         $countParams['orderType'] = $params['orderType'] = 'P';
         $data['orderCount'] = $this->mypageService->getTotalOrderCount($countParams);
-        $data['pageType'] = 'purchase';
-        $data['user'] = $this->getLoginUser();
 
         // 전체 주문 리스트
         switch($request->input('keywordType')) {
@@ -131,12 +185,14 @@ class MypageController extends BaseController
         // 전체 주문 리스트
         $data = array_merge($this->mypageService->getOrderList($params), $data);
 
-        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+        $data['user'] = $this -> getLoginUser();
+        $xtoken = $this -> loginService -> getFcmToken(Auth::user()['idx']);
         $data['xtoken'] = $xtoken;
 
         $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['pageType'] = 'purchase';
 
-        return response()->view(getDeviceType() . 'mypage.mypage', $data)->withCookie(Cookie::forget('cocr'));
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
     /**
@@ -187,10 +243,12 @@ class MypageController extends BaseController
         try {
             $data = array_merge([], $request->all());
             if (isset($data['type']) && $data['type'] === 'S') {
-                $data['detailTitle'] = '거래';
+                $data['detailTitle1'] = '판매';
+                $data['detailTitle2'] = '거래';
             } else {
                 $data['loginCompanyName'] = $this->mypageService->getOrderProductSellerName($request->all());
-                $data['detailTitle'] = '주문';
+                $data['detailTitle1'] = '구매';
+                $data['detailTitle2'] = '주문';
             }
             $data['orderGroupCode'] = $this->mypageService->getOrderGroupCode($request->all());
             $request['orderGroupCode'] = $data['orderGroupCode'];
@@ -210,7 +268,7 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'order-detail';
 
-        return view('mypage.order-detail', $data);
+        return view(getDeviceType().'mypage.order-detail', $data);
     }
 
     /**
@@ -296,9 +354,10 @@ class MypageController extends BaseController
         $data['pageType'] = 'recent';
         $data['user'] = $this -> getLoginUser();
         $data['categories'] = $this -> mypageService -> getCategories();
+
         $data = array_merge($data, $this -> mypageService -> getRecentProducts($params));
 
-        return view('mypage.mypage', $data);
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
 
@@ -373,16 +432,16 @@ class MypageController extends BaseController
     }
 
     /**
-     * 홈페이지 관리
+     * 홈페이지 관리 (메인)
      * @return View
      */
     public function company(): View {
         $data['user'] = $this -> getLoginUser();
-        
-        $data['pageType'] = 'company';
-        $data['info'] = $this -> mypageService -> getCompany();
 
-        return view('mypage.mypage', $data);
+        $data['info'] = $this -> mypageService -> getCompany();
+        $data['pageType'] = 'company';
+
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
     /**
@@ -418,18 +477,20 @@ class MypageController extends BaseController
         $data = array_merge($data, $this -> mypageService -> getRegisterProducts($params));
         $data = array_merge($data, $this -> mypageService -> getTotalProductCount());
 
-        return view('mypage.mypage', $data);
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
     /**
-     * 계정 관리
+     * 계정 관리 (메인)
      * @return View
      */
     public function account(): View
     {
-        $data['user'] = $this->getLoginUser();
+        $data['user'] = $this -> getLoginUser();
+        
         $data['pageType'] = 'account';
-        return view('mypage.mypage', $data);
+
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
     /**
@@ -450,15 +511,16 @@ class MypageController extends BaseController
     }
 
     /**
-     * 업체 관리 수정 페이지
+     * 홈페이지 관리 (수정)
      * @return View
      */
-    public function editCompany(): View
-    {
-        $data['user'] = $this->getLoginUser();
-        $data['info'] = $this->mypageService->getCompany();
+    public function editCompany(): View {
+        $data['user'] = $this -> getLoginUser();
 
-        return view('mypage.company-edit', $data);
+        $data['info'] = $this -> mypageService -> getCompany();
+        $data['pageType'] = 'company-edit';
+
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
     /**
@@ -571,31 +633,26 @@ class MypageController extends BaseController
 
 
     /**
-     * 업체 계정 상세 페이지
+     * 계정 관리 (수정)
      * @return View
      */
     public function companyAccount(): View {
         
-        $data['user'] = $this->getLoginUser();
-        
+        $data['user'] = $this -> getLoginUser();
         $user_type = Auth::user()['type'];
-        
         Log::debug("----- user : $user_type");
         
         if ( $user_type === 'N' || $user_type === 'S' ) {
-            
             $data['pageType'] = 'normal-account';
             
         } else {
-            
             $data['pageType'] = 'company-account';
 
-            $data['company'] = $this->mypageService->getCompanyAccount();
-            $data['members'] = $this->mypageService->getCompanyMembers();
+            $data['company'] = $this -> mypageService -> getCompanyAccount();
+            $data['members'] = $this -> mypageService -> getCompanyMembers();
         }
 
-        return view('mypage.mypage', $data);
-        
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
 
@@ -789,14 +846,18 @@ class MypageController extends BaseController
         return response()->json($result);
     }
 
+
+
+
+    
     // 견적서 관리 (현황)
     public function getEstimateInfo(): View {
         $data['user'] = $this -> getLoginUser();
-        $data['pageType'] = 'estimate';
 
+        $data['pageType'] = 'estimate';
         $data['info'] = $this -> mypageService -> getEstimateInfo();
 
-        return view('mypage.mypage', $data);
+        return view(getDeviceType().'mypage.mypage', $data);
     }
 
     // 견적서 관리 (요청한 목록)
@@ -817,17 +878,17 @@ class MypageController extends BaseController
                 $data['keywordTypeText'] = '판매 업체';
                 break;
             default:
-                $data['keywordTypeText'] = '전체';
+                $data['keywordTypeText'] = '전체 유형';
                 break;
         }
 
         $data['user'] = $this -> getLoginUser();
-        $data['pageType'] = 'estimate-request';
-
         $data['info'] = $this -> mypageService -> getEstimateInfo();
+
+        $data['pageType'] = 'estimate-request';
         $data['request'] = array_merge($this -> mypageService -> getRequestEstimate($params), $data);
 
-        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
     // 견적서 관리 (요청한 상세)
@@ -864,12 +925,12 @@ class MypageController extends BaseController
         }
 
         $data['user'] = $this -> getLoginUser();
-        $data['pageType'] = 'estimate-response';
-
         $data['info'] = $this -> mypageService -> getEstimateInfo();
+
+        $data['pageType'] = 'estimate-response';
         $data['response'] = array_merge($this -> mypageService -> getResponseEstimate($params), $data);
 
-        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
     // 견적서 관리 (요청받은 상세)
@@ -893,7 +954,7 @@ class MypageController extends BaseController
         $data['now1'] = date('Y년 m월 d일');
         $data['now2'] = date('Y-m-d H:i:s');
 
-        return
+        return 
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data
@@ -904,7 +965,7 @@ class MypageController extends BaseController
     public function getResponseOrderDetail(Request $request): JsonResponse {
         $data = $this -> mypageService -> getResponseOrderDetail($request -> all());
 
-        return
+        return 
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data
@@ -918,18 +979,89 @@ class MypageController extends BaseController
     // 견적서 관리 (견적서 보내기)
     public function getResponseEstimateMulti(): Response {
         $data['user'] = $this -> getLoginUser();
+
         $data['pageType'] = 'estimate-response-multi';
 
         $data['response'] = array_merge($this -> mypageService -> getResponseEstimateMulti($data['user']), $data);
 
-        return response() -> view('mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+
+
+
+    
+    // 모바일 > '견적 요청서' 생성 (견적서 받는 쪽)
+    public function getSendRequestEstimate($idx): Response {
+        $data = $this -> mypageService -> getRequestSendEstimate($idx);
+        $data['pageType'] = 'estimate-request-send';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 모바일 > 받은 '견적 요청서 확인' 생성 (견적서 보내는 쪽)
+    public function getSendResponseEstimate($idx): Response {
+        $params['estimate_idx'] = $idx;
+
+        $data['user'] = $this -> getLoginUser();
+        $data['request'] = $this -> mypageService -> getRequestEstimateDetail($params);
+        $data['pageType'] = 'estimate-response-send';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 모바일 > 보낸 '견적 요청서' 확인 (견적서 받는 쪽)
+    public function getCheckRequestEstimate($idx): Response {
+        $params['estimate_idx'] = $idx;
+
+        $data['request'] = $this -> mypageService -> getRequestEstimateDetail($params);
+        $data['pageType'] = 'estimate-request-check';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 모바일 > 받은 '견적서 확인' 생성 (견적서 받는 쪽)
+    public function getSendResponseOrder($idx): Response {
+        $estimate = Estimate::find($idx);
+        $params['estimate_code'] = $estimate -> estimate_code;
+        $params['response_company_type'] = $estimate -> response_company_type;
+
+        $data['user'] = $this -> getLoginUser();
+        $data['response'] = $this -> mypageService -> getResponseEstimateDetail($params);
+        $data['pageType'] = 'estimate-response-check';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 모바일 > 보낸 '견적서 확인' 생성 (견적서 보내는 쪽)
+    public function getCheckResponseEstimate($idx): Response {
+        $estimate = Estimate::find($idx);
+        $params['estimate_code'] = $estimate -> estimate_code;
+        $params['response_company_type'] = $estimate -> response_company_type;
+
+        $data['user'] = $this -> getLoginUser();
+        $data['response'] = $this -> mypageService -> getResponseEstimateDetail($params);
+        $data['pageType'] = 'estimate-check';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
+    }
+
+    // 모바일 > '주문서 확인' 생성 (견적서 받는 쪽 + 보내는 쪽)
+    public function getCheckOrder($code): Response {
+        $params['order_code'] = $code;
+
+        $data['response'] = $this -> mypageService -> getResponseOrderDetail($params);
+        $data['pageType'] = 'order-check';
+
+        return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
 
 
 
 
-    public function likeProduct(Request $request){
+    public function likeProduct(Request $request)
+    {
         $data['pageType'] = 'product';
         
         if($request->ajax()) {

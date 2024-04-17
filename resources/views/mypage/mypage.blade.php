@@ -70,7 +70,7 @@
         </div>
         <div class="flex inner gap-10 mb-[100px]">
             <div>
-                <h3 class="text-xl font-bold">마이 올펀</h3>
+                <h3 class="text-xl font-bold">마이올펀</h3>
                 <ul class="my_menu_list mt-5">
                     @if(auth() -> user() -> type !== 'N')
                         @if(auth() -> user() -> type === 'W')
