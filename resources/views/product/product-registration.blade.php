@@ -12,7 +12,7 @@
                         상품 수정
                     @endif
                 </h2>
-                <p class="required_sample flex flex-row-reverse items-center"> 는 필수 입력 항목입니다.</p>
+                <p class="required_sample flex flex-row-reverse items-center"> 는 필수 입력 항목입니다.{{ $request->type }}</p>
             </div>
 
             <!-- 기본정보 시작 -->
@@ -24,8 +24,7 @@
                             기본 정보 불러오기
                         </button>
                     @endif
-                    --}}
-                    <!-- button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button //-->
+                    button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button>--}}
                 </div>
                 <div class="mb-5 pb-5 border-b">
                     <dl class="flex">
@@ -2205,7 +2204,46 @@
                 </div>
             </div>
         </div>
-        
+    </div>
+
+    <!-- 상품 임시 등록 팝업 -->
+    <div class="modal" id="product_temp_save_modal">
+        <div class="modal_bg" onclick="modalClose('#product_temp_save_modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#product_temp_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>임시 등록되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 상품 등록 신청 팝업 -->
+    <div class="modal" id="product_save_modal">
+        <div class="modal_bg" onclick="modalClose('#product_save_modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#product_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>상품 등록 신청이 완료되었습니다.<br />등록 승인 결과는 푸시 알림으로 발송됩니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 상품 수정 완료 팝업 -->
+    <div class="modal" id="product_update_modal">
+        <div class="modal_bg" onclick="modalClose('#product_update_modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#product_update_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>상품 수정이 완료되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 

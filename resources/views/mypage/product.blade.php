@@ -112,7 +112,7 @@
                                         <div class="text-lg">{{ $represent -> name }}</div>
                                     </div>
                                     <div class="flex items-center gap-2 shrink-0 text-stone-500">
-                                        <a href="/product/modify/{{ $represent -> idx }}">수정</a>
+                                        <a href="/product/modify/{{ $represent -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
                                         <span>|</span>
                                         <button type="button" onClick="deleteProductModal({{ $represent -> idx }})">삭제</button>
                                     </div>
@@ -188,7 +188,7 @@
                                     <div class="flex items-center gap-2 shrink-0 text-stone-500">
                                         <button onClick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}');">상태 변경</button>
                                         <span>|</span>
-                                        <a href="/product/registration?temp={{ $row -> idx }}">수정</a>
+                                        <a href="/product/modify/{{ $row -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
                                         <span>|</span>
                                         <button type="button" onClick="deleteProductModal({{ $row -> idx }})">삭제</button>
                                     </div>

@@ -52,7 +52,8 @@ class ProductController extends BaseController
             'productIdx' => $productIdx,
             'data' => $this->productService->getProductData($productIdx, $type)['detail'],
             'categoryList' => $this->getCategoryList(),
-            'productList' => $this->getMyProductList()
+            'productList' => $this->getMyProductList(), 
+            'request' => $request
         ]);
     }
 
@@ -140,14 +141,15 @@ class ProductController extends BaseController
      * 상품 등록 - 대 카테고리 / 내가 등록한 상품 정보 리스트 가져오기
      * @return Application|Factory|View
      */
-    public function registration()
+    public function registration(Request $request)
     {
         return view(getDeviceType().'product.product-registration', [
             'banners' => $this->productService->getBannerList(),
             'todayCount' => $this->productService->getTodayCount(),
             //'categoryList' => $this->productService->getCategoryList(),
             'categoryList' => $this->productService->getCategoryTree(),
-            'productList' => $this->getMyProductList()
+            'productList' => $this->getMyProductList(), 
+            'request' => $request
         ]);
     }
 
