@@ -199,7 +199,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li class="bottom_type together">
-                    <a href="javascript: ;" >
+                    <a href="/help/faq" >
                         <b>함께 올펀을 사용해보세요!</b>
                         <span class="flex items-center">
                             올펀 알려주기

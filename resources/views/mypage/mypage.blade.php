@@ -165,7 +165,7 @@
                         </a>
                     </li>
                 </ul>
-                <a href="javascript: ;" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
+                <a href="/help/faq" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
                     <div>
                         <p class="text-white">함께 올펀을 사용해보세요!</p>
                         <p class="text-sm">올펀 알려주기</p>
