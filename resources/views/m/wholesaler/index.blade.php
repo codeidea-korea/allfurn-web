@@ -69,10 +69,10 @@
                                     $link = $banner->web_link;
                                     break;
                                 case 1: //상품
-                                    $link = '/product/detail/'.$banner->web_link;
+                                    $link = $banner->web_link;
                                     break;
                                 case 2: //업체
-                                    $link = '/wholesaler/detail/'.$banner->web_link;
+                                    $link = $banner->web_link;
                                     break;
                                 case 3: //커뮤니티
                                     $link = $banner->web_link;
@@ -83,7 +83,7 @@
                             }
                         ?>
                         @if( $banner->banner_type == 'img' )
-                            <li class="swiper-slide" style="background-image:url({{$banner->imgUrl}}) ">
+                            <li class="swiper-slide" style="background-image:url({{$banner->appBigImgUrl}}) ">
                                 <a href="{{$link}}"></a>
                             </li>
                         @else

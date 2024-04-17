@@ -4,7 +4,7 @@
             @if(isset($banners) && count($banners) > 0)
                 @foreach ($banners as $banner)
                     @if($banner->banner_type === 'img')
-                        <li class="swiper-slide" style="background-image:url({{ preImgUrl() }}{{$banner->attachment->folder}}/{{$banner->attachment->filename}})">
+                        <li class="swiper-slide" style="background-image:url({{ $banner->appBigImgUrl }})">
                             <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
                         </li>
                     @else

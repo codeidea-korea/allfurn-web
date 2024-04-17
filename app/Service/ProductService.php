@@ -1273,16 +1273,28 @@ class ProductService
                 'ap.idx as product_idx',
                 'aw.company_name',
                 DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+                CONCAT("'.preImgUrl().'", at2.folder,"/", at2.filename) as mainImgUrl,
+                (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
+                CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl,
+                CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl'
             ))
+            ->leftjoin('AF_product as ap', function ($query) {
+                $query->on('ap.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_link, "/", -1)'));
+            })
             ->leftjoin('AF_attachment as at', function ($query) {
-                $query->on('AF_banner_ad.web_attachment_idx', 'at.idx');
+                $query->on('ap.attachment_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at2', function ($query) {
+                $query->on('AF_banner_ad.web_attachment_idx', 'at2.idx');
+            })
+            ->leftjoin('AF_attachment as app', function($query) {
+                $query->on('app.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.appbig_attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_attachment as app51', function($query) {
+                $query->on('app51.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.app51_attachment_idx, ",", 1)'));
             })
             ->leftjoin('AF_wholesale as aw', function($query) {
                 $query->on('AF_banner_ad.company_idx', 'aw.idx');
-            })
-            ->leftjoin('AF_product as ap', function ($query) {
-                $query->on('ap.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_link, "/", -1)'));
             })
             ->where('AF_banner_ad.ad_location',$state)
             ->where('AF_banner_ad.state', 'G')
