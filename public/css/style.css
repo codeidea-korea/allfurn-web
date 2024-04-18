@@ -240,6 +240,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 .popular_prod.type02 .slide_box ul {grid-template-columns: repeat(5,1fr);}
 .popular_prod.type02 .slide_box ul li:first-of-type {grid-row:span 3; }
 
+.main_popular .prod_item .txt_box p {-webkit-line-clamp:1; }
 .main_popular .bottom_box {display:flex; align-items:center; justify-content:space-between; gap:150px; padding:15px 40px; background: #E9E9E8; }
 .main_popular .bottom_box .bot_slide {display:flex; align-items: center;}
 .main_popular .bottom_box .bot_slide .arrow svg {width:30px; height:30px; }

@@ -122,11 +122,11 @@ textarea{
   content:"";
   width:24px;
   height:24px;
-  background: url(../img/check_off.svg) center/contain no-repeat;
+  background: url(/img/check_off.svg) center/contain no-repeat;
 }
 
 .custom_input input[type="checkbox"]:checked + label::before{
-  background: url(../img/check_on.svg) center/contain no-repeat;
+  background: url(/img/check_on.svg) center/contain no-repeat;
 }
 
 
@@ -397,9 +397,9 @@ textarea{
   border: 3px solid white;
   box-shadow: 0 0 0 1px #fb4760;
 }
-.overseas_section{
+/* .overseas_section{
   display: none;;
-}
+} */
 
 .file_input{
   position: absolute;
@@ -433,7 +433,7 @@ textarea{
 .filter_box .order_filter:after{
   width:16px!important;
   height:16px!important;
-  background: url(../img/icon/arrow-down-up.svg) no-repeat center center!important;
+  background: url(/img/icon/arrow-down-up.svg) no-repeat center center!important;
 }
 
 .change_btn.active{
@@ -599,3 +599,17 @@ textarea{
 .accordion_arrow.active{
   transform: rotate(180deg);
 }
+
+.full_search .category_list {display:none; border:1px solid rgba(218, 221, 224, 0.60); background-color: #fff; ;}
+.full_search .category_list > ul {width:50%; }
+.full_search .category_list > ul > li > a {display:flex; align-items:center; gap:10px; padding:10px 16px; }
+.full_search .category_list > ul > li:hover {background-color:#FFF5F6;}
+.full_search .category_list > ul > li:hover > a {color:var(--main_color); }
+.full_search .category_list > ul > li > a i svg,
+.full_search .category_list > ul > li > a i img {width:24px; height:24px; stroke:#767676; filter:grayscale(100%); }
+.full_search .category_list > ul > li:hover > a i img {filter:grayscale(0); }
+.full_search .category_list > ul > li:hover .depth2 {display:block; }
+.full_search .category_list .depth2 {position:absolute; left:50%; top:0; overflow-y:auto; display:none; width:50%; height:100%; border-left:1px solid rgba(218, 221, 224, 0.60); background-color:#fff;}
+.full_search .category_list .depth2 li a {display:block; padding:10px 16px; }
+.full_search .category_list .depth2 li:hover {background-color:#FFF5F6;}
+.full_search .category_list .depth2 li:hover a {color:var(--main_color); }
