@@ -2181,4 +2181,18 @@ class MypageService
 
         return $request;
     }
+
+    /**
+     * 회원 포인트 목록
+     */
+    public function getPointList()
+    {
+        $pointList = DB::table('AF_point')
+            ->where('user_idx', Auth::user()->idx)
+            ->where('is_delete', 0)
+            ->orderBy('register_time', 'DESC')
+            ->get();
+
+        return $pointList;
+    }
 }
