@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 
 use App\Service\MessageService;
+use App\Service\PushService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -14,9 +15,12 @@ use Illuminate\Support\Facades\Log;
 class MessageController extends BaseController
 {
     private $messageService;
-    public function __construct(MessageService $messageService)
+    private $pushService;
+    
+    public function __construct(MessageService $messageService, PushService $pushService)
     {
         $this->messageService = $messageService;
+        $this->pushService = $pushService;
     }
 
     public function index(Request $request) {
@@ -246,5 +250,22 @@ class MessageController extends BaseController
     public function sendRoomMessage(Request $request): JsonResponse
     {
         return response()->json($this->messageService->sendRoomMessage($request->all()));
+    }
+
+    public function sendToUnreadRecipients()
+    {
+        $list = $this->messageService->getUnreadRecipientsList();
+        
+        $result = [];
+        foreach($list->toArray() as $key => $value) {
+        
+            $receiver = $value['phone_number'];
+            unset($value["phone_number"]);
+
+            $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
+                'TS_1855', '[상품 문의 미확인 알림]', $value, $receiver));
+        }
+
+        return $result;
     }
 }
