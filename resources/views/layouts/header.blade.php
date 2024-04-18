@@ -227,8 +227,10 @@ $('body').on('click', '#search_keyword_delete', function () {
 
 // 검색
 if ($('#sKeyword').length) {
-    document.getElementById('sKeyword').addEventListener('Enter', evt => {
-        clickKeyword(evt.currentTarget.value);
+    document.getElementById('sKeyword').addEventListener('keyup', evt => {
+        if( evt.keyCode === 13 ) {
+            clickKeyword(evt.currentTarget.value);
+        }
     })
 }
 
