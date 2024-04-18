@@ -106,6 +106,10 @@
         }
     });
 
+    $(document).on('click', '.search_box button', function(e) {
+        doSearch(e.currentTarget.previousElementSibling.value)
+    });
+
     //검색
     function doSearch(keyword) {
         location.replace("/community?" + new URLSearchParams({keyword: keyword}));
