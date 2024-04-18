@@ -1470,7 +1470,7 @@
                         }
                     }
 
-                    // 상품가격
+                    // 상품 가격
                     $('#product-price').val(result['price']); 
                     if (result['is_price_open'] == 1) {
                         $('#price_exposure01').attr('checked', true);
@@ -1484,6 +1484,10 @@
                             $('.select-group__dropdown .dropdown__title').text(result['price_text'])
                         }
                     }
+
+                    // 상품 코드
+                    $('input[name="product_code"]').val(result['product_code']);
+
 
 
 /*
@@ -1529,7 +1533,7 @@
                         })
                     });
 
-                    $('#form-list07').val(result['product_code']);
+                    
 
                     
                     
