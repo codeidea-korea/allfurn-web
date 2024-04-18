@@ -24,6 +24,18 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
 @section('content')
     @include('layouts.header_m')
 
+@php
+    $tPoint = 0;
+    if( !empty( $point ) ) {
+        foreach( $point AS $p ) {
+            if( $p->type == 'A' )
+                $tPoint = $tPoint + $p->score;
+            else
+                $tPoint = $tPoint - $p->score;
+        }
+    }
+@endphp
+
     @if(in_array($pageType, [
         'deal', 'deal-company', 'purchase',
         'interest', 'like',
@@ -148,16 +160,14 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <li><a href="/mypage/requestEstimate?status=F">확인/완료<b>{{ $info[0] -> count_req_f }}</b></a></li>
                     </ul>
                 </div>
-                {{--<!--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
-                        <span class="text-base main_color font-bold">350,000</span>
+                        <span class="text-base main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
                     <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
-                -->--}}
             </div>
             <ul class="my_menu_list mt-5">
                 <li class="bottom_type">
@@ -277,22 +287,27 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
-                                    <tr>
-                                        <td>적립</td>
-                                        <td>포인트 적립</td>
-                                        <td class="text-blue-500 font-medium">+10,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>감소</td>
-                                        <td>포인트 사용</td>
-                                        <td class="text-primary font-medium">-5,000</td>
-                                    </tr>
+                                @foreach( $point AS $p )
+                                    @if( $p->type == 'A' )
+                                        <tr>
+                                            <td>적립</td>
+                                            <td>{{$p->reason}}</td>
+                                            <td class="text-blue-500 font-medium">+{{number_format( $p->score )}}</td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td>감소</td>
+                                            <td>{{$p->reason}}</td>
+                                            <td class="text-primary font-medium">-{{number_format( $p->score )}}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
                                 </tbody>
                         </table>
                         
                         <div class="bg-stone-800 px-3 py-2 font-bold text-white flex items-center justify-between rounded-sm mt-3">
                                 <p>총 포인트</p>
-                                <p class="text-lg">5,000</p>
+                                <p class="text-lg">{{number_format( $tPoint )}}</p>
                         </div>
                         </div>
                         <div class="flex justify-center mt-4">

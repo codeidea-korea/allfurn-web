@@ -46,6 +46,8 @@ class MypageController extends BaseController
             $data['info'] = $this -> mypageService -> getEstimateInfo();
             $data['pageType'] = 'mypage';
 
+            $data['point']  = $this->mypageService->getPointList();
+
             return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
         } else {
             if (Auth::user()['type'] === 'W') {

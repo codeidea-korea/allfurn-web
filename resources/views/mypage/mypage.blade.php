@@ -12,7 +12,6 @@
                 $tPoint = $tPoint - $p->score;
         }
     }
-    print_re( Auth::user()['idx'] );
 @endphp
     <div id="content">
         <div class="my_top_area inner flex items-center justify-between">
@@ -67,7 +66,6 @@
                     {{-- </a> --}}
                 </div>
                 @endif
-                {{--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
@@ -76,7 +74,6 @@
                     </div>
                     <a class="fs14 flex items-center txt-gray mt-2" href="javascript:;" onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
-                --}}
             </div>
         </div>
         <div class="flex inner gap-10 mb-[100px]">
