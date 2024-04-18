@@ -326,9 +326,9 @@
 <div id="withdrawal_modal" class="modal">
     <div class="modal_bg" onclick="modalClose('#withdrawal_modal')"></div>
     <div class="modal_inner modal-md">
-        <div class="modal_title">
-            <button class="x_btn" onclick="modalClose('#withdrawal_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>
-            <h3>회원 탈퇴</h3>
+        <button class="close_btn" onclick="modalClose('#withdrawal_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body filter_body">
+            <h4>회원 탈퇴</h4>
         </div>
         <div class="px-4">
             <div class="bg-stone-100 p-4">
