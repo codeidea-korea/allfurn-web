@@ -76,7 +76,7 @@
                         <div class="link_box">
                             <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
                             <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
-                            <button class="btn btn-line4 nohover inquiry" onClick="location.href='/message';"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
+                            <button class="btn btn-line4 nohover inquiry" onClick="sendMessage();"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
                         </div>
                     </div>
                     <div class="btn_box">
@@ -95,7 +95,7 @@
                     <button class="btn btn-line4 nohover zzim_btn prd_{{$data['detail']->idx}} {{ ($data['detail']->isInterest == 1) ? 'active' : '' }}" pidx="{{$data['detail']->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
                     <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                 </div>
-                <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의하기</button>
+                <button class="btn btn-line4 nohover inquiry" onclick="sendMessage()"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의하기</button>
                 <button class="btn btn-primary estimate" onclick="openEstimateModal({{ $data['detail'] -> idx }})"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
             </div>
             <div class="inner">
@@ -475,6 +475,38 @@
             document.body.removeChild(dummy);
 
             modalOpen('#alert-modal')
+        }
+
+        //문의하기
+        function sendMessage() {
+            idx='';
+            type=''
+            if ($(location).attr('href').includes('/product/detail')) {
+                idx = $(location).attr('pathname').split('/')[3];
+                type = 'product';
+            } else if ($(location).attr('href').includes('/wholesaler/detail/')) {
+                idx = $(location).attr('pathname').split('/')[3];
+                type = 'wholesaler';
+            }
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url                : '/message/send',
+                data            : {
+                    'idx'       : idx,
+                    'type'      : type,
+                    'message'   : '상품 문의드립니다.'
+                },
+                type            : 'POST',
+                dataType        : 'json',
+                success        : function(result) {
+                    if (result.result == 'success') {
+                        location.replace('/message?roomIdx='+result.roomIdx+'&idx='+idx+'&type='+type+'&message=상품 문의드립니다');
+                    } else {
+
+                    }
+                }
+            });
         }
 
 
