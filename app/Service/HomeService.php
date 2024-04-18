@@ -332,7 +332,7 @@ class HomeService
                 ->get();
             
             
-            $oneHourAgo= date('Y-m-d H:i:s', strtotime('-1 hour'));
+            $oneHourAgo= date('Y-m-d H:i:s', strtotime('-24 hour'));
 
             $data['category'] = CategoryHistory::select('AF_user_category_history.category_idx as categoryIdx', 'ac.name as categoryName', 'ac.parent_idx as parentIdx',
                 DB::raw('COUNT(AF_user_category_history.category_idx) cnt,

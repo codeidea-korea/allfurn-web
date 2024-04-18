@@ -363,6 +363,9 @@ class ProductController extends BaseController
             $list = $this->productService->listByCategory($data);
             $banners = $this->productService->getBannerListByCategory($data);
 
+            // 인기 카테고리 집계 
+            $this->productService->saveCategoryAccessHistory($data['categoryIdx']);
+
             return view(getDeviceType().'product.categoryBy', [
                 'data' => $list,
                 'banners' => $banners,

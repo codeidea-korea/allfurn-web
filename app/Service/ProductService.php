@@ -21,6 +21,7 @@ use App\Models\MonthWholesaleSetting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class ProductService
 {
@@ -1575,5 +1576,17 @@ class ProductService
         }
 
         return $list;
+    }
+
+    // 인기카테고리 집계
+    function saveCategoryAccessHistory($categoryIdx) {
+        if(empty($categoryIdx)) return false;
+    
+        DB::table('AF_user_category_history')->insert([
+            'user_idx' => Auth::user()->idx,
+            'category_idx' => $categoryIdx,
+            'register_time' => Carbon::now()
+        ]);
+        return true;
     }
 }
