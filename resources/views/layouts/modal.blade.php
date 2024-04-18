@@ -883,6 +883,55 @@
     </div>
 </div>
 
+<!-- 포인트 내역 추가 모달-->
+@if( !empty( $point ) )
+<div class="modal" id="points_details">
+    <div class="modal_bg" onclick="modalClose('#points_details')"></div>
+    <div class="modal_inner modal-md" style="width:480px;">
+        <div class="modal_body filter_body">
+            <div class="py-2">
+                <p class="text-lg font-bold text-left">포인트 내역</p>
+                <div class="py-5">
+                    <table class="my_table table-auto w-full">
+                        <thead>
+                        <tr>
+                            <th>형태</th>
+                            <th>내용</th>
+                            <th>포인트</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-center">
+                        @foreach( $point AS $p )
+                        @if( $p->type == 'A' )
+                        <tr>
+                            <td>적립</td>
+                            <td>{{$p->reason}}</td>
+                            <td class="text-blue-500 font-medium">+{{number_format( $p->score )}}</td>
+                        </tr>
+                        @else
+                        <tr>
+                            <td>감소</td>
+                            <td>{{$p->reason}}</td>
+                            <td class="text-primary font-medium">-{{number_format( $p->score )}}</td>
+                        </tr>
+                        @endif
+                        @endforeach
+                        </tbody>
+                    </table>
+
+                    <div class="bg-stone-800 px-3 py-2 font-bold text-white flex items-center justify-between rounded-sm mt-3">
+                        <p>총 포인트</p>
+                        <p class="text-lg">{{number_format( $tPoint )}}</p>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-4">
+                    <button class="btn btn-primary w-full" onclick="modalClose('#points_details')">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 
 

@@ -192,6 +192,8 @@ class MypageController extends BaseController
         $data['info'] = $this -> mypageService -> getEstimateInfo();
         $data['pageType'] = 'purchase';
 
+        $data['point']  = $this->mypageService->getPointList();
+
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
@@ -309,6 +311,8 @@ class MypageController extends BaseController
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 	    $data['xtoken'] = $xtoken;
 
+        $data['point']  = $this->mypageService->getPointList();
+
         return view(getDeviceType() . 'mypage.mypage', $data);
     }
 
@@ -333,6 +337,8 @@ class MypageController extends BaseController
         $data['regions'] = $request -> input('regions') ? explode(',', $request -> input('regions')) : [];
         $data = array_merge($data, $this -> tmpLikeService -> getLikeCompanies($params));
 
+        $data['point']  = $this->mypageService->getPointList();
+
         return view(getDeviceType() .'mypage.mypage', $data);
     }
 
@@ -356,6 +362,8 @@ class MypageController extends BaseController
         $data['categories'] = $this -> mypageService -> getCategories();
 
         $data = array_merge($data, $this -> mypageService -> getRecentProducts($params));
+
+        $data['point']  = $this->mypageService->getPointList();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -441,6 +449,8 @@ class MypageController extends BaseController
         $data['info'] = $this -> mypageService -> getCompany();
         $data['pageType'] = 'company';
 
+        $data['point']  = $this->mypageService->getPointList();
+
         return view(getDeviceType().'mypage.mypage', $data);
     }
 
@@ -477,6 +487,8 @@ class MypageController extends BaseController
         $data = array_merge($data, $this -> mypageService -> getRegisterProducts($params));
         $data = array_merge($data, $this -> mypageService -> getTotalProductCount());
 
+        $data['point']  = $this->mypageService->getPointList();
+
         return view(getDeviceType().'mypage.mypage', $data);
     }
 
@@ -489,6 +501,8 @@ class MypageController extends BaseController
         $data['user'] = $this -> getLoginUser();
         
         $data['pageType'] = 'account';
+
+        $data['point']  = $this->mypageService->getPointList();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -856,6 +870,8 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'estimate';
         $data['info'] = $this -> mypageService -> getEstimateInfo();
+
+        $data['point']  = $this->mypageService->getPointList();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
