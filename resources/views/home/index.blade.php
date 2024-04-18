@@ -185,7 +185,7 @@
                             <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
                             <div class="txt_box">
                                 <a href="/magazine/detail/{{ $item->idx }}">
-                                    <b>{{$item->title}}</b>
+                                    <b>[{{ $item->category_list }}] {{$item->title}}</b>
                                     <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
                                 </a>
                             </div>
