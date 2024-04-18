@@ -105,6 +105,20 @@
             </div>
         </div>
     </section>
+    
+    {{-- 댓글 삭제완료 모달--}}
+    <div class="modal" id="delete_comment-modal">
+        <div class="modal_bg" onclick="modalClose('#delete_comment-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#delete_comment-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.reload()">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- 게시글 삭제완료 모달 --}}
     <div class="modal" id="delete_article-modal">
