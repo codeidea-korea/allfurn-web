@@ -149,7 +149,8 @@ class ProductController extends BaseController
             //'categoryList' => $this->productService->getCategoryList(),
             'categoryList' => $this->productService->getCategoryTree(),
             'productList' => $this->getMyProductList(), 
-            'request' => $request
+            'request' => $request, 
+            'productIdx' => 0
         ]);
     }
 
@@ -256,7 +257,11 @@ class ProductController extends BaseController
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
-        $data['orderedElement'] = $request->orderedElement == null ? "register_time" : $request->orderedElement;
+        if($request->orderedElement == null || $request->orderedElement) {
+            $data['orderedElement'] = 'AF_product.access_date';
+        } else {
+            $data['orderedElement'] = $request->orderedElement;
+        }
 
         $list = $this->productService->getNewAddedProductList($data);
 
