@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\UserAuthCode;
 use App\Models\UserUnregisterHistory;
 use App\Models\UserUpgradeQueue;
+use App\Models\Estimate;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -251,7 +252,7 @@ class MypageService
                 ];
         }
 
-        if (empty($orders)) {
+        if ($orders -> count() < 1) {
             return [
                 'result' => 'fail',
                 'code' => 'EMPTY_ORDER',
@@ -259,10 +260,12 @@ class MypageService
             ];
         }
 
+        /*
         $isSendMessage = false;
         $isSendAlarm = false;
         $alarmService = new AlarmService();
-        $messageService = new MessageService;
+        $messageService = new MessageService();
+        */
         foreach($orders as $order) {
             // 주문 상태 변경
             if ($params['status'] === 'C') { // 거래 취소일 경우
@@ -288,6 +291,7 @@ class MypageService
                 $cancelHistory->save();
             }
 
+            /*
             if ($isSendAlarm === false && isset($alarmParams['depth3'])) {
                 $link_url = $alarmParams['link_url'];
                 $alarmParams['target_company_idx'] = Auth::user()['company_idx'];
@@ -331,6 +335,7 @@ class MypageService
                 }
                 $isSendAlarm = true;
             }
+
             if ($isSendMessage === false && isset($messageParams['templateDetailType']) && $messageParams['templateDetailType'] === 'DEAL_COMP') {
                 $sendUser = User::find($order->user_idx);
                 $messageParams['company_idx'] = $sendUser->company_idx;
@@ -344,11 +349,11 @@ class MypageService
                 $alarmParams['link_url'] = '/message';
                 $alarmParams['target_company_idx'] = $sendUser->company_idx;
                 $alarmParams['target_company_type'] = $sendUser->type;
-                $alarmService->sendAlarm($alarmParams);
+                //$alarmService->sendAlarm($alarmParams);
 
                 $isSendMessage = true;
             }
-
+            */
         }
 
         $sql =
@@ -446,18 +451,19 @@ class MypageService
         if ($params['type'] === 'S') {
             $order
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 )
                 -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> where('AF_product.company_type', 'W') -> where('AF_product.company_idx', Auth::user()['company_idx']);
         } else {
             $order
-                ->where('AF_user.idx', Auth::user()['idx'])
-                ->join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF.product.name AS product_name', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
-                );
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                )
+                -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
+                -> where('AF_user.idx', Auth::user()['idx']);
         }
+
         if(isset($params['state'])) {
             switch($params['state']) {
                 case 'C': // 취소중
@@ -703,47 +709,6 @@ class MypageService
     }
 
     /**
-     * 최근 상품 리스트 가져오기
-     * @param array $params
-     * @return array
-     */
-    public function getRecentProducts(array $params): array
-    {
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
-        $limit = $params['limit'];
-
-        $query = ProductRecent::select(DB::raw('AF_product.*'),
-            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                                ELSE "" END) as company_name,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) AS product_image,
-                                (SELECT COUNT(DISTINCT pi.idx) cnt FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'))
-            ->where('AF_recently_product.user_idx', Auth::user()->idx)
-            ->join('AF_product', function ($query) {
-                $query->on('AF_product.idx', 'AF_recently_product.product_idx');
-            })
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            });
-            if (isset($params['categories'])) {
-                $query->join('AF_category', function($query) use ($params) {
-                    $query->on('AF_category.idx', 'AF_product.category_idx')
-                    ->whereIn('AF_category.parent_idx', explode(',',$params['categories']));
-                });
-            }
-        $query->distinct();
-
-        $count = $query->get()->count();
-        $list = $query->orderBy('AF_recently_product.idx', 'desc')
-            ->offset($offset)->limit($limit)->get();
-        
-        $data['count'] = $count;
-        $data['list'] = $list;
-        $data['pagination'] = paginate($params['offset'], $limit, $count);
-        return $data;
-    }
-
-    /**
      * 좋아요한 업체 리트스 가져오기
      * @param array $params
      * @return array
@@ -809,7 +774,56 @@ class MypageService
     }
 
     /**
-     * 업체 상세 내용 가져오기
+     * 최근 본 상품 목록 가져오기
+     * @param array $params
+     * @return array
+     */
+    public function getRecentProducts(array $params): array
+    {
+        $offset = $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
+        $limit = $params['limit'];
+
+        $query =
+            ProductRecent::select(DB::raw('AF_product.*'),
+                DB::raw(
+                    '(CASE 
+                    WHEN AF_product.company_type = "W" THEN 
+                        (SELECT aw.company_name FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
+                    WHEN AF_product.company_type = "R" THEN
+                        (SELECT ar.company_name FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
+                    ELSE ""
+                END) AS company_name,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) AS product_image,
+                (SELECT COUNT(DISTINCT pi.idx) cnt FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user() -> idx.') AS isInterest'))
+                -> where('AF_recently_product.user_idx', Auth::user() -> idx)
+                -> join('AF_product', function($query) {
+                    $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
+                })
+                -> leftjoin('AF_attachment AS at', function($query) {
+                    $query -> on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",",  1)'));
+                });
+        if (isset($params['ca'])) {
+            $query -> where('AF_product.category_idx', $params['ca']);
+        }
+        if(isset($params['categories'])) {
+            $query -> join('AF_category', function($query) use ($params) {
+                $query -> on('AF_category.idx', 'AF_product.category_idx') -> whereIn('AF_category.parent_idx', explode(',', $params['categories']));
+            });
+        }
+        $query -> distinct();
+
+        $count = $query -> get() -> count();
+        $list = $query -> orderBy('AF_recently_product.idx', 'DESC') -> offset($offset) -> limit($limit) -> get();
+
+        $data['count'] = $count;
+        $data['list'] = $list;
+        $data['pagination'] = paginate($params['offset'], $limit, $count);
+
+        return $data;
+    }
+
+    /**
+     * 업체 상세 가져오기
      * @return mixed
      */
     public function getCompany()
@@ -1018,7 +1032,7 @@ class MypageService
     }
 
     /**
-     * 대표 상품 가져오기
+     * 추천 상품 가져오기
      * @param $params
      * @return mixed
      */
@@ -1065,7 +1079,7 @@ class MypageService
     }
 
     /**
-     * 업체 등록/임시 가져오기
+     * 업체 등록, 전체 + 임시 가져오기
      * @param array $params
      * @return array
      */
@@ -1477,19 +1491,19 @@ class MypageService
             $user->state = 'JS';
             $user->parent_idx = Auth::user()['idx'];
         } else {
-            if (User::where('account', $params['member_account'])->where('idx', '<>', $params['idx'])->count() > 0) {
+            if (User::where('account', $params['member_account'])->where('idx', '<>', $params['member_idx'])->count() > 0) {
                 return [
                     'result' => 'fail',
                     'code' => 'DUPLICATE_ID',
                     'message' => '이미 등록된 아이디입니다.'
                 ];
             }
-            $user = User::find($params['idx']);
+            $user = User::find($params['member_idx']);
         }
         $user->name = $params['member_name'];
         $user->phone_number = $params['member_phone_number'];
         $user->account = $params['member_account'];
-        $user->secret = DB::raw('password(\''.hash('sha256', $params['password']).'\')');
+        $user->secret = DB::raw('password(\''.hash('sha256', $params['member_password']).'\')');
         $user->save();
         return [
             'result' => 'success',
@@ -1911,10 +1925,10 @@ class MypageService
                 FORMAT(e.product_each_price, 0) AS product_each_price,
                 FORMAT(e.product_total_price, 0) AS product_total_price,
                 CASE 
-                    WHEN p.company_type = 'W' 
-                        THEN CONCAT(w.business_address, ' ', w.business_address_detail)
-                    WHEN p.company_type = 'R' 
-                        THEN CONCAT(r.business_address, ' ', r.business_address_detail)
+                    WHEN p.company_type = 'W'
+                        THEN CONCAT(IFNULL(w.business_address, ''), ' ', IFNULL(w.business_address_detail, ''))
+                    WHEN p.company_type = 'R'
+                        THEN CONCAT(IFNULL(r.business_address, ''), ' ', IFNULL(r.business_address_detail, ''))
                     ELSE ''
                 END AS product_address
             FROM AF_estimate e
@@ -2037,10 +2051,10 @@ class MypageService
                     IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
                     FORMAT(e.product_total_price, 0) AS product_total_price,
                     CASE 
-                        WHEN p.company_type = 'W' 
-                            THEN CONCAT(w1.business_address, ' ', w1.business_address_detail)
-                        WHEN p.company_type = 'R' 
-                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
+                        WHEN p.company_type = 'W'
+                            THEN CONCAT(IFNULL(w1.business_address, ''), ' ', IFNULL(w1.business_address_detail, ''))
+                        WHEN p.company_type = 'R'
+                            THEN CONCAT(IFNULL(r1.business_address, ''), ' ', IFNULL(r1.business_address_detail, ''))
                         ELSE ''
                     END AS product_address,
                     e.product_delivery_info AS product_delivery_info
@@ -2078,10 +2092,10 @@ class MypageService
                     IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
                     FORMAT(e.product_total_price, 0) AS product_total_price,
                     CASE 
-                        WHEN p.company_type = 'W' 
-                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
-                        WHEN p.company_type = 'R' 
-                            THEN CONCAT(r1.business_address, ' ', r1.business_address_detail)
+                        WHEN p.company_type = 'W'
+                            THEN CONCAT(IFNULL(w1.business_address, ''), ' ', IFNULL(w1.business_address_detail, ''))
+                        WHEN p.company_type = 'R'
+                            THEN CONCAT(IFNULL(r1.business_address, ''), ' ', IFNULL(r1.business_address_detail, ''))
                         ELSE ''
                     END AS product_address,
                     e.product_delivery_info AS product_delivery_info
@@ -2109,11 +2123,13 @@ class MypageService
         $sql =
             "SELECT 
                 *,
+                e.*,
                 o.register_time AS register_time,
                 o.name AS name,
                 IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
                 p.name AS product_name,
-                FORMAT(o.price, 0) AS total_price
+                FORMAT(o.price, 0) AS total_price,
+                e.response_address1 AS product_address
             FROM AF_order o 
             LEFT JOIN AF_estimate e ON o.order_code = e.estimate_code 
             LEFT JOIN AF_product p ON e.product_idx = p.idx 
@@ -2140,7 +2156,8 @@ class MypageService
                         IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
                         p.name,
                         p.price,
-                        p.product_number
+                        p.product_number,
+                        p.product_option
                     FROM AF_user u
                     LEFT JOIN AF_wholesale w ON u.company_idx = w.idx
                     LEFT JOIN AF_product p ON u.company_idx = p.company_idx
@@ -2163,7 +2180,8 @@ class MypageService
                         IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
                         p.name,
                         p.price,
-                        p.product_number
+                        p.product_number,
+                        p.product_option
                     FROM AF_user u
                     LEFT JOIN AF_retail w ON u.company_idx = r.idx
                     LEFT JOIN AF_product p ON u.company_idx = p.company_idx
@@ -2180,6 +2198,56 @@ class MypageService
         $request['list'] = $estimateMulti;
 
         return $request;
+    }
+
+    public function getRequestSendEstimate($idx) {
+        $estimateGroupCode = '';
+
+        $check = 1;
+        while($check != 0) {
+            $characters  = '0123456789';
+            $characters .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+            $nmr_loops = 16;
+            while($nmr_loops--) {
+                $estimateGroupCode .= $characters[mt_rand(0, strlen($characters) - 1)];
+            }
+
+            $check = Estimate::where('estimate_group_code', $estimateGroupCode) -> count();
+        }
+
+        $now1 = date('Y년 m월 d일');
+        $now2 = date('Y-m-d H:i:s');
+
+        $user = User::find(Auth::user()['idx']);
+        if (Auth::user()['type'] === 'W') {
+            $company = CompanyWholesale::find(Auth::user()['company_idx']);
+        } else {
+            $company = CompanyRetail::find(Auth::user()['company_idx']);
+        }
+        $product = Product::find($idx);
+
+        $sql =
+            "SELECT 
+                IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder, '/', a.filename), '') AS product_thumbnail,
+                (CASE 
+                    WHEN p.company_type = 'W' THEN (SELECT CONCAT(IFNULL(aw.business_address, ''), ' ', IFNULL(aw.business_address_detail, '')) FROM AF_wholesale AS aw WHERE aw.idx = p.company_idx)
+                    WHEN p.company_type = 'R' THEN (SELECT CONCAT(IFNULL(ar.business_address, ''), ' ', IFNULL(ar.business_address_detail, '')) FROM AF_retail AS ar WHERE ar.idx = p.company_idx)
+                ELSE '' END) AS product_address
+            FROM AF_product p 
+            LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx 
+            WHERE p.idx = ".$idx;
+        $attachment = DB::select($sql);
+
+        $data['code'] = $estimateGroupCode;
+        $data['now1'] = $now1;
+        $data['now2'] = $now2;
+        $data['user'] = $user;
+        $data['company'] = $company;
+        $data['product'] = $product;
+        $data['attachment'] = $attachment;
+
+        return $data;
     }
 
     /**
