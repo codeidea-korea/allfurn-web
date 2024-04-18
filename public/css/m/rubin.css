@@ -117,8 +117,8 @@
     .state_box {padding-top:30px; }
     .state_box .tit p {font-weight:700;}
     .state_box ul {display:flex; align-items:center; gap:6px; margin:10px 0 25px; }
-    .state_box ul li {width:100%; border-radius: 3px; background: #F5F6F8;}
-    .state_box ul li a {display:block; padding:15px 0; font-size:12px; text-align:center;}
+    .state_box ul li {width:100%; height:70px; border-radius: 3px; background: #F5F6F8;}
+    .state_box ul li a {display: flex;/* padding:15px 0; */font-size: 12px;text-align:center;width: 100%;height: 100%;flex-direction: column;justify-content: center;word-break: keep-all;}
     .state_box ul li a b {display:block; font-weight:700; font-size:14px; }
     
     .my_point_area {

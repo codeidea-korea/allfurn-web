@@ -17,7 +17,7 @@
                     </div>
                 </div>
 
-                @if(Auth::check())
+                {{-- @if(Auth::check())
                     <div class="foo__customer">
                         <p>고객센터</p>
                         <a href="/help/faq">자주 묻는 질문</a>
@@ -25,7 +25,7 @@
                         <a href="/help/inquiry">1:1 문의</a>
                         <a href="/help/notice">이용 가이드</a>
                     </div>
-                @endif
+                @endif --}}
 {{--                <div class="foo__language">--}}
 {{--                    <div class="foo__language__wrap">--}}
 {{--                        <p>한국어</p>--}}
@@ -48,8 +48,8 @@
                             <div class="header">
                                 <p>서비스 이용 약관</p>
                             </div>
-                            <div class="content">
-                                <iframe src="{{env('ALLFURN_API_DOMAIN')}}/res/agreement/agreement.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
+                            <div class="content" style="height: 380px; overflow-y:hidden">
+                                <iframe src="https://api.all-furn.com/res/agreement/agreement.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
                                 </iframe>
                             </div>
                             <div class="footer" style="height: 42px"></div>
@@ -70,8 +70,8 @@
                             <div class="header">
                                 <p>개인정보 활용 동의</p>
                             </div>
-                            <div class="content">
-                                <iframe src="{{env('ALLFURN_API_DOMAIN')}}/res/agreement/privacy.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
+                            <div class="content" style="height: 380px; overflow-y:hidden">
+                                <iframe src="https://api.all-furn.com/res/agreement/agreement.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
                                 </iframe>
                             </div>
                             <div class="footer" style="height: 42px"></div>
@@ -180,5 +180,22 @@
         $(document).ready(function(){
             floating()
         });
+
+        function openModal(name) {
+            document.querySelector(name).style.display = 'block';
+            document.querySelector('body').style.overflow = 'hidden';
+        }
+
+        function closeModal(name) {
+            if (name === '*') {
+                const openModals = document.querySelectorAll('.modal');
+                openModals.forEach(modal => {
+                    closeModal('#' + modal.id);
+                });
+            } else {
+                document.querySelector(name).style.display = 'none';
+                document.querySelector('body').style.overflow = '';
+            }
+        }
     </script>
 </footer>

@@ -24,6 +24,18 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
 @section('content')
     @include('layouts.header_m')
 
+@php
+    $tPoint = 0;
+    if( !empty( $point ) ) {
+        foreach( $point AS $p ) {
+            if( $p->type == 'A' )
+                $tPoint = $tPoint + $p->score;
+            else
+                $tPoint = $tPoint - $p->score;
+        }
+    }
+@endphp
+
     @if(in_array($pageType, [
         'deal', 'deal-company', 'purchase',
         'interest', 'like',
@@ -79,15 +91,15 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 @if($user -> type === 'W')
                 <div class="profile flex gap-4 items-center">
                     <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> company_name }}</p>
                             @if($user -> parent_idx !== 0)
                             <p class="user-name-text">{{ $user -> name }}</p>
                             @endif
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 <div class="status_zone flex gap-3.5 items-center">
                     <div class="flex items-center flex-col ">
@@ -107,23 +119,23 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 </div>
                 @elseif($user -> type === 'R')
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/s_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> company_name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @else
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/r_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @endif
                 <div class="state_box">
@@ -148,16 +160,14 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <li><a href="/mypage/requestEstimate?status=F">확인/완료<b>{{ $info[0] -> count_req_f }}</b></a></li>
                     </ul>
                 </div>
-                <!--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
-                        <span class="text-base main_color font-bold">350,000</span>
+                        <span class="text-base main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
                     <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
-                -->
             </div>
             <ul class="my_menu_list mt-5">
                 <li class="bottom_type">
@@ -199,7 +209,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li class="bottom_type together">
-                    <a href="javascript: ;" >
+                    <a href="/help/faq" >
                         <b>함께 올펀을 사용해보세요!</b>
                         <span class="flex items-center">
                             올펀 알려주기
@@ -225,14 +235,14 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
-                <!--
+                {{--<!--
                 <li class="">
                     <a href="javascript: ;" class="flex p-4 justify-between">
                         <p>사업자등록증 등록</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
-                -->
+                -->--}}
                 <li>
                     <a href="/mypage/account" class="flex p-4 justify-between bottom_type">
                         <p>계정 관리</p>
@@ -277,22 +287,27 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
-                                    <tr>
-                                        <td>적립</td>
-                                        <td>포인트 적립</td>
-                                        <td class="text-blue-500 font-medium">+10,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>감소</td>
-                                        <td>포인트 사용</td>
-                                        <td class="text-primary font-medium">-5,000</td>
-                                    </tr>
+                                @foreach( $point AS $p )
+                                    @if( $p->type == 'A' )
+                                        <tr>
+                                            <td>적립</td>
+                                            <td>{{$p->reason}}</td>
+                                            <td class="text-blue-500 font-medium">+{{number_format( $p->score )}}</td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td>감소</td>
+                                            <td>{{$p->reason}}</td>
+                                            <td class="text-primary font-medium">-{{number_format( $p->score )}}</td>
+                                        </tr>
+                                    @endif
+                                @endforeach
                                 </tbody>
                         </table>
                         
                         <div class="bg-stone-800 px-3 py-2 font-bold text-white flex items-center justify-between rounded-sm mt-3">
                                 <p>총 포인트</p>
-                                <p class="text-lg">5,000</p>
+                                <p class="text-lg">{{number_format( $tPoint )}}</p>
                         </div>
                         </div>
                         <div class="flex justify-center mt-4">

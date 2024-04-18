@@ -123,12 +123,12 @@
         <div class="inner">
             <div class="slide_box overflow-hidden">
                 <ul class="swiper-wrapper">
-                    <li class="swiper-slide active">
+                    {{-- <li class="swiper-slide active">
                         <a href="javascript:;">
                             <i><b>ALL</b></i>
                             <span>전체</span>
                         </a>
-                    </li>
+                    </li> --}}
                     @foreach($data['categoryAlist'] as $item)
                         <li class="swiper-slide">
                             <a href="/product/category?pre={{ $item->idx }}">

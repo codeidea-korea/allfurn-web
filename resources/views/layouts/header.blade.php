@@ -5,7 +5,7 @@
 
             <div class="product_search relative">
                 <div class="search_btn">
-                    <svg class="w-11 h-11 ml-2"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> <input name="kw" id="sKeyword" class="bg-transparent w-full h-full search_active" value="" placeholder="상품및 도매 업체를 검색해주세요" autocomplete="off">
+                    <svg class="w-11 h-11 ml-2"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> <input name="kw" id="sKeyword" class="bg-transparent w-full h-full search_active" value="" placeholder="상품및 도매 업체를 검색해주세요" autocomplete="one-time-code">
                 </div>
                 <div class="absolute w-full p-4 bg-white rounded-md z-999 shadow-md search_list hidden">
                     <div class="text-sm flex justify-between py-3">
@@ -227,7 +227,7 @@ $('body').on('click', '#search_keyword_delete', function () {
 
 // 검색
 if ($('#sKeyword').length) {
-    document.getElementById('sKeyword').addEventListener('change', evt => {
+    document.getElementById('sKeyword').addEventListener('Enter', evt => {
         clickKeyword(evt.currentTarget.value);
     })
 }

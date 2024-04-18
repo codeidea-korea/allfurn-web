@@ -102,7 +102,7 @@ class HomeController extends BaseController
     
     public function welcome() {
         
-        return view('home/welcome');
+        return view(getDeviceType().'home/welcome');
         
     }
     

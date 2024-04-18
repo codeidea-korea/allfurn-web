@@ -13,18 +13,18 @@
                     <div class="util__link">
                         @if (Auth::check()) 
                             <a href="/message">올톡</a>
-                            <a href="/mypage">마이올펀</a>
+                            <a href="/mypage/deal">마이올펀</a>
                             <a href="/help">고객센터</a>
                             <a href="/alarm">
                                 <i class="ico__alram"><span class="a11y">알람</span></i>
                                 <span class="badge" name="alarm" style="display:none;">1</span>
                             </a>
-                            <? if (Auth::user()->type != 'N') { ?>
+                            {{-- <? if (Auth::user()->type != 'N') { ?>
                             <a href="/cart">
                                 <i class="ico__basket"><span class="a11y">장바구니</span></i>
                                 <span class="badge" name="cart" style="display:none;">1</span>
                             </a>
-                            <? } ?>
+                            <? } ?> --}}
                         @else
                             <a href="{{ route('signIn') }}">로그인</a>
                             <a href="{{ route('signUp') }}">회원가입</a>

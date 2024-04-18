@@ -1,22 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-    @include('layouts.header')
-
+@include('layouts.header')
+@php
+    $tPoint = 0;
+    if( !empty( $point ) ) {
+        foreach( $point AS $p ) {
+            if( $p->type == 'A' )
+                $tPoint = $tPoint + $p->score;
+            else
+                $tPoint = $tPoint - $p->score;
+        }
+    }
+@endphp
     <div id="content">
         <div class="my_top_area inner flex items-center justify-between">
             @if($user -> type === 'W')
             <div class="profile flex gap-4 items-center">
                 <img src="/img/mypage/ws_profile.png" alt="" />
-                <a href="javascript: ;">
+                {{-- <a href="javascript: ;"> --}}
                     <div class="flex items-center">
                         <p class="profile_id">{{ $user -> company_name }}</p>
                         @if($user -> parent_idx !== 0)
                         <p class="user-name-text">{{ $user -> name }}</p>
                         @endif
-                        <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                        {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                     </div>
-                </a>
+                {{-- </a> --}}
             </div>
             <div class="flex items-center gap-5">
                 <div class="status_zone flex gap-3.5 items-center">
@@ -37,35 +47,33 @@
                 </div>
                 @elseif($user -> type === 'R')
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/s_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> company_name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @else
                 <div class="profile flex gap-4 items-center">
-                    <img src="/img/mypage/ws_profile.png" alt="" />
-                    <a href="javascript: ;">
+                    <img src="/img/mypage/r_profile.png" alt="" />
+                    {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
                             <p class="profile_id">{{ $user -> name }}</p>
-                            <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                            {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
-                    </a>
+                    {{-- </a> --}}
                 </div>
                 @endif
-                <!--
                 <div class="my_point_area flex items-center justify-between">
                     <p>올펀 포인트</p>
                     <div>
-                        <span class="text-2xl main_color font-bold">350,000</span>
+                        <span class="text-2xl main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
-                    <a class="fs14 flex items-center txt-gray" href="javascript: ;">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
+                    <a class="fs14 flex items-center txt-gray mt-2" href="javascript:;" onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
-                -->
             </div>
         </div>
         <div class="flex inner gap-10 mb-[100px]">
@@ -165,7 +173,7 @@
                         </a>
                     </li>
                 </ul>
-                <a href="javascript: ;" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
+                <a href="/help/faq" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
                     <div>
                         <p class="text-white">함께 올펀을 사용해보세요!</p>
                         <p class="text-sm">올펀 알려주기</p>
