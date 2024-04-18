@@ -20,9 +20,9 @@
                 </div>
             </div>
             <ul class="bottom_link flex">
-                <li><a href="javascript:;">서비스소개</a></li>
-                <li><a href="javascript:;" onclick="modalOpen('#footer_agree-modal')">이용약관</a></li>
-                <li><a href="javascript:;" onclick="modalOpen('#footer_policy-modal')">개인정보 처리 방침</a></li>
+                <li><a href="/home/welcome">서비스소개</a></li>
+                <li><a href="javascript:;" onclick="modalOpen('#agree01-modal')">이용약관</a></li>
+                <li><a href="javascript:;" onclick="modalOpen('#agree02-modal')"><b>개인정보 처리 방침</b></a></li>
             </ul>
         </div>
     </footer>

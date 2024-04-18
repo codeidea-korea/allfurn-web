@@ -33,7 +33,7 @@
         <ul class="bottom_link flex">
             <li><a href="/home/welcome">서비스소개</a></li>
             <li><a onclick="modalOpen('#agree01-modal')">이용약관</a></li>
-            <li><a onclick="modalOpen('#agree02-modal')">개인정보 처리 방침</a></li>
+            <li><a onclick="modalOpen('#agree02-modal')"><b>개인정보 처리 방침</b></a></li>
         </ul>
     </div>
 </footer>

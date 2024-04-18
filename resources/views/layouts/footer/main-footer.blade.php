@@ -48,7 +48,7 @@
                             <div class="header">
                                 <p>서비스 이용 약관</p>
                             </div>
-                            <div class="content">
+                            <div class="content" style="height: 380px; overflow-y:hidden">
                                 <iframe src="https://api.all-furn.com/res/agreement/agreement.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
                                 </iframe>
                             </div>
@@ -70,7 +70,7 @@
                             <div class="header">
                                 <p>개인정보 활용 동의</p>
                             </div>
-                            <div class="content">
+                            <div class="content" style="height: 380px; overflow-y:hidden">
                                 <iframe src="https://api.all-furn.com/res/agreement/agreement.html" style="width: 100%; height: 100%; padding-top: 10px; padding-bottom: 10px; background-color: #f0f0f0;">
                                 </iframe>
                             </div>

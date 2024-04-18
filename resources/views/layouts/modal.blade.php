@@ -5,7 +5,10 @@
 	<div class="modal_inner">
 		<button class="close_btn" onclick="modalClose('#agree01-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
 		<div class="modal_body agree_modal_body">
-			<iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
+            <h3>이용 약관</h3>
+            <div style="margin-top:20px;">
+			    <iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
+            </div>
 		</div>
 	</div>
 </div>
@@ -16,7 +19,7 @@
 		<button class="close_btn" onclick="modalClose('#agree02-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
 		<div class="modal_body agree_modal_body">
 			<h3>개인정보 활용 동의</h3>
-			<div class="scroll_box">
+			<div style="margin-top:20px;">
 				<iframe src="https://api.all-furn.com/res/agreement/agreement.html"></iframe>
 			</div>
 		</div>
