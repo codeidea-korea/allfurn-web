@@ -38,7 +38,7 @@
                     <div class="info">
                         <p>
                             @if( $data['detail']->is_price_open == 1 )
-                                {{$data['detail']->price}}
+                                {{number_format($data['detail']->price)}}
                             @else
                                 {{$data['detail']->price_text}}
                             @endif
