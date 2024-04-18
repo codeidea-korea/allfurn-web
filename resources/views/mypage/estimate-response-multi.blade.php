@@ -147,10 +147,29 @@
                             <tr>
                                 <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                 <td>
-                                    <span class="product_option"></span>
-                                    <select name="product_option[]" class="input-form w-2/3">
-                                        <option value="없음">없음</option>
-                                    </select>
+                                @if (!empty(json_decode($res -> product_option)))
+                                    <table class="my_table w-full text-left">
+                                        @foreach (json_decode($res -> product_option) as $key => $val)
+                                            @if ($val -> required === '1')
+                                            <tr>
+                                                <th>
+                                                    {{ $val -> optionName }}
+                                                    <input type="hidden" name="product_option_key_{{ $res -> idx }}[]" value="{{ $val -> optionName }}" readOnly />
+                                                </th>
+                                                <td>
+                                                    <select name="product_option_value_{{ $res -> idx }}[]" class="input-form w-2/3">
+                                                    @foreach ($val -> optionValue as $opVal)
+                                                        <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                    @endforeach
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            @endif
+                                            @endforeach
+                                    </table>
+                                @else
+                                    없음
+                                @endif
                                 </td>
                             </tr>
                             <tr>
@@ -173,10 +192,10 @@
     </form>
     
     <div class="btn_box mt-10 prev">
-        <a href="javascript: ;" class="btn btn-primary w-full" onclick="goNext()">상품 선택 완료</a>
+        <a href="javascript: ;" class="btn btn-primary w-full" onclick="goNext()">상품선택 완료</a>
     </div>
     <div class="btn_box mt-10 next hidden">
-        <p class="txt-gray fs12 text-right mb-2">*올톡 채팅 친구 또는 친구를 맺은 거래처에게만 보낼 수 있습니다.</p>
+        <p class="txt-gray fs12 text-right mb-2">* 올톡 채팅 친구 또는 친구를 맺은 거래처에게만 보낼 수 있습니다.</p>
         <div class="flex gap-5">
             <a href="javascript: ;" class="btn btn-kakao w-[330px]"><img class="mr-2" src="/img/icon/kakao.svg" alt="">카카오톡 친구에게 견적서 보내기</a>
             <a href="javascript: ;" class="btn btn-primary flex-1" onclick="updateResponseMulti()">견적서 보내기</a>
@@ -245,6 +264,13 @@
         if(!$('input[name="response_address1"]').val()) {
             alert('주소를 입력해주세요!');
             $('input[name="response_address1').focus();
+
+            return false;
+        }
+
+        if(!$('#response_account2').val()) {
+            alert('계좌번호를 입력해주세요!');
+            $('input[name="response_account2').focus();
 
             return false;
         }

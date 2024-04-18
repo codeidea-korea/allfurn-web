@@ -11,11 +11,6 @@
     @include('layouts.header_m')
 
     <div id="content">
-        <!--
-        <section class="sub_banner">
-            <h3>견적 요청서 확인</h3>
-        </section>
-        -->
         <section class="sub">
             <div class="flex inner gap-10 ">
                 <div class="w-full">
@@ -96,11 +91,24 @@
                                     </tr>
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                        <td>없음</td>
+                                        <td>
+                                        @if (!empty(json_decode($request[0] -> product_option_json)))
+                                            <table class="my_table w-full text-left">
+                                                @foreach (json_decode($request[0] -> product_option_json) as $key => $val)
+                                                    <tr>
+                                                        <th>{{ $val -> optionName }}</th>
+                                                        <td>{{ key($val -> optionValue) }}</td>
+                                                    </tr>
+                                                 @endforeach
+                                            </table>
+                                        @else
+                                            없음
+                                        @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>판매가격</th>
-                                        <td class="txt-gray">{{ $request[0] -> product_each_price > 0 ?: $request[0] -> product_each_price_text }}</td>
+                                        <td class="txt-gray">{{ str_replace(',', '', $request[0] -> product_each_price) > 0 ? $request[0] -> product_each_price.'원': $request[0] -> product_each_price_text }}</td>
                                     </tr>
                                     <tr>
                                         <th>배송지역</th>

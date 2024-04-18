@@ -5,17 +5,17 @@
     $header_depth = 'mypage';
     $top_title = '견적서 확인하기';
     $header_banner = '';
+
+    $product_option_price = 0;
+    foreach($response as $res) {
+        $product_option_price += $res -> product_option_price;
+    }
 @endphp
 
 @section('content')
     @include('layouts.header_m')
 
     <div id="content">
-        <!--
-        <section class="sub_banner">
-            <h3>견 적 서</h3>
-        </section>
-        -->
         <form method="PUT" name="isForm" id="isForm" action="/estimate/insertOrder">
             <section class="sub">
                 <div class="flex inner gap-10 ">
@@ -219,7 +219,18 @@
                                         <tr>
                                             <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                             <td>
-                                                <span class="product_option">없음</span>
+                                            @if (!empty(json_decode($res -> product_option_json)))
+                                                <table class="my_table w-full text-left">
+                                                    @foreach (json_decode($res -> product_option_json) as $key => $val)
+                                                        <tr>
+                                                            <th>{{ $val -> optionName }}</th>
+                                                            <td>{{ key($val -> optionValue) }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            @else
+                                                없음
+                                            @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -268,16 +279,22 @@
                                     <span class="txt-gray fs14">
                                         견적금액 (<span class="response_estimate_product_total_count"></span>)
                                     </span>
-                                    <b class="response_estimate_product_total_price"></b>원
+                                    <b class="response_estimate_product_total_price"></b>
+                                </p>
+                                <p>
+                                    <span class="txt-gray fs14">
+                                        옵션금액
+                                    </span>
+                                    <b class="response_estimate_product_option_price">{{ number_format($product_option_price) }}원</b>
                                 </p>
                                 <p>
                                     <span class="txt-gray fs14">배송비</span>
-                                    <b class="response_estimate_product_delivery_price">{{ number_format($response[0] -> product_delivery_price) }}</b>원
+                                    <b class="response_estimate_product_delivery_price">{{ number_format($response[0] -> product_delivery_price) }}원</b>
                                 </p>
                             </div>
                             <div class="total">
                                 <p>총 견적금액</p>
-                                <b class="response_estimate_estimate_total_price">{{ number_format($response[0] -> estimate_total_price) }}</b>원
+                                <b class="response_estimate_estimate_total_price">{{ number_format($response[0] -> estimate_total_price) }}원</b>
                             </div>
                         </div>
 
@@ -308,7 +325,7 @@
             }
 
             $('.response_estimate_product_total_count').text(response_estimate_product_total_count + '개');
-            $('.response_estimate_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+            $('.response_estimate_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
         });
     </script>
 @endsection
