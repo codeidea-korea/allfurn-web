@@ -99,7 +99,7 @@
                         @if ($list -> estimate_state == 'N')
                         <button class="btn outline_primary btn-h-auto request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적 요청서 확인</button>
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
-                        <button class="btn outline_primary cbtn-h-auto heck_estimate_detail" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적서 확인</button>
+                        <button class="btn outline_primary btn-h-auto check_estimate_detail" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
                         <button class="btn outline_primary btn-h-auto check_order_detail" data-code="{{ $list -> estimate_code }}" data-state="{{ $list -> estimate_state }}">주문서 확인</button>
                         @endif
@@ -1321,7 +1321,7 @@
                             $('.name').text(json.data[0].name);
                             $('.phone_number').text(json.data[0].phone_number);
                             $('.address1').text(json.data[0].address1);
-                            $('.memo').text(json.data[0].memo);
+                            $('.memo').text(json.data[0].memo ? json.data[0].memo : '');
 
                             var response_estimate_product_total_price = 0;
                             var response_estimate_product_option_price = 0;

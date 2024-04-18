@@ -81,7 +81,7 @@
                     </div>
                     <div class="btn_box">
                         <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
-                        <button class="btn btn-primary" onclick="openEstimateModal()"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
+                        <button class="btn btn-primary" onclick="openEstimateModal({{ $data['detail'] -> idx }})"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     <button class="btn btn-line4 nohover" onclick="copyUrl()"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
                 </div>
                 <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의하기</button>
-                <button class="btn btn-primary estimate" onclick="openEstimateModal()"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
+                <button class="btn btn-primary estimate" onclick="openEstimateModal({{ $data['detail'] -> idx }})"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
             </div>
             <div class="inner">
                 @if( !empty( $data['detail']['propertyArray'] ) )
@@ -279,11 +279,11 @@
                             </tr>
                             <tr>
                                 <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                                <td colspan="3"><input type="text" name="request_address1" class="input-form" value="" /></td>
+                                <td colspan="3"><input type="text" name="request_address1" class="input-form w-full" value="" /></td>
                             </tr>
                             <tr>
                                 <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                                <td colspan="3"><input type="text" name="request_memo" class="input-form" value="" /></td>
+                                <td colspan="3"><input type="text" name="request_memo" class="input-form w-full" value="" /></td>
                             </tr>
                         </tbody>
                     </table>
@@ -353,9 +353,29 @@
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                         <td>
-                                            <select name="product_option" id="product_option" class="input-form w-2/3">
-                                                <option value="0">없음</option>
-                                            </select>
+                                            @if (!empty(json_decode($data['detail']['product_option'])))
+                                            <table class="my_table w-full text-left">
+                                                @foreach (json_decode($data['detail']['product_option']) as $key => $val)
+                                                @if ($val -> required === '1')
+                                                <tr>
+                                                    <th>
+                                                        {{ $val -> optionName }}
+                                                        <input type="hidden" name="product_option_key[]" value="{{ $val -> optionName }}" readOnly />
+                                                    </th>
+                                                    <td>
+                                                        <select name="product_option_value[]" class="input-form w-2/3">
+                                                            @foreach ($val -> optionValue as $opVal)
+                                                            <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                @endif
+                                                @endforeach
+                                            </table>
+                                            @else
+                                            없음
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
@@ -372,7 +392,7 @@
                                     </tr>
                                     <tr>
                                         <th>배송지역</th>
-                                        <td>{{ $data['detail'] -> delivery_info }}</td>
+                                        <td>{{ $data['detail'] -> product_address }}</td>
                                         <input type="hidden" name="product_delivery_info" value="{{ $data['detail'] -> delivery_info }}" />
                                     </tr>
                                 </table>
@@ -464,11 +484,14 @@
         var storedFiles = [];
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
-        function openEstimateModal() {
+        function openEstimateModal(idx) {
             fetch('/estimate/makeEstimateCode', {
                 method  : 'POST',
                 headers : {
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+                },
+                body    : {
+                    idx             : idx
                 }
             }).then(response => {
                 if (response.ok) {
@@ -478,11 +501,16 @@
                 throw new Error('Sever Error');
             }).then(json => {
                 if (json.success) {
+                    console.log(json);
                     $('#request_time').text(json.now1);
                     $('input[name="request_time"]').val(json.now2);
 
                     $('#estimate_group_code').text(json.group_code);
                     $('input[name="estimate_group_code"]').val(json.group_code);
+
+                    $('input[name="request_business_license_number"]').val(json.company.business_license_number);
+                    $('input[name="request_phone_number"]').val(json.company.phone_number);
+                    $('input[name="request_address1"]').val(json.company.business_address + ' ' + json.company.business_address_detail);
 
                     $('.product_address').text(json.product_address);
 

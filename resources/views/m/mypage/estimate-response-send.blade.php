@@ -11,11 +11,6 @@
     @include('layouts.header_m')
 
     <div id="content">
-        <!--
-        <section class="sub_banner">
-            <h3>견적 요청서 확인</h3>
-        </section>
-        -->
         <section class="sub">
             <div class="flex inner gap-10 ">
                 <div class="w-full">
@@ -196,11 +191,24 @@
                                         </tr>
                                         <tr>
                                             <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                            <td>없음</td>
+                                            <td>
+                                            @if (!empty(json_decode($request[0] -> product_option_json)))
+                                                <table class="my_table w-full text-left">
+                                                    @foreach (json_decode($request[0] -> product_option_json) as $key => $val)
+                                                        <tr>
+                                                            <th>{{ $val -> optionName }}</th>
+                                                            <td>{{ key($val -> optionValue) }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            @else
+                                                없음
+                                            @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>견적단가</th>
-                                            <td class="txt-gray">{{ $request[0] -> product_each_price > 0 ?: $request[0] -> product_each_price_text }}</td>
+                                            <td class="txt-gray">{{ str_replace(',', '', $request[0] -> product_each_price) > 0 ? $request[0] -> product_each_price.'원': $request[0] -> product_each_price_text }}</td>
                                         </tr>
                                         <tr>
                                             <th>배송지역</th>
@@ -233,7 +241,20 @@
                                             </tr>
                                             <tr>
                                                 <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                                <td>없음</td>
+                                                <td>
+                                                @if (!empty(json_decode($request[0] -> product_option_json)))
+                                                    <table class="my_table w-full text-left">
+                                                        @foreach (json_decode($request[0] -> product_option_json) as $key => $val)
+                                                            <tr>
+                                                                <th>{{ $val -> optionName }}</th>
+                                                                <td>{{ key($val -> optionValue) }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </table>
+                                                @else
+                                                    없음
+                                                @endif
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <th>견적단가</th>
@@ -241,7 +262,7 @@
                                             </tr>
                                             <tr>
                                                 <th>견적금액</th>
-                                                <td>{{ $request[0] -> product_each_price > 0 ? number_format($request[0] -> product_each_price).'원': $request[0] -> product_each_price_text }}</td>
+                                                <td class="response_estimate_product_total_price">{{ str_replace(',', '', $request[0] -> product_total_price) > 0 ? $request[0] -> product_total_price.'원': $request[0] -> product_each_price_text }}</td>
                                                 <input type="hidden" name="response_estimate_product_total_price" id="response_estimate_product_total_price" value="" />
                                             </tr>
                                             <tr>
@@ -278,16 +299,23 @@
                                     <span class="txt-gray fs14">
                                         견적금액 (<span class="response_estimate_product_count"></span>)
                                     </span>
-                                    <b class="response_estimate_product_total_price"></b>원
+                                    <b class="response_estimate_product_total_price"></b>
+                                </p>
+                                <p>
+                                    <span class="txt-gray fs14">
+                                        옵션금액
+                                    </span>
+                                    <b class="response_estimate_product_option_price"></b>
+                                    <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
                                 </p>
                                 <p>
                                     <span class="txt-gray fs14">배송비</span>
-                                    <b class="response_estimate_product_delivery_price"></b>원
+                                    <b class="response_estimate_product_delivery_price"></b>
                                 </p>
                             </div>
                             <div class="total">
                                 <p>총 견적금액</p>
-                                <b class="response_estimate_estimate_total_price"></b>원
+                                <b class="response_estimate_estimate_total_price"></b>
                                 <input type="hidden" name="response_estimate_estimate_total_price" id="response_estimate_estimate_total_price" value="" />
                             </div>
                         </div>
@@ -317,6 +345,8 @@
         var estimate_idx = $('#estimate_idx').val();
         var estimate_code = $('#estimate_code').val();
         var response_company_type = $('#response_company_type').val();
+
+        var product_option_price = 0;
 
         const updateResponse = () => {
             if(!$('input[name="response_estimate_res_phone_number"]').val()) {
@@ -424,16 +454,41 @@
                         $('.response_estimate_product_name').text(json.data[0].name);
                         $('.response_estimate_product_number').text(json.data[0].product_number);
                         $('.response_estimate_product_count').text(json.data[0].product_count + '개');
+
+                        product_option_price = 0;
+                        if(json.data[0].product_option_json) {
+                            $('.response_estimate_product_option').html('');
+                            $('.response_estimate_product_option').append(`<table class="my_table w-full text-left response_estimate_product_option_table">`);
+
+                            product_option_json = JSON.parse(json.data[0].product_option_json);
+                            for(var key in product_option_json) {
+                                $('.response_estimate_product_option_table').append(
+                                `<tr>
+                                    <th>` + product_option_json[key]['optionName'] + `</th>
+                                    <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
+                                </tr>`);
+
+                                product_option_price += parseInt(Object.values(product_option_json[key]['optionValue'])[0]);
+                            }
+
+                            $('.response_estimate_product_option').append(`</table>`);
+
+                            product_option_price = parseInt(product_option_price) * parseInt(json.data[0].product_count);
+                        }
+
                         $('#response_estimate_product_each_price').val(json.data[0].product_each_price);
-                        $('.response_estimate_product_total_price').text(json.data[0].product_total_price);
+                        $('.response_estimate_product_total_price').text(json.data[0].product_total_price + '원');
                         $('#response_estimate_product_total_price').val(json.data[0].product_total_price.replace(/[^0-9]/g, ''));
                         $('.response_estimate_product_address').text(json.data[0].product_address);
-                        $('.response_estimate_product_delivery_price').text(json.data[0].product_delivery_price ? json.data[0].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0');
+                        $('.response_estimate_product_delivery_price').text(json.data[0].product_delivery_price ? json.data[0].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원' : '0원');
                         $('#response_estimate_product_delivery_price').val(json.data[0].product_delivery_price ? json.data[0].product_delivery_price : '0');
                         $('#response_estimate_product_memo').val(json.data[0].product_memo);
 
-                        $('.response_estimate_estimate_total_price').text(json.data[0].estimate_total_price ? json.data[0].estimate_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','): json.data[0].product_total_price);
-                        $('#response_estimate_estimate_total_price').val(json.data[0].estimate_total_price ? json.data[0].estimate_total_price : json.data[0].product_total_price);
+                        $('.response_estimate_product_option_price').text(product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                        $('#response_estimate_product_option_price').val(product_option_price);
+
+                        $('.response_estimate_estimate_total_price').text(json.data[0].estimate_total_price ? (parseInt(json.data[0].estimate_total_price) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원' : (parseInt(json.data[0].product_total_price.replace(/[^0-9]/g, '')) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                        $('#response_estimate_estimate_total_price').val(json.data[0].estimate_total_price ? parseInt(json.data[0].estimate_total_price) + parseInt(product_total_price) : parseInt(json.data[0].product_total_price.replace(/[^0-9]/g, '')) + parseInt(product_option_price));
 
                         $('.input_type1').addClass('hidden');
                         $('.input_type2').removeClass('hidden');
@@ -450,11 +505,11 @@
                 $(this).val($(this).val().replace(/[^0-9]/g, ''));
 
                 if(Number($(this).val() > 0)) {
-                    $('.response_estimate_product_total_price').text((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text())).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                    $('.response_estimate_product_total_price').text((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text())).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
                     $('#response_estimate_product_total_price').val(parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text()));
 
-                    $('.response_estimate_estimate_total_price').text((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text()) + parseInt($('#response_estimate_product_delivery_price').val())).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('#response_estimate_estimate_total_price').val((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text()) + parseInt($('#response_estimate_product_delivery_price').val())));
+                    $('.response_estimate_estimate_total_price').text((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text()) + parseInt($('#response_estimate_product_delivery_price').val()) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                    $('#response_estimate_estimate_total_price').val((parseInt($(this).val()) * parseInt($('.response_estimate_product_count').last().text()) + parseInt($('#response_estimate_product_delivery_price').val())) + parseInt(product_option_price));
                 }
             });
 
@@ -463,10 +518,10 @@
                 $(this).val($(this).val().replace(/[^0-9]/g, ''));
 
                 if(Number($(this).val() > 0)) {
-                    $('.response_estimate_product_delivery_price').text((parseInt($(this).val())).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                    $('.response_estimate_product_delivery_price').text((parseInt($(this).val())).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
 
-                    $('.response_estimate_estimate_total_price').text((parseInt($(this).val()) + parseInt($('#response_estimate_product_total_price').val().replace(/[^0-9]/g, ''))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('#response_estimate_estimate_total_price').val((parseInt($(this).val()) + parseInt($('#response_estimate_product_total_price').val())));
+                    $('.response_estimate_estimate_total_price').text((parseInt($(this).val()) + parseInt($('#response_estimate_product_total_price').val())  + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                    $('#response_estimate_estimate_total_price').val((parseInt($(this).val()) + parseInt($('#response_estimate_product_total_price').val())) + parseInt(product_option_price));
                 }
             });
         });

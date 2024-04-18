@@ -29,7 +29,7 @@ class EstimateController extends BaseController {
         $this -> estimateService = $estimateService;
     }
 
-    // 견적서 요청번호 / 견적번호 생성
+    // 견적 요청서 > 요청번호 or 견적서 > 견적번호 생성
     public function makeEstimateCode() {
         return $this -> estimateService -> makeEstimateCode(16);
     }

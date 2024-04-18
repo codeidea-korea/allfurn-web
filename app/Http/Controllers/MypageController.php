@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use App\Service\LoginService;
 use App\Service\ProductService;
 use App\Service\TmpLikeService;
+use App\Service\PushService;
 use \Exception;
 use Session;
 
@@ -29,12 +30,13 @@ class MypageController extends BaseController
     private $tmpLikeService;
     private $limit = 20;
     private $user;
-    public function __construct(MypageService $mypageService, LoginService $loginService, ProductService $productService, TmpLikeService $tmpLikeService)
+    public function __construct(MypageService $mypageService, LoginService $loginService, ProductService $productService, TmpLikeService $tmpLikeService, PushService $pushService)
     {
         $this->mypageService = $mypageService;
         $this->loginService = $loginService;
         $this -> productService = $productService;
         $this->tmpLikeService = $tmpLikeService;
+        $this -> pushService = $pushService;
     }
 
     public function index(): Response
@@ -1067,6 +1069,27 @@ class MypageController extends BaseController
     // 모바일 > '주문서 확인' 생성 (견적서 받는 쪽 + 보내는 쪽)
     public function getCheckOrder($code): Response {
         $params['order_code'] = $code;
+
+        $sql = "SELECT * FROM AF_estimate WHERE estimate_code = '".$params['order_code']."'";
+        $estimate = DB::select($sql);
+
+        if($estimate[0] -> estimate_state !== 'F') {
+            DB::table('AF_estimate')
+                -> where('estimate_code', $params['order_code'])
+                -> update(['estimate_state' => 'F']);
+
+            $sql =
+                "SELECT * FROM AF_user
+                WHERE type = '".$estimate[0] -> request_company_type."' AND company_idx = ".$estimate[0] -> request_company_idx." AND parent_idx = 0";
+            $user = DB::select($sql);
+
+            if(count($user) > 0) {
+                $this -> pushService -> sendPush(
+                    '주문서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 주문서를 확인했습니다.',
+                    $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+                );
+            }
+        }
 
         $data['response'] = $this -> mypageService -> getResponseOrderDetail($params);
         $data['pageType'] = 'order-check';

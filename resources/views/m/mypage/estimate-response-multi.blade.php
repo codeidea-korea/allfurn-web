@@ -184,10 +184,29 @@
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                         <td>
-                                            <span class="product_option"></span>
-                                            <select name="product_option[]" class="input-form w-2/3">
-                                                <option value="없음">없음</option>
-                                            </select>
+                                        @if (!empty(json_decode($res -> product_option)))
+                                            <table class="my_table w-full text-left">
+                                                @foreach (json_decode($res -> product_option) as $key => $val)
+                                                    @if ($val -> required === '1')
+                                                    <tr>
+                                                        <th>
+                                                            {{ $val -> optionName }}
+                                                            <input type="hidden" name="product_option_key_{{ $res -> idx }}[]" value="{{ $val -> optionName }}" readOnly />
+                                                        </th>
+                                                        <td>
+                                                            <select name="product_option_value_{{ $res -> idx }}[]" class="input-form w-2/3">
+                                                            @foreach ($val -> optionValue as $opVal)
+                                                                <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                            @endforeach
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    @endif
+                                                @endforeach
+                                            </table>
+                                        @else
+                                            없음
+                                        @endif
                                         </td>
                                     </tr>
                                     <tr>
