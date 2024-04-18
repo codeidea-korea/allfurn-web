@@ -58,7 +58,7 @@ $header_banner = '';
                         </div>
                     </div>
                     <div class="text-center txt-danger py-7 fs14">일반 소비자는 회원가입이 불가합니다.</div>
-                    <button type="button" class="btn w-full btn-primary step1_next" onclick="modalOpen('#step1-modal')">다음 (1/3)</button>
+                    <button type="button" class="btn w-full btn-primary step1_next" onclick="step1Next()">다음 (1/3)</button>
                     
                 </div>
 
@@ -88,7 +88,7 @@ $header_banner = '';
                                     <dt class="necessary">명함 또는 사업자 등록증</dt>
                                     <dd>
                                         <div class="file-form vertical">
-                                            <input type="file" id="w_certificate" name="certificate" required class="input-guid__input">
+                                            <input type="file" id="w_certificate" name="certificate" required class="input-guid__input" accept="image/*">
                                             <div class="text">
                                                 <img id="w_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
                                                 <p id="w_file-input" class="mt-1">이미지 추가</p>
@@ -120,7 +120,7 @@ $header_banner = '';
                                 <dl>
                                     <dt class="necessary">휴대폰 번호</dt>
                                     <dd class="flex gap-1">
-                                        @include('login._country_phone_number', ['id'=>'w_phone_country_number'])
+                                        @include('m.login._country_phone_number', ['id'=>'w_phone_country_number'])
                                         <div class="flex-1">
                                             <input type="text" id="w_contact" name="contact" required class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                                         </div>
@@ -165,7 +165,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex gap-1">
                                         <div class="flex-1">
-                                            <input type="text" id="w_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
+                                            <input type="email" id="w_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'w')" type="button">중복체크</button>
                                     </dd>
@@ -216,7 +216,7 @@ $header_banner = '';
                                     <dt class="necessary">명함 또는 사업자 등록증</dt>
                                     <dd>
                                         <div class="file-form vertical">
-                                            <input id="r_certificate" name="certificate" type="file" required class="input-guid__input">
+                                            <input id="r_certificate" name="certificate" type="file" required class="input-guid__input" accept="image/*">
                                             <div class="text">
                                                 <img id="r_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
                                                 <p id="r_file-input" class="mt-1">이미지 추가</p>
@@ -248,7 +248,7 @@ $header_banner = '';
                                 <dl>
                                     <dt class="necessary">휴대폰 번호</dt>
                                     <dd class="flex gap-1">
-                                        @include('login._country_phone_number', ['id'=>'r_phone_country_number'])
+                                        @include('m.login._country_phone_number', ['id'=>'r_phone_country_number'])
                                         <div class="flex-1">
                                             <input id="r_contact" name="contact" type="text" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                                         </div>
@@ -293,7 +293,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex gap-1">
                                         <div class="flex-1">
-                                            <input type="text" id="r_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="email" id="r_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                             <label for="" class="error"></label>
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'r')" type="button">중복체크</button>
@@ -334,7 +334,7 @@ $header_banner = '';
                                     <dt class="necessary">명함 첨부</dt>
                                     <dd>
                                         <div class="file-form horizontal">
-                                            <input type="file" id="s_certificate" name="certificate" required class="input-guid__input">
+                                            <input type="file" id="s_certificate" name="certificate" required class="input-guid__input" accept="image/*">
                                             <div class="text">
                                                 <img id="s_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
                                                 <p id="s_file-input" class="mt-1">이미지 추가</p>
@@ -366,7 +366,7 @@ $header_banner = '';
                                 <dl>
                                     <dt class="necessary">휴대폰 번호</dt>
                                     <dd class="flex gap-1">
-                                        @include('login._country_phone_number', ['id'=>'s_phone_country_number'])
+                                        @include('m.login._country_phone_number', ['id'=>'s_phone_country_number'])
                                         <div class="flex-1">
                                             <input type="text" id="s_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                                         </div>
@@ -378,7 +378,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex  gap-1">
                                         <div class="flex-1">
-                                            <input type="text" id="s_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="email" id="s_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 's')" type="button">중복체크</button>
                                     </dd>
@@ -414,7 +414,7 @@ $header_banner = '';
                                     <dt class="necessary">명함 첨부</dt>
                                     <dd>
                                         <div class="file-form horizontal">
-                                            <input type="file" id="n_certificate" name="certificate" required class="input-guid__input">
+                                            <input type="file" id="n_certificate" name="certificate" required class="input-guid__input" accept="image/*">
                                             <div class="text">
                                                 <img id="n_img" class="mx-auto" src="/img/member/img_icon.svg" alt="">
                                                 <p id="n_file-input" class="mt-1">이미지 추가</p>
@@ -446,7 +446,7 @@ $header_banner = '';
                                 <dl>
                                     <dt class="necessary">휴대폰 번호</dt>
                                     <dd class="flex gap-1">
-                                        @include('login._country_phone_number', ['id'=>'n_phone_country_number'])
+                                        @include('m.login._country_phone_number', ['id'=>'n_phone_country_number'])
                                         <div class="flex-1">
                                             <input type="text" id="n_contact" name="contact" required maxlength="13" class="input-form w-full input-guid__input" placeholder="-없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                                         </div>
@@ -458,7 +458,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex  gap-1">
                                         <div class="flex-1">
-                                            <input type="text" id="n_useremail" name="useremail" required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="email" id="n_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'n')" type="button">중복체크</button>
                                     </dd>
@@ -588,17 +588,32 @@ $header_banner = '';
         </div>
     </div>
 
+    <div class="modal" id="modal-email--duplicated">
+        <div class="modal_bg" onclick="modalClose('#modal-email--duplicated')"></div>
+        <div class="modal_inner modal-sm">
+            <button type="button" class="close_btn" onclick="modalClose('#modal-email--duplicated')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b id='email_dupcheck_ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-email--duplicated');">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-let inN = '0';
+let inN = '-1';
 var base = '';
 
 let join_tit = ['제조/도매','판매/매장','가구 업종','기타 가구 관련 업종']
 let join_num = 0;
 // step 변경
 $('.step2_next').on('click',function(){
-    if(!$('#frm').valid()) {
+    if(!$('#frm2').valid()) {
+        $('#email_dupcheck_ment').html('필수항목을 입력해주세요.');
+        modalOpen('#modal-email--duplicated');
         return;
     }
     $('.join_header h3').text('약관 동의')
@@ -609,12 +624,14 @@ $('.step2_prev').on('click',function(){
     $('.step2').addClass('hidden')
     $('.step3').addClass('hidden')
     $('.step1').removeClass('hidden')
+    $(window).scrollTop(0)
 })
 $('.step3_prev').on('click',function(){
     $('.join_header h3').text(`${join_tit[join_num]} 가입`)
     $('.step3').addClass('hidden')
     $('.step2').removeClass('hidden')
     $('.nextBtn').removeClass('hidden')
+    $(window).scrollTop(0)
 })
 // 탭변경
 $('.join_type button').on('click', function() {
@@ -646,7 +663,39 @@ $('.join_type button').on('click', function() {
         base  = '#normal-tab-pane';
     }
 })
+function email_check( email ) {    
+    var regex=/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    return (email != '' && email != 'undefined' && regex.test(email)); 
+}
 
+$("input[type=email]").blur(function(){
+  var email = $(this).val();
+  if( email == '' || email == 'undefined') return;
+  if(! email_check(email) ) {
+  	$(this).val('');
+    $(this).focus();
+    return false;
+  }
+});
+function step1Next(){
+    if(inN < 0) {
+        modalOpen('#step1-modal');
+    } else {
+        $('.step1').addClass('hidden')
+        $('.step2').removeClass('hidden')
+        $('.nextBtn').removeClass('hidden')
+        $('.step3').addClass('hidden')
+
+        $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden')
+
+        $('#frm2')[0].reset();
+        $('#frm3')[0].reset();
+        $('#register_form-submit').attr('disabled', true);
+        if (inN === 0) { $('#add_1_1').prop('checked', true);  } else { $('#add_1_3').prop('checked', true); }
+
+        $('.nextBtn').removeClass('hidden')
+    }
+}
 // 이미지 변경
 const fileUpload = (input) => {
     if (input.files && input.files[0]) {
@@ -738,6 +787,8 @@ $(document).ready(function() {
             userpw: {required:true, eng_number:true, minlength:8},
             w_userpwcheck: {required:true, minlength:8, equalTo:"#w_userpw"},
             r_userpwcheck: {required:true, minlength:8, equalTo:"#r_userpw"},
+            s_userpwcheck: {required:true, minlength:8, equalTo:"#s_userpw"},
+            n_userpwcheck: {required:true, minlength:8, equalTo:"#n_userpw"},
             userpwcheck: {required:true, minlength:8, equalTo:base +" #userpw"},
         },
         messages: {
@@ -789,6 +840,16 @@ $(document).ready(function() {
                 required: "비밀번호확인을 입력해주세요",
                 minlength: "비밀번호와 일치하지 않습니다",
                 equalTo: "비밀번호와 일치하지 않습니다",
+            },
+            s_userpwcheck: {
+                required: "비밀번호확인을 입력해주세요",
+                minlength: "비밀번호와 일치하지 않습니다",
+                equalTo: "비밀번호와 일치하지 않습니다",
+            },
+            n_userpwcheck: {
+                required: "비밀번호확인을 입력해주세요",
+                minlength: "비밀번호와 일치하지 않습니다",
+                equalTo: "비밀번호와 일치하지 않습니다",
             }
         }
     });
@@ -831,6 +892,12 @@ function execPostCode(t) {
 // 사용중 이메일, 사업자번호 체크
 function checkBeforeAuthCode(type, t) {
     if ( type === 'business_regist_number' ) {
+        if($(`#${t}_businesscode`).val().replaceAll('-','').length != 10){
+            $(`#${t}_businesscode`).parent().find('label').text('잘못된 사업자 등록번호입니다.');
+            $('#email_dupcheck_ment').html('잘못된 사업자 등록번호입니다.');
+            modalOpen('#modal-email--duplicated');
+            return;
+        }
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/member/checkUsingBusinessNumber',
@@ -841,12 +908,14 @@ function checkBeforeAuthCode(type, t) {
             dataType: 'json',
             success: function(result) {
                 if (result == 0) {
+                    $(`#${t}_businesscode`).parent().find('label').text('사용가능한 사업자번호 입니다.');
                     $('#email_dupcheck_ment').html('사용가능한 사업자번호 입니다.');
                     $(`#${t}_businesscode`).removeClass('error');
                     $(`#${t}_businesscode`).parent().find('label').hide();
                     business_code_dup_check = true;
                 } else {
-                    $('#email_dupcheck_ment').html('이미 사용중인 사업자번호 입니다. 다시 확인해주세요.');
+                    $(`#${t}_businesscode`).parent().find('label').text('중복된 사업자 등록번호입니다.');
+                    $('#email_dupcheck_ment').html('중복된 사업자 등록번호입니다.');
                 }
                 modalOpen('#modal-email--duplicated');
             }

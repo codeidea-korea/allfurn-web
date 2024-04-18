@@ -3,7 +3,6 @@
     <option value="44">UK (+44)</option>
     <option value="1">USA (+1)</option>
     
-    <optgroup label="Other countries">
         <option value="213">Algeria (+213)</option>
         <option value="376">Andorra (+376)</option>
         <option value="244">Angola (+244)</option>
@@ -218,5 +217,4 @@
         <option value="967">Yemen (South)(+967)</option>
         <option value="260">Zambia (+260)</option>
         <option value="263">Zimbabwe (+263)</option>
-    </optgroup>
 </select>

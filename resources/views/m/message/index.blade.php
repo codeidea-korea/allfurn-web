@@ -9,8 +9,8 @@ $header_banner = '';
 
 @endphp
 
-@section('content')
 @include('layouts.header_m')
+@section('content')
 
 <div id="content">
     <section class="message_con01">
