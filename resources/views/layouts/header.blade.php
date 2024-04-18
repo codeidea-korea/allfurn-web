@@ -255,10 +255,12 @@ $(document).on('click', function(e) {
     if ($(e.target).closest('.search_active').length) {
         getSearchData();
         $('.search_list').show();
+        console.log('show')
     }
     // .search_list 외의 영역 클릭 시 숨기기
     else if (!$(e.target).closest('.search_list').length) {
         $('.search_list').hide();
+        console.log('hide')
     }
 });
 

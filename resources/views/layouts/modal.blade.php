@@ -849,21 +849,25 @@
                 <span>{{date('Y년 m월 d일')}} 기준</span>
             </div>
             @if( isset( $schData ) && count( $schData ) > 0 )
-            <ul class="search_list">
-                @foreach( $schData AS $cate )
-                <li><a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}">
-                    @php
-                        if( $cate->parentName ) {
-                            $caName .= "<b>".$cate->categoryName."</b>";
-                        } else {
-                            $caName .= "<b>".$cate->parentName."</b> ".$cate->categoryName;
-                        }
-                    @endphp
-                    <i>1</i>
-                    <p>{{$caName}}</p>
-                </a></li>
-                @endforeach
-            </ul>
+                <ul class="search_list">
+                    @foreach( $schData as $i => $cate )
+                        <li><a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}">
+                            <i>1</i>
+                            @if( $cate->parentName ) 
+                                <b>{{ $cate->categoryName }}</b>
+                            @else 
+                                <p><b>{{ $cate->parentName }}</b>{{ $cate->categoryName }}<p>
+                            @endif 
+                        </a></li>
+                        {{-- <li>
+                            @if( $cate->parentName ) 
+                                <a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}"><i>1</i><p><b>{{ $cate->categoryName }}</b><p></a>
+                            @else 
+                                <a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}"><i>2</i><p><b>{{ $cate->parentName }}</b>{{ $cate->categoryName }}<p></a>
+                            @endif 
+                        </li> --}}
+                    @endforeach
+                </ul>
             @endif
         </div>
 

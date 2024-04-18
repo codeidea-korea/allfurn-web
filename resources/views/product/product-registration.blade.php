@@ -194,7 +194,7 @@
                                     <label for="payment04" class="w-[140px] h-[48px] flex items-center justify-center">직접입력</label>
                                 </div>
                             </div>
-                            <div class="direct_input mt-5 {{ isset($data) ? ( $data->pay_type == '4' ? '' : 'hidden' ) : 'hidden' }}">
+                            <div class="payment__input-wrap direct_input mt-5 {{ isset($data) ? ( $data->pay_type == '4' ? '' : 'hidden' ) : 'hidden' }}">
                                 <input type="text" name="payment_text" id="payment_text" class="setting_input h-[48px] w-full" placeholder="결제 방식을 입력해주세요." value="{{  isset($data) ? $data->pay_type_text : '' }}">
                             </div>
                         </dd>
@@ -653,7 +653,7 @@
                             htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
                                 '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
                                     '<div class="flex items-center gap-3">' +
-                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
+                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택1</button>' +
                                 '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
                                 '       </div>' +
                                 '   </div>' +
@@ -661,21 +661,11 @@
                         });
                         $('#property #property_info').before(htmlText);
                     } else {
-                        var htmlText = "";
                         var subHtmlText = '';
                         result.forEach(function (e, idx) {
                             if( idx > 0 ) {
                                 pb_cls = 'py-5';
                             }
-
-                            htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
-                                '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
-                                '<div class="flex items-center gap-3">' +
-                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
-                                '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
-                                '       </div>' +
-                                '   </div>' +
-                                '</div>';
 
                             subHtmlText += '<li>' +
                                 '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
@@ -1303,7 +1293,7 @@
             form.append('price_text', $('.select-group__dropdown .dropdown__title').text());
             form.append('pay_type',$('input[name="payment"]:checked').val());
 
-            if ($('input[name="payment"]').val() == 4) {
+            if ($('input[name="payment"]:checked').val() == 4) {
                 form.append('pay_type_text', $('input[name="payment_text"]').val());
             }
 
@@ -1485,25 +1475,39 @@
                         }
                     }
 
+                    // 결제 방식
+                    if (result['pay_type'] != 4) {
+                        $('payment__input-wrap').css('display', 'none');
+                    } else {
+                        $('payment__input-wrap').css('display', 'block');
+                    }
+
                     // 상품 코드
                     $('input[name="product_code"]').val(result['product_code']);
 
-
-
-/*
-                    
-
+                    // 배송 방법
                     var delivery = '';
                     result['delivery_info'].split(',').forEach(str => {
-                        delivery += '<li><span class="add__name">' + $.trim(str) + '</span><i class="ico__delete16"><span class="a11y">삭제</span></i></li>';
+                        delivery += '' + 
+                            '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
+                            '   <button class="delivery_del">' +
+                            '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
+                            '           <path d="M18 6 6 18"></path>' +
+                            '           <path d="m6 6 12 12"></path>' +
+                            '       </svg>' +
+                            '   </button>' +
+                            '</div>';
                     })
-                    $('.shipping-wrap__add ul').html(delivery);
-
+                    $('.shipping-wrap__add .shipping_method_list').append(delivery);
                     $('.shipping-wrap__add').addClass('active');
+                    $('.shipping-wrap__add').show();
+
+                    // 상품 추가 공지
                     $('#form-list09').val(result['notice_info']);
+
+                    // 인증 정보
                     $('#auth_info').text(result['auth_info']);
-                    $('.auth-wrap__selected').addClass('active');
-/*
+                    // $('.auth-wrap__selected').addClass('active');
                     result['auth_info'].split(', ').forEach(str => {
                         if (authList.indexOf(str) == -1) {
                             $('#default-modal07 .content__list input[data-auth="기타 인증"]').attr('checked', true);
@@ -1514,8 +1518,10 @@
                         }
                     });
 
+                    // 상세 내용 작성
                     editer.html.set(result['product_detail']);
 
+                    // 주문 옵션 추가
                     var obj = $.parseJSON(result['product_option']);
                     obj.forEach(function (item, i) {
                         if (i > 0) {
@@ -1532,21 +1538,8 @@
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
                         })
                     });
-
-                    
-
-                    
-                    
-                    
-
-                    if (result['pay_type'] != 4) {
-                        $('payment__input-wrap').css('display', 'none');
-                    } else {
-                        $('payment__input-wrap').css('display', 'block');
-                    }
-                    */
                 }
-/*
+
                 if (loadType == 0 || loadType == 2) {
                     if (result['is_pay_notice'] == 0) {
                         $('.textarea-wrap.margin-top16.is_pay').hide();
@@ -1587,7 +1580,7 @@
                         $('.access_date').text(result['access_date'].split(' ')[0].replace(/-/g, '.'));
                     }
                 }
-*/
+
                 //closeModal('#default-modal10');
             }
         });
