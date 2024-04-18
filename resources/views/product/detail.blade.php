@@ -327,7 +327,7 @@
                         <input type="hidden" name="product_idx" value="{{ $data['detail'] -> idx }}" />
                         <li>
                             <div class="img_box">
-                                <img src="{{ ($data['detail'] -> attachment[0]) -> imgUrl }}" alt="" />
+                                <img src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt="" />
                             </div>
                             <div class="right_box">
                                 <h6>{{ $data['detail'] -> name }}</h6>

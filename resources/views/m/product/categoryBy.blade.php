@@ -61,7 +61,7 @@
                     <div class="total">전체 428개</div>
                 </div>
                 --}}
-                <div class="sub_filter_result">
+                {{-- <div class="sub_filter_result">
                     <div class="filter_on_box">
                         <div class="category">
                             <span>소파/거실 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
@@ -69,7 +69,7 @@
                             <span>수납/서랍장/옷장 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="relative">
                     <ul class="prod_list">
@@ -77,7 +77,7 @@
                         @foreach( $data['list'] AS $item )
                         <li class="prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                <a href="/product/detail/{{$item->idx}}"><img src="{{ isset($item->imgUrl) ? $item->imgUrl : '' }}" alt=""></a>
                                 <button class="zzim_btn prd_{{$item->idx}} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{$item->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
