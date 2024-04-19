@@ -149,6 +149,7 @@ class AlarmService
         $push->target_company_idx = $params['target_company_idx'];
         $push->send_date = Carbon::now()->format('Y-m-d H:i:s');
         $push->link_url = $params['link_url'];
+        $push->web_url = $params['web_url'];
         $push->save();
     }
 
