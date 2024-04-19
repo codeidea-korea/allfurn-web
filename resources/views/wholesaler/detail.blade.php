@@ -133,19 +133,13 @@
                                             <a href="/product/detail/{{$item->idx}}">
                                                 <img class="card__img" src="{{$item->imgUrl}}" alt="{{$item->name}}">
                                             </a>
-                                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                         </div>
                                         <div class="txt_box">
                                             <a href="/product/detail/{{$item->idx}}">
-                                                <span>{{$data['info']->company_name}}</span>
+                                                <span>{{$item->company_name}}</span>
                                                 <p>{{$item->name}}</p>
-                                                <b>
-                                                    @if($item->is_price_open != 0)
-                                                            <?php echo number_format($item->price, 0); ?>원
-                                                    @else
-                                                        {{$item->price_text}}
-                                                    @endif
-                                                </b>
+                                                <b>{{$item->is_price_open ? number_format($item->price, 0).'원': $item->price_text}}</b>
                                             </a>
                                         </div>
                                     </li>

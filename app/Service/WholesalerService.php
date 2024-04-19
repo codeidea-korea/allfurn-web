@@ -408,24 +408,23 @@ class WholesalerService {
         ->orderBy('AF_product_ad.price', 'DESC')
         ->orderBy('AF_product_ad.register_time', 'DESC')
         ->get();
-        
+
         // 추천 상품
-        $data['recommend'] = Product::select('AF_product.*',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-            (SELECT count(*)cnt FROM AF_product_interest WHERE idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest,
-            (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd'))
-            ->where([
-                'AF_product.company_type' => 'W',
-                'AF_product.company_idx' => $param['wholesalerIdx'],
-                'AF_product.is_represent' => 1,
-                'AF_product.state' => 'S'
-            ])
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->orderBy('AF_product.idx', 'desc')
-            ->limit(5)
-            ->get();
+        $data['recommend'] = Product::select(
+             'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+        )
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->where('AF_product.company_idx', $param['wholesalerIdx'])
+        ->where('AF_product.state', 'S')
+        ->where('AF_product.is_represent', 1)
+        ->whereNotNull('AF_product.access_date')
+        ->orderBy('AF_product.access_date', 'DESC')
+        ->limit(5)
+        ->get();
 
         // 판매중인 상품
         $list = Product::select('AF_product.*',
