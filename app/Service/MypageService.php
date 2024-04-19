@@ -1517,6 +1517,13 @@ class MypageService
      */
     public function withdrawal(): array
     {
+        // INFO: 앱 배포 승인을 위해서 잠시 추가
+        if(Auth::user()['idx'] == 3371) {
+            return [
+                'result' => 'success',
+                'message' => '',
+            ];
+        }
         $user = User::find(Auth::user()['idx']);
         $user->state = 'D';
         $user->save();

@@ -369,7 +369,7 @@
                 </div>
             </div>
             <div class="flex text-base border-t">
-                <button type="button" class="w-full text-primary py-3" onclick="modalClose('#alert-modal02')">확인</button>
+                <button type="button" class="w-full text-primary py-3" onclick="location.href='/'">확인</button>
             </div>
         </div>
     </div>
@@ -826,6 +826,7 @@
         withdrawal_proc();
     }
 
+    let isWithdraw = false;
     const withdrawal_proc = () => {
         fetch('/mypage/withdrawal', {
             method  : 'POST',
@@ -835,8 +836,15 @@
         }).then(response => {
             return response.json();
         }).then(json => {
-            openModal('#alert-modal02');
+            isWithdraw = true;
+            modalOpen('#alert-modal02');
         });
+    }
+
+    window.onclick = function(event) {
+        if(isWithdraw) {
+            location.href='/';
+        }
     }
 
     document.getElementById('password').addEventListener('blur', e => {
