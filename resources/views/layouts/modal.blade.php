@@ -878,8 +878,8 @@
             </div>
             @if(isset($categoryList) && count( $categoryList ) > 0 )
             <ul class="search_btn_list type02">
-                <li class="all_btn" data-pre=""><button>카테고리</button></li>
-                <li data-pre=""><button>전체</button></li>
+                {{-- <li class="all_btn" data-pre=""><button>카테고리</button></li> --}}
+                {{-- <li data-pre=""><button>전체</button></li> --}}
                 @foreach( $categoryList AS $category )
                 <li data-pre="{{$category->idx}}"><button>{{$category->name}}</button></li>
                 @endforeach

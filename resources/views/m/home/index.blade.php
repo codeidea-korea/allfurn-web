@@ -459,7 +459,7 @@ $(document)
     .on('click', '.sch_cate_info .btn-primary', function() {
         var pre = $(this).prev().find('li.active').data('pre');
 
-        if( typeof pre != 'undefined' || pre != '' ) {
+        if( typeof pre != 'undefined' && pre != '' ) {
             $(location).attr('href', '/product/category?pre=' + pre);
         } else {
             //
