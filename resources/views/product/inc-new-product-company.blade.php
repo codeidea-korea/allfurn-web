@@ -10,14 +10,19 @@
                 <ul class="company_list swiper-wrapper">
                     @foreach($company as $item)
                         <li class="swiper-slide">
-                            <a href="/wholesaler/detail/{{$item->idx}}">
+                            <a href="/wholesaler/detail/{{$item->company_idx}}">
                                 <b>{{$item->company_name}}</b>
                                 <div class="tag">
                                     @php $categoryList = explode(',', $item->categoryList); @endphp
-                                    <span>{{$categoryList[0]}}</span>
-                                    @isset($categoryList[1])
-                                        <span>{{ $categoryList[1]}}</span>
-                                    @endisset       
+                                    @foreach($categoryList as $category)
+                                        @if($category == '화장대/거울/콘솔')
+                                            <span>화장대/거울</span>
+                                        @elseif($category == '수납/서랍장/옷장')
+                                            <span>서랍장/옷장</span>
+                                        @else
+                                            <span>{{$category}}</span>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </a>
                         </li>
