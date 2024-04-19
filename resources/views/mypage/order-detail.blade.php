@@ -5,15 +5,14 @@
 
 <div id="content">
     <div class="inner">
-        <!-- title -->
         <div>
             <div class="pt-10 pb-6 flex items-center gap-1 text-stone-400">
-                <p>판매 현황 / 구매 현황</p>
+                <p>{{ $detailTitle1 }} 현황</p>
                 <p>&gt;</p>
-                <p>거래 상세</p>
+                <p>{{ $detailTitle2 }} 상세</p>
             </div>
             <div class="flex itesm-center justify-between">
-                <h2 class="text-2xl font-bold">거래 상세</h2>
+                <h2 class="text-2xl font-bold">{{ $detailTitle2 }} 상세</h2>
             </div>
         </div>
 
@@ -39,8 +38,8 @@
                         <!--<option value="C" {{ $orders[0] -> order_state == 'C' ? 'selected' : '' }} disabled>거래 취소(선택 불가)</option>-->
                     </select>
                 </div>
-                @endif
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                @endif
                 @if ($orders[0] -> order_state !== 'C')
                 <div class="h-[40px] border rounded-md px-2">
                     <button type="button" class="w-full h-full cancle cancle--modify">거래 취소</button>
@@ -56,7 +55,19 @@
                     <div class="ml-3">
                         <p class="font-medium">{{ $order -> product_name }}</p>
                         <div class="flex items-center gap-2">
-                            <p class="font-medium">업체문의</p>
+                            <p class="font-medium">{{ $order -> price_text ?: number_format($order -> product_each_price).'원' }}</p>
+                            <span>|</span>
+                            @if (!empty(json_decode($order -> product_option_json)))
+                            <span>
+                                    @foreach (json_decode($order -> product_option_json) as $key => $val)
+                                        {{ $val -> optionName }}
+                                        {{ key($val -> optionValue).'('.number_format($val -> optionValue -> {key($val -> optionValue)}).'원)' }}
+                                        <br />
+                                    @endforeach
+                                </span>
+                            @else
+                            옵션 없음
+                            @endif
                             <span>|</span>
                             <p class="text-stone-400">{{ $order -> product_count }}개</p>
                         </div>
@@ -73,7 +84,7 @@
                     </div>
                     <div class="flex">
                         <p class="text-stone-400">주문 금액</p>
-                        <p class="ml-4">{{ $order -> price_text ?: number_format($order -> product_price).'원' }}</p>
+                        <p class="ml-4">{{ $order -> price_text ?: number_format(($order -> product_price) + ($order -> product_option_price)).'원' }}</p>
                     </div>
                 </div>
                 <div class="p-4 border rounded-tr flex flex-col items-center justify-center grow"></div>
@@ -93,7 +104,7 @@
                         <div>{{ $buyer -> w_company_name ?: $buyer -> r_company_name }}</div>
                     </div>
                     <div class="flex gap-4 w-full">
-                        <div class="w-[140px] shrink-0 text-stone-400 font-medium">휴대폰 번호</div>
+                        <div class="w-[140px] shrink-0 text-stone-400 font-medium">휴대폰번호</div>
                         <div>{{ preg_replace("/([0-9]{3})([0-9]{3,4})([0-9]{4})$/", "\\1-\\2-\\3", str_replace('-', '', $buyer -> user_phone_number)) }}</div>
                     </div>
                     <div class="flex gap-4 w-full">
@@ -112,10 +123,14 @@
                         <div class="w-[140px] shrink-0 text-stone-400 font-medium">배송지</div>
                         <div>({{ $buyer -> zipcode }}) {{ $buyer -> address1 }} {{ $buyer -> address2 }}</div>
                     </div>
+                    <div class="flex gap-4 w-full">
+                        <div class="w-[140px] shrink-0 text-stone-400 font-medium">배송비</div>
+                        <div>{{ number_format($orders[0] -> product_delivery_price) }}원</div>
+                    </div>
                 </div>
                 <hr>
                 <div class="py-5 flex gap-4">
-                    <div class="w-[140px] shrink-0 font-bold text-xl">총 주문 금액</div>
+                    <div class="w-[140px] shrink-0 font-bold text-xl">총 주문금액</div>
                     <div class="text-lg">{{ number_format($buyer -> total_price) }}원 <span class="text-stone-400">{{ $buyer -> price_text ? '(협의 포함)' : '' }}</span></div>
                 </div>
             </div>
@@ -131,7 +146,7 @@
 <script>
     $(document).ready(function(){
         $('.order_state').change(function(){
-            if(confirm('상태값을 변경하시겠습니까?')) {
+            if(confirm('거래 상태를 변경하시겠습니까?')) {
                 fetch('/mypage/order/status', {
                     method  : 'PUT',
                     headers : {
@@ -150,7 +165,9 @@
                         alert('상태값이 변경되었습니다.')
                         location.reload();
                     } else {
+                        console.log(json.code);
                         alert(json.message);
+                        location.reload();
                     }
                 });
             }

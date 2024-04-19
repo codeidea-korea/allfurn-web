@@ -920,52 +920,47 @@ class ProductService
     // 최근 상품 등록 업체
     public function getRecentlyAddedProductCompanyList()
     {
-        $wholesaleCompany = CompanyWholesale::select('AF_wholesale.idx', 'AF_wholesale.company_name', 'prodcut.MAX(register_time)')
-            ->join(DB::raw('
-                    (SELECT company_idx, MAX(register_time),COUNT(idx) 
-                    FROM AF_product
-                    WHERE company_type = \'W\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
-                    GROUP BY company_idx
-                    HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
-                $query->on('prodcut.company_idx', 'AF_wholesale.idx');
-            })
-        ->groupBy('idx');
-
-        
-        $retailCompany = CompanyRetail::select('AF_retail.idx', 'AF_retail.company_name', 'prodcut.MAX(register_time)')
-                ->join(DB::raw('
-                        (SELECT company_idx, MAX(register_time), COUNT(idx) 
-                        FROM AF_product
-                        WHERE company_type = \'R\' AND state IN (\'S\', \'O\') AND access_date IS NOT NULL
-                        GROUP BY company_idx
-                        HAVING COUNT(idx) >= 3) AS prodcut'), function($query) {
-                    $query->on('prodcut.company_idx', 'AF_retail.idx');
-                })
-            ->groupBy('idx');
-
-        $company = $wholesaleCompany
-                ->union($retailCompany)
-                ->orderby('MAX(register_time)', 'desc')
-                ->limit(10)
-                ->get();
+        $company = Product::select(
+             'company_type', 'company_idx'
+            , DB::raw('MAX(access_date) as access_date')
+            , DB::raw('CASE company_type 
+                            WHEN "W" THEN (SELECT company_name from AF_wholesale WHERE idx = company_idx)
+                            WHEN "R" THEN (SELECT company_name from AF_retail WHERE idx = company_idx)
+                        END AS company_name')
+            )
+            ->where('is_new_product', 1)
+            ->whereNotNull('access_date')
+            ->whereIn('state', ['S', 'O'])
+            ->groupBy('company_idx')
+            ->havingRaw('COUNT(AF_product.idx) > 3')
+            ->orderBy('access_date', 'desc')
+            ->limit(10)
+            ->get();
 
         foreach($company as $key => $item) {
 
-            $category = Product::select(DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList'))
-            ->where('AF_product.company_idx', $item->idx)
-            ->whereIn('AF_product.state', ['S','O'])
-            ->whereNotNull('access_date')
-            ->orderBy('AF_product.register_time', 'desc');
+            $category = DB::select("
+                SELECT GROUP_CONCAT(DISTINCT(name)) as categoryList
+                FROM (
+                    SELECT 
+                        company_type, company_idx, category_idx, ac2.name,
+                        COUNT(*) AS totalCategory
+                        , ROW_NUMBER() OVER(PARTITION BY company_idx, company_type ORDER BY COUNT(*) DESC) AS categoryRank
+                    FROM AF_product
+                    LEFT JOIN AF_category ac ON ac.idx = AF_product.category_idx
+                    LEFT JOIN AF_category ac2 ON ac2.idx = ac.parent_idx
+                    WHERE access_date IS NOT NULL 
+                        AND state IN ('S', 'O')
+                        AND company_idx = '".$item->company_idx."'
+                        AND company_type = '".$item->company_type."'
+                    GROUP BY company_idx, company_type, category_idx
+                ) AS sub
+                WHERE categoryRank <= 2
+                GROUP BY company_idx, company_type
+                ORDER BY company_idx, categoryRank
+            ");
 
-            $category->join('AF_category AS ac', function ($query) {
-                $query->on('ac.idx', 'AF_product.category_idx');
-            });
-
-            $category->join('AF_category AS ac2', function ($query) {
-                $query->on('ac2.idx', 'ac.parent_idx');
-            });
-
-            $company[$key]['categoryList'] = $category -> get()[0] -> categoryList;
+            $company[$key]['categoryList'] = $category[0]->categoryList;
         }
 
         return $company;

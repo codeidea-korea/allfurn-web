@@ -64,6 +64,9 @@
                 <button class="h-[42px] border rounded-sm w-full mt-1" onclick="modalOpen('#change_password_modal')">
                     비밀번호 변경
                 </button>
+                <button class="h-[42px] border rounded-sm w-full mt-1" onclick="modalOpen('#withdrawal_modal')">
+                    회원탈퇴
+                </button>
             </div>
             <div class="p-4 bg-stone-100">
                 <p class="text-base font-bold">직원 <span class="text-sm text-stone-400">(최대 5명)</span></p>
@@ -364,7 +367,7 @@
                     </div>
                 </div>
                 <div class="flex text-base border-t">
-                    <button type="button" class="w-full text-primary py-3" onclick="modalClose('#alert-modal02')">확인</button>
+                    <button type="button" class="w-full text-primary py-3" onclick="location.href='/'">확인</button>
                 </div>
             </div>
         </div>
@@ -825,6 +828,7 @@
             withdrawal_proc();
         }
 
+        let isWithdraw = false;
         const withdrawal_proc = () => {
             fetch('/mypage/withdrawal', {
                 method  : 'POST',
@@ -834,8 +838,15 @@
             }).then(response => {
                 return response.json();
             }).then(json => {
-                openModal('#alert-modal02');
+                isWithdraw = true;
+                modalOpen('#alert-modal02');
             });
+        }
+
+        window.onclick = function(event) {
+            if(isWithdraw) {
+                location.href='/';
+            }
         }
 
         document.getElementById('password').addEventListener('blur', e => {

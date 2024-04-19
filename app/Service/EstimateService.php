@@ -62,6 +62,11 @@ class EstimateService {
     }
 
     public function insertRequest(array $params) {
+        $check = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> count();
+        if($check > 0) {
+            throw new \Exception('', 500);
+        }
+
         $estimate = new Estimate;
 
         $estimate -> estimate_group_code = $params['estimate_group_code'];
@@ -110,8 +115,13 @@ class EstimateService {
 
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
-                '견적서 요청 알림', '('.$params['request_company_name'].') 님 에게서 견적서를 요청 받았습니다.',
+                '견적서 요청 알림', '('.$params['request_company_name'].')에게 견적서를 요청 받았습니다.',
                 $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/responseEstimate'
+            );
+
+            $this -> pushService -> sendKakaoAlimtalk(
+                'TS_1856', '[견적서 요청 알림]',
+                [ '회사명' => $params['request_company_name'] ], $user[0] -> phone_number
             );
         }
 
@@ -159,8 +169,13 @@ class EstimateService {
 
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
-                '견적서 확인 알림', '('.$params['response_estimate_res_company_name'].') 님 에게서 요청하신 견적서가 도착했습니다.',
+                '견적서 도착 알림', '('.$params['response_estimate_res_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
                 $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+            );
+
+            $this -> pushService -> sendKakaoAlimtalk(
+                'TS_1857', '[견적서 도착 알림]',
+                [ '회사명' => $params['response_estimate_res_company_name'] ], $user[0] -> phone_number
             );
         }
 
@@ -217,6 +232,11 @@ class EstimateService {
             $product_total_count += $params['product_count'][$i];
         }
 
+        $check = Order::where('order_group_code', $estimate['estimate_group_code']) -> count();
+        if($check > 0) {
+            throw new \Exception('', 500);
+        }
+
         $order = new Order;
 
         $order -> user_idx = $params['response_estimate_req_user_idx'];
@@ -238,7 +258,7 @@ class EstimateService {
         $product = DB::select("SELECT name FROM AF_product WHERE idx = ".$estimate['product_idx']);
         $productName = count($params['estimate_idx']) > 1 ?  $product[0]->name .'외 ' .count($params['estimate_idx'])-1 .'개' : $product[0]->name;
 
-        //구매자
+        // 구매자
         $this -> pushService -> sendPush(
             '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
             $params['response_estimate_req_user_idx'], $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate', '/mypage/requestEstimate'
@@ -249,11 +269,28 @@ class EstimateService {
             WHERE type = '".$estimate['response_company_type']."' AND company_idx = ".$estimate['response_company_idx']." AND parent_idx = 0";
         $user = DB::select($sql);
 
+        if($estimate['request_company_type'] === 'W') {
+            $sql =
+                "SELECT * FROM AF_wholesale 
+                WHERE idx = ".$estimate['request_company_idx'];
+            $company = DB::select($sql);
+        } else {
+            $sql =
+                "SELECT * FROM AF_retail 
+                WHERE idx = ".$estimate['request_company_idx'];
+            $company = DB::select($sql);
+        }
+
         // 판매자
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
-                '주문완료 안내', $productName.' 신규 주문이 등록되었습니다.',
+                '발주서 도착 알림', '('.$company[0] -> company_name.')님이 발주서를 요청했습니다.',
                 $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/responseEstimate', '/mypage/responseEstimate'
+            );
+
+            $this -> pushService -> sendKakaoAlimtalk(
+                'TS_1858', '[발주서 도착 알림]',
+                [ '회사명' => $company[0] -> company_name ], $user[0] -> phone_number
             );
         }
 
@@ -276,8 +313,13 @@ class EstimateService {
 
             if(count($user) > 0) {
                 $this -> pushService -> sendPush(
-                    '주문서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 주문서를 확인했습니다.',
+                    '발주서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 요청하신 발주서를 확인했습니다.',
                     $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+                );
+
+                $this -> pushService -> sendKakaoAlimtalk(
+                    'TS_1859', '[발주서 확인 알림]',
+                    [ '회사명' => $estimate[0] -> response_company_name ], $user[0] -> phone_number
                 );
             }
         }
@@ -334,6 +376,11 @@ class EstimateService {
 
                     $check = Estimate::where('estimate_group_code', $estimateGroupCode) -> count();
                 }
+            }
+
+            $check = Estimate::where('estimate_group_code', $estimateGroupCode) -> count();
+            if($check > 0) {
+                throw new \Exception('', 500);
             }
 
             if($params['company_type'][$i] === 'W') {
@@ -426,6 +473,23 @@ class EstimateService {
                 ]);
 
             $product_total_price = 0;
+
+            $sql =
+                "SELECT * FROM AF_user
+                WHERE type = '".$params['company_type'][$i]."' AND company_idx = ".$request -> idx." AND parent_idx = 0";
+            $user = DB::select($sql);
+
+            if(count($user) > 0) {
+                $this -> pushService -> sendPush(
+                    '견적서 도착 알림', '('.$params['response_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
+                    $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+                );
+
+                $this -> pushService -> sendKakaoAlimtalk(
+                    'TS_1857', '[견적서 도착 알림]',
+                    [ '회사명' => $params['response_company_name'] ], $user[0] -> phone_number
+                );
+            }
         }
     }
 }
