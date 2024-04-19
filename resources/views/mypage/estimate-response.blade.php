@@ -1328,6 +1328,8 @@
 
                             $('.check_order_prod_list').html('');
                             for(var i = 0; i < json.data.length; i++) {
+                                let product_memo = json.data[i].product_memo ? json.data[i].product_memo : '';
+
                                 $('.check_order_prod_list').append(
                                     `<li>
                                         <div class="img_box">
@@ -1375,7 +1377,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>비고</th>
-                                                    <td>` + json.data[i].product_memo + `</td>
+                                                    <td>` + product_memo + `</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
