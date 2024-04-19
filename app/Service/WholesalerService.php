@@ -426,36 +426,6 @@ class WholesalerService {
         ->limit(5)
         ->get();
 
-        // 판매중인 상품
-        $list = Product::select('AF_product.*',
-            DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl,
-                                IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew,
-                (SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest,
-                (SELECT COUNT(*) cnt FROM AF_order WHERE product_idx = AF_product.idx ) as orderCnt,
-                (SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as searchCnt'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->where('AF_product.company_idx', $param['wholesalerIdx'])
-            ->WhereIn('AF_product.state', ['S', 'O']);
-
-        if ($param['sort'] == 'search') {
-            $list = $list->orderby('AF_product.access_count', 'desc');
-        } else if ($param['sort'] == 'order') {
-            $list = $list->orderby('orderCnt', 'desc');
-        } else {
-            $list = $list->orderby('AF_product.register_time', 'desc');
-        }
-
-        $list = $list->paginate(32);
-
-        $data['list'] = $list;
-
-        // view 호출을 컨트롤러에서 하도록 변경함 ( kr.kevin, 2024.03.15 )
-        /*return view('wholesaler.detail', [
-            'data'=>$data
-        ]);*/
         return $data;
     }
 
