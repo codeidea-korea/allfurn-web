@@ -41,7 +41,7 @@
                     </div>
                     <div class="btn_box">
                         <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
-                        <button class="btn btn-primary" onClick="location.href='/message';"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
+                        <button class="btn btn-primary" onClick="sendMessage()"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry_white"></use></svg>문의하기</button>
                     </div>
                 </div>
             </div>
@@ -371,6 +371,39 @@
         $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active')
     })
 
+    //문의하기
+    function sendMessage() {
+        idx='';
+        type=''
+        if ($(location).attr('href').includes('/product/detail')) {
+            idx = $(location).attr('pathname').split('/')[3];
+            type = 'product';
+        } else if ($(location).attr('href').includes('/wholesaler/detail/')) {
+            idx = $(location).attr('pathname').split('/')[3];
+            type = 'wholesaler';
+        }
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url                : '/message/send',
+            data            : {
+                'idx'       : idx,
+                'type'      : type,
+                'message'   : '상품 문의드립니다.'
+            },
+            type            : 'POST',
+            dataType        : 'json',
+            success        : function(result) {
+                if (result.result == 'success') {
+                    location.replace('/message?roomIdx='+result.roomIdx+'&idx='+idx+'&type='+type+'&message=상품 문의드립니다');
+                } else {
+
+                }
+            }
+        });
+    }
+
+    /* --- 전체 상품 비동기 조회 --- */
     $(document).ready(function(){
         setTimeout(() => {
             loadProductList();
