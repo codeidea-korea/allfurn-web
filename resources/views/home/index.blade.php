@@ -267,6 +267,7 @@
 <script>
 // main_visual 
 const main_visual = new Swiper(".main_visual .slide_box", {
+    loop: true,
     slidesPerView: 1,
     navigation: {
         nextEl: ".main_visual .slide_arrow.next",

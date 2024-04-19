@@ -31,6 +31,7 @@
 <script>
     // line_common_banner 
     const line_common_banner = new Swiper(".line_common_banner", {
+        loop: true,
         slidesPerView: 1,
         spaceBetween: 0,
         navigation: {
