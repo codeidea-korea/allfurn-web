@@ -234,6 +234,13 @@ if ($('#sKeyword').length) {
     })
 }
 
+$(document).on('click', '.search_btn svg', function() {
+    console.log($(".search_btn input").val().length);
+    if($(".search_btn input").val().length) {
+        clickKeyword($(".search_btn input").val());
+    }
+})
+
 function clickKeyword(keyword) {
     fetch("/home/search/" + keyword, {
         method: 'PUT',
