@@ -74,49 +74,51 @@
             <div class="tab_content">
                 <!-- 판매상품 -->
                 <div class="active">
-                    <div class="box">
-                        <div class="inner">
-                            <div class="main_tit mb-10">
-                                <h3>{{$data['info']->company_name}} 이벤트 상품</h3>
-                            </div>
-                            <div class="relative">
-                                <!-- ul class="prod_list grid1 mb-14">
-                                    <li class="prod_item type02">
-                                        <div class="img_box">
-                                            <a href="./prod_detail.php">
-                                                <img src="/img/sale_thumb.png" alt="">
-                                                <span><b>호텔같은 내 침실로!</b><br>#20조 한정 할인 특가 #호텔형 침대</span>
-                                            </a>
-                                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                                        </div>
-                                        <div class="txt_box">
-                                            <a href="./prod_detail.php">
-                                                <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
-                                                <span>{{$data['info']->company_name}}</span>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul //-->
-                                <ul class="prod_list">
-                                    @foreach( $data['event'] AS $e => $event )
-                                    <li class="prod_item">
-                                        <div class="img_box">
-                                            <a href="/product/detail/{{$event->idx}}"><img src="{{$event->imgUrl}}" alt=""></a>
-                                            <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                                        </div>
-                                        <div class="txt_box">
-                                            <a href="/product/detail/{{$event->idx}}">
-                                                <span>{{$data['info']->company_name}}</span>
-                                                <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
-                                                <b>112,500원</b>
-                                            </a>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                </ul>
+                    @if(count($data['event']) > 0)
+                        <div class="box">
+                            <div class="inner">
+                                <div class="main_tit mb-10">
+                                    <h3>{{$data['info']->company_name}} 이벤트 상품</h3>
+                                </div>
+                                <div class="relative">
+                                    {{-- <ul class="prod_list grid1 mb-14">
+                                        <li class="prod_item type02">
+                                            <div class="img_box">
+                                                <a href="./prod_detail.php">
+                                                    <img src="/img/sale_thumb.png" alt="">
+                                                    <span><b>호텔같은 내 침실로!</b><br>#20조 한정 할인 특가 #호텔형 침대</span>
+                                                </a>
+                                                <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            </div>
+                                            <div class="txt_box">
+                                                <a href="./prod_detail.php">
+                                                    <strong>내 침실을 휴향지 호텔 처럼!  20조 한정 할인 특가를 진행합니다.</strong>
+                                                    <span>{{$data['info']->company_name}}</span>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul> --}}
+                                    <ul class="prod_list">
+                                        @foreach( $data['event'] AS $event )
+                                        <li class="prod_item">
+                                            <div class="img_box">
+                                                <a href="/product/detail/{{$event->idx}}"><img src="{{$event->imgUrl}}" alt=""></a>
+                                                <button class="zzim_btn prd_{{ $event->idx }} {{ ($event->isInterest == 1) ? 'active' : '' }}" pidx="{{ $event->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                            </div>
+                                            <div class="txt_box">
+                                                <a href="/product/detail/{{$event->idx}}">
+                                                    <span>{{$event->company_name}}</span>
+                                                    <p>{{$event->name}}</p>
+                                                    <b>{{$event->is_price_open ? number_format($event->price, 0).'원': $event->price_text}}</b>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                     @if($data['recommend']->count() > 0)
                     <div class="box">
                         <div class="inner">
@@ -152,7 +154,7 @@
                             </div>
                         </div>
                     </div>
-                    @endif;
+                    @endif
                     <div class="box">
                         <div class="inner">
                             <div class="sub_filter">
