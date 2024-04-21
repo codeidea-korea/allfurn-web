@@ -22,7 +22,8 @@
                     </div>
                 @else
                     @foreach($list as $row)
-                        <a href="{{ $row->type != 'order' && $row->type != 'active' ? $row->web_url : '#' }}" class="py-5 px-8 hover:bg-rose-50" disabled>
+                        {{-- <a href="{{ $row->type != 'order' && $row->type != 'active' ? $row->web_url : '#' }}" class="py-5 px-8 hover:bg-rose-50" disabled> --}}
+                        <a href="{{ $row->web_url ? $row->web_url : ''}}" class="py-5 px-8 hover:bg-rose-50" disabled>
                             <p>{{ $row->title }}</p>
                             <p class="mt-2">{!! $row->content !!}</p>
                             <p class="text-stone-400 mt-1 text-sm">{{ $row->send_date }}</p>

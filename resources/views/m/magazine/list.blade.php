@@ -14,9 +14,8 @@
             <ul class="swiper-wrapper">
                 @foreach($banners as $banner)
                     @if($banner->banner_type === 'img')
-                        <li class="swiper-slide" style="background-image:url({{ $banner->appBigImgUrl }})">
-                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
-                        </li>
+                        <li class="swiper-slide" style="background-image:url({{ $banner->appBigImgUrl }})"
+                            onclick="location.href='{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}'"></li>
                     @else
                         <li class="swiper-slide" style="background-color:{{$banner->bg_color}};">
                             <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
@@ -143,6 +142,7 @@
 
     // line_common_banner 
     const line_common_banner = new Swiper(".line_common_banner", {
+        loop: true,
         slidesPerView: 1,
         spaceBetween: 0,
         autoplay: {

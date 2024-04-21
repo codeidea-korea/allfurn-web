@@ -385,77 +385,47 @@ class WholesalerService {
             ->get();
 
         // 인기 상품
-        // 광고중인 상품( isAd=1 ) 이면서 좋아요( isInterest ) 가 있는 상품
-        $data['event'] = DB::table(DB::raw(
-            '(SELECT 
-		        AF_product.*, 
-		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
-		        (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd ,
-		        (SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = 1648) as isInterest
-	        FROM 
-		        AF_product 
-		        left join AF_attachment as at on at.idx = SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1) 
-	        WHERE 
-		        AF_product.company_type = "W" 
-		        and AF_product.company_idx = "'.$param['wholesalerIdx'].'" 
-		        and AF_product.state = "S") AS t
-        '))
-            ->select(
-                't.*'
-            )
-            ->where('t.isInterest', 1)
-            ->where('t.isAd', 1)
-            ->orderby('t.idx', 'desc')
-            ->limit(5)->get();
+        // 조건1: 광고중인 상품( isAd=1 ) 이면서 
+        // 조건2: 좋아요( isInterest ) 가 있는 상품 => 이조건 제외함(24.04.19)
+        $data['event'] = Product::select(
+             'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+        )
+        ->leftjoin('AF_product_ad', function($query) {
+            $query->on('AF_product_ad.product_idx', 'AF_product.idx')
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
+            ->where('AF_product_ad.end_date', '>', DB::raw('now()'));
+        })
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->where('AF_product.company_idx', $param['wholesalerIdx'])
+        ->where('AF_product.company_type', 'W')
+        ->where('AF_product.state', 'S')
+        ->whereNotNull('AF_product_ad.idx')
+        ->orderBy('AF_product_ad.price', 'DESC')
+        ->orderBy('AF_product_ad.register_time', 'DESC')
+        ->get();
 
         // 추천 상품
-        $data['recommend'] = Product::select('AF_product.*',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-            (SELECT count(*)cnt FROM AF_product_interest WHERE idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest,
-            (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd'))
-            ->where([
-                'AF_product.company_type' => 'W',
-                'AF_product.company_idx' => $param['wholesalerIdx'],
-                'AF_product.is_represent' => 1,
-                'AF_product.state' => 'S'
-            ])
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->orderBy('AF_product.idx', 'desc')
-            ->limit(5)
-            ->get();
+        $data['recommend'] = Product::select(
+             'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+        )
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->where('AF_product.company_idx', $param['wholesalerIdx'])
+        ->where('AF_product.state', 'S')
+        ->where('AF_product.is_represent', 1)
+        ->whereNotNull('AF_product.access_date')
+        ->orderBy('AF_product.access_date', 'DESC')
+        ->limit(5)
+        ->get();
 
-        // 판매중인 상품
-        $list = Product::select('AF_product.*',
-            DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl,
-                                IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew,
-                (SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest,
-                (SELECT COUNT(*) cnt FROM AF_order WHERE product_idx = AF_product.idx ) as orderCnt,
-                (SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as searchCnt'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->where('AF_product.company_idx', $param['wholesalerIdx'])
-            ->WhereIn('AF_product.state', ['S', 'O']);
-
-        if ($param['sort'] == 'search') {
-            $list = $list->orderby('AF_product.access_count', 'desc');
-        } else if ($param['sort'] == 'order') {
-            $list = $list->orderby('orderCnt', 'desc');
-        } else {
-            $list = $list->orderby('AF_product.register_time', 'desc');
-        }
-
-        $list = $list->paginate(32);
-
-        $data['list'] = $list;
-
-        // view 호출을 컨트롤러에서 하도록 변경함 ( kr.kevin, 2024.03.15 )
-        /*return view('wholesaler.detail', [
-            'data'=>$data
-        ]);*/
         return $data;
     }
 

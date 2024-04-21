@@ -256,6 +256,7 @@
 
 // main_visual 
 const main_visual = new Swiper(".main_visual .slide_box", {
+    loop: true,
     slidesPerView: 1,
     pagination: {
         el: ".main_visual .count_pager",
@@ -458,7 +459,7 @@ $(document)
     .on('click', '.sch_cate_info .btn-primary', function() {
         var pre = $(this).prev().find('li.active').data('pre');
 
-        if( typeof pre != 'undefined' || pre != '' ) {
+        if( typeof pre != 'undefined' && pre != '' ) {
             $(location).attr('href', '/product/category?pre=' + pre);
         } else {
             //

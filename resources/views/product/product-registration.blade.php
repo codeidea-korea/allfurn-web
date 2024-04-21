@@ -241,8 +241,8 @@
                     <dl class="flex">
                         <dt class="w-[190px] shrink-0 mt-2">인증 정보</dt>
                         <dd class="font-medium w-full">
-                            <button class="h-[48px] w-[240px] rounded-md bg-stone-700 text-white hover:bg-stone-600" onclick="openAuthInfo();">인증 정보 선택</button>
-                            <div class="mt-3 wrap__selected hidden">
+                            <button class="h-[48px] w-[240px] rounded-md bg-stone-700 text-white hover:bg-stone-600" onclick="modalOpen('#certification_information_modal');">인증 정보 선택</button>
+                            <div class="mt-3 wrap__selected auth-wrap__selected hidden">
                                 <span class="plus_del text-primary text-sm">선택된 인증 정보</span>
                                 <div class="mt-1" id="auth_info">
                                     {{-- 인증정보 텍스트 영역 --}}
@@ -316,7 +316,7 @@
                             </div>
                         </div>
                         <!-- hidden -->
-                        <div class="guide_area mt-3 hidden">
+                        <div class="guide_area guide_pay_notice mt-3 hidden">
                             <div class=" setting_input h-[100px] py-3  w-full">
                                 <textarea name="pay_notice" id="pay_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
                             </div>
@@ -337,7 +337,7 @@
                                 <label for="price_exposure24" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
                             </div>
                         </div>
-                        <div class="guide_area mt-3 hidden">
+                        <div class="guide_area guide_delivery_notice mt-3 hidden">
                             <div class=" setting_input h-[100px] py-3  w-full">
                                 <textarea name="delivery_notice" id="delivery_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
                             </div>
@@ -358,7 +358,7 @@
                                 <label for="price_exposure26" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
                             </div>
                         </div>
-                        <div class="guide_area mt-3 hidden">
+                        <div class="guide_area guide_return_notice mt-3 hidden">
                             <div class=" setting_input h-[100px] py-3  w-full">
                                 <textarea name="return_notice" id="return_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
                             </div>
@@ -379,7 +379,7 @@
                                 <label for="price_exposure28" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
                             </div>
                         </div>
-                        <div class="guide_area mt-3 hidden">
+                        <div class="guide_area guide_order_notice mt-3 hidden">
                             <div class="font-medium w-full">
                                 <input type="text" class="setting_input h-[48px] w-full" id="order_title" placeholder="항목 상세">
                             </div>
@@ -422,6 +422,16 @@
         @endif 
     </div>
     {{-- ############# 완료, 임시, 미리보기 버튼 종료 --}}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -580,44 +590,7 @@
         $('#sortable').sortable();
         $('#sortable').disableSelection();
 
-        // 에디터 초기화
-        function init_editor() {
-            editer = new FroalaEditor('.textarea-form', {
-                key: "wFE7nG5E4I4D3A11A6eMRPYf1h1REb1BGQOQIc2CDBREJImA11C8D6B5B1G4D3F2F3C8==",
-                requestHeaders: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-
-                // fullPage: true,
-                height:300,
-                useClasses: false,
-
-                imageUploadParam: 'file',
-                imageUploadURL: '/product/image',
-                imageUploadParams: {folder: 'product'},
-                imageUploadMethod: 'POST',
-                imageMaxSize: 20 * 1024 * 1024,
-                imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
-
-                events: {
-                    'image.inserted': function ($img, response) {
-                        var obj = $.parseJSON(response);
-                        $img.data('idx', obj.idx);
-                    },
-                    'image.removed': function ($img) {
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            method: "DELETE",
-                            url: "/product/image",
-                            data: {
-                                src: $img.attr('src'),
-                                idx: $img.data('idx')
-                            }
-                        })
-                    },
-                }
-            });
-        }
+        
 
         function img_reload_order() {
             $('.desc__product-img-wrap').find('.add__badge').remove();
@@ -630,135 +603,247 @@
             });
         }
 
-        // 속성 가져오기
-        function getProperty(parentIdx=null, title=null) {
-            $.ajax({
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url				: '/product/getCategoryProperty',
-                data			: {
-                    'category_idx' : $('.w-full .text-primary.active span').data('category_idx'),
-                    'parent_idx' : parentIdx
-                },
-                type			: 'POST',
-                dataType		: 'json',
-                success		: function(result) {
-                    pb_cls = ' pb-5';
-                    if (parentIdx == null) {
-                        var htmlText = '';
-                        result.forEach(function (e, idx) {
-                            if( idx > 0 ) {
-                                pb_cls = ' py-5';
-                            }
-
-                            htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
-                                '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
-                                    '<div class="flex items-center gap-3">' +
-                                '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택1</button>' +
-                                '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
-                                '       </div>' +
-                                '   </div>' +
-                                '</div>';
-                        });
-                        $('#property #property_info').before(htmlText);
-                    } else {
-                        var subHtmlText = '';
-                        result.forEach(function (e, idx) {
-                            if( idx > 0 ) {
-                                pb_cls = 'py-5';
-                            }
-
-                            subHtmlText += '<li>' +
-                                '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
-                                '<label for="property-check_' + e.idx + '">' + e.property_name + '</label>' +
-                                '</li>';
-                        })
-
-                        $('#product_attributes_modal').data('property_idx', parentIdx);
-                        $('#product_attributes_modal .filter_body p').text(title);
-                        $('#product_attributes_modal .filter_list').html(subHtmlText);
-
-                        //$('ul.select-group__result[data-property_idx="' + parentIdx + '"] li').each(function (i, el) {
-                        //$('#property-modal #property-check_'+$(el).data('sub_idx')).attr('checked', true);
-                        //})
-
-                        modalOpen('#product_attributes_modal');
-                    }
+    //### 속성 가져오기
+    function getProperty(parentIdx=null, title=null) {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/product/getCategoryProperty',
+            data			: {
+                'category_idx' : $('.w-full .text-primary.active span').data('category_idx'),
+                'parent_idx' : parentIdx
+            },
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                pb_cls = ' pb-5';
+                if (parentIdx == null) {
+                    var htmlText = '';
+                    result.forEach(function (e, idx) {
+                        if( idx > 0 ) {
+                            pb_cls = ' py-5';
+                        }
+                        htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
+                            '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
+                                '<div class="flex items-center gap-3">' +
+                            '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
+                            '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
+                            '       </div>' +
+                            '   </div>' +
+                            '</div>';
+                    });
+                    $('#property #property_info').before(htmlText);
+                } else {
+                    var subHtmlText = '';
+                    result.forEach(function (e, idx) {
+                        subHtmlText += '<li>' +
+                            '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
+                            '<label for="property-check_' + e.idx + '">' + e.property_name + '</label>' +
+                            '</li>';
+                    })
+                    $('#product_attributes_modal').data('property_idx', parentIdx);
+                    $('#product_attributes_modal .filter_body p').text(title);
+                    $('#product_attributes_modal .filter_list').html(subHtmlText);
+                    $('div.select-group__result[data-property_idx="' + parentIdx + '"] div').each(function (i, el) {
+                        $('#product_attributes_modal #property-check_'+$(el).data('sub_idx')).attr('checked', true);
+                    })
+                    modalOpen('#product_attributes_modal');
                 }
-            });
+            }
+        });
+    }
+
+    //### 속성 선택하기
+    $('#product_attributes_modal button').click(function () {
+        if ($(this).has('.btn-primary')) {
+            var htmlText = "";
+            $('#product_attributes_modal .check-form:checked').map(function (n, i) {
+                htmlText += '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + $(this).data('sub_property') + '">' +
+                '   <span class="text-stone-500 property_name">' + $(this).data('sub_name') + '</span>' +
+                '   <button class="ico_delete"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
+                '</div>';
+            })
+            $('#property .select-group__result[data-property_idx="' + $('#product_attributes_modal').data('property_idx') + '"]').html(htmlText);
+            modalClose('#product_attributes_modal');
+        }
+    })
+
+    //### 모달에서 선택한 값 삭제 (상품속성, 배송방법) ico_delete
+    $(document).on('click', '.ico_delete', function() {
+        $(this).parent().remove();
+        if ($('.shipping_method').length < 1) {
+            $('.shipping-wrap__add').addClass('hidden');
+        }
+    });
+
+    //### 배송방법 추가 모달 - 배송방법은 최대 5개까지만 등록가능
+    function openDeliveryModal() {
+        if( $('.shipping-wrap__add div').length > 5 ) {
+            modalOpen('#shipping_error_modal');
+        } else {
+            $('#shipping_method_modal .btn-primary').prop('disabled', true);
+            modalOpen('#shipping_method_modal');
+        }
+    }
+
+    //### 배송 방법 추가
+    $('#shipping_method_modal .btn-primary').on('click', function (e) {
+        e.stopPropagation();
+        var title = $('#shipping_method_modal .dropdown.step1 p').text();
+        if (title == '직접 입력') {
+            title = $('#shipping_method_modal .direct_input_2 > input').val();
         }
 
-        // 속성 선택하기
-        $('#product_attributes_modal button').click(function () {
-            if ($(this).has('.btn-primary')) {
-                var htmlText = "";
-                $('#product_attributes_modal .check-form:checked').map(function (n, i) {
+        let htmlText = '' +
+            '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + title + ' ('+ $('#shipping_method_modal .dropdown.step2 p').text() + ')</span>' +
+            '   <button class="ico_delete">' +
+            '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
+            '           <path d="M18 6 6 18"></path>' +
+            '           <path d="m6 6 12 12"></path>' +
+            '       </svg>' +
+            '   </button>' +
+            '</div>';
+        $('.shipping-wrap__add .shipping_method_list').append(htmlText);
+        $('.shipping-wrap__add').removeClass('hidden');
 
-                    htmlText += '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + $(this).data('sub_property') + '">' +
-                    '   <span class="text-stone-500 property_name">' + $(this).data('sub_name') + '</span>' +
-                    '   <button><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
-                    '</div>';
-                })
-                $('#property .select-group__result[data-property_idx="' + $('#product_attributes_modal').data('property_idx') + '"]').html(htmlText);
+        // 배송방법 추가 모달 초기화
+        $('#shipping_method_modal .dropdown.step1 p').text('가격 안내 문구 선택');
+        $('#shipping_method_modal .direct_input_2 > input').val('');
+        $('#shipping_method_modal .dropdown.step2 p').text('배송 가격을 선택해주세요');
 
-                modalClose('#product_attributes_modal');
+        modalClose('#shipping_method_modal');
+    })
+
+    //### 인증정보 체크박스 선택시 (마지막 기타인증 선택 관련)
+    $('#certification_information_modal [type="checkbox"]').on('change', function () {
+        let isShow = $(this).is(':checked');
+        if ($(this).parents().find('li').has(':last')) {
+            if (!isShow) {
+                $('#auth_info_text').val('');
             }
-        })
-
-
-        // 드롭다운 토글
-        $(".filter_dropdown").click(function(event) {
-            var $thisDropdown = $(this).next(".filter_dropdown_wrap");
-            $(this).toggleClass('active');
-            $thisDropdown.toggle();
-            $(this).find("svg").toggleClass("active");
-            event.stopPropagation(); // 이벤트 전파 방지
+            $('#auth_info_text').css('display', isShow ? 'block' : 'none');
+        }
+        var cnt = 0;
+        $('#certification_information_modal [type="checkbox"]').each(function (i, el) {
+            if ($(el).is(':checked')) { cnt++; }
         });
+    })
 
-        // 드롭다운 항목 선택 이벤트
-        $(".filter_dropdown_wrap ul li a").click(function(event) {
-            var selectedText = $(this).text();
-            var $dropdown = $(this).closest('.filter_dropdown_wrap').prev(".filter_dropdown");
-            $dropdown.find("p").text(selectedText);
-            $(this).closest(".filter_dropdown_wrap").hide();
-            $dropdown.removeClass('active');
-            $dropdown.find("svg").removeClass("active");
-
-            // '직접 입력' 선택 시 direct_input_2 표시
-            if ($(this).data('target') === "direct_input_2") {
-                $('.direct_input_2').show();
-            }
-            // '소비자 직배 가능' 또는 '매장 배송' 선택 시 direct_input_2 숨김
-            else if ($(this).hasClass('direct_input_2_hidden')) {
-                $('.direct_input_2').hide();
-            }
-            // '무료' 또는 '착불' 선택 시 direct_input_2의 상태 변경 없음
-
-            // 배송방법추가일경우
-            if( $('#shipping_method_modal .dropdown.step1 p').text() == '직접 입력' ) {
-                if( $('#shipping_method_modal .direct_input_2 > input').val() != '' && $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
-                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
+    //### 인증정보 선택완료
+    $('#certification_information_modal .btn-primary').click(function () {
+        if ($('#certification_information_modal [type="checkbox"]:checked').length > 0 ) {
+            let text = "";
+            $('#certification_information_modal [type="checkbox"]:checked').each(function (i, el) {
+                if ($(el).is('[data-auth="기타 인증"]')) {
+                    if ($('#auth_info_text').val() != '') {
+                        text += $('#auth_info_text').val();
+                    } else {
+                        $(el).prop('checked', false);
+                    }
                 } else {
-                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
+                    text += $(el).parent().find('label').text();
                 }
-            } else {
-                if( $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
-                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
-                } else {
-                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
-                }
-            }
+                text += ", "
+            });
+            $('.wrap__selected .mt-1').text(text.slice(0, -2));
+            $('.wrap__selected').addClass('active');
+            $('.wrap__selected').show();
+        } else {
+            $('.wrap__selected .mt-1').text('');
+            $('.wrap__selected.active').removeClass('active');
+            $('.wrap__selected').hide();
+        }
 
-            event.stopPropagation(); // 이벤트 전파 방지
-        });
+        modalClose('#certification_information_modal');
+    })
 
-        // 드롭다운 영역 밖 클릭 시 드롭다운 닫기
-        $(document).click(function(event) {
-            if (!$(event.target).closest('.filter_dropdown, .filter_dropdown_wrap').length) {
-                $('.filter_dropdown_wrap').hide();
-                $('.filter_dropdown').removeClass('active');
-                $('.filter_dropdown svg').removeClass("active");
+    //### 에디터 초기화
+    function init_editor() {
+        editer = new FroalaEditor('.textarea-form', {
+            key: "wFE7nG5E4I4D3A11A6eMRPYf1h1REb1BGQOQIc2CDBREJImA11C8D6B5B1G4D3F2F3C8==",
+            requestHeaders: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            // fullPage: true,
+            height:300,
+            useClasses: false,
+
+            imageUploadParam: 'file',
+            imageUploadURL: '/product/image',
+            imageUploadParams: {folder: 'product'},
+            imageUploadMethod: 'POST',
+            imageMaxSize: 20 * 1024 * 1024,
+            imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+
+            events: {
+                'image.inserted': function ($img, response) {
+                    var obj = $.parseJSON(response);
+                    $img.data('idx', obj.idx);
+                },
+                'image.removed': function ($img) {
+                    $.ajax({
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        method: "DELETE",
+                        url: "/product/image",
+                        data: {
+                            src: $img.attr('src'),
+                            idx: $img.data('idx')
+                        }
+                    })
+                },
             }
         });
+    }
+
+    //### 옵션 추가
+    function addOrderOption() {
+        // 옵션 최대 6개
+        oIdx = parseInt( oIdx + 1 );
+        _tmp = parseInt( _tmp + 1 );
+        if (oIdx > 6) {
+            oIdx = parseInt( oIdx - 1 );
+            openModal('#alert-modal10');
+        } else {
+            var titleHtml = '<div class="flex gap-3 border-t py-5 optNum' + parseInt( _tmp -1 ) + ' form__list-wrap" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
+                '   <div class="w-[190px] shrink-0 mt-2">' +
+                '       <p>옵션 ' + oIdx + '</p>' +
+                '       <button class="text-stone-400 underline mt-2" onclick="checkRemoveOption(' + parseInt( _tmp -1 ) + ');">삭제</button>' +
+                '   </div>' +
+                '   <div class="w-full option_value_wrap">' +
+                '       <div class="radio_btn flex items-center border-b pb-5">' +
+                '           <p class="essential w-[130px] shrink-0">필수옵션</p>' +
+                '           <div>' +
+                '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-1" value="1" checked="">' +
+                '               <label for="repuired-option0'+ parseInt( oIdx ) +'-1" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>' +
+                '           </div>' +
+                '           <div style="margin-left:-1px;">' +
+                '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-2" value="0">' +
+                '               <label for="repuired-option0'+ parseInt( oIdx ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
+                '           </div>' +
+                '       </div>' +
+                '       <div class="flex items-center mt-3 ">' +
+                '           <p class="essential w-[130px] shrink-0">옵션명</p>' +
+                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
+                '       </div>' +
+                '       <div class="flex items-center mt-3 item__input-wrap">' +
+                '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
+                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" placeholder="예시)색상">' +
+                '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
+                '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
+                '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">원</p>' +
+                '           </div>' +
+                '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
+                '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
+                '           </button>' +
+                '       </div>' +
+                '   </div>' +
+                '</div>'
+
+            $('#optsArea').append(titleHtml);
+        }
+    }
+
+        
 
         // 라디오 버튼의 변경을 감지
         $('input[type="radio"][name="payment"]').change(function() {
@@ -774,61 +859,9 @@
             }
         });
 
-        // 배송방법 추가 모달
-        function openDeliveryModal() {
-            // 배송방법은 최대 5개까지만 등록가능
-            if( $('.shipping-wrap__add div').length > 5 ) {
-                modalOpen('#shipping_error_modal');
-            } else {
-                $('#shipping_method_modal .btn-primary').prop('disabled', true);
-                modalOpen('#shipping_method_modal');
-            }
-        }
+        
 
-        // 배송 방법 추가
-        $('#shipping_method_modal .btn-primary').on('click', function (e) {
-            e.stopPropagation();
-            var title = $('#shipping_method_modal .dropdown.step1 p').text();
-            if (title == '직접 입력') {
-                title = $('#shipping_method_modal .direct_input_2 > input').val();
-            }
 
-            let htmlText = '' +
-                '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + title + ' ('+ $('#shipping_method_modal .dropdown.step2 p').text() + ')</span>' +
-                '   <button class="delivery_del">' +
-                '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
-                '           <path d="M18 6 6 18"></path>' +
-                '           <path d="m6 6 12 12"></path>' +
-                '       </svg>' +
-                '   </button>' +
-                '</div>';
-
-                /*'<li>' +
-                '<span class="add__name">'+ title + ' (' + $('#delivery-modal .wrap-item--02 .dropdown__title').text() +')</span>' +
-                '<i class="ico__delete16"><span class="a11y">삭제</span></i>' +
-                '</li>';*/
-
-            $('.shipping-wrap__add .shipping_method_list').append(htmlText);
-            $('.shipping-wrap__add').addClass('active');
-
-            $('.shipping-wrap__add').show();
-
-            //초기화
-            $('#shipping_method_modal .dropdown.step2 p').text('가격 안내 문구 선택');
-            $('#shipping_method_modal .direct_input_2 > input').val('');
-            $('#shipping_method_modal .shipping-wrap__add.active').removeClass('active');
-
-            $('#shipping_method_modal .dropdown.step2 p').text('배송 가격을 선택해주세요');
-
-            modalClose('#shipping_method_modal');
-
-            //$(this).prop('disabled', true);
-        })
-
-        // 인증정보 모달
-        function openAuthInfo() {
-            modalOpen('#certification_information_modal');
-        }
 
         $('#shipping_method_modal .direct_input_2 > input').on('keyup', function() {
             if( $(this).val() != '' && $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
@@ -838,81 +871,9 @@
             }
         });
 
-        // 인증정보 선택
-        $('#certification_information_modal .btn-primary').click(function () {
-            if ($('#certification_information_modal [type="checkbox"]:checked').length > 0 ) {
-                let text = "";
-                $('#certification_information_modal [type="checkbox"]:checked').each(function (i, el) {
-                    if ($(el).is('[data-auth="기타 인증"]')) {
-                        if ($('#auth_info_text').val() != '') {
-                            text += $('#auth_info_text').val();
-                        } else {
-                            $(el).prop('checked', false);
-                        }
-                    } else {
-                        text += $(el).parent().find('label').text();
-                    }
-                    text += ", "
-                });
-                $('.wrap__selected .mt-1').text(text.slice(0, -2));
-                $('.wrap__selected').addClass('active');
-                $('.wrap__selected').show();
-            } else {
-                $('.wrap__selected .mt-1').text('');
-                $('.wrap__selected.active').removeClass('active');
-                $('.wrap__selected').hide();
-            }
+        
 
-            modalClose('#certification_information_modal');
-        })
-
-        // 옵션 추가
-        function addOrderOption() {
-            // 옵션 최대 6개
-            oIdx = parseInt( oIdx + 1 );
-            _tmp = parseInt( _tmp + 1 );
-            if (oIdx > 6) {
-                oIdx = parseInt( oIdx - 1 );
-                openModal('#alert-modal10');
-            } else {
-                var titleHtml = '<div class="flex gap-3 border-t py-5 optNum' + parseInt( _tmp -1 ) + ' form__list-wrap" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
-                    '   <div class="w-[190px] shrink-0 mt-2">' +
-                    '       <p>옵션 ' + oIdx + '</p>' +
-                    '       <button class="text-stone-400 underline mt-2" onclick="checkRemoveOption(' + parseInt( _tmp -1 ) + ');">삭제</button>' +
-                    '   </div>' +
-                    '   <div class="w-full option_value_wrap">' +
-                    '       <div class="radio_btn flex items-center border-b pb-5">' +
-                    '           <p class="essential w-[130px] shrink-0">필수옵션</p>' +
-                    '           <div>' +
-                    '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-1" value="1" checked="">' +
-                    '               <label for="repuired-option0'+ parseInt( oIdx ) +'-1" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>' +
-                    '           </div>' +
-                    '           <div style="margin-left:-1px;">' +
-                    '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-2" value="0">' +
-                    '               <label for="repuired-option0'+ parseInt( oIdx ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
-                    '           </div>' +
-                    '       </div>' +
-                    '       <div class="flex items-center mt-3 ">' +
-                    '           <p class="essential w-[130px] shrink-0">옵션명</p>' +
-                    '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
-                    '       </div>' +
-                    '       <div class="flex items-center mt-3 item__input-wrap">' +
-                    '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
-                    '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" placeholder="예시)색상">' +
-                    '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
-                    '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
-                    '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">환</p>' +
-                    '           </div>' +
-                    '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
-                    '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
-                    '           </button>' +
-                    '       </div>' +
-                    '   </div>' +
-                    '</div>'
-
-                $('#optsArea').append(titleHtml);
-            }
-        }
+        
 
         // 상품 미리보기
         function preview() {
@@ -1076,7 +1037,7 @@
 
         // 옵션값 추가
         $('body').on('click', '.input__add-btn', function () {
-            if ($(this).is('.input__del-btn')) {
+            if ($(this).is('.input__del-btn')) { // 옵션값 삭제
                 var valueWrap = $(this).parents('.option_value_wrap');
                 var isLast = $(this).parents('.item__input-wrap').is(':last-child')
 
@@ -1096,7 +1057,7 @@
                 if (valueWrap.find('.input__add-btn').length == 2) {
                     valueWrap.find('.input__add-btn.input__del-btn').remove();
                 }
-            } else {
+            } else { // 옵션값 추가
                 if ($(this).parents('.item__input-wrap').index() != 0) {
                     $(this).parents('.item__input-wrap').find('.input__add-btn.input__del-btn').remove();
                 }
@@ -1107,6 +1068,7 @@
                 var clone = $(this).parents('.item__input-wrap').clone();
                 clone.find('input[name="option-property_name"]').val('');
                 clone.find('input[name="option-price"]').val('0');
+                clone.find('input[name="option-property_name"]').attr('id','option-property_01-'+$(this).parents('.item__input-wrap').index());
                 clone.append(clone.find('.input__add-btn').clone());
                 clone.find('.input__add-btn:last').removeClass('input__del-btn');
                 clone.find('.input__add-btn:last').html('' +
@@ -1232,6 +1194,61 @@
             }
         });
 
+        // 드롭다운 토글
+        $(".filter_dropdown").click(function(event) {
+            var $thisDropdown = $(this).next(".filter_dropdown_wrap");
+            $(this).toggleClass('active');
+            $thisDropdown.toggle();
+            $(this).find("svg").toggleClass("active");
+            event.stopPropagation(); // 이벤트 전파 방지
+        });
+
+        // 드롭다운 항목 선택 이벤트
+        $(".filter_dropdown_wrap ul li a").click(function(event) {
+            var selectedText = $(this).text();
+            var $dropdown = $(this).closest('.filter_dropdown_wrap').prev(".filter_dropdown");
+            $dropdown.find("p").text(selectedText);
+            $(this).closest(".filter_dropdown_wrap").hide();
+            $dropdown.removeClass('active');
+            $dropdown.find("svg").removeClass("active");
+
+            // '직접 입력' 선택 시 direct_input_2 표시
+            if ($(this).data('target') === "direct_input_2") {
+                $('.direct_input_2').show();
+            }
+            // '소비자 직배 가능' 또는 '매장 배송' 선택 시 direct_input_2 숨김
+            else if ($(this).hasClass('direct_input_2_hidden')) {
+                $('.direct_input_2').hide();
+            }
+            // '무료' 또는 '착불' 선택 시 direct_input_2의 상태 변경 없음
+
+            // 배송방법추가일경우
+            if( $('#shipping_method_modal .dropdown.step1 p').text() == '직접 입력' ) {
+                if( $('#shipping_method_modal .direct_input_2 > input').val() != '' && $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
+                } else {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
+                }
+            } else {
+                if( $('#shipping_method_modal .dropdown.step2 p').text() != '배송가격을 선택해주세요' ) {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', false);
+                } else {
+                    $('#shipping_method_modal .btn-primary').prop('disabled', true);
+                }
+            }
+
+            event.stopPropagation(); // 이벤트 전파 방지
+        });
+
+        // 드롭다운 영역 밖 클릭 시 드롭다운 닫기
+        $(document).click(function(event) {
+            if (!$(event.target).closest('.filter_dropdown, .filter_dropdown_wrap').length) {
+                $('.filter_dropdown_wrap').hide();
+                $('.filter_dropdown').removeClass('active');
+                $('.filter_dropdown svg').removeClass("active");
+            }
+        });
+
         function saveProduct(regType) {
 
             //closeModal('#alert-modal09');
@@ -1256,7 +1273,7 @@
                 alert('결제방식을 선택해주세요.');
                 $('#payment01').focus();
                 return;
-            } else if ($('.shipping-wrap__add.active').length == 0) {
+            } else if ($('.shipping_method').length < 1) {
                 alert('배송방법을 선택해주세요.');
                 $('.shipping-wrap__add').focus();
                 return;
@@ -1384,6 +1401,9 @@
 
     
 
+
+
+
     // 저장된 상품 데이터가 있을 경우에만(수정화면) > 주문정보 가져오기 > 등록된 상품 목록 가져오기 
     function loadProduct() {
         let loadType = $('.product_reg').data('loadtype'); // loadType = 0:modify, 1:기본정보 불러오기, 2:주문정보 불러오기
@@ -1405,33 +1425,9 @@
                     subCategoryIdx = result['category_idx']; // 카테고리 idx
 
                     // 저장된(선택된) 카테고리 값 관련
-                    // $('.category__list-item.step1[data-category_idx=' + result['category_parent_idx'] + ']').click();
                     $('.w-full .text-primary').addClass('active');
                     $('.w-full .text-primary span').data('category_idx', result['category_idx']);
                     $('.w-full .text-primary span').text( result['category'] );
-
-                    // 저장된(선택된) 속성값 관련
-                    getProperty(null);
-                    
-
-                    // setTimeout(function () {
-                    //     var parentIdx = 0;
-
-                    //     result['propertyList'].map(function (item) {
-                    //         console.log(item['parent_idx'], + '|' + parentIdx);
-                    //         if (parentIdx == '' || item['parent_idx'] != parentIdx) {
-                    //             parentIdx = item['parent_idx'];
-                    //             $('.list__desc.property ul.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').html('');
-                    //         }
-
-                    //         $('.list__desc.property ul.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').append(
-                    //             '<li data-sub_idx="' + item.idx + '">' +
-                    //             '<span class="property_name">' + item['property_name'] + '</span>' +
-                    //             '<i class="ico__delete16"><span class="a11y">삭제</span></i>' +
-                    //             '</li>'
-                    //         )
-                    //     });
-                    // }, 500);
 
                     // 첨부파일 이미지 출력
                     if (result['attachment'] != null) {
@@ -1459,6 +1455,27 @@
                             $('.product-img__gallery').hide();
                         }
                     }
+
+                    // 저장된(선택된) 속성값 관련
+                    getProperty(null);
+                    
+                    // 카테고리 선택에 따른 상품 속성 값들..
+                    setTimeout(function () {
+                        var parentIdx = 0;
+                        result['propertyList'].map(function (item) {
+                            if (parentIdx == '' || item['parent_idx'] != parentIdx) {
+                                parentIdx = item['parent_idx'];
+                                $('div.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').html('');
+                            }
+
+                            $('div.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').append(
+                                '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + item.idx + '">' +
+                                '   <span class="text-stone-500 property_name">' + item['property_name'] + '</span>' +
+                                '   <button class="ico_delete"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
+                                '</div>'
+                            )
+                        });
+                    }, 500);
 
                     // 상품 가격
                     $('#product-price').val(result['price']); 
@@ -1490,7 +1507,7 @@
                     result['delivery_info'].split(',').forEach(str => {
                         delivery += '' + 
                             '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
-                            '   <button class="delivery_del">' +
+                            '   <button class="ico_delete">' +
                             '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
                             '           <path d="M18 6 6 18"></path>' +
                             '           <path d="m6 6 12 12"></path>' +
@@ -1499,22 +1516,21 @@
                             '</div>';
                     })
                     $('.shipping-wrap__add .shipping_method_list').append(delivery);
-                    $('.shipping-wrap__add').addClass('active');
-                    $('.shipping-wrap__add').show();
+                    $('.shipping-wrap__add').removeClass('hidden');
 
                     // 상품 추가 공지
                     $('#form-list09').val(result['notice_info']);
 
                     // 인증 정보
                     $('#auth_info').text(result['auth_info']);
-                    // $('.auth-wrap__selected').addClass('active');
+                    $('.auth-wrap__selected').removeClass('hidden');
                     result['auth_info'].split(', ').forEach(str => {
                         if (authList.indexOf(str) == -1) {
-                            $('#default-modal07 .content__list input[data-auth="기타 인증"]').attr('checked', true);
+                            $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
                             $('#auth_info_text').val(str);
                             $('#auth_info_text').css('display', 'block');
                         } else {
-                            $('#default-modal07 .content__list input[data-auth="' + str + '"]').attr('checked', true);
+                            $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
                         }
                     });
 
@@ -1524,15 +1540,14 @@
                     // 주문 옵션 추가
                     var obj = $.parseJSON(result['product_option']);
                     obj.forEach(function (item, i) {
-                        if (i > 0) {
-                            addOrderOption();
-                        }
+                        addOrderOption();
                         $('input[name="option-required_0' + (i + 1) + '"][value=' + item.required + ']').prop('checked', true);
                         $('input#option-name_0' + (i + 1)).val(item.optionName);
-
+                        // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
                         item.optionValue.forEach(function (value, y) {
                             if (y > 0) {
-                                $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').click();
+                                $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
+                                console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
                             }
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
@@ -1542,32 +1557,32 @@
 
                 if (loadType == 0 || loadType == 2) {
                     if (result['is_pay_notice'] == 0) {
-                        $('.textarea-wrap.margin-top16.is_pay').hide();
+                        $('.guide_pay_notice').hide();
                     } else {
                         $('#pay_notice').val(result['pay_notice']);
-                        $('.textarea-wrap.margin-top16.is_pay').show();
+                        $('.guide_pay_notice').show();
                     }
 
                     if (result['is_delivery_notice'] == 0) {
-                        $('.textarea-wrap.margin-top16.is_delivery').hide();
+                        $('.guide_delivery_notice').hide();
                     } else {
                         $('#delivery_notice').val(result['delivery_notice']);
-                        $('.textarea-wrap.margin-top16.is_delivery').show();
+                        $('.guide_delivery_notice').show();
                     }
 
                     if (result['is_return_notice'] == 0) {
-                        $('.textarea-wrap.margin-top16.is_return').hide();
+                        $('.guide_return_notice').hide();
                     } else {
                         $('#return_notice').val(result['return_notice']);
-                        $('.textarea-wrap.margin-top16.is_return').show();
+                        $('.guide_return_notice').show();
                     }
 
                     if (result['is_order_notice'] == 0) {
-                        $('#order_title').parent().css('display', 'none');
+                        $('.guide_order_notice').hide();
                     } else {
                         $('#order_title').val(result['order_title']);
                         $('#order_content').val(result['order_content']);
-                        $('#order_title').parent().css('display', 'block');
+                        $('.guide_order_notice').show();
                     }
 
                     $('input[name="order-info01"][value=' + result['is_pay_notice'] + '],' +
@@ -1575,6 +1590,7 @@
                         'input[name="order-info03"][value=' + result['is_return_notice'] + '],' +
                         'input[name="order-info04"][value=' + result['is_order_notice'] + ']').prop('checked', true);
 
+                    // 미리보기쪽.. 일단 보류
                     $('.sales_product_num').text(result['product_number']);
                     if (result['access_date'] != null && result['access_date'] != '') {
                         $('.access_date').text(result['access_date'].split(' ')[0].replace(/-/g, '.'));

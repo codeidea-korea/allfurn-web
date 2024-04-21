@@ -574,6 +574,7 @@ class CommunityService {
                     $alarmParams['target_company_idx'] = $user->company_idx;
                     $alarmParams['target_company_type'] = $user->type;
                     $alarmParams['link_url'] = '/community/detail/' . $re_reply->article_idx;
+                    $alarmParams['web_url'] = '/community/detail/' . $re_reply->article_idx;
                     $alarmService->sendAlarm($alarmParams);
                 }
             } else {
@@ -584,6 +585,7 @@ class CommunityService {
                     $alarmParams['target_company_idx'] = $user->company_idx;
                     $alarmParams['target_company_type'] = $user->type;
                     $alarmParams['link_url'] = '/community/detail/' . $article->idx;
+                    $alarmParams['web_url'] = '/community/detail/' . $article->idx;
                     $alarmService->sendAlarm($alarmParams);
                 }
             }

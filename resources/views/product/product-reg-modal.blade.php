@@ -163,6 +163,7 @@
                     <li>
                         <input type="checkbox" class="check-form" id="certified_11" data-auth="기타 인증">
                         <label for="certified_11">기타 인증</label>
+                        <input class="setting_input h-[48px] w-full" type="text" id="auth_info_text" maxlength="20" placeholder="(필수) 기타 인증을 입력해주세요." required style="display: none;">
                     </li>
                 </ul>
                 <div class="flex justify-center">

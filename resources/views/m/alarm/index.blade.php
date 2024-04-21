@@ -28,7 +28,8 @@
                 <ul class="flex flex-col">
                     @foreach($list as $row)
                         <li class="bg-white shadow-sm">
-                            <a href="{{ $row->type != 'order' && $row->type != 'active' ? $row->web_url : '#' }}">
+                            {{-- <a href="{{ $row->type != 'order' && $row->type != 'active' ? $row->web_url : '#' }}"> --}}
+                            <a href="{{ $row->web_url ? $row->web_url : '' }}">
                                 <div class="px-4 py-2 rounded-t-sm border-b">
                                     <div class="flex items-center">
                                         <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">

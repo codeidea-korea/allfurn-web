@@ -68,21 +68,14 @@ class WholesalerController extends BaseController
     {
 
         $data['wholesalerIdx'] = $wholesalerIdx;
-        $data['sort'] = $request->query('so');
-
-        // 상단 배너
-        $banners = $this->productService->getBannerList();
         $categoryList = $this->productService->getCategoryList();
+
         $todayCount = $this->productService->getTodayCount();
-
-        $target['categoryIdx'] = $request->query('categories');
-        $target['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        
         $data = $this->wholesalerService->detail($data);
-
         $data['info']->place = substr( $data['info']->business_address, 0, 6 );
 
         return view(getDeviceType().'wholesaler.detail', [
-            'banners'=>$banners,
             'todayCount'=>$todayCount,
             'categoryList'=>$categoryList,
             'data'=>$data
@@ -140,15 +133,24 @@ class WholesalerController extends BaseController
     public function wholesalerAddProduct(Request $request)
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
-        $data['orderedElement'] =  $request->orderedElement == null ? "register_time" : str_replace("filter_", "", $request->orderedElement);
+        switch($request->orderedElement){
+            case "access_count":
+                $data['orderedElement'] = 'access_count';
+                break;
+
+            case "register_time" : 
+                $data['orderedElement'] = 'access_date';
+                break;
+
+            default:
+                $data['orderedElement'] = 'popularity';
+                break;
+        }
         $data['company_idx'] = $request->company_idx;
 
         $list = $this->productService->getWholesalerAddedProductList($data);
-
-        if( !empty( $list ) )
-            return response()->json($list);
-        else
-            return false;
+        $list['html'] = view('product.inc-product-common', ['list' => $list])->render();
+        return response()->json($list);
     }
     
     public function getThisMonthWholesaler()
