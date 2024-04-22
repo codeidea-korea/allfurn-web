@@ -236,6 +236,7 @@ section.sub_section_bot {padding:30px 0 70px; }
 .theme_prod .tab_content .title p {position:relative; z-index:1; font-size:14px; color:#fff; font-weight:400; }
 .theme_prod .tab_content .slide_box {padding:0 20px; }
 .theme_prod .prod_item .txt_box {border:1px solid #DADDE0; border-top:0 none; padding:16px; }
+.theme_prod .prod_item .txt_box p {-webkit-line-clamp:1; }
 
 /* popular_prod */
 .popular_prod .slide_box ul {display:grid; grid-template-columns: repeat(4,1fr); gap:4px 2px; padding:0 4px; }

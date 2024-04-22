@@ -420,6 +420,7 @@ footer .bottom_link li:last-of-type a::before {display:none; }
     검색 모달
 ------------------------------------ */
 .modal .search_wrap {position:relative; border-top-left-radius:0; border-top-right-radius:0; }
+.modal .search_wrap > div {overflow-y:auto; max-height:80vh; }
 .search_wrap .title {padding:30px 0; text-align:center; }
 .search_wrap .title p {font-size:20px; font-weight:600; }
 .search_wrap .title p span {color:var(--main_color); }
