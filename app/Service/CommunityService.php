@@ -850,4 +850,76 @@ class CommunityService {
             ->get();
     }
 
+    public function getClubDetail(array $param=[])
+    {
+        $list = Club::select(
+                 'AF_club.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+                , DB::raw('IF(COUNT(ap.idx) > 3, 1, 0) AS haveHomepage')
+            )
+            ->leftjoin('AF_product AS ap', function($query) {
+                $query->on('ap.company_idx', 'AF_club.manager_idx')
+                    ->whereNotNull('access_date');
+            })
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
+            })
+            ->where('AF_club.idx', $param['idx'])
+            ->where('AF_club.is_open', 1)
+            ->groupBy('AF_club.manager_idx')
+            ->first();
+        
+        if(!$list) return null;
+
+        $list['member'] = DB::table('AF_club_member')
+            ->select(
+                 'AF_club_member.*'
+                , DB::raw('IF(COUNT(ap.idx) > 3, 1, 0) AS haveHomepage')
+            )
+            ->leftjoin('AF_product AS ap', function($query) {
+                $query->on('ap.company_idx', 'AF_club_member.user_cidx')
+                    ->whereNotNull('access_date');
+            })
+            ->where('AF_club_member.club_idx', $param['idx'])
+            ->where('AF_club_member.status', 1)
+            ->groupBy('AF_club_member.user_cidx')
+            ->orderby('AF_club_member.register_time')
+            ->get();
+        
+        $list['article'] = DB::table('AF_club_article')
+            ->select(
+                 'AF_club_article.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+                , Db::raw('CASE WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 60 THEN "방금"
+                                WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 3600 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article.register_time, now())/60),"분 전")
+                                WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article.register_time, now())/3600),"시간 전")
+                                ELSE DATE_FORMAT(AF_club_article.register_time, "%Y.%m.%d") END diff_time')
+                , DB::raw('(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                                        ELSE COUNT(*) END cnt FROM AF_club_article_views WHERE article_idx = AF_club_article.idx) AS view_count')
+                , DB::raw('(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                                        ELSE COUNT(*) END cnt FROM AF_club_article_like WHERE article_idx = AF_club_article.idx) AS like_count')
+                , DB::raw('(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                                        ELSE COUNT(*) END cnt FROM AF_club_article_comment WHERE article_idx = AF_club_article.idx) AS comment_count')
+            )
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_club_article.first_image');
+            })
+            ->where('AF_club_article.is_open', 1)
+            ->where('AF_club_article.is_delete', 0)
+            ->orderby('AF_club_article.is_notice', 'desc')
+            ->orderby('AF_club_article.register_time', 'desc')
+            ->get();
+
+        return $list;
+    }
+
 }
