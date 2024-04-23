@@ -225,7 +225,7 @@ class HomeService
             ->where('AF_video_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_video_ad.is_delete', 0)
             ->where('AF_video_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('AF_video_ad.price desc, RAND()')->get();
         foreach($data['video_ad'] as $video){
             if ($video->video_upload_type == '1'){
                 $tmpVideo = DB::table('AF_attachment')->selectRaw('CONCAT("'.preImgUrl().'", folder, "/", filename) as video_url')

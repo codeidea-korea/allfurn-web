@@ -451,14 +451,14 @@ class MypageService
         if ($params['type'] === 'S') {
             $order
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 )
                 -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> where('AF_product.company_type', 'W') -> where('AF_product.company_idx', Auth::user()['company_idx']);
         } else {
             $order
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 )
                 -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> where('AF_user.idx', Auth::user()['idx']);
@@ -469,7 +469,7 @@ class MypageService
                 case 'C': // 취소중
                     $order->where('order_state', 'N')
                         ->addSelect(DB::raw(
-                            "(
+                        "(
                             SELECT
                                 IF(
                                     wholesale.company_name IS NOT NULL,
@@ -557,47 +557,65 @@ class MypageService
         return Category::whereNull('parent_idx')->get();
     }
 
+    public function getTotalLikeProduct() {
+        return ProductInterest::where('AF_product_interest.user_idx', Auth::user()['idx'])
+            ->join('AF_product', 'AF_product.idx', 'AF_product_interest.product_idx')
+            ->get()
+            ->count();
+    }
+
     /**
-     * 관심 상품 리스트
+     * 관심 상품 목록 가져오기
      * @param array $params
      * @return Array
      */
     public function getInterestProducts(array $params): Array
     {
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+        $offset = $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
-        $query = ProductInterest::where('AF_product_interest.user_idx', Auth::user()['idx'])
-            ->join('AF_product', 'AF_product.idx', 'AF_product_interest.product_idx')
-            ->leftJoin('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
-            ->leftJoin('AF_product_interest_folder', function($query) {
-                $query->on('AF_product_interest_folder.idx', 'AF_product_interest.folder_idx');
+        $query = 
+            ProductInterest::where('AF_product_interest.user_idx', Auth::user()['idx'])
+            -> join('AF_product', 'AF_product.idx', 'AF_product_interest.product_idx')
+            -> leftJoin('AF_attachment', 'AF_attachment.idx',
+            DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
+            -> leftJoin('AF_product_interest_folder', function($query) {
+                $query -> on('AF_product_interest_folder.idx', 'AF_product_interest.folder_idx');
             })
-            ->leftJoin('AF_wholesale', function($query) {
-                $query->on('AF_wholesale.idx', 'AF_product.company_idx')->where('AF_product.company_type', 'W');
+            -> leftJoin('AF_wholesale', function($query) {
+                $query -> on('AF_wholesale.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'W');
             })
-            ->leftJoin('AF_retail', function($query) {
-                $query->on('AF_retail.idx', 'AF_product.company_idx')->where('AF_product.company_type', 'R');
+            -> leftJoin('AF_retail', function($query) {
+                $query -> on('AF_retail.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
             })
-            ->select('AF_product.idx', 'AF_product.name AS product_name', 'AF_product.price', 'AF_product.price_text'
-                , 'AF_product_interest_folder.name AS folder_name'
-                , DB::raw('IF(AF_wholesale.idx IS NOT NULL,AF_wholesale.company_name,AF_retail.company_name) AS company_name')
-                , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) AS product_image'));
+            -> select(
+                'AF_product.idx', 'AF_product.name AS product_name', 'AF_product.price', 'AF_product.price_text', 'AF_product_interest_folder.name AS folder_name',
+            DB::raw(
+                'IF(AF_wholesale.idx IS NOT NULL, AF_wholesale.company_name, AF_retail.company_name) 
+                AS company_name'),
+            DB::raw(
+                'CONCAT("'.preImgUrl().'",AF_attachment.folder,"/", AF_attachment.filename) 
+                AS product_image'));
         if (isset($params['folder'])) {
-            $query->where('AF_product_interest.folder_idx', $params['folder']);
+            $query -> where('AF_product_interest.folder_idx', $params['folder']);
+        }
+        if (isset($params['ca'])) {
+            $query -> where('AF_product.category_idx', $params['ca']);
         }
         if (isset($params['categories'])) {
-            $query->join('AF_category', function($query) use ($params) {
-                $query->on('AF_category.idx', 'AF_product.category_idx')
-                    ->whereIn('AF_category.parent_idx', explode(',',$params['categories']));
+            $query -> join('AF_category', function($query) use ($params) {
+                $query -> on('AF_category.idx', 'AF_product.category_idx') -> whereIn('AF_category.parent_idx', explode(',', $params['categories']));
             });
         }
-        $count = $query->count();
-        $list = $query->orderBy('AF_product_interest.idx', 'desc')
-            ->offset($offset)->limit($limit)->get();
+        $query -> distinct();
+
+        $count = $query -> get() -> count();
+        $list = $query -> orderBy('AF_product_interest.idx', 'DESC') -> offset($offset) -> limit($limit) -> get();
+
         $data['count'] = $count;
         $data['list'] = $list;
         $data['pagination'] = paginate($params['offset'], $params['limit'], $count);
+
         return $data;
     }
 
@@ -708,61 +726,62 @@ class MypageService
         ProductInterest::insert($inserts);
     }
 
+    public function getTotalLikeCompany() {
+        return DB::table('AF_company_like')
+        ->where('user_idx', Auth::user()['idx'])
+        ->count();
+    }
+
     /**
-     * 좋아요한 업체 리트스 가져오기
+     * 좋아요 업체 목록 가져오기
      * @param array $params
      * @return array
      */
     public function getLikeCompanies(array $params): array
     {
-        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+        $offset = $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
         DB::statement('SET group_concat_max_len = 1000000');
 
         $where = "";
+        // 카테고리 추가할 위치
         if (isset($params['regions'])) {
-            $where .= " AND (wl.sido REGEXP '".str_replace(',','|',$params['regions'])."'
-                 OR rl.sido REGEXP '".str_replace(',','|',$params['regions'])."')";
+            $where .= " AND (wl.sido REGEXP '".str_replace(',', '|', $params['regions'])."' OR rl.sido REGEXP '".str_replace(',', '|', $params['regions'])."')";
         }
+
         $outerWhere = "";
         if (isset($params['categories'])) {
             foreach (explode(',', $params['categories']) as $category) {
                 $outerWhere .= " FIND_IN_SET('{$category}', category_names) OR";
             }
-            $outerWhere = " AND (" . rtrim($outerWhere, 'OR') . ') ';
+            $outerWhere = " AND (".rtrim($outerWhere, 'OR').') ';
         }
 
-        $fromSql = "select
-                    `cl`.`idx`, `cl`.`company_idx`, `cl`.`company_type`,
-                    IF(w.idx IS NOT NULL, w.company_name, r.company_name) AS company_name,
-                    IF(attach.idx IS NOT NULL, CONCAT('".preImgUrl()."',attach.folder,'/',attach.filename),'')  AS profile_image,
-                    GROUP_CONCAT(SUBSTRING_INDEX(IF(w.idx IS NOT NULL, wl.sido, rl.sido), ' ', 1)) AS region,
-                    IF(TIMESTAMPDIFF(SECOND ,cl.register_time, now() < 2592000), 'Y','N') AS is_new,
-                    (SELECT SUBSTRING_INDEX(group_concat(JSON_OBJECT(
-                        'name', ap.name,
-                        'idx', ap.idx,
-                        'image', CONCAT('".preImgUrl()."', aa.folder,'/', aa.filename)
-                      ) ORDER BY ap.register_time DESC),'},', 4) FROM AF_product ap LEFT JOIN AF_attachment aa ON SUBSTRING_INDEX(ap.attachment_idx, ',', 1) = aa.idx
-                        WHERE ap.company_type = cl.company_type
-                        AND ap.company_idx = cl.company_idx
-                    ) AS products,
-                    (SELECT GROUP_CONCAT(DISTINCT ac2.name)
-                        FROM AF_category ac
-                            INNER JOIN AF_product ap ON ac.idx = ap.category_idx
-                            INNER JOIN AF_category ac2 ON ac2.idx = ac.parent_idx
-                        WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx
-                    ) AS category_names
-                from
-                    `AF_company_like` as `cl`
-                        left join (`AF_wholesale` as `w` left join `AF_location` as `wl` on `wl`.`company_idx` = `w`.`idx` and `wl`.`company_type` = 'W')
-                            on `w`.`idx` = `cl`.`company_idx` and `cl`.`company_type` = 'W'
-                        left join (`AF_retail` as `r` left join `AF_location` as `rl` on `rl`.`company_idx` = `r`.`idx` and `rl`.`company_type` = 'R')
-                            on `r`.`idx` = `cl`.`company_idx` and `cl`.`company_type` = 'R'
-                        left join `AF_attachment` as `attach`
-                            on `attach`.`idx` = `w`.`profile_image_attachment_idx` or `attach`.`idx` = r.profile_image_attachment_idx
-                where `cl`.`user_idx` = ".Auth::user()['idx']." {$where}
-                group by `cl`.`company_idx`, `cl`.`company_type` ORDER BY `cl`.idx DESC";
+        $fromSql = 
+            "SELECT
+                `cl`.`idx`, `cl`.`company_idx`, `cl`.`company_type`,
+                IF(w.idx IS NOT NULL, w.company_name, r.company_name) AS company_name,
+                IF(attach.idx IS NOT NULL, CONCAT('".preImgUrl()."', attach.folder, '/', attach.filename),  '')
+                 AS profile_image,
+                GROUP_CONCAT(SUBSTRING_INDEX(IF(w.idx IS NOT NULL, wl.sido, rl.sido), ' ', 1)) AS region,
+                IF(TIMESTAMPDIFF(SECOND, cl.register_time, now() < 2592000), 'Y', 'N') 
+                AS is_new,
+                (SELECT SUBSTRING_INDEX(GROUP_CONCAT(JSON_OBJECT('name', ap.name, 'idx', ap.idx, 'image', CONCAT('".preImgUrl()."', aa.folder, '/', aa.filename)) ORDER BY ap.register_time DESC), '},', 4) FROM AF_product ap LEFT JOIN AF_attachment aa ON SUBSTRING_INDEX(ap.attachment_idx, ',', 1) = aa.idx WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx) AS products,
+                (SELECT GROUP_CONCAT(DISTINCT ac2.name) FROM AF_category ac INNER JOIN AF_product ap ON ac.idx = ap.category_idx INNER JOIN AF_category ac2 ON ac2.idx = ac.parent_idx WHERE ap.company_type = cl.company_type AND ap.company_idx = cl.company_idx)
+                AS category_names
+            FROM `AF_company_like` AS `cl`
+            LEFT JOIN 
+                (`AF_wholesale` AS `w` LEFT JOIN `AF_location` AS `wl` ON `wl`.`company_idx` = `w`.`idx` AND `wl`.`company_type` = 'W')
+            ON `w`.`idx` = `cl`.`company_idx` AND `cl`.`company_type` = 'W'
+            LEFT JOIN 
+                (`AF_retail` AS `r` LEFT JOIN `AF_location` AS `rl` ON `rl`.`company_idx` = `r`.`idx` AND `rl`.`company_type` = 'R')
+            ON `r`.`idx` = `cl`.`company_idx` AND `cl`.`company_type` = 'R'
+            LEFT JOIN `AF_attachment` AS `attach`
+            ON 
+                `attach`.`idx` = `w`.`profile_image_attachment_idx` OR `attach`.`idx` = r.profile_image_attachment_idx
+            WHERE `cl`.`user_idx` = ".Auth::user()['idx']." {$where}
+            group by `cl`.`company_idx`, `cl`.`company_type` ORDER BY `cl`.idx DESC";
         $sql = "SELECT * FROM ({$fromSql}) AS tb WHERE 1 = 1 {$outerWhere}";
         $result = DB::select($sql);
 
@@ -771,6 +790,17 @@ class MypageService
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
 
         return $data;
+    }
+
+    public function getTotalRecentlyViewedProduct() {
+        return ProductRecent::where('AF_recently_product.user_idx', Auth::user() -> idx)
+            -> join('AF_product', function($query) {
+                $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
+            })
+            ->select('AF_product.idx')
+            ->distinct()
+            ->get()
+            ->count();
     }
 
     /**
@@ -785,8 +815,8 @@ class MypageService
 
         $query =
             ProductRecent::select(DB::raw('AF_product.*'),
-                DB::raw(
-                    '(CASE 
+            DB::raw(
+                '(CASE 
                     WHEN AF_product.company_type = "W" THEN 
                         (SELECT aw.company_name FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
                     WHEN AF_product.company_type = "R" THEN
@@ -795,22 +825,22 @@ class MypageService
                 END) AS company_name,
                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) AS product_image,
                 (SELECT COUNT(DISTINCT pi.idx) cnt FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user() -> idx.') AS isInterest'))
-                -> where('AF_recently_product.user_idx', Auth::user() -> idx)
-                -> join('AF_product', function($query) {
-                    $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
-                })
-                -> leftjoin('AF_attachment AS at', function($query) {
-                    $query -> on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",",  1)'));
-                });
-        if (isset($params['ca'])) {
-            $query -> where('AF_product.category_idx', $params['ca']);
-        }
-        if(isset($params['categories'])) {
-            $query -> join('AF_category', function($query) use ($params) {
-                $query -> on('AF_category.idx', 'AF_product.category_idx') -> whereIn('AF_category.parent_idx', explode(',', $params['categories']));
+            -> where('AF_recently_product.user_idx', Auth::user() -> idx)
+            -> join('AF_product', function($query) {
+                $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
+            })
+            -> leftjoin('AF_attachment AS at', function($query) {
+                $query -> on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",",  1)'));
             });
-        }
-        $query -> distinct();
+            if (isset($params['ca'])) {
+                $query -> where('AF_product.category_idx', $params['ca']);
+            }
+            if(isset($params['categories'])) {
+                $query -> join('AF_category', function($query) use ($params) {
+                    $query -> on('AF_category.idx', 'AF_product.category_idx') -> whereIn('AF_category.parent_idx', explode(',', $params['categories']));
+                });
+            }
+        $query = $query -> distinct();
 
         $count = $query -> get() -> count();
         $list = $query -> orderBy('AF_recently_product.idx', 'DESC') -> offset($offset) -> limit($limit) -> get();
@@ -820,6 +850,19 @@ class MypageService
         $data['pagination'] = paginate($params['offset'], $limit, $count);
 
         return $data;
+    }
+
+    public function getTotalInquiry() {
+        return DB::table('AF_message')
+            ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
+            ->where(function($query) {
+                $query->whereJsonContains('content->type', 'inquiry')
+                      ->orWhereJsonContains('content->text', '상품 문의드립니다.');
+            })
+            ->where('AF_message.is_read', 0)
+            ->where('amr.second_company_idx',  Auth::user() -> company_idx)
+            ->get()
+            ->count();
     }
 
     /**

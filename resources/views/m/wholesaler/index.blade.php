@@ -174,7 +174,7 @@
                     @if( $key != 0 && $key%5 == 0 )
                 </ul><ul{{( $key > 9 ) ? ' hidden' : ''}}>
                     @endif
-                    <li><a href="javascript:;">
+                    <li><a href="/wholesaler/detail/{{ $company->company_idx }}">
                             <i>{{$key+1}}</i>
                             <p>{{$company->company_name}}</p>
                             <div class="tag">

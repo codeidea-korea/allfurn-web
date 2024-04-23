@@ -325,6 +325,11 @@ class CommunityController extends BaseController
 
     public function clubDetail(int $idx)
     {
-        return view('community.clubDetail');
+        $param['idx'] = $idx;
+        $data['club'] = $this->communityService->getClubDetail($param);
+
+        if(!$data['club']) return redirect('/community/club');
+        
+        return view('community.clubDetail', $data);
     }
 }

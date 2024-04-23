@@ -90,8 +90,6 @@ class TmpLikeService
             });
         }
 
-        $query -> distinct();
-
         $count = $query -> get() -> count();
 
         if(!isset($params['orderedElement']) || $params['orderedElement'] == 'register_time') {
