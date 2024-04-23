@@ -30,11 +30,7 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품명</dt>
                         <dd class="font-medium w-full">
-                            <input type="text" id="form-list01" name="name" maxlength="50"
-                                   @if(@isset($data->name))
-                                       value="{{$data->name}}"
-                                   @endif
-                                   class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
+                            <input type="text" id="form-list01" name="name" maxlength="50" @if(@isset($data->name)) value="{{$data->name}}" @endif class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
                         </dd>
                     </dl>
                 </div>
@@ -519,7 +515,7 @@
                                     '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
                                     '   <img class="w-[200px] h-[200px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
                                     '   <div class="absolute top-2.5 right-2.5">' +
-                                    '       <button class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
+                                    '       <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
                                     '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
                                     '       </button>' +
                                     '   </div>' +
@@ -591,17 +587,18 @@
         $('#sortable').disableSelection();
 
         
-
-        function img_reload_order() {
-            $('.desc__product-img-wrap').find('.add__badge').remove();
-            $('li .product-img__add').first().children('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
-        }
-
-        function img_add_order() {
-            $('.desc__product-img-wrap li').each(function(n) {
-                $(this).attr('item', n);
-            });
-        }
+    //### 
+    function img_reload_order() {
+        $('.desc__product-img-wrap').find('.add__badge').remove();
+        $('li .product-img__add').first().children('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
+    }
+    
+    //### 
+    function img_add_order() {
+        $('.desc__product-img-wrap li').each(function(n) {
+            $(this).attr('item', n);
+        });
+    }
 
     //### 속성 가져오기
     function getProperty(parentIdx=null, title=null) {
@@ -1440,7 +1437,7 @@
                                     <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
                                         <img class="w-[200px] h-[200px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
                                         <div class="absolute top-2.5 right-2.5">
-                                            <button class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                            <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                                             </button>
                                         </div>`;

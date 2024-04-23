@@ -257,7 +257,7 @@ class ProductController extends BaseController
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
-        if($request->orderedElement == null || $request->orderedElement) {
+        if($request->orderedElement == null || $request->orderedElement == 'registser_time') {
             $data['orderedElement'] = 'AF_product.access_date';
         } else {
             $data['orderedElement'] = $request->orderedElement;
@@ -297,7 +297,7 @@ class ProductController extends BaseController
         $data['detail']->propertyArray = $propArray;
 
         // 신상품 처리 최근등록일 기준 ( 30일 )
-        $date1 = Carbon::parse($data['detail']->register_time);
+        $date1 = Carbon::parse($data['detail']->accss_date);
         $date2 = Carbon::parse(now());
 
         // 신상품( is_new_product ==1 ) 이면서 등록된지 1달 이내의 상품
@@ -412,7 +412,7 @@ class ProductController extends BaseController
             $wholesalesCnt = $this->productService->countSearchWholesales($data['keyword']);
 
             if ($wholesalesCnt > 1) {
-                return redirect(getDeviceType().'/wholesaler/search?kw=' . $data['keyword']);
+                return redirect('/wholesaler/search?kw=' . $data['keyword']);
             }
         }
 
@@ -464,7 +464,19 @@ class ProductController extends BaseController
 
         $target['categoryIdx'] = $request->query('categories');
         $target['locationIdx'] = $request->query('locations');
-        $target['orderedElement'] = $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
+        switch($request->orderedElement){
+            case "access_count":
+                $target['orderedElement'] = 'companyAccessCount';
+                break;
+
+            case "register_time" : 
+                $target['orderedElement'] = 'access_date';
+                break;
+
+            default:
+                $target['orderedElement'] = 'score';
+                break;
+        }
         $company = $this->wholesalerService->getThisMonthWholesaler($target);
 
         return view(getDeviceType() . 'product.thisMonth', [
@@ -592,7 +604,7 @@ class ProductController extends BaseController
                 break;
 
             case "register_time" : 
-                $data['orderedElement'] = 'register_time';
+                $data['orderedElement'] = 'access_date';
                 break;
 
             default:
