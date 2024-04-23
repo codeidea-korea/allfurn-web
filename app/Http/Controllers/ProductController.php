@@ -412,7 +412,7 @@ class ProductController extends BaseController
             $wholesalesCnt = $this->productService->countSearchWholesales($data['keyword']);
 
             if ($wholesalesCnt > 1) {
-                return redirect(getDeviceType().'/wholesaler/search?kw=' . $data['keyword']);
+                return redirect('/wholesaler/search?kw=' . $data['keyword']);
             }
         }
 
