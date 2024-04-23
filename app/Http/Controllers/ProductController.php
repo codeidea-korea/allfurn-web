@@ -257,7 +257,7 @@ class ProductController extends BaseController
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
-        if($request->orderedElement == null || $request->orderedElement == 'registser_time') {
+        if($request->orderedElement == null || $request->orderedElement == 'register_time') {
             $data['orderedElement'] = 'AF_product.access_date';
         } else {
             $data['orderedElement'] = $request->orderedElement;
@@ -462,30 +462,13 @@ class ProductController extends BaseController
         $target['thisMonth'] = date('m');
         $dealBanner['product'] = $this->productService->getBestNewProductList($data);
 
-        $target['categoryIdx'] = $request->query('categories');
-        $target['locationIdx'] = $request->query('locations');
-        switch($request->orderedElement){
-            case "access_count":
-                $target['orderedElement'] = 'companyAccessCount';
-                break;
-
-            case "register_time" : 
-                $target['orderedElement'] = 'access_date';
-                break;
-
-            default:
-                $target['orderedElement'] = 'score';
-                break;
-        }
-        $company = $this->wholesalerService->getThisMonthWholesaler($target);
-
         return view(getDeviceType() . 'product.thisMonth', [
             'categoryList' => $categoryList,
             'dealbrand' => $dealBanner['dealbrand'],
             'plandiscount' => $dealBanner['plandiscount'],
             'dealmiddle' => $dealBanner['dealmiddle'],
             'productBest' => $dealBanner['product'],
-            'companyProduct' => $company
+            // 'companyProduct' => $company
         ]);
     }
 
@@ -598,7 +581,7 @@ class ProductController extends BaseController
     {
         $data['categoryIdx'] = $request->categories == null ? "" : $request->categories;
         $data['locationIdx'] = $request->locations == null ? "" : $request->locations;
-        switch($request->orderedElement){
+        /* switch($request->orderedElement){
             case "access_count":
                 $data['orderedElement'] = 'companyAccessCount';
                 break;
@@ -611,8 +594,8 @@ class ProductController extends BaseController
                 $data['orderedElement'] = 'score';
                 break;
 
-        }
-
+        } */
+        $data['orderedElement'] = 'score';
         $data['list'] = $this->wholesalerService->getThisMonthWholesaler($data);
         $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
 

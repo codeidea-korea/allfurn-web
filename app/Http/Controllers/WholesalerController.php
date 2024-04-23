@@ -41,6 +41,7 @@ class WholesalerController extends BaseController
         // $companyList = $this->productService->getThisMonth('product');
         // $companyList = setArrayNumer( $companyList );
         $target['limit'] = 20;
+        $target['orderedElement'] = null;
         $companyList = $this->wholesalerService->getThisMonthWholesaler($target);
         
         return view(getDeviceType().'wholesaler.index', [

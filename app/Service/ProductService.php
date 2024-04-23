@@ -576,7 +576,7 @@ class ProductService
             ->where('AF_product_ad.ad_location', 1)
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
-            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+            ->orderByRaw('AF_product_ad.price desc, RAND()')->get();
         return $bestNewProducts;
     }
 

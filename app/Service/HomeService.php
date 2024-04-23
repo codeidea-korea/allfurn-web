@@ -105,7 +105,7 @@ class HomeService
             ->where('AF_product_ad.ad_location', 1)
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
-            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+            ->orderByRaw('AF_product_ad.price desc, RAND()')->get();
        
 
         // 신상품 목록 
@@ -123,7 +123,7 @@ class HomeService
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
-            ->orderBy('idx', 'desc')->limit(256)->get();
+            ->orderBy('access_date', 'desc')->limit(240)->get();
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
@@ -164,7 +164,7 @@ class HomeService
             ->where('AF_banner_ad.ad_location', 'popularbrand')
             ->where('AF_banner_ad.is_delete', 0)
             ->where('AF_banner_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('AF_banner_ad.banner_price desc, RAND()')->get();
         
         foreach($data['popularbrand_ad'] as $brand){
             $brand_product_interest = array();

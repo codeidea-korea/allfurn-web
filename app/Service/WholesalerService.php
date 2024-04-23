@@ -302,7 +302,7 @@ class WholesalerService {
                     $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
                 })
                 ->orderByRaw('ap.is_represent = 1 desc')
-                ->orderBy('ap.register_time','desc')
+                ->orderBy('ap.access_date','desc')
                 ->limit(3)
                 ->get();
         }
@@ -498,11 +498,14 @@ class WholesalerService {
         
         if(isset($params['orderedElement'])) {
             $list->groupBy('company_idx')
-                ->orderBy($params['orderedElement'], 'desc');
+                ->orderBy($params['orderedElement'], 'desc')
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.access_date','desc');
         } else {
             $list->groupBy('company_idx')
+                ->orderBy('score', 'desc')
                 ->orderByRaw('ap.is_represent = 1 desc')
-                ->orderBy('ap.register_time','desc');
+                ->orderBy('ap.access_date','desc');
         }
 
         if( isset( $params['limit'] ) && $params['limit'] > 0 ) {
@@ -531,7 +534,7 @@ class WholesalerService {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
             })
             ->orderByRaw('ap.is_represent = 1 desc')
-            ->orderBy('ap.register_time','desc')
+            ->orderBy('ap.access_date','desc')
             ->limit(3)
             ->get();
         }
