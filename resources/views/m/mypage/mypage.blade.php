@@ -22,7 +22,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
 @endphp
 
 @section('content')
-    @include('layouts.header_m')
+@include('layouts.header_m')
 
 @php
     $tPoint = 0;
@@ -45,7 +45,8 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
         'estimate', 'estimate-response-multi',
         'estimate-request', 'estimate-request-check', 'estimate-request-send',
         'estimate-response', 'estimate-check', 'estimate-response-check', 'estimate-response-send',
-        'order-check'
+        'order-check',
+        'recent'
     ]))
         @include('m.mypage.'.$pageType)
     @else
@@ -191,7 +192,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex p-4 justify-between">
+                    <a href="/mypage/recent" class="flex p-4 justify-between">
                         <p>최근 본 상품</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $recentlyViewedProductCount }}개</p>
@@ -200,7 +201,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex p-4 justify-between bottom_type">
+                    <a href="/message" class="flex p-4 justify-between bottom_type">
                         <p>문의 내역</p>
                         <div class="flex items-center">
                             <p class="text-sm main_color">{{ $inquiryCount }}건</p>

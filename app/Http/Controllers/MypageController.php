@@ -373,7 +373,7 @@ class MypageController extends BaseController
      */
     public function recent(Request $request): View {
         $params['offset'] = $data['offset'] = $request -> input('offset') ?: 1;
-        $params['limit'] = $data['limit'] = 40;
+        $params['limit'] = $data['limit'] = 12;
         $params = array_merge($params, $request -> all());
 
         $data['checked_categories'] = [];
@@ -383,7 +383,7 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'recent';
         $data['user'] = $this -> getLoginUser();
-        $data['categories'] = $this -> mypageService -> getCategories();
+        $data['categoryList'] = $this->mypageService->getCategories();
 
         $data = array_merge($data, $this -> mypageService -> getRecentProducts($params));
 
