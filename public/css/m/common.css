@@ -215,7 +215,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .prod_item .img_box .zzim_btn {position:absolute; right:8px; bottom:8px; }
 .prod_item .txt_box {padding-top:6px ; line-height:1;}
 .prod_item .txt_box span {display:block; color:var(--gray_color); font-size:12px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;}
-.prod_item .txt_box p {margin:3px 0 4px; font-size:14px; font-weight:400; word-break:keep-all; line-height:1.4; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
+.prod_item .txt_box p {height:39px; margin:3px 0 4px; font-size:14px; font-weight:400; word-break:keep-all; line-height:1.4; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
 .prod_item .txt_box b {font-size:16px; font-weight:700;}
 
 .img_box .zzim_btn svg {width:24px; height:24px; stroke:#fff; fill:transparent; }
