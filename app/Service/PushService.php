@@ -108,7 +108,7 @@ class PushService
     
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/template/list/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
@@ -121,7 +121,7 @@ class PushService
 //        echo $result;
         curl_close ($ch);
 
-        return json_decode( $result );
+        return json_decode(preg_replace('/\r|\n/', '\n', preg_replace('/\t/', '\t', $result)));
     }
 
     /**
@@ -168,6 +168,7 @@ class PushService
                 }
             }
         }
+//        $alimtalkTemplate->templtContent = nl2br($alimtalkTemplate->templtContent); 
 
         $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
         $userid = 'codeidea';
@@ -176,13 +177,31 @@ class PushService
         $tpl_code = urlencode($templateCode);
         $sender = urlencode('010-5440-5414');
         $receiver_1 = urlencode($receiver);
-        $subject_1 = urlencode($title);
-        $message_1 = urlencode($alimtalkTemplate->templtContent);
-        $strjson = json_encode($alimtalkTemplate->buttons);
-        $button_1 = urlencode($strjson);
+        $subject_1 = rawurlencode($alimtalkTemplate->templtName);
+        $message_1 = rawurlencode($alimtalkTemplate->templtContent);
+//        $strjson = 
+
+        $button = array();
+        $button['name'] = $alimtalkTemplate->buttons[0]->name;
+        $button['linkType'] = $alimtalkTemplate->buttons[0]->linkType;
+        $button['linkTypeName'] = $alimtalkTemplate->buttons[0]->linkTypeName;
+        $button['linkMo'] = $alimtalkTemplate->buttons[0]->linkMo;
+        $button['linkPc'] = $alimtalkTemplate->buttons[0]->linkPc;
+        $button['linkIos'] = $alimtalkTemplate->buttons[0]->linkIos;
+        $button['linkAnd'] = $alimtalkTemplate->buttons[0]->linkAnd;
+        $button2 = array();
+        $button2['name'] = $alimtalkTemplate->buttons[1]->name;
+        $button2['linkType'] = $alimtalkTemplate->buttons[1]->linkType;
+        $button2['linkTypeName'] = $alimtalkTemplate->buttons[1]->linkTypeName;
+        $button2['linkMo'] = $alimtalkTemplate->buttons[1]->linkMo;
+        $button2['linkPc'] = $alimtalkTemplate->buttons[1]->linkPc;
+        $button2['linkIos'] = $alimtalkTemplate->buttons[1]->linkIos;
+        $button2['linkAnd'] = $alimtalkTemplate->buttons[1]->linkAnd;
+
+        $button_1 = rawurlencode('{"button":['. json_encode($button) . ',' .json_encode($button2) . ']}');
         $failover = 'Y';
-        $fsubject_1 = urlencode($title);
-        $fmessage_1 = urlencode($alimtalkTemplate->templtContent);
+        $fsubject_1 = rawurlencode($title);
+        $fmessage_1 = rawurlencode($alimtalkTemplate->templtContent);
 
         $pushMessage = new SmsHistory;
         $pushMessage->title = $title;
@@ -201,7 +220,7 @@ class PushService
     
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/alimtalk/send/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
