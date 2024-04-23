@@ -176,7 +176,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="/mypage/interest" class="flex p-4 justify-between">
                         <p>좋아요 상품</p>
                         <div class="flex items-center">
-                            <p class="text-sm">52개</p>
+                            <p class="text-sm">{{ $likeProductCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
@@ -185,7 +185,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="/mypage/like" class="flex p-4 justify-between">
                         <p>좋아요 업체</p>
                         <div class="flex items-center">
-                            <p class="text-sm">27개</p>
+                            <p class="text-sm">{{ $likeCompanyCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
@@ -194,7 +194,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="#" class="flex p-4 justify-between">
                         <p>최근 본 상품</p>
                         <div class="flex items-center">
-                            <p class="text-sm">124개</p>
+                            <p class="text-sm">{{ $recentlyViewedProductCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
@@ -203,7 +203,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="#" class="flex p-4 justify-between bottom_type">
                         <p>문의 내역</p>
                         <div class="flex items-center">
-                            <p class="text-sm main_color">5건</p>
+                            <p class="text-sm main_color">{{ $inquiryCount }}건</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>

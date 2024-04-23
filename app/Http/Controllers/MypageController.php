@@ -49,6 +49,10 @@ class MypageController extends BaseController
             $data['pageType'] = 'mypage';
 
             $data['point']  = $this->mypageService->getPointList();
+            $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+            $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+            $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+            $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
             return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
         } else {
@@ -104,6 +108,10 @@ class MypageController extends BaseController
         $data['pageType'] = 'deal';
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
@@ -197,6 +205,10 @@ class MypageController extends BaseController
         $data['pageType'] = 'purchase';
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
@@ -316,6 +328,10 @@ class MypageController extends BaseController
 	    $data['xtoken'] = $xtoken;
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType() . 'mypage.mypage', $data);
     }
@@ -342,6 +358,10 @@ class MypageController extends BaseController
         $data = array_merge($data, $this -> tmpLikeService -> getLikeCompanies($params));
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType() .'mypage.mypage', $data);
     }
@@ -368,6 +388,10 @@ class MypageController extends BaseController
         $data = array_merge($data, $this -> mypageService -> getRecentProducts($params));
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -454,6 +478,10 @@ class MypageController extends BaseController
         $data['pageType'] = 'company';
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -492,6 +520,10 @@ class MypageController extends BaseController
         $data = array_merge($data, $this -> mypageService -> getTotalProductCount());
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -507,6 +539,10 @@ class MypageController extends BaseController
         $data['pageType'] = 'account';
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -876,6 +912,10 @@ class MypageController extends BaseController
         $data['info'] = $this -> mypageService -> getEstimateInfo();
 
         $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }

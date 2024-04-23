@@ -557,6 +557,13 @@ class MypageService
         return Category::whereNull('parent_idx')->get();
     }
 
+    public function getTotalLikeProduct() {
+        return ProductInterest::where('AF_product_interest.user_idx', Auth::user()['idx'])
+            ->join('AF_product', 'AF_product.idx', 'AF_product_interest.product_idx')
+            ->get()
+            ->count();
+    }
+
     /**
      * 관심 상품 목록 가져오기
      * @param array $params
@@ -719,6 +726,12 @@ class MypageService
         ProductInterest::insert($inserts);
     }
 
+    public function getTotalLikeCompany() {
+        return DB::table('AF_company_like')
+        ->where('user_idx', Auth::user()['idx'])
+        ->count();
+    }
+
     /**
      * 좋아요 업체 목록 가져오기
      * @param array $params
@@ -779,6 +792,17 @@ class MypageService
         return $data;
     }
 
+    public function getTotalRecentlyViewedProduct() {
+        return ProductRecent::where('AF_recently_product.user_idx', Auth::user() -> idx)
+            -> join('AF_product', function($query) {
+                $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
+            })
+            ->select('AF_product.idx')
+            ->distinct()
+            ->get()
+            ->count();
+    }
+
     /**
      * 최근 본 상품 목록 가져오기
      * @param array $params
@@ -816,7 +840,7 @@ class MypageService
                     $query -> on('AF_category.idx', 'AF_product.category_idx') -> whereIn('AF_category.parent_idx', explode(',', $params['categories']));
                 });
             }
-        $query -> distinct();
+        $query = $query -> distinct();
 
         $count = $query -> get() -> count();
         $list = $query -> orderBy('AF_recently_product.idx', 'DESC') -> offset($offset) -> limit($limit) -> get();
@@ -826,6 +850,19 @@ class MypageService
         $data['pagination'] = paginate($params['offset'], $limit, $count);
 
         return $data;
+    }
+
+    public function getTotalInquiry() {
+        return DB::table('AF_message')
+            ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
+            ->where(function($query) {
+                $query->whereJsonContains('content->type', 'inquiry')
+                      ->orWhereJsonContains('content->text', '상품 문의드립니다.');
+            })
+            ->where('AF_message.is_read', 0)
+            ->where('amr.second_company_idx',  Auth::user() -> company_idx)
+            ->get()
+            ->count();
     }
 
     /**
