@@ -277,6 +277,7 @@ class PushService
             }
             $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
+            /*
             $data = [
                 "message" => [
                     "token"=> $authToken->push_token,
@@ -294,12 +295,42 @@ class PushService
                     ]
                 ]
             ];
+            */
+
+            if (strpos($weblink, 'https') === false){
+                $weblink = env("APP_URL") . $weblink;
+            }
+    
+            $notification_opt = array (
+                'title' => $title,
+                'body' => $msg,
+                //'image' => AWS_S3.$file
+            );
+    
+            $android_opt = array (
+                'notification' => array(
+                    'default_sound'         => true, 
+                )
+            );
+    
+            $message = array(
+                'token' => $authToken->push_token,
+                'notification' => $notification_opt,
+                'android' => $android_opt, 
+                'data' => array(
+                    'start_url' => $weblink
+                )
+            );
+    
+            $last_msg = array (
+                "message" => $message
+            );
         
             $ch = curl_init();
         
             curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($last_msg));
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_FAILONERROR, true);
         
