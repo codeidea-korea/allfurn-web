@@ -187,6 +187,7 @@
 
                 let txt = $('[data-property_idx="' + value + '"]').text();
                 let num = value;
+                $('.option_wrap .sub_filter_result .category').empty();
                 $('.option_wrap .sub_filter_result .category').append(`<span>${txt} <button data-num="${num}" onclick="optionRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>`)
 
                 // 선택옵션 보이게
