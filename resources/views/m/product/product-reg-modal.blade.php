@@ -981,7 +981,6 @@
                             <p>필수 옵션의 경우, 주문 시 상위 옵션을 선택해야 하위 옵션 선택이 가능합니다. 상위 개념의 옵션을 앞 순서로 설정해주세요.</p>
                         </div>
                     </div>
-
                     <div class="h-[240px] overflow-y-auto ">
                         <ul id="sortable">
                             <li class="ui-state-default">
@@ -1105,6 +1104,48 @@
             </div>
             <div class="flex justify-center py-2">
                 <button class="btn btn-primary w-1/4" onclick="modalClose('#state_preview_modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 상품 임시 등록 팝업 --}}
+<div class="modal" id="product_temp_save_modal">
+    <div class="modal_bg" onclick="modalClose('#product_temp_save_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_temp_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>임시 등록되었습니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 상품 등록 신청 팝업 --}}
+<div class="modal" id="product_save_modal">
+    <div class="modal_bg" onclick="modalClose('#product_save_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_save_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>상품 등록 신청이 완료되었습니다.<br />등록 승인 결과는 푸시 알림으로 발송됩니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 상품 수정 완료 팝업 --}}
+<div class="modal" id="product_update_modal">
+    <div class="modal_bg" onclick="modalClose('#product_update_modal')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#product_update_modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>상품 수정이 완료되었습니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
             </div>
         </div>
     </div>
