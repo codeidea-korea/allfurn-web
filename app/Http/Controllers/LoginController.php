@@ -231,6 +231,19 @@ class LoginController extends BaseController
         return response()->json(['success' => true]);
     }
 
+    /**
+     * 액세스 토큰으로 로그인 처리
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function signinByAccessToken(Request $request)
+    {
+        $request->validate([
+            'accessToken' => 'required'
+        ]);
+        return response()->json($this->loginService->signinByAccessToken($request->input('accessToken')));
+    }
+
     public function signOut() {
         Session::flush();
         Auth::logout();

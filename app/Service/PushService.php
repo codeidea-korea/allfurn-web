@@ -237,7 +237,7 @@ class PushService
     }
 
     /**
-     * fcm 푸시 발송
+     * fcm 푸시 발송 - 테이블 쌓기로 변경
      * 
      * @param string $title 
      * @param string $msg 
@@ -261,98 +261,10 @@ class PushService
         $pushMessage->app_link = $applink;
         $pushMessage->web_link_type = $type;
         $pushMessage->web_link = $weblink;
+        $pushMessage->is_delete = 0;
+        $pushMessage->state = 'W';
+        
         $pushMessage->save();
-
-        $client = new Google_Client();
-        $client->setAuthConfigFile('/var/www/allfurn-web/fcm.json');
-        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-        $client->refreshTokenWithAssertion();
-        $auth_key = $client->getAccessToken();
-
-        $targets = explode(',', $to);
-        for($idx = 0; $idx < count($targets); $idx++) {
-            $userIdx = $targets[$idx];
-            if(empty($userIdx)) {
-                continue;
-            }
-            $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
-
-            /*
-            $data = [
-                "message" => [
-                    "token"=> $authToken->push_token,
-                    "notification"=> [
-                        "title"=> $title,
-                        "body"=> $msg,
-                        "sound"=> "default"
-                    ],
-                    "data"=> [
-                        "scheme" => $applink,
-                        "weburl" => $weblink,
-                        "title"  => $title,
-                        "body"  => $msg,
-                        "content" => $msg
-                    ]
-                ]
-            ];
-            */
-
-            if (strpos($weblink, 'https') === false){
-                $weblink = env("APP_URL") . $weblink;
-            }
-    
-            $notification_opt = array (
-                'title' => $title,
-                'body' => $msg,
-                //'image' => AWS_S3.$file
-            );
-    
-            $android_opt = array (
-                'notification' => array(
-                    'default_sound'         => true, 
-                )
-            );
-    
-            $message = array(
-                'token' => $authToken->push_token,
-                'notification' => $notification_opt,
-                'android' => $android_opt, 
-                'data' => array(
-                    'start_url' => $weblink
-                )
-            );
-    
-            $last_msg = array (
-                "message" => $message
-            );
-        
-            $ch = curl_init();
-        
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($last_msg));
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        
-            $headers = array();
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
-            $result = curl_exec($ch);
-            
-            $sendLog = new PushSendLog();
-            $sendLog->user_idx = $userIdx;
-            $sendLog->push_idx = $pushMessage->idx;
-            $sendLog->push_type = $pushMessage->type;
-            $sendLog->is_send = 1;
-            $sendLog->is_check = 0;
-            $sendLog->send_date = date('Y-m-d H:i:s');
-            $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
-            $sendLog->save();
-
-            curl_close ($ch);
-        }
     }
 
     /**
@@ -373,13 +285,16 @@ class PushService
         $pushMessage->content = $msg;
         $pushMessage->push_info = $msg;
         $pushMessage->send_date = date('Y-m-d H:i:s');
-        $pushMessage->send_type = 'P';
+        $pushMessage->send_type = 'S';
         $pushMessage->send_target = $to;
         $pushMessage->is_ad = 0;
         $pushMessage->app_link_type = $type;
         $pushMessage->app_link = $applink;
         $pushMessage->web_link_type = $type;
         $pushMessage->web_link = $weblink;
+        $pushMessage->is_delete = 0;
+        $pushMessage->state = 'W';
+        
         $pushMessage->save();
     }
 }

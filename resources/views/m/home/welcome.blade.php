@@ -237,6 +237,26 @@ function closeModal(name) {
     }
 }
 
+const accessToken = localStorage.getItem('accessToken');
+if(accessToken && accessToken.length > 1) {
+    // 
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
+        url: '/tokenpass-signin',
+        data: {
+            'accessToken': accessToken
+        },
+        type: 'POST',
+        dataType: 'json',
+        success: function(result) {
+            if (result.success) {
+                location.href = '/';
+            } else {
+                alert(result.msg);
+            }
+        }
+    });
+}
 </script>
 </body>
 </html>

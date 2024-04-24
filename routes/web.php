@@ -28,6 +28,7 @@ Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
+Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');

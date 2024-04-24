@@ -275,6 +275,6 @@ $header_banner = '';
             })
         }
     </script>
-@endsection
 
-@include('m.message.modal')
+    @include('m.message.modal')
+@endsection

@@ -138,7 +138,7 @@ $header_banner = '';
                                         <div class="add_tab">
                                             <!-- 국내 -->
                                             <div class="flex gap-1">
-                                                <input type="text" id="w_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('w')">
+                                                <input type="text" id="w_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" required placeholder="주소를 검색해주세요" disabled onclick="execPostCode('w')">
                                                 <button type="button" type="button" class="btn btn-black-line" onclick="execPostCode('w')">주소 검색</button>
                                             </div>
                                             <!-- 해외 -->
@@ -154,8 +154,8 @@ $header_banner = '';
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mt-2 w-2/3">
-                                            <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <div class="mt-2 w-full">
+                                            <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled required>
                                         </div>
                                     </dd>
                                 </dl>
@@ -266,7 +266,7 @@ $header_banner = '';
                                         <div class="add_tab">
                                             <!-- 국내 -->
                                             <div class="flex gap-1">
-                                                <input type="text" id="r_businessaddress" name="businessaddress" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('r')">
+                                                <input type="text" id="r_businessaddress" name="businessaddress" required class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled onclick="execPostCode('r')">
                                                 <button type="button" type="button" class="btn btn-black-line" onclick="execPostCode('r')" type="button">주소 검색</button>
                                             </div>
                                             <!-- 해외 -->
@@ -282,8 +282,8 @@ $header_banner = '';
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mt-2 w-2/3">
-                                            <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <div class="mt-2 w-full">
+                                            <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled required>
                                         </div>
                                     </dd>
                                 </dl>
@@ -600,6 +600,23 @@ $header_banner = '';
             </div>
         </div>
     </div>
+    
+    <!-- 풀페이지 모달 주소검색 모달 -->
+    
+    <div class="modal" id="ad_search">
+        <div class="modal_inner inner_full">
+
+            <div class="modal_title">
+                <button class="x_btn" onclick="modalClose('#ad_search')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <h3>주소 검색</h3>
+            </div>
+            <div class="h-[calc(100dvh-60px)] overflow-y-scroll px-[18px]" id="address_body">
+            </div>
+
+        </div>
+    </div>
 
 </div>
 
@@ -615,6 +632,16 @@ $('.step2_next').on('click',function(){
         $('#email_dupcheck_ment').html('필수항목을 입력해주세요.');
         modalOpen('#modal-email--duplicated');
         return;
+    }
+    
+    if (base === '#wholesale-tab-pane' || base === '#retail-tab-pane') {
+        const address = $(base + ' [name="businessaddress"]').val();
+        const addressdetail = $(base + ' [name="businessaddressdetail"]').val();
+        if(!address || address.length < 1 || !addressdetail || addressdetail.length < 1) {
+            $('#email_dupcheck_ment').html('필수항목을 입력해주세요.');
+            modalOpen('#modal-email--duplicated');
+            return;
+        }
     }
     $('.join_header h3').text('약관 동의')
     $('.step2').addClass('hidden')
@@ -783,6 +810,7 @@ $(document).ready(function() {
             businessname: {required:true},
             username: {required:true},
             contact: {required:true},
+            businessaddress: {required:true},
             businessaddressdetail: {required:true},
             useremail: {required:true, emailDupCheck: true},
             userpw: {required:true, eng_number:true, minlength:8},
@@ -802,6 +830,7 @@ $(document).ready(function() {
             businessname: "업체명을 정확히 입력해주세요",
             username: "대표장명을 정확히 입력해주세요",
             contact: "휴대폰 번호를 정확히 입력해주세요",
+            businessaddress: "주소를 입력해주세요",
             businessaddressdetail: "주소를 입력해주세요",
             useremail: {
                 required: "아이디를 입력해주세요",
@@ -873,6 +902,7 @@ $.validator.addMethod('businessCodeDupCheck', function(value) {
 // 우편번호/주소 검색
 function execPostCode(t) {
     daum.postcode.load(function() {
+        const element_layer = document.getElementById('address_body');
         new daum.Postcode({
             oncomplete: function(data) {
                 var addr = '';
@@ -885,8 +915,13 @@ function execPostCode(t) {
                 $(`#${t}_businessaddress`).val(addr);
                 $(`#${t}_businessaddressdetail`).removeAttr('disabled');
                 $(`#${t}_businessaddressdetail`).focus();
-            }
-        }).open();
+                modalClose('#ad_search');
+            },
+            width : '100%',
+            height : '100%',
+            maxSuggestItems : 10
+        }).embed(element_layer);
+        modalOpen('#ad_search');
     });
 }
 

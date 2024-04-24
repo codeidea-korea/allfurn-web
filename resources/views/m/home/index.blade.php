@@ -490,14 +490,15 @@ $(document)
             };
 
             try{
-            if(isMobile.any()) {
-                if(isMobile.Android()) {
-                // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
-                window.AppWebview.postMessage(jsonStr);
-                } else if (isMobile.iOS()) {
-                window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                localStorage.setItem('accessToken', "{{$xtoken}}");
+                if(isMobile.any()) {
+                    if(isMobile.Android()) {
+                    // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
+                    window.AppWebview.postMessage(jsonStr);
+                    } else if (isMobile.iOS()) {
+                    window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                    }
                 }
-            }
             } catch (e){
             console.log(e)
             }

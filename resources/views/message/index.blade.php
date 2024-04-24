@@ -678,6 +678,6 @@
 
 
 
-@endsection
-
 @include('message.modal')
+
+@endsection

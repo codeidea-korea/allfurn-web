@@ -21,7 +21,29 @@
 
     <script src="/js/plugin.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
-</head>
+    <script src="/js/jquery-1.12.4.js?20240424125855"></script>
+    <script type="text/javascript">
+    const accessToken = localStorage.getItem('accessToken');
+    if(accessToken && accessToken.length > 1) {
+        // 
+        $.ajax({
+    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
+            url: '/tokenpass-signin',
+            data: {
+                'accessToken': accessToken
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                if (result.success) {
+                    location.href = '/signin';
+                } else {
+                    alert(result.msg);
+                }
+            }
+        });
+    }
+    </script>
 </head>
 
 <body class="allfurn-introduction">
@@ -173,7 +195,6 @@ function download() {
     }
 
 }
-
 </script>
 </body>
 </html>
