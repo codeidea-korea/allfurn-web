@@ -1,4 +1,4 @@
-<select id="{{$id}}" name="countryCode" class="input-form">
+<select id="{{$id}}" name="countryCode" class="input-form w-[160px]">
     <option value="82" Selected>대한민국 (+82)</option>
     <option value="44">UK (+44)</option>
     <option value="1">USA (+1)</option>
