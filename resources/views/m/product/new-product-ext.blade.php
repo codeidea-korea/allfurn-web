@@ -23,6 +23,11 @@
                                 </div>
                             </li>
                         @endforeach
+                        <li class="swiper-slide">
+                            <div class="more_wrap">
+                                <button class="more_btn" onclick="location.href='/product/new?scroll=true'">더보기</button>
+                            </div>
+                        </li>
                     @endif
                 </ul>
             </div>

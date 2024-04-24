@@ -122,8 +122,12 @@ class HomeService
             ->where([
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
-            ])
-            ->orderBy('access_date', 'desc')->limit(240)->get();
+            ]);
+            if(getDeviceType() == 'm.') {
+                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(8)->get();
+            } else {
+                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(256)->get();
+            }
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')

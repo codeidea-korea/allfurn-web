@@ -28,6 +28,9 @@
                             </div>
                         </li>
                     @endforeach
+                    <li class="swiper-slide more_btn">
+                        <button onclick="location.href='/product/new?scroll=true'">더보기</button>
+                    </li>
                 </ul>
             </div>
             <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>

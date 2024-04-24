@@ -187,6 +187,8 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .prod_slide-2 .swiper-wrapper {justify-content: space-between; }
 .prod_slide-2 .swiper-slide {width:138px; height:calc(50% - 10px) !important; }
 .prod_slide .swiper-slide {width:138px; }
+.prod_slide-2 .more_btn {display:flex; align-items:center; justify-content:center; height:100% !important; } 
+.prod_slide-2 .more_btn button {width:70%; height:40px; border:1px solid #ddd; }
 
 .slide_arrow {position:absolute; top:calc(50% - 25px); width:50px; height:50px; border:1px solid #dadde0; border-radius:50%; }
 .slide_arrow.swiper-button-disabled {display:none;}

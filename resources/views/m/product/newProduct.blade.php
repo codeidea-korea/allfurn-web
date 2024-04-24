@@ -114,6 +114,13 @@
             el: "#zoom_view-modal-new .count_pager",
             type: "fraction",
         },
+        on: {
+            slideChange: function () {
+                if (this.isEnd && !isLoading && !isLastPage) {
+                    loadNewProductList();
+                }
+            },
+        },
     });
 
     /* ----------------------------- */
