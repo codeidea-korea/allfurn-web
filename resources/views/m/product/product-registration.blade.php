@@ -32,7 +32,7 @@
                     <dt>상품 이미지</dt>
                     <dd>
                         <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
-                            <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center">
+                            <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center product-img__gallery">
                                 <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                 <div>
                                     <div class="file_text flex flex-col items-center">
@@ -108,8 +108,8 @@
                             <button class="is_price_open w-1/2" data-val="0">미노출</button>
                         </div>
                         <div class="btn_select_cont mt-2">
-                            <div></div>
-                            <div>
+                            <div class='div_ptxt1'></div>
+                            <div class='div_ptxt0'>
                                 <div class="dropdown_wrap">
                                     <button class="dropdown_btn price_text">가격 안내 문구 선택</button>
                                     <div class="dropdown_list">
@@ -377,6 +377,7 @@
 <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
 <script type="text/javascript">
+const productIdx = $('#modifyBtn').data('idx');
 var storedFiles = [];
 var subCategoryIdx = null;
 var deleteImage = [];
@@ -569,16 +570,6 @@ function getSubProperty(parentIdx=null, title=null, ord=null) {
             })
             subHtmlText += '</ul></div>';
             $('#prod_property-modal .prod_property_cont').append(subHtmlText);
-
-
-            //$('#prod_property-modal').data('property_idx', parentIdx);
-            //$('#prod_property-modal .filter_body p').text(title);
-
-
-            // $('div.select-group__result[data-property_idx="' + parentIdx + '"] div').each(function (i, el) {
-            //     $('#prod_property-modal #property-check_'+$(el).data('sub_idx')).attr('checked', true);
-            // })
-
         }
     });
 }
@@ -601,16 +592,6 @@ function getProperty(parentIdx=null, title=null) {
             result.forEach(function (e, idx) {
                 if( idx == 0 ) { _active = 'active'; } else { _active = ''; }
                 htmlText += '<li class="' + _active + '" data-property_idx=' + e.idx+ '><button>' + e.name + '</button></li>';
-
-
-                // htmlText += '<div class="flex items-center gap-3 border-b' + pb_cls + '">' +
-                //     '   <p class="text-stone-400 w-[130px] shrink-0">' + e.name + '</p>' +
-                //         '<div class="flex items-center gap-3">' +
-                //     '       <button class="h-[48px] w-[120px] border rounded-md hover:bg-stone-50 text-sm shrink-0" onclick="getProperty(' + e.idx + ', \'' + e.name + '\')">' + e.name + ' 선택</button>' +
-                //     '       <div class="flex flex-wrap items-center gap-3 select-group__result" data-property_idx=' + e.idx+ '>' +
-                //     '       </div>' +
-                //     '   </div>' +
-                //     '</div>';
                 getSubProperty(e.idx, e.name, idx);
             });
             $('#prod_property-modal .prod_property_tab').html(htmlText);
@@ -749,8 +730,8 @@ function addOrderOption() {
             '           <dl class="mb-3">' + 
             '               <dt class="necessary">필수 옵션</dt>' + 
             '               <dd><div class="flex gap-2 btn_select">' +
-            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2">설정</button>' +
-            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2 active">설정 안함</button>' +
+            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2" data-val="1">설정</button>' +
+            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2 active" data-val="0">설정 안함</button>' +
             '               </div></dd>' + 
             '           </dl>' +
             '           <dl class="mb-3">' +
@@ -1078,11 +1059,6 @@ function loadProduct() {
                 $('#form-list01').val(result['name']); // 상품명
                 subCategoryIdx = result['category_idx']; // 카테고리 idx
 
-                // 저장된(선택된) 카테고리 값 관련
-                $('.w-full .text-primary').addClass('active');
-                $('.w-full .text-primary span').data('category_idx', result['category_idx']);
-                $('.w-full .text-primary span').text( result['category'] );
-
                 // 첨부파일 이미지 출력
                 if (result['attachment'] != null) {
                     imageAddBtn = $('.product-img__gallery').clone();
@@ -1091,8 +1067,8 @@ function loadProduct() {
                     result['attachment'].map(function (item, i) {
                         if (item != null) {
                             var html = `
-                                <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
-                                    <img class="w-[200px] h-[200px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
+                                <div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
+                                    <img class="w-[150px] h-[150px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
                                     <div class="absolute top-2.5 right-2.5">
                                         <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
@@ -1110,47 +1086,78 @@ function loadProduct() {
                     }
                 }
 
-                // 저장된(선택된) 속성값 관련
+                // 저장된(선택된) 카테고리 값 관련
+                $('input:radio[name=prod_category]').each(function(){
+                    if ($(this).val() == result['category_idx']) {
+                        $(this).parents('.prod_category li').addClass('on');
+                        $(this).prop('checked', true);
+                    }
+                });
+                $('#categoryIdx').data('category_idx', result['category_idx']);
+                $('#categoryIdx').text(result['category']);
                 getProperty(null);
-                
+                $('.propertyList').show();
+                $('.checkedProperties').html('');
+
                 // 카테고리 선택에 따른 상품 속성 값들..
                 setTimeout(function () {
-                    var parentIdx = 0;
                     result['propertyList'].map(function (item) {
-                        if (parentIdx == '' || item['parent_idx'] != parentIdx) {
-                            parentIdx = item['parent_idx'];
-                            $('div.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').html('');
-                        }
-
-                        $('div.select-group__result[data-property_idx="' + item['parent_idx'] + '"]').append(
-                            '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + item.idx + '">' +
-                            '   <span class="text-stone-500 property_name">' + item['property_name'] + '</span>' +
-                            '   <button class="ico_delete"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
-                            '</div>'
-                        )
+                        var propertyHtmlText = "";
+                        $('#prod_property-modal .sub_property_area').each(function(o){
+                            $('#prod_property-modal .sub_property_area:eq('+o+') .check-form').map(function (n, i) {
+                                if ($(this).data('sub_property') == item.idx) { $(this).prop('checked', true); }
+                            });
+                        });
+                        $('#prod_property-modal .sub_property_area').each(function(o){
+                            if ($('#prod_property-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
+                                propertyHtmlText += '<div><div class="mt-5 font-medium">'+$(this).data('title')+'</div><div class="flex flex-wrap items-center gap-3 mt-2">';
+                                $('#prod_property-modal .sub_property_area:eq('+o+') .check-form:checked').map(function (n, i) {
+                                    propertyHtmlText += '<div class="flex items-center bg-stone-100 px-3 py-1 rounded-full gap-1" data-sub_idx="' + $(this).data('sub_property') + '">' +
+                                    '   <span class="text-stone-500 property_name">' + $(this).data('sub_name') + '</span>' +
+                                    '   <button class="ico_delete"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-400"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>' +
+                                    '</div>';
+                                })
+                                propertyHtmlText += '</div></div>';
+                            }
+                        });
+                        $('.checkedProperties').html(propertyHtmlText);
                     });
                 }, 500);
 
                 // 상품 가격
                 $('#product-price').val(result['price']); 
                 if (result['is_price_open'] == 1) {
-                    $('#price_exposure01').attr('checked', true);
-                    $('#price_exposure02').attr('checked', false);
-                    $('.select-group__dropdown').css('display', 'none');
+                    $('button.is_price_open[data-val=1]').addClass('active');
+                    $('button.is_price_open[data-val=0]').removeClass('active');
                 } else {
-                    $('#price_exposure01').attr('checked', false);
-                    $('#price_exposure02').attr('checked', true);
-                    $('.select-group__dropdown').css('display', 'block');
-                    if (result['price_text'] != null) {
-                        $('.select-group__dropdown .dropdown__title').text(result['price_text'])
-                    }
+                    $('button.is_price_open[data-val=1]').removeClass('active');
+                    $('button.is_price_open[data-val=0]').addClass('active');
+                    $('.div_ptxt0').addClass('active');
+                    $('.div_ptxt1').removeClass('active')
+                    $('.price_text').text(result['price_text']);
+                }
+
+                // 신상품 설정
+                if (result['is_new_product'] == 1) {
+                    $('button.is_new_product[data-val=1]').addClass('active');
+                    $('button.is_new_product[data-val=0]').removeClass('active');
+                } else {
+                    $('button.is_new_product[data-val=1]').removeClass('active');
+                    $('button.is_new_product[data-val=0]').addClass('active');
                 }
 
                 // 결제 방식
-                if (result['pay_type'] != 4) {
-                    $('payment__input-wrap').css('display', 'none');
-                } else {
-                    $('payment__input-wrap').css('display', 'block');
+                $('.payment_method').addClass('hidden');
+                if (result['pay_type'] == "1"){
+                    $('.payment').text('업체 협의');
+                }else if (result['pay_type'] == "2"){
+                    $('.payment').text('계좌이체');
+                }else if (result['pay_type'] == "3"){
+                    $('.payment').text('세금 계산서 발행');
+                }else if (result['pay_type'] == "4"){
+                    $('.payment').text('직접입력');
+                    $('input[name="payment_text"]').val(result['pay_type_text']);
+                    $('.payment_method').removeClass('hidden');
                 }
 
                 // 상품 코드
@@ -1160,13 +1167,8 @@ function loadProduct() {
                 var delivery = '';
                 result['delivery_info'].split(',').forEach(str => {
                     delivery += '' + 
-                        '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
-                        '   <button class="ico_delete">' +
-                        '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
-                        '           <path d="M18 6 6 18"></path>' +
-                        '           <path d="m6 6 12 12"></path>' +
-                        '       </svg>' +
-                        '   </button>' +
+                        '<div class="shipping_method px-4 py-2 mb-2 bg-stone-100 inline-flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + '</span>' +
+                        '   <button class="ico_delivery"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>' +
                         '</div>';
                 })
                 $('.shipping-wrap__add .shipping_method_list').append(delivery);
@@ -1180,11 +1182,11 @@ function loadProduct() {
                 $('.auth-wrap__selected').removeClass('hidden');
                 result['auth_info'].split(', ').forEach(str => {
                     if (authList.indexOf(str) == -1) {
-                        $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                        $('#prod_certifi-modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
                         $('#auth_info_text').val(str);
                         $('#auth_info_text').css('display', 'block');
                     } else {
-                        $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                        $('#prod_certifi-modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
                     }
                 });
 
@@ -1193,56 +1195,53 @@ function loadProduct() {
 
                 // 주문 옵션 추가
                 var obj = $.parseJSON(result['product_option']);
+                console.log(obj);
                 obj.forEach(function (item, i) {
                     addOrderOption();
-                    $('input[name="option-required_0' + (i + 1) + '"][value=' + item.required + ']').prop('checked', true);
+                    //$('button.option-required_0' + (i + 1) + '[data-val=' + item.required + ']').prop('checked', true);
                     $('input#option-name_0' + (i + 1)).val(item.optionName);
                     // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
                     item.optionValue.forEach(function (value, y) {
                         if (y > 0) {
                             $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
-                            console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
+                            //console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
                         }
                         $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
                         $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
                     })
                 });
+
             }
 
             if (loadType == 0 || loadType == 2) {
-                if (result['is_pay_notice'] == 0) {
-                    $('.guide_pay_notice').hide();
-                } else {
+                if (result['is_pay_notice'] == "1") {
                     $('#pay_notice').val(result['pay_notice']);
-                    $('.guide_pay_notice').show();
+                    $('#pay_notice').parent().addClass('active');
+                    $('button.order-info01[data-val=1]').addClass('active');
+                    $('button.order-info01[data-val=0]').removeClass('active');
                 }
 
-                if (result['is_delivery_notice'] == 0) {
-                    $('.guide_delivery_notice').hide();
-                } else {
+                if (result['is_delivery_notice'] == "1") {
                     $('#delivery_notice').val(result['delivery_notice']);
-                    $('.guide_delivery_notice').show();
+                    $('#delivery_notice').parent().addClass('active');
+                    $('button.order-info02[data-val=1]').addClass('active');
+                    $('button.order-info02[data-val=0]').removeClass('active');
                 }
 
-                if (result['is_return_notice'] == 0) {
-                    $('.guide_return_notice').hide();
-                } else {
+                if (result['is_return_notice'] == "1") {
                     $('#return_notice').val(result['return_notice']);
-                    $('.guide_return_notice').show();
-                }
+                    $('#return_notice').parent().addClass('active');
+                    $('button.order-info03[data-val=1]').addClass('active');
+                    $('button.order-info03[data-val=0]').removeClass('active');
+                } 
 
-                if (result['is_order_notice'] == 0) {
-                    $('.guide_order_notice').hide();
-                } else {
+                if (result['is_order_notice'] == "1") {
                     $('#order_title').val(result['order_title']);
                     $('#order_content').val(result['order_content']);
-                    $('.guide_order_notice').show();
+                    $('#order_content').parent().addClass('active');
+                    $('button.order-info04[data-val=1]').addClass('active');
+                    $('button.order-info04[data-val=0]').removeClass('active');
                 }
-
-                $('input[name="order-info01"][value=' + result['is_pay_notice'] + '],' +
-                    'input[name="order-info02"][value=' + result['is_delivery_notice'] + '],' +
-                    'input[name="order-info03"][value=' + result['is_return_notice'] + '],' +
-                    'input[name="order-info04"][value=' + result['is_order_notice'] + ']').prop('checked', true);
 
                 // 미리보기쪽.. 일단 보류
                 $('.sales_product_num').text(result['product_number']);
@@ -1250,8 +1249,6 @@ function loadProduct() {
                     $('.access_date').text(result['access_date'].split(' ')[0].replace(/-/g, '.'));
                 }
             }
-
-            //closeModal('#default-modal10');
         }
     });
 }
