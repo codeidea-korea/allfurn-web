@@ -42,12 +42,11 @@
         @if($company->company_type === 'W' || $company->company_type === 'R')
         <div class="add">{{ $company->business_address }} {{ $company->business_address_detail }}</div>
         <p>{{ $company->phone_number }}</p>
+        <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
         @else
         <div class="add">경기도 고양시 일산동구 산두로213번길 18 (정발산동)</div>
         <p>031-813-5588</p>
         @endif
-
-        <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
     </div>
 </div>
 <div class="chatting_list" style="overflow-y: scroll;">
@@ -63,7 +62,7 @@
 </div>
 <div class="message_form">
     <div class="file_box">
-        <input type="file" id="img_file">
+        <input type="file" id="img_file" onchange="submitImgMessage()">
         <label for="img_file">
             <img class="mx-auto" src="/img/member/img_icon.svg" alt="">
         </label>
