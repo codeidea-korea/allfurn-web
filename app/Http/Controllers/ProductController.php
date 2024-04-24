@@ -51,7 +51,7 @@ class ProductController extends BaseController
         return view(getDeviceType().'product.product-registration', [
             'productIdx' => $productIdx,
             'data' => $this->productService->getProductData($productIdx, $type)['detail'],
-            'categoryList' => $this->getCategoryList(),
+            'categoryList' => $this->productService->getCategoryTree(), //$this->getCategoryList(),
             'productList' => $this->getMyProductList(), 
             'request' => $request
         ]);
