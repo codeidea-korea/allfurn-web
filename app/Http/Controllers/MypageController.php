@@ -222,6 +222,12 @@ class MypageController extends BaseController
         $data['pageType'] = 'normal';
         $data['user'] = $this->getLoginUser();
 
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
         return view('mypage.mypage', $data);
     }
 
@@ -558,6 +564,12 @@ class MypageController extends BaseController
             $data['pageType'] = 'normal-account';
             $nameCardImage = $this->mypageService->getUserNameCard();
             $data['nameCardImage'] = $nameCardImage ?? '';
+
+            $data['point']  = $this->mypageService->getPointList();
+            $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+            $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+            $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+            $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
             return view('mypage.mypage', $data);
         } else {
             return redirect()->route('signOut');
@@ -573,6 +585,12 @@ class MypageController extends BaseController
 
         $data['info'] = $this -> mypageService -> getCompany();
         $data['pageType'] = 'company-edit';
+
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return view(getDeviceType().'mypage.mypage', $data);
     }
@@ -706,6 +724,11 @@ class MypageController extends BaseController
             $data['members'] = $this -> mypageService -> getCompanyMembers();
         }
 
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
         return view(getDeviceType().'mypage.mypage', $data);
     }
 
@@ -786,6 +809,13 @@ class MypageController extends BaseController
     {
         $data['pageType'] = 'withdrawal';
         $data['user'] = $this->getLoginUser();
+
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
         return view('mypage.mypage', $data);
     }
 
@@ -948,6 +978,12 @@ class MypageController extends BaseController
         $data['pageType'] = 'estimate-request';
         $data['request'] = array_merge($this -> mypageService -> getRequestEstimate($params), $data);
 
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
 
@@ -989,6 +1025,12 @@ class MypageController extends BaseController
 
         $data['pageType'] = 'estimate-response';
         $data['response'] = array_merge($this -> mypageService -> getResponseEstimate($params), $data);
+
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }
@@ -1043,6 +1085,12 @@ class MypageController extends BaseController
         $data['pageType'] = 'estimate-response-multi';
 
         $data['response'] = array_merge($this -> mypageService -> getResponseEstimateMulti($data['user']), $data);
+
+        $data['point']  = $this->mypageService->getPointList();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
         return response() -> view(getDeviceType().'mypage.mypage', $data) -> withCookie(Cookie::forget('cocw'));
     }

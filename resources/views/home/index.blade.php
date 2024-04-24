@@ -376,6 +376,15 @@ const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
         el: "#zoom_view-modal-new .count_pager",
         type: "fraction",
     },
+    on: {
+        slideChange: function () {
+            if (this.isEnd) {
+                $("#zoom_view-modal-new .slide_arrow.more_btn").show();
+            } else {
+                $("#zoom_view-modal-new .slide_arrow.more_btn").hide();
+            }
+        },
+    },
 });
 
 // 테마별상품 탭

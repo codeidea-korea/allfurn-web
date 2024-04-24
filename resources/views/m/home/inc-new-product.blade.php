@@ -26,6 +26,9 @@
                             </div>
                         </li>
                     @endforeach
+                    <li class="swiper-slide more_btn">
+                        <button onclick="location.href='/product/new?scroll=true'">더보기</button>
+                    </li>
                 </ul>
             </div>
             
