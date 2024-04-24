@@ -197,7 +197,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .prod_item .img_box .zzim_btn {position:absolute; right:16px; bottom:16px; }
 .prod_item .txt_box {padding-top:6px ; line-height:1;}
 .prod_item .txt_box span {color:var(--gray_color); font-size:14px; }
-.prod_item .txt_box p {margin:3px 0 4px; font-size:16px; font-weight:400; word-break:keep-all; line-height:1.4; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
+.prod_item .txt_box p {height:44px; margin:3px 0 4px; font-size:16px; font-weight:400; word-break:keep-all; line-height:1.4; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;}
 .prod_item .txt_box b {font-size:18px; font-weight:700;}
 
 .img_box .zzim_btn svg {width:30px; height:30px; stroke:#fff; fill:transparent; }
