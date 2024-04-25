@@ -231,7 +231,7 @@
             <div class="prod_detail_write">
                 <div class="top_info">
                     <h6>상품 상세 내용</h6>
-                    <button onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button>
+                    {{-- <button onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button> --}}
                 </div>
                 <textarea class="prod_detail_area" placeholder="내용을 입력해주세요."></textarea>
             </div>

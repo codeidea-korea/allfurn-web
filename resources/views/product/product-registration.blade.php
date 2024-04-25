@@ -253,8 +253,8 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품 상세 내용</dt>
                         <dd class="font-medium w-full">
-                            <button class="h-[48px] w-[240px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button>
-                            <div class="h-[100px] py-3 mt-5">
+                            {{-- <button class="h-[48px] w-[240px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button> --}}
+                            <div class="h-[100px]">{{-- <div class="h-[100px] py-3 mt-5"> --}}
                                 <textarea class="textarea-form"></textarea>
                             </div>
                         </dd>

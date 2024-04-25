@@ -67,7 +67,6 @@ class HomeController extends BaseController
                 ]);
                 
             } else {
-                
                 return view('home/mWelcome');
                 
             }
