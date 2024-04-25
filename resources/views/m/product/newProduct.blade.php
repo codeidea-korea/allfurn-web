@@ -127,6 +127,7 @@
     $(document).ready(function(){
         setTimeout(() => {
             loadNewProductList();
+            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     })
 
