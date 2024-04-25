@@ -167,7 +167,7 @@
                 <div class="filter_box">
                     <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                    <button onclick="modalOpen('#filter_align-modal')">추천순</button>
+                    <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
                 </div>
                 <div class="total">전체 0개</div>
             </div>
@@ -175,6 +175,7 @@
                 <div class="filter_on_box">
                     <div class="category"></div>
                     <div class="location"></div>
+                    <div class="order"></div>
                 </div>
                 <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
             </div>
@@ -300,7 +301,6 @@
                 }
             },
             success: function(result) {
-                console.log(result);
                 if(needEmpty) {
                     $(".sub_section_bot .obtain_list").empty();
                 }
@@ -333,6 +333,13 @@
     const filterRemove = (item)=>{
         $(item).parents('span').remove(); //해당 카테고리 삭제
         $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
+
+        loadWholesalerList(true);
+    }
+
+    const orderRemove = (item)=> {
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#filter_align-modal .radio-form").eq(1).prop('checked', true);
 
         loadWholesalerList(true);
     }
@@ -408,7 +415,7 @@
     }
 
     function toggleFilterBox() {
-        if($(".modal .check-form:checked").length === 0){
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
             $(".sub_filter_result").hide();
         } else {
             $(".sub_filter_result").css('display', 'flex');
@@ -416,6 +423,17 @@
     }
 
     function displaySelectedOrders() {
+        if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+            $(".filter_on_box .order").empty().append(
+                '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>'
+            );   
+            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+        } else {
+            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+        }
+
         $(".sub_filter .filter_box button").eq(2)
         .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
     }
