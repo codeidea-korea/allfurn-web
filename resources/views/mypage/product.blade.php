@@ -148,8 +148,8 @@
                     <li class="no_prod txt-gray">
                         상품을 등록해주세요.
                     </li>
-                    <li class="no_prod txt-gray">
-                        <button type="button" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
+                    <li class="no_prod txt-gray" style="text-align:right;">
+                        <button type="button" class="text-m px-3 py-2 rounded bg-primary text-white font-medium" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
                     </li>
                 </ul>
                 @endif
@@ -188,7 +188,11 @@
                                     <div class="flex items-center gap-2 shrink-0 text-stone-500">
                                         <button onClick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}');">상태 변경</button>
                                         <span>|</span>
-                                        <a href="/product/modify/{{ $row -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
+                                        @if (request()->get('type') == 'temp')
+                                            <a href="/product/registration?temp={{ $row -> idx }}">수정</a>
+                                        @else 
+                                            <a href="/product/modify/{{ $row -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
+                                        @endif 
                                         <span>|</span>
                                         <button type="button" onClick="deleteProductModal({{ $row -> idx }})">삭제</button>
                                     </div>
@@ -342,7 +346,7 @@
                                     <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
-                                    <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li
+                                    <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                 </ul>
                             </div>

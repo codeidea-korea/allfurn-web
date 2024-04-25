@@ -143,6 +143,10 @@ class ProductController extends BaseController
      */
     public function registration(Request $request)
     {
+        $productIdx = 0;
+        if ($request->temp != "") {
+            $productIdx = $request->temp;
+        }
         return view(getDeviceType().'product.product-registration', [
             'banners' => $this->productService->getBannerList(),
             'todayCount' => $this->productService->getTodayCount(),
@@ -150,7 +154,7 @@ class ProductController extends BaseController
             'categoryList' => $this->productService->getCategoryTree(),
             'productList' => $this->getMyProductList(), 
             'request' => $request, 
-            'productIdx' => 0
+            'productIdx' => $productIdx
         ]);
     }
 

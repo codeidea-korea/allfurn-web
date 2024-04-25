@@ -60,13 +60,14 @@
             </div>
         </div>
 
-        <div class="mt-5 flex items-center justify-between">
+        {{-- <div class="mt-5 flex items-center justify-between">
             <p class="font-bold">직원 <span class="text-sm text-stone-400 font-normal">(최대 5명)</span></p>
             <button class="flex items-center justify-between gap-1 text-stone-600 font-medium" onClick="getCompanyMember_create();">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                 직원 등록
             </button>
         </div>
+        
         <div class="mt-3 border-t-2 border-t-stone-600 py-5 gap-6">
             @if (count($members) >= 1)
             <div>
@@ -105,9 +106,9 @@
                 </div>
             </div>
             @endif
-        </div>
+        </div> --}}
     </div>
-
+    
     <div class="flex items-center gap-3">
         <button type="button" class="btn w-1/4 btn-primary-line mt-5" onclick="modalOpen('#withdrawal_modal')">회원 탈퇴</button>
         <button class="btn w-1/4 btn-primary mt-5" onclick="modalOpen('#change_password_modal')">비밀번호 변경</button>
@@ -128,14 +129,14 @@
     </div>
 </div>
 
-<!-- 휴대폰 번호 수정 -->
+<!-- 휴대폰번호 수정 -->
 <div class="modal" id="edit_phone_number">
     <div class="modal_bg" onClick="modalClose('#edit_phone_number');"></div>
     <div class="modal_inner modal-md">
         <div class="modal_body filter_body">
-            <h4>휴대폰 번호 수정</h4>
+            <h4>휴대폰번호 수정</h4>
             <div class="py-3">
-                <p>휴대폰 번호<span class="text-primary">*</span></p>
+                <p>휴대폰번호<span class="text-primary">*</span></p>
                 <div class="mt-1">
                     <div class="flex items-center gap-2">
                         <div class="setting_input h-[48px]">
@@ -147,9 +148,7 @@
                             <input type="text" name="phone_number" id="phone_number" class="w-full h-full" value="{{ $company -> phone_number }}" placeholder="- 없이 숫자만 입력해주세요." oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')" />
                         </div>
                     </div>
-
                 </div>
-
             </div>
             <div class="btn_bot">
                 <button class="btn btn-primary !w-full" onclick="updatePhoneNumber()">완료</button>
@@ -158,12 +157,12 @@
     </div>
 </div>
 
-<!-- 사업자 주소 수정 -->
+<!-- 사업자주소 수정 -->
 <div id="edit_business_number" class="modal">
     <div class="modal_bg" onClick="modalClose('#edit_business_number');"></div>
     <div class="modal_inner modal-md">
         <div class="modal_body filter_body">
-            <h4>사업자 주소 수정</h4>
+            <h4>사업자주소 수정</h4>
             <div class="com_setting py-3">
                 <div class="flex flex-col w-full">
                     <div class="flex justify-between">
@@ -173,7 +172,7 @@
                         </div>
                         <button class="h-[48px] w-[98px] border border-stone-500 rounded-md shrink-0 delete_address hover:bg-stone-100" style="display: none;">삭제</button>
                     </div>
-                    <div class="domestic_section mt-2 location--type01 {{ $company -> is_domestic == '1'? '' : 'hidden' }}">
+                    <div class="domestic_section mt-2 location--type01 {{ $company -> is_domestic == '1'? '' : 'hidden' }}"> 
                         <div class="flex items-center gap-2">
                             <input type="text" name="default_address" id="default_address" class="setting_input h-[48px] w-full bg-stone-50" value="{{ $company -> business_address }}" placeholder="사업자 주소를 입력해주세요." onClick="callMapApi();" readOnly />
                             <button class="h-[48px] w-[98px] border border-stone-500 rounded-md shrink-0" onClick="callMapApi();">주소 검색</button>
@@ -214,7 +213,7 @@
     <div class="modal_bg" onClick="modalClose('#add_account_modal')"></div>
     <div class="modal_inner modal-md">
         <div class="modal_body filter_body">
-            <h4 id="account_title">신규 직원 등록</h4>
+            <h4 id="account_title">신규 직원 등록</h4> 
             <form name="memberForm" id="memberForm">
                 <input type="hidden" name="member_idx" id="member_idx" value="" />
                 <div class="com_setting py-3">
@@ -231,7 +230,7 @@
                             <input type="text" name="member_name" id="member_name" class="w-full h-full" value="" placeholder="이름을 입력해주세요." required />
                         </div>
                     </div>
-
+                
                     <div class="mt-4">
                         <p>휴대폰 번호<span class="text-primary">*</span></p>
                         <div class="setting_input h-[48px] grow mt-1">
@@ -293,7 +292,7 @@
         <div class="modal_body filter_body !p-0">
             <div class="p-8">
                 <div class="text-center text-base">
-                    중복된 아이디입니다. 다시 입력해주세요.
+                중복된 아이디입니다. 다시 입력해주세요.
                 </div>
             </div>
             <div class="flex text-base border-t">
@@ -444,7 +443,7 @@
     // 국내 / 해외 라디오 버튼 클릭
     const changeDomesticType = elem => {
         document.getElementById('completeAddressBtn').setAttribute('disabled', 'disabled');
-
+        
         document.getElementById('default_address').value = '';
         document.getElementById('detail_address').value = '';
         document.getElementById('domestic_type').value = '';
@@ -912,7 +911,7 @@
     }
 
 
-
+    
     $(document).ready(function(){
         $('.dropdown__title').text('{{ $company -> business_address }}');
 

@@ -448,3 +448,9 @@ textarea{
 
 .modal_search .search_btn {display:flex; flex-grow:1; align-items:center; gap:10px; width:auto; height:36px; padding:0 10px; font-size:14px; color:#bbb8b5; border-radius:40px; background-color:#f5f5f5; border-radius:40px; }
 .modal_search .search_btn svg {width:24px; height:24px; }
+
+
+.change_btn.active{
+  fill:var(--main_color);
+  color:var(--main_color);
+}

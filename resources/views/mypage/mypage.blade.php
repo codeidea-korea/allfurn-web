@@ -73,7 +73,7 @@ if( !empty( $point ) ) {
                     <span class="text-2xl main_color font-bold">{{number_format( $tPoint )}}</span>
                     <span class="font-bold">P</span>
                 </div>
-                <a class="fs14 flex items-center txt-gray mt-2" href="javascript:;" onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
+                <a class="fs14 flex items-center txt-gray mt-2" href="javascript:;" onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
             </div>
         </div>
     </div>

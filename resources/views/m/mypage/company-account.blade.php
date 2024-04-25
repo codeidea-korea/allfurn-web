@@ -68,7 +68,7 @@
                     회원탈퇴
                 </button>
             </div>
-            <div class="p-4 bg-stone-100">
+            {{-- <div class="p-4 bg-stone-100">
                 <p class="text-base font-bold">직원 <span class="text-sm text-stone-400">(최대 5명)</span></p>
                 @if (count($members) >= 1)
                 <div class="mt-2">
@@ -108,7 +108,7 @@
                 <button class="mt-2 bg-stone-700 h-[42px] text-white w-full rounded-sm" onclick="getCompanyMember_create()">
                     직원 등록 
                 </button>
-            </div>
+            </div> --}}
         </div>
         
         <!-- 사업자등록증 -->

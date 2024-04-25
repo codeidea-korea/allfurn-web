@@ -109,7 +109,7 @@
                                 <li class="border-b pb-3 mb-6">
                                     <div class="flex items-center justify-between pb-2 mb-2 border-b">
                                         <span class="text-sm px-2 py-0.5 rounded-sm bg-primary text-white font-medium">{{ config('constants.PRODUCT_STATUS')[$represent -> state] }}</span>
-                                        <button class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
+                                        <button type="button" class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                         </button>
                                     </div>
@@ -165,8 +165,8 @@
                                 <li class="no_prod txt-gray">
                                     상품을 등록해주세요.
                                 </li>
-                                <li class="no_prod txt-gray">
-                                    <button type="button" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
+                                <li class="no_prod txt-gray" style="text-align:right;">
+                                    <button type="button" class="text-sm px-2 py-2 rounded btn-primary text-white font-medium" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
                                 </li>
                             </ul>
                             @endif
@@ -212,7 +212,11 @@
                                     </div>
                                     <div class="flex items-center justify-between gap-2 rounded-md mt-2">
                                         <button class="w-full h-10 border border-stone-300 rounded text-stone-600" onclick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}')">상태 변경</button>
-                                        <a href="/product/registration?temp={{ $row -> idx }}" class="flex items-center justify-center w-full h-10 border border-stone-300 rounded text-stone-600">수정</a>
+                                        @if (request()->get('type') == 'temp')
+                                            <a href="/product/registration?temp={{ $row -> idx }}" class="flex items-center justify-center w-full h-10 border border-stone-300 rounded text-stone-600">수정</a>
+                                        @else 
+                                            <a href="/product/modify/{{ $row -> idx }}" class="flex items-center justify-center w-full h-10 border border-stone-300 rounded text-stone-600">수정</a>
+                                        @endif 
                                         <button class="w-full h-10 border border-stone-300 rounded text-stone-600" onclick="deleteProductModal({{ $row -> idx }})">삭제</button>
                                     </div>
                                 </li>

@@ -173,7 +173,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <span class="text-base main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
-                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
+                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
             </div>
             <ul class="my_menu_list mt-5">
@@ -268,12 +268,12 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="#" class="flex p-4 justify-between">
                         <p>설정</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </div>
 
