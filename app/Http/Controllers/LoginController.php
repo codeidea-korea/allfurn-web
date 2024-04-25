@@ -236,11 +236,12 @@ class LoginController extends BaseController
      * @param Request $request
      * @return Redirect ReWrite uri
      */
-    public function signinByAccessToken($accessToken)
+    public function signinByAccessToken(Request $request)
     {
-        $result = $this->loginService->signinByAccessToken($accessToken);
-
-        return Redirect('/');
+        $request->validate([
+            'accessToken' => 'required'
+        ]);
+        return response()->json($this->loginService->signinByAccessToken($request->input('accessToken')));
     }
 
     public function signOut() {
