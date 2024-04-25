@@ -46,7 +46,7 @@
 
                 <div class="sub_filter">
                     <div class="filter_box">
-                        <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                        <button onclick="modalOpen('#filter_align-modal02')">신상품순</button>
                         <button onclick="modalOpen('#option-modal')">속성</button>
                     </div>
                     <div class="total">전체 {{number_format( $data['list']->total())}}개</div>
@@ -210,6 +210,15 @@
         let isLastPage = false;
         let currentPage = 1;
 
+        $(document).ready(function(){
+            urlSearch = new URLSearchParams(location.search);
+            
+            urlSearch.get('so');
+            console.log(urlSearch.get('so'))
+            $('#filter_align-modal02 input[value="'+ urlSearch.get('so') +'"]').prop('checked', true);
+            $(".sub_filter .filter_box button").text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
+        })
+
         // 카테고리 클릭시
         $('.sub_category li').on('click',function(){
             $(this).addClass('active').siblings().removeClass('active')
@@ -228,10 +237,14 @@
         }
 
         function loadNewProductList() {
+            if(isLoading) return;
+            if(isLastPage) return;
+
             isLoading = true;
 
             var categories = '';
             var parents = '';
+            let property = '';
             var orderedElement = '';
             urlSearch = new URLSearchParams(location.search);
             if (urlSearch.get('ca') != null) {
@@ -242,7 +255,7 @@
             }
 
             if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
-                orderedElement = $('input[name="filter_cate_2"]:checked').attr('id')
+                orderedElement = $("#filter_align-modal02 .radio-form:checked").val();
             }
 
             $.ajax({
@@ -251,9 +264,10 @@
                 method: 'GET',
                 data: {
                     'page': ++currentPage,
-                    'categories' : categories,
-                    'parents' : parents,
-                    'orderedElement' : orderedElement,
+                    'ca' : categories,
+                    'pre' : parents,
+                    'prop' : property,
+                    'so' : orderedElement,
                 },
                 success: function(result) {
 

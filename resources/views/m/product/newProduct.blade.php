@@ -141,6 +141,9 @@
     let currentPage = 0;
     let firstLoad = true;
     function loadNewProductList(needEmpty, target) {
+        if(isLoading) return;
+        if(isLastPage) return;
+        
         isLoading = true;
 
         if(needEmpty) currentPage = 0;

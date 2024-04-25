@@ -291,6 +291,9 @@
     let isLastPage = false;
     let currentPage = 0;
     function loadWholesalerList(needEmpty, target) {
+        if(isLoading) return;
+        if(isLastPage) return;
+
         isLoading = true;
         if(needEmpty) currentPage = 0;;
 

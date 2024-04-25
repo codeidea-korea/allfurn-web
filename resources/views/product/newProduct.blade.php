@@ -134,14 +134,14 @@
             type: "fraction",
         },
         on: {
-        slideChange: function () {
-            if (this.isEnd) {
-                $("#zoom_view-modal-new .slide_arrow.more_btn").show();
-            } else {
-                $("#zoom_view-modal-new .slide_arrow.more_btn").hide();
-            }
+            slideChange: function () {
+                if (this.isEnd && !isLastPage) {
+                    $("#zoom_view-modal-new .slide_arrow.more_btn").show();
+                } else {
+                    $("#zoom_view-modal-new .slide_arrow.more_btn").hide();
+                }
+            },
         },
-    },
     });
 
     /* ----------------------------- */
@@ -162,6 +162,9 @@
     let currentPage = 0;
     let firstLoad = true;
     function loadNewProductList(needEmpty, target) {
+        if(isLoading) return;
+        if(isLastPage) return;
+
         $("#zoom_view-modal-new .slide_arrow.more_btn").hide();
         isLoading = true;
         if(needEmpty) currentPage = 0;

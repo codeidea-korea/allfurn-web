@@ -181,13 +181,14 @@
 
         const URLSearch = new URLSearchParams(location.search);
         if( URLSearch.get('prop') != null ) {
+            $('.option_wrap .sub_filter_result .category').empty();
+            
             var prop = URLSearch.get('prop').split('|');
             $.each(prop, function (index, value) {
                 $('[data-property_idx="' + value + '"]').addClass('active');
 
                 let txt = $('[data-property_idx="' + value + '"]').text();
                 let num = value;
-                $('.option_wrap .sub_filter_result .category').empty();
                 $('.option_wrap .sub_filter_result .category').append(`<span>${txt} <button data-num="${num}" onclick="optionRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>`)
 
                 // 선택옵션 보이게
@@ -291,6 +292,9 @@
     let isLastPage = false;
     let currentPage = 1;
     function loadProductList() {
+        if(isLoading) return;
+        if(isLastPage) return;
+        
         isLoading = true;
 
         var categories = '';
