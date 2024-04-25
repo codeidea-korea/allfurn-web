@@ -417,6 +417,7 @@ header.top_fixed {position:sticky; top:0; }
 .category_con01 .category_list > ul > li {position:relative; border-bottom:1px solid rgba(218, 221, 224, 0.60); }
 .category_con01 .category_list > ul > li > a {position:relative; display:flex; align-items:center; gap:10px; padding:10px 16px; }
 .category_con01 .category_list > ul > li > a:before {content:''; position:absolute; right:20px; top:calc(50% - 7px); width:10px; height:10px; border-left:1px solid #46433F; border-bottom:1px solid #46433F; transform:rotate(-45deg); }
+.category_con01 .category_list > ul > li.active > a {color:var(--main_color); }
 .category_con01 .category_list > ul > li.active > a:before {transform:rotate(135deg); }
 .category_con01 .category_list > ul > li > a i svg,
 .category_con01 .category_list > ul > li > a i img {width:24px; height:24px; stroke:#767676; filter:grayscale(100%); }
