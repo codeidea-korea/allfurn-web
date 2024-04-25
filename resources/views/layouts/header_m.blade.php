@@ -66,7 +66,7 @@
 </div>
 
 @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
-    <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk' )?'hidden':'' }}">
+    <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
         <a href="/product/registration">상품<br/>등록</a>
     </div>
 @endif

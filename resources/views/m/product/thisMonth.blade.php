@@ -1,7 +1,7 @@
 @extends('layouts.app_m')
 @php
     $only_quick = '';
-    $header_depth = 'product';
+    $header_depth = 'thismonth';
     $top_title = '';
     $header_banner = '';
 @endphp
