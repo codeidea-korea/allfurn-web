@@ -85,31 +85,31 @@
             <div class="slide_box">
                 <ul class="swiper-wrapper">
                     <li class="swiper-slide">
-                         <a href="/product/best-new">
-                            <img src="./img/main/best_icon.png" alt="">
+                        <a href="/product/best-new">
+                            <img src="/img/main/best_icon.png" alt="">
                             <span>BEST<br/>신상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:modalOpen('#search-modal');">
+                        <a href="javascript:modalOpen('#search-modal');">
                             <img src="/img/main/search_icon.png" alt="">
                             <span>쉬운<br/> 상품 찾기</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/product/planDiscountDetail">
+                        <a href="/product/planDiscountDetail">
                             <img src="/img/main/event_icon.png" alt="">
                             <span>할인/이벤트<br/> 상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/magazine/daily">
+                        <a href="/magazine/daily">
                             <img src="/img/main/news_icon.png" alt="">
                             <span>일일 <br/>가구 뉴스</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/community?board_name=상품문의">
+                        <a href="/community?board_name=상품문의">
                             <img src="/img/main/message_icon.png" alt="">
                             <span>상품 문의</span>
                          </a>
@@ -278,13 +278,13 @@ const main_visual = new Swiper(".main_visual .slide_box", {
 // main_mid_banner
 const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
     slidesPerView: 'auto',
-    spaceBetween: 8,
+    //spaceBetween: 8,
 });
 
 // category_banner
 const category_banner = new Swiper(".category_banner .slide_box", {
     slidesPerView: 'auto',
-    spaceBetween: 17,
+    //spaceBetween: 17,
 });
 
 $('.category_banner li').on('click',function(){

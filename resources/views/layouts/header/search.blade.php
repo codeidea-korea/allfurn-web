@@ -126,7 +126,7 @@
                         '</div>';
                 }
 
-                document.querySelector('.cateogry_list').innerHTML = categoryList;
+                //document.querySelector('.cateogry_list').innerHTML = categoryList;
             }
 
             var adKeywordPart = "";

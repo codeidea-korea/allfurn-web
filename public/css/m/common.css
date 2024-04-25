@@ -536,6 +536,13 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .search_wrap .search_list .tag {display:flex; gap:5px; }
 .search_wrap .search_list .tag span {padding:6px 10px; border:0.5px solid rgba(218, 221, 224, 0.60); font-size:11px; font-weight:400; border-radius:3px; background-color:#f5f5f5; ;}
 
+.search_wrap .search_list_recent {margin-top:5px; }
+.search_wrap .search_list_recent a {display:flex; align-items: center; justify-content: space-between; gap:10px; padding:5px 0; }
+.search_wrap .search_list_recent a i {font-weight:600; color:var(--main_color); font-style:normal;}
+.search_wrap .search_list_recent a p {flex-grow:1; text-align:left; }
+.search_wrap .search_list_recent .tag {display:flex; gap:5px; }
+.search_wrap .search_list_recent .tag span {padding:6px 10px; border:0.5px solid rgba(218, 221, 224, 0.60); font-size:11px; font-weight:400; border-radius:3px; background-color:#f5f5f5; ;}
+
 .search_intro {position:relative; border-top:6px solid #F5F5F5;  padding:18px; }
 .search_intro:before {content:''; position:absolute; top:-6px; left:0; width:50%; height:6px; background-color:var(--main_color);}
 
