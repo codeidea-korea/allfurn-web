@@ -85,7 +85,7 @@
             <div class="modal_search w-full bg-white search_list">
                 <div class="search_btn">
                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요">
+                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요" autocomplete="one-time-code">
                 </div>
                 <div class="text-sm flex justify-between py-3 mt-3">
                     <span class="font-bold">최근 검색어</span>
@@ -180,13 +180,13 @@
                     if (json['category'][i]['parentName'] != null) {
                         categoryList += '' +
                             '<li class="flex items-center text-sm gap-2">' +
-                            '   <span class="text-primary font-bold">1</span>' +
+                            '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
                             '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
                             '</li>';
                     } else {
                         categoryList += '' +
                             '<li class="flex items-center text-sm gap-2">' +
-                            '   <span class="text-primary font-bold">1</span>' +
+                            '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
                             '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
                             '</li>';
                     }
