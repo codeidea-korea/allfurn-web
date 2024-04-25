@@ -130,9 +130,10 @@ class PushService
      * @param string $templateCode
      * @param string $replaceParams 대치코드별 값이 들어 있는 연관 배열
      * @param string $receiver (, 로 구분)
+     * @param string $reservate 발송 예약일시
      * @return object { code : 0 이 정상, 나머지 오류, message : 연동 메시지 }
      */
-    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver)
+    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver, $reservate)
     {
         // 템플릿을 템플릿 코드로 조회한다.
         $alimtalkTemplate = $this->getTemplate($templateCode)->list[0];
@@ -214,6 +215,10 @@ class PushService
         $data = "apikey=" . $apikey . "&userid=" . $userid . "&token=" . $token . "&senderkey=" . $senderkey
             . "&tpl_code=" . $tpl_code . "&sender=" . $sender . "&receiver_1=" . $receiver_1 . "&subject_1=" . $subject_1 . "&message_1=" . $message_1
             . "&button_1=" . $button_1 . "&failover=" . $failover . "&fsubject_1=" . $fsubject_1 . "&fmessage_1=" . $fmessage_1;
+
+        if(!empty($reservate) && $reservate != '') {
+            $data = $data . '&senddate='. urlencode($reservate);
+        }
     
 //        echo $data;
         $ch = curl_init();
