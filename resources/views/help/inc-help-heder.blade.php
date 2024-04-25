@@ -8,13 +8,14 @@
         <div class="mt-2"><span class="text-stone-500">운영시간</span> | 평일 09:00 - 18:00</div>
     </div>
     <div class="flex flex-col gap-2">
-        <button class="h-[48px] w-[140px] border rounded-md" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button>
+        {{-- <button class="h-[48px] w-[140px] border rounded-md" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button> --}}
         <a href="/help/inquiry" class="h-[48px] w-[140px] border rounded-md flex items-center justify-center">1:1 문의</a>
     </div>
 </div>
 <div class="border-b">
     <div class="flex gap-5">
-        <a href="/help/faq" class="py-4 {{ $pageType === 'faq' ? 'border-b-2 border-primary text-primary font-bold' : 'font-medium text-stone-400' }}">자주 묻는 질문</a>
+        <a href="/help/guide" class="py-4 {{ $pageType === 'guide' ? 'border-b-2 border-primary text-primary font-bold' : 'font-medium text-stone-400' }}">이용 가이드</a>
         <a href="/help/notice" class="py-4 {{ $pageType === 'notice' ? 'border-b-2 border-primary text-primary font-bold' : 'font-medium text-stone-400' }}">공지사항</a>
+        <a href="/help/faq" class="py-4 {{ $pageType === 'faq' ? 'border-b-2 border-primary text-primary font-bold' : 'font-medium text-stone-400' }}">자주 묻는 질문</a>
     </div>
 </div>

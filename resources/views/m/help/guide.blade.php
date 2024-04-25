@@ -29,8 +29,8 @@
     <div class="mt-4 bg-white">
         <div class="border-b">
             <div class="flex gap-5">
-                <a href="/help/guide" class="font-medium py-3 text-stone-400 w-full text-center">이용 가이드</a>
-                <a href="/help/notice" class="border-b-2 border-primary py-3 text-primary font-bold w-full text-center">공지사항</a>
+                <a href="/help/guide" class="border-b-2 border-primary py-3 text-primary font-bold w-full text-center">이용 가이드</a>
+                <a href="/help/notice" class="font-medium py-3 text-stone-400 w-full text-center">공지사항</a>
                 <a href="/help/faq" class="font-medium py-3 text-stone-400 w-full text-center">자주 묻는 질문</a>
             </div>
         </div>
@@ -40,13 +40,13 @@
                 <div class="accordion-item">
                     <button class="accordion-header py-3 px-5 w-full text-left" type="button">
                         <div class="flex items-center gap-2">
-                            <span>Q</span>
+                            {{-- <span>Q</span> --}}
                             <span class="">{{ $row->title }}</span>
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
                     <div class="accordion-body hidden p-5 bg-stone-50">
-                        <p class="text-sm text-primary">A</p>
+                        {{-- <p class="text-sm text-primary">A</p> --}}
                         <p class="">
                             {!! $row->content !!}
                         </p>

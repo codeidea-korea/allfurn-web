@@ -279,6 +279,7 @@ Route::prefix('help')->name('help')->middleware('auth')->group(function() {
     Route::get('/', 'HelpController@index');
     Route::get('/faq', 'HelpController@faq')->name('.faq');
     Route::get('/notice', 'HelpController@notice')->name('.notice');
+    Route::get('/guide', 'HelpController@guide')->name('.guide');
     Route::get('/inquiry', 'HelpController@inquiry');
     Route::get('/inquiry/detail/{idx}', 'HelpController@inquiryDetail');
     Route::get('/inquiry/form/{idx?}', 'HelpController@inquiryForm');

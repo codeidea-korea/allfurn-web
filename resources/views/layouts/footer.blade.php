@@ -19,7 +19,7 @@
                 <li><a href="/help/faq">자주 묻는 질문</a></li>
                 <li><a href="/help/notice">공지사항</a></li>
                 <li><a href="/help/inquiry">1:1 문의</a></li>
-                <li><a href="/help/notice">이용 가이드</a></li>
+                <li><a href="/help/guide">이용 가이드</a></li>
             </ul>
         @endif 
         <div class="info">

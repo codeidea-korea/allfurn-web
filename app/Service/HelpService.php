@@ -65,6 +65,25 @@ class HelpService
     }
 
     /**
+     * 이용 가이드 리스트 가져오기
+     * @param $params
+     * @return array
+     */
+    public function getGuideList($params): array
+    {
+        $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+        $limit = $params['limit'];
+
+        $query = DB::table('AF_guide')->where('is_open', 1)->where('is_delete', 0);
+
+        $data['count'] = $query->count();
+        $list = $query->orderBy('idx', 'desc')->offset($offset)->limit($limit)->get();
+        $data['list'] = $list;
+        $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
+        return $data;
+    }
+
+    /**
      * 1:1 문의 리스트 가져오기
      * @param $params
      * @return array
