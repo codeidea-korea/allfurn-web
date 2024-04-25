@@ -206,7 +206,7 @@ class WholesalerService {
             , DB::raw('COUNT(ap.idx) as productCnt')
             , DB::raw('AF_wholesale.access_count AS companyAccessCount')  // 업체조회수
             , DB::raw('SUM(ap.access_count)  AS productAccessCount')  // 상품조회수
-            , DB::raw('Max(ap.register_time) as register_time')
+            , DB::raw('Max(ap.access_date) as access_date')
             , DB::raw('SUBSTRING_INDEX(AF_wholesale.business_address, " ", 1) as location')
             , DB::raw('GROUP_CONCAT( DISTINCT (ac2.name)) as categoryList')
             , DB::raw('(SELECT if(count(*) > 0, 1, 0)
@@ -221,6 +221,12 @@ class WholesalerService {
                 ->where('ap.company_type', 'W')
                 ->whereIn('ap.state', ['S', 'O']);
         })
+        /* ->leftjoin('AF_banner_ad AS aba', function($query) {
+            $query->on('AF_wholesale.idx', 'aba.company_idx')
+            ->where('state', 'G')
+            ->where('is_delete', 1)
+            ->where('is_open', 0);
+        }) */
         ->leftjoin('AF_category as ac', function ($query) {
             $query->on('ac.idx', 'ap.category_idx');
         })
@@ -256,7 +262,7 @@ class WholesalerService {
             switch ($params['orderedElement']) {
                 //TODO: 추천순 개발 필요
                 case 'recommendation';
-                    $list->orderBy('register_time', 'desc');   
+                    $list->orderBy('access_date', 'desc');   
                     break;
                 case 'word':
                     $list->orderByRaw('(CASE
@@ -265,12 +271,17 @@ class WholesalerService {
                     WHEN ASCII(SUBSTRING(BINARY(company_name), 1)) BETWEEN 129 AND 227 THEN 3
                     ELSE 1 END), BINARY(companyName)');
                     break;
+                case 'register_time':
+                    $list->orderBy('access_date', 'DESC');
+                    break;
                 default:
                     $list->orderBy($params['orderedElement'], 'DESC');
             }
         } else {
             $list->orderBy('register_time', 'desc');
         }
+
+        $list->orderBy('access_date', 'desc');
 
         if (isset($params['keyword']) && !empty($params['keyword'])) {
             $keyword = $params['keyword'];
