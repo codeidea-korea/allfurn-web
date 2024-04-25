@@ -32,7 +32,7 @@
     let currentPage = 0;
     function loadLikeCompany(needEmpty, target) {
         if(isLoading) return;
-        if(isLastPage) return;
+        if(!needEmpty && isLastPage) return;
         
         isLoading = true;
         if(needEmpty) currentPage = 0;

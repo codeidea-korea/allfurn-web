@@ -332,7 +332,7 @@
         let currentPage = 0;
         function loadWholesalerList(needEmpty, target) {
             if(isLoading) return;
-            if(isLastPage) return;
+            if(!needEmpty && isLastPage) return;
             
             isLoading = true;
 
