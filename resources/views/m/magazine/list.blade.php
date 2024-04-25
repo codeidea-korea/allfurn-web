@@ -116,13 +116,13 @@
                     <p class="mt-1">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</p>
                 </div>
             </div>
-            {{-- <div class="sub_filter">
+            <div class="sub_filter">
                 <div class="filter_box">
-                    <button onclick="modalOpen('#filter_align-modal')">최신 등록 순</button>
+                    <button onclick="modalOpen('#magazine_filter_align-modal')">전체</button>
                 </div>
-            </div> --}}
+            </div>
             <ul class="magazine_list">
-                @foreach ($list as $row)
+                {{-- @foreach ($list as $row)
                     <li>
                         <div class="txt_box">
                             <a href="/magazine/detail/{{$row->idx}}">
@@ -132,10 +132,34 @@
                         </div>
                         <div class="img_box"><a href="/magazine/detail/{{$row->idx}}"><img src="{{$row->image_url}}" alt=""></a></div>
                     </li>
-                @endforeach
+                @endforeach --}}
             </ul>
         </div>
     </section>
+    <div class="modal" id="magazine_filter_align-modal">
+        <div class="modal_bg" onclick="modalClose('#magazine_filter_align-modal')"></div>
+        <div class="modal_inner modal-md">
+            <button class="close_btn" onclick="modalClose('#magazine_filter_align-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body filter_body">
+                <h4>정렬 선택</h4>
+                <ul class="filter_list">
+                    <li>
+                        <input type="radio" class="radio-form" name="mfa" id="all" value="all" checked>
+                        <label for="all">전체</label>
+                    </li>
+                    @foreach ( $magazineCategoryList as $category)
+                        <li>
+                            <input type="radio" class="radio-form" name="mfa" id="{{ $category->idx }}" value="{{ $category->category_name }}">
+                            <label for="{{ $category->idx }}">{{ $category->category_name }}</label>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="btn_bot">
+                    <button class="btn btn-primary full btnMagazineAlign">선택 완료</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
    
@@ -165,43 +189,72 @@
         window.location.href = "/magazine/daily?keyword=" +  $(".search_box input").val();
     });
 
+    /* ----------------------------- */
+    $(document).ready(function(){
+        setTimeout(() => {
+            loadMagazineList();
+        }, 50);
+    })
+
     // 매거진 스크롤 로딩
     window.addEventListener('scroll', function() {
-        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight) {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage ) {
             loadMagazineList();
         }
     });
 
-    let loading = false;
-    let currentPage = 1;
-    function loadMagazineList() {
-        loading = true;
+    $(document).on('click', '#magazine_filter_align-modal .btn-primary', function() { 
+        loadMagazineList(true, $(this));
+    });
+
+    let isLoading = false;
+    let isLastPage = false;
+    let currentPage = 0;
+    function loadMagazineList(needEmpty, target) {
+        if(isLoading) return;
+        if(!needEmpty && isLastPage) return;
+
+        isLoading = true;
+        if(needEmpty) currentPage = 0;
 
         $.ajax({
             url: '/magazine/list',
             method: 'GET',
             data: { 
                 'offset': ++currentPage,
-            }, 
-            success: function(result) {
-                displayMagazineList(result.list);
+                'category': $("#magazine_filter_align-modal .radio-form:checked").val(),
             },
-            error : function() {
-                currentPage--;
+            beforeSend : function() {
+                if(target) {
+                    target.prop("disabled", true);
+                }
+            },
+            success: function(result) {
+                displayMagazineList(result.list, needEmpty);
+
+                if(target) {
+                    target.prop("disabled", false);
+                    modalClose('#' + target.parents('[id^="magazine_filter"]').attr('id'));
+                }
+
+                isLastPage = currentPage === result.last_page;
             },
             complete : function () {
-                loading = false;
+                displaySelectedCategories();
+                isLoading = false;
             }
         })
     }
 
-    function displayMagazineList(data) {
+    function displayMagazineList(data, needEmpty) {
+        if(needEmpty) $(".magazine_list").empty();
         
         data.forEach(function(magazine) {
             $(".magazine_list").append(
             '<li>'+
             '   <div class="txt_box">'+
             '       <a href="/magazine/detail/' + magazine.idx + '">'+
+            '           <span>[' + magazine.category_list + ']</span>'+
             '           <div class="tit">' + magazine.title + '</div>'+
             '           <b>' + formatDate(magazine.register_time) + '</b>'+
             '       </a>'+
@@ -210,6 +263,12 @@
             '</li>'
             );
         })
+    }
+
+    function displaySelectedCategories() {
+        if($("#magazine_filter_align-modal .radio-form:checked").val() != 'all') {
+            $(".sub_filter .filter_box button").text($("#magazine_filter_align-modal .radio-form:checked").val());
+        }
     }
 
     function formatDate(date) {
