@@ -32,7 +32,7 @@
     let currentPage = 0;
     function loadLikeCompany(needEmpty, target) {
         if(isLoading) return;
-        if(isLastPage) return;
+        if(!needEmpty && isLastPage) return;
         
         isLoading = true;
         if(needEmpty) currentPage = 0;
@@ -150,6 +150,12 @@
     }    
 
     function displaySelectedOrders() {
+        if($("#filter_align-modal03 .radio-form:checked").val() != "register_time") {
+            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+        } else {
+            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+        }
+        
         $(".sub_filter .filter_box button").eq(2)
             .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
     }

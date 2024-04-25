@@ -234,14 +234,13 @@ class LoginController extends BaseController
     /**
      * 액세스 토큰으로 로그인 처리
      * @param Request $request
-     * @return JsonResponse
+     * @return Redirect ReWrite uri
      */
-    public function signinByAccessToken(Request $request)
+    public function signinByAccessToken($accessToken)
     {
-        $request->validate([
-            'accessToken' => 'required'
-        ]);
-        return response()->json($this->loginService->signinByAccessToken($request->input('accessToken')));
+        $result = $this->loginService->signinByAccessToken($accessToken);
+
+        return Redirect('/');
     }
 
     public function signOut() {

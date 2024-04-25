@@ -1,4 +1,4 @@
-<section class="sub">
+<section class="sub_section_top">
     <div class="inner">
         <div class="sub_filter">
             <div class="filter_box">
@@ -12,6 +12,7 @@
             <div class="filter_on_box">
                 <div class="category"></div>
                 <div class="location"></div>
+                <div class="order"></div>
             </div>
             <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
         </div>
@@ -42,7 +43,7 @@
     let currentPage = 0;
     function loadNewProductList(needEmpty, target) {
         if(isLoading) return;
-        if(isLastPage) return;
+        if(!needEmpty && isLastPage) return;
         
         isLoading = true;
         if(needEmpty) currentPage = 0;
@@ -96,6 +97,13 @@
     function filterRemove(item) {
         $(item).parents('span').remove();
         $("#" + $(item).data('id')).prop('checked', false);
+
+        loadNewProductList(true);
+    }
+
+    const orderRemove = (item)=> {
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
 
         loadNewProductList(true);
     }
@@ -169,7 +177,7 @@
     }    
 
     function toggleFilterBox() {
-        if($(".modal .check-form:checked").length === 0){
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal03 .radio-form:checked").val() == "register_time"){
             $(".sub_filter_result").hide();
         } else {
             $(".sub_filter_result").css('display', 'flex');
@@ -177,6 +185,17 @@
     }
 
     function displaySelectedOrders() {
+        if($("#filter_align-modal03 .radio-form:checked").val() != "register_time") {
+            $(".filter_on_box .order").empty().append(
+                '<span>'+ $("#filter_align-modal03 .radio-form:checked").siblings('label').text() + 
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>'
+            );   
+            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+        } else {
+            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+        }
+
         $(".sub_filter .filter_box button").eq(2)
             .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
     }

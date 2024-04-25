@@ -254,9 +254,10 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .sub_filter .total {font-weight:500; }
 
 .sub_filter_result {display:flex; align-items:center; justify-content:space-between; padding:15px; border:1px solid #dadde0; margin-bottom:24px; border-radius:3px;}
-.sub_filter_result .filter_on_box {display:flex; flex-direction:column; gap:10px; }
-.sub_filter_result .filter_on_box > div {display:flex; flex-wrap:wrap; gap:8px; }
-.sub_filter_result .filter_on_box span {display:flex; padding:3px 10px; background-color:#F2F2F2; border-radius:30px; }
+.sub_filter_result .filter_on_box {display:flex; flex-direction:column; }
+.sub_filter_result .filter_on_box .category {margin-top:-10px; }
+.sub_filter_result .filter_on_box > div {display:flex; flex-wrap:wrap; gap:0px 8px; }
+.sub_filter_result .filter_on_box span {display:flex; padding:3px 10px; margin-top:10px; background-color:#F2F2F2; border-radius:30px; }
 .sub_filter_result .filter_on_box span button svg {width:16px; height:16px; opacity:0.5; }
 .sub_filter_result button.refresh_btn {display:flex; align-items:center; gap:5px; flex-shrink:0; }
 .sub_filter_result button.refresh_btn svg {width:14px; height:14px; stroke:#4f4f4f; stroke-width:2px; }
