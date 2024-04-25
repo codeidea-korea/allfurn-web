@@ -179,36 +179,52 @@
                                 <col width="*">
                             </colgroup>
                             <tr>
-                                <th>대표자</th>
-                                <td>{{$data['info']->owner_name}}</td>
+                                @if($data['info']->owner_name)
+                                    <th>대표자</th>
+                                    <td>{{$data['info']->owner_name}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>대표전화</th>
-                                <td>{{$data['info']->phone_number}}</td>
+                                @if($data['info']->phone_number)
+                                    <th>대표전화</th>
+                                    <td>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['info']->phone_number); @endphp</td>
+                                @endif
                             </tr>
                             <tr>
+                                @if ($data['info']->work_day)
                                 <th>근무일</th>
                                 <td>{{$data['info']->work_day}}</td>
+                            @endif
                             </tr>
                             <tr>
-                                <th>발주방법</th>
-                                <td>{{$data['info']->how_order}}</td>
+                                @if ($data['info']->how_order)
+                                    <th>발주방법</th>
+                                    <td>{{$data['info']->how_order}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>담당자</th>
-                                <td>{{$data['info']->manager}}</td>
+                                @if ($data['info']->manager)
+                                    <th>담당자</th>
+                                    <td>{{$data['info']->manager}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>담당자연락처</th>
-                                <td>{{$data['info']->manager_number}}</td>
+                                @if ($data['info']->manager_number)
+                                    <th>담당자연락처</th>
+                                    <td>{{$data['info']->manager_number}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>웹사이트</th>
-                                <td colspan="3"><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>
+                                @if ($data['info']->business_address)
+                                    <th>주소</th>
+                                    <td colspan="3">{{$data['info']->business_address .' '.$data['info']->business_address_detail}}</td>    
+                                @endif
                             </tr>
                             <tr>
-                                <th>주소</th>
-                                <td colspan="3">{{$data['info']->business_address .' '.$data['info']->business_address}}</td>
+                                @if ($data['info']->website)
+                                    <th>웹사이트</th>
+                                    <td colspan="3"><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>    
+                                @endif
                             </tr>
                         </table>
                     </div>
