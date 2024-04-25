@@ -44,9 +44,9 @@ class WholesalerService {
             COUNT(ap.idx) as productCnt,
             Max(ap.register_time) as register_time,
             SUBSTRING_INDEX(AF_wholesale.business_address, " ", 1) as location,
-        (select ac2.name from AF_category ac2 where ac2.idx = ac.parent_idx) as categoryName,
-        (select COUNT(acl.idx) from AF_company_like as acl where acl.company_type = "W" and acl.company_idx = AF_wholesale.idx and acl.user_idx = '.Auth::user()->idx.') as isLike,
-        IF(AF_wholesale.register_time > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew,
+            (select ac2.name from AF_category ac2 where ac2.idx = ac.parent_idx) as categoryName,
+            (select COUNT(acl.idx) from AF_company_like as acl where acl.company_type = "W" and acl.company_idx = AF_wholesale.idx and acl.user_idx = '.Auth::user()->idx.') as isLike,
+            IF(AF_wholesale.register_time > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew,
             CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'
         ))
             //  COUNT(cah.idx) as searchCnt
@@ -376,10 +376,13 @@ class WholesalerService {
                            WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
                            ELSE COUNT(*) END cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W") as likeCnt,
                         (SELECT COUNT(*) cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W" AND user_idx = '.Auth::user()->idx.') as isLike,
-                        CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
+                        CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl, CONCAT("'.preImgUrl().'", at2.folder, "/", at2.filename) as imgUrl2'))
             ->where('AF_wholesale.idx', $param['wholesalerIdx'])
             ->leftjoin('AF_attachment as at', function ($query) {
-                $query->on('at.idx', 'AF_wholesale.logo_attachment');
+                $query->on('at.idx', 'AF_wholesale.profile_image_attachment_idx');
+            })
+            ->leftjoin('AF_attachment as at2', function ($query) {
+                $query->on('at2.idx', 'AF_wholesale.top_banner_attachment_idx');
             })
             ->first();
 

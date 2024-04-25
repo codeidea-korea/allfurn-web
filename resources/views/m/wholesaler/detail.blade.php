@@ -9,7 +9,7 @@
 @include('layouts.header_m')
 <div id="content">
     <div class="company_detail_top">
-        <div class="banner" style="background-image:url('/img/company_banner.png')">
+        <div class="banner" style="background-image:url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')">
             <div class="profile_img">
                 <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="">
             </div>
@@ -50,21 +50,26 @@
                     </div>
                 </div>
             </div>
-            <div class="notice_box">
-                <dl class="active">
-                    <dt>
-                        <p>
-                            <svg><use xlink:href="/img/icon-defs.svg#Notice_primary"></use></svg>
-                            전화문의 9시부터 6시까지 가능
-                        </p>
-                        <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow_black"></use></svg>
-                    </dt>
-                    <dd>
-                        공휴일/ 토요일/ 일요일 휴무입니다.<br/>
-                        통화 부재 시 문자 남겨 주시면 전화드리겠습니다. 
-                    </dd>
-                </dl>
-            </div>
+            @if ($data['info']->notice_title != "" && $data['info']->notice_content)
+                <div class="notice_box">
+                    <dl class="active">
+                        @if ($data['info']->notice_title != "")
+                            <dt>
+                                <p>
+                                    <svg><use xlink:href="/img/icon-defs.svg#Notice_primary"></use></svg>
+                                    {{ $data['info']->notice_title }}
+                                </p>
+                                <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow_black"></use></svg>
+                            </dt>
+                        @endif 
+                        @if ($data['info']->notice_content != "")
+                            <dd>
+                                {!! nl2br(e($data['info']->notice_content)) !!}
+                            </dd>
+                        @endif 
+                    </dl>
+                </div>
+            @endif 
         </div>
     </div>
 

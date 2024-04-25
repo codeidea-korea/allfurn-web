@@ -247,7 +247,9 @@
     </section>
 
     {{-- 올펀 패밀리 광고 --}}
-    @include('m.home.inc-allfurn-family')  
+    @if(count($data['family_ad']) > 0)
+        @include('m.home.inc-allfurn-family')  
+    @endif
 
 </div>
 
