@@ -861,3 +861,5 @@ section.sub_section_bot {padding:30px 0 70px; }
     border-color: #E0E0E0;
     padding:14px;
   }
+
+  .fr-box.fr-basic .fr-element{padding:0!important;}

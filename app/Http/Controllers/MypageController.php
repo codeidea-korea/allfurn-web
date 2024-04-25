@@ -628,6 +628,7 @@ class MypageController extends BaseController
     {
         $params = $request->all();
         $params['profile_image'] = $request->file('profile_image');
+        $params['top_banner'] = $request->file('top_banner');
         return response()->json($this->mypageService->updateCompany($params));
     }
 
@@ -1163,17 +1164,17 @@ class MypageController extends BaseController
 
         if($estimate[0] -> estimate_state !== 'F') {
             DB::table('AF_estimate')
-                -> where('estimate_code', $params['order_code'])
-                -> update(['estimate_state' => 'F']);
+            -> where('estimate_code', $params['order_code'])
+            -> update(['estimate_state' => 'F']);
 
-            $sql =
+            $sql = 
                 "SELECT * FROM AF_user
                 WHERE type = '".$estimate[0] -> request_company_type."' AND company_idx = ".$estimate[0] -> request_company_idx." AND parent_idx = 0";
             $user = DB::select($sql);
 
             if(count($user) > 0) {
                 $this -> pushService -> sendPush(
-                    '주문서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 주문서를 확인했습니다.',
+                    '주문서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 주문서를 확인했습니다.', 
                     $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
                 );
             }

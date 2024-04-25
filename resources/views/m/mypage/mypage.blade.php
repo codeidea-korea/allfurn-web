@@ -79,7 +79,8 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 } catch (e){
                 console.log(e)
                 }
-            }
+	    }
+
             function signout(){
                 localStorage.removeItem('accessToken');
                 location.href='/signout';

@@ -177,8 +177,8 @@
                                 </dl>
                             </div>
                             <div class="mb-4">
-                                <dl class="flex">
-                                    <dt class="w-[190px] shrink-0 mt-2">로고 이미지</dt>
+                                <dl class="flex-col">
+                                    <dt class="w-[190px] shrink-0 mb-2">로고 이미지</dt>
                                     <dd class="font-medium w-full">
                                         <div class="flex items-center gap-2">
                                             <div id="previewSelectImage" class="file_up_area border border-dashed w-[140px] h-[140px] rounded-md relative flex items-center justify-center">
@@ -196,20 +196,69 @@
                                                 </div>
                                             </div>
                                             @if ($info -> profile_image)
-                                            <div class="border border-dashed w-[140px] h-[140px] rounded-md relative flex items-center justify-center desc__gallery" data-image-src="{{ $info -> profile_image }}">
-                                                <img src="{{$info -> profile_image}}" alt="" class="w-[140px] h-[140px] rounded-md object-cover">
-                                                <div class="absolute top-2.5 right-2.5">
-                                                    <button type="button" id="deleteLogoImage" class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                                                    </button>
+                                                <div class="border border-dashed w-[140px] h-[140px] rounded-md relative flex items-center justify-center desc__gallery" data-image-src="{{ $info -> profile_image }}">
+                                                    <img src="{{$info -> profile_image}}" alt="" class="w-[140px] h-[140px] rounded-md object-cover">
+                                                    <div class="absolute top-2.5 right-2.5">
+                                                        <button type="button" id="deleteLogoImage" class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             @endif
                                         </div>
                                         <div class="info">
                                             <div class="flex items-center gap-1">
                                                 <p>· 권장 크기: 140 x 140 / 권장 형식: jpg, jpeg, png</p>
                                             </div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-4">
+                                <dl class="flex-col">
+                                    <dt class="w-[190px] shrink-0 mb-2">상단 배너 이미지</dt>
+                                    <dd class="font-medium w-full">
+                                        <div class="flex-col items-center">
+                                            <div id="previewSelectImage2" class="file_up_area border border-dashed w-full h-[140px] rounded-md relative flex items-center justify-center">
+                                                <input type="file" name="top_banner" id="form-list13" class="file_input" accept="image/*" placeholder="이미지 추가" />
+                                                <div>
+                                                    <div class="file_text flex flex-col items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image text-stone-400"><rect width="20" height="20" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                                        <span class="default-add-image2 text-stone-400">이미지 추가</span>
+                                                    </div>
+                                                    <div class="absolute top-2.5 right-2.5">
+                                                        <button type="button" id="deletePreviewBannerImage" class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full hidden">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if ($info->top_banner_image)
+                                                <div class="mt-[8px] border border-dashed w-full h-[140px] rounded-md relative flex items-center justify-center desc__gallery" data-image-src="{{ $info->top_banner_image }}">
+                                                    <img src="{{$info->top_banner_image}}" alt="" class="w-full h-[140px] rounded-md object-cover">
+                                                    <div class="absolute top-2.5 right-2.5">
+                                                        <button type="button" id="deleteTopBannerImage" class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="info">
+                                            <div class="flex items-center gap-1">
+                                                <p>· 권장 크기: 1800 x 540 / 권장 형식: jpg, jpeg, png</p>
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="mb-4">
+                                <dl>
+                                    <dt class="mb-1 mt-2">공지 내용</dt>
+                                    <dd class="font-medium w-full">
+                                        <input type="text" name="notice_title" id="notice_title" class="setting_input h-[48px] w-full" value="{{ $info -> notice_title }}" placeholder="공지사항 제목을 입력해주세요." />
+                                        <div class="setting_input h-[100px] py-3 mt-[4px]">
+                                            <textarea name="notice_content" class="w-full h-full" placeholder="공지사항 내용을 입력해주세요.">{!! $info -> notice_content !!}</textarea>
                                         </div>
                                     </dd>
                                 </dl>

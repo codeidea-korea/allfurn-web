@@ -880,7 +880,9 @@ class MypageService
             })->leftJoin('AF_attachment AS a', function($query) {
                 $query->on('a.idx', 'w.profile_image_attachment_idx')
                     ->orOn('a.idx','r.profile_image_attachment_idx');
-
+            })->leftJoin('AF_attachment AS b', function($query) {
+                $query->on('b.idx', 'w.top_banner_attachment_idx')
+                    ->orOn('b.idx','r.top_banner_attachment_idx');
             // 소재지
             }) -> leftJoin('AF_location AS l', function($query) {
                 $query -> on('l.company_idx', 'u.company_idx') -> on('l.company_type', 'u.type');
@@ -900,7 +902,10 @@ class MypageService
                 , DB::raw("IF(w.idx IS NOT NULL, w.how_order, r.how_order) AS how_order")
                 , DB::raw("IF(w.idx IS NOT NULL, w.website, r.website) AS website")
                 , DB::raw("IF(w.idx IS NOT NULL, w.etc, r.etc) AS etc")
+                , DB::raw("IF(w.idx IS NOT NULL, w.notice_title, r.notice_title) AS notice_title")
+                , DB::raw("IF(w.idx IS NOT NULL, w.notice_content, r.notice_content) AS notice_content")
                 , DB::raw("IF(a.idx IS NOT NULL, CONCAT('".preImgUrl()."', a.folder,'/', a.filename), '') AS profile_image")
+                , DB::raw("IF(b.idx IS NOT NULL, CONCAT('".preImgUrl()."', b.folder,'/', b.filename), '') AS top_banner_image")
                 , DB::raw("(SELECT COUNT(*) FROM AF_product WHERE company_type = u.type AND company_idx = u.company_idx) AS product_count")
 
                 // 소재지
@@ -1029,6 +1034,9 @@ class MypageService
         if (isset($params['profile_image'])) {
             $profile_image_attachment_idx = $this->insertCompanyProfileImage($params['profile_image']);
         }
+        if (isset($params['top_banner'])) {
+            $top_banner_attachment_idx = $this->insertCompanyProfileImage($params['top_banner']);
+        }
         if (Auth::user()['type'] === 'W') {
             $company = CompanyWholesale::find(Auth::user()['company_idx']);
         } else {
@@ -1043,6 +1051,8 @@ class MypageService
         $company->how_order = $params['how_order'];
         $company->website = $params['website'];
         $company->etc = $params['etc'];
+        $company->notice_title = $params['notice_title'];
+        $company->notice_content = $params['notice_content'];
 
         if ($params['introduce']) {
             $introduce = '<div class="fr-element fr-view">' . $params['introduce'] . '</div>';
@@ -1050,6 +1060,9 @@ class MypageService
         }
         if (isset($profile_image_attachment_idx)) {
             $company->profile_image_attachment_idx = $profile_image_attachment_idx;
+        }
+        if (isset($top_banner_attachment_idx)) {
+            $company->top_banner_attachment_idx = $top_banner_attachment_idx;
         }
         $this->insertCompanyLocation($params);
         $company->save();
