@@ -71,6 +71,12 @@
     </div>
 @endif
 
+@if(Route::currentRouteName() != '')
+    <div id="move_back_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
+        <a href="javascript:history.back()">뒤로<br/>가기</a>
+    </div>
+@endif
+
 <!-- 검색 -->
 <div class="modal" id="search_modal">
     <div class="modal_bg" onclick="modalClose('#search_modal')"></div>
