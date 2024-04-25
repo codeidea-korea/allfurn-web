@@ -278,7 +278,7 @@ class HomeService
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('ad_price desc, RAND()')->get();
 
         // 팝업
         $data['popup'] = Popup::select('AF_popup.*',

@@ -22,15 +22,30 @@
     <script src="/js/plugin.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
     <script src="/js/jquery-1.12.4.js?20240424125855"></script>
-    <script type="text/javascript">
-    const accessToken = localStorage.getItem('accessToken');
-    if(accessToken && accessToken.length > 1) {
-        location.href = '/tokenpass-signin/' + accessToken;
-    }
-    </script>
 </head>
 
-<body class="allfurn-introduction">
+<style>
+    .splash {
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: unset;
+        height: 100vh;
+
+        &::after {
+            content: ' ';
+            background: url('/splash.png') no-repeat;
+            background-image: url('/splash.png') no-repeat;
+            background-size: cover;
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0px;
+            z-index: 10000;
+        }
+    }
+</style>
+
+<body class="allfurn-introduction splash">
 <div id="wrap" class="mo-wrap">
     <header id="header" class="header headertype__mo">
         <div class="inner">
@@ -180,5 +195,48 @@ function download() {
 
 }
 </script>
+    <script type="text/javascript">
+    const accessToken = localStorage.getItem('accessToken');
+    if(accessToken && accessToken.length > 1) {
+        const callTime = new Date().getTime();
+        $.ajax({
+    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
+            url: '/tokenpass-signin',
+            data: {
+                'accessToken': accessToken
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                const pendingTime = new Date().getTime() - callTime;
+
+                if (result.success) {                    
+                    if(pendingTime > 1100) {
+                        location.href = '/';
+//                        $('.splash').removeClass('splash');
+                    } else {
+                        setTimeout(() => {
+                        location.href = '/';
+//                            $('.splash').removeClass('splash');
+                        }, (1100 - pendingTime));
+                    }
+                } else {
+                    if(pendingTime > 1400) {
+                        $('.splash').removeClass('splash');
+                    } else {
+                        setTimeout(() => {
+                            $('.splash').removeClass('splash');
+                        }, (1400 - pendingTime));
+                    }
+                    alert(result.msg);
+                }
+            }
+        });
+    } else {
+        setTimeout(() => {
+            $('.splash').removeClass('splash');
+        }, 1400);
+    }
+    </script>
 </body>
 </html>

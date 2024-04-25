@@ -21,10 +21,71 @@
 
     <script src="/js/plugin.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
-</head>
+    <script src="/js/jquery-1.12.4.js?20240424125855"></script>
 </head>
 
-<body class="allfurn-introduction">
+<style>
+    .splash::after {
+        content: ' ';
+        background: url('/splash.png') no-repeat;
+        background-size: cover;
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0px;
+        z-index: 9999;
+    }
+    .splash {
+        overflow-y: hidden;
+    }
+</style>
+
+<body class="allfurn-introduction splash">
+    <script type="text/javascript">
+    const accessToken = localStorage.getItem('accessToken');
+    if(accessToken && accessToken.length > 1) {
+        const callTime = new Date().getTime();
+        $.ajax({
+    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
+            url: '/tokenpass-signin',
+            data: {
+                'accessToken': accessToken
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                const pendingTime = new Date().getTime() - callTime;
+                
+                if (result.success) {
+                    location.href = '/';
+                    
+                    if(pendingTime > 1400) {
+                        $('body').removeClass('splash');
+                    } else {
+                        setTimeout(() => {
+                            $('body').removeClass('splash');
+                        }, (1400 - pendingTime));
+                    }
+                } else {
+                    if(pendingTime > 1400) {
+                        $('body').removeClass('splash');
+                    } else {
+                        setTimeout(() => {
+                            $('body').removeClass('splash');
+                        }, (1400 - pendingTime));
+                    }
+                    alert(result.msg);
+                }
+            }
+        });
+    } else {
+        setTimeout(() => {
+            $('body').removeClass('splash');
+        }, 1400);
+    }
+    </script>
+
 <div id="wrap" class="mo-wrap">
     <header id="header" class="header headertype__mo">
         <div class="inner">
@@ -235,11 +296,6 @@ function closeModal(name) {
         document.querySelector(name).style.display = 'none';
         document.querySelector('body').style.overflow = '';
     }
-}
-
-const accessToken = localStorage.getItem('accessToken');
-if(accessToken && accessToken.length > 1) {
-    location.href = '/tokenpass-signin/' + accessToken;
 }
 </script>
 </body>

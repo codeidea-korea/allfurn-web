@@ -211,13 +211,6 @@ class LoginService
             $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
             return $result;
         }
-        $nauthToken = AuthToken::where('user_idx', $authToken['user_idx'])->orderBy('register_time', 'DESC')->first();
-
-        if ($authToken['token'] != $nauthToken['token']) {
-            $result['code'] = 'EA012';
-            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다. (만료 토큰)';
-            return $result;
-        }
 
         $this->getAuthToken($authToken['user_idx']);
 
