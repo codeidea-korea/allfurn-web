@@ -10,14 +10,13 @@
                     <h3>인기 브랜드</h3>
                 </div>
             </div>
-
             @if( count( $lists ) > 0 )
             <div class="popular_prod popular_con01">
                 <div class="slide_box">
                     @foreach( $lists AS $l => $brand )
                     <ul>
                         <li class="popular_banner">
-                            <img src="{{$brand->imgUrl}}" class="h-[595px]" alt="{{$brand->companyName}}">
+                            <img src="{{$brand->imgUrl}}" class="object-cover h-[713px]" alt="{{$brand->companyName}}">
                             <div class="txt_box">
                                 <p>
                                     <b>{{$brand->subtext1}}</b><br/>{{$brand->subtext2}}
@@ -33,7 +32,7 @@
                                 <button class="zzim_btn prd_{{$item['mdp_gidx']}} {{($brand->product_interest[$item['mdp_gidx']])?'active':''}}" pIdx="{{$item['mdp_gidx']}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
-                                <a href="./prod_detail.php">
+                                <a href="/product/detail/{{$item['mdp_gidx']}}">
                                     <p>{{mb_strimwidth($item['mdp_gname'], 0, 40, '...','utf-8')}}</p>
                                 </a>
                             </div>
@@ -51,7 +50,7 @@
 
 <script type="text/javascript">
     let isLoading = false;
-    let isLastPage = false;
+    let isLastPage = {{ $lists->lastPage() == 1 }};
     let currentPage = 1;
 
     function loadNewProductList() {
@@ -77,7 +76,7 @@
                 console.log( result );
                 displayNewWholesaler(result.query, $(".popular_prod .slide_box"), false);
 
-                isLastPage = currentPage === result.last_page;
+                isLastPage = currentPage === result.query.last_page;
             },
             complete : function () {
                 isLoading = false;

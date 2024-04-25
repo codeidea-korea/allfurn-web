@@ -8,7 +8,7 @@
     </div>
     <div class="relative">
         <div class="slide_box overflow-hidden">
-            <div class="swiper-wrapper">
+            {{-- <div class="swiper-wrapper">
                 @foreach($data['popularbrand_ad'] as $key => $brand)
                     <ul class="swiper-slide">
                         <li class="popular_banner">
@@ -22,6 +22,36 @@
                                 <div class="img_box">
                                     <a href="/product/detail/{{ $info['mdp_gidx'] }}"><img src="{{ $info['mdp_gimg'] }}" alt=""></a>
                                     <button class="zzim_btn prd_{{ $info['mdp_gidx'] }} {{ ($brand->product_interest[$info['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $info['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endforeach
+            </div> --}}
+            <div class="swiper-wrapper">
+                @foreach( $data['popularbrand_ad'] AS $brand )
+                    <ul class="swiper-slide">
+                        <li class="popular_banner">
+                            <img src="{{$brand->imgUrl}}" class="h-[320px]" alt="{{ $brand->companyName }}">
+                            <div class="txt_box">
+                                <p>
+                                    <b>{{ $brand->subtext1 }}</b><br/>
+                                    {{ $brand->subtext2 }}
+                                </p>
+                                <a href="/wholesaler/detail/{{$brand->company_idx}}"><b>{{$brand->companyName}} </b> 홈페이지 가기</a>
+                            </div>
+                        </li>
+                        @foreach ( $brand->product_info AS $item )
+                            <li class="prod_item">
+                                <div class="img_box">
+                                    <a href="/product/detail/{{$item['mdp_gidx']}}"><img src="{{$item['mdp_gimg']}}" alt="{{$item['mdp_gname']}}" alt=""></a>
+                                    <button class="zzim_btn prd_{{$item['mdp_gidx']}} {{($brand->product_interest[$item['mdp_gidx']])?'active':''}}" pIdx="{{$item['mdp_gidx']}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+                                </div>
+                                <div class="txt_box">
+                                    <a href="/product/detail/{{$item['mdp_gidx']}}">
+                                        <p>{{mb_strimwidth($item['mdp_gname'], 0, 40, '...','utf-8')}}</p>
+                                        {{-- <b>112,500원</b> --}}
+                                    </a>
                                 </div>
                             </li>
                         @endforeach

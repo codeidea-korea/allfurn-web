@@ -294,9 +294,10 @@ class LoginController extends BaseController
         $title = $request->input('title');
         $replaceParams = $request->input('replaceParams');
         $receiver = $request->input('receiver');
-
+        $reservate = $request->input('reservate');
+        
         return response()->json($this->pushService->sendKakaoAlimtalk(
-            $templateCode, $title, json_decode($replaceParams, true), $receiver));
+            $templateCode, $title, json_decode($replaceParams, true), $receiver, $reservate));
     }
 }
 

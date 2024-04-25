@@ -1556,7 +1556,7 @@ class ProductService
             ->where('AF_banner_ad.ad_location', 'popularbrand')
             ->where('AF_banner_ad.is_delete', 0)
             ->where('AF_banner_ad.is_open', 1)
-            ->orderby('idx', 'desc')->paginate(1);
+            ->orderByRaw('banner_price desc, RAND()')->paginate(5);
 
         foreach($list as $brand){
             $brand_product_interest = array();
