@@ -2246,7 +2246,7 @@ class MypageService
                         p.product_number,
                         p.product_option
                     FROM AF_user u
-                    LEFT JOIN AF_retail w ON u.company_idx = r.idx
+                    LEFT JOIN AF_retail r ON u.company_idx = r.idx
                     LEFT JOIN AF_product p ON u.company_idx = p.company_idx
                     LEFT JOIN AF_attachment a ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a.idx
                     WHERE u.idx = ".$params -> idx." 
