@@ -349,12 +349,12 @@
             <div class="bot_btn">
                 @if(Route::current()->getName() == 'product.create')
                     <button class="btn btn-primary-line w-1/4" onclick="goStep('step5', 'p')">이전</button>
-                    <button class="btn btn-primary-line w-1/4" onclick="modalOpen('#state_preview_modal')">미리보기</button>
+                    <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="btn btn-primary-line w-1/4" onclick="saveProduct(1);">임시등록</button>
                     <button class="btn btn-primary w-1/4" onclick="saveProduct(0);">등록신청</button>
                 @elseif(Route::current()->getName() == 'product.modify')
                     <button class="btn btn-primary-line w-1/4" onclick="goStep('step5', 'p')">이전</button>
-                    <button class="btn btn-primary-line w-1/4" onclick="modalOpen('#state_preview_modal')">미리보기</button>
+                    <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="btn btn-primary w-1/4" style="margin-left:90px;" id="modifyBtn" onclick="saveProduct(2)" data-idx={{$productIdx}}>수정완료</button>
                 @endif 
             </div>
@@ -920,6 +920,7 @@ const goStep = (item, pn)=>{
 }
 
 function saveProduct(regType) {
+    console.log(regType);
     var form = new FormData();
     form.append("reg_type", regType);
     form.append("name", $('#form-list01').val());
@@ -1038,6 +1039,128 @@ function saveProduct(regType) {
         }
     });
 }
+
+//## 미리보기
+function preview() {
+    setImg = '';
+    $('.product-img__add').map(function () {
+        setImg += '<li class="swiper-slide">' +
+            '<img src="' + $(this).find('img').attr('src') + '" alt="' + $(this).find('img').attr('alt') + '">' +
+            '</li>';
+    })
+    $('.big_thumb > ul').html(setImg);
+
+    // 상품명 상단에 카테고리 노출
+    $('.prod_detail_top .name h4').text($('#form-list01').val());
+
+    // 상품가격
+    if ($('button.is_price_open.active').data('val') == 0) {
+        $('.prod_detail_top .info p').text($('.price_text').text());
+    } else {
+        $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
+    }
+
+    // 상품코드 노출
+    if ($('input[name="product_code"]').val() != '') {
+        $('.prod_detail_top dd.preview_product_code').text($('input[name="product_code"]').val());
+    } else {
+        $('.preview_product_code').parent().hide();
+    }
+
+    // 상품 상세 내용
+    if (!editer || typeof editer === 'undefined') {
+        init_editor();
+    } else {
+        $('#state_preview_modal .product-detail__img-area').html(editer.html.get());
+    }
+
+    if (requiredCnt == 0) {
+        $('.right-wrap__selection').css('display', 'none');
+    } else {
+        $('.right-wrap__selection').html(htmlText);
+    }
+
+    var htmlText = "";
+    var requiredCnt = 0;
+    $('#optsArea > div.flex').each(function (i, el) {
+        required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
+        if(required == 1) {
+            requiredCnt ++;
+        }
+    })
+
+    htmlText = '';
+    i = 1;
+    $('.desc__select-group--item').map(function () {
+        if ($(this).find('.select-group__result li').length > 0) {
+            if (i%2 == 1) {
+                htmlText += '<dl class="item01">';
+            }
+            htmlText += '<dt>' + $(this).find('button').text() + '</dt>';
+            str = '';
+            $(this).find('.select-group__result li').map(function (i, k) {
+                str += (i != 0 ? ', ' : '') + $(this).find('span.property_name').text();
+            })
+            htmlText += '<dd>' + str + '</dd>';
+
+            if(i%2 == 0) {
+                htmlText += '</dl>';
+            }
+            i ++;
+        }
+    });
+
+    if (i%2 == 0) {
+        htmlText += '<dt></dt><dd></dd></dl>';
+    }
+
+    htmlText += '<dl class="item02">' +
+        '<dt class="ico__notice24"><span class="a11y">공지</span></dt>' +
+        '<dd>' + $('#form-list09').val() + '</dd>' +
+        '</dl>';
+
+    $('.product-detail__table').html(htmlText);
+
+    var shipping = "";
+    $('.shipping-wrap__add span.add__name').each(function (i, el) {
+        shipping += $(el).text() + ", ";
+    })
+    $('#default-modal-preview02 dd.previce_delivery').text(shipping.slice(0, -2));
+    $('#default-modal-preview02 .previce_title').text($('#form-list01').val());
+
+    if ($('input[name="order-info01"]:checked').val() == 1) {
+        $('#default-modal-preview02 .order-info_1 .order-info__desc').text($('#pay_notice').val());
+        $('#default-modal-preview02 .order-info_1').css('display', 'block');
+    } else {
+        $('#default-modal-preview02 .order-info_1').css('display', 'none');
+    }
+    if ($('input[name="order-info02"]:checked').val() == 1) {
+        $('#default-modal-preview02 .order-info_2 .order-info__desc').text($('#delivery_notice').val());
+        $('#default-modal-preview02 .order-info_2').css('display', 'block');
+    } else {
+        $('#default-modal-preview02 .order-info_2').css('display', 'none');
+    }
+    if ($('input[name="order-info03"]:checked').val() == 1) {
+        $('#default-modal-preview02 .order-info_3 .order-info__desc').text($('#return_notice').val());
+        $('#default-modal-preview02 .order-info_3').css('display', 'block');
+    } else {
+        $('#default-modal-preview02 .order-info_3').css('display', 'none');
+    }
+    if ($('input[name="order-info04"]:checked').val() == 1) {
+        $('#default-modal-preview02 .order-info_4 .order-info__title p').text($('#order_title').val());
+        $('#default-modal-preview02 .order-info_4 .order-info__desc').text($('#order_content').val());
+        $('#default-modal-preview02 .order-info_4').css('display', 'block');
+    } else {
+        $('#default-modal-preview02 .order-info_4').css('display', 'none');
+    }
+
+    // 미리보기 창 오픈
+    modalOpen('#state_preview_modal');
+}
+const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+    slidesPerView: 1,
+    spaceBetween: 0,
+});
 
 //### 저장된 상품 데이터가 있을 경우에만(수정화면) > 주문정보 가져오기 > 등록된 상품 목록 가져오기 
 function loadProduct() {

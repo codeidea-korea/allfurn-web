@@ -165,7 +165,11 @@
                     <li class="border-b pb-8">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                                <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
+                                @if (request()->get('type') == 'temp')
+                                    <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, true)">
+                                @else 
+                                    <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, false)">
+                                @endif 
                                     <img src="{{ $row -> product_image }}" alt="item03" />
                                 </button>
                             </div>

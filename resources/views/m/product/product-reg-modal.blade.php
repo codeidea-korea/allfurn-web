@@ -1088,17 +1088,17 @@
                                 <div class="link_box">
                                     <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/m/icon-defs.svg#zzim"></use></svg>좋아요</button>
                                     <button class="btn btn-line4 nohover"><svg><use xlink:href="/img/m/icon-defs.svg#share"></use></svg>공유하기</button>
-                                    <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/m/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
+                                    {{-- <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/m/icon-defs.svg#inquiry"></use></svg>문의 하기</button> --}}
                                 </div>
                             </div>
                             <div class="btn_box">
-                                <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
+                                <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone"></use></svg>전화번호 확인</button>
                                 <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-10 flex justify-center">
+                <div class="mt-10 flex justify-center product-detail__img-area">
                     <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
                 </div>
             </div>

@@ -115,7 +115,7 @@
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
-                                            <button class="state_preview" onclick="modalOpen('#state_preview_modal')">
+                                            <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
                                                 <img src="{{ $represent -> product_image }}" alt="item03" class="rounded-md" />
                                             </button>
                                         </div>
@@ -188,7 +188,11 @@
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
-                                            <button class="state_preview" onclick="modalOpen('#state_preview_modal')">
+                                            @if (request()->get('type') == 'temp')
+                                                <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, true)">
+                                            @else 
+                                                <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, false)">
+                                            @endif 
                                                 <img src="{{ $row -> product_image }}" alt="item03" class="rounded-md" />
                                             </button>
                                         </div>
@@ -293,6 +297,7 @@
             </div>
         </div>
     </div>
+    <iframe id="productPreviewModal" src="about:blank" width="0" height="0"></iframe>
 
     <!-- 상품 상태 -->
     <div id="product_status_modal" class="modal">
@@ -398,6 +403,99 @@
                         <button id="confirmChangeStatueBtn" class="btn btn-primary w-full mt-8" data-idx="" onClick="changeState();">완료</button>
                     </div> 
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 미리보기 -->
+    <div id="state_preview_modal" class="modal">
+        <div class="modal_bg" onClick="modalClose('#state_preview_modal')"></div>
+        <div class="modal_inner modal-md" style="width: 1340px;">
+            <div class="modal_body filter_body" style="max-height: inherit;">
+                <div class="py-2">
+                    <p class="text-lg font-bold text-left">미리보기</p>
+                </div>
+                <div class="overflow-y-scroll h-[600px]">
+                    <div class="prod_detail_top">
+                        <div class="inner">
+                            <div class="img_box">
+                                <div class="left_thumb">
+                                    <ul class="swiper-wrapper">
+                                        <li class="swiper-slide"><img src="/img/zoom_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb4.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb5.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                    </ul>
+                                </div>
+                                <div class="big_thumb">
+                                    <ul class="swiper-wrapper">
+                                        <li class="swiper-slide"><img src="/img/zoom_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb4.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb5.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
+                                        <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="txt_box">
+                                <div class="name">
+                                    <div class="tag">
+                                        <span class="new">NEW</span>
+                                        <span class="event">이벤트</span>
+                                    </div>
+                                    <h4>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</h4>
+                                </div>
+                                <div class="info">
+                                    <p>업체 문의</p>
+                                    <hr>
+                                    <div>
+                                        <dl class="flex">
+                                            <dt class="text-stone-400 w-[130px]">상품 코드</dt>
+                                            <dd>FORMA</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="mt-3">
+                                        <dl class="flex">
+                                            <dt class="text-stone-400 w-[130px]">판매자 상품번호</dt>
+                                            <dd>A01A17MIZPWR</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="mt-3">
+                                        <dl class="flex">
+                                            <dt class="text-stone-400 w-[130px]">상품 승인 일자</dt>
+                                            <dd>2022.12.05</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="link_box">
+                                        <button class="btn btn-line4 nohover zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+                                        <button class="btn btn-line4 nohover"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+                                        <button class="btn btn-line4 nohover inquiry"><svg><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의 하기</button>
+                                    </div>
+                                </div>
+                                <div class="btn_box">
+                                    <button class="btn btn-primary-line phone" onclick="modalOpen('#company_phone-modal')"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#phone"></use></svg>전화번호 확인하기</button>
+                                    <button class="btn btn-primary"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#estimate"></use></svg>견적서 받기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-10 flex justify-center">
+                        <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <button class="btn btn-primary w-1/4 mt-8" onclick="modalClose('#state_preview_modal')">확인</button>
+                </div> 
             </div>
         </div>
     </div>
@@ -673,22 +771,27 @@
             }
         })
 
-        // Todo
+
         const modalProductPreview = (idx, temp) => {
+            $('#loadingContainer').show();
             if (temp === true) {
                 document.getElementById('productPreviewModal').src = '/product/registration?temp=' + idx;
             } else {
                 document.getElementById('productPreviewModal').src = '/product/modify/' + idx;
             }
             $('#productPreviewModal').on( 'load', function() {
-                setTimeout(function() {
-                    document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
-                    document.querySelector('#default-modal-preview02').innerHTML =
-                        document.querySelector('#productPreviewModal').contentWindow.document.getElementById('default-modal-preview02').innerHTML;
-                    openModal('#default-modal-preview02');
-                }, 1000)
+                document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
+                document.querySelector('#state_preview_modal .modal_body').innerHTML =
+                    document.querySelector('#productPreviewModal').contentWindow.document.getElementById('state_preview_modal').innerHTML;
+                $('#loadingContainer').hide();
+                modalOpen('#state_preview_modal');
             });
         }
+
+        const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+            slidesPerView: 1,
+            spaceBetween: 0,
+        });
 
 
         
