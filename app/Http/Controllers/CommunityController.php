@@ -320,7 +320,12 @@ class CommunityController extends BaseController
         $data['banners'] = $this->communityService->getBannerList('clubtop');
         $data['clubList'] = $this->communityService->getClubList();
 
-        return view('community.club', $data);
+        return view(getDeviceType().'community.club', $data);
+    }
+
+    public function clubRegister(Request $request)
+    {
+        return response()->json($this->communityService->clubRegister($request));
     }
 
     public function clubDetail(int $idx)
@@ -330,7 +335,12 @@ class CommunityController extends BaseController
 
         if(!$data['club']) return redirect('/community/club');
         
-        return view('community.clubDetail', $data);
+        return view(getDeviceType().'community.clubDetail', $data);
+    }
+
+    public function clubWithdrawal(Request $request)
+    {
+        return response()->json($this->communityService->clubWithdrawal($request));
     }
 
     public function clubArticle(int $idx)

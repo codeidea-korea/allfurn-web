@@ -844,12 +844,52 @@ class CommunityService {
     // 가구인 모임
     public function getClubList()
     {
-        return Club::where('is_open', 1)
-            ->leftjoin('AF_attachment as at', function ($query) {
-                $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
-            })
-            ->select('AF_club.*', DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
-            ->get();
+        $clubList = DB::table('AF_club')->select('AF_club.*', DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
+        ->leftjoin('AF_attachment as at', function ($query) {
+            $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
+        })->where('is_open', 1)->get();
+
+        foreach($clubList as $club){
+            $articles = DB::table('AF_club_article')->where('club_idx', $club->idx)->where('is_delete', '0')->where('is_open', '1')->orderBy('idx', 'desc')->limit(3)->get();
+            $club->article = $articles;
+        }
+
+        return $clubList;
+    }
+
+    public function clubRegister($request)
+    {
+        $result = 0;
+
+        if (Auth::user()['type'] == "W"){
+            $company = DB::table('AF_wholesale')->selectRaw('company_name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }else if (Auth::user()['type'] == "R"){
+            $company = DB::table('AF_retail')->selectRaw('company_name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }else if (Auth::user()['type'] == "N" || Auth::user()['type'] == "S"){
+            $company = DB::table('AF_normal')->selectRaw('name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }
+
+        $clubMember = DB::table("AF_club_member")->where('club_idx', $request->club_idx)->where('user_cidx', Auth::user()['company_idx'])->where('user_ctype', Auth::user()['type'])->first();
+        if ($clubMember){
+            if ($clubMember->status == "0"){
+                return ['status' => 3];
+            }else{
+                return ['status' => 2];
+            }
+        }
+
+        DB::table("AF_club_member")->insert([
+            'club_idx' => $request->club_idx, 
+            'user_cidx' => Auth::user()['company_idx'],
+            'user_cname' => $company->cname, 
+            'user_ctype' => Auth::user()['type'], 
+            'is_manager' => '0', 
+            'status' => '1', 
+            'register_time' => Carbon::now(),
+        ]);
+
+        DB::table('AF_club')->where('idx', $request->club_idx)->increment('member_count');
+        return ['status' => 1];
     }
 
     public function getClubDetail(array $param=[])
@@ -857,18 +897,12 @@ class CommunityService {
         $list = Club::select(
                  'AF_club.*'
                 , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
-                , DB::raw('IF(COUNT(ap.idx) > 3, 1, 0) AS haveHomepage')
             )
-            ->leftjoin('AF_product AS ap', function($query) {
-                $query->on('ap.company_idx', 'AF_club.manager_idx')
-                    ->whereNotNull('access_date');
-            })
             ->leftjoin('AF_attachment as at', function ($query) {
                 $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
             })
             ->where('AF_club.idx', $param['idx'])
             ->where('AF_club.is_open', 1)
-            ->groupBy('AF_club.manager_idx')
             ->first();
         
         if(!$list) return null;
@@ -876,12 +910,7 @@ class CommunityService {
         $list['member'] = DB::table('AF_club_member')
             ->select(
                  'AF_club_member.*'
-                , DB::raw('IF(COUNT(ap.idx) > 3, 1, 0) AS haveHomepage')
             )
-            ->leftjoin('AF_product AS ap', function($query) {
-                $query->on('ap.company_idx', 'AF_club_member.user_cidx')
-                    ->whereNotNull('access_date');
-            })
             ->where('AF_club_member.club_idx', $param['idx'])
             ->where('AF_club_member.status', 1)
             ->groupBy('AF_club_member.user_cidx')
@@ -923,6 +952,16 @@ class CommunityService {
             ->get();
 
         return $list;
+    }
+
+    public function clubWithdrawal($request)
+    {
+        $result = DB::table('AF_club_member')->where('idx', $request->member_idx)->where('club_idx', $request->club_idx)->delete();
+        if ($result){
+            DB::table('AF_club')->where('idx', $request->club_idx)->decrement('member_count');
+        }
+
+        return ['status' => $result];
     }
 
     function isActiveClub(int $idx)

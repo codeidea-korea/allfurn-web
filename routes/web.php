@@ -239,8 +239,9 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::post('/reporting', 'CommunityController@reporting');
     Route::get('/write-dispatch/{orderGroupCode}', 'CommunityController@writeDispatch');
 
-    Route::get('/club', 'CommunityTempController@clubTempList');
-    Route::post('/club/register', 'CommunityTempController@clubRegister');
+    Route::get('/club', 'CommunityController@clubList');
+    Route::post('/club/register', 'CommunityController@clubRegister');
+    Route::post('/club/withdrawal', 'CommunityController@clubWithdrawal');
     Route::get('/club/detail/{idx}', 'CommunityController@clubDetail');
     Route::get('/club/article/{idx}', 'CommunityController@clubArticle');
     Route::post('/club/reply', 'CommunityController@clubReply');
