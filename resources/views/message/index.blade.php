@@ -38,7 +38,7 @@
                     @foreach($rooms as $room)
                     <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
                         <div class="img_box">
-                            <img src="/img/profile_img.svg" alt="">
+                            <img src="{{ $room->profile_image }}" alt="">
                         </div>
                         <div class="txt_box">
                             <h3>
@@ -88,7 +88,7 @@
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
                     +'    <div class="img_box">'
-                    +'        <img src="/img/profile_img.svg" alt="">'
+                    +'        <img src="'+messages.profile_image+'" alt="">'
                     +'    </div>'
                     +'    <div class="txt_box">'
                     +'        <h3>'
