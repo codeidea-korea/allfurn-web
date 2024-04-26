@@ -26,11 +26,12 @@
                                         <a href="/product/detail/{{ $info['mdp_gidx'] }}"><img src="{{ $info['mdp_gimg'] }}" alt=""></a>
                                         <button class="zzim_btn prd_{{ $info['mdp_gidx'] }} {{ ($brand->product_interest[$info['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $info['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
-                                    <div class="txt_box">
+                                    <!-- 고객사 요청으로 삭제 -->
+                                    <!-- <div class="txt_box">
                                         <a href="/product/detail/{{ $info['mdp_gidx'] }}">
                                             <p>{{ $info['mdp_gname'] }}</p>
                                         </a>
-                                    </div>
+                                    </div> -->
                                 </li>
                             @endforeach
                         </ul>

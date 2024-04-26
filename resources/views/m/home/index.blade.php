@@ -213,33 +213,17 @@
                         <h3>가구 모임</h3>
                     </div>
                     <ul class="main_board_list">
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>골프모임</span>
-                                    <p>12월 정모 일자 알려드립니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>소파 업체 모임</span>
-                                    <p>패브릭 소파 판매현황이 어떤가요?</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>매출 증진 모임</span>
-                                    <p>이번달 매출액입니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
+                        @foreach ($data['club'] as $item )
+                            <li>
+                                <div class="title">
+                                    <a href="/community/club/article/{{$item->article_idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
