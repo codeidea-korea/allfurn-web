@@ -216,7 +216,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li class="bottom_type together">
-                    <a href="/help/faq" >
+                    <a id="kakaotalk-sharing-btn" href="javascript:shareMessage()">
                         <b>함께 올펀을 사용해보세요!</b>
                         <span class="flex items-center">
                             올펀 알려주기
@@ -325,16 +325,28 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
             </div>
         </div>
 
-
-
-
-
         <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
         <script>
             function openModal(name) {
                 $(`${name}`).css('display', 'block');
                 $('body').css('overflow', 'hidden');
             }
+        </script>
+
+        <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+        <script>
+        Kakao.init('2b966eb2c764be29d46d709f6d100afb'); 
+        function shareMessage() {
+            Kakao.Share.sendDefault({
+                objectType: 'text',
+                text:
+                    '올펀 - 글로벌 가구 도·소매 No.1 플랫폼',
+                link: {
+                    mobileWebUrl: "{{ env('APP_URL') }}",
+                    webUrl: "{{ env('APP_URL') }}",
+                },
+            });
+        }
         </script>
     @endif
 @endsection
