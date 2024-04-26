@@ -383,10 +383,10 @@
 
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
 
             $(".sub_section_bot ul.obtain_list .sub_filter_result").show();
@@ -405,17 +405,17 @@
 
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }
 
     function toggleFilterBox() {
-        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "recommendation"){
             $(".sub_filter_result").hide();
         } else {
             $(".sub_filter_result").css('display', 'flex');
@@ -423,7 +423,7 @@
     }
 
     function displaySelectedOrders() {
-        if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+        if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
             $(".filter_on_box .order").empty().append(
                 '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
                 '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +

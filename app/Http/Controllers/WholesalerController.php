@@ -59,7 +59,6 @@ class WholesalerController extends BaseController
         $data = $request->all();
         $data['limit'] = 10;
         $data['list'] = $this->wholesalerService->getWholesalerList($data);
-        $data['rank'] = true;
         $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
 
         return response()->json($data);

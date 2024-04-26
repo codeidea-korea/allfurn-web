@@ -209,7 +209,7 @@
                 <div class="filter_box">
                     <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                    <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                    <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
                     <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                 </div>
                 <div class="total">전체 0개</div>
@@ -345,7 +345,7 @@
     $(".refresh_btn").on('click', function() {
         $("#filter_category-modal .check-form:checked").prop('checked', false);
         $("#filter_location-modal .check-form:checked").prop('checked', false);
-        $("#filter_align-modal .radio-form").eq(1).prop('checked', true);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
         
         loadWholesalerList(true);
     });
@@ -372,10 +372,10 @@
     function displaySelectedCategories() {
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
 
             $(".wholesalerListSection ul.obtain_list .sub_filter_result").show();
@@ -385,17 +385,17 @@
     function displaySelectedLocation() {
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }
 
     function displaySelectedOrders() {
-        if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+        if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
             $(".sub_filter .filter_box button").eq(2).addClass('on')         
         } else {
             $(".sub_filter .filter_box button").eq(2).removeClass('on')
