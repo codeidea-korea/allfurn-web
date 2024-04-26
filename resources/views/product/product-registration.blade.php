@@ -402,7 +402,7 @@
             <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
                 <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
                 <div class="flex items-center">
-                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
+                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900" onclick="saveProduct(1);">임시등록</button>
                     <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onclick="saveProduct(0);">등록신청</button>
                 </div>
@@ -411,7 +411,7 @@
             <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
                 <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">수정취소</a>
                 <div class="flex items-center">
-                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
+                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" id="modifyBtn" onclick="saveProduct(2)" data-idx={{$productIdx}}>수정완료</button>
                 </div>
             </div>

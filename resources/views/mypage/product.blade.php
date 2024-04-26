@@ -91,7 +91,7 @@
                     <li class="border-b pb-8">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                                <button class="state_preview">
+                                <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
                                     <img src="{{ $represent -> product_image }}" alt="item03" />
                                 </button>
                             </div>
@@ -165,7 +165,7 @@
                     <li class="border-b pb-8">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                                <button class="state_preview" onClick="modalOpen('#state_preview_modal')">
+                                <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
                                     <img src="{{ $row -> product_image }}" alt="item03" />
                                 </button>
                             </div>
@@ -288,6 +288,7 @@
         </div>
     </div>
 </div>
+<iframe id="productPreviewModal" src="about:blank" width="0" height="0"></iframe>
 
 <!-- 카테고리 -->
 <div id="filter_category-modal" class="modal">
@@ -701,20 +702,19 @@
         }
     })
 
-    // Todo
     const modalProductPreview = (idx, temp) => {
+        $('#loadingContainer').show();
         if (temp === true) {
             document.getElementById('productPreviewModal').src = '/product/registration?temp=' + idx;
         } else {
             document.getElementById('productPreviewModal').src = '/product/modify/' + idx;
         }
         $('#productPreviewModal').on( 'load', function() {
-            setTimeout(function() {
-                document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
-                document.querySelector('#default-modal-preview02').innerHTML =
-                    document.querySelector('#productPreviewModal').contentWindow.document.getElementById('default-modal-preview02').innerHTML;
-                openModal('#default-modal-preview02');
-            }, 1000)
+            document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
+            document.querySelector('#state_preview_modal .modal_body').innerHTML =
+                document.querySelector('#productPreviewModal').contentWindow.document.getElementById('state_preview_modal').innerHTML;
+            $('#loadingContainer').hide();
+            modalOpen('#state_preview_modal');
         });
     }
 
