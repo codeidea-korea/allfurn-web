@@ -2254,6 +2254,7 @@ class MypageService
                     ORDER BY p.idx";
                 break;
             default:
+                $sql = "select * from AF_product where idx=0";
                 break;
         }
         $estimateMulti = DB::select($sql);
