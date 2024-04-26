@@ -38,7 +38,7 @@
                     @foreach($rooms as $room)
                     <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
                         <div class="img_box">
-                            <img src="{{ $room->profile_image }}" alt="">
+                            <img src="{{ $room->profile_image }}" class="object-cover w-full h-full" alt="">
                         </div>
                         <div class="txt_box">
                             <h3>
