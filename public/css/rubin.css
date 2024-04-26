@@ -63,9 +63,8 @@ textarea{
 }
 .outline_primary{
   border:1px solid var(--main_color);
-  height:30px;
   color:var(--main_color);
-  padding:0 10px;
+  padding:8px 10px;
   width:100%
 }
 
@@ -199,7 +198,7 @@ textarea{
 .my_menu_list {
   border-radius: 3px;
   border: 1px solid var(--line, #dadde0);
-  width: 260px;
+  width: 220px;
 }
 .my_menu_list li a:hover {
   background: #f5f6f8;
