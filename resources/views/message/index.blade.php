@@ -38,7 +38,7 @@
                     @foreach($rooms as $room)
                     <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
                         <div class="img_box">
-                            <img src="{{ $room->profile_image }}" alt="">
+                            <img src="{{ $room->profile_image }}" class="object-cover w-full h-full" alt="">
                         </div>
                         <div class="txt_box">
                             <h3>
@@ -71,7 +71,7 @@
     <script>
     Pusher.logToConsole = false;
             
-    const pusher = new Pusher('51b26f4641d16394d3fd', {
+    var pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
     });
 
@@ -193,6 +193,39 @@
                 loadEvent(idx);
 
                 const roomIdx = idx;
+                pusher.disconnect(); // TESTSETSETSE
+                pusher = new Pusher('51b26f4641d16394d3fd', {
+                    cluster: 'ap3'
+                });
+
+                var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
+                cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
+                    console.log(JSON.stringify(messages));
+
+                    const rooms = $('._chatting_rooms > li');
+                    const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
+
+                    if(newestRoom) {
+                        rooms.prepend(newestRoom);
+                    } else {
+                        const tmpChattingRoom = 
+                                '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                                +'    <div class="img_box">'
+                                +'        <img src="'+messages.profile_image+'" alt="">'
+                                +'    </div>'
+                                +'    <div class="txt_box">'
+                                +'        <h3>'
+                                +'            '+messages.roomName
+                                +'            <span>'+messages.title+'</span>'
+                                +'        </h3>'
+                                +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+                                +'    </div>'
+                                +'</li>';
+                        $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+                    }
+                    // 활성화 처리 및 텍스트 변경
+                    $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+                });
                 var channel = pusher.subscribe('chat-' + roomIdx);
                 channel.bind('chat-event-' + roomIdx, function(messages) {
                     console.log(JSON.stringify(messages));
@@ -206,6 +239,9 @@
                     if(messages.date != lastCommunicatedDate) {
                         const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
                         $('.chatting_list').html($('.chatting_list').html() + dateTag);
+                    }
+                    if(messages.userIdx != {{ $user_idx }}) {
+                        messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
                     }
                     $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
                     

@@ -20,6 +20,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Magazine;
 use App\Models\LikeCompany;
+use App\Models\Club;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -264,6 +265,16 @@ class HomeService
             ->get();
 
         // 가구모임
+        $data['club'] = Club::select('*', 'AF_club_article.idx AS article_idx')
+            ->where('AF_club.is_open', 1)
+            ->leftjoin('AF_club_article',  function($query) {
+                $query->on('AF_club.idx', 'AF_club_article.club_idx');
+            })
+            ->where('AF_club_article.is_open', 1)
+            ->where('AF_club_article.is_delete', 0)
+            ->orderBy('AF_club_article.register_time', 'desc')
+            ->limit(3)
+            ->get();
 
         // 올펀패밀리
         $data['family_ad'] = FamilyAd::select('AF_family_ad.*', 

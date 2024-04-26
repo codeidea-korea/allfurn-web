@@ -88,7 +88,7 @@
                 </div>
                 <ul>
                     @foreach($represents as $represent)
-                    <li class="border-b pb-8">
+                    <li class="pb-10">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
                                 <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
@@ -162,7 +162,7 @@
                     <br />
                     @endif
                     @foreach($list as $row)
-                    <li class="border-b pb-8">
+                    <li class="pb-10">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
                                 @if (request()->get('type') == 'temp')

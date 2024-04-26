@@ -112,6 +112,9 @@ $header_banner = '';
             const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
             $('.chatting_list').html($('.chatting_list').html() + dateTag);
         }
+        if(messages.userIdx != {{ $user_idx }}) {
+            messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
+        }
         $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
         
         $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);

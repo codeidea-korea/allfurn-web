@@ -22,7 +22,7 @@
                 @foreach( $lists AS $brand )
                     <ul>
                         <li class="popular_banner">
-                            <img src="{{$brand->imgUrl}}" class="h-[320px]" alt="{{ $brand->companyName }}">
+                            <img src="{{$brand->imgUrl}}" class="" alt="{{ $brand->companyName }}">
                             <div class="txt_box">
                                 <p>
                                     <b>{{ $brand->subtext1 }}</b><br/>
@@ -37,12 +37,13 @@
                                     <a href="/product/detail/{{$item['mdp_gidx']}}"><img src="{{$item['mdp_gimg']}}" alt="{{$item['mdp_gname']}}" alt=""></a>
                                     <button class="zzim_btn prd_{{$item['mdp_gidx']}} {{($brand->product_interest[$item['mdp_gidx']])?'active':''}}" pIdx="{{$item['mdp_gidx']}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
-                                <div class="txt_box">
+                                <!-- 고객사 요청으로 삭제 -->
+                                <!-- <div class="txt_box">
                                     <a href="/product/detail/{{$item['mdp_gidx']}}">
                                         <p>{{mb_strimwidth($item['mdp_gname'], 0, 40, '...','utf-8')}}</p>
                                         {{-- <b>112,500원</b> --}}
                                     </a>
-                                </div>
+                                </div> -->
                             </li>
                         @endforeach
                     </ul>

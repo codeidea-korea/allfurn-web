@@ -79,6 +79,7 @@
                         </ul>
                     </div>
                 </div>
+                @if(count($club->article)> 0)
                 <div class="right_box">
                     <div class="community_list">
                         <ul>
@@ -86,7 +87,7 @@
                                 <li>
                                     <div class="txt_box">
                                         <div class="top">
-                                            <a href="/community/club/article/detail/{{$article->idx}}">
+                                            <a href="/community/club/article/{{$article->idx}}">
                                                 <div class="category">
                                                     @if( $article->is_notice )
                                                         <span class="notice">공지</span>
@@ -120,6 +121,11 @@
                         </ul>
                     </div>
                 </div>
+                @else
+                <div>
+                    게시글이 없습니다.
+                </div>
+                @endif
             </div>
 
         </div>

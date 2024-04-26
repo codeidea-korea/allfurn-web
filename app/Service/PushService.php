@@ -258,48 +258,95 @@ class PushService
         $pushMessage->title = $title;
         $pushMessage->content = $msg;
         $pushMessage->push_info = $msg;
-        $pushMessage->send_date = date('Y-m-d H:i:s');
-        $pushMessage->send_type = 'W';
-        $pushMessage->send_target = $to;
-        $pushMessage->is_ad = 0;
+        $pushMessage->attachment_idx = 0;
         $pushMessage->app_link_type = $type;
         $pushMessage->app_link = $applink;
         $pushMessage->web_link_type = $type;
         $pushMessage->web_link = $weblink;
-        $pushMessage->is_delete = 0;
+        $pushMessage->send_type = 'P';
+        $pushMessage->send_target = $to;
         $pushMessage->state = 'W';
+        $pushMessage->send_date = date('Y-m-d H:i:s', strtotime('+5 seconds'));
+        $pushMessage->is_ad = 0;
+        $pushMessage->is_delete = 0;
         
         $pushMessage->save();
-    }
 
-    /**
-     * fcm 푸시 발송 배치 큐 대기
-     * 
-     * @param string $title 
-     * @param string $msg 
-     * @param string $to 
-     * @param int $type 
-     * @param string $applink 
-     * @param string $weblink 
-     */
-    public function sendPushAsync($title, $msg, $to, $type = 5, $applink = '', $weblink = '')
-    {
-        $pushMessage = new PushQ;
-        $pushMessage->type = 'push';
-        $pushMessage->title = $title;
-        $pushMessage->content = $msg;
-        $pushMessage->push_info = $msg;
-        $pushMessage->send_date = date('Y-m-d H:i:s');
-        $pushMessage->send_type = 'S';
-        $pushMessage->send_target = $to;
-        $pushMessage->is_ad = 0;
-        $pushMessage->app_link_type = $type;
-        $pushMessage->app_link = $applink;
-        $pushMessage->web_link_type = $type;
-        $pushMessage->web_link = $weblink;
-        $pushMessage->is_delete = 0;
-        $pushMessage->state = 'W';
         
-        $pushMessage->save();
+        $authToken = PushToken::where('user_idx', '=', $to)->orderBy('register_time', 'DESC')->first();
+        if(empty($authToken)) {
+        
+            $sendLog = new PushSendLog();
+            $sendLog->user_idx = $to;
+            $sendLog->push_idx = 0;
+            $sendLog->push_type = $pushMessage->type;
+            $sendLog->is_send = 0;
+            $sendLog->is_check = 0;
+            $sendLog->send_date = date('Y-m-d H:i:s');
+            $sendLog->response = '푸시 토큰이 없습니다.';
+            $sendLog->save();
+            return;
+        }
+        
+        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+        $client = new Google_Client();
+        $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
+        $client->setScopes($scope);
+        $auth_key = $client->fetchAccessTokenWithAssertion();
+
+        $notification_opt = array (
+            'title' => $title,
+            'body' => $msg,
+//            'image' => AWS_S3.$file
+        );
+
+        $android_opt = array (
+            'notification' => array(
+//                'default_sound'         => true, 
+//                'priority' => 'high',
+//                'click_action' => 'TOP_STORY_ACTIVITY',
+                'title' => $title,
+                'body' => $msg,
+            )
+        );
+
+        $message = array(
+            'token' => $authToken->push_token,
+            'notification' => $notification_opt,
+            'android' => $android_opt, 
+            'data' => array(
+                'start_url' => $weblink
+            )
+        );
+
+        $data = array (
+            "message" => $message
+        );
+    
+        $ch = curl_init();
+    
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+        $result = curl_exec($ch);
+        
+        $sendLog = new PushSendLog();
+        $sendLog->user_idx = $to;
+        $sendLog->push_idx = $pushMessage->idx;
+        $sendLog->push_type = $pushMessage->type;
+        $sendLog->is_send = 1;
+        $sendLog->is_check = 0;
+        $sendLog->send_date = date('Y-m-d H:i:s');
+        $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
+        $sendLog->save();
     }
 }

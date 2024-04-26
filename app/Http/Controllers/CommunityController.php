@@ -332,4 +332,31 @@ class CommunityController extends BaseController
         
         return view('community.clubDetail', $data);
     }
+
+    public function clubArticle(int $idx)
+    {
+        if(!$this->communityService->isActiveArticle($idx)) return redirect('/community/club');       
+
+        $article = $this->communityService->getClubArticleDetail($idx);
+        $comments = $this->communityService->getClubArticleComments($idx);
+
+        return view('community.clubArticleDetail', [
+            'article' => $article,
+            'comments' => $comments,
+        ]);
+    }
+
+    public function clubReply(Request $request) {
+        return response()->json($this->communityService->clubReply($request->all()));
+    }
+
+    public function removeClubReply(int $idx)
+    {
+        return response()->json($this->communityService->removeClubReply($idx));
+    }
+
+    public function toggleClubArticleLike(Request $request) {
+        $idx = $request->input('articleId');
+        return response()->json($this->communityService->toggleClubArticleLike($idx));
+    }
 }
