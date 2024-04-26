@@ -241,6 +241,10 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
 
     Route::get('/club', 'CommunityController@clubList');
     Route::get('/club/detail/{idx}', 'CommunityController@clubDetail');
+    Route::get('/club/article/{idx}', 'CommunityController@clubArticle');
+    Route::post('/club/reply', 'CommunityController@clubReply');
+    Route::delete('/club/reply/{idx}', 'CommunityController@removeClubReply');
+    Route::post('/club/like-article', 'CommunityController@toggleClubArticleLike');
 
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');
