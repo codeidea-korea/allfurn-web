@@ -592,15 +592,20 @@ class MessageService
         } else if($chatContent['type'] == 'inquiry') {
             // 상담
             $contentHtml = '<div class="flex flex-col">
-                                    <span>[ 상담문의가 도착했습니다 ] '.$chatContent['productName'].'</span>
-                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
-                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
-                                        <img src="'.$chatContent['productThumbnailURL'].'">
-                                            바로가기
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                        </p>
-                                    </button>
-                                </div>';
+                                <div class="flex gap-3">
+                                    <img src="'.$chatContent['productThumbnailURL'].'" class="w-[90px] h-[90px] shrink-0">
+                                    <div>
+                                        <span class="text-stone-600">[ 상담문의가 도착했습니다 ]</span>
+                                        <p class="mt-1">'.$chatContent['productName'].'</p>
+                                        <button class="flex flex-col mt-1 w-full" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                            <p class="bg-primary px-2 py-1 rounded-md flex items-center text-white w-full justify-between">
+                                                바로가기
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                            </p>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>';
         } else if($chatContent['type'] == 'order') {
             // 주문
             $contentHtml = '<div class="font-medium w-[260px]">
