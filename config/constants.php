@@ -39,7 +39,7 @@ return [
     ],
     'ALLFURN' => [
         'CALL_NUMBER' => '031-813-5588',
-        'PROFILE_IMAGE' => '/images/allfurn-defult_thumnail.png',
+        'PROFILE_IMAGE' => '/img/profile_img.svg',
         'OPERATION_TIME' => '평일 09:00 - 18:00',
         'NAME' => '올펀',
     ],

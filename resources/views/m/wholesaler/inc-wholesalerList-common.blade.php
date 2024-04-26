@@ -1,23 +1,21 @@
 @foreach ( $list as $wholesaler )
-@php
-    $companyIdx = isset($wholesaler->companyIdx) ? $wholesaler->companyIdx : $wholesaler->company_idx;
-    $companyName = isset($wholesaler->companyName) ? $wholesaler->companyName : $wholesaler->company_name;
-@endphp
 <li>
     <div class="txt_box">
         <div class="flex items-center justify-between">
-            <a href="/wholesaler/detail/{{ $companyIdx }}">
-                <img src="/img/icon/crown.png" alt="">
-                {{ $companyName }}
+            <a href="/wholesaler/detail/{{ $wholesaler->company_idx  }}">
+                @if($wholesaler->rank <= 50)
+                    <img src="/img/icon/crown.png" alt="">
+                @endif
+                {{ $wholesaler->company_name }}
                 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
             </a>
-            <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$companyIdx}}' onclick="toggleCompanyLike({{$companyIdx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
+            <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->company_idx }}' onclick="toggleCompanyLike({{$wholesaler->company_idx }})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
         </div>
         <div class="flex items-center justify-between">
             <div class="tag">
-                @foreach( explode( ',', $wholesaler->categoryList ) AS $category )
-                    <span>{{$category}}</span>
-                @endforeach
+                @foreach( $wholesaler->categoryList AS $category )
+                    <span>{{$category->name}}</span>
+                @endforeach 
             </div>
             <i class="shrink-0">{{ $wholesaler->location }}</i>
         </div>

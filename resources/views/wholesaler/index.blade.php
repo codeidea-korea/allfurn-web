@@ -81,7 +81,9 @@
                                 <div class="txt_box">
                                     <div class="flex items-center justify-between">
                                         <a href="/wholesaler/detail/{{ $wholesaler->company_idx }}">
-                                            <img src="/img/icon/crown.png" alt="">
+                                            @if($wholesaler->rank <= 20)
+                                                <img src="/img/icon/crown.png" alt="">
+                                            @endif
                                             {{ $wholesaler->company_name }}
                                             <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                         </a>
@@ -89,12 +91,9 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div class="tag">
-                                            @php
-                                                $companyCategoryList = explode(',', $wholesaler->categoryList);
-                                            @endphp
-                                            @foreach ( $companyCategoryList as $category )
+                                            @foreach ( $wholesaler->categoryList as $category )
                                                 @if($loop->index == 3) @break @endif
-                                                <span>{{ $category }}</span>
+                                                <span>{{ $category->name }}</span>
                                             @endforeach
                                         </div>
                                         <i class="shrink-0">{{ $wholesaler->location }}</i>
@@ -127,7 +126,29 @@
                         <h3>도매 업체 순위</h3>
                     </div>
                 </div>
-                <div class="ranking_box">
+                @for ($i=0; $i<2; $i++)
+                    <div class="ranking_box">
+                        <ul {{$i == 1 ? 'hidden' : ''}}>
+                            @for ($j=$i*10; $j<$i*10+10; $j++)
+                                @php $company = $companyProduct[$j]; @endphp
+                                @if( $j ==5 || $j==15 )
+                                    </ul><ul {{$j == 15 ? 'hidden' : ''}} >
+                                @endif
+                                <li><a href="/wholesaler/detail/{{ $company->company_idx }}">
+                                    <i>{{$j+1}}</i>
+                                    <p>{{$company->company_name}}</p>
+                                    <div class="tag">
+                                        @foreach( $company->categoryList AS $cate )
+                                            @if($loop->index == 2) @break @endif
+                                            <span>{{$cate->name}}</span>
+                                        @endforeach
+                                    </div>
+                                </a></li>
+                            @endfor
+                        </ul>
+                    </div>
+                @endfor
+                {{-- <div class="ranking_box">
                     <ul>
                         @foreach( $companyProduct AS $key => $company )
                             @if( $key != 0 && $key%5 == 0 )
@@ -137,16 +158,16 @@
                                 <i>{{$key+1}}</i>
                                 <p>{{$company->company_name}}</p>
                                 <div class="tag">
-                                    @foreach( explode( ',', $company->categoryList ) AS $cate )
+                                    @foreach( $company->categoryList AS $cate )
                                         @if($loop->index == 2) @break @endif
-                                        <span>{{$cate}}</span>
+                                        <span>{{$cate->name}}</span>
                                     @endforeach
                                 </div>
                             </a>
                         </li>
                         @endforeach
                     </ul>
-                </div>
+                </div> --}}
                 @if( count( $companyProduct ) > 10 )
                     <div class="mt-8 text-center ">
                         <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
@@ -339,7 +360,7 @@
 
     const orderRemove = (item)=> {
         $(item).parents('span').remove(); //해당 카테고리 삭제
-        $("#filter_align-modal .radio-form").eq(1).prop('checked', true);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
 
         loadWholesalerList(true);
     }
@@ -383,10 +404,10 @@
 
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
 
             $(".sub_section_bot ul.obtain_list .sub_filter_result").show();
@@ -405,17 +426,17 @@
 
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }
 
     function toggleFilterBox() {
-        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "recommendation"){
             $(".sub_filter_result").hide();
         } else {
             $(".sub_filter_result").css('display', 'flex');
@@ -423,7 +444,7 @@
     }
 
     function displaySelectedOrders() {
-        if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+        if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
             $(".filter_on_box .order").empty().append(
                 '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
                 '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +

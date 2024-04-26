@@ -65,11 +65,12 @@ class MessageService
                     ->where('second_company_idx', $user->company_idx);
             });
         })
+        ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
             ->select("AF_message_room.idx"
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
                     ,second_company_idx,first_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
-                    ,second_company_type,first_company_type) AS other_company_type"));
+                    ,second_company_type,first_company_type) AS other_company_type"))->distinct();
         if (isset($params['room_idx']) && !empty($params['room_idx'])) {
             $roomQuery->where('AF_message_room.idx', $params['room_idx']);
         }
@@ -342,7 +343,7 @@ class MessageService
                 $message->leftJoin('AF_retail AS company', 'company.idx', 'AF_message.sender_company_idx');
             }
             $message->where(function($query) use ($keyword, $company) {
-                $query->whereRaw('IF(JSON_VALID(AF_message.content),JSON_EXTRACT(AF_message.content, "$.text"),AF_message.content) LIKE "%'.$keyword.'%"');
+                $query->whereRaw('AF_message.content LIKE "%'.$keyword.'%"');
                 if ($company) {
                     $query->orWhere('company.company_name', 'like', "%{$keyword}%");
                 }
