@@ -23,7 +23,7 @@
                                 <div class="img_box">
                                     <img src="{{ $club->imgUrl }}" alt="">
                                 </div>
-                                <button class="btn btn-gray thin w-full mt-4">회원가입</button>
+                                <button class="btn btn-gray thin w-full mt-4 btnClubRegister" data-cidx="{{ $club->idx }}">회원가입</button>
                             </div>
                             <div class="right_box">
                                 <div class="name">
@@ -35,18 +35,12 @@
                                     </div>
                                 </div>
                                 <ul class="list">
-                                    <li><a href="javascript:;">
-                                        <b>9월 25일 서원힐스 정모</b>
-                                        <span>2023.09.06</span>
-                                    </a></li>
-                                    <li><a href="javascript:;">
-                                        <b>9월 25일 서원힐스 정모</b>
-                                        <span>2023.09.06</span>
-                                    </a></li>
-                                    <li><a href="javascript:;">
-                                        <b>9월 25일 서원힐스 정모</b>
-                                        <span>2023.09.06</span>
-                                    </a></li>
+                                    @foreach($club->article as $article)
+                                        <li><a href="/community/club/article/{{ $article->idx }}">
+                                            <b>{{ $article->title }}</b>
+                                            <span>{{ Carbon\Carbon::parse($article->register_time)->format('Y.m.d') }}</span>
+                                        </a></li>
+                                    @endforeach 
                                 </ul>
                                 <a href="/community/club/detail/{{$club->idx}}" class="more_btn btn btn-line4">더보기</a>
                             </div>
@@ -60,8 +54,27 @@
 </div>
 
 <script>
-
-
+$(document).on('click', '.btnClubRegister', function(){
+    var clubIdx = $(this).data('cidx');
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url				: '/community/club/register',
+        data			: {
+            'club_idx' : clubIdx
+        },
+        type			: 'POST',
+        dataType		: 'json',
+        success		: function(result) {
+            if (result.status == 2){
+                alert('가입된 회원입니다.'); return false;
+            }else if (result.status == 3){
+                alert('탈퇴한 회원입니다.'); return false;
+            }else if (result.status == 1){
+                alert('정상적으로 가입되었습니다.'); location.reload();
+            }
+        }
+    });
+})
 </script>
 
 @endsection
