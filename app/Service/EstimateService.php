@@ -63,7 +63,7 @@ class EstimateService {
 
     public function insertRequest(array $params) {
         $check = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> count();
-        if($check > 0) {
+        if($check < 0) {
             throw new \Exception('', 500);
         }
 
@@ -125,7 +125,7 @@ class EstimateService {
                     '회사명' => $params['request_company_name'],
                     '견적서작성링크' => 'allfurn-web.codeidea.io/mypage/responseEstimate'
                 ], 
-                $user[0] -> phone_number
+                $user[0] -> phone_number, null
             );
         }
 
@@ -183,7 +183,7 @@ class EstimateService {
                     '회사명' => $params['response_estimate_res_company_name'],
                     '견적서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate'
                 ],
-                $user[0] -> phone_number
+                $user[0] -> phone_number, null
             );
         }
 
@@ -302,7 +302,7 @@ class EstimateService {
                     '회사명' => $company[0] -> company_name,
                     '발주서링크' => 'allfurn-web.codeidea.io/mypage/responseEstimate'
                 ], 
-                $user[0] -> phone_number
+                $user[0] -> phone_number, null
             );
         }
 
@@ -335,7 +335,7 @@ class EstimateService {
                         '회사명' => $estimate[0] -> response_company_name,
                         '발주서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate'
                     ],
-                    $user[0] -> phone_number
+                    $user[0] -> phone_number, null
                 );
             }
         }
@@ -503,7 +503,7 @@ class EstimateService {
 
                 $this -> pushService -> sendKakaoAlimtalk(
                     'TS_1857', '[견적서 도착 알림]',
-                    [ '회사명' => $params['response_company_name'] ], $user[0] -> phone_number
+                    [ '회사명' => $params['response_company_name'] ], $user[0] -> phone_number, null
                 );
             }
         }

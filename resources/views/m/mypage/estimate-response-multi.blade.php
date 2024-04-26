@@ -8,6 +8,11 @@
 @endphp
 
 @section('content')
+
+@if (count($response['list']) > 0)
+
+        
+         
     @include('layouts.header_m')
 
     <div id="content">
@@ -75,21 +80,31 @@
                         <tr>
                             <th>유 효 기 한</th>
                             <td>
-                                견적일로부터 
-                                <span class="expiration_date hidden"> 15일</span> 
-                                <select name="expiration_date" id="expiration_date" class="input-form ml-3">
-                                    <option value="0">15일</option>
-                                </select>
+                                <div class="flex items-center">
+                                    <span>
+                                        견적일로부터
+                                    </span>
+                                    <span class="expiration_date hidden"> 15일</span> 
+                                    <div class="input-form ml-3 ">
+                                        <select name="expiration_date" id="expiration_date" class="w-full h-full">
+                                            <option value="0">15일</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <th>배 송 방 법</th>
                             <td>
-                                <span class="product_delivery_info hidden"></span> 
-                                <select name="product_delivery_info" id="product_delivery_info" class="input-form w-full">
-                                    <option value="업체 협의 (착불)">착불</option>
-                                    <option value="매장 배송 (무료)">무료</option>
-                                </select>
+                                <div class="flex items-center">
+                                    <span class="product_delivery_info hidden"></span> 
+                                    <div class="input-form w-full">
+                                        <select name="product_delivery_info" id="product_delivery_info">
+                                            <option value="업체 협의 (착불)">착불</option>
+                                            <option value="매장 배송 (무료)">무료</option>
+                                        </select>
+                                    </div> 
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -567,4 +582,16 @@
             });
         });
     </script>
+
+@else 
+    @if (in_array(Auth::user()['type'], ['W','R']))
+        <script> 
+            alert('판매 승인된 상품이 등록되어야 견적서 보내기가 가능합니다.'); history.back();
+        </script>
+    @else 
+        <script> 
+            alert('가구사업자만 견적서 보내기가 가능합니다.'); history.back();
+        </script>
+    @endif 
+@endif 
 @endsection

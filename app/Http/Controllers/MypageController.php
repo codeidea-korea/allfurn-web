@@ -1086,6 +1086,8 @@ class MypageController extends BaseController
         $data['pageType'] = 'estimate-response-multi';
 
         $data['response'] = array_merge($this -> mypageService -> getResponseEstimateMulti($data['user']), $data);
+        //echo count($data['response']['list']);
+        //dd($data['response']);
 
         $data['point']  = $this->mypageService->getPointList();
         $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
@@ -1230,4 +1232,5 @@ class MypageController extends BaseController
         return view(getDeviceType().'mypage.likePage', $data);
         
     }
+
 }

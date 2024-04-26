@@ -259,7 +259,7 @@ class PushService
         $pushMessage->content = $msg;
         $pushMessage->push_info = $msg;
         $pushMessage->send_date = date('Y-m-d H:i:s');
-        $pushMessage->send_type = 'S';
+        $pushMessage->send_type = 'W';
         $pushMessage->send_target = $to;
         $pushMessage->is_ad = 0;
         $pushMessage->app_link_type = $type;
