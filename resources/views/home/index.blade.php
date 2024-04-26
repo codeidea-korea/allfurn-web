@@ -221,37 +221,21 @@
                             <h3>가구 모임</h3>
                         </div>
                         <div class="flex items-center gap-7">
-                            <a class="more_btn flex items-center" href="javascript:;">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
+                            <a class="more_btn flex items-center" href="/community/club">더보기<svg><use xlink:href="./img/icon-defs.svg#more_icon"></use></svg></a>
                         </div>
                     </div>
                     <ul class="main_board_list">
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>골프모임</span>
-                                    <p>12월 정모 일자 알려드립니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>소파 업체 모임</span>
-                                    <p>패브릭 소파 판매현황이 어떤가요?</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>매출 증진 모임</span>
-                                    <p>이번달 매출액입니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
+                        @foreach ($data['club'] as $item )
+                            <li>
+                                <div class="title">
+                                    <a href="/community/club/article/{{$item->article_idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -269,8 +253,10 @@
 <script>
 // main_visual 
 const main_visual = new Swiper(".main_visual .slide_box", {
+    effect: "creative",
     loop: true,
     slidesPerView: 1,
+    speed : 1500,
     navigation: {
         nextEl: ".main_visual .slide_arrow.next",
         prevEl: ".main_visual .slide_arrow.prev",
@@ -287,6 +273,15 @@ const main_visual = new Swiper(".main_visual .slide_box", {
         slideChangeTransitionEnd: function () {
             let brand = $('.main_visual .swiper-slide.swiper-slide-active .brand').text(); 
             $('.main_visual .bottom_box p').text(brand)
+        },
+    },
+    creativeEffect: {
+        prev: {
+          shadow: true,
+          translate: ["-20%", 0, -1],
+        },
+        next: {
+          translate: ["100%", 0, 0],
         },
     },
 });
