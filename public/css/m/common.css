@@ -374,6 +374,7 @@ header.top_fixed {position:sticky; top:0; }
 .header_category::-webkit-scrollbar {display:none; }
 .header_category ul.gnb { gap:12px; text-align:center; }
 .header_category ul.gnb li a {position:relative; font-size:14px; font-weight:600; white-space:nowrap; }
+.header_category ul.gnb li a:hover, .header_category ul.gnb li a:active , .header_category ul.gnb li a:focus{color:var(--main_color);}
 .header_category ul.gnb li a span {position:absolute; left:50%; bottom:100%; width:100px; font-size:10px; font-weight:400; color:var(--main_color); transform:translateX(-50%); }
 .header_category ul.gnb li.active a {color:var(--main_color); }
 .header_category ul.gnb li button {gap:10px; height:36px; padding:0 16px; border:1px solid #dadde0; font-size:18px; font-weight:500; background-color:#f5f5f5; border-radius:3px; }
