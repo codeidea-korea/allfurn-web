@@ -425,7 +425,7 @@ class ProductController extends BaseController
         ]);
     }
 
-    // 이 달의 도매 데이터 가져오기
+    // 이 달의 딜 데이터 가져오기
     public function thisMonth(Request $request)
     {
         $categoryList = $this->productService->getCategoryList();
@@ -463,15 +463,15 @@ class ProductController extends BaseController
         $dealBanner['plandiscount'] = $this->productService->getThisDealList('plandiscount');
         $dealBanner['dealmiddle'] = $this->productService->getThisDealList('dealmiddle');
 
-        $target['thisMonth'] = date('m');
-        $dealBanner['product'] = $this->productService->getBestNewProductList($data);
+        //BEST 상품
+        $dealBanner['product'] = $this->productService->getBestNewProductList();
 
         return view(getDeviceType() . 'product.thisMonth', [
             'categoryList' => $categoryList,
-            'dealbrand' => $dealBanner['dealbrand'],
-            'plandiscount' => $dealBanner['plandiscount'],
-            'dealmiddle' => $dealBanner['dealmiddle'],
-            'productBest' => $dealBanner['product'],
+            'dealbrand' => $dealBanner['dealbrand'], //이달의 딜 인기브랜드
+            'plandiscount' => $dealBanner['plandiscount'], // BEST 기획전
+            'dealmiddle' => $dealBanner['dealmiddle'], // 띠배너
+            'productBest' => $dealBanner['product'], //베스트상품
             // 'companyProduct' => $company
         ]);
     }
@@ -583,24 +583,9 @@ class ProductController extends BaseController
     // xx월 Best 도매업체 json
     public function getJsonThisBestWholesaler(Request $request)
     {
-        $data['categoryIdx'] = $request->categories == null ? "" : $request->categories;
-        $data['locationIdx'] = $request->locations == null ? "" : $request->locations;
-        /* switch($request->orderedElement){
-            case "access_count":
-                $data['orderedElement'] = 'companyAccessCount';
-                break;
-
-            case "register_time" : 
-                $data['orderedElement'] = 'access_date';
-                break;
-
-            default:
-                $data['orderedElement'] = 'score';
-                break;
-
-        } */
-        $data['orderedElement'] = 'score';
-        $data['list'] = $this->wholesalerService->getThisMonthWholesaler($data);
+        $data = $request->all();
+        $data['limit'] = 10;
+        $data['list'] = $this->wholesalerService->getThisMonthBestWholesaler($data);
         $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
 
         return response()->json($data);

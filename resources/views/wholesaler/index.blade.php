@@ -81,7 +81,9 @@
                                 <div class="txt_box">
                                     <div class="flex items-center justify-between">
                                         <a href="/wholesaler/detail/{{ $wholesaler->company_idx }}">
-                                            <img src="/img/icon/crown.png" alt="">
+                                            @if($wholesaler->rank <= 20)
+                                                <img src="/img/icon/crown.png" alt="">
+                                            @endif
                                             {{ $wholesaler->company_name }}
                                             <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                         </a>
@@ -89,12 +91,9 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div class="tag">
-                                            @php
-                                                $companyCategoryList = explode(',', $wholesaler->categoryList);
-                                            @endphp
-                                            @foreach ( $companyCategoryList as $category )
+                                            @foreach ( $wholesaler->categoryList as $category )
                                                 @if($loop->index == 3) @break @endif
-                                                <span>{{ $category }}</span>
+                                                <span>{{ $category->name }}</span>
                                             @endforeach
                                         </div>
                                         <i class="shrink-0">{{ $wholesaler->location }}</i>
@@ -127,7 +126,29 @@
                         <h3>도매 업체 순위</h3>
                     </div>
                 </div>
-                <div class="ranking_box">
+                @for ($i=0; $i<2; $i++)
+                    <div class="ranking_box">
+                        <ul {{$i == 1 ? 'hidden' : ''}}>
+                            @for ($j=$i*10; $j<$i*10+10; $j++)
+                                @php $company = $companyProduct[$j]; @endphp
+                                @if( $j ==5 || $j==15 )
+                                    </ul><ul {{$j == 15 ? 'hidden' : ''}} >
+                                @endif
+                                <li><a href="/wholesaler/detail/{{ $company->company_idx }}">
+                                    <i>{{$j+1}}</i>
+                                    <p>{{$company->company_name}}</p>
+                                    <div class="tag">
+                                        @foreach( $company->categoryList AS $cate )
+                                            @if($loop->index == 2) @break @endif
+                                            <span>{{$cate->name}}</span>
+                                        @endforeach
+                                    </div>
+                                </a></li>
+                            @endfor
+                        </ul>
+                    </div>
+                @endfor
+                {{-- <div class="ranking_box">
                     <ul>
                         @foreach( $companyProduct AS $key => $company )
                             @if( $key != 0 && $key%5 == 0 )
@@ -137,16 +158,16 @@
                                 <i>{{$key+1}}</i>
                                 <p>{{$company->company_name}}</p>
                                 <div class="tag">
-                                    @foreach( explode( ',', $company->categoryList ) AS $cate )
+                                    @foreach( $company->categoryList AS $cate )
                                         @if($loop->index == 2) @break @endif
-                                        <span>{{$cate}}</span>
+                                        <span>{{$cate->name}}</span>
                                     @endforeach
                                 </div>
                             </a>
                         </li>
                         @endforeach
                     </ul>
-                </div>
+                </div> --}}
                 @if( count( $companyProduct ) > 10 )
                     <div class="mt-8 text-center ">
                         <a href="javascript:;" class="flex items-center justify-center">더보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
@@ -339,7 +360,7 @@
 
     const orderRemove = (item)=> {
         $(item).parents('span').remove(); //해당 카테고리 삭제
-        $("#filter_align-modal .radio-form").eq(1).prop('checked', true);
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
 
         loadWholesalerList(true);
     }
