@@ -496,7 +496,8 @@
                 data            : {
                     'idx'       : idx,
                     'type'      : type,
-                    'message'   : '상품 문의드립니다.'
+                    'message'   : '상품 문의드립니다.',
+                    'productThumbnailURL' : "{{ $data['detail']->attachment[0]['imgUrl'] }}",
                 },
                 type            : 'POST',
                 dataType        : 'json',
