@@ -242,11 +242,15 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::get('/club', 'CommunityController@clubList');
     Route::post('/club/register', 'CommunityController@clubRegister');
     Route::post('/club/withdrawal', 'CommunityController@clubWithdrawal');
-    Route::get('/club/detail/{idx}', 'CommunityController@clubDetail');
+    Route::get('/club/{idx}', 'CommunityController@clubDetail');
     Route::get('/club/article/{idx}', 'CommunityController@clubArticle');
     Route::post('/club/reply', 'CommunityController@clubReply');
     Route::delete('/club/reply/{idx}', 'CommunityController@removeClubReply');
     Route::post('/club/like-article', 'CommunityController@toggleClubArticleLike');
+    Route::get('/club/{clubIdx}/write/{idx?}','CommunityController@clubArticleForm');
+    Route::post('/club/{clubIdx}/write','CommunityController@createClubArticle');
+    Route::put('/club/{clubIdx}/write','CommunityController@modifyClubArticle');
+    Route::delete('/club/{clubIdx}/write/{idx}', 'CommunityController@removeClubArticle');
 
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');
