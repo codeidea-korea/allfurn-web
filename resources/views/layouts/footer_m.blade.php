@@ -1,6 +1,7 @@
 @if(!Str::contains(url()->current(), ['/magazine/daily/detail', '/magazine/furniture/detail', 
                                       '/magazine/detail', '/community/detail', '/community/write',
-                                      '/home/category','/product/registration'
+                                      '/home/category','/product/registration',
+                                      '/community/club/article'
                                       ]))
     <footer>
         <div class="inner">

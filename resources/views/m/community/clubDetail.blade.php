@@ -11,7 +11,7 @@
 <div id="content">
     @include('m.community.community-tab')
 
-    <section class="sub_section">
+    <section class="sub_section_top">
         <div class="inner">
             <div class="main_tit mb-5 flex justify-between items-center">
                 <div class="flex items-center gap-4">
@@ -113,7 +113,7 @@
                                             <div class="bot">
                                                 <div class="info">
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_view"></use></svg>
-                                                    <span>{{ $article->view_count }}</span>
+                                                    <span>{{ $article->hit }}</span>
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>
                                                     <span>{{ $article->like_count }}</span>
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_comment"></use></svg>
@@ -129,10 +129,17 @@
                     </div>
                 </div>
             @else 
-                <div>
-                    게시글이 없습니다.
+                <div class="inner">
+                    <div>
+                        게시글이 없습니다.
+                    </div>
                 </div>
             @endif 
+            <div class="inner" style="margin-top: 20px">
+                <div class="community_write_btn">
+                    <a href="/community/club/{{$club->idx}}/write" class="btn btn-round btn-primary px-4"><svg class="w-5 h-5 mr-1"><use xlink:href="/img/icon-defs.svg#write_add"></use></svg>글쓰기</a>
+                </div>
+            </div>
         </div>
     </section>
 </div>

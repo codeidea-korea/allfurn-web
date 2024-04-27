@@ -1,11 +1,25 @@
-@extends('layouts.app')
+@extends('layouts.app_m')
 
 @section('content')
-@include('layouts.header')
-<div id="content">
-    @include('community.community-tab')
+{{-- @include('layouts.header_m') --}}
 
-    <section class="sub_section_top community_detail">
+<div id="content">
+    <div class="detail_mo_top">
+        <div class="inner">
+            <a class="back_img" href="javascript:history.back()"><svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg></a>
+            <div class="more_btn">
+                @if( $article->manager_idx === Auth::user()->company_idx || $article->user_cidx === Auth::user()->company_idx)
+                    <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
+                    <div>
+                        <div><a href="/community/write/{{$article->idx}}">수정</a></div>
+                        <div><a href="javascript:;" onclick="deleteArticle({{ $article->idx }})">삭제</a></div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <section class="community_detail">
         <div class="inner">
             <div class="title">
                 <div class="tag">
@@ -13,95 +27,69 @@
                         <span>공지</span>
                     @endif
                 </div>
-                <div class="flex items-center justify-between">
-                    <h3>{{ $article->title }}</h3>
-                    <div class="custom_hover shrink-0">
-                        @if( $article->manager_idx === Auth::user()->company_idx || $article->user_cidx === Auth::user()->company_idx)
-                        <button class="p-2"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                        <div class="hover_cont">
-                            {{-- @if( $article->manager_idx === Auth::user()->company_idx || $article->user_cidx === Auth::user()->company_idx) --}}
-                                <div><a href="/community/club/{{$article->club_idx}}/write/{{ $article->idx }}">수정</a></div>
-                                <div><a href="javascript:;" onclick="deleteArticle({{ $article->idx }})">삭제</a></div>
-                            {{-- @else --}}
-                            {{-- @else
-                                <a href="javascript:;" onclick="setReportedArticleInfoAndModalOpen({{ $article->idx }}, {{ $article->company_idx }}, '{{ $article->company_type }}')">신고하기</a> --}}
-                            {{-- @endif --}}
-                        </div>
-                        @endif
-                    </div>
-                </div>
+                <h3>{{ $article->title }}</h3>
                 <p>{{ $article->user_cname }}</p>
                 <div class="info">
                     <p>
                         <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_view"></use></svg>
                         조회 {{ $article->hit }}
                     </p>
-                    <p>
-                        {{ date('Y.m.d H:i', strtotime($article->register_time)) }}
-                    </p>
+                    <p>{{ date('Y.m.d H:i', strtotime($article->register_time)) }}</p>
                 </div>
             </div>
             <div class="content">
                 {!! $article->content !!}
             </div>
-            <div class="bottom">
-                <div class="link_box">
-                    <button class="btn zzim_btn {{ $article->is_like ? 'active' : ''}}" data-club-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
-                    <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
-                </div>
-
-                <div class="comment_box">
-                    <h6>댓글 {{ count($comments) }}</h6>
-                    <div class="comment_list">
-                        @foreach ($comments as $comment)
-                            <div class="comment_item {{ $comment->depth == 2 ? 'recomment_item' : '' }}"  data-id="{{ $comment->idx }}">
-                                <div class="name">
-                                    <p>
-                                        <b>{{$comment->user_cname}}</b>
-                                        {{$comment->diff_time}}
-                                    </p>
-                                    @if($comment->user_cidx == auth()->user()->company_idx)
-                                        <div class="more_btn">
-                                            <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
-                                            <div>
-                                                {{-- @if($comment->user_cidx == auth()->user()->company_idx) --}}
-                                                    <a href="javascript:;" onclick="deleteComment({{ $comment->idx }})">삭제</a>
-                                                {{-- @else
-                                                    <a href="javascript:;" onclick="setReportedCommentInfoAndModalOpen({{ $comment->idx }}, {{ $comment->user_cidx }}, '{{ $comment->user_ctype }}')">신고하기</a> --}}
-                                                {{-- @endif --}}
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="comm">
-                                    {{$comment->content }}
-                                </div>
-                                @if ($comment->depth == 1)
-                                    <div class="recomm">
-                                        <button class="recomm_btn">
-                                            <svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> 답글 쓰기
-                                        </button>
-                                        <div class="recomm_form">
-                                            <p><svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> {{$comment->user_cname}} 님에게 답글 쓰는 중</p>
-                                            <div class="comment_form">
-                                                <input type="text" class="input-form" placeholder="답글을 입력해주세요." data-parent-id="{{ $comment->idx }}">
-                                                <button class="btn btn-line4 nohover comment_cancel">취소</button>
-                                                <button class="btn btn-primary" disabled>등록</button>
-                                            </div>
+        </div>
+        <div class="bottom">
+            <div class="link_box">
+                <button class="btn zzim_btn {{ $article->is_like ? 'active' : ''}}" data-club-article-id="{{$article->idx}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>좋아요 <span id="like_count">{{ $article->like_count }}</span></button>
+                <button class="btn" id="shareArticleBtn"><svg><use xlink:href="/img/icon-defs.svg#share"></use></svg>공유하기</button>
+            </div>
+            <div class="comment_box">
+                <h6>댓글 {{ count($comments) }}</h6>
+                <div class="comment_list">
+                    @foreach ($comments as $comment)
+                        <div class="comment_item {{ $comment->depth == 2 ? 'recomment_item' : '' }}"  data-id="{{ $comment->idx }}">
+                            <div class="name">
+                                <p>
+                                    <b>{{$comment->user_cname}}</b>
+                                    {{$comment->diff_time}}
+                                </p>
+                                @if($comment->user_cidx == auth()->user()->company_idx)
+                                    <div class="more_btn">
+                                        <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
+                                        <div>
+                                            <a href="javascript:;" onclick="deleteComment({{ $comment->idx }})">삭제</a>
                                         </div>
                                     </div>
                                 @endif
                             </div>
-                        @endforeach
-                    </div>
+                            <div class="comm">
+                                {{$comment->content }}
+                            </div>
+                            @if ($comment->depth == 1)
+                                <div class="recomm">
+                                    <button class="recomm_btn">
+                                        <svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> 답글 쓰기
+                                    </button>
+                                    <div class="recomm_form">
+                                        <p><svg><use xlink:href="/img/icon-defs.svg#recomment"></use></svg> {{$comment->user_cname}} 님에게 답글 쓰는 중</p>
+                                        <div class="comment_form">
+                                            <input type="text" class="input-form" placeholder="답글을 입력해주세요." data-parent-id="{{ $comment->idx }}">
+                                            <button class="btn btn-line4 nohover comment_cancel">취소</button>
+                                            <button class="btn btn-primary" disabled>등록</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
-                <div class="comment_form mb-8" id="new_comment">
-                    <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
-                    <button class="btn btn-primary" disabled>등록</button>
-                </div>
-                <div class="flex items-center justify-center">
-                    <a href="javascript:history.back();" class="btn btn-line w-[300px]">목록보기</a>
-                </div>
+            </div>
+            <div class="comment_form">
+                <input type="text" class="input-form" placeholder="댓글을 입력해주세요.">
+                <button class="btn btn-primary" disabled>등록</button>
             </div>
         </div>
     </section>
@@ -128,7 +116,7 @@
             <div class="modal_body agree_modal_body">
                 <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
                 <div class="flex gap-2 justify-center">
-                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community/club/{{$article->club_idx}}')">확인</button>
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community')">확인</button>
                 </div>
             </div>
         </div>
@@ -182,9 +170,12 @@
             </div>
         </div>
     </div>
+
 </div>
+
 <script>
-    // 대댓글 입력 
+
+    // 댓글 입력 
     $('.comment_list .recomm_btn').on('click',function(){
         $(this).next('.recomm_form').toggleClass('active')
     })
@@ -192,7 +183,6 @@
         $(this).parents('.recomm_form').toggleClass('active')
     })
 
-    // 댓글 입력
     $(".comment_form input").on('keyup', function() {
         if($(this).val().length === 0) {
             $(this).nextAll('button.btn-primary').attr('disabled', true);
@@ -201,7 +191,6 @@
         }
     });
 
-    // 댓글 등록 클릭
     $(".comment_form button").on('click', function() {
         const $comment = $(this).prevAll('input.input-form');
         if($comment.val().length > 0) {
@@ -217,7 +206,8 @@
             comment(data);
         }
     });
-    
+
+    // 댓글 달기
     function comment(data) {
         if(data!==undefined && typeof(data)=="object") {
             $.ajax({
@@ -252,6 +242,7 @@
             url: '/community/club/reply/' + idx,
             success : function (result) {
                 if(result.result === "success") {
+                    $("#delete_comment-modal .py-4").html('<b>삭제 완료되었습니다.</b>')
                     modalOpen("#delete_comment-modal");    
                 }
             }

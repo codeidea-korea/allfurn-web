@@ -42,7 +42,7 @@
                                         </a></li>
                                     @endforeach 
                                 </ul>
-                                <a href="/community/club/detail/{{$club->idx}}" class="more_btn btn btn-line4">더보기</a>
+                                <a href="/community/club/{{$club->idx}}" class="more_btn btn btn-line4">더보기</a>
                             </div>
                         </li>
                     @endforeach

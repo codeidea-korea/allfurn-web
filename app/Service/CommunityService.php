@@ -973,6 +973,9 @@ class CommunityService {
 
     function isActiveArticle(int $idx)
     {
+        //조회수 up
+        DB::table('AF_club_article')->where('idx', $idx)->increment('hit');
+
         $club = DB::table('AF_club_article')
             ->select('club_idx')
             ->where('idx', $idx)
@@ -1136,7 +1139,7 @@ class CommunityService {
         if (Auth::check()) {
             $articleLike = ClubArticleLike::where('article_idx', $articleIdx)->where('user_idx', Auth::user()['idx'])->first();
             if (isset($articleLike['idx'])) {
-                ArticleLike::where('idx', $articleLike['idx'])->delete();
+                ClubArticleLike::where('idx', $articleLike['idx'])->delete();
                 return [
                     'result' => 'success',
                     'code' => 'DOWN',
@@ -1158,6 +1161,107 @@ class CommunityService {
             'result' => 'fail',
             'code' => 'ERR',
             'message' => '로그인이 필요합니다.'
+        ];
+    }
+
+    public function checkIsMember(int $clubIdx)
+    {
+        if(!$this->isActiveClub($clubIdx)) return false;
+
+        return DB::table('AF_club_member')
+            ->where('club_idx', $clubIdx)
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->where('user_ctype', Auth::user()['type'])
+            ->first();
+    }
+
+    public function createClubArticle(array $param=[])
+    {
+        if (Auth::check()) {
+            $firstImage = "";
+            if (isset($param['firstImage']) && !empty($param['firstImage'])) {
+                $explode = explode('/', $param['firstImage']);
+                $firstImage = end($explode);
+            }
+
+            switch(Auth::user()['type']) {
+                case 'W':
+                    $user_cname = DB::select("select company_name from AF_wholesaler where idx =".Auth::user()['company_idx']);
+                    break;
+    
+                case 'R':
+                    $user_cname = DB::select("select company_name from AF_retail where idx =".Auth::user()['company_idx']);
+                    break;
+    
+                default:
+                    $user_cname =  DB::select("select company_name from AF_normal where idx =".Auth::user()['company_idx']);;
+                    break;
+            }
+
+            DB::table("AF_club_article")->insert([
+                'club_idx' => $param['clubIdx'], 
+                'user_cidx' => Auth::user()['company_idx'],
+                'user_cname' => $user_cname[0]->company_name, 
+                'user_ctype' => Auth::user()['type'], 
+                'title'=> $param['boardTitle'],
+                'content'=>$param['editor_content'],
+                'is_notice' => $param['isNotice'] == 'notice' ? '1' : '0', 
+                'is_open' => '1',
+                'is_delete' => '0',
+                'first_image' => $firstImage,
+                'register_time' => Carbon::now(),
+                'update_time' => Carbon::now(),
+            ]);
+
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function modifyClubArticle(array $param=[])
+    {
+        if (Auth::check()) {
+            $firstImage = "";
+            if (isset($param['firstImage']) && !empty($param['firstImage'])) {
+                $explode = explode('/', $param['firstImage']);
+                $firstImage = end($explode);
+            }
+
+            DB::table("AF_club_article")
+            ->where('idx', $param['articleIdx'])
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->update([
+                'title' => $param['boardTitle'],
+                'content' => $param['editor_content'],
+                'is_notice' => $param['isNotice'] == 'notice' ? '1' : '0', 
+                'update_time' => Carbon::now(),
+                'first_image' => $firstImage,
+            ]);
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function removeClubArticle(int $idx)
+    {
+        if (Auth::check()) {
+
+            DB::table("AF_club_article")
+            ->where('idx', $idx)
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->update([
+                'is_open' => 0,
+                'is_delete' => 1,
+                'update_time' => Carbon::now(),
+            ]);
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
         ];
     }
 }

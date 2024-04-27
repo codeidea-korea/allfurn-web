@@ -350,7 +350,7 @@ class CommunityController extends BaseController
         $article = $this->communityService->getClubArticleDetail($idx);
         $comments = $this->communityService->getClubArticleComments($idx);
 
-        return view('community.clubArticleDetail', [
+        return view(getDeviceType().'community.clubArticleDetail', [
             'article' => $article,
             'comments' => $comments,
         ]);
@@ -368,5 +368,33 @@ class CommunityController extends BaseController
     public function toggleClubArticleLike(Request $request) {
         $idx = $request->input('articleId');
         return response()->json($this->communityService->toggleClubArticleLike($idx));
+    }
+
+    public function clubArticleForm(int $clubIdx, int $idx = null)
+    {
+        //해당 가구인 모임의 회원인지 체크
+        if(!$this->communityService->checkIsMember($clubIdx)) return redirect('/community/club');
+
+        $data['idx'] = $idx; // idx 가 있으면 수정 없으면 등록
+        $data['clubIdx'] = $clubIdx;
+        if ($data['idx']) {
+            $data['detail'] = $this->communityService->getClubArticleDetail($idx);
+        }
+        return view(getDeviceType().'community.clubArticleForm', $data);
+    }
+
+    public function createClubArticle(Request $request)
+    {
+        return response()->json($this->communityService->createClubArticle($request->all()));
+    }
+
+    public function modifyClubArticle(Request $request)
+    {
+        return response()->json($this->communityService->modifyClubArticle($request->all()));
+    }
+
+    public function removeClubArticle(int $clubIdx, int $articlleIdx)
+    {
+        return response()->json($this->communityService->removeClubArticle($articlleIdx));
     }
 }

@@ -106,7 +106,7 @@
                                             <div class="bot">
                                                 <div class="info">
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_view"></use></svg>
-                                                    <span>{{ $article->view_count }}</span>
+                                                    <span>{{ $article->hit }}</span>
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#zzim"></use></svg>
                                                     <span>{{ $article->like_count }}</span>
                                                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#commu_comment"></use></svg>
@@ -132,6 +132,9 @@
                         게시글이 없습니다.
                     </div>
                 @endif
+            </div>
+            <div class="community_write_btn">
+                <a href="/community/club/{{$club->idx}}/write" class="btn btn-round btn-primary px-4"><svg class="w-5 h-5 mr-1"><use xlink:href="/img/icon-defs.svg#write_add"></use></svg>글쓰기</a>
             </div>
         </div>
     </section>
