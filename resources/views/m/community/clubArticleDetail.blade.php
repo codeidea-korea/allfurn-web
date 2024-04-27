@@ -11,7 +11,7 @@
                 @if( $article->manager_idx === Auth::user()->company_idx || $article->user_cidx === Auth::user()->company_idx)
                     <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
                     <div>
-                        <div><a href="/community/write/{{$article->idx}}">수정</a></div>
+                        <div><a href="/community/club/{{$article->club_idx}}/write/{{ $article->idx }}">수정</a></div>
                         <div><a href="javascript:;" onclick="deleteArticle({{ $article->idx }})">삭제</a></div>
                     </div>
                 @endif
@@ -116,7 +116,7 @@
             <div class="modal_body agree_modal_body">
                 <p class="text-center py-4"><b>삭제 완료되었습니다.</b></p>
                 <div class="flex gap-2 justify-center">
-                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community')">확인</button>
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="location.replace('/community/club/{{$article->club_idx}}')">확인</button>
                 </div>
             </div>
         </div>
