@@ -1361,9 +1361,13 @@
                                 </div>
                             </li>`
                         );
+
+                        $('.product_option_td').eq(i).find('select').attr('name', '');
+                        $('.product_option_td').eq(i).find('select').each(function(index){
+                            $(this).val($('.product_option_select').eq(i).find('select option:selected').eq(index).val());
+                        });
+                        $('.product_option_td').eq(i).find('select').attr('disabled', true);
                     }
-                    $('.product_option_td').find('select').attr('name', '');
-                    $('.product_option_td').find('select').attr('disabled', true);
                     
                     $('.request_order_product_total_count').text(response_estimate_product_total_count + '개');
                     $('.request_order_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
