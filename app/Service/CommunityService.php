@@ -478,6 +478,7 @@ class CommunityService {
                 'depth3' => 'subscribe',
                 'variables' => [$board->name],
                 'link_url' => '/community?board_name='.$board->name,
+                'web_url' => '/community?board_name='.$board->name,
             ];
             foreach($subscribed as $subs) {
                 $user = User::find($subs->user_idx);
@@ -485,7 +486,7 @@ class CommunityService {
                 $alarmParams['target_company_type'] = $user->type;
                 $alarmService->sendAlarm($alarmParams);
                 $this->pushService->sendPush('올펀 게시글 알림', '구독한 '. $board->name .'에 새 글이 등록되었습니다.', 
-                    $user->company_idx, $type = 3, 'allfurn://community?board_name='.$board->name ,'/community?board_name='.$board->name);
+                    $user->idx, $type = 3, '/community?board_name='.$board->name ,'/community?board_name='.$board->name);
             }
         }
         return [
