@@ -17,6 +17,8 @@ use App\Models\SubscribeBoard;
 use App\Models\User;
 use App\Models\UserSearch;
 use App\Models\Club;
+use App\Models\ClubArticleComment;
+use App\Models\ClubArticleLike;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -593,10 +595,10 @@ class CommunityService {
             //fcm 푸시
             if ($parent_idx) {
                 $this->pushService->sendPush('올펀 게시글 알림', '작성한 댓글에 답글이 작성되었습니다.', 
-                    $user->company_idx, $type = 3, 'allfurn://community/detail/'.$re_reply->article_idx  ,'/community/detail/'.$re_reply->article_idx);
+                    $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$re_reply->article_idx, env('APP_URL').'/community/detail/'.$re_reply->article_idx);
             } else {
                 $this->pushService->sendPush('올펀 게시글 알림', '작성한 게시글에 댓글이 작성되었습니다.', 
-                    $user->company_idx, $type = 3, 'allfurn://community/detail/'.$article->idx  ,'/community/detail/'.$article->idx);
+                    $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$article->idx, env('APP_URL').'/community/detail/'.$article->idx);
             }
             
         }
@@ -842,12 +844,424 @@ class CommunityService {
     // 가구인 모임
     public function getClubList()
     {
-        return Club::where('is_open', 1)
+        $clubList = DB::table('AF_club')->select('AF_club.*', DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
+        ->leftjoin('AF_attachment as at', function ($query) {
+            $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
+        })->where('is_open', 1)->get();
+
+        foreach($clubList as $club){
+            $articles = DB::table('AF_club_article')->where('club_idx', $club->idx)->where('is_delete', '0')->where('is_open', '1')->orderBy('idx', 'desc')->limit(3)->get();
+            $club->article = $articles;
+        }
+
+        return $clubList;
+    }
+
+    public function clubRegister($request)
+    {
+        $result = 0;
+
+        if (Auth::user()['type'] == "W"){
+            $company = DB::table('AF_wholesale')->selectRaw('company_name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }else if (Auth::user()['type'] == "R"){
+            $company = DB::table('AF_retail')->selectRaw('company_name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }else if (Auth::user()['type'] == "N" || Auth::user()['type'] == "S"){
+            $company = DB::table('AF_normal')->selectRaw('name as cname')->where('idx', Auth::user()['company_idx'])->first();
+        }
+
+        $clubMember = DB::table("AF_club_member")->where('club_idx', $request->club_idx)->where('user_cidx', Auth::user()['company_idx'])->where('user_ctype', Auth::user()['type'])->first();
+        if ($clubMember){
+            if ($clubMember->status == "0"){
+                return ['status' => 3];
+            }else{
+                return ['status' => 2];
+            }
+        }
+
+        DB::table("AF_club_member")->insert([
+            'club_idx' => $request->club_idx, 
+            'user_cidx' => Auth::user()['company_idx'],
+            'user_cname' => $company->cname, 
+            'user_ctype' => Auth::user()['type'], 
+            'is_manager' => '0', 
+            'status' => '1', 
+            'register_time' => Carbon::now(),
+        ]);
+
+        DB::table('AF_club')->where('idx', $request->club_idx)->increment('member_count');
+        return ['status' => 1];
+    }
+
+    public function getClubDetail(array $param=[])
+    {
+        $list = Club::select(
+                 'AF_club.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+            )
             ->leftjoin('AF_attachment as at', function ($query) {
                 $query->on('at.idx', 'AF_club.thumbnail_attachment_idx');
             })
-            ->select('AF_club.*', DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
+            ->where('AF_club.idx', $param['idx'])
+            ->where('AF_club.is_open', 1)
+            ->first();
+        
+        if(!$list) return null;
+
+        $list['member'] = DB::table('AF_club_member')
+            ->select(
+                 'AF_club_member.*'
+            )
+            ->where('AF_club_member.club_idx', $param['idx'])
+            ->where('AF_club_member.status', 1)
+            ->groupBy('AF_club_member.user_cidx')
+            ->orderby('AF_club_member.register_time')
             ->get();
+        
+        $list['article'] = DB::table('AF_club_article')
+            ->select(
+                 'AF_club_article.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+                , Db::raw('CASE WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 60 THEN "방금"
+                                WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 3600 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article.register_time, now())/60),"분 전")
+                                WHEN TIMESTAMPDIFF(SECOND,AF_club_article.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article.register_time, now())/3600),"시간 전")
+                                ELSE DATE_FORMAT(AF_club_article.register_time, "%Y.%m.%d") END diff_time')
+                , DB::raw('(CASE WHEN hit >= 100000000 THEN CONCAT(hit/100000000,"억")
+                                WHEN hit >= 10000000 THEN CONCAT(hit/10000000,"천만")
+                                WHEN hit >= 10000 THEN CONCAT(hit/10000, "만")
+                                WHEN hit >= 1000 THEN CONCAT(hit/1000, "천")
+                                ELSE hit END) AS view_count')
+                , DB::raw('(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                                        ELSE COUNT(*) END cnt FROM AF_club_article_like WHERE article_idx = AF_club_article.idx) AS like_count')
+                , DB::raw('(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                                        ELSE COUNT(*) END cnt FROM AF_club_article_comment WHERE article_idx = AF_club_article.idx) AS comment_count')
+            )
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_club_article.first_image');
+            })
+            ->where('AF_club_article.is_open', 1)
+            ->where('AF_club_article.is_delete', 0)
+            ->where('AF_club_article.club_idx', $param['idx'])
+            ->orderby('AF_club_article.is_notice', 'desc')
+            ->orderby('AF_club_article.register_time', 'desc')
+            ->get();
+
+        return $list;
     }
 
+    public function clubWithdrawal($request)
+    {
+        $result = DB::table('AF_club_member')->where('idx', $request->member_idx)->where('club_idx', $request->club_idx)->delete();
+        if ($result){
+            DB::table('AF_club')->where('idx', $request->club_idx)->decrement('member_count');
+        }
+
+        return ['status' => $result];
+    }
+
+    function isActiveClub(int $idx)
+    {
+        $clubIdx = Club::select('idx')->where('is_open', 1)->where('idx', $idx)->first();
+
+        return $clubIdx->idx;
+    }
+
+    function isActiveArticle(int $idx)
+    {
+        //조회수 up
+        DB::table('AF_club_article')->where('idx', $idx)->increment('hit');
+
+        $club = DB::table('AF_club_article')
+            ->select('club_idx')
+            ->where('idx', $idx)
+            ->where('is_open', 1)
+            ->where('is_delete', 0)
+            ->first();
+
+        if($club) {
+            return $this->isActiveClub($club->club_idx);
+        } else {
+            return false;
+        }
+    
+    }
+
+    function getClubArticleDetail(int $idx)
+    {
+        $article = DB::table('AF_club_article')
+            ->select('AF_club_article.*'
+                ,'AF_club.manager_idx'
+                , DB::raw('(SELECT count(*) FROM AF_club_article_like WHERE article_idx ='.$idx .') AS like_count')
+                , DB::raw('(SELECT IF(count(*)>0, 1, 0) FROM AF_club_article_like WHERE article_idx ='.$idx .' AND user_idx =' . Auth::user()->idx .') AS is_like')
+            )
+            ->leftjoin('AF_club', function($query) {
+                $query->on('AF_club.idx', 'AF_club_article.club_idx')
+                    ->where('AF_club.is_open', 1);
+            })
+            ->leftjoin('AF_club_article_like AS acal', function($query) {
+                $query->on('acal.article_idx', 'AF_club_article.club_idx')
+                    ->where('acal.user_idx', Auth::user()->idx);
+            })
+            ->where('AF_club_article.idx', $idx)
+            ->where('AF_club_article.is_open', 1)
+            ->where('AF_club_article.is_delete', 0)
+            ->first();
+        return $article;
+    }
+
+    function getClubArticleComments(int $idx)
+    {
+        $firstDepthComments = DB::table('AF_club_article_comment')
+            ->where('AF_club_article_comment.article_idx', $idx)
+            ->where('AF_club_article_comment.depth', 1)->where('AF_club_article_comment.is_delete', 0)
+            ->orderBy('AF_club_article_comment.register_time','desc')
+            ->orderBy('AF_club_article_comment.idx', 'desc')
+            ->join('AF_club_article', 'AF_club_article.idx', 'AF_club_article_comment.article_idx')
+            // ->join('AF_board', 'AF_board.idx', 'AF_club_article.board_idx')
+            // ->join('AF_user', 'AF_user.idx', 'AF_club_article_comment.c_idx')
+            ->leftJoin('AF_wholesale', function($query) {
+                $query->on('AF_wholesale.idx', 'AF_club_article_comment.user_cidx')->where('AF_club_article_comment.user_ctype', 'W');
+            })
+            ->leftJoin('AF_retail', function($query) {
+                $query->on('AF_retail.idx', 'AF_club_article_comment.user_cidx')->where('AF_club_article_comment.user_ctype', 'R');
+            })
+            ->select('AF_club_article_comment.*', 
+                DB::raw("CASE WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 60 THEN '방금'
+                   WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 3600 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now())/60),'분 전')
+                   WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now())/3600),'시간 전')
+                   ELSE DATE_FORMAT(AF_club_article_comment.register_time, '%Y.%m.%d')
+              END diff_time"))
+            ->get();
+        
+        $secondDepthComments = DB::table('AF_club_article_comment')
+            ->where('AF_club_article_comment.article_idx', $idx)
+            ->where('AF_club_article_comment.depth', 2)->where('AF_club_article_comment.is_delete', 0)
+            ->orderBy('AF_club_article_comment.register_time','desc')
+            ->orderBy('AF_club_article_comment.idx', 'desc')
+            ->join('AF_club_article', 'AF_club_article.idx', 'AF_club_article_comment.article_idx')
+            // ->join('AF_board', 'AF_board.idx', 'AF_club_article.board_idx')
+            // ->join('AF_user', 'AF_user.idx', 'AF_club_article_comment.c_idx')
+            ->leftJoin('AF_wholesale', function($query) {
+                $query->on('AF_wholesale.idx', 'AF_club_article_comment.user_cidx')->where('AF_club_article_comment.user_ctype', 'W');
+            })
+            ->leftJoin('AF_retail', function($query) {
+                $query->on('AF_retail.idx', 'AF_club_article_comment.user_cidx')->where('AF_club_article_comment.user_ctype', 'R');
+            })
+            ->select('AF_club_article_comment.*', 
+                DB::raw("CASE WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 60 THEN '방금'
+                WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 3600 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now())/60),'분 전')
+                WHEN TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,AF_club_article_comment.register_time, now())/3600),'시간 전')
+                ELSE DATE_FORMAT(AF_club_article_comment.register_time, '%Y.%m.%d')
+            END diff_time"))
+            ->get();
+            // dd($firstDepthComments);
+
+        $comments = [];
+        $firstComments = $firstDepthComments->toArray();
+        $secondComments = $secondDepthComments->toArray();
+        foreach($firstComments as $firstComment) {
+            array_push($comments, $firstComment);
+
+            $arr = array_filter($secondComments, function($secondComment) use($firstComment) {
+                return $secondComment->parent_idx == $firstComment->idx;
+            });
+            $comments = array_merge($comments, $arr);
+        }
+        return $comments;
+    }
+
+    function clubReply($params)
+    {
+        $content = $params['replyComment'];
+        $article_idx = $params['articleId'];
+        $parent_idx = isset($params['parentId']) ? $params['parentId'] : null;
+
+        switch(Auth::user()['type']) {
+            case 'W':
+                $user_cname = DB::select("select company_name from AF_wholesaler where idx =".Auth::user()['company_idx']);
+                break;
+
+            case 'R':
+                $user_cname = DB::select("select company_name from AF_retail where idx =".Auth::user()['company_idx']);
+                break;
+
+            default:
+                $user_cname =  DB::select("select company_name from AF_normal where idx =".Auth::user()['company_idx']);;
+                break;
+        }
+
+        if (Auth::check()) {
+            $reply = new ClubArticleComment;
+            $reply->user_cidx = Auth::user()['company_idx'];
+            $reply->user_ctype = Auth::user()['type'];
+            $reply->user_cname = $user_cname[0]->company_name;
+            $reply->article_idx = $article_idx;
+            $reply->depth = ($parent_idx ? 2 : 1);
+            $reply->content = $content;
+            $reply->is_delete = 0;
+
+            if ($parent_idx) {
+                $reply->parent_idx = $parent_idx;
+            }
+            $reply->save();
+        }
+
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function removeClubReply(int $idx)
+    {
+        if (Auth::check()) {
+            $article = ClubArticleComment::where('idx', $idx)->where('user_cidx', Auth::user()['company_idx'])->first();
+            if ($article->depth == 1) {
+                // 대댓글 모두 삭제 처리
+                Reply::where('depth', 2)->where('parent_idx', $idx)->update(['is_delete' => 1]);
+            }
+            $article->is_delete = 1;
+            $article->save();
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function toggleClubArticleLike(int $articleIdx)
+    {
+        if (Auth::check()) {
+            $articleLike = ClubArticleLike::where('article_idx', $articleIdx)->where('user_idx', Auth::user()['idx'])->first();
+            if (isset($articleLike['idx'])) {
+                ClubArticleLike::where('idx', $articleLike['idx'])->delete();
+                return [
+                    'result' => 'success',
+                    'code' => 'DOWN',
+                    'message' => ''
+                ];
+            } else {
+                $article = new ClubArticleLike;
+                $article->user_idx = Auth::user()['idx'];
+                $article->article_idx = $articleIdx;
+                $article->save();
+                return [
+                    'result' => 'success',
+                    'code' => 'UP',
+                    'message' => ''
+                ];
+            }
+        }
+        return [
+            'result' => 'fail',
+            'code' => 'ERR',
+            'message' => '로그인이 필요합니다.'
+        ];
+    }
+
+    public function checkIsMember(int $clubIdx)
+    {
+        if(!$this->isActiveClub($clubIdx)) return false;
+
+        return DB::table('AF_club_member')
+            ->where('club_idx', $clubIdx)
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->where('user_ctype', Auth::user()['type'])
+            ->first();
+    }
+
+    public function createClubArticle(array $param=[])
+    {
+        if (Auth::check()) {
+            $firstImage = "";
+            if (isset($param['firstImage']) && !empty($param['firstImage'])) {
+                $explode = explode('/', $param['firstImage']);
+                $firstImage = end($explode);
+            }
+
+            switch(Auth::user()['type']) {
+                case 'W':
+                    $user_cname = DB::select("select company_name from AF_wholesaler where idx =".Auth::user()['company_idx']);
+                    break;
+    
+                case 'R':
+                    $user_cname = DB::select("select company_name from AF_retail where idx =".Auth::user()['company_idx']);
+                    break;
+    
+                default:
+                    $user_cname =  DB::select("select company_name from AF_normal where idx =".Auth::user()['company_idx']);;
+                    break;
+            }
+
+            DB::table("AF_club_article")->insert([
+                'club_idx' => $param['clubIdx'], 
+                'user_cidx' => Auth::user()['company_idx'],
+                'user_cname' => $user_cname[0]->company_name, 
+                'user_ctype' => Auth::user()['type'], 
+                'title'=> $param['boardTitle'],
+                'content'=>$param['editor_content'],
+                'is_notice' => $param['isNotice'] == 'notice' ? '1' : '0', 
+                'is_open' => '1',
+                'is_delete' => '0',
+                'first_image' => $firstImage,
+                'register_time' => Carbon::now(),
+                'update_time' => Carbon::now(),
+            ]);
+
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function modifyClubArticle(array $param=[])
+    {
+        if (Auth::check()) {
+            $firstImage = "";
+            if (isset($param['firstImage']) && !empty($param['firstImage'])) {
+                $explode = explode('/', $param['firstImage']);
+                $firstImage = end($explode);
+            }
+
+            DB::table("AF_club_article")
+            ->where('idx', $param['articleIdx'])
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->update([
+                'title' => $param['boardTitle'],
+                'content' => $param['editor_content'],
+                'is_notice' => $param['isNotice'] == 'notice' ? '1' : '0', 
+                'update_time' => Carbon::now(),
+                'first_image' => $firstImage,
+            ]);
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    function removeClubArticle(int $idx)
+    {
+        if (Auth::check()) {
+
+            DB::table("AF_club_article")
+            ->where('idx', $idx)
+            ->where('user_cidx', Auth::user()['company_idx'])
+            ->update([
+                'is_open' => 0,
+                'is_delete' => 1,
+                'update_time' => Carbon::now(),
+            ]);
+        }
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
 }

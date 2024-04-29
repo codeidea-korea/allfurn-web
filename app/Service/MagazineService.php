@@ -34,6 +34,10 @@ class MagazineService
                 , DB::raw("DATE_FORMAT(AF_magazine.start_date, '%Y.%m.%d') AS start_date")
                 , DB::raw("DATE_FORMAT(AF_magazine.end_date, '%Y.%m.%d') AS end_date")
                 , DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'));
+        
+        if(isset($params['category']) && $params['category'] != 'all') {
+            $query->where('category_list', $params['category']);
+        }
 
         $data['count'] = $query->count();
         $list = $query->orderBy('AF_magazine.idx', 'desc');
@@ -50,6 +54,7 @@ class MagazineService
         $data['list'] = $list;
         if(isset($params['offset']) && isset($params['limit'])) {
             $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
+            $data['last_page'] = $data['count'] > 0 ? ceil($data['count'] / $params['limit']) : 1;
         }
         return $data;
     }
@@ -98,6 +103,13 @@ class MagazineService
                 , DB::raw('CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl')
             )
             ->orderByRaw('banner_price desc, RAND()')
+            ->get();
+    }
+
+    public function getMagazineCategories()
+    {
+        return DB::table('AF_magazine_category')
+            ->where('is_delete', 0)
             ->get();
     }
 }

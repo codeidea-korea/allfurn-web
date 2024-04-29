@@ -22,7 +22,7 @@ class HelpController extends BaseController
 
     public function index(): RedirectResponse
     {
-        return redirect()->route('help.faq');
+        return redirect()->route('help.guide');
     }
 
     /**
@@ -55,6 +55,21 @@ class HelpController extends BaseController
         $data['pageType'] = 'notice';
         $data = array_merge($data, $this->helpService->getNoticeList($params));
         return view(getDeviceType().'help.notice', $data);
+    }
+
+    /**
+     * 이용 가이드 리스트
+     * @param Request $request
+     * @return View
+     */
+    public function guide(Request $request): View
+    {
+        $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
+        $params['limit'] = $data['limit'] = $this->limit;
+
+        $data['pageType'] = 'guide';
+        $data = array_merge($data, $this->helpService->getGuideList($params));
+        return view(getDeviceType().'help.guide', $data);
     }
 
     /**

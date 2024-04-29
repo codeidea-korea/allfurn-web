@@ -46,30 +46,18 @@
 
                 <div class="sub_filter">
                     <div class="filter_box">
-                        <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                        <button onclick="modalOpen('#option-modal')">속성</button>
+                        <button onclick="modalOpen('#filter_align-modal02')">신상품순</button>
+                        <button class="optionDrop" onclick="modalOpen('#option-modal')">속성 <b class="txt-primary"></b></button>
+                        <button class="refresh_btn" onclick="optionReset()">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                     </div>
                     <div class="total">전체 {{number_format( $data['list']->total())}}개</div>
                 </div>
-                {{--
-                <div class="sub_filter">
-                    <div class="filter_box">
-                        <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
-                        <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                        <button class="on" onclick="modalOpen('#option-modal')">속성 <b class="txt-primary">2</b></button>
-                    </div>
-                    <div class="total">전체 428개</div>
-                </div>
-                --}}
-                {{-- <div class="sub_filter_result">
+                <div class="sub_filter_result hidden">
                     <div class="filter_on_box">
-                        <div class="category">
-                            <span>소파/거실 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
-                            <span>식탁/의자 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
-                            <span>수납/서랍장/옷장 <button onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>
+                        <div class="category checkedProperties">
                         </div>
                     </div>
-                </div> --}}
+                </div>
 
                 <div class="relative">
                     <ul class="prod_list">
@@ -116,7 +104,7 @@
             <div class="modal_body filter_body">
                 <h4>속성</h4>
                 <div class="sub_category type02 mt-3">
-                    <ul>
+                    <ul class="prod_property_tab">
                         <li class="active"><a href="javascript:;">사이즈</a></li>
                         <li><a href="javascript:;">프레임형태</a></li>
                         <li><a href="javascript:;">소재</a></li>
@@ -126,7 +114,7 @@
                         <li><a href="javascript:;">원산지</a></li>
                     </ul>
                 </div>
-                <div class="category_tab">
+                <div class="category_tab prod_property_cont">
                     <div class="active">
                         <ul class="filter_list">
                             <li>
@@ -163,148 +151,319 @@
                             </li>
                         </ul>
                     </div>
-                    <div>
-                        <ul class="filter_list">
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_2_1">
-                                <label for="option_2_1">하단오픈형</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_2_2">
-                                <label for="option_2_2">하단밀폐형</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_2_3">
-                                <label for="option_2_3">하단서랍형</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_2_4">
-                                <label for="option_2_4">기타</label>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
                 <div class="btn_bot">
                     <button class="btn btn-line3 refresh_btn" onclick="optionRefresh(this)"><svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg>초기화</button>
-                    <button class="btn btn-primary full">선택 완료</button>
+                    <button class="btn btn-primary full confirm_prod_property">선택 완료</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const line_common_banner = new Swiper(".line_common_banner", {
-            slidesPerView: 1,
-            spaceBetween: 0,
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
+    const line_common_banner = new Swiper(".line_common_banner", {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".line_common_banner .count_pager",
+            type: "fraction",
+        }
+    });
+
+    let isLoading = false;
+    let isLastPage = false;
+    let currentPage = 1;
+
+    // 카테고리 클릭시
+    $('.sub_category li').on('click',function(){
+        $(this).addClass('active').siblings().removeClass('active')
+    })
+
+    $('.sub_category.type02 li').on('click',function(){
+        let liN = $(this).index();
+        $(this).addClass('active').siblings().removeClass('active')
+        $('.category_tab > div').eq(liN).addClass('active').siblings().removeClass('active')
+    })
+
+    function locationGo() {
+        var prop = '';
+        $('#option-modal .sub_property_area').each(function(o){
+            if ($('#option-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
+                $('#option-modal .sub_property_area:eq('+o+') .check-form:checked').map(function (n, i) {
+                    prop += $(this).data('sub_property') + "|";
+                })
+            }
+        });
+
+        url = '/product/category?';
+        urlSearch = new URLSearchParams(location.search);
+        if (urlSearch.get('ca') != null) {
+            url += 'ca='+urlSearch.get('ca');
+        }
+        if (urlSearch.get('pre') != null) {
+            url += '&pre='+urlSearch.get('pre');
+        }
+
+        if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
+            url += '&so=' +  $("#filter_align-modal02 .radio-form:checked").val();
+        }
+
+        location.replace(url+'&prop='+prop.slice(0, -1));
+    }
+
+    // 정렬 선택시
+    $(document).on('click', '#filter_align-modal02 .btn-primary', function() {
+        locationGo();
+    });
+
+    const optionRefresh = (item)=>{
+        $(item).parents('.filter_body').find('input').each(function(){
+            $(this).prop("checked",false);
+        });
+    }
+
+    const optionReset = ()=>{
+        url = '/product/category?';
+        urlSearch = new URLSearchParams(location.search);
+        if (urlSearch.get('ca') != null) {
+            url += 'ca='+urlSearch.get('ca');
+        }
+        if (urlSearch.get('pre') != null) {
+            url += '&pre='+urlSearch.get('pre');
+        }
+        location.replace(url);
+    }
+
+    function loadNewProductList() {
+        if(isLoading) return;
+        if(isLastPage) return;
+
+        isLoading = true;
+
+        var categories = '';
+        var parents = '';
+        let property = '';
+        var orderedElement = '';
+        urlSearch = new URLSearchParams(location.search);
+        if (urlSearch.get('ca') != null) {
+            categories = urlSearch.get('ca');
+        }
+        if (urlSearch.get('pre') != null) {
+            parents = urlSearch.get('pre');
+        }
+
+        if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
+            orderedElement = $("#filter_align-modal02 .radio-form:checked").val();
+        }
+
+        $('#loadingContainer').show();
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/product/getJsonListByCategory',
+            method: 'GET',
+            data: {
+                'page': ++currentPage,
+                'ca' : categories,
+                'pre' : parents,
+                'prop' : property,
+                'so' : orderedElement,
             },
-            pagination: {
-                el: ".line_common_banner .count_pager",
-                type: "fraction",
+            success: function(result) {
+
+                displayNewWholesaler(result.query, $(".relative ul.prod_list"), false);
+
+                isLastPage = currentPage === result.last_page;
+            },
+            complete : function () {
+                isLoading = false;
+                $('#loadingContainer').hide();
             }
+        })
+    }
+
+    function displayNewWholesaler(productArr, target, needsEmptying) {
+        if(needsEmptying) {
+            target.empty();
+        }
+
+        let html = "";
+        productArr.data.forEach(function(product, index) {
+
+            html += '' +
+                '<li class="prod_item">' +
+                '   <div class="img_box">' +
+                '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt="' + product.name + '"></a>' +
+                '           <button class="zzim_btn prd_' + product.idx + '" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
+                '   </div>' +
+                '   <div class="txt_box">' +
+                '       <a href="/product/detail/{{$item->idx}}">' +
+                '           <span>' + product.companyName + '</span>' +
+                '           <p>' + product.name + '</p>' +
+                '           <b>';
+            if (product.is_price_open == 1) {
+                html += product.price.toLocaleString('ko-KR') + '원';
+            } else {
+                html += product.price_text;
+            }
+            html += '' +
+                '           </b>' +
+                '       </a>' +
+                '   </div>' +
+                '</li>';
         });
 
-        let isLoading = false;
-        let isLastPage = false;
-        let currentPage = 1;
+        target.append(html);
+    }
 
-        // 카테고리 클릭시
-        $('.sub_category li').on('click',function(){
-            $(this).addClass('active').siblings().removeClass('active')
-        })
-
-        $('.sub_category.type02 li').on('click',function(){
-            let liN = $(this).index();
-            $(this).addClass('active').siblings().removeClass('active')
-            $('.category_tab > div').eq(liN).addClass('active').siblings().removeClass('active')
-        })
-
-        const optionRefresh = (item)=>{
-            $(item).parents('.filter_body').find('input').each(function(){
-                $(this).prop("checked",false);
-            });
-        }
-
-        function loadNewProductList() {
-            isLoading = true;
-
-            var categories = '';
-            var parents = '';
-            var orderedElement = '';
-            urlSearch = new URLSearchParams(location.search);
-            if (urlSearch.get('ca') != null) {
-                categories = urlSearch.get('ca');
-            }
-            if (urlSearch.get('pre') != null) {
-                parents = urlSearch.get('pre');
-            }
-
-            if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
-                orderedElement = $('input[name="filter_cate_2"]:checked').attr('id')
-            }
-
-            $.ajax({
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: '/product/getJsonListByCategory',
-                method: 'GET',
-                data: {
-                    'page': ++currentPage,
-                    'categories' : categories,
-                    'parents' : parents,
-                    'orderedElement' : orderedElement,
-                },
-                success: function(result) {
-
-                    displayNewWholesaler(result.query, $(".relative ul.prod_list"), false);
-
-                    isLastPage = currentPage === result.last_page;
-                },
-                complete : function () {
-                    isLoading = false;
-                }
-            })
-        }
-
-        function displayNewWholesaler(productArr, target, needsEmptying) {
-            if(needsEmptying) {
-                target.empty();
-            }
-
-            let html = "";
-            productArr.data.forEach(function(product, index) {
-
-                html += '' +
-                    '<li class="prod_item">' +
-                    '   <div class="img_box">' +
-                    '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt="' + product.name + '"></a>' +
-                    '           <button class="zzim_btn prd_' + product.idx + '" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
-                    '   </div>' +
-                    '   <div class="txt_box">' +
-                    '       <a href="/product/detail/{{$item->idx}}">' +
-                    '           <span>' + product.companyName + '</span>' +
-                    '           <p>' + product.name + '</p>' +
-                    '           <b>';
-                if (product.is_price_open == 1) {
-                    html += product.price.toLocaleString('ko-KR') + '원';
-                } else {
-                    html += product.price_text;
-                }
-                html += '' +
-                    '           </b>' +
-                    '       </a>' +
-                    '   </div>' +
-                    '</li>';
-            });
-
-            target.append(html);
-        }
-
-        $(window).scroll(function() {
-            if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
-                loadNewProductList();
+    // 속성 가져오기
+    function getProperty() {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/product/getCategoryProperty',
+            data			: {
+                'category_idx' : getUrlVars()["ca"],
+                'parent_idx' : null
+            },
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                var _active = "";
+                var htmlText = '';
+                $('#option-modal .prod_property_cont').html('');
+                result.forEach(function (e, idx) {
+                    if( idx == 0 ) { _active = 'active'; } else { _active = ''; }
+                    htmlText += '<li class="' + _active + '" data-property_idx=' + e.idx+ '><button>' + e.name + '</button></li>';
+                    getSubProperty(e.idx, e.name, idx);
+                });
+                $('#option-modal .prod_property_tab').html(htmlText);
             }
         });
+    }
+
+    // 속성 가져오기2
+    function getSubProperty(parentIdx=null, title=null, ord=null) {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/product/getCategoryProperty',
+            data			: {
+                'category_idx' : getUrlVars()["ca"],
+                'parent_idx' : parentIdx
+            },
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                var _active = "";
+                if( ord == 0 ) { _active = 'active'; } else { _active = ''; }
+                var subHtmlText = '<div class="sub_property_area ' + _active + ' property_idx_' + parentIdx + '" data-title="' + title + '"><ul class="filter_list">';
+                result.forEach(function (e, idx) {
+                    subHtmlText += '<li>' +
+                        '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
+                        '<label for="property-check_' + e.idx + '">' + e.property_name + '</label>' +
+                        '</li>';
+                })
+                subHtmlText += '</ul></div>';
+                $('#option-modal .prod_property_cont').append(subHtmlText);
+            }
+        });
+    }
+
+    //### 상품등록 > 속성 모달
+    $(document).on('click', '#option-modal .prod_property_tab li', function() {
+        console.log(1)
+        let liN = $(this).data('property_idx'); //')$(this).index();
+        $(this).addClass('active').siblings().removeClass('active')
+        $('.prod_property_cont > div.property_idx_'+liN).addClass('active').siblings().removeClass('active')
+    })
+
+    //### 속성 선택완료
+    $(document).on('click', '.confirm_prod_property', function() {
+        if ($(this).has('.btn-primary')) {
+            var htmlText = "";
+            $('#option-modal .sub_property_area').each(function(o){
+                if ($('#option-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
+                    $('#option-modal .sub_property_area:eq('+o+') .check-form:checked').map(function (n, i) {
+                        htmlText += '<span data-sub_idx="' + $(this).data('sub_property') + '">' + $(this).data('sub_name') + ' <button class="ico_delete"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>'
+                    })
+                }
+            });
+            locationGo();
+        }
+    })
+
+    //### 선택한 상품속성 값 삭제
+    $(document).on('click', '.ico_delete', function() {
+        var this_sub_idx = $(this).parent().data('sub_idx');
+        var this_property_length = $(this).parent().parent().children('div').length;
+        if (this_property_length == 1){
+            $(this).parent().parent().parent().remove();
+        }else{
+            $(this).parent().remove();
+        }
+        $('#option-modal #property-check_'+this_sub_idx).attr('checked', false);
+    });
+
+    function getUrlVars(){
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++){
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+            loadNewProductList();
+        }
+    });
+
+    $(document).ready(function(){
+        urlSearch = new URLSearchParams(location.search);
+        urlSearch.get('so');
+        $('#filter_align-modal02 input[value="'+ urlSearch.get('so') +'"]').prop('checked', true);
+        $(".sub_filter .filter_box button:eq(0)").text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
+
+        getProperty();
+        $('#loadingContainer').show();
+
+        setTimeout(function () {
+            let get_parameter_prop = getUrlVars()["prop"];
+            if (typeof(get_parameter_prop) != 'undefined'){
+                var arr_prop = get_parameter_prop.split('|');
+                arr_prop.map(function (item) {
+                    $('#option-modal .sub_property_area').each(function(o){
+                        $('#option-modal .sub_property_area:eq('+o+') .check-form').map(function (n, i) {
+                            if ($(this).data('sub_property') == item) { $(this).prop('checked', true); }
+                        });
+                    });
+                });
+
+                var htmlText = "";
+                var property_cnt = 0;
+                $('#option-modal .sub_property_area').each(function(o){
+                    if ($('#option-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
+                        $('#option-modal .sub_property_area:eq('+o+') .check-form:checked').map(function (n, i) {
+                            property_cnt++;
+                            htmlText += '<span data-sub_idx="' + $(this).data('sub_property') + '">' + $(this).data('sub_name') + ' <button class="ico_delete"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span>'
+                        })
+                    }
+                });
+                if (property_cnt > 0) {
+                    $('.optionDrop').addClass('on');
+                    $('.optionDrop b.txt-primary').html(property_cnt);
+                    $('.checkedProperties').html(htmlText);
+                    $('.sub_filter_result').show();
+                }
+            }
+            $('#loadingContainer').hide();
+        }, 500);
+        
+    })
     </script>
 @endsection

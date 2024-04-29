@@ -1,3 +1,6 @@
+
+@if (count($response['list']) > 0)
+
 <div class="w-full">
     <div class="flex">
         <a href="/mypage/estimateInfo" class="text-stone-400 text-xl font-bold grow text-center">견적서 관리</a>
@@ -40,21 +43,31 @@
                     </td>
                     <th>유 효 기 한</th>
                     <td>
-                        견적일로부터
-                        <span class="expiration_date hidden"> 15일</span> 
-                        <select name="expiration_date" id="expiration_date" class="input-form ml-3">
-                            <option value="0">15일</option>
-                        </select>
+                        <div class="flex items-center">
+                            <span>
+                                견적일로부터
+                            </span>
+                            <span class="expiration_date hidden"> 15일</span> 
+                            <div class="input-form ml-3 ">
+                                <select name="expiration_date" id="expiration_date" class="w-full h-full">
+                                    <option value="0">15일</option>
+                                </select>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 <tr>
                     <th>배 송 방 법</th>
                     <td>
-                        <span class="product_delivery_info hidden">착불</span> 
-                        <select name="product_delivery_info" id="product_delivery_info" class="input-form w-1/2">
-                            <option value="업체 협의 (착불)">착불</option>
-                            <option value="매장 배송 (무료)">무료</option>
-                        </select>
+                        <div class="flex items-center">
+                            <span class="product_delivery_info hidden">착불</span> 
+                            <div class="input-form w-full">
+                                <select name="product_delivery_info" id="product_delivery_info" class="w-full h-full">
+                                    <option value="업체 협의 (착불)">착불</option>
+                                    <option value="매장 배송 (무료)">무료</option>
+                                </select>
+                            </div>
+                        </div>
                     </td>
                     <th>배 송 비</th>
                     <td>
@@ -72,11 +85,15 @@
                 <tr>
                     <th>계 좌 번 호</th>
                     <td colspan="3">
-                        <span class="response_account hidden"></span>
-                        <select name="response_account1" id="response_account1" class="input-form">
-                            <option value="우리은행">우리은행</option>
-                        </select>
-                        <input type="text" name="response_account2" id="response_account2" class="input-form" value="" />
+                        <div class="flex items-center">
+                            <span class="response_account hidden"></span>
+                            <div class="input-form">
+                                <select name="response_account1" id="response_account1" class="w-full h-full">
+                                    <option value="우리은행">우리은행</option>
+                                </select>
+                            </div>
+                            <input type="text" name="response_account2" id="response_account2" class="input-form ml-2" value="" />
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -157,11 +174,14 @@
                                                     <input type="hidden" name="product_option_key_{{ $res -> idx }}[]" value="{{ $val -> optionName }}" readOnly />
                                                 </th>
                                                 <td>
-                                                    <select name="product_option_value_{{ $res -> idx }}[]" class="input-form w-2/3">
-                                                    @foreach ($val -> optionValue as $opVal)
-                                                        <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
-                                                    @endforeach
-                                                    </select>
+                                                    <div class="input-form w-2/3">
+                                                        <select name="product_option_value_{{ $res -> idx }}[]" class="w-full h-full">
+                                                        @foreach ($val -> optionValue as $opVal)
+                                                            <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                        @endforeach
+                                                        </select>
+                                                    </div>
+                                                  
                                                 </td>
                                             </tr>
                                             @endif
@@ -493,3 +513,15 @@
         });
     });
 </script>
+
+@else 
+    @if (in_array(Auth::user()['type'], ['W','R']))
+        <script> 
+            alert('판매 승인된 상품이 등록되어야 견적서 보내기가 가능합니다.'); history.back();
+        </script>
+    @else 
+        <script> 
+            alert('가구사업자만 견적서 보내기가 가능합니다.'); history.back();
+        </script>
+    @endif 
+@endif 

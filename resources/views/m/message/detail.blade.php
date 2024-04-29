@@ -59,11 +59,11 @@ $header_banner = '';
                     @if($company->company_type === 'W' || $company->company_type === 'R')
                     <div class="add">{{ $company->business_address }} {{ $company->business_address_detail }}</div>
                     <p>{{ $company->phone_number }}</p>
+                    <a href="/m/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
                     @else
                     <div class="add">경기도 고양시 일산동구 산두로213번길 18 (정발산동)</div>
                     <p>031-813-5588</p>
                     @endif
-                    <a href="/m/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
                 </div>
             </div>
             <div class="chatting_list" style="overflow-y: scroll;">
@@ -80,7 +80,7 @@ $header_banner = '';
             </div>
             <div class="message_form">
                 <div class="file_box shrink-0">
-                    <input type="file" id="img_file">
+                    <input type="file" id="img_file" onchange="submitImgMessage()">
                     <label for="img_file">
                         <img class="mx-auto" src="/img/member/img_icon.svg" alt="">
                     </label>
@@ -111,6 +111,9 @@ $header_banner = '';
         if(messages.date != lastCommunicatedDate) {
             const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
             $('.chatting_list').html($('.chatting_list').html() + dateTag);
+        }
+        if(messages.userIdx != {{ $user_idx }}) {
+            messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
         }
         $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
         
@@ -273,6 +276,46 @@ $header_banner = '';
             document.getElementById('chat_message').value = '';
         }
         {{-- 메시지 전송 --}}
+        const submitImgMessage = () => {
+            let elem = document.getElementById('submitBtn');
+            if (elem.dataset.processing) {
+                return false;
+            }
+            elem.dataset.processing = "Y";
+            const roomIdx = elem.dataset.roomIdx;
+            const data = new FormData();
+            const imageFiles = document.getElementById('img_file').files;
+            data.append('room_idx', roomIdx);
+            if (imageFiles.length > 0) {
+                data.append('message_image', imageFiles[0]);
+            }
+            if (document.getElementById('product_idx')) {
+                data.append('product_idx', document.getElementById('product_idx').value);
+            }
+            if (imageFiles.length < 1 && !document.getElementById('product_idx')) {
+                return false;
+            }
+            fetch('/message/send', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+                body: data,
+            }).then(response => {
+                delete elem.dataset.processing;
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Sever Error');
+            }).then(json => {
+                if (json.result === 'success') {
+//                    visibleRoom(roomIdx);
+                }
+            }).catch(error => {
+                delete elem.dataset.processing;
+            })
+        }
+        {{-- 메시지 전송 --}}
         const submitMessage = elem => {
             if (elem.dataset.processing) {
                 return false;
@@ -285,14 +328,10 @@ $header_banner = '';
             if (message) {
                 data.append('message', message);
             }
-            const imageFiles = document.getElementById('img_file').files;
-            if (imageFiles.length > 0) {
-                data.append('message_image', imageFiles[0]);
-            }
             if (document.getElementById('product_idx')) {
                 data.append('product_idx', document.getElementById('product_idx').value);
             }
-            if (!message && imageFiles.length < 1 && !document.getElementById('product_idx')) {
+            if (!message && !document.getElementById('product_idx')) {
                 return false;
             }
             fetch('/message/send', {
@@ -519,6 +558,7 @@ $header_banner = '';
         })
     </script>
 
-@endsection
-
 @include('m.message.modal')
+
+
+@endsection

@@ -28,6 +28,7 @@ Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
+Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -239,7 +240,17 @@ Route::prefix('community')->name('community')->middleware('auth')->group(functio
     Route::get('/write-dispatch/{orderGroupCode}', 'CommunityController@writeDispatch');
 
     Route::get('/club', 'CommunityController@clubList');
-    Route::get('/club/detail/{idx}', 'CommunityController@clubDetail');
+    Route::post('/club/register', 'CommunityController@clubRegister');
+    Route::post('/club/withdrawal', 'CommunityController@clubWithdrawal');
+    Route::get('/club/{idx}', 'CommunityController@clubDetail');
+    Route::get('/club/article/{idx}', 'CommunityController@clubArticle');
+    Route::post('/club/reply', 'CommunityController@clubReply');
+    Route::delete('/club/reply/{idx}', 'CommunityController@removeClubReply');
+    Route::post('/club/like-article', 'CommunityController@toggleClubArticleLike');
+    Route::get('/club/{clubIdx}/write/{idx?}','CommunityController@clubArticleForm');
+    Route::post('/club/{clubIdx}/write','CommunityController@createClubArticle');
+    Route::put('/club/{clubIdx}/write','CommunityController@modifyClubArticle');
+    Route::delete('/club/{clubIdx}/write/{idx}', 'CommunityController@removeClubArticle');
 
     Route::prefix('my')->name('.my')->middleware('auth')->group(function() {
         Route::get('/articles', 'CommunityController@getMyArticles')->name('.articles');
@@ -278,6 +289,7 @@ Route::prefix('help')->name('help')->middleware('auth')->group(function() {
     Route::get('/', 'HelpController@index');
     Route::get('/faq', 'HelpController@faq')->name('.faq');
     Route::get('/notice', 'HelpController@notice')->name('.notice');
+    Route::get('/guide', 'HelpController@guide')->name('.guide');
     Route::get('/inquiry', 'HelpController@inquiry');
     Route::get('/inquiry/detail/{idx}', 'HelpController@inquiryDetail');
     Route::get('/inquiry/form/{idx?}', 'HelpController@inquiryForm');

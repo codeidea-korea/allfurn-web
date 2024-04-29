@@ -61,13 +61,19 @@
         <li class="{{$header_depth=='like'?'active':'' }}"><a href="/like/product"><svg><use xlink:href="/img/m/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
         <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="/"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
         <li class="{{$header_depth=='talk'?'active':'' }}"><a href="/message"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
-        <li class="{{$header_depth=='mypage'?'active':'' }}"><a href="/mypage/deal"><svg><use xlink:href="/img/m/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
+        <li class="{{$header_depth=='mypage'?'active':'' }}"><a href="/mypage"><svg><use xlink:href="/img/m/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
     </ul>
 </div>
 
 @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
-    <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk' )?'hidden':'' }}">
+    <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
         <a href="/product/registration">상품<br/>등록</a>
+    </div>
+@endif
+
+@if(Route::currentRouteName() != '')
+    <div id="move_back_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
+        <a href="javascript:history.back()">뒤로<br/>가기</a>
     </div>
 @endif
 
@@ -85,7 +91,7 @@
             <div class="modal_search w-full bg-white search_list">
                 <div class="search_btn">
                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요">
+                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요" autocomplete="one-time-code">
                 </div>
                 <div class="text-sm flex justify-between py-3 mt-3">
                     <span class="font-bold">최근 검색어</span>
@@ -180,14 +186,14 @@
                     if (json['category'][i]['parentName'] != null) {
                         categoryList += '' +
                             '<li class="flex items-center text-sm gap-2">' +
-                            '   <span class="text-primary font-bold">1</span>' +
-                            '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
+                            '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
+                            '   <a href="/product/category?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
                             '</li>';
                     } else {
                         categoryList += '' +
                             '<li class="flex items-center text-sm gap-2">' +
-                            '   <span class="text-primary font-bold">1</span>' +
-                            '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
+                            '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
+                            '   <a href="/product/category?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
                             '</li>';
                     }
                 }
@@ -327,7 +333,7 @@
             return response.json();
         }).then(json => {
             if (json.success == true) {
-                location.replace('/product/searchBar?kw=' + keyword);
+                location.href = '/product/searchBar?kw=' + keyword;
             }
         });
     }

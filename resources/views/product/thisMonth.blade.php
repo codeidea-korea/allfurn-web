@@ -147,14 +147,15 @@
                     <div class="filter_box">
                         <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                         <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                        <button class="" onclick="modalOpen('#filter_align-modal03')">최신순</button>
+                        <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
                     </div>
-                    <div class="total">전체 {{number_format( count( $companyProduct ) )}}개</div>
+                    <div class="total">전체 0개</div>
                 </div>
                 <div class="sub_filter_result hidden">
                     <div class="filter_on_box">
                         <div class="category"></div>
                         <div class="location"> </div>
+                        <div class="order"> </div>
                     </div>
                     <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                 </div>
@@ -318,11 +319,18 @@
             loadWholesalerList(true);
         }
 
+        const orderRemove = (item)=> {
+            $(item).parents('span').remove(); //해당 카테고리 삭제
+            $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+
+            loadWholesalerList(true);
+        }
+
         // 초기화
         $(".refresh_btn").on('click', function() {
             $("#filter_category-modal .check-form:checked").prop('checked', false);
             $("#filter_location-modal .check-form:checked").prop('checked', false);
-            $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
+            $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
             
             loadWholesalerList(true);
         });
@@ -331,6 +339,9 @@
         let isLastPage = false;
         let currentPage = 0;
         function loadWholesalerList(needEmpty, target) {
+            if(isLoading) return;
+            if(!needEmpty && isLastPage) return;
+            
             isLoading = true;
 
             if(needEmpty) currentPage = 0;
@@ -343,7 +354,7 @@
                     'page': ++currentPage,
                     'categories' : getIndexesOfSelectedCategory().join(','),
                     'locations' : getIndexesOfSelectedLocation().join(','),
-                    'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
+                    'orderedElement' : $("#filter_align-modal .radio-form:checked").val()
                 },
                 beforeSend : function() {
                     if(target) {
@@ -358,7 +369,7 @@
 
                     $(".sub_section_bot ul.obtain_list").append(result.html);
 
-                    $(".total").text('전체 ' + result.list.total.toLocaleString('ko-KR') + '개');
+                    $(".total").text('전체 ' + result.list.total + '개');
 
                     if(target) {
                         target.prop("disabled", false);
@@ -437,12 +448,23 @@
         }    
 
         function displaySelectedOrders() {
+            if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
+                $(".filter_on_box .order").empty().append(
+                    '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
+                    '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                    '</span>'
+                );   
+                $(".sub_filter .filter_box button").eq(2).addClass('on')         
+            } else {
+                $(".sub_filter .filter_box button").eq(2).removeClass('on')
+            }
+
             $(".sub_filter .filter_box button").eq(2)
-                .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
+                .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
         }
 
         function toggleFilterBox() {
-            if($(".modal .check-form:checked").length === 0){
+            if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "recommendation"){
                 $(".sub_filter_result").hide();
             } else {
                 $(".sub_filter_result").css('display', 'flex');

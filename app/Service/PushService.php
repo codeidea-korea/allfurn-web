@@ -108,7 +108,7 @@ class PushService
     
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/template/list/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
@@ -121,7 +121,7 @@ class PushService
 //        echo $result;
         curl_close ($ch);
 
-        return json_decode( $result );
+        return json_decode(preg_replace('/\r|\n/', '\n', preg_replace('/\t/', '\t', $result)));
     }
 
     /**
@@ -130,9 +130,10 @@ class PushService
      * @param string $templateCode
      * @param string $replaceParams 대치코드별 값이 들어 있는 연관 배열
      * @param string $receiver (, 로 구분)
+     * @param string $reservate 발송 예약일시
      * @return object { code : 0 이 정상, 나머지 오류, message : 연동 메시지 }
      */
-    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver)
+    public function sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver, $reservate)
     {
         // 템플릿을 템플릿 코드로 조회한다.
         $alimtalkTemplate = $this->getTemplate($templateCode)->list[0];
@@ -168,6 +169,7 @@ class PushService
                 }
             }
         }
+//        $alimtalkTemplate->templtContent = nl2br($alimtalkTemplate->templtContent); 
 
         $apikey = urlencode('eifub09280f6yzfyct9wppyfavv195rn');
         $userid = 'codeidea';
@@ -176,13 +178,31 @@ class PushService
         $tpl_code = urlencode($templateCode);
         $sender = urlencode('010-5440-5414');
         $receiver_1 = urlencode($receiver);
-        $subject_1 = urlencode($title);
-        $message_1 = urlencode($alimtalkTemplate->templtContent);
-        $strjson = json_encode($alimtalkTemplate->buttons);
-        $button_1 = urlencode($strjson);
+        $subject_1 = rawurlencode($alimtalkTemplate->templtName);
+        $message_1 = rawurlencode($alimtalkTemplate->templtContent);
+//        $strjson = 
+
+        $button = array();
+        $button['name'] = $alimtalkTemplate->buttons[0]->name;
+        $button['linkType'] = $alimtalkTemplate->buttons[0]->linkType;
+        $button['linkTypeName'] = $alimtalkTemplate->buttons[0]->linkTypeName;
+        $button['linkMo'] = $alimtalkTemplate->buttons[0]->linkMo;
+        $button['linkPc'] = $alimtalkTemplate->buttons[0]->linkPc;
+        $button['linkIos'] = $alimtalkTemplate->buttons[0]->linkIos;
+        $button['linkAnd'] = $alimtalkTemplate->buttons[0]->linkAnd;
+        $button2 = array();
+        $button2['name'] = $alimtalkTemplate->buttons[1]->name;
+        $button2['linkType'] = $alimtalkTemplate->buttons[1]->linkType;
+        $button2['linkTypeName'] = $alimtalkTemplate->buttons[1]->linkTypeName;
+        $button2['linkMo'] = $alimtalkTemplate->buttons[1]->linkMo;
+        $button2['linkPc'] = $alimtalkTemplate->buttons[1]->linkPc;
+        $button2['linkIos'] = $alimtalkTemplate->buttons[1]->linkIos;
+        $button2['linkAnd'] = $alimtalkTemplate->buttons[1]->linkAnd;
+
+        $button_1 = rawurlencode('{"button":['. json_encode($button) . ',' .json_encode($button2) . ']}');
         $failover = 'Y';
-        $fsubject_1 = urlencode($title);
-        $fmessage_1 = urlencode($alimtalkTemplate->templtContent);
+        $fsubject_1 = rawurlencode($title);
+        $fmessage_1 = rawurlencode($alimtalkTemplate->templtContent);
 
         $pushMessage = new SmsHistory;
         $pushMessage->title = $title;
@@ -195,13 +215,17 @@ class PushService
         $data = "apikey=" . $apikey . "&userid=" . $userid . "&token=" . $token . "&senderkey=" . $senderkey
             . "&tpl_code=" . $tpl_code . "&sender=" . $sender . "&receiver_1=" . $receiver_1 . "&subject_1=" . $subject_1 . "&message_1=" . $message_1
             . "&button_1=" . $button_1 . "&failover=" . $failover . "&fsubject_1=" . $fsubject_1 . "&fmessage_1=" . $fmessage_1;
+
+        if(!empty($reservate) && $reservate != '') {
+            $data = $data . '&senddate='. urlencode($reservate);
+        }
     
 //        echo $data;
         $ch = curl_init();
     
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/alimtalk/send/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
@@ -218,7 +242,7 @@ class PushService
     }
 
     /**
-     * fcm 푸시 발송
+     * fcm 푸시 발송 - 테이블 쌓기로 변경
      * 
      * @param string $title 
      * @param string $msg 
@@ -234,102 +258,95 @@ class PushService
         $pushMessage->title = $title;
         $pushMessage->content = $msg;
         $pushMessage->push_info = $msg;
-        $pushMessage->send_date = date('Y-m-d H:i:s');
-        $pushMessage->send_type = 'S';
-        $pushMessage->send_target = $to;
-        $pushMessage->is_ad = 0;
+        $pushMessage->attachment_idx = 0;
         $pushMessage->app_link_type = $type;
         $pushMessage->app_link = $applink;
         $pushMessage->web_link_type = $type;
         $pushMessage->web_link = $weblink;
-        $pushMessage->save();
-
-        $client = new Google_Client();
-        $client->setAuthConfigFile('/var/www/allfurn-web/fcm.json');
-        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-        $client->refreshTokenWithAssertion();
-        $auth_key = $client->getAccessToken();
-
-        $targets = explode(',', $to);
-        for($idx = 0; $idx < count($targets); $idx++) {
-            $userIdx = $targets[$idx];
-            if(empty($userIdx)) {
-                continue;
-            }
-            $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
-
-            $data = [
-                "message" => [
-                    "token"=> $authToken->push_token,
-                    "notification"=> [
-                        "title"=> $title,
-                        "body"=> $msg,
-                        "sound"=> "default"
-                    ],
-                    "data"=> [
-                        "scheme" => $applink,
-                        "weburl" => $weblink,
-                        "title"  => $title,
-                        "body"  => $msg,
-                        "content" => $msg
-                    ]
-                ]
-            ];
-        
-            $ch = curl_init();
-        
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        
-            $headers = array();
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
-            $result = curl_exec($ch);
-            
-            $sendLog = new PushSendLog();
-            $sendLog->user_idx = $userIdx;
-            $sendLog->push_idx = $pushMessage->idx;
-            $sendLog->push_type = $pushMessage->type;
-            $sendLog->is_send = 1;
-            $sendLog->is_check = 0;
-            $sendLog->send_date = date('Y-m-d H:i:s');
-            $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
-            $sendLog->save();
-
-            curl_close ($ch);
-        }
-    }
-
-    /**
-     * fcm 푸시 발송 배치 큐 대기
-     * 
-     * @param string $title 
-     * @param string $msg 
-     * @param string $to 
-     * @param int $type 
-     * @param string $applink 
-     * @param string $weblink 
-     */
-    public function sendPushAsync($title, $msg, $to, $type = 5, $applink = '', $weblink = '')
-    {
-        $pushMessage = new PushQ;
-        $pushMessage->type = 'push';
-        $pushMessage->title = $title;
-        $pushMessage->content = $msg;
-        $pushMessage->push_info = $msg;
-        $pushMessage->send_date = date('Y-m-d H:i:s');
         $pushMessage->send_type = 'P';
         $pushMessage->send_target = $to;
+        $pushMessage->state = 'W';
+        $pushMessage->send_date = date('Y-m-d H:i:s', strtotime('+5 seconds'));
         $pushMessage->is_ad = 0;
-        $pushMessage->app_link_type = $type;
-        $pushMessage->app_link = $applink;
-        $pushMessage->web_link_type = $type;
-        $pushMessage->web_link = $weblink;
+        $pushMessage->is_delete = 0;
+        
         $pushMessage->save();
+
+        
+        $authToken = PushToken::where('user_idx', '=', $to)->orderBy('register_time', 'DESC')->first();
+        if(empty($authToken)) {
+        
+            $sendLog = new PushSendLog();
+            $sendLog->user_idx = $to;
+            $sendLog->push_idx = 0;
+            $sendLog->push_type = $pushMessage->type;
+            $sendLog->is_send = 0;
+            $sendLog->is_check = 0;
+            $sendLog->send_date = date('Y-m-d H:i:s');
+            $sendLog->response = '푸시 토큰이 없습니다.';
+            $sendLog->save();
+            return;
+        }
+        
+        $scope = 'https://www.googleapis.com/auth/firebase.messaging';
+
+        $client = new Google_Client();
+        $client->setAuthConfig('/var/www/allfurn-web/fcm.json');
+        $client->setScopes($scope);
+        $auth_key = $client->fetchAccessTokenWithAssertion();
+
+        $notification_opt = array (
+            'title' => $title,
+            'body' => $msg,
+//            'image' => AWS_S3.$file
+        );
+
+        $android_opt = array (
+            'notification' => array(
+//                'default_sound'         => true, 
+//                'priority' => 'high',
+//                'click_action' => 'TOP_STORY_ACTIVITY',
+                'title' => $title,
+                'body' => $msg,
+            )
+        );
+
+        $message = array(
+            'token' => $authToken->push_token,
+            'notification' => $notification_opt,
+            'android' => $android_opt, 
+            'data' => array(
+                'start_url' => $weblink
+            )
+        );
+
+        $data = array (
+            "message" => $message
+        );
+    
+        $ch = curl_init();
+    
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+        $result = curl_exec($ch);
+        
+        $sendLog = new PushSendLog();
+        $sendLog->user_idx = $to;
+        $sendLog->push_idx = $pushMessage->idx;
+        $sendLog->push_type = $pushMessage->type;
+        $sendLog->is_send = 1;
+        $sendLog->is_check = 0;
+        $sendLog->send_date = date('Y-m-d H:i:s');
+        $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
+        $sendLog->save();
     }
 }

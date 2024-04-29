@@ -28,6 +28,11 @@
             </div>
             <button class="slide_arrow prev type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
             <button class="slide_arrow next type03"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow_white"></use></svg></button>
+            @if(!empty($product))
+                <button class="slide_arrow next type03 more_btn hidden" onclick="location.href='/product/new?scroll=true'">더보기</button>
+            @else
+                <button class="slide_arrow next type03 more_btn hidden" onclick="loadNewProductList()">더보기</button>
+            @endif
         </div>
     </div>
 </div>

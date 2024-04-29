@@ -53,6 +53,9 @@
     let isLoading = false;
     let isLastPage = currentPage === {{ $last_page }};
     function loadDailyNewsList() {
+        if(isLoading) return;
+        if(isLastPage) return;
+        
         isLoading = true;
 
         $.ajax({

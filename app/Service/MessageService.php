@@ -16,7 +16,8 @@ use App\Models\UserNormal;
 use App\Models\UserPushSet;
 use App\Events\ChatMessage;
 use App\Events\ChatUser;
-use App\Events\PushToken;
+use App\Models\PushToken;
+use App\Models\Attachment;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,11 +66,12 @@ class MessageService
                     ->where('second_company_idx', $user->company_idx);
             });
         })
+        ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
             ->select("AF_message_room.idx"
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
                     ,second_company_idx,first_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
-                    ,second_company_type,first_company_type) AS other_company_type"));
+                    ,second_company_type,first_company_type) AS other_company_type"))->distinct();
         if (isset($params['room_idx']) && !empty($params['room_idx'])) {
             $roomQuery->where('AF_message_room.idx', $params['room_idx']);
         }
@@ -298,7 +300,7 @@ class MessageService
                 
                 $rooms[] = (object)[
                     'idx' => $messageRoom->idx,
-                    'profile_image' => $company->profile_image,
+                    'profile_image' => (!isset($company->profile_image) || empty($company->profile_image) ? '/img/default_company_profile.png' : $company->profile_image),
                     'name' => $company_name,
                     'company_type' => $messageRoom->other_company_type,
                     'message_type' => $room->type,
@@ -342,7 +344,7 @@ class MessageService
                 $message->leftJoin('AF_retail AS company', 'company.idx', 'AF_message.sender_company_idx');
             }
             $message->where(function($query) use ($keyword, $company) {
-                $query->whereRaw('IF(JSON_VALID(AF_message.content),JSON_EXTRACT(AF_message.content, "$.text"),AF_message.content) LIKE "%'.$keyword.'%"');
+                $query->whereRaw('AF_message.content LIKE "%'.$keyword.'%"');
                 if ($company) {
                     $query->orWhere('company.company_name', 'like', "%{$keyword}%");
                 }
@@ -542,7 +544,7 @@ class MessageService
         ];
     }
 
-    public function convertHtmlContentByMessage($chat){
+    public function convertHtmlContentByMessage($chat, $revers){
         $contentHtml = '';
         $user = Auth::user();
 
@@ -561,7 +563,7 @@ class MessageService
 
             if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
                 // 이미지
-                return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+                return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                             <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
                             <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                         </div>';
@@ -591,15 +593,20 @@ class MessageService
         } else if($chatContent['type'] == 'inquiry') {
             // 상담
             $contentHtml = '<div class="flex flex-col">
-                                    <span>[ 상담문의가 도착했습니다 ] '.$chatContent['productName'].'</span>
-                                    <button class="flex flex-col mt-1" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
-                                        <p class="bg-primary p-2 rounded-md flex items-center text-white">
-                                        <img src="'.$chatContent['productThumbnailURL'].'">
-                                            바로가기
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                                        </p>
-                                    </button>
-                                </div>';
+                                <div class="flex gap-3">
+                                    <img src="'.$chatContent['productThumbnailURL'].'" class="w-[90px] h-[90px] shrink-0">
+                                    <div>
+                                        <span class="text-stone-600">[ 상담문의가 도착했습니다 ]</span>
+                                        <p class="mt-1">'.$chatContent['productName'].'</p>
+                                        <button class="flex flex-col mt-1 w-full" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                            <p class="bg-primary px-2 py-1 rounded-md flex items-center text-white w-full justify-between">
+                                                바로가기
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                                            </p>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>';
         } else if($chatContent['type'] == 'order') {
             // 주문
             $contentHtml = '<div class="font-medium w-[260px]">
@@ -629,7 +636,7 @@ class MessageService
                             </a>';
         }
 
-        return '<div class="chatting ' . ($user['idx'] == $chat->user_idx ? 'right' : 'left') . '">
+        return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                     <div class="chat_box">' . $contentHtml . '</div>
                     <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                 </div>';
@@ -682,7 +689,8 @@ class MessageService
                 'productIdx' => $params['product_idx'],
                 'productName' => $product->name,
                 'productPrice' => ($product->price_text ?? $product->price),
-                'productThumbnailURL' => $product->attachment_idx,
+                'productThumbnailURL' => 'https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/product/' 
+                    . Attachment::whereIn('idx', explode(',', $product->attachment_idx))->first()->filename,
             ], JSON_UNESCAPED_UNICODE);
             $message = new Message;
             $message->room_idx = $params['room_idx'];
@@ -734,7 +742,7 @@ class MessageService
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $message->content, 
-            $this->convertHtmlContentByMessage($message),
+            $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년 m월 d일'),
             substr(date('H:i:s'), 0, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
@@ -746,13 +754,18 @@ class MessageService
         $targetUsers = User::where('company_idx', $companyInfo->idx)
             ->where('is_delete', 0)
             ->get();
+        $pushToken = PushToken::where('user_idx', $companyInfo->idx)
+            ->orderBy('register_time', 'DESC')
+            ->first();
+        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
+            $message->user_idx.'', 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
         if(isset($targetUsers) && is_array($targetUsers)) {
             foreach($targetUsers as $key => $targetUser) {
-                $pushToken = PushToken::where('user_idx', $targetUser->idx)
+                $pushToken = PushToken::where('user_idx', $companyInfo->idx)
                     ->orderBy('register_time', 'DESC')
                     ->first();
-                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $message->content, 
-                    $targetUser->idx, $type = 5, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
+                    $targetUser->idx, 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
             }
         }
 
@@ -947,7 +960,7 @@ class MessageService
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $message->content, 
-            $this->convertHtmlContentByMessage($message),
+            $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년 m월 d일'),
             substr(date('H:i:s'), 0, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
@@ -967,7 +980,7 @@ class MessageService
                     event(new ChatUser($message->room_idx, 
                         $targetUser->idx, 
                         $message->content, 
-                        $this->convertHtmlContentByMessage($message),
+                        $this->convertHtmlContentByMessage($message, 'Y'),
                         date('Y년 m월 d일'),
                         substr(date('H:i:s'), 0, 5),
                         ["일","월","화","수","목","금","토"][date('w', time())],

@@ -347,11 +347,11 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count" value="recommendation">
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count" value="recommendation" checked>
                     <label for="filter_interest_count">추천순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time" value="register_time" checked>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time" value="register_time">
                     <label for="filter_register_time">최신 상품 등록순</label>
                 </li>
                 <li>
@@ -849,15 +849,11 @@
                 <span>{{date('Y년 m월 d일')}} 기준</span>
             </div>
             @if( isset( $schData ) && count( $schData ) > 0 )
-                <ul class="search_list">
+                <ul class="search_list_recent">
                     @foreach( $schData as $i => $cate )
-                        <li><a href="/home/searchResult?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}">
-                            <i>1</i>
-                            @if( $cate->parentName ) 
-                                <b>{{ $cate->categoryName }}</b>
-                            @else 
-                                <p><b>{{ $cate->parentName }}</b>{{ $cate->categoryName }}<p>
-                            @endif 
+                        <li><a href="/product/category?ca={{$cate->categoryIdx}}&pre={{$cate->parentIdx}}">
+                            <i>{{ $i+1 }}</i>
+                            <p><b>{{ $cate->parentName }}</b> &gt; {{ $cate->categoryName }}<p>
                         </a></li>
                         {{-- <li>
                             @if( $cate->parentName ) 

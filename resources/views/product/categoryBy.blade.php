@@ -181,6 +181,8 @@
 
         const URLSearch = new URLSearchParams(location.search);
         if( URLSearch.get('prop') != null ) {
+            $('.option_wrap .sub_filter_result .category').empty();
+            
             var prop = URLSearch.get('prop').split('|');
             $.each(prop, function (index, value) {
                 $('[data-property_idx="' + value + '"]').addClass('active');
@@ -290,6 +292,9 @@
     let isLastPage = false;
     let currentPage = 1;
     function loadProductList() {
+        if(isLoading) return;
+        if(isLastPage) return;
+        
         isLoading = true;
 
         var categories = '';

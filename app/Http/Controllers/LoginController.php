@@ -231,6 +231,19 @@ class LoginController extends BaseController
         return response()->json(['success' => true]);
     }
 
+    /**
+     * 액세스 토큰으로 로그인 처리
+     * @param Request $request
+     * @return Redirect ReWrite uri
+     */
+    public function signinByAccessToken(Request $request)
+    {
+        $request->validate([
+            'accessToken' => 'required'
+        ]);
+        return response()->json($this->loginService->signinByAccessToken($request->input('accessToken')));
+    }
+
     public function signOut() {
         Session::flush();
         Auth::logout();
@@ -282,9 +295,10 @@ class LoginController extends BaseController
         $title = $request->input('title');
         $replaceParams = $request->input('replaceParams');
         $receiver = $request->input('receiver');
-
+        $reservate = $request->input('reservate');
+        
         return response()->json($this->pushService->sendKakaoAlimtalk(
-            $templateCode, $title, json_decode($replaceParams, true), $receiver));
+            $templateCode, $title, json_decode($replaceParams, true), $receiver, $reservate));
     }
 }
 

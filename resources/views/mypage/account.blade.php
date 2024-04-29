@@ -46,7 +46,7 @@
                     </div>
                     <div id="failAuthentic" class="attchment-wrap hidden">
                         <i class="ico__check--red"></i>
-                        <p class="attchment__text fail">인증번호가 일치하지 않습니다. 다시 확인해주세요.</p>
+                        <p class="attchment__text fail">인증번호가 일치하지 않습니다. 다시한번 확인해주세요.</p>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
             alert('아이디를 입력해주세요.');
             return false;
         }
-
+        
         fetch('/mypage/account/send/auth/email', {
             method      : 'POST',
             headers     : {
@@ -96,7 +96,7 @@
 
                     time = 299;
                     time_proc_interval = setInterval(timer, 1000);
-
+                    
                 } else {
                     document.getElementById('authBtn').removeAttribute('disabled');
 
@@ -123,7 +123,7 @@
 
             return false;
         }
-
+        
         const authcode = document.getElementById('authcode').value;
         fetch('/mypage/account/authentic', {
             method  : 'POST',
@@ -161,11 +161,11 @@
 
     const viewCompanyAccount = elem => {
         if (!elem.getAttribute('disabled')) {
-        @if (auth() -> user()['type'] === 'N')
-            location.href = '/mypage/normal-account';
-        @else
-            location.href = '/mypage/company-account';
-        @endif
+            @if (auth() -> user()['type'] === 'N')
+                location.href = '/mypage/normal-account';
+            @else
+                location.href = '/mypage/company-account';
+            @endif
         }
     }
 

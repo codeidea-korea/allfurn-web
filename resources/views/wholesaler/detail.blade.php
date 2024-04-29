@@ -5,7 +5,7 @@
 <div id="content">
     <div class="company_detail_top">
         <div class="inner">
-            <div class="banner" style="background-image:url('/img/company_banner.png')">
+            <div class="banner" style="background-image:url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')">
                 <div class="profile_img">
                     <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="">
                 </div>
@@ -45,21 +45,26 @@
                     </div>
                 </div>
             </div>
-            <div class="notice_box">
-                <dl class="active">
-                    <dt>
-                        <p>
-                            <svg><use xlink:href="/img/icon-defs.svg#Notice_primary"></use></svg>
-                            전화문의 9시부터 6시까지 가능
-                        </p>
-                        <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow_black"></use></svg>
-                    </dt>
-                    <dd>
-                        공휴일/ 토요일/ 일요일 휴무입니다.<br>
-                        통화 부재 시 문자 남겨 주시면 전화드리겠습니다.
-                    </dd>
-                </dl>
-            </div>
+            @if ($data['info']->notice_title != "" && $data['info']->notice_content)
+                <div class="notice_box">
+                    <dl class="active">
+                        @if ($data['info']->notice_title != "")
+                            <dt>
+                                <p>
+                                    <svg><use xlink:href="/img/icon-defs.svg#Notice_primary"></use></svg>
+                                    {{ $data['info']->notice_title }}
+                                </p>
+                                <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow_black"></use></svg>
+                            </dt>
+                        @endif 
+                        @if ($data['info']->notice_content != "")
+                            <dd>
+                                {!! nl2br(e($data['info']->notice_content)) !!}
+                            </dd>
+                        @endif 
+                    </dl>
+                </div>
+            @endif 
         </div>
     </div>
     <div class="company_detail">
@@ -178,35 +183,52 @@
                         <table>
                             <colgroup>
                                 <col width="120px">
-                                <col width="*">
+                                <col width="480px">
                                 <col width="120px">
-                                <col width="*">
+                                <col width="480px">
                             </colgroup>
-                            <tbody><tr>
-                                <th>대표자</th>
-                                <td>{{$data['info']->owner_name}}</td>
-                                <th>대표전화</th>
-                                <td>{{$data['info']->phone_number}}</td>
+                            <tbody>
+                            <tr>
+                                @if($data['info']->owner_name)
+                                    <th>대표자</th>
+                                    <td>{{$data['info']->owner_name}}</td>
+                                @endif
+                                @if($data['info']->phone_number)
+                                    <th>대표전화</th>
+                                    <td>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['info']->phone_number); @endphp</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>근무일</th>
-                                <td>{{$data['info']->work_day}}</td>
-                                <th>발주방법</th>
-                                <td>{{$data['info']->how_order}}</td>
+                                @if ($data['info']->work_day)
+                                    <th>근무일</th>
+                                    <td>{{$data['info']->work_day}}</td>
+                                @endif
+                                @if ($data['info']->how_order)
+                                    <th>발주방법</th>
+                                    <td>{{$data['info']->how_order}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>담당자</th>
-                                <td>{{$data['info']->manager}}</td>
-                                <th>담당자연락처</th>
-                                <td>{{$data['info']->manager_number}}</td>
+                                @if ($data['info']->manager)
+                                    <th>담당자</th>
+                                    <td>{{$data['info']->manager}}</td>
+                                @endif
+                                @if ($data['info']->manager_number)
+                                    <th>담당자연락처</th>
+                                    <td>{{$data['info']->manager_number}}</td>
+                                @endif
                             </tr>
                             <tr>
-                                <th>웹사이트</th>
-                                <td colspan="3"><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>
+                                @if ($data['info']->business_address)
+                                    <th>주소</th>
+                                    <td colspan="3">{{$data['info']->business_address .' '.$data['info']->business_address_detail}}</td>    
+                                @endif
                             </tr>
                             <tr>
-                                <th>주소</th>
-                                <td colspan="3">{{$data['info']->business_address .' '.$data['info']->business_address}}</td>
+                                @if ($data['info']->website)
+                                    <th>웹사이트</th>
+                                    <td colspan="3"><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>    
+                                @endif
                             </tr>
                             </tbody></table>
                     </div>
@@ -441,6 +463,9 @@
     let currentPage = 0;
     let firstLoad = true;
     function loadProductList(needEmpty, target) {
+        if(isLoading) return;
+        if(!needEmpty && isLastPage) return;
+
         isLoading = true;
         if(needEmpty) currentPage = 0;
 

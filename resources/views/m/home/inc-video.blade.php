@@ -38,8 +38,8 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         <div class="modal_inner video_wrap">
             <button class="close_btn" onclick="videoModalClose_{{ $key }}('#video-modal_{{ $key }}')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
             <div class="modal_body" >
-                <div class="video_box" id="player_{{ $key }}"></div>
                 @if ($video->video_upload_type == 0)
+                <div class="video_box"><div class="" id="player_{{ $key }}"></div></div>
                     <script>
                         var player_{{ $key }};
                         const videoModalOpen_{{ $key }} = (modal)=>{

@@ -185,4 +185,39 @@ class LoginService
         $authToken = AuthToken::where('user_idx', $userIdx)->orderBy('register_time', 'DESC')->first();
         return empty($authToken) ? '' : $authToken->token;
     }
+
+
+    /**
+     * 사용자 액세스 토큰으로 로그인 처리
+     * 
+     * @param string $accessToken
+     * @return json array
+     */
+    public function signinByAccessToken($accessToken): array
+    {
+        $result = array();
+        $result['success'] = false;
+        $result['msg'] = '실패';
+        $result['code'] = 'EA001';
+
+        if (empty($accessToken)) {
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
+        }
+        $authToken = AuthToken::where('token', $accessToken)->orderBy('register_time', 'DESC')->first();
+
+        if (empty($authToken)) {
+            $result['code'] = 'EA002';
+            $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
+            return $result;
+        }
+
+        $this->getAuthToken($authToken['user_idx']);
+
+        $result['success'] = true;
+        $result['msg'] = '성공';
+        $result['code'] = 'S0001';
+
+        return $result;
+    }
 }

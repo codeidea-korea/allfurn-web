@@ -121,21 +121,20 @@
                         <div class="txt_box">
                             <div class="flex items-center justify-between">
                                 <a href="/wholesaler/detail/{{ $wholesaler->company_idx }}">
-                                    <img src="/img/icon/crown.png" alt="">
+                                    @if($wholesaler->rank <= 20)
+                                        <img src="/img/icon/crown.png" alt="">
+                                    @endif
                                     {{ $wholesaler->company_name }}
                                     <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
                                 </a>
                                 <button class="zzim_btn {{ $wholesaler->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$wholesaler->company_idx}}' onclick="toggleCompanyLike({{$wholesaler->company_idx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
-                            @php
-                                $companyCategoryList = explode(',', $wholesaler->categoryList);
-                            @endphp
-                            @if( count( $companyCategoryList ) > 0 )
+                            @if( count( $wholesaler->categoryList ) > 0 )
                             <div class="flex items-center justify-between">
                                 <div class="tag">
-                                    @foreach ( $companyCategoryList as $category )
+                                    @foreach ( $wholesaler->categoryList as $category )
                                         @if($loop->index == 3) @break @endif
-                                        <span>{{ $category }}</span>
+                                        <span>{{ $category->name }}</span>
                                     @endforeach
                                 </div>
                                 <i>{{ $wholesaler->location }}</i>
@@ -174,13 +173,13 @@
                     @if( $key != 0 && $key%5 == 0 )
                 </ul><ul{{( $key > 9 ) ? ' hidden' : ''}}>
                     @endif
-                    <li><a href="javascript:;">
+                    <li><a href="/wholesaler/detail/{{ $company->company_idx }}">
                             <i>{{$key+1}}</i>
                             <p>{{$company->company_name}}</p>
                             <div class="tag">
-                                @foreach( explode( ',', $company->categoryList ) AS $cate )
-                                    @if($loop->index == 2) @break @endif
-                                    <span>{{$cate}}</span>
+                                @foreach( $company->categoryList AS $cate )
+                                    @if($loop->index == 1) @break @endif
+                                    <span>{{$cate->name}}</span>
                                 @endforeach
                             </div>
                         </a>
@@ -209,7 +208,7 @@
                 <div class="filter_box">
                     <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                    <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+                    <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
                     <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                 </div>
                 <div class="total">전체 0개</div>
@@ -291,8 +290,11 @@
     let isLastPage = false;
     let currentPage = 0;
     function loadWholesalerList(needEmpty, target) {
+        if(isLoading) return;
+        if(!needEmpty && isLastPage) return;
+
         isLoading = true;
-        if(needEmpty) currentPage = 0;;
+        if(needEmpty) currentPage = 0;
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -339,13 +341,6 @@
         loadWholesalerList(true, $(this))
     });
 
-    const filterRemove = (item)=>{
-        $(item).parents('span').remove(); //해당 카테고리 삭제
-        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
-
-        loadWholesalerList(true);
-    }
-
     $(".refresh_btn").on('click', function() {
         $("#filter_category-modal .check-form:checked").prop('checked', false);
         $("#filter_location-modal .check-form:checked").prop('checked', false);
@@ -374,21 +369,12 @@
     }
 
     function displaySelectedCategories() {
-
-        let html = "";
-        $("#filter_category-modal .check-form:checked").each(function(){
-            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
-                "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
-                "</span>";
-        });
-        $(".filter_on_box .category").empty().append(html);
-
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).html("카테고리 <b class='txt-primary'>" + totalOfSelectedCategories + "</b>");
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
 
             $(".wholesalerListSection ul.obtain_list .sub_filter_result").show();
@@ -396,27 +382,24 @@
     }
 
     function displaySelectedLocation() {
-        let html = "";
-
-        $("#filter_location-modal .check-form:checked").each(function() {
-            html += '<span>'+ $(this).data('location') +
-                '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
-                '</span>';                    "</span>";
-        });
-        $(".filter_on_box .location").empty().append(html);
-
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).html("소재지");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).html("소재지 <b class='txt-primary'>" + totalOfSelectedLocations + "</b>");
+            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
     }
 
     function displaySelectedOrders() {
+        if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
+            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+        } else {
+            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+        }
+
         $(".sub_filter .filter_box button").eq(2)
         .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
     }

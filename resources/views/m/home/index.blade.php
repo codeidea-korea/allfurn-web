@@ -85,31 +85,31 @@
             <div class="slide_box">
                 <ul class="swiper-wrapper">
                     <li class="swiper-slide">
-                         <a href="/product/best-new">
-                            <img src="./img/main/best_icon.png" alt="">
+                        <a href="/product/best-new">
+                            <img src="/img/main/best_icon.png" alt="">
                             <span>BEST<br/>신상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="javascript:modalOpen('#search-modal');">
+                        <a href="javascript:modalOpen('#search-modal');">
                             <img src="/img/main/search_icon.png" alt="">
                             <span>쉬운<br/> 상품 찾기</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/product/planDiscountDetail">
+                        <a href="/product/planDiscountDetail">
                             <img src="/img/main/event_icon.png" alt="">
                             <span>할인/이벤트<br/> 상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/magazine/daily">
+                        <a href="/magazine/daily">
                             <img src="/img/main/news_icon.png" alt="">
                             <span>일일 <br/>가구 뉴스</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/community?board_name=상품문의">
+                        <a href="/community?board_name=상품문의">
                             <img src="/img/main/message_icon.png" alt="">
                             <span>상품 문의</span>
                          </a>
@@ -213,33 +213,17 @@
                         <h3>가구 모임</h3>
                     </div>
                     <ul class="main_board_list">
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>골프모임</span>
-                                    <p>12월 정모 일자 알려드립니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>소파 업체 모임</span>
-                                    <p>패브릭 소파 판매현황이 어떤가요?</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
-                        <li>
-                            <div class="title">
-                                <a href="javascript:;">
-                                    <span>매출 증진 모임</span>
-                                    <p>이번달 매출액입니다.</p>
-                                </a>
-                            </div>
-                            <span>23.10.04</span>
-                        </li>
+                        @foreach ($data['club'] as $item )
+                            <li>
+                                <div class="title">
+                                    <a href="/community/club/article/{{$item->article_idx}}">
+                                        <span>{{$item->name}}</span>
+                                        <p>{{$item->title}}</p>
+                                    </a>
+                                </div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('y.m.d') }}</span>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -247,7 +231,9 @@
     </section>
 
     {{-- 올펀 패밀리 광고 --}}
-    @include('m.home.inc-allfurn-family')  
+    @if(count($data['family_ad']) > 0)
+        @include('m.home.inc-allfurn-family')  
+    @endif
 
 </div>
 
@@ -278,13 +264,13 @@ const main_visual = new Swiper(".main_visual .slide_box", {
 // main_mid_banner
 const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
     slidesPerView: 'auto',
-    spaceBetween: 8,
+    //spaceBetween: 8,
 });
 
 // category_banner
 const category_banner = new Swiper(".category_banner .slide_box", {
     slidesPerView: 'auto',
-    spaceBetween: 17,
+    //spaceBetween: 17,
 });
 
 $('.category_banner li').on('click',function(){
@@ -490,14 +476,15 @@ $(document)
             };
 
             try{
-            if(isMobile.any()) {
-                if(isMobile.Android()) {
-                // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
-                window.AppWebview.postMessage(jsonStr);
-                } else if (isMobile.iOS()) {
-                window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                localStorage.setItem('accessToken', "{{$xtoken}}");
+                if(isMobile.any()) {
+                    if(isMobile.Android()) {
+                    // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
+                    window.AppWebview.postMessage(jsonStr);
+                    } else if (isMobile.iOS()) {
+                    window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                    }
                 }
-            }
             } catch (e){
             console.log(e)
             }

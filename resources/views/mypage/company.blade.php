@@ -6,7 +6,7 @@
             <span class="font-medium">설정</span>
         </a>
     </div>
-
+    
     <div class="pt-5">
         <ul class="obtain_list hompage">
             <li>

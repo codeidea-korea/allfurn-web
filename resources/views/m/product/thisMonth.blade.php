@@ -1,7 +1,7 @@
 @extends('layouts.app_m')
 @php
     $only_quick = '';
-    $header_depth = 'product';
+    $header_depth = 'thismonth';
     $top_title = '';
     $header_banner = '';
 @endphp
@@ -188,26 +188,25 @@
         </section>
         @endif
 
-        @if( count( $companyProduct ) > 0 )
         <section class="sub_section sub_section_bot overflow-hidden">
             <div class="inner">
                 <div class="main_tit mb-5 flex justify-between items-center">
                     <div class="flex items-center gap-4">
-                        <h3>9월 BEST 도매 업체</h3>
+                        <h3>{{date('n')}}월 BEST 도매 업체</h3>
                     </div>
                 </div>
                 <div class="sub_filter">
                     <div class="filter_box">
                         <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                         <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                        <button class="" onclick="modalOpen('#filter_align-modal03')">최신순 <b class="txt-primary"></b></button>
+                        <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
+                        <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                     </div>
                 </div>
             </div>
 
             <ul class="obtain_list type02"></ul>
         </section>
-        @endif
     </div>
 
     <script>
@@ -306,7 +305,7 @@
         $(".refresh_btn").on('click', function() {
             $("#filter_category-modal .check-form:checked").prop('checked', false);
             $("#filter_location-modal .check-form:checked").prop('checked', false);
-            $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
+            $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
             
             loadWholesalerList(true);
         });
@@ -315,6 +314,9 @@
         let isLastPage = false;
         let currentPage = 0;
         function loadWholesalerList(needEmpty, target) {
+            if(isLoading) return;
+            if(!needEmpty && isLastPage) return;
+
             isLoading = true;
 
             if(needEmpty) currentPage = 0;
@@ -327,7 +329,7 @@
                     'page': ++currentPage,
                     'categories' : getIndexesOfSelectedCategory().join(','),
                     'locations' : getIndexesOfSelectedLocation().join(','),
-                    'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
+                    'orderedElement' : $("#filter_align-modal .radio-form:checked").val()
                 },
                 beforeSend : function() {
                     if(target) {
@@ -402,8 +404,14 @@
         }
 
         function displaySelectedOrders() {
+            if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
+                $(".sub_filter .filter_box button").eq(2).addClass('on')         
+            } else {
+                $(".sub_filter .filter_box button").eq(2).removeClass('on')
+            }
+
             $(".sub_filter .filter_box button").eq(2)
-            .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
+            .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
         }
 
         function toggleCompanyLike(idx) {

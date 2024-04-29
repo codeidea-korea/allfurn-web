@@ -10,14 +10,13 @@
                     <h3>인기 브랜드</h3>
                 </div>
             </div>
-
             @if( count( $lists ) > 0 )
             <div class="popular_prod popular_con01">
                 <div class="slide_box">
                     @foreach( $lists AS $l => $brand )
                     <ul>
                         <li class="popular_banner">
-                            <img src="{{$brand->imgUrl}}" class="h-[595px]" alt="{{$brand->companyName}}">
+                            <img src="{{$brand->imgUrl}}" class="object-cover h-full" alt="{{$brand->companyName}}">
                             <div class="txt_box">
                                 <p>
                                     <b>{{$brand->subtext1}}</b><br/>{{$brand->subtext2}}
@@ -32,11 +31,12 @@
                                 <a href="/product/detail/{{$item['mdp_gidx']}}"><img src="{{$item['mdp_gimg']}}" alt="{{$item['mdp_gname']}}"></a>
                                 <button class="zzim_btn prd_{{$item['mdp_gidx']}} {{($brand->product_interest[$item['mdp_gidx']])?'active':''}}" pIdx="{{$item['mdp_gidx']}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
-                            <div class="txt_box">
-                                <a href="./prod_detail.php">
+                            <!-- 고객사 요청으로 삭제 -->
+                            <!-- <div class="txt_box">
+                                <a href="/product/detail/{{$item['mdp_gidx']}}">
                                     <p>{{mb_strimwidth($item['mdp_gname'], 0, 40, '...','utf-8')}}</p>
                                 </a>
-                            </div>
+                            </div> -->
                         </li>
                         @endforeach
                         @endif
@@ -51,10 +51,13 @@
 
 <script type="text/javascript">
     let isLoading = false;
-    let isLastPage = false;
+    let isLastPage = {{ $lists->lastPage() == 1 }};
     let currentPage = 1;
 
     function loadNewProductList() {
+        if(isLoading) return;
+        if(isLastPage) return;
+        
         isLoading = true;
 
         var orderedElement = '';
@@ -74,7 +77,7 @@
                 console.log( result );
                 displayNewWholesaler(result.query, $(".popular_prod .slide_box"), false);
 
-                isLastPage = currentPage === result.last_page;
+                isLastPage = currentPage === result.query.last_page;
             },
             complete : function () {
                 isLoading = false;

@@ -303,6 +303,9 @@
 
 
         function loadNewProductList() {
+            if(isLoading) return;
+            if(isLastPage) return;
+
             isLoading = true;
 
             var orderedElement = '';

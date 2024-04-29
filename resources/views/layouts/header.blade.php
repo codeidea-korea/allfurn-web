@@ -122,14 +122,14 @@ const getSearchData = () => {
                 if (json['category'][i]['parentName'] != null) {
                     categoryList += '' +
                         '<li class="flex items-center text-sm gap-2">' +
-                        '   <span class="text-primary font-bold">1</span>' +
-                        '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
+                        '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
+                        '   <a href="/product/category?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['parentName'] + ' > ' + json['category'][i]['categoryName'] + '</a>' +
                         '</li>';
                 } else {
                     categoryList += '' +
                         '<li class="flex items-center text-sm gap-2">' +
-                        '   <span class="text-primary font-bold">1</span>' +
-                        '   <a href="/home/searchResult?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
+                        '   <span class="text-primary font-bold">'+ (i+1) +'</span>' +
+                        '   <a href="/product/category?ca=' + json['category'][i]['categoryIdx'] + '&pre=' + json['category'][i]['parentIdx'] + '">' + json['category'][i]['categoryName'] + '</a>' +
                         '</li>';
                 }
             }
@@ -251,7 +251,7 @@ function clickKeyword(keyword) {
         return response.json();
     }).then(json => {
         if (json.success == true) {
-            location.replace('/product/searchBar?kw=' + keyword);
+            location.href = '/product/searchBar?kw=' + keyword;
         }
     });
 }

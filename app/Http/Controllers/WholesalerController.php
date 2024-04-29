@@ -32,24 +32,33 @@ class WholesalerController extends BaseController
      */
     public function index(Request $request)
     {
-        $target['orderedElement'] =  $request->orderedElement == null ? "banner_price" : str_replace("filter_", "", $request->orderedElement);
-        $data = $this->wholesalerService->getWholesalerData($target);
-        $categoryList = $this->productService->getCategoryList();
+        // $target['orderedElement'] =  $request->orderedElement == null ? "banner_price" : str_replace("filter_", "", $request->orderedElement);
+        // $data = $this->wholesalerService->getWholesalerData($target);
 
+        //인기브랜드(광고)
+        $popularbrand_ad = $this->wholesalerService->getPopularBrand();
+        
+        //띠배너
         $bannerList = $this->productService->getThisDealList('wholesaletop');
 
-        // $companyList = $this->productService->getThisMonth('product');
-        // $companyList = setArrayNumer( $companyList );
-        $target['limit'] = 20;
-        $companyList = $this->wholesalerService->getThisMonthWholesaler($target);
+        //이달의 도매
+        $thisMonthParam['limit'] = 50;
+        $thisMonthParam['orderElement'] = 'recommendation';
+        $thisMonthWholesaler = $this->wholesalerService->getThisMonthWholesaler($thisMonthParam);
+
+        //도매업체 순위
+        $wholesalerRankParam['limit'] = 20;
+        $wholesalerRankParam['orderedElement'] = 'recommendation';
+        $wholesalerRank = $this->wholesalerService->getWholesalerList($wholesalerRankParam);
+        
+        $categoryList = $this->productService->getCategoryList();
         
         return view(getDeviceType().'wholesaler.index', [
-            'data'=>$data,
+            'data' => $popularbrand_ad,
+            'bannerList'    => $bannerList, // 띠배너
+            'companyList'   => $thisMonthWholesaler, //이달의 도매
+            'companyProduct'=> $wholesalerRank, //도매업체 순위
             'categoryList'  => $categoryList,
-            'bannerList'    => $bannerList,
-            'companyList'   => $companyList,
-            'companyProduct'=> $companyList,
-            'query'         => $target
         ]);
     }
 

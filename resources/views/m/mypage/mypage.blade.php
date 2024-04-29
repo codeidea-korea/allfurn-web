@@ -22,7 +22,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
 @endphp
 
 @section('content')
-    @include('layouts.header_m')
+@include('layouts.header_m')
 
 @php
     $tPoint = 0;
@@ -45,7 +45,8 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
         'estimate', 'estimate-response-multi',
         'estimate-request', 'estimate-request-check', 'estimate-request-send',
         'estimate-response', 'estimate-check', 'estimate-response-check', 'estimate-response-send',
-        'order-check'
+        'order-check',
+        'recent'
     ]))
         @include('m.mypage.'.$pageType)
     @else
@@ -66,17 +67,23 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 };
 
                 try{
-                if(isMobile.any()) {
-                    if(isMobile.Android()) {
-                    // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
-                    window.AppWebview.postMessage(jsonStr);
-                    } else if (isMobile.iOS()) {
-                    window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                    localStorage.setItem('accessToken', "{{$xtoken}}");
+                    if(isMobile.any()) {
+                        if(isMobile.Android()) {
+                        // AppWebview 라는 모듈은 android 웹뷰에서 설정하게 됩니다.
+                        window.AppWebview.postMessage(jsonStr);
+                        } else if (isMobile.iOS()) {
+                        window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
+                        }
                     }
-                }
                 } catch (e){
                 console.log(e)
                 }
+	    }
+
+            function signout(){
+                localStorage.removeItem('accessToken');
+                location.href='/signout';
             }
 
             callLogin();
@@ -166,7 +173,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <span class="text-base main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
-                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></a>
+                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
             </div>
             <ul class="my_menu_list mt-5">
@@ -176,7 +183,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="/mypage/interest" class="flex p-4 justify-between">
                         <p>좋아요 상품</p>
                         <div class="flex items-center">
-                            <p class="text-sm">52개</p>
+                            <p class="text-sm">{{ $likeProductCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
@@ -185,31 +192,31 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <a href="/mypage/like" class="flex p-4 justify-between">
                         <p>좋아요 업체</p>
                         <div class="flex items-center">
-                            <p class="text-sm">27개</p>
+                            <p class="text-sm">{{ $likeCompanyCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex p-4 justify-between">
+                    <a href="/mypage/recent" class="flex p-4 justify-between">
                         <p>최근 본 상품</p>
                         <div class="flex items-center">
-                            <p class="text-sm">124개</p>
+                            <p class="text-sm">{{ $recentlyViewedProductCount }}개</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="flex p-4 justify-between bottom_type">
+                    <a href="/message" class="flex p-4 justify-between bottom_type">
                         <p>문의 내역</p>
                         <div class="flex items-center">
-                            <p class="text-sm main_color">5건</p>
+                            <p class="text-sm main_color">{{ $inquiryCount }}건</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>
                     </a>
                 </li>
                 <li class="bottom_type together">
-                    <a href="/help/faq" >
+                    <a id="kakaotalk-sharing-btn" href="javascript:shareMessage()">
                         <b>함께 올펀을 사용해보세요!</b>
                         <span class="flex items-center">
                             올펀 알려주기
@@ -256,17 +263,17 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="javascript: ;" class="flex p-4 justify-between" onclick="location.href='/signout';">
+                    <a href="javascript: ;" class="flex p-4 justify-between" onclick="signout()">
                         <p>로그아웃</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="#" class="flex p-4 justify-between">
                         <p>설정</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
-                </li>
+                </li> --}}
             </ul>
         </div>
 
@@ -318,16 +325,28 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
             </div>
         </div>
 
-
-
-
-
         <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
         <script>
             function openModal(name) {
                 $(`${name}`).css('display', 'block');
                 $('body').css('overflow', 'hidden');
             }
+        </script>
+
+        <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+        <script>
+        Kakao.init('2b966eb2c764be29d46d709f6d100afb'); 
+        function shareMessage() {
+            Kakao.Share.sendDefault({
+                objectType: 'text',
+                text:
+                    '올펀 - 글로벌 가구 도·소매 No.1 플랫폼',
+                link: {
+                    mobileWebUrl: "{{ env('APP_URL') }}",
+                    webUrl: "{{ env('APP_URL') }}",
+                },
+            });
+        }
         </script>
     @endif
 @endsection

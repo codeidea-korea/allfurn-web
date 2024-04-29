@@ -22,15 +22,16 @@
             </div>
         </div>
         <div class="flex mt-4 gap-2">
-            <button class="rounded-sm border h-[42px] text-center w-full" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button>
+            {{-- <button class="rounded-sm border h-[42px] text-center w-full" onclick="modalOpen('#writing_guide_modal')">올펀 이용 가이드</button> --}}
             <button class="rounded-sm border h-[42px] text-center w-full" onclick="location.href='/help/inquiry'">1:1문의</button>
         </div>
     </div>
     <div class="mt-4 bg-white">
         <div class="border-b">
             <div class="flex gap-5">
-                <a href="/help/faq" class="font-medium py-3 text-stone-400 w-full text-center">자주 묻는 질문</a>
+                <a href="/help/guide" class="font-medium py-3 text-stone-400 w-full text-center">이용 가이드</a>
                 <a href="/help/notice" class="border-b-2 border-primary py-3 text-primary font-bold w-full text-center">공지사항</a>
+                <a href="/help/faq" class="font-medium py-3 text-stone-400 w-full text-center">자주 묻는 질문</a>
             </div>
         </div>
         <!-- 아코디언 리스트 최대 10개씩 출력 -->

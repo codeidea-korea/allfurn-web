@@ -16,7 +16,7 @@
                     <li>
                         <a>
                             <i><img src="{{ $category->imgUrl }}"></i>
-                            <span onclick="javascript:location.href='/product/category?pre={{ $category->idx }}'">{{ $category->name }}</span>
+                            <span onclick="javascript:(0);">{{ $category->name }}</span>
                         </a>
                         <ul class="depth2">
                             <li><a href="/product/category?pre={{ $category->idx }}">전체</a></li>
@@ -31,4 +31,9 @@
     </section>
 </div>
 
+<script>
+    $(document).on('click', '.depth2 li a', function() {
+        $(this).addClass('active');
+    })
+</script>
 @endsection

@@ -20,6 +20,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Magazine;
 use App\Models\LikeCompany;
+use App\Models\Club;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -105,7 +106,7 @@ class HomeService
             ->where('AF_product_ad.ad_location', 1)
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
-            ->orderby('ad_price', 'desc')->inRandomOrder()->get();
+            ->orderByRaw('AF_product_ad.price desc, RAND()')->get();
        
 
         // 신상품 목록 
@@ -122,8 +123,12 @@ class HomeService
             ->where([
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
-            ])
-            ->orderBy('idx', 'desc')->limit(256)->get();
+            ]);
+            if(getDeviceType() == 'm.') {
+                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(8)->get();
+            } else {
+                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(256)->get();
+            }
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
@@ -164,7 +169,7 @@ class HomeService
             ->where('AF_banner_ad.ad_location', 'popularbrand')
             ->where('AF_banner_ad.is_delete', 0)
             ->where('AF_banner_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('AF_banner_ad.banner_price desc, RAND()')->get();
         
         foreach($data['popularbrand_ad'] as $brand){
             $brand_product_interest = array();
@@ -225,7 +230,7 @@ class HomeService
             ->where('AF_video_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_video_ad.is_delete', 0)
             ->where('AF_video_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('AF_video_ad.price desc, RAND()')->get();
         foreach($data['video_ad'] as $video){
             if ($video->video_upload_type == '1'){
                 $tmpVideo = DB::table('AF_attachment')->selectRaw('CONCAT("'.preImgUrl().'", folder, "/", filename) as video_url')
@@ -260,6 +265,16 @@ class HomeService
             ->get();
 
         // 가구모임
+        $data['club'] = Club::select('*', 'AF_club_article.idx AS article_idx')
+            ->where('AF_club.is_open', 1)
+            ->leftjoin('AF_club_article',  function($query) {
+                $query->on('AF_club.idx', 'AF_club_article.club_idx');
+            })
+            ->where('AF_club_article.is_open', 1)
+            ->where('AF_club_article.is_delete', 0)
+            ->orderBy('AF_club_article.register_time', 'desc')
+            ->limit(3)
+            ->get();
 
         // 올펀패밀리
         $data['family_ad'] = FamilyAd::select('AF_family_ad.*', 
@@ -274,7 +289,7 @@ class HomeService
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderby('idx', 'desc')->get();
+            ->orderByRaw('ad_price desc, RAND()')->get();
 
         // 팝업
         $data['popup'] = Popup::select('AF_popup.*',

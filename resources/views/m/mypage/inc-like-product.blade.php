@@ -5,6 +5,7 @@
                 <button onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                 <button onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                 <button onclick="modalOpen('#filter_align-modal03')">최신순</button>
+                <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
             </div>
             <div class="total txt-gray">전체 0개</div>
         </div>
@@ -34,6 +35,9 @@
     let isLastPage = false;
     let currentPage = 0;
     function loadNewProductList(needEmpty, target) {
+        if(isLoading) return;
+        if(!needEmpty && isLastPage) return;
+        
         isLoading = true;
         if(needEmpty) currentPage = 0;
 
@@ -152,6 +156,12 @@
     }
 
     function displaySelectedOrders() {
+        if($("#filter_align-modal03 .radio-form:checked").val() != "register_time") {
+            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+        } else {
+            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+        }
+
         $(".sub_filter .filter_box button").eq(2)
             .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
     }

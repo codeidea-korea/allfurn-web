@@ -52,6 +52,7 @@ class MessageController extends BaseController
         if (!isset($params['room_idx'])) {
             return redirect('/message');
         }
+        $data['user_idx'] = $this->messageService->getUserIdx();
         
         $data['keyword'] = isset($params['keyword']) ? $params['keyword'] : '';
         $data['chatting_keyword'] = isset($params['chatting_keyword']) ? $params['chatting_keyword'] : '';
@@ -78,7 +79,7 @@ class MessageController extends BaseController
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
                             $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week - 1].'요일</span></div>';
                     }
-                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
+                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat, 'Y');
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
                 } catch(Exception $e) {
                 }

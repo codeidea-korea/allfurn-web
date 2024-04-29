@@ -1,6 +1,7 @@
 @if(!Str::contains(url()->current(), ['/magazine/daily/detail', '/magazine/furniture/detail', 
                                       '/magazine/detail', '/community/detail', '/community/write',
-                                      '/home/category','/product/registration'
+                                      '/home/category','/product/registration',
+                                      '/community/club/article'
                                       ]))
     <footer>
         <div class="inner">
@@ -9,7 +10,7 @@
                 <li><a href="/help/faq">자주 묻는 질문</a></li>
                 <li><a href="/help/notice">공지사항</a></li>
                 <li><a href="/help/inquiry">1:1 문의</a></li>
-                <li><a href="/help/notice">이용 가이드</a></li>
+                <li><a href="/help/guide">이용 가이드</a></li>
             </ul>
             <div class="info">
                 <img src="/img/logo_gray.svg" alt="">
@@ -27,3 +28,22 @@
         </div>
     </footer>
 @endif
+
+<!-- ** 페이지 로딩 ** -->
+<div id="loadingContainer" style="display:none;">
+    <svg width="50" viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="rgb(255, 255, 255)" class="w-10 h-10">
+        <circle cx="15" cy="15" r="15">
+            <animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate>
+            <animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate>
+        </circle>
+        <circle cx="60" cy="15" r="9" fill-opacity="0.3">
+            <animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate>
+            <animate attributeName="fill-opacity" from="0.5" to="0.5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate>
+        </circle>
+        <circle cx="105" cy="15" r="15">
+            <animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate>
+            <animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate>
+        </circle>
+    </svg>
+</div>
+<!-- ** 페이지 로딩 끝 ** -->

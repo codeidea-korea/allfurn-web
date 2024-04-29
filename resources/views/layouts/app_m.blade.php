@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/css/m/rubin.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/anypicker.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/anypicker-ios.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="/css/output.css?{{ date('Ymdhis') }}">
+    {{-- <link rel="stylesheet" href="/css/output.css?{{ date('Ymdhis') }}"> --}}
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/pci.js?{{ date('Ymdhis') }}"></script>

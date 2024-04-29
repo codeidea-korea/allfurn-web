@@ -38,7 +38,7 @@
                     @foreach($rooms as $room)
                     <li onclick="visibleRoom({{ $room->idx }})" data-key="{{ $room->idx }}">
                         <div class="img_box">
-                            <img src="/img/profile_img.svg" alt="">
+                            <img src="{{ $room->profile_image }}" class="object-cover w-full h-full" alt="">
                         </div>
                         <div class="txt_box">
                             <h3>
@@ -71,7 +71,7 @@
     <script>
     Pusher.logToConsole = false;
             
-    const pusher = new Pusher('51b26f4641d16394d3fd', {
+    var pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
     });
 
@@ -88,7 +88,7 @@
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
                     +'    <div class="img_box">'
-                    +'        <img src="/img/profile_img.svg" alt="">'
+                    +'        <img src="'+messages.profile_image+'" alt="">'
                     +'    </div>'
                     +'    <div class="txt_box">'
                     +'        <h3>'
@@ -193,6 +193,39 @@
                 loadEvent(idx);
 
                 const roomIdx = idx;
+                pusher.disconnect(); // TESTSETSETSE
+                pusher = new Pusher('51b26f4641d16394d3fd', {
+                    cluster: 'ap3'
+                });
+
+                var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
+                cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
+                    console.log(JSON.stringify(messages));
+
+                    const rooms = $('._chatting_rooms > li');
+                    const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
+
+                    if(newestRoom) {
+                        rooms.prepend(newestRoom);
+                    } else {
+                        const tmpChattingRoom = 
+                                '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                                +'    <div class="img_box">'
+                                +'        <img src="'+messages.profile_image+'" alt="">'
+                                +'    </div>'
+                                +'    <div class="txt_box">'
+                                +'        <h3>'
+                                +'            '+messages.roomName
+                                +'            <span>'+messages.title+'</span>'
+                                +'        </h3>'
+                                +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+                                +'    </div>'
+                                +'</li>';
+                        $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+                    }
+                    // 활성화 처리 및 텍스트 변경
+                    $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+                });
                 var channel = pusher.subscribe('chat-' + roomIdx);
                 channel.bind('chat-event-' + roomIdx, function(messages) {
                     console.log(JSON.stringify(messages));
@@ -206,6 +239,9 @@
                     if(messages.date != lastCommunicatedDate) {
                         const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
                         $('.chatting_list').html($('.chatting_list').html() + dateTag);
+                    }
+                    if(messages.userIdx != {{ $user_idx }}) {
+                        messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
                     }
                     $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
                     
@@ -345,6 +381,46 @@
             document.getElementById('chat_message').value = '';
         }
         {{-- 메시지 전송 --}}
+        const submitImgMessage = () => {
+            let elem = document.getElementById('submitBtn');
+            if (elem.dataset.processing) {
+                return false;
+            }
+            elem.dataset.processing = "Y";
+            const roomIdx = elem.dataset.roomIdx;
+            const data = new FormData();
+            data.append('room_idx', roomIdx);
+            const imageFiles = document.getElementById('img_file').files;
+            if (imageFiles.length > 0) {
+                data.append('message_image', imageFiles[0]);
+            }
+            if (document.getElementById('product_idx')) {
+                data.append('product_idx', document.getElementById('product_idx').value);
+            }
+            if (imageFiles.length < 1 && !document.getElementById('product_idx')) {
+                return false;
+            }
+            fetch('/message/send', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+                body: data,
+            }).then(response => {
+                delete elem.dataset.processing;
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Sever Error');
+            }).then(json => {
+                if (json.result === 'success') {
+//                    visibleRoom(roomIdx);
+                }
+            }).catch(error => {
+                delete elem.dataset.processing;
+            })
+        }
+        {{-- 메시지 전송 --}}
         const submitMessage = elem => {
             if (elem.dataset.processing) {
                 return false;
@@ -357,14 +433,10 @@
             if (message) {
                 data.append('message', message);
             }
-            const imageFiles = document.getElementById('img_file').files;
-            if (imageFiles.length > 0) {
-                data.append('message_image', imageFiles[0]);
-            }
             if (document.getElementById('product_idx')) {
                 data.append('product_idx', document.getElementById('product_idx').value);
             }
-            if (!message && imageFiles.length < 1 && !document.getElementById('product_idx')) {
+            if (!message && !document.getElementById('product_idx')) {
                 return false;
             }
             fetch('/message/send', {
@@ -642,6 +714,6 @@
 
 
 
-@endsection
-
 @include('message.modal')
+
+@endsection

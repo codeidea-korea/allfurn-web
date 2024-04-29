@@ -103,7 +103,7 @@
                         <button class="btn btn-line3" onclick="location.href='/mypage/sendRequestEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
                         <button class="btn btn-primary" onClick="location.href='tel:{{$data['detail']->companyPhoneNumber}}';"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
                     </div>
-                    <div class="quick_btn_box" onClick="location.href='/message';">
+                    <div class="quick_btn_box" onClick="sendMessage()">
                         <button>채팅<br/>문의</button>
                     </div>
                 </div>
@@ -270,5 +270,37 @@
         }
         // 이미 'active' 상태였다면, 위의 로직에 의해 'active' 클래스가 제거됩니다.
     });
+
+    //문의하기
+    function sendMessage() {
+            idx='';
+            type=''
+            if ($(location).attr('href').includes('/product/detail')) {
+                idx = $(location).attr('pathname').split('/')[3];
+                type = 'product';
+            } else if ($(location).attr('href').includes('/wholesaler/detail/')) {
+                idx = $(location).attr('pathname').split('/')[3];
+                type = 'wholesaler';
+            }
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url                : '/message/send',
+                data            : {
+                    'idx'       : idx,
+                    'type'      : type,
+                    'message'   : '상품 문의드립니다.'
+                },
+                type            : 'POST',
+                dataType        : 'json',
+                success        : function(result) {
+                    if (result.result == 'success') {
+                        location.href = "/message/room?room_idx=" + result.roomIdx;
+                    } else {
+
+                    }
+                }
+            });
+        }
 </script>
 @endsection

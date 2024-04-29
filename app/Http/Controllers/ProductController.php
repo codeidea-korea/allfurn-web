@@ -48,10 +48,10 @@ class ProductController extends BaseController
     {
         $type = $request->get('type') ?? '';
 
-        return view('product.product-registration', [
+        return view(getDeviceType().'product.product-registration', [
             'productIdx' => $productIdx,
             'data' => $this->productService->getProductData($productIdx, $type)['detail'],
-            'categoryList' => $this->getCategoryList(),
+            'categoryList' => $this->productService->getCategoryTree(), //$this->getCategoryList(),
             'productList' => $this->getMyProductList(), 
             'request' => $request
         ]);
@@ -143,6 +143,10 @@ class ProductController extends BaseController
      */
     public function registration(Request $request)
     {
+        $productIdx = 0;
+        if ($request->temp != "") {
+            $productIdx = $request->temp;
+        }
         return view(getDeviceType().'product.product-registration', [
             'banners' => $this->productService->getBannerList(),
             'todayCount' => $this->productService->getTodayCount(),
@@ -150,7 +154,7 @@ class ProductController extends BaseController
             'categoryList' => $this->productService->getCategoryTree(),
             'productList' => $this->getMyProductList(), 
             'request' => $request, 
-            'productIdx' => 0
+            'productIdx' => $productIdx
         ]);
     }
 
@@ -257,7 +261,7 @@ class ProductController extends BaseController
     {
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
-        if($request->orderedElement == null || $request->orderedElement) {
+        if($request->orderedElement == null || $request->orderedElement == 'register_time') {
             $data['orderedElement'] = 'AF_product.access_date';
         } else {
             $data['orderedElement'] = $request->orderedElement;
@@ -297,7 +301,7 @@ class ProductController extends BaseController
         $data['detail']->propertyArray = $propArray;
 
         // 신상품 처리 최근등록일 기준 ( 30일 )
-        $date1 = Carbon::parse($data['detail']->register_time);
+        $date1 = Carbon::parse($data['detail']->accss_date);
         $date2 = Carbon::parse(now());
 
         // 신상품( is_new_product ==1 ) 이면서 등록된지 1달 이내의 상품
@@ -412,7 +416,7 @@ class ProductController extends BaseController
             $wholesalesCnt = $this->productService->countSearchWholesales($data['keyword']);
 
             if ($wholesalesCnt > 1) {
-                return redirect(getDeviceType().'/wholesaler/search?kw=' . $data['keyword']);
+                return redirect('/wholesaler/search?kw=' . $data['keyword']);
             }
         }
 
@@ -421,7 +425,7 @@ class ProductController extends BaseController
         ]);
     }
 
-    // 이 달의 도매 데이터 가져오기
+    // 이 달의 딜 데이터 가져오기
     public function thisMonth(Request $request)
     {
         $categoryList = $this->productService->getCategoryList();
@@ -459,21 +463,16 @@ class ProductController extends BaseController
         $dealBanner['plandiscount'] = $this->productService->getThisDealList('plandiscount');
         $dealBanner['dealmiddle'] = $this->productService->getThisDealList('dealmiddle');
 
-        $target['thisMonth'] = date('m');
-        $dealBanner['product'] = $this->productService->getBestNewProductList($data);
-
-        $target['categoryIdx'] = $request->query('categories');
-        $target['locationIdx'] = $request->query('locations');
-        $target['orderedElement'] = $request->orderedElement == null ? "score" : str_replace("filter_", "", $request->orderedElement);
-        $company = $this->wholesalerService->getThisMonthWholesaler($target);
+        //BEST 상품
+        $dealBanner['product'] = $this->productService->getBestNewProductList();
 
         return view(getDeviceType() . 'product.thisMonth', [
             'categoryList' => $categoryList,
-            'dealbrand' => $dealBanner['dealbrand'],
-            'plandiscount' => $dealBanner['plandiscount'],
-            'dealmiddle' => $dealBanner['dealmiddle'],
-            'productBest' => $dealBanner['product'],
-            'companyProduct' => $company
+            'dealbrand' => $dealBanner['dealbrand'], //이달의 딜 인기브랜드
+            'plandiscount' => $dealBanner['plandiscount'], // BEST 기획전
+            'dealmiddle' => $dealBanner['dealmiddle'], // 띠배너
+            'productBest' => $dealBanner['product'], //베스트상품
+            // 'companyProduct' => $company
         ]);
     }
 
@@ -584,24 +583,9 @@ class ProductController extends BaseController
     // xx월 Best 도매업체 json
     public function getJsonThisBestWholesaler(Request $request)
     {
-        $data['categoryIdx'] = $request->categories == null ? "" : $request->categories;
-        $data['locationIdx'] = $request->locations == null ? "" : $request->locations;
-        switch($request->orderedElement){
-            case "access_count":
-                $data['orderedElement'] = 'companyAccessCount';
-                break;
-
-            case "register_time" : 
-                $data['orderedElement'] = 'register_time';
-                break;
-
-            default:
-                $data['orderedElement'] = 'score';
-                break;
-
-        }
-
-        $data['list'] = $this->wholesalerService->getThisMonthWholesaler($data);
+        $data = $request->all();
+        $data['limit'] = 10;
+        $data['list'] = $this->wholesalerService->getThisMonthBestWholesaler($data);
         $data['html'] = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $data['list']])->render();
 
         return response()->json($data);

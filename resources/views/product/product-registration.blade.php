@@ -30,11 +30,7 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품명</dt>
                         <dd class="font-medium w-full">
-                            <input type="text" id="form-list01" name="name" maxlength="50"
-                                   @if(@isset($data->name))
-                                       value="{{$data->name}}"
-                                   @endif
-                                   class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
+                            <input type="text" id="form-list01" name="name" maxlength="50" @if(@isset($data->name)) value="{{$data->name}}" @endif class="setting_input h-[48px] w-full" placeholder="상품명을 입력해주세요." required>
                         </dd>
                     </dl>
                 </div>
@@ -257,8 +253,8 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품 상세 내용</dt>
                         <dd class="font-medium w-full">
-                            <button class="h-[48px] w-[240px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button>
-                            <div class="h-[100px] py-3 mt-5">
+                            {{-- <button class="h-[48px] w-[240px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#writing_guide_modal')">상세 내용 작성 가이드</button> --}}
+                            <div class="h-[100px]">{{-- <div class="h-[100px] py-3 mt-5"> --}}
                                 <textarea class="textarea-form"></textarea>
                             </div>
                         </dd>
@@ -406,7 +402,7 @@
             <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
                 <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">등록취소</a>
                 <div class="flex items-center">
-                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
+                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900" onclick="saveProduct(1);">임시등록</button>
                     <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" onclick="saveProduct(0);">등록신청</button>
                 </div>
@@ -415,7 +411,7 @@
             <div class="w-[1200px] mx-auto py-6 flex items-center justify-between">
                 <a href="javascript:;" class="flex w-[120px] justify-center items-center h-[48px] bg-white border font-medium hover:bg-stone-100" onClick="modalOpen('#alert-registration_cancel');">수정취소</a>
                 <div class="flex items-center">
-                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" onclick="preview();">미리보기</button>
+                    <button class="font-medium bg-stone-600 text-white w-[120px] h-[48px] border border-stone-900 -mr-px" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="font-medium bg-primary text-white w-[120px] h-[48px] border border-priamry" id="modifyBtn" onclick="saveProduct(2)" data-idx={{$productIdx}}>수정완료</button>
                 </div>
             </div>
@@ -438,7 +434,7 @@
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
     <script>
-    const productIdx = $('#modifyBtn').data('idx');
+    const productIdx = "{{ $productIdx }}"
         var storedFiles = [];
         var subCategoryIdx = null;
         var deleteImage = [];
@@ -519,7 +515,7 @@
                                     '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
                                     '   <img class="w-[200px] h-[200px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
                                     '   <div class="absolute top-2.5 right-2.5">' +
-                                    '       <button class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
+                                    '       <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
                                     '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
                                     '       </button>' +
                                     '   </div>' +
@@ -591,17 +587,18 @@
         $('#sortable').disableSelection();
 
         
-
-        function img_reload_order() {
-            $('.desc__product-img-wrap').find('.add__badge').remove();
-            $('li .product-img__add').first().children('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
-        }
-
-        function img_add_order() {
-            $('.desc__product-img-wrap li').each(function(n) {
-                $(this).attr('item', n);
-            });
-        }
+    //### 
+    function img_reload_order() {
+        $('.desc__product-img-wrap').find('.add__badge').remove();
+        $('li .product-img__add').first().children('.add__img-wrap').prepend('<p class="add__badge">대표이미지</p>');
+    }
+    
+    //### 
+    function img_add_order() {
+        $('.desc__product-img-wrap li').each(function(n) {
+            $(this).attr('item', n);
+        });
+    }
 
     //### 속성 가져오기
     function getProperty(parentIdx=null, title=null) {
@@ -1440,7 +1437,7 @@
                                     <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
                                         <img class="w-[200px] h-[200px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
                                         <div class="absolute top-2.5 right-2.5">
-                                            <button class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                            <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
                                             </button>
                                         </div>`;

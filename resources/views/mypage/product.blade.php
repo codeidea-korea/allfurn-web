@@ -88,10 +88,10 @@
                 </div>
                 <ul>
                     @foreach($represents as $represent)
-                    <li class="border-b pb-8">
+                    <li class="pb-10">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                                <button class="state_preview">
+                                <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
                                     <img src="{{ $represent -> product_image }}" alt="item03" />
                                 </button>
                             </div>
@@ -148,8 +148,8 @@
                     <li class="no_prod txt-gray">
                         상품을 등록해주세요.
                     </li>
-                    <li class="no_prod txt-gray">
-                        <button type="button" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
+                    <li class="no_prod txt-gray" style="text-align:right;">
+                        <button type="button" class="text-m px-3 py-2 rounded bg-primary text-white font-medium" onClick="location.href='/product/registration'"><b>상품 등록하기</b></button>
                     </li>
                 </ul>
                 @endif
@@ -162,10 +162,14 @@
                     <br />
                     @endif
                     @foreach($list as $row)
-                    <li class="border-b pb-8">
+                    <li class="pb-10">
                         <div class="flex items-center gap-8">
                             <div class="w-[216px] h-[216px] rounded-md overflow-hidden shrink-0 relative">
-                                <button class="state_preview" onClick="modalOpen('#state_preview_modal')">
+                                @if (request()->get('type') == 'temp')
+                                    <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, true)">
+                                @else 
+                                    <button class="state_preview" onclick="modalProductPreview({{ $row->idx }}, false)">
+                                @endif 
                                     <img src="{{ $row -> product_image }}" alt="item03" />
                                 </button>
                             </div>
@@ -188,7 +192,11 @@
                                     <div class="flex items-center gap-2 shrink-0 text-stone-500">
                                         <button onClick="changeStatsModal({{ $row -> idx }}, '{{ $row -> state }}');">상태 변경</button>
                                         <span>|</span>
-                                        <a href="/product/modify/{{ $row -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
+                                        @if (request()->get('type') == 'temp')
+                                            <a href="/product/registration?temp={{ $row -> idx }}">수정</a>
+                                        @else 
+                                            <a href="/product/modify/{{ $row -> idx }}{{ Request::getQueryString() ? '?'.Request::getQueryString() : '' }}">수정</a>
+                                        @endif 
                                         <span>|</span>
                                         <button type="button" onClick="deleteProductModal({{ $row -> idx }})">삭제</button>
                                     </div>
@@ -284,6 +292,7 @@
         </div>
     </div>
 </div>
+<iframe id="productPreviewModal" src="about:blank" width="0" height="0"></iframe>
 
 <!-- 카테고리 -->
 <div id="filter_category-modal" class="modal">
@@ -342,7 +351,7 @@
                                     <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/prod_thumb3.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/sale_thumb.png" alt=""></li>
-                                    <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li
+                                    <li class="swiper-slide"><img src="/img/video_thumb.png" alt=""></li>
                                     <li class="swiper-slide"><img src="/img/prod_thumb2.png" alt=""></li>
                                 </ul>
                             </div>
@@ -697,20 +706,19 @@
         }
     })
 
-    // Todo
     const modalProductPreview = (idx, temp) => {
+        $('#loadingContainer').show();
         if (temp === true) {
             document.getElementById('productPreviewModal').src = '/product/registration?temp=' + idx;
         } else {
             document.getElementById('productPreviewModal').src = '/product/modify/' + idx;
         }
         $('#productPreviewModal').on( 'load', function() {
-            setTimeout(function() {
-                document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
-                document.querySelector('#default-modal-preview02').innerHTML =
-                    document.querySelector('#productPreviewModal').contentWindow.document.getElementById('default-modal-preview02').innerHTML;
-                openModal('#default-modal-preview02');
-            }, 1000)
+            document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
+            document.querySelector('#state_preview_modal .modal_body').innerHTML =
+                document.querySelector('#productPreviewModal').contentWindow.document.getElementById('state_preview_modal').innerHTML;
+            $('#loadingContainer').hide();
+            modalOpen('#state_preview_modal');
         });
     }
 
