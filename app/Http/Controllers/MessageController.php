@@ -59,7 +59,7 @@ class MessageController extends BaseController
         
         $data['room_idx'] = $params['room_idx'];
         $this->messageService->readRoomAlarmCount($data['room_idx']);
-        $data['company'] = $this->messageService->getCompany($params);
+        $data['company'] = $this->messageService->getCompany($params, 'N');
         $data['chatting'] = $this->messageService->getChatting($params);
         $data['chattingCount'] = $this->messageService->getChattingCount($params);
         $data['day'] = ["일","월","화","수","목","금","토"];
@@ -122,7 +122,7 @@ class MessageController extends BaseController
         $data['keyword'] = isset($params['keyword']) ? $params['keyword'] : '';
         $data['room_idx'] = $params['room_idx'];
         $this->messageService->readRoomAlarmCount($data['room_idx']);
-        $data['company'] = $this->messageService->getCompany($params);
+        $data['company'] = $this->messageService->getCompany($params, 'N');
         $data['chatting'] = $this->messageService->getChatting($params);
         $data['chattingCount'] = $this->messageService->getChattingCount($params);
         $data['day'] = ["일","월","화","수","목","금","토"];
@@ -142,7 +142,7 @@ class MessageController extends BaseController
                         $data['chattingHtml'] = $data['chattingHtml'] . '<div class="date"><span>' . 
                             $chat->message_register_day.' '.$data['day'][$chat->message_register_day_of_week - 1].'요일</span></div>';
                     }
-                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat);
+                    $contentHtml = $this->messageService->convertHtmlContentByMessage($chat, 'N');
                     $data['chattingHtml'] = $data['chattingHtml'] . $contentHtml;
                 } catch(Exception $e) {
                 }
@@ -268,5 +268,19 @@ class MessageController extends BaseController
         }
 
         return $result;
+    }
+
+    /**
+     * 메시지 읽음 처리
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function readRoomAlarmCount(Request $request): JsonResponse
+    {
+        $this->messageService->readRoomAlarmCount($params['room_idx']);
+        return response()->json([
+            'result' => 'success',
+            'message' => ''
+        ]);
     }
 }

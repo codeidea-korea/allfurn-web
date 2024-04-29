@@ -279,6 +279,7 @@ class PushService
             $sendLog = new PushSendLog();
             $sendLog->user_idx = $to;
             $sendLog->push_idx = 0;
+            $sendLog->token = '';
             $sendLog->push_type = $pushMessage->type;
             $sendLog->is_send = 0;
             $sendLog->is_check = 0;
@@ -308,6 +309,7 @@ class PushService
 //                'click_action' => 'TOP_STORY_ACTIVITY',
                 'title' => $title,
                 'body' => $msg,
+//                'start_url' => $applink
             )
         );
 
@@ -328,7 +330,7 @@ class PushService
     
         curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data, JSON_UNESCAPED_UNICODE));
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
     
@@ -341,6 +343,7 @@ class PushService
         
         $sendLog = new PushSendLog();
         $sendLog->user_idx = $to;
+        $sendLog->token = $authToken->push_token;
         $sendLog->push_idx = $pushMessage->idx;
         $sendLog->push_type = $pushMessage->type;
         $sendLog->is_send = 1;

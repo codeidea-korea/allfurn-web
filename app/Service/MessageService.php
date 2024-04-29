@@ -44,7 +44,7 @@ class MessageService
         if (isset($params['keyword']) && !empty($params['keyword'])) {
             $keyword = $params['keyword'];
         }
-        $roomQuery = $this->getRoomQuery();
+        $roomQuery = $this->getRoomQuery([], 'N');
         $messageRooms = $roomQuery->get();
         return $this->getRoomsInfo($messageRooms, $keyword);
     }
@@ -54,24 +54,35 @@ class MessageService
      * @param array $params
      * @return mixed
      */
-    public function getRoomQuery(array $params=[])
+    public function getRoomQuery(array $params=[], $revers = 'N')
     {
         $user = Auth::user();
         $roomQuery = MessageRoom::where(function($query) use($user) {
             $query->where(function($query2) use($user) {
-                $query2->where('first_company_type', $user->type)
+                $query2
+//                ->where('first_company_type', $user->type)
                     ->where('first_company_idx', $user->company_idx);
             })->orWhere(function($query2) use($user) {
-                $query2->where('second_company_type', $user->type)
+                $query2
+//                ->where('second_company_type', $user->type)
                     ->where('second_company_idx', $user->company_idx);
             });
         })
-        ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx')
-            ->select("AF_message_room.idx"
-                , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
+        ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
+        
+        if($revers == 'Y') {
+            $roomQuery = $roomQuery->select("AF_message_room.idx"
+                , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
+                    ,first_company_idx,first_company_idx) AS other_company_idx")
+                , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
+                    ,first_company_type,second_company_type) AS other_company_type"))->distinct();
+        } else {
+            $roomQuery = $roomQuery->select("AF_message_room.idx"
+                , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,second_company_idx,first_company_idx) AS other_company_idx")
-                , DB::raw("IF(first_company_idx = '".$user->company_idx."' AND first_company_type = '".$user->type."'
+                , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,second_company_type,first_company_type) AS other_company_type"))->distinct();
+        }
         if (isset($params['room_idx']) && !empty($params['room_idx'])) {
             $roomQuery->where('AF_message_room.idx', $params['room_idx']);
         }
@@ -84,10 +95,10 @@ class MessageService
      * @param array $params
      * @return Model|Builder|object
      */
-    public function getCompany(array $params) {
+    public function getCompany(array $params, $revers) {
         
         $user = Auth::user();
-        $room = $this->getRoomQuery($params)->first();
+        $room = $this->getRoomQuery($params, $revers)->first();
 
         if ($room->other_company_type === 'W') {
             
@@ -512,11 +523,14 @@ class MessageService
 
     /**
      * 알림 읽기 처리
+     * - 보낸사람이 읽기 처리되는 오류 수정
      * @param $idx
      */
     public function readRoomAlarmCount($idx)
     {
-        Message::where('room_idx', $idx)->update(['is_read' => 1]);
+        Message::where('room_idx', '=', $idx)
+            ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
+            ->update(['is_read' => 1]);
     }
 
     /**
@@ -548,14 +562,14 @@ class MessageService
         $contentHtml = '';
         $user = Auth::user();
 
-	$chatContent = json_decode($chat->content, true);
-	
-	if(!isset($chatContent) && empty($chatContent['type'])) { $contentHtml = $chat->content; }
-       
-	else if($chatContent['type'] == 'welcome' || $chatContent['type'] == 'normal') {
-            // 단순 텍스트
+        $chatContent = json_decode($chat->content, true);
+        
+        if(!isset($chatContent) || empty($chatContent['type'])) { $contentHtml = $chat->content; }
+        
+        else if($chatContent['type'] === 'welcome' || $chatContent['type'] === 'normal') {
+                // 단순 텍스트
             $contentHtml = $chatContent['text'];
-        } else if($chatContent['type'] == 'attach') {
+        } else if($chatContent['type'] === 'attach') {
             // 첨부
             $extension = explode('.', $chatContent['imgUrl']);
             $extension = end($extension);
@@ -590,7 +604,7 @@ class MessageService
                                     </div></a>
                                 </div>';
             }
-        } else if($chatContent['type'] == 'inquiry') {
+        } else if($chatContent['type'] === 'inquiry') {
             // 상담
             $contentHtml = '<div class="flex flex-col">
                                 <div class="flex gap-3">
@@ -598,7 +612,7 @@ class MessageService
                                     <div>
                                         <span class="text-stone-600">[ 상담문의가 도착했습니다 ]</span>
                                         <p class="mt-1">'.$chatContent['productName'].'</p>
-                                        <button class="flex flex-col mt-1 w-full" click="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
+                                        <button class="flex flex-col mt-1 w-full" onclick="location.href=\'/product/detail/'.$chatContent['productIdx'].'\'">
                                             <p class="bg-primary px-2 py-1 rounded-md flex items-center text-white w-full justify-between">
                                                 바로가기
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
@@ -607,7 +621,7 @@ class MessageService
                                     </div>
                                 </div>
                             </div>';
-        } else if($chatContent['type'] == 'order') {
+        } else if($chatContent['type'] === 'order') {
             // 주문
             $contentHtml = '<div class="font-medium w-[260px]">
                                     <p class="truncate">주문번호 : '.$chatContent['order_group_code'].'</p>
@@ -618,7 +632,7 @@ class MessageService
                                     <a href="/product/detail/'.$chatContent['order_group_code'].'" class="block w-full mt-2 py-3 border rounded-md text-primary text-center hover:bg-stone-50">주문 현황 보러가기</a>
                                 </div>';
 
-        } else if($chatContent['type'] == 'estimate') {
+        } else if($chatContent['type'] === 'estimate') {
             // 견적
             $contentHtml = '<a href="/estimate/detail/'.$chatContent['estimate_idx'].'">
                                 <p class="font-bold">상품 문의드립니다.</p>
@@ -718,7 +732,6 @@ class MessageService
                     UserNormal::where('idx', $product->company_idx)
                         ->update(['inquiry_count' => DB::raw('inquiry_count + 1')]);
             }
-            
         }
         
         
@@ -735,10 +748,33 @@ class MessageService
             ], JSON_UNESCAPED_UNICODE);
             $message->save();
         }
+        
+        // 대상 회사에 소속된 사용자 조회
+        
+        $room = MessageRoom::where('idx', $message->room_idx)
+            ->first();
+        $targetUsers = User::where('company_idx', $room->first_company_idx)
+            ->orWhere('company_idx', $room->second_company_idx)
+//            ->where('is_delete', 0)
+            ->get();
+        $userType = '';
+        $userCompanyIdx = 1;
+        if(isset($targetUsers)) {
+            foreach($targetUsers as $key => $targetUser) {
+                if($user['idx'] == $targetUser->idx) {
+                    continue;
+                }
+                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['user_company_idx']], 'Y');
+                $userType = $targetUser->type;
+                $userCompanyIdx = $targetUser->company_idx;
+                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
+                    $targetUser->idx, 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+            }
+        }
 
         setlocale(LC_ALL, "ko_KR.utf-8");
         // echo
-        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx]);
+//        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $userType, 'user_company_idx' => $userCompanyIdx], 'Y');
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $message->content, 
@@ -749,25 +785,10 @@ class MessageService
             $this->getRoomMessageTitle($message->content),
             $companyInfo->company_name
         ));
+
+//        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
+//            $message->user_idx.'', 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
         
-        // 대상 회사에 소속된 사용자 조회
-        $targetUsers = User::where('company_idx', $companyInfo->idx)
-            ->where('is_delete', 0)
-            ->get();
-        $pushToken = PushToken::where('user_idx', $companyInfo->idx)
-            ->orderBy('register_time', 'DESC')
-            ->first();
-        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-            $message->user_idx.'', 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
-        if(isset($targetUsers) && is_array($targetUsers)) {
-            foreach($targetUsers as $key => $targetUser) {
-                $pushToken = PushToken::where('user_idx', $companyInfo->idx)
-                    ->orderBy('register_time', 'DESC')
-                    ->first();
-                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-                    $targetUser->idx, 5, '', 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
-            }
-        }
 
         return [
             'result' => 'success',
@@ -956,7 +977,7 @@ class MessageService
 
         setlocale(LC_ALL, "ko_KR.utf-8");
         // 대상 업체 메시지 전달
-        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx]);
+        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx], 'Y');
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $message->content, 

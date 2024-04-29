@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
             }
             // pending push
             $pushQueue = PushQ::where('send_type', '=', 'P')->get();
-            
+            /*
             foreach($pushQueue as $pushq) {
                 $pushq->send_date = date('Y-m-d H:i:s');
                 $pushq->send_type = 'S';
@@ -105,6 +105,7 @@ class Kernel extends ConsoleKernel
                     $sendLog->save();
                 }
             }
+            */
         })->cron('* * * * *');
     }
 
