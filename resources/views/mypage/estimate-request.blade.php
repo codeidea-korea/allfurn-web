@@ -407,24 +407,24 @@
                             <span class="txt-gray fs14">
                                 견적금액 (<span class="response_estimate_product_total_count"></span>)
                             </span>
-                            <b class="response_estimate_product_total_price"></b>원
+                            <b><span class="response_estimate_product_total_price"></span>원</b>
                             <input type="hidden" name="response_estimate_product_total_price" value="" />
                         </p>
                         <p>
                             <span class="txt-gray fs14">
                                 옵션금액
                             </span>
-                            <b class="response_estimate_product_option_price"></b>원
+                            <b><span class="response_estimate_product_option_price"></span>원</b>
                             <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
                         </p>
                         <p>
                             <span class="txt-gray fs14">배송비</span>
-                            <b class="response_estimate_product_delivery_price"></b>원
+                            <b><span class="response_estimate_product_delivery_price"></span>원</b>
                         </p>
                     </div>
                     <div class="total">
                         <p>총 견적금액</p>
-                        <b class="response_estimate_estimate_total_price"></b>원
+                        <b><span class="response_estimate_estimate_total_price"></span>원</b>
                         <input type="hidden" name="response_estimate_estimate_total_price" value="" />
                     </div>
                 </div>
@@ -595,23 +595,23 @@
                             <span class="txt-gray fs14">
                                 견적금액 (<span class="request_order_product_total_count"></span>)
                             </span>
-                            <b class="request_order_product_total_price"></b>원
+                            <b><span class="request_order_product_total_price"></span>원</b>
                         </p>
                         <p>
                             <span class="txt-gray fs14">
                                 옵션금액
                             </span>
-                            <b class="request_order_product_option_price"></b>원
+                            <b><span class="request_order_product_option_price"></span>원</b>
                             <input type="hidden" name="request_order_product_option_price" id="request_order_product_option_price" value="" />
                         </p>
                         <p>
                             <span class="txt-gray fs14">배송비</span>
-                            <b class="request_order_product_delivery_price"></b>원
+                            <b><span class="request_order_product_delivery_price"></span>원</b>
                         </p>
                     </div>
                     <div class="total">
                         <p>총 견적금액</p>
-                        <b class="request_order_estimate_total_price"></b>원
+                        <b><span class="request_order_estimate_total_price"></span>원</b>
                     </div>
                 </div>
 
@@ -834,22 +834,22 @@
                         <span class="txt-gray fs14">
                             견적금액 (<span class="check_order_product_total_count"></span>)
                         </span>
-                        <b class="check_order_product_total_price"></b>원
+                        <b><span class="check_order_product_total_price"></span>원</b>
                     </p>
                     <p>
                         <span class="txt-gray fs14">
                             옵션금액
                         </span>
-                        <b class="check_order_product_option_price"></b>원
+                        <b><span class="check_order_product_option_price"></span>원</b>
                     </p>
                     <p>
                         <span class="txt-gray fs14">배송비</span>
-                        <b class="check_order_product_delivery_price"></b>원
+                        <b><span class="check_order_product_delivery_price"></span>원</b>
                     </p>
                 </div>
                 <div class="total">
                     <p>총 주문금액</p>
-                    <b class="check_order_estimate_total_price"></b>원
+                    <b><span class="check_order_estimate_total_price"></span>원</b>
                 </div>
             </div>
 
@@ -1361,9 +1361,13 @@
                                 </div>
                             </li>`
                         );
+
+                        $('.product_option_td').eq(i).find('select').attr('name', '');
+                        $('.product_option_td').eq(i).find('select').each(function(index){
+                            $(this).val($('.product_option_select').eq(i).find('select option:selected').eq(index).val());
+                        });
+                        $('.product_option_td').eq(i).find('select').attr('disabled', true);
                     }
-                    $('.product_option_td').find('select').attr('name', '');
-                    $('.product_option_td').find('select').attr('disabled', true);
                     
                     $('.request_order_product_total_count').text(response_estimate_product_total_count + '개');
                     $('.request_order_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));

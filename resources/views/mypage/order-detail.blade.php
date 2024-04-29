@@ -27,27 +27,21 @@
                     </div>
                 </div>
                 <!-- "구매 현황" 에서는 삭제-->
-                @if (request() -> type === 'S')
-                <div class="h-[40px] border rounded-md px-2 ml-auto">
-                    <select name="order_state" class="w-full h-full order_state" data-order-num="{{ $orders[0] -> order_code }}">
-                        <option value="N" {{ $orders[0] -> order_state == 'N' ? 'selected' : '' }}>신규 주문</option>
-                        <option value="R" {{ $orders[0] -> order_state == 'R' ? 'selected' : '' }}>상품 준비중</option>
-                        <option value="D" {{ $orders[0] -> order_state == 'D' ? 'selected' : '' }}>발송 중</option>
-                        <option value="W" {{ $orders[0] -> order_state == 'W' ? 'selected' : '' }}>구매 확정 대기</option>
-                        <option value="F" {{ $orders[0] -> order_state == 'F' ? 'selected' : '' }}>거래 완료</option>
-                        <!--<option value="C" {{ $orders[0] -> order_state == 'C' ? 'selected' : '' }} disabled>거래 취소(선택 불가)</option>-->
-                    </select>
-                </div>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                @endif
-                @if ($orders[0] -> order_state !== 'C')
-                <div class="h-[40px] border rounded-md px-2">
-                    <button type="button" class="w-full h-full cancle cancle--modify">거래 취소</button>
-                    <!--<button type="button" class="w-[120px] h-[44px] border rounded-md cancle cancle--modify" onclick="location.href='/mypage/order/cancel?orderCode={{ $orders[0] -> order_code }}&type={{ $type }}&state=C'">거래 취소</button>-->
-                </div>
+                @if (request() -> type === 'S' && $orders[0] -> order_state != 'C')
+                    <div class="h-[40px] border rounded-md px-2 ml-auto">
+                        <select name="order_state" class="w-full h-full order_state" data-order-num="{{ $orders[0] -> order_code }}">
+                            <option value="N" {{ $orders[0] -> order_state == 'N' ? 'selected' : '' }}>신규 주문</option>
+                            <option value="R" {{ $orders[0] -> order_state == 'R' ? 'selected' : '' }}>상품 준비중</option>
+                            <option value="D" {{ $orders[0] -> order_state == 'D' ? 'selected' : '' }}>발송 중</option>
+                            <option value="W" {{ $orders[0] -> order_state == 'W' ? 'selected' : '' }}>구매 확정 대기</option>
+                            <option value="F" {{ $orders[0] -> order_state == 'F' ? 'selected' : '' }}>거래 완료</option>
+                            <!--<option value="C" {{ $orders[0] -> order_state == 'C' ? 'selected' : '' }} disabled>거래 취소(선택 불가)</option>-->
+                        </select>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 @endif
             </div>
-
+        
             @foreach ($orders as $index => $order)
             <div class="flex mt-3">
                 <div class="p-4 border-l border-t border-b rounded-tl flex w-[632px]">
@@ -59,12 +53,12 @@
                             <span>|</span>
                             @if (!empty(json_decode($order -> product_option_json)))
                             <span>
-                                    @foreach (json_decode($order -> product_option_json) as $key => $val)
-                                        {{ $val -> optionName }}
-                                        {{ key($val -> optionValue).'('.number_format($val -> optionValue -> {key($val -> optionValue)}).'원)' }}
-                                        <br />
-                                    @endforeach
-                                </span>
+                                @foreach (json_decode($order -> product_option_json) as $key => $val)
+                                    {{ $val -> optionName }}
+                                    {{ key($val -> optionValue).'('.number_format($val -> optionValue -> {key($val -> optionValue)}).'원)' }}
+                                    <br />
+                                @endforeach
+                            </span>
                             @else
                             옵션 없음
                             @endif
@@ -87,11 +81,26 @@
                         <p class="ml-4">{{ $order -> price_text ?: number_format(($order -> product_price) + ($order -> product_option_price)).'원' }}</p>
                     </div>
                 </div>
-                <div class="p-4 border rounded-tr flex flex-col items-center justify-center grow"></div>
+                <div class="p-4 border rounded-tr flex flex-col items-center justify-center grow">
+                    @if ($orders[0] -> order_state == 'N' )
+                        <div class="h-[40px] border rounded-md px-2">
+                            <button type="button" id="cancel_order_btn" class="w-full h-full cancle cancle--modify">{{ $detailTitle2 }} 취소</button>
+                            <!--<button type="button" class="w-[120px] h-[44px] border rounded-md cancle cancle--modify" onclick="location.href='/mypage/order/cancel?orderCode={{ $orders[0] -> order_code }}&type={{ $type }}&state=C'">거래 취소</button>-->
+                        </div>
+                    @elseif($orders[0] -> order_state == 'C')
+                        거래취소 완료
+                    @elseif ($orders[0] -> order_state == 'W' && $type == 'P' )
+                    <div class="h-[40px] border rounded-md px-2">
+                            <button type="button" class="w-full h-full cancle cancle--modify" onclick="changeStatus('{{ isset($orders[0] -> order_group_code) ? $orders[0] -> order_group_code : $orders[0] -> order_code }}','F', '{{ $type }}');">구매 확정</button>
+                        </div>
+                    @endif
+                </div>
             </div>
-            <div class="border-r border-b border-l rounded-b p-4">
-                {{ $order -> memo }}
-            </div>
+            @if($order -> memo)
+                <div class="border-r border-b border-l rounded-b p-4">
+                    {{ $order -> memo }}
+                </div>
+            @endif
             @endforeach
         </div>
 
@@ -173,5 +182,59 @@
             }
         });
     });
+
+    $("#cancel_order_btn").click(function () {
+
+        const parameterData = {
+            orderGroupCode : '{{  $orders[0] -> order_group_code }}',
+            orderCode : '{{  $orders[0] -> order_group_code }}',
+            type : '{{  $type }}',
+            state : 'C',
+        };
+
+        window.location.href = "/mypage/order/cancel?" + new URLSearchParams(parameterData);
+
+    })
+
+    const changeStatus = (orderNum, status, type) => {
+        let params = {orderNum, status, type};
+        if (status === 'C') {
+            params['cancelReason'] = document.getElementById('cancelReason').value;
+        }
+        fetch('/mypage/order/status', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(params)
+        }).then(result => {
+            return result.json()
+        }).then(json => {
+            if (json.result === 'success') {
+                switch(status) {
+                    case 'R':
+                        modalOpen('#modal-deal');
+                        break;
+                    case 'D':
+                        modalOpen('#modal-send-start');
+                        break;
+                    case 'W':
+                        modalOpen('#modal-send-complete');
+                        break;
+                    case 'C':
+                        modalClose('#modal-request-cancel');
+                        modalOpen('#modal-cancel');
+                        break;
+                    case 'F':
+                        location.replace(location.href);
+                        break;
+                }
+            } else {
+                alert("오류가 발생했습니다. 관리자에게 문의바랍니다.");
+                window.history.back();
+            }
+        });
+    }
 </script>
 @endsection

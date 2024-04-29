@@ -371,7 +371,7 @@
                                 <tr>
                                     <th>견적금액</th>
                                     <td>
-                                        <b class="response_estimate_product_total_price"></b>원
+                                        <b><span class="response_estimate_product_total_price"></span>원</b>
                                         <input type="hidden" name="response_estimate_product_total_price" id="response_estimate_product_total_price" value="" />
                                     </td>
                                 </tr>
@@ -408,23 +408,23 @@
                             <span class="txt-gray fs14">
                                 견적금액 (<span class="response_estimate_product_count"></span>)
                             </span>
-                            <b class="response_estimate_product_total_price"></b>원
+                            <b><span class="response_estimate_product_total_price"></span>원</b>
                         </p>
                         <p>
                             <span class="txt-gray fs14">
                                 옵션금액
                             </span>
-                            <b class="response_estimate_product_option_price"></b>원
+                            <b><span class="response_estimate_product_option_price"></span>원</b>
                             <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
                         </p>
                         <p>
                             <span class="txt-gray fs14">배송비</span>
-                            <b class="response_estimate_product_delivery_price"></b>원
+                            <b><span class="response_estimate_product_delivery_price"></span>원</b>
                         </p>
                     </div>
                     <div class="total">
                         <p>총 견적금액</p>
-                        <b class="response_estimate_estimate_total_price"></b>원
+                        <b><span class="response_estimate_estimate_total_price"></span>원</b>
                         <input type="hidden" name="response_estimate_estimate_total_price" id="response_estimate_estimate_total_price" value="" />
                     </div>
                 </div>
@@ -772,22 +772,22 @@
                         <span class="txt-gray fs14">
                             견적금액 (<span class="check_order_product_total_count"></span>)
                         </span>
-                        <b class="check_order_product_total_price"></b>원
+                        <b><span class="check_order_product_total_price"></span>원</b>
                     </p>
                     <p>
                         <span class="txt-gray fs14">
                             옵션금액
                         </span>
-                        <b class="check_order_product_option_price"></b>원
+                        <b><span class="check_order_product_option_price"></span>원</b>
                     </p>
                     <p>
                         <span class="txt-gray fs14">배송비</span>
-                        <b class="check_order_product_delivery_price"></b>원
+                        <b><span class="check_order_product_delivery_price"></span>원</b>
                     </p>
                 </div>
                 <div class="total">
                     <p>총 주문금액</p>
-                    <b class="check_order_estimate_total_price"></b>원
+                    <b><span class="check_order_estimate_total_price"></span>원</b>
                 </div>
             </div>
 
@@ -1128,7 +1128,7 @@
                     $('#response_estimate_product_delivery_price').val(json.data[0].product_delivery_price ? json.data[0].product_delivery_price : '0');
                     $('#response_estimate_product_memo').val(json.data[0].product_memo);
 
-                    $('.response_estimate_product_option_price').text(product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                    $('.response_estimate_product_option_price').text(product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
                     $('#response_estimate_product_option_price').val(product_option_price);
 
                     $('.response_estimate_estimate_total_price').text(json.data[0].estimate_total_price ? (parseInt(json.data[0].estimate_total_price) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : (parseInt(json.data[0].product_total_price.replace(/[^0-9]/g, '')) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));

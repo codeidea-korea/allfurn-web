@@ -72,58 +72,58 @@
         @else
         <table class="my_table table-auto w-full">
             <thead>
-            <th>No</th>
-            <th>주문번호</th>
-            <th>주문일자</th>
-            <th>거래 상태</th>
-            <th>주문 상품</th>
-            <th>구매 업체</th>
-            <th>관리</th>
+                <th>No</th>
+                <th>주문번호</th>
+                <th>주문일자</th>
+                <th>거래 상태</th>
+                <th>주문 상품</th>
+                <th>구매 업체</th>
+                <th>관리</th>
             </thead>
             <tbody class="text-center">
-            @foreach($orders as $order)
-            <tr>
-                <td>{{ $orderListCount - $loop -> index - (($offset - 1) * $limit) }}</td>
-                <td class="orderNum">{{ $order -> order_code }}</td>
-                <td>{{ $order -> register_time }}</td>
-                <td>{{ config('constants.ORDER.STATUS.S')[$order -> order_state] }}</td>
-                <td class="text-sky-500 underline">
-                    <a href="/mypage/order/detail?orderGroupCode={{ $order -> order_group_code }}&type=S">
-                        <span>{{ $order -> product_name }}</span>
-                    </a>
-                </td>
-                <td>
-                    <span class="target">{{ $order -> company_name }}</span>
-                </td>
-                <td>
-                    <!-- 기존에 개발되어있던 영역인데, 나중에 다시 쓸 수도 있다고 해서 일단은 주석처리만 해둠-->
-                    <!--
-                    <div class="button-popup">
-                        @if($order -> order_state === 'N')
-                        <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'R', 'S');">거래 확정</button>
-                        <a class="btn outline_primary mt-3 inlin-block" onClick="window.location.href='/mypage/order/cancel?orderGroupCode={{ $order -> order_group_code }}&type=S&state=C'">거래 취소</a>
-                        @elseif($order -> order_state === 'R')
-                        <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'D', 'S');">발송</button>
-                        <a class="btn outline_primary mt-3 inlin-block" onClick="window.location.href='/community/write-dispatch/{{$order -> order_group_code}}'">배차 신청</a>
-                        @elseif($order -> order_state === 'D')
-                        <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'W', 'S');">발송 완료</button>
-                        @else
-                        -
+                @foreach($orders as $order)
+                <tr>
+                    <td>{{ $orderListCount - $loop -> index - (($offset - 1) * $limit) }}</td>
+                    <td class="orderNum">{{ $order -> order_code }}</td>
+                    <td>{{ $order -> register_time }}</td>
+                    <td>{{ config('constants.ORDER.STATUS.S')[$order -> order_state] }}</td>
+                    <td class="text-sky-500 underline">
+                        <a href="/mypage/order/detail?orderGroupCode={{ $order -> order_group_code }}&type=S">
+                            <span>{{ $order -> product_name }}</span>
+                        </a>
+                    </td>
+                    <td>
+                        <span class="target">{{ $order -> company_name }}</span>
+                    </td>
+                    <td>
+                        <!-- 기존에 개발되어있던 영역인데, 나중에 다시 쓸 수도 있다고 해서 일단은 주석처리만 해둠-->
+                        <!--
+                        <div class="button-popup">
+                            @if($order -> order_state === 'N')
+                            <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'R', 'S');">거래 확정</button>
+                            <a class="btn outline_primary mt-3 inlin-block" onClick="window.location.href='/mypage/order/cancel?orderGroupCode={{ $order -> order_group_code }}&type=S&state=C'">거래 취소</a>
+                            @elseif($order -> order_state === 'R')
+                            <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'D', 'S');">발송</button>
+                            <a class="btn outline_primary mt-3 inlin-block" onClick="window.location.href='/community/write-dispatch/{{$order -> order_group_code}}'">배차 신청</a>
+                            @elseif($order -> order_state === 'D')
+                            <button type="button" class="btn outline_primary" onClick="changeStatus('{{$order -> order_group_code}}', 'W', 'S');">발송 완료</button>
+                            @else
+                            -
+                            @endif
+                        </div>
+                        -->
+                        @if($order -> order_state !== 'C')
+                        <select name="order_state" class="order_state">
+                            <option value="N" {{ $order -> order_state == 'N' ? 'selected' : '' }}>신규 주문</option>
+                            <option value="R" {{ $order -> order_state == 'R' ? 'selected' : '' }}>상품 준비중</option>
+                            <option value="D" {{ $order -> order_state == 'D' ? 'selected' : '' }}>발송 중</option>
+                            <option value="W" {{ $order -> order_state == 'W' ? 'selected' : '' }}>구매 확정 대기</option>
+                            <option value="F" {{ $order -> order_state == 'F' ? 'selected' : '' }}>거래 완료</option>
+                        </select>
                         @endif
-                    </div>
-                    -->
-                    @if($order -> order_state !== 'C')
-                    <select name="order_state" class="order_state">
-                        <option value="N" {{ $order -> order_state == 'N' ? 'selected' : '' }}>신규 주문</option>
-                        <option value="R" {{ $order -> order_state == 'R' ? 'selected' : '' }}>상품 준비중</option>
-                        <option value="D" {{ $order -> order_state == 'D' ? 'selected' : '' }}>발송 중</option>
-                        <option value="W" {{ $order -> order_state == 'W' ? 'selected' : '' }}>구매 확정 대기</option>
-                        <option value="F" {{ $order -> order_state == 'F' ? 'selected' : '' }}>거래 완료</option>
-                    </select>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
         </table>
         <div class="pagenation flex items-center justify-center py-12">
@@ -135,11 +135,11 @@
             </button>
             @endif
             @foreach($pagination['pages'] as $paginate)
-            @if ($paginate == $offset)
-            <a href="javascript: void(0);" class="active" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
-            @else
-            <a href="javascript: void(0);" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
-            @endif
+                @if ($paginate == $offset)
+                    <a href="javascript: void(0);" class="active" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
+                @else
+                    <a href="javascript: void(0);" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
+                @endif
             @endforeach
             @if($pagination['next'] > 0)
             <button type="button" class="next" onClick="moveToOrderPage({{ $pagination['next'] }})">
