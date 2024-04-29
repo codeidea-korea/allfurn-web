@@ -30,11 +30,8 @@
                                     </a>
                                     <i>{{ $wholesaler->location }}</i>
                                     <div class="tag">
-                                        @php
-                                            $companyCategoryList = explode(',', $wholesaler->categoryList);
-                                        @endphp
-                                        @foreach ( $companyCategoryList as $category )
-                                            <span>{{ $category }}</span>
+                                        @foreach ( $wholesaler->categoryList as $category )
+                                            <span>{{ $category->name }}</span>
                                         @endforeach
                                     </div>
                                 </div>
