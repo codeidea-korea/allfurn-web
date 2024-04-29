@@ -304,9 +304,17 @@ class MypageController extends BaseController
     public function orderCancel(Request $request): View
     {
         $data = array_merge([], $request->all());
+        if (isset($data['type']) && $data['type'] === 'S') {
+            $data['detailTitle1'] = '판매';
+            $data['detailTitle2'] = '거래';
+        } else {
+            // $data['loginCompanyName'] = $this->mypageService->getOrderProductSellerName($request->all());
+            $data['detailTitle1'] = '구매';
+            $data['detailTitle2'] = '주문';
+        }
         $data['orders'] = $this->mypageService->getOrderDetail($request->all());
 
-        return view('mypage.order-cancel', $data);
+        return view(getDeviceType().'mypage.order-cancel', $data);
     }
 
     /**

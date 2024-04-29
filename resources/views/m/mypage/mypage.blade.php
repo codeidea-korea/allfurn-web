@@ -146,16 +146,18 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 </div>
                 @endif
                 <div class="state_box">
-                    <a href="/mypage/deal" class="tit flex items-center">
-                        <p>판매 현황</p>
-                        <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
-                    </a>
-                    <ul>
-                        <li><a href="/mypage/responseEstimate?status=N">요청받은 견적<b class="txt-primary">{{ $info[0] -> count_res_n }}</b></a></li>
-                        <li><a href="/mypage/responseEstimate?status=R">보낸 견적 <b>{{ $info[0] -> count_res_r }}</b></a></li>
-                        <li><a href="/mypage/responseEstimate?status=O">주문서 수<b class="txt-primary">{{ $info[0] -> count_res_o }}</b></a></li>
-                        <li><a href="/mypage/responseEstimate?status=F">확인/완료<b>{{ $info[0] -> count_res_f }}</b></a></li>
-                    </ul>
+                    @if(Auth::user()['type'] == 'W')
+                        <a href="/mypage/deal" class="tit flex items-center">
+                            <p>판매 현황</p>
+                            <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                        </a>
+                        <ul>
+                            <li><a href="/mypage/responseEstimate?status=N">요청받은 견적<b class="txt-primary">{{ $info[0] -> count_res_n }}</b></a></li>
+                            <li><a href="/mypage/responseEstimate?status=R">보낸 견적 <b>{{ $info[0] -> count_res_r }}</b></a></li>
+                            <li><a href="/mypage/responseEstimate?status=O">주문서 수<b class="txt-primary">{{ $info[0] -> count_res_o }}</b></a></li>
+                            <li><a href="/mypage/responseEstimate?status=F">확인/완료<b>{{ $info[0] -> count_res_f }}</b></a></li>
+                        </ul>
+                    @endif
                     <a href="/mypage/purchase" class="tit flex items-center">
                         <p>구매 현황</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>

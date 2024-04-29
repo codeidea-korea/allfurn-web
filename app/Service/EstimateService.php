@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Models\User;
 use App\Models\CompanyWholesale;
 use App\Models\CompanyRetail;
+use App\Models\CompanyNormal;
 use App\Models\Product;
 use App\Models\Estimate;
 use App\Models\Order;
@@ -46,8 +47,10 @@ class EstimateService {
         $user = User::find(Auth::user()['idx']);
         if (Auth::user()['type'] === 'W') {
             $company = CompanyWholesale::find(Auth::user()['company_idx']);
-        } else {
+        } else if(Auth::user()['type'] === 'R'){;
             $company = CompanyRetail::find(Auth::user()['company_idx']);
+        } else {
+            $company = CompanyNormal::find(Auth::user()['company_idx']);
         }
 
         return
@@ -282,9 +285,14 @@ class EstimateService {
                 "SELECT * FROM AF_wholesale 
                 WHERE idx = ".$estimate['request_company_idx'];
             $company = DB::select($sql);
-        } else {
+        } else if ($estimate['request_company_type'] === 'R') {
             $sql =
                 "SELECT * FROM AF_retail 
+                WHERE idx = ".$estimate['request_company_idx'];
+            $company = DB::select($sql);
+        } else {
+            $sql =
+                "SELECT * FROM AF_normal
                 WHERE idx = ".$estimate['request_company_idx'];
             $company = DB::select($sql);
         }
@@ -401,8 +409,10 @@ class EstimateService {
 
             if($params['company_type'][$i] === 'W') {
                 $request = CompanyWholesale::find($params['company_idx'][$i]);
-            } else {
+            } else if($params['company_type'][$i] === 'R') {
                 $request = CompanyRetail::find($params['company_idx'][$i]);
+            } else {
+                $request = CompanyNormal::find($params['company_idx'][$i]);
             }
 
             $estimate_total_price = 0;

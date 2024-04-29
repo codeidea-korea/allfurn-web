@@ -63,9 +63,12 @@
                                 <tr>
                                     <th>주요판매처</th>
                                     <td>
-                                        <select name="" id="" class="input-form w-full">
-                                            <option value="0">매장 판매</option>
-                                        </select>
+                                        <div class="input-form">
+                                            <select name="" id="" class=" w-full h-full">
+                                                <option value="0">매장 판매</option>
+                                            </select>
+                                        </div>
+                                        
                                     </td>
                                 </tr>
                                 <tr>
@@ -367,7 +370,7 @@
                 if (json.success) {
                     //openModal('#alert-modal02');
                     alert('견적서 요청이 완료되었습니다.');
-                    location.reload();
+                    history.back();
                 } else {
                     alert('일시적인 오류로 처리되지 않았습니다.');
                     return false;

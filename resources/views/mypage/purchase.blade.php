@@ -66,59 +66,59 @@
 
     <div class="mt-4">
         @if (count($orders) < 1)
-        <ul>
-            <li class="no_prod txt-gray">
-                데이터가 존재하지 않습니다. 다시 조회해주세요.
-            </li>
-        </ul>
+            <ul>
+                <li class="no_prod txt-gray">
+                    데이터가 존재하지 않습니다. 다시 조회해주세요.
+                </li>
+            </ul>
         @else
-        <table class="my_table table-auto w-full">
-            <thead>
-            <th>No</th>
-            <th>주문번호</th>
-            <th>주문일자</th>
-            <th>거래 상태</th>
-            <th>주문 상품</th>
-            </thead>
-            <tbody class="text-center">
-            @foreach($orders as $order)
-            <tr>
-                <td>{{ $orderListCount - $loop -> index - (($offset - 1) * $limit) }}</td>
-                <td>{{ $order -> order_code }}</td>
-                <td>{{ $order -> register_time }}</td>
-                <td>{{ config('constants.ORDER.STATUS.S')[$order -> order_state] }}</td>
-                <td class="text-sky-500 underline">
-                    <a href="/mypage/order/detail?orderGroupCode={{ $order -> order_group_code }}&type=P">
-                        <span>{{ $order -> product_name }}</span>
-                    </a>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
-        <div class="pagenation flex items-center justify-center py-12">
-            @if($pagination['prev'] > 0)
-            <button type="button" class="prev" onClick="moveToOrderPage({{ $pagination['prev'] }})">
-                <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            @endif
-            @foreach($pagination['pages'] as $paginate)
-            @if ($paginate == $offset)
-            <a href="javascript: void(0);" class="active" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
-            @else
-            <a href="javascript: void(0);" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
-            @endif
-            @endforeach
-            @if($pagination['next'] > 0)
-            <button type="button" class="next" onClick="moveToOrderPage({{ $pagination['next'] }})">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            @endif
-        </div>
+            <table class="my_table table-auto w-full">
+                <thead>
+                    <th>No</th>
+                    <th>주문번호</th>
+                    <th>주문일자</th>
+                    <th>거래 상태</th>
+                    <th>주문 상품</th>
+                    </thead>
+                <tbody class="text-center">
+                    @foreach($orders as $order)
+                    <tr>
+                        <td>{{ $orderListCount - $loop -> index - (($offset - 1) * $limit) }}</td>
+                        <td>{{ $order -> order_code }}</td>
+                        <td>{{ $order -> register_time }}</td>
+                        <td>{{ config('constants.ORDER.STATUS.P')[$order -> order_state] }}</td>
+                        <td class="text-sky-500 underline">
+                            <a href="/mypage/order/detail?orderGroupCode={{ $order -> order_group_code }}&type=P">
+                                <span>{{ $order -> product_name }}</span>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="pagenation flex items-center justify-center py-12">
+                @if($pagination['prev'] > 0)
+                    <button type="button" class="prev" onClick="moveToOrderPage({{ $pagination['prev'] }})">
+                        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                @endif
+                @foreach($pagination['pages'] as $paginate)
+                    @if ($paginate == $offset)
+                        <a href="javascript: void(0);" class="active" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
+                    @else
+                        <a href="javascript: void(0);" onClick="moveToOrderPage({{ $paginate }})">{{ $paginate }}</a>
+                    @endif
+                @endforeach
+                @if($pagination['next'] > 0)
+                    <button type="button" class="next" onClick="moveToOrderPage({{ $pagination['next'] }})">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                @endif
+            </div>
         @endif
     </div>
 </div>

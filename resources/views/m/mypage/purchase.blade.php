@@ -14,7 +14,7 @@
         <div class="sticky top-0 z-10">
             <div class="p-4 bg-white flex items-center gap-2 shadow-sm">
                 <button class="flex items-center justify-between gap-1 h-[32px] border border-stone-300 rounded-sm px-2" onclick="modalOpen('#order_state_modal')">
-                    <span>{{ request() -> status ? config('constants.ORDER.STATUS.S')[ request() -> status] : '거래 상태' }}</span>
+                    <span>{{ request() -> status ? config('constants.ORDER.STATUS.P')[ request() -> status] : '거래 상태' }}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <button class="flex items-center justify-between gap-1 h-[32px] border border-stone-300 rounded-sm px-2" onclick="modalOpen('#order_date_modal')">
@@ -341,7 +341,7 @@
                 delete bodies['offset'];
             }
 
-            location.href = '/mypage/deal?' + new URLSearchParams(bodies);
+            location.href = '/mypage/purchase?' + new URLSearchParams(bodies);
         }
 
         const moveToOrderPage = page => {
@@ -352,7 +352,7 @@
             if (urlSearch.get('orderDate'))     bodies.orderDate = urlSearch.get('orderDate');
             if (urlSearch.get('keyword'))       bodies.keyword = urlSearch.get('keyword');
 
-            location.replace('/mypage/deal?' + new URLSearchParams(bodies));
+            location.replace('/mypage/purchase?' + new URLSearchParams(bodies));
         }
 
 

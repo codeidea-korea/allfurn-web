@@ -9,6 +9,7 @@ use App\Models\CancelHistory;
 use App\Models\Category;
 use App\Models\CompanyRetail;
 use App\Models\CompanyWholesale;
+use App\Models\CompanyNormal;
 use App\Models\LikeCompany;
 use App\Models\Location;
 use App\Models\Order;
@@ -1404,9 +1405,14 @@ class MypageService
         if (Auth::user()['type'] === 'W') {
             $company = DB::table('AF_wholesale AS company')
                 ->where('company.idx', Auth::user()['company_idx']);
-        } else {
+        } else if (Auth::user()['type'] === 'R') {
             $company = DB::table('AF_retail AS company')
                 ->where('company.idx', Auth::user()['company_idx']);
+        } else {
+            return DB::table('AF_normal AS company')
+                ->where('company.idx', Auth::user()['company_idx'])
+                ->select('*', 'name AS company_name')
+                ->first();
         }
         return $company->leftJoin('AF_attachment', 'AF_attachment.idx', '=', DB::raw('SUBSTRING_INDEX(company.business_license_attachment_idx, ",", 1)'))
             ->select('company.*', DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS license_image'))->first();
@@ -2286,8 +2292,10 @@ class MypageService
         $user = User::find(Auth::user()['idx']);
         if (Auth::user()['type'] === 'W') {
             $company = CompanyWholesale::find(Auth::user()['company_idx']);
-        } else {
+        } else if (Auth::user()['type'] === 'R') {
             $company = CompanyRetail::find(Auth::user()['company_idx']);
+        } else {
+            $company = CompanyNormal::where('idx', Auth::user()['company_idx'])->select('*', 'name AS company_name')->first();
         }
         $product = Product::find($idx);
 

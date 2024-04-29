@@ -81,7 +81,6 @@ if( !empty( $point ) ) {
         <div>
             <h3 class="text-xl font-bold">마이올펀</h3>
             <ul class="my_menu_list mt-5">
-                @if(auth() -> user() -> type !== 'N')
                     @if(auth() -> user() -> type === 'W')
                     <li class="{{ $pageType === 'deal' ? 'active' : '' }}">
                         <a href="/mypage/deal" class="flex p-4 justify-between">
@@ -96,7 +95,6 @@ if( !empty( $point ) ) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
-                @endif
                 <li class="{{ $pageType === 'interest' ? 'active' : ''}}">
                     <a href="/mypage/interest" class="flex p-4 justify-between">
                         <p>좋아요 상품</p>

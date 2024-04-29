@@ -58,7 +58,15 @@
             {{-- <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button> --}}
             <ul class="right_link flex items-center">
                 <li><a href="/message">올톡</a></li>
-                <li><a href="/mypage/deal">마이올펀</a></li>
+                @if(Auth::user()['type'] == 'W')
+                    <li><a href="/mypage/deal">마이올펀</a></li>
+                @elseif(Auth::user()['type'] == 'R')
+                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                @elseif(Auth::user()['type'] == 'S')
+                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                @else
+                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                @endif
                 <li><a href="/like/product">좋아요</a></li>
                 <li><a class="alarm_btn" href="/alarm"><span hidden></span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
