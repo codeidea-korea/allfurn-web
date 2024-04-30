@@ -97,23 +97,29 @@ $header_banner = '';
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
     Pusher.logToConsole = true;
+    var opened_room_idx = {{ $room_idx }};
             
     const pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
     });
+    var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
+    cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
+        console.log(JSON.stringify(messages));
+        if(messages.message == 'read') {
+            // 읽음 처리
+            $('.chatting_list > .chatting.right > ._alert').remove();
+        }
+    });
     var channel = pusher.subscribe('chat-{{ $room_idx }}');
     channel.bind('chat-event-{{ $room_idx }}', function(messages) {
         console.log(JSON.stringify(messages));
-
+                
         var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
         const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
 
         if(messages.date != lastCommunicatedDate) {
             const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
             $('.chatting_list').html($('.chatting_list').html() + dateTag);
-        }
-        if(messages.userIdx != {{ $user_idx }}) {
-            messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
         }
         $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
         
@@ -123,6 +129,24 @@ $header_banner = '';
         if('{{$chatting_keyword}}' != '') {
             $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
             boldSearchKeywordInRoom();
+        }
+        if(messages.companyIdx != {{ $companyIdx }}) {
+            messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
+            $('.chatting_list > .chatting.right > ._alert').remove();
+
+            // 내가 보낸 것이 아닌데 보고 있는 경우 읽음 처리를 한다.
+            fetch('/message/read?room_idx=' + messages.roomIdx, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                }
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.result === 'success') {
+                    $('.chatting_list > .chatting.left > ._alert').remove();
+                }
+            });
         }
     });
     setTimeout(() => {

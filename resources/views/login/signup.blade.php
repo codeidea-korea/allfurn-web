@@ -144,7 +144,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mt-2 w-2/3">
+                                    <div class="mt-2">
                                         <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
                                     </div>
                                 </dd>
@@ -272,7 +272,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mt-2 w-2/3">
+                                    <div class="mt-2">
                                         <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
                                     </div>
                                 </dd>
@@ -604,14 +604,15 @@ const fileUpload = (input) => {
 
 // 주소 탭 변경
 const addressChange = (e) => {
-    let liN = $(e).parent().index()
+let liN = $(e).parent().index()
+	if(liN != 0) { $(e).parent().parent().parent().find('div:nth-child(3) > input').removeAttr('disabled'); } else { $(e).parent().parent().parent().find('div:nth-child(3) > input').attr('disabled', 'disabled'); }
     $(e).parent().parent().next('.add_tab').find('> div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
 }
 </script>
 
 <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js?autoload=false"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js" ></script>
-<script src="/js/validate/messages_ko.min.js" ></script>
+    <script src="/js/validate/messages_ko.min.js" ></script>
 
 <script>
 var isProc = false; // 중복등록 방지용

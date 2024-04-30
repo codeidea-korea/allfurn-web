@@ -743,7 +743,8 @@ const fileUpload = (input) => {
 // 주소 탭 변경
 const addressChange = (e) => {
     let liN = $(e).parent().index()
-    $(e).parent().parent().next('.add_tab').find('> div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
+	if(liN != 0) { $(e).parent().parent().parent().find('div:nth-child(3) > input').removeAttr('disabled'); } else { $(e).parent().parent().parent().find('div:nth-child(3) > input').attr('disabled', 'disabled'); }
+	    $(e).parent().parent().next('.add_tab').find('> div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
 }
 </script>
 

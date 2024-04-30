@@ -139,17 +139,16 @@ $header_banner = '';
     var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
     cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
         console.log(JSON.stringify(messages));
+        const rooms = document.querySelector('._chatting_rooms > li');
+        const newestRoom = $('._chatting_rooms > li[data-key='+messages.roomIdx+']');
 
-        const rooms = $($('._chatting_rooms')[0]).find('li');
-        const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
-
-        if(newestRoom) {
-            rooms.prepend(newestRoom);
+        if(newestRoom.length > 0) {
+            rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
         } else {
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
-                    +'    <a  href="javascript:;"><div class="img_box">'
-                    +'        <img src="'+messages.profile_image+'" alt="">'
+                    +'    <div class="img_box">'
+                    +'        <img src="'+messages.dateOfWeek+'" alt="">'
                     +'    </div>'
                     +'    <div class="txt_box">'
                     +'        <h3>'
@@ -157,13 +156,13 @@ $header_banner = '';
                     +'            <span>'+messages.title+'</span>'
                     +'        </h3>'
                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
-                    +'    </div></a>'
+                    +'    </div>'
                     +'</li>';
             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
         }
         // 활성화 처리 및 텍스트 변경
-        $($($('._chatting_rooms')[0]).find('li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
-        $($($('._chatting_rooms')[1]).find('li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
     });
     </script>
 

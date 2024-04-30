@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends BaseController
 {
@@ -38,6 +39,7 @@ class MessageController extends BaseController
         $data['keywords'] = $this->messageService->getSearchKeywords();
         $data['product_idx'] = $request->input('product_idx');
         $data['user_idx'] = $this->messageService->getUserIdx();
+        $data['companyIdx'] = Auth::user()['company_idx'];
         return view(getDeviceType() . 'message.index', $data);
     }
 
@@ -68,6 +70,8 @@ class MessageController extends BaseController
             'company_type' => $data['company']->company_type,
         ];
         $data['chattingHtml'] = '';
+        $data['companyIdx'] = Auth::user()['company_idx'];
+        
         $lastCommunicatedDate = '';
         
         if(isset($data['chatting'])) {
@@ -131,6 +135,7 @@ class MessageController extends BaseController
             'company_type' => $data['company']->company_type,
         ];
         $data['chattingHtml'] = '';
+        $data['companyIdx'] = Auth::user()['company_idx'];
         $lastCommunicatedDate = '';
         
         if(isset($data['chatting'])) {
@@ -277,7 +282,7 @@ class MessageController extends BaseController
      */
     public function readRoomAlarmCount(Request $request): JsonResponse
     {
-        $this->messageService->readRoomAlarmCount($params['room_idx']);
+        $this->messageService->readRoomAlarmCount($request['room_idx']);
         return response()->json([
             'result' => 'success',
             'message' => ''

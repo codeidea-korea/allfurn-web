@@ -79,29 +79,34 @@
     cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
         console.log(JSON.stringify(messages));
 
-        const rooms = $('._chatting_rooms > li');
-        const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
+        if(messages && messages.message == 'msg') {
+            const rooms = document.querySelector('._chatting_rooms > li');
+            const newestRoom = $('._chatting_rooms > li[data-key='+messages.roomIdx+']');
 
-        if(newestRoom) {
-            rooms.prepend(newestRoom);
+            if(newestRoom.length > 0) {
+                rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
+            } else {
+                const tmpChattingRoom = 
+                        '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                        +'    <div class="img_box">'
+                        +'        <img src="'+messages.dateOfWeek+'" alt="">'
+                        +'    </div>'
+                        +'    <div class="txt_box">'
+                        +'        <h3>'
+                        +'            '+messages.roomName
+                        +'            <span>'+messages.title+'</span>'
+                        +'        </h3>'
+                        +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+                        +'    </div>'
+                        +'</li>';
+                $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+            }
+            // 활성화 처리 및 텍스트 변경
+            $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
+            $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
         } else {
-            const tmpChattingRoom = 
-                    '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
-                    +'    <div class="img_box">'
-                    +'        <img src="'+messages.profile_image+'" alt="">'
-                    +'    </div>'
-                    +'    <div class="txt_box">'
-                    +'        <h3>'
-                    +'            '+messages.roomName
-                    +'            <span>'+messages.title+'</span>'
-                    +'        </h3>'
-                    +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
-                    +'    </div>'
-                    +'</li>';
-            $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+            $('.chatting_list > .chatting.right > ._alert').remove();
         }
-        // 활성화 처리 및 텍스트 변경
-        $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
     });
     </script>
 
@@ -202,29 +207,34 @@
                 cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
                     console.log(JSON.stringify(messages));
 
-                    const rooms = $('._chatting_rooms > li');
-                    const newestRoom = rooms.find(r => r.dataset.key == roomIdx);
+                    if(messages && messages.message == 'msg') {
+                        const rooms = document.querySelector('._chatting_rooms > li');
+                        const newestRoom = $('._chatting_rooms > li[data-key='+messages.roomIdx+']');
 
-                    if(newestRoom) {
-                        rooms.prepend(newestRoom);
+                        if(newestRoom.length > 0) {
+                            rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
+                        } else {
+                            const tmpChattingRoom = 
+                                    '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
+                                    +'    <div class="img_box">'
+                                    +'        <img src="'+messages.dateOfWeek+'" alt="">'
+                                    +'    </div>'
+                                    +'    <div class="txt_box">'
+                                    +'        <h3>'
+                                    +'            '+messages.roomName
+                                    +'            <span>'+messages.title+'</span>'
+                                    +'        </h3>'
+                                    +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+                                    +'    </div>'
+                                    +'</li>';
+                            $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+                        }
+                        // 활성화 처리 및 텍스트 변경
+                        $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
+                        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
                     } else {
-                        const tmpChattingRoom = 
-                                '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
-                                +'    <div class="img_box">'
-                                +'        <img src="'+messages.profile_image+'" alt="">'
-                                +'    </div>'
-                                +'    <div class="txt_box">'
-                                +'        <h3>'
-                                +'            '+messages.roomName
-                                +'            <span>'+messages.title+'</span>'
-                                +'        </h3>'
-                                +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
-                                +'    </div>'
-                                +'</li>';
-                        $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
+                        $('.chatting_list > .chatting.right > ._alert').remove();
                     }
-                    // 활성화 처리 및 텍스트 변경
-                    $($('._chatting_rooms > li')[0]).find('li > .txt_box > h3 > span').text(messages.title);
                 });
                 var channel = pusher.subscribe('chat-' + roomIdx);
                 channel.bind('chat-event-' + roomIdx, function(messages) {
@@ -240,8 +250,23 @@
                         const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
                         $('.chatting_list').html($('.chatting_list').html() + dateTag);
                     }
-                    if(messages.userIdx != {{ $user_idx }}) {
+                    if(messages.companyIdx != {{ $companyIdx }}) {
                         messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
+            $('.chatting_list > .chatting.right > ._alert').remove();
+
+                        // 내가 보낸 것이 아닌데 보고 있는 경우 읽음 처리를 한다.
+                        fetch('/message/read?room_idx=' + messages.roomIdx, {
+                            method: 'GET',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{csrf_token()}}'
+                            }
+                        }).then(response => {
+                            return response.json();
+                        }).then(json => {
+                            if (json.result === 'success') {
+                                $('.chatting_list > .chatting.left > ._alert').remove();
+                            }
+                        });
                     }
                     $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
                     

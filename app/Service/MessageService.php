@@ -57,26 +57,38 @@ class MessageService
     public function getRoomQuery(array $params=[], $revers = 'N')
     {
         $user = Auth::user();
-        $roomQuery = MessageRoom::where(function($query) use($user) {
-            $query->where(function($query2) use($user) {
-                $query2
-//                ->where('first_company_type', $user->type)
-                    ->where('first_company_idx', $user->company_idx);
-            })->orWhere(function($query2) use($user) {
-                $query2
-//                ->where('second_company_type', $user->type)
-                    ->where('second_company_idx', $user->company_idx);
-            });
-        })
-        ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
         
         if($revers == 'Y') {
+            $roomQuery = MessageRoom::where(function($query) use($params) {
+                $query->where(function($query2) use($params) {
+                    $query2
+                    ->where('first_company_type', '=', $params['user_type'])
+                        ->where('first_company_idx', '=', $params['user_company_idx']);
+                })->orWhere(function($query2) use($params) {
+                    $query2
+                    ->where('second_company_type', '=', $params['user_type'])
+                        ->where('second_company_idx', '=', $params['user_company_idx']);
+                });
+            })
+            ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,first_company_idx,first_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,first_company_type,second_company_type) AS other_company_type"))->distinct();
         } else {
+            $roomQuery = MessageRoom::where(function($query) use($user) {
+                $query->where(function($query2) use($user) {
+                    $query2
+                    ->where('first_company_type', '=', $user->type)
+                        ->where('first_company_idx', '=', $user->company_idx);
+                })->orWhere(function($query2) use($user) {
+                    $query2
+                    ->where('second_company_type', '=', $user->type)
+                        ->where('second_company_idx', '=', $user->company_idx);
+                });
+            })
+            ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,second_company_idx,first_company_idx) AS other_company_idx")
@@ -531,6 +543,19 @@ class MessageService
         Message::where('room_idx', '=', $idx)
             ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
             ->update(['is_read' => 1]);
+
+        // 읽은 시점 전달
+        event(new ChatUser($idx, 
+            Auth::user()['idx'], 
+            'read',
+            date('YmdHis'), 
+            '',
+            date('Y년 m월 d일'),
+            substr(date('H:i:s'), 0, 5),
+            '',
+            '',
+            ''
+        ));
     }
 
     /**
@@ -579,6 +604,13 @@ class MessageService
                 // 이미지
                 return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                             <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
+                            ' . ($chat->is_read === 1 ? '' 
+                                : '<div class="timestamp _alert" data-key="'.$chat->idx.'" style="
+                                    position: relative;
+                                    top: -16px;
+                                    left: 10px;
+                                    color: black;
+                                ">1</div>') . '
                             <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                         </div>';
             } else if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
@@ -652,6 +684,13 @@ class MessageService
 
         return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                     <div class="chat_box">' . $contentHtml . '</div>
+                    ' . ($chat->is_read === 1 ? '' 
+                        : '<div class="timestamp _alert" data-key="'.$chat->idx.'" style="
+                            position: relative;
+                            top: -16px;
+                            left: 10px;
+                            color: black;
+                        ">1</div>') . '
                     <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                 </div>';
     }
@@ -753,8 +792,14 @@ class MessageService
         
         $room = MessageRoom::where('idx', $message->room_idx)
             ->first();
-        $targetUsers = User::where('company_idx', $room->first_company_idx)
-            ->orWhere('company_idx', $room->second_company_idx)
+        $targetUsers = User::where(function($query) use($room) {
+                $query->where('company_idx', '=', $room->first_company_idx)
+                    ->where('type', '=', $room->first_company_type);
+            })
+            ->orWhere(function($query) use($room) {
+                $query->where('company_idx', '=', $room->second_company_idx)
+                    ->where('type', '=', $room->second_company_type);
+            })
 //            ->where('is_delete', 0)
             ->get();
         $userType = '';
@@ -764,11 +809,26 @@ class MessageService
                 if($user['idx'] == $targetUser->idx) {
                     continue;
                 }
-                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['user_company_idx']], 'Y');
-                $userType = $targetUser->type;
-                $userCompanyIdx = $targetUser->company_idx;
-                $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-                    $targetUser->idx, 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $targetUser->type, 'user_company_idx' => $targetUser->company_idx], 'Y');
+                if(($targetUser->type == $room->first_company_type && $targetUser->company_idx == $room->first_company_idx) 
+                    || ($targetUser->type == $room->second_company_type && $targetUser->company_idx == $room->second_company_idx)) {
+                
+                        $userType = $targetUser->type;
+                        $userCompanyIdx = $targetUser->company_idx;
+                        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
+                            $targetUser->idx, 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+                            
+                        event(new ChatUser($message->room_idx, 
+                            Auth::user()['idx'], 
+                            'msg',
+                            $this->convertHtmlContentByMessage($message, 'Y'), 
+                            date('Y년 m월 d일'),
+                            substr(date('H:i:s'), 0, 5),
+                            $companyInfo->profile_image,
+                            $this->getRoomMessageTitle($message->content),
+                            $companyInfo->company_name
+                        ));
+                }
             }
         }
 
@@ -777,6 +837,8 @@ class MessageService
 //        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $userType, 'user_company_idx' => $userCompanyIdx], 'Y');
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
+            $user['company_idx'],
+            'msg',
             $message->content, 
             $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년 m월 d일'),
@@ -980,6 +1042,8 @@ class MessageService
         $companyInfo = $this->getCompany(['room_idx' => $message->room_idx], 'Y');
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
+            $user['company_idx'],
+            'msg',
             $message->content, 
             $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년 m월 d일'),
@@ -988,29 +1052,6 @@ class MessageService
             $this->getRoomMessageTitle($message->content),
             $companyInfo->company_name
         ));
-        if($isCreated) {
-            // 방을 최초 개설한 경우, 기존 채팅방 목록에 노출되지 않았을 수 있음. 
-            // 이 경우, 해당하는 회사의 모든 사용자 웹소켓으로 전달하여 접속한 소켓(=접속중인 경우)이 있을때 즉시 이벤트 처리가 가능하게 함
-
-            $targetUsers = User::where('company_idx', $companyInfo->idx)
-                ->where('is_delete', 0)
-                ->get();
-
-            if(isset($targetUsers) && is_array($targetUsers)) {
-                foreach($targetUsers as $key => $targetUser) {
-                    event(new ChatUser($message->room_idx, 
-                        $targetUser->idx, 
-                        $message->content, 
-                        $this->convertHtmlContentByMessage($message, 'Y'),
-                        date('Y년 m월 d일'),
-                        substr(date('H:i:s'), 0, 5),
-                        ["일","월","화","수","목","금","토"][date('w', time())],
-                        $this->getRoomMessageTitle($message->content),
-                        $companyInfo->company_name
-                    ));
-                }
-            }
-        }
         
         return [
             'result' => 'success',

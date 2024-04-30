@@ -15,6 +15,8 @@ class ChatMessage implements ShouldBroadcast
 
     public $roomIdx;
     public $userIdx;
+    public $companyIdx;
+    public $comnd;
     public $message;
     public $contentHtml;
     public $date;
@@ -23,10 +25,12 @@ class ChatMessage implements ShouldBroadcast
     public $title;
     public $roomName;
 
-    public function __construct($roomIdx, $userIdx, $message, $contentHtml, $date, $times, $dateOfWeek, $title, $roomName)
+    public function __construct($roomIdx, $userIdx, $companyIdx, $comnd, $message, $contentHtml, $date, $times, $dateOfWeek, $title, $roomName)
     {
         $this->roomIdx = $roomIdx;
         $this->userIdx = $userIdx;
+        $this->companyIdx = $companyIdx;
+        $this->comnd = $comnd;
         $this->message = $message;
         $this->contentHtml = $contentHtml;
         $this->date = $date;

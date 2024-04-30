@@ -218,6 +218,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::post('/send/message', 'MessageController@sendRoomMessage');
     Route::get('/rooms', 'MessageController@getRooms');
     Route::get('/unread','MessageController@sendToUnreadRecipients');
+    Route::get('/read','MessageController@readRoomAlarmCount');
 });
 
 Route::prefix('community')->name('community')->middleware('auth')->group(function() {
