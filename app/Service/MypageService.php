@@ -368,8 +368,8 @@ class MypageService
 
         switch($params['status']) {
             case 'R':
-                $title_request = '상품 준비 중 안내';
-                $message_request = $productName .' 상품이 준비 중입니다.';
+                $title_request = '거래 확정 안내';
+                $message_request = $productName .' 상품 주문이 확정되었습니다.';
 
                 $title_response = '상품 준비 중 안내';
                 $message_response = $productName .' 주문 건이 상품 준비 중 상태로 변경되었습니다.';
