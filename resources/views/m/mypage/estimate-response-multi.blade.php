@@ -82,36 +82,36 @@
                             <td>
                                 <div class="flex items-center">
                                     <span>
-                                        견적일로부터
+                                        견적일로부터 &nbsp;&nbsp;
                                     </span>
                                     <span class="expiration_date hidden"> 15일</span> 
-                                    <div class="input-form ml-3 ">
-                                        <select name="expiration_date" id="expiration_date" class="w-full h-full">
+                                    {{-- <div class="input-form ml-3 "> --}}
+                                        <select name="expiration_date" id="expiration_date" class="input-form w-140">
                                             <option value="0">15일</option>
                                         </select>
-                                    </div>
+                                    {{-- </div> --}}
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <th>배 송 방 법</th>
                             <td>
-                                <div class="flex items-center">
+                                {{-- <div class="flex items-center"> --}}
                                     <span class="product_delivery_info hidden"></span> 
-                                    <div class="input-form w-full">
-                                        <select name="product_delivery_info" id="product_delivery_info">
+                                    {{-- <div class="input-form w-full"> --}}
+                                        <select name="product_delivery_info" class="input-form w-full" id="product_delivery_info">
                                             <option value="업체 협의 (착불)">착불</option>
                                             <option value="매장 배송 (무료)">무료</option>
                                         </select>
-                                    </div> 
-                                </div>
+                                    {{-- </div>  --}}
+                                {{-- </div> --}}
                             </td>
                         </tr>
                         <tr>
                             <th>배 송 비</th>
                             <td>
                                 <span class="txt-primary product_delivery_price hidden"><b>0원</b></span> 
-                                <input type="text" name="product_delivery_price" id="product_delivery_price" class="input-form txt-primary" value="0" />
+                                <input type="text" name="product_delivery_price" id="product_delivery_price" class="input-form w-full txt-primary" value="0" />
                             </td>
                         </tr>
                         <tr>
@@ -126,7 +126,16 @@
                             <td>
                                 <span class="response_account hidden"></span>
                                 <select name="response_account1" id="response_account1" class="input-form w-full">
+                                    <option value="KEB하나은행">KEB하나은행</option>
+                                    <option value="SC제일은행">SC제일은행</option>
+                                    <option value="국민은행">국민은행</option>
+                                    <option value="신한은행">신한은행</option>
+                                    <option value="외환은행">외환은행</option>
                                     <option value="우리은행">우리은행</option>
+                                    <option value="한국시티은행">한국시티은행</option>
+                                    <option value="기업은행">기업은행</option>
+                                    <option value="농협">농협</option>
+                                    <option value="수협">수협</option>
                                 </select>
                                 <input type="text" name="response_account2" id="response_account2" class="input-form w-full mt-1" value="" />
                             </td>
@@ -247,7 +256,7 @@
                 <div class="btn_box mt-7 next hidden">
                     <p class="txt-gray fs10 text-center mb-2">* 올톡 채팅 친구 또는 친구 맺은 거래처에게만 보낼 수 있습니다. </p>
                     <div class="">
-                        <a href="javascript: ;" class="btn btn-kakao w-full"><img src="/img/icon/kakao.svg" alt="" class="mr-2" />카카오톡 친구에게 견적서 보내기</a>
+                        <a href="javascript: ;" class="btn btn-kakao w-full" onclick="updateResponseMulti(true)"><img src="/img/icon/kakao.svg" alt="" class="mr-2" />카카오톡 친구에게 견적서 보내기</a>
                         <a href="javascript: ;" class="btn btn-primary w-full mt-3" onclick="updateResponseMulti()">견적서 보내기</a>
                     </div>
                 </div>
@@ -269,7 +278,7 @@
                 </div>
                 <p class="mt-4 text-sm text-stone-400">검색 결과</p>
                 <div class="h-[360px] overflow-y-auto">
-                    <ul class="filter_list" style="margin-top: 0px;">
+                    <ul class="filter_list" style="margin-top: 0px; max-height:340px;">
                     <!--
                         <li>
                             <input type="checkbox" id="business_check01" class="check-form" />
@@ -329,7 +338,7 @@
 
             if($('.checkItem:checked').length < 1) {
                 alert('최소 1개 이상의 상품을 체크해주셔아 합니다!');
-                $('html, body').animate({ scrollTop: '0' }, 1000);
+                document.getElementById('response_memo').scrollIntoView({ behavior: 'smooth' })
 
                 return false;
             }
@@ -460,7 +469,7 @@
             modalClose('#search_company_modal');
         }
 
-        const updateResponseMulti = () => {
+        const updateResponseMulti = (isKakao) => {
             if($('.del').length < 1) {
                 alert('최소 1개 이상의 업체를 선택해주세요!');
 
@@ -472,6 +481,8 @@
 
             if(confirm('이대로 견적서를 보내시겠습니까?')) {
                 const formData = new FormData(document.getElementById('udForm'));
+                formData.append('isKakao', isKakao ? true : false);
+
                 /*
                 for (const [key, value] of formData.entries()) {
                     console.log(key, value);
@@ -490,9 +501,15 @@
                     return response.json();
                 }).then(json => {
                     if (json.success) {
-                        alert('견적서 보내기가 완료되었습니다.');
-
-                        location.reload();
+                        if(isKakao) { 
+                            shareEstimate();
+                            setTimeout(() => {
+                                location.reload();    
+                            }, 1000);
+                        } else {
+                            alert('견적서 보내기가 완료되었습니다.');
+                            location.reload();
+                        }
                     } else {
                         alert('일시적인 오류로 처리되지 않았습니다.');
                         return false;
@@ -543,7 +560,7 @@
                 }
                 */
 
-                if ($(this).val()) {
+                if ($(this).val().length>0) {
                     fetch('/estimate/companyList', {
                         method  : 'POST',
                         headers : {
@@ -581,6 +598,22 @@
                 $(this).closest('div').remove();
             });
         });
+    </script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+    <script>
+    Kakao.init('2b966eb2c764be29d46d709f6d100afb'); 
+    function shareEstimate() {
+        Kakao.Share.sendDefault({
+            objectType: 'text',
+            text:
+                '올펀 - 글로벌 가구 도·소매 No.1 플랫폼\n{{$response["list"][0] -> company_name}요청하신 견적서가 도착했습니다.',
+            link: {
+                mobileWebUrl: "{{ env('APP_URL') }}" + "/mypage/requestEstimate",
+                webUrl: "{{ env('APP_URL') }}" + "/mypage/requestEstimate",
+            },
+            buttonTitle: '견적서 보기',
+        });
+    }
     </script>
 
 @else 

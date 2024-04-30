@@ -21,8 +21,8 @@
             <hr class="mt-3">
             <p class="font-bold text-base mt-3">{{ $orders[0] -> product_name }}</p>
             @if (request() -> type === 'S' && $orders[0] -> order_state != 'C')
-                <div class="border rounded-md px-2 h-[40px] mt-3">
-                    <select name="order_state" id="" class="w-full h-full order_state" data-order-num="{{ $orders[0] -> order_code }}">
+                {{-- <div class="border rounded-md px-2 h-[40px] mt-3"> --}}
+                    <select name="order_state" id="" class="border rounded-md mt-3 w-full h-[40px] order_state" data-order-num="{{ $orders[0] -> order_code }}">
                         <option value="N" {{ $orders[0] -> order_state == 'N' ? 'selected' : '' }}>신규 주문</option>
                         <option value="R" {{ $orders[0] -> order_state == 'R' ? 'selected' : '' }}>상품 준비중</option>
                         <option value="D" {{ $orders[0] -> order_state == 'D' ? 'selected' : '' }}>발송 중</option>
@@ -30,7 +30,8 @@
                         <option value="F" {{ $orders[0] -> order_state == 'F' ? 'selected' : '' }}>거래 완료</option>
                         <!--<option value="C" {{ $orders[0] -> order_state == 'C' ? 'selected' : '' }} disabled>거래 취소(선택 불가)</option>-->
                     </select>
-                </div>
+                {{-- </div> --}}
+                <br/>
             @endif
             @if ($orders[0] -> order_state == 'N' )
                 <br/>
