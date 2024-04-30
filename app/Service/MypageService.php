@@ -1321,7 +1321,7 @@ class MypageService
             $type = 'S';
             $target = $params['phone_number'];
         
-            $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode';
+            $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode.php';
             $response = Http::asForm()->post($url, [
                 'data' => '{"target":"'.$target.'", "type":"'.$type.'"}',
             ]);
