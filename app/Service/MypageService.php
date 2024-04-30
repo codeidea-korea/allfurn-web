@@ -1298,6 +1298,22 @@ class MypageService
     }
 
     /**
+     * 입시 저장된 업체 상품 삭제
+     * @param $idx
+     * @return array
+     */
+    public function deleteProductTemp($idx): array
+    {
+        ProductTemp::where('company_idx', Auth::user()['company_idx'])
+            ->where('company_type', Auth::user()['type'])
+            ->where('idx', $idx)->delete();
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    /**
      * 이메일, 휴대폰번호 인증 코드 보내기
      * @param array $params
      * @return array

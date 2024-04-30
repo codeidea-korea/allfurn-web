@@ -670,6 +670,16 @@ class MypageController extends BaseController
     {
         return response()->json($this->mypageService->deleteProduct($idx));
     }
+    
+    /**
+     * 임시 저장된 상품 삭제
+     * @param $idx
+     * @return JsonResponse
+     */
+    public function deleteProductTemp($idx): JsonResponse
+    {
+        return response()->json($this->mypageService->deleteProductTemp($idx));
+    }
 
     /**
      * (이메일/휴대폰) 인증번호 전송

@@ -160,6 +160,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/company/image', 'MypageController@removeCompanyIntroduceImage');
     Route::get('/product', 'MypageController@product');
     Route::delete('/product/{idx}', 'MypageController@deleteProduct');
+    Route::delete('/product-temp/{idx}', 'MypageController@deleteProductTemp');
     Route::put('/product/state', 'MypageController@changeProductState');
     Route::get('/account', 'MypageController@account');
     Route::post('/account/authentic', 'MypageController@compareAuthCode');
@@ -218,6 +219,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::post('/send/message', 'MessageController@sendRoomMessage');
     Route::get('/rooms', 'MessageController@getRooms');
     Route::get('/unread','MessageController@sendToUnreadRecipients');
+    Route::get('/read','MessageController@readRoomAlarmCount');
 });
 
 Route::prefix('community')->name('community')->middleware('auth')->group(function() {

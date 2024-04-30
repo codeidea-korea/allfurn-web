@@ -752,7 +752,7 @@
 
         const deleteProduct = () => {
             const idx = document.getElementById('confirmDeleteProductBtn').dataset.idx;
-            fetch('/mypage/product/' + idx, {
+            fetch('/mypage/product-temp/' + idx, {
                 method  : 'DELETE',
                 headers : {
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
