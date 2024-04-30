@@ -138,69 +138,88 @@
             </div>
         </div>
     </section>
+
+    @if(isset($message))
+    <div class="modal" id="inform-modal">
+        <div class="modal_bg" onclick="modalClose('#inform-modal')"></div>
+        <div class="modal_inner modal-sm">
+            <button class="close_btn" onclick="modalClose('#inform-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>{!! $message !!}</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#inform-modal')">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 <script>
-$('.member_list .member_btn').on('click',function(){
-    let text = $(this).find('span').text();
-    $(this).toggleClass('off')
-    if(text == "닫기"){
-        $(this).find('span').text("열기");
-    }else{
-        $(this).find('span').text("닫기");
-    }
-    $('.member_list .member_list_box').slideToggle();
-})
+    @if(isset($message))
+        modalOpen('#inform-modal');
+    @endif
 
-$(document).on('click', '.btnClubRegister', function(){
-    var clubIdx = $(this).data('cidx');
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url				: '/community/club/register',
-        data			: {
-            'club_idx' : clubIdx
-        },
-        type			: 'POST',
-        dataType		: 'json',
-        success		: function(result) {
-            if (result.status == 2){
-                alert('가입된 회원입니다.'); return false;
-            }else if (result.status == 3){
-                alert('탈퇴한 회원입니다.'); return false;
-            }else if (result.status == 1){
-                alert('정상적으로 가입되었습니다.'); location.reload();
-            }
+    $('.member_list .member_btn').on('click',function(){
+        let text = $(this).find('span').text();
+        $(this).toggleClass('off')
+        if(text == "닫기"){
+            $(this).find('span').text("열기");
+        }else{
+            $(this).find('span').text("닫기");
         }
-    });
-})
+        $('.member_list .member_list_box').slideToggle();
+    })
 
-$(document).on('click', '.btnClubWithdrawal, .btnClubForceWithdrawal', function(){
-    var confirm_msg;
-    if (this.className == "btnClubWithdrawal"){
-        confirm_msg = "클럽을 탈퇴하시겠습니까?";
-    }else if (this.className == "btnClubForceWithdrawal"){
-        confirm_msg = "선택하신 회원을 탈퇴시키시겠습니까?";
-    }
-    if (confirm(confirm_msg)){
-        var memberIdx = $(this).data('midx');
+    $(document).on('click', '.btnClubRegister', function(){
+        var clubIdx = $(this).data('cidx');
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url				: '/community/club/withdrawal',
+            url				: '/community/club/register',
             data			: {
-                'member_idx' : memberIdx, 
-                'club_idx' : {{ $club->idx }}
+                'club_idx' : clubIdx
             },
             type			: 'POST',
             dataType		: 'json',
             success		: function(result) {
-                if (result.status == 1){
-                    alert('정상적으로 탈퇴되었습니다.'); location.reload();
+                if (result.status == 2){
+                    alert('가입된 회원입니다.'); return false;
+                }else if (result.status == 3){
+                    alert('탈퇴한 회원입니다.'); return false;
+                }else if (result.status == 1){
+                    alert('정상적으로 가입되었습니다.'); location.reload();
                 }
             }
         });
-    }else{
-        return false;
-    }
-})
+    })
+
+    $(document).on('click', '.btnClubWithdrawal, .btnClubForceWithdrawal', function(){
+        var confirm_msg;
+        if (this.className == "btnClubWithdrawal"){
+            confirm_msg = "클럽을 탈퇴하시겠습니까?";
+        }else if (this.className == "btnClubForceWithdrawal"){
+            confirm_msg = "선택하신 회원을 탈퇴시키시겠습니까?";
+        }
+        if (confirm(confirm_msg)){
+            var memberIdx = $(this).data('midx');
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url				: '/community/club/withdrawal',
+                data			: {
+                    'member_idx' : memberIdx, 
+                    'club_idx' : {{ $club->idx }}
+                },
+                type			: 'POST',
+                dataType		: 'json',
+                success		: function(result) {
+                    if (result.status == 1){
+                        alert('정상적으로 탈퇴되었습니다.'); location.reload();
+                    }
+                }
+            });
+        }else{
+            return false;
+        }
+    })
 </script>
 @endsection
