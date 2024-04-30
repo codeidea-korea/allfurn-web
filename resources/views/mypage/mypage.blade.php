@@ -13,6 +13,8 @@ if( !empty( $point ) ) {
     }
 }
 @endphp
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
 
 <div id="content">
     <div class="my_top_area inner flex items-center justify-between">
@@ -172,7 +174,7 @@ if( !empty( $point ) ) {
                     </a>
                 </li>
             </ul>
-            <a href="/help/faq" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
+            <a onclick="shareMessage()" class="my_small_b w-full flex p-4 bg_main justify-between items-center mt-5">
                 <div>
                     <p class="text-white">함께 올펀을 사용해보세요!</p>
                     <p class="text-sm">올펀 알려주기</p>
@@ -308,9 +310,22 @@ if( !empty( $point ) ) {
 </div>
 
 <script>
-function openModal(name) {
-    $(`${name}`).css('display', 'block');
-    $('body').css('overflow', 'hidden');
-}
+    function openModal(name) {
+        $(`${name}`).css('display', 'block');
+        $('body').css('overflow', 'hidden');
+    }
+
+    function shareMessage() {
+        Kakao.Share.sendDefault({
+            objectType: 'text',
+            text:
+                '올펀 - 글로벌 가구 도·소매 No.1 플랫폼',
+            link: {
+                mobileWebUrl: "{{ env('APP_URL') }}",
+                webUrl: "{{ env('APP_URL') }}",
+            },
+        });
+    }
+
 </script>
 @endsection

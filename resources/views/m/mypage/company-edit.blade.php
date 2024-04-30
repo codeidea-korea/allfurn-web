@@ -127,8 +127,8 @@
                                         @else
                                             <div class="address_container">
                                                 <div class="mt-8 address_area pb-8 border-b" data-address-id="1">
-                                                    <div class="flex">
-                                                        <p class="w-[190px] shrink-0 font-normal">사업자 주소</p>
+                                                    <div class="mb-1">
+                                                        <p class="mb-2 font-normal">사업자 주소</p>
                                                         <div class="flex flex-col w-full">
                                                             <div class="flex justify-between">
                                                                 <div class="flex gap-6">

@@ -1084,7 +1084,7 @@ class CommunityService {
 
         switch(Auth::user()['type']) {
             case 'W':
-                $user_cname = DB::select("select company_name from AF_wholesaler where idx =".Auth::user()['company_idx']);
+                $user_cname = DB::select("select company_name from AF_wholesale where idx =".Auth::user()['company_idx']);
                 break;
 
             case 'R':
@@ -1187,7 +1187,7 @@ class CommunityService {
 
             switch(Auth::user()['type']) {
                 case 'W':
-                    $user_cname = DB::select("select company_name from AF_wholesaler where idx =".Auth::user()['company_idx']);
+                    $user_cname = DB::select("select company_name from AF_wholesale where idx =".Auth::user()['company_idx']);
                     break;
     
                 case 'R':

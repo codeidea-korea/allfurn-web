@@ -640,6 +640,13 @@ $(document).on('click', '.ico_delete', function() {
     $('#prod_property-modal #property-check_'+this_sub_idx).attr('checked', false);
 });
 
+//### 상품속성 초기화 
+function resetProperty(item){
+    $(item).parent().siblings('.prod_property_cont').find('input').each(function(){
+        $(this).prop("checked",false);
+    });
+}
+
 //### 배송방법 추가
 $('#prod_shipping-modal .btn-primary').on('click', function (e) {
     e.stopPropagation();

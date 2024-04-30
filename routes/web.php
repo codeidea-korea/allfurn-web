@@ -160,6 +160,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::delete('/company/image', 'MypageController@removeCompanyIntroduceImage');
     Route::get('/product', 'MypageController@product');
     Route::delete('/product/{idx}', 'MypageController@deleteProduct');
+    Route::delete('/product-temp/{idx}', 'MypageController@deleteProductTemp');
     Route::put('/product/state', 'MypageController@changeProductState');
     Route::get('/account', 'MypageController@account');
     Route::post('/account/authentic', 'MypageController@compareAuthCode');

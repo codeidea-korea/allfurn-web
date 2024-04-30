@@ -368,8 +368,8 @@ class MypageService
 
         switch($params['status']) {
             case 'R':
-                $title_request = '상품 준비 중 안내';
-                $message_request = $productName .' 상품이 준비 중입니다.';
+                $title_request = '거래 확정 안내';
+                $message_request = $productName .' 상품 주문이 확정되었습니다.';
 
                 $title_response = '상품 준비 중 안내';
                 $message_response = $productName .' 주문 건이 상품 준비 중 상태로 변경되었습니다.';
@@ -1298,6 +1298,22 @@ class MypageService
     }
 
     /**
+     * 입시 저장된 업체 상품 삭제
+     * @param $idx
+     * @return array
+     */
+    public function deleteProductTemp($idx): array
+    {
+        ProductTemp::where('company_idx', Auth::user()['company_idx'])
+            ->where('company_type', Auth::user()['type'])
+            ->where('idx', $idx)->delete();
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
+    }
+
+    /**
      * 이메일, 휴대폰번호 인증 코드 보내기
      * @param array $params
      * @return array
@@ -1321,7 +1337,7 @@ class MypageService
             $type = 'S';
             $target = $params['phone_number'];
         
-            $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode';
+            $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode.php';
             $response = Http::asForm()->post($url, [
                 'data' => '{"target":"'.$target.'", "type":"'.$type.'"}',
             ]);

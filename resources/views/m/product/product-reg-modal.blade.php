@@ -41,7 +41,7 @@
             <div class="prod_property_cont">
             </div>
             <div class="btn_bot">
-                <button class="btn btn-line3 refresh_btn" onclick="refreshHandle(this)"><svg><use xlink:href="/img/m/icon-defs.svg#refresh"></use></svg>초기화</button>
+                <button class="btn btn-line3 refresh_btn" onclick="resetProperty(this)"><svg><use xlink:href="/img/m/icon-defs.svg#refresh"></use></svg>초기화</button>
                 <button class="btn btn-primary confirm_prod_property">선택 완료</button>
             </div>
         </div>

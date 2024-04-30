@@ -330,6 +330,10 @@ class CommunityController extends BaseController
 
     public function clubDetail(int $idx)
     {
+        if(session('message')) {
+            $data['message'] = request()->session()->pull('message');
+        }
+
         $param['idx'] = $idx;
         $data['club'] = $this->communityService->getClubDetail($param);
 
@@ -373,7 +377,10 @@ class CommunityController extends BaseController
     public function clubArticleForm(int $clubIdx, int $idx = null)
     {
         //해당 가구인 모임의 회원인지 체크
-        if(!$this->communityService->checkIsMember($clubIdx)) return redirect('/community/club');
+        if(!$this->communityService->checkIsMember($clubIdx)) {
+            request()->session()->put('message', '해당 가구인 모임에 가입한 회원만<br>작성할 수 있습니다.');
+            return redirect('/community/club/'.$clubIdx);
+        }
 
         $data['idx'] = $idx; // idx 가 있으면 수정 없으면 등록
         $data['clubIdx'] = $clubIdx;

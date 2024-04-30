@@ -505,7 +505,7 @@ class EstimateService {
                 WHERE type = '".$params['company_type'][$i]."' AND company_idx = ".$request -> idx." AND parent_idx = 0";
             $user = DB::select($sql);
 
-            if(count($user) > 0) {
+            if(count($user) > 0 && $params['isKakao'] == 'false') {
                 $this -> pushService -> sendPush(
                     '견적서 도착 알림', '('.$params['response_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
                     $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
@@ -513,7 +513,11 @@ class EstimateService {
 
                 $this -> pushService -> sendKakaoAlimtalk(
                     'TS_1857', '[견적서 도착 알림]',
-                    [ '회사명' => $params['response_company_name'] ], $user[0] -> phone_number, null
+                    [ 
+                        '회사명' => $params['response_company_name'],
+                        '견적서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate?status=R'
+                    ],
+                    $user[0] -> phone_number, null
                 );
             }
         }
