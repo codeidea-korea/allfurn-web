@@ -606,7 +606,7 @@
         Kakao.Share.sendDefault({
             objectType: 'text',
             text:
-                '올펀 - 글로벌 가구 도·소매 No.1 플랫폼\n{{$response["list"][0] -> company_name}요청하신 견적서가 도착했습니다.',
+                '올펀 - 글로벌 가구 도·소매 No.1 플랫폼\n{{$response["list"][0] -> company_name}}요청하신 견적서가 도착했습니다.',
             link: {
                 mobileWebUrl: "{{ env('APP_URL') }}" + "/mypage/requestEstimate",
                 webUrl: "{{ env('APP_URL') }}" + "/mypage/requestEstimate",
