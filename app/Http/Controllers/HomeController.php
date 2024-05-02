@@ -34,7 +34,7 @@ class HomeController extends BaseController
     }
 
 
-    public function index() {
+    public function index(Request $params) {
         
         Log::info('-------- HomeController > index ');
         
@@ -67,7 +67,12 @@ class HomeController extends BaseController
                 ]);
                 
             } else {
-                return view('home/mWelcome');
+                $data = array();
+                if($params->input('isweb')) {
+                    $data['isweb'] = $params->input('isweb');
+                }
+                
+                return view('home/mWelcome', $data);
                 
             }
             

@@ -102,12 +102,15 @@ class LoginController extends BaseController
                     'not_approve' => 'use after approve.',
                 ]);
         } else {
+            // 퍼블 없음 삭제
+            /*
             if ( $userInfo->is_owner == 1 && $userInfo->isNeedAgreement > 0 ) {
                 return view(getDeviceType() . 'login.login')
                     ->withErrors([
                         'need_terms' => $userInfo->idx,
                     ]);
             } else {
+            */
                 $this->loginService->getAuthToken($userInfo->idx);
 
                 if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
@@ -115,7 +118,7 @@ class LoginController extends BaseController
                 } else {
                     return redirect('/');
                 }
-            }
+//            }
         }
     }
 

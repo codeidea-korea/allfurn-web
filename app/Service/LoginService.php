@@ -204,7 +204,10 @@ class LoginService
             $result['msg'] = $result['msg'] . ' - accessToken을 확인해주시기 바랍니다.';
             return $result;
         }
-        $authToken = AuthToken::where('token', $accessToken)->orderBy('register_time', 'DESC')->first();
+        $authToken = AuthToken::where('token', $accessToken)
+            // 만료 여부 체크X - 무조건 로그인 되게 변경
+    //        ->orderBy('register_time', 'DESC')
+            ->first();
 
         if (empty($authToken)) {
             $result['code'] = 'EA002';
