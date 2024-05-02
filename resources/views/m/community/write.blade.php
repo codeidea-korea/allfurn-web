@@ -4,8 +4,8 @@
 {{-- @include('layouts.header_m') --}}
 
 <div id="content">
-    <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/js/froala_editor.pkgd.min.js"></script>
+    <link href="/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/js/froala_editor.pkgd.min.js"></script>
 
     <div class="detail_mo_top write_type">
         <div class="inner">
