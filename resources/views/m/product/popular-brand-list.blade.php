@@ -56,7 +56,7 @@
 
 <script type="text/javascript">
     let isLoading = false;
-    let isLastPage = {{ $lists->lastPage() == 1 }};
+    let isLastPage = {{ $lists->lastPage() }} == 1;
     let currentPage = 1;
 
     function loadNewProductList() {
