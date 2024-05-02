@@ -24,8 +24,9 @@
 
     <title>All FURN  | Home</title>
     <link rel="stylesheet" href="/css/m/font.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css?{{ date('Ymdhis') }}">
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css?{{ date('Ymdhis') }}"> --}}
     <link href="https://cdn.jsdelivr.net/npm/anypicker/dist/anypicker-all.min.css?{{ date('Ymdhis') }}" rel="stylesheet">
+    <link rel="stylesheet" href="/css/m/swiper-bundle.min.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/common.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/style.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/rubin.css?{{ date('Ymdhis') }}">
@@ -38,7 +39,8 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js?{{ date('Ymdhis') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js?{{ date('Ymdhis') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script> --}}
+    <script src="/js/m/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
 
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <script src="/js/m/anypicker.js?{{ date('Ymdhis') }}"></script>

@@ -24,7 +24,8 @@
 
     <title>All FURN  | Home</title>
     <link rel="stylesheet" href="/css/font.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" /> --}}
+    <link rel="stylesheet" href="/css/swiper-bundle.min.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/common.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/style.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/rubin.css?{{ date('Ymdhis') }}">
@@ -36,7 +37,8 @@
     <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/pci.js?{{ date('Ymdhis') }}"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
+    <script src="/js/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/common.js?{{ date('Ymdhis') }}"></script>
     <!-- flatpickr(datepicker) -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
