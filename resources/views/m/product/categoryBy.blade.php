@@ -97,6 +97,16 @@
     </div>
 
     <!-- 옵션 선택 -->
+    @php
+        $propertyList = [];
+        foreach($data['property'] as $item) {
+            if ($item['name'] != null) {
+                $item['list'] = [];
+                array_push($propertyList, $item);
+            }
+        }
+        $selectedFilterList = [];
+    @endphp
     <div class="modal" id="option-modal">
         <div class="modal_bg" onclick="modalClose('#option-modal')"></div>
         <div class="modal_inner modal-md">
@@ -105,52 +115,40 @@
                 <h4>속성</h4>
                 <div class="sub_category type02 mt-3">
                     <ul class="prod_property_tab">
-                        <li class="active"><a href="javascript:;">사이즈</a></li>
-                        <li><a href="javascript:;">프레임형태</a></li>
-                        <li><a href="javascript:;">소재</a></li>
-                        <li><a href="javascript:;">헤드형태</a></li>
-                        <li><a href="javascript:;">색상</a></li>
-                        <li><a href="javascript:;">깔판형태</a></li>
-                        <li><a href="javascript:;">원산지</a></li>
+                        @if( count( $propertyList ) > 0 )
+                            @foreach($propertyList as $key=>$prop)
+                                @php $arr = array(); @endphp
+                                @if(isset($_GET['prop']))
+                                    @php $arr = explode('|', $_GET['prop']);@endphp
+                                @endif
+                           
+                                <li class="{{$loop->index == 0 ? 'active' : ''}}"><a href="javascript:;">{{$prop->name}}</a></li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div>
                 <div class="category_tab prod_property_cont">
-                    <div class="active">
-                        <ul class="filter_list">
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_1">
-                                <label for="option_1_1">싱글</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_2">
-                                <label for="option_1_2">슈퍼싱글</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_3">
-                                <label for="option_1_3">더블</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_4">
-                                <label for="option_1_4">퀸</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_5">
-                                <label for="option_1_5">킹</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_6">
-                                <label for="option_1_6">라지킹</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_7">
-                                <label for="option_1_7">기타</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" class="check-form" id="option_1_8">
-                                <label for="option_1_8">패밀리</label>
-                            </li>
-                        </ul>
-                    </div>
+                    @if( count( $propertyList ) > 0 )
+                            @foreach($propertyList as $key=>$prop)
+                                @php $arr = array(); @endphp
+                                @if(isset($_GET['prop']))
+                                    @php $arr = explode('|', $_GET['prop']);@endphp
+                                @endif
+                           
+                                <div class="{{$loop->index == 0 ? 'active' : ''}}">
+                                    <ul class="filter_list">
+                                        @foreach($data['property'] as $item)
+                                            @if($prop->idx == $item->parent_idx)
+                                                <li>
+                                                    <input type="checkbox" class="check-form" data-property-idx="{{$item->idx}}" id="option_{{$loop->parent->index}}_{{$loop->index}}">
+                                                    <label for="option_{{$loop->parent->index}}_{{$loop->index}}">{{$item->property_name}}</label>
+                                                </li>
+                                            @endif
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
+                        @endif
                 </div>
                 <div class="btn_bot">
                     <button class="btn btn-line3 refresh_btn" onclick="optionRefresh(this)"><svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg>초기화</button>
@@ -175,7 +173,7 @@
     });
 
     let isLoading = false;
-    let isLastPage = false;
+    let isLastPage = {{$data['list']->lastPage()}} == 1;
     let currentPage = 1;
 
     // 카테고리 클릭시
@@ -191,13 +189,17 @@
 
     function locationGo() {
         var prop = '';
-        $('#option-modal .sub_property_area').each(function(o){
+        /* $('#option-modal .sub_property_area').each(function(o){
             if ($('#option-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
                 $('#option-modal .sub_property_area:eq('+o+') .check-form:checked').map(function (n, i) {
                     prop += $(this).data('sub_property') + "|";
                 })
             }
-        });
+        }); */
+
+        $("#option-modal .prod_property_cont li input:checked").each(function(e) {
+            prop += $(this).data('property-idx') + "|"
+        }) 
 
         url = '/product/category?';
         urlSearch = new URLSearchParams(location.search);
@@ -255,6 +257,10 @@
         if (urlSearch.get('pre') != null) {
             parents = urlSearch.get('pre');
         }
+        if (urlSearch.get('prop') != null) {
+            property = urlSearch.get('prop');
+        }
+
 
         if( $('input[name="filter_cate_2"]').is(':checked') == true ) {
             orderedElement = $("#filter_align-modal02 .radio-form:checked").val();
@@ -381,7 +387,7 @@
 
     //### 속성 선택완료
     $(document).on('click', '.confirm_prod_property', function() {
-        if ($(this).has('.btn-primary')) {
+        /* if ($(this).has('.btn-primary')) {
             var htmlText = "";
             $('#option-modal .sub_property_area').each(function(o){
                 if ($('#option-modal .sub_property_area:eq('+o+') .check-form:checked').length > 0){
@@ -391,7 +397,8 @@
                 }
             });
             locationGo();
-        }
+        } */
+        locationGo();
     })
 
     //### 선택한 상품속성 값 삭제
@@ -429,7 +436,7 @@
         $('#filter_align-modal02 input[value="'+ urlSearch.get('so') +'"]').prop('checked', true);
         $(".sub_filter .filter_box button:eq(0)").text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
 
-        getProperty();
+        // getProperty();
         $('#loadingContainer').show();
 
         setTimeout(function () {
@@ -463,7 +470,21 @@
             }
             $('#loadingContainer').hide();
         }, 500);
-        
+        displaySelectedProperty();   
     })
+
+    function displaySelectedProperty() {
+        if(!new URLSearchParams(location.search).has('prop')) return;
+
+        const selectedPropertyArr = new URLSearchParams(location.search).get('prop').split('|');
+        console.log(selectedPropertyArr);
+
+        $("#option-modal .prod_property_cont li input").each(function(){
+            if(selectedPropertyArr.includes($(this).data('property-idx').toString())){
+                $(this).prop('checked', true);
+            }
+        })
+    }
+
     </script>
 @endsection

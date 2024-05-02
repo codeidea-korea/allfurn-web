@@ -289,7 +289,7 @@
     });
 
     let isLoading = false;
-    let isLastPage = false;
+    let isLastPage = {{$data['list']->lastPage()}} == 1;
     let currentPage = 1;
     function loadProductList() {
         if(isLoading) return;
