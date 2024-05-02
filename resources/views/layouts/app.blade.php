@@ -31,7 +31,8 @@
     <link rel="stylesheet" href="/css/rubin.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/output.css?{{ date('Ymdhis') }}">
     <!-- flatpickr(datepicker) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" /> --}}
+    <link rel="stylesheet" href="/css/flatpickr.min.css?{{ date('Ymdhis') }}">
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
@@ -41,8 +42,10 @@
     <script src="/js/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/common.js?{{ date('Ymdhis') }}"></script>
     <!-- flatpickr(datepicker) -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script> --}}
+    <script src="/js/flatpickr_ko.js?{{ date('Ymdhis') }}"></script>
+    <script src="/js/flatpickr.js?{{ date('Ymdhis') }}"></script>
     
 </head>
 <body>

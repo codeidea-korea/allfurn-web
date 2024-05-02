@@ -25,8 +25,9 @@
     <title>All FURN  | Home</title>
     <link rel="stylesheet" href="/css/m/font.css?{{ date('Ymdhis') }}">
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css?{{ date('Ymdhis') }}"> --}}
-    <link href="https://cdn.jsdelivr.net/npm/anypicker/dist/anypicker-all.min.css?{{ date('Ymdhis') }}" rel="stylesheet">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/anypicker/dist/anypicker-all.min.css?{{ date('Ymdhis') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="/css/m/swiper-bundle.min.css?{{ date('Ymdhis') }}">
+    <link rel="stylesheet" href="/css/m/anypicker-all.min.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/common.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/style.css?{{ date('Ymdhis') }}">
     <link rel="stylesheet" href="/css/m/rubin.css?{{ date('Ymdhis') }}">
