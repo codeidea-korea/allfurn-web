@@ -257,6 +257,7 @@ const main_visual = new Swiper(".main_visual .slide_box", {
     loop: true,
     slidesPerView: 1,
     speed : 1500,
+    autoHeight:true,
     navigation: {
         nextEl: ".main_visual .slide_arrow.next",
         prevEl: ".main_visual .slide_arrow.prev",
