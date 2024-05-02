@@ -449,6 +449,8 @@ class ProductController extends BaseController
             $data[$key]->company_name = $banner['company_name'];
             $data[$key]->imgUrl = $banner['imgUrl'];
             $data[$key]->mainImgUrl = $banner['mainImgUrl'];
+            $data[$key]->appBigImgUrl = $banner['appBigImgUrl'];
+            $data[$key]->app51ImgUrl = $banner['app51ImgUrl'];
 
             $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
