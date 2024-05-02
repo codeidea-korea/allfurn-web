@@ -134,6 +134,7 @@ class HomeService
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
             ->where('AF_product_md.is_delete', 0)
             ->where('AF_product_md.is_open', 1)
+            ->whereRaw('JSON_LENGTH(JSON_EXTRACT(md_product_info, "$[0].groups")) > 0')
             ->orderby('idx', 'desc')->first();
 
         $md_product_interest = array();
