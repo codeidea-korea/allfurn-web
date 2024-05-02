@@ -47,11 +47,12 @@ class HelpController extends BaseController
      * @param Request $request
      * @return View
      */
-    public function notice(Request $request): View
+    public function notice(Request $request, int $idx=null): View
     {
         $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
         $params['limit'] = $data['limit'] = $this->limit;
 
+        $data['noticeIdx'] = $idx;
         $data['pageType'] = 'notice';
         $data = array_merge($data, $this->helpService->getNoticeList($params));
         return view(getDeviceType().'help.notice', $data);
