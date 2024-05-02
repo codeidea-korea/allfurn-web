@@ -317,13 +317,25 @@ if( !empty( $point ) ) {
 
     function shareMessage() {
         Kakao.Share.sendDefault({
-            objectType: 'text',
-            text:
-                '올펀 - 글로벌 가구 도·소매 No.1 플랫폼',
-            link: {
-                mobileWebUrl: "{{ env('APP_URL') }}",
-                webUrl: "{{ env('APP_URL') }}",
+            objectType: 'feed',
+            content: {
+                title: '우리 올펀으로 편하게 거래해요!\n가구 사업자용 B2B 플랫폼',
+                description: '상품 등록으로, 매장 거래처 확보하세요!',
+                imageUrl:'{{ env("APP_URL") }}/img/logo.png',
+                link: {
+                mobileWebUrl: 'https://developers.kakao.com',
+                webUrl: 'https://developers.kakao.com',
+                },
             },
+            buttons: [
+                {
+                    title: '올펀에서 보기',
+                    link: {
+                        mobileWebUrl: "{{ env('APP_URL') }}",
+                        webUrl: "{{ env('APP_URL') }}",
+                    },
+                },
+            ],
         });
     }
 
