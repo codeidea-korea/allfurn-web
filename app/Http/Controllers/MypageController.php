@@ -1195,7 +1195,7 @@ class MypageController extends BaseController
             if(count($user) > 0) {
                 $this -> pushService -> sendPush(
                     '주문서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 주문서를 확인했습니다.', 
-                    $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+                    $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
                 );
             }
         }

@@ -58,8 +58,18 @@
     </div>
 </div>
 <script>
-    const moveToList = page => {
-        location.replace(location.pathname + "?" + new URLSearchParams({offset:page}));
-    }
+
+const moveToList = page => {
+    location.replace(location.pathname + "?" + new URLSearchParams({offset:page}));
+}
+
+$(document).ready(function(){
+    $(document).on('click', '.my_menu_list a', function(){
+        $('#loadingContainer').show();
+    });
+    $(window).on('load', function(){
+        $('#loadingContainer').hide();
+    });
+});
 </script> 
 @endsection

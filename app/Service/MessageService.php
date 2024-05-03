@@ -152,19 +152,28 @@ class MessageService
                 )->first();
                 
         } else {
-            
+
+	    $company_idx = 1;
+	    $company_name = '올펀';
+	    $company_type = 'A';
+	    
+	    if($user->company_idx > 1 && $revers == 'N') {
+	        $company_idx = $user->company_idx;
+            $company_name = $user->name;
+            $company_type = 'U';
+	    }
             $is_alarm = DB::table('AF_user_push_set AS push')
-                ->where('push.company_idx', "1")
+                ->where('push.company_idx', 1)
                 ->where('push.company_type', "A")
                 ->where('user_idx', $user->idx)
                 ->count() > 0 ? 'Y' : 'N';
             
             $company = (object)[
-                'idx' => '1',
+                'idx' => $company_idx,
                 'room_idx' => $room->idx,
                 'profile_image' => config('constants.ALLFURN.PROFILE_IMAGE'),
-                'company_name' => '올펀',
-                'company_type' => 'A',
+                'company_name' => $company_name,
+                'company_type' => $company_type,
                 'is_alarm' => $is_alarm,
             ];
         }
@@ -816,10 +825,10 @@ class MessageService
                         $userType = $targetUser->type;
                         $userCompanyIdx = $targetUser->company_idx;
                         $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-                            $targetUser->idx, 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
+                            $targetUser->idx, 5, env('APP_URL').'/message/room?room_idx=' . $message->room_idx, env('APP_URL').'/message/room?room_idx=' . $message->room_idx);
                             
                         event(new ChatUser($message->room_idx, 
-                            Auth::user()['idx'], 
+                            $targetUser->idx, 
                             'msg',
                             $this->convertHtmlContentByMessage($message, 'Y'), 
                             date('Y년 m월 d일'),
@@ -834,7 +843,10 @@ class MessageService
 
         setlocale(LC_ALL, "ko_KR.utf-8");
         // echo
-//        $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $userType, 'user_company_idx' => $userCompanyIdx], 'Y');
+        if(empty($companyInfo)) {
+            $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['company_idx']], 'Y');
+        }
+//        
         event(new ChatMessage($message->room_idx, 
             $message->user_idx, 
             $user['company_idx'],
@@ -845,7 +857,7 @@ class MessageService
             substr(date('H:i:s'), 0, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
             $this->getRoomMessageTitle($message->content),
-            $companyInfo->company_name
+            empty($companyInfo->company_name) ? '올펀' : $companyInfo->company_name
         ));
 
 //        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 

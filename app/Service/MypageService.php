@@ -412,12 +412,12 @@ class MypageService
         $pushService = new PushService();
         // 구매자
         $pushService -> sendPush(
-            $title_request, $message_request, $orders[0] -> user_idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/purchase', '/mypage/purchase'
+            $title_request, $message_request, $orders[0] -> user_idx, $type = 5, env('APP_URL').'/mypage/purchase', env('APP_URL').'/mypage/purchase'
         );
 
         // 판매자
         $pushService -> sendPush(
-            $title_response, $message_response, $product[0]->userIdx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/deal', '/mypage/deal'
+            $title_response, $message_response, $product[0]->userIdx, $type = 5, env('APP_URL').'/mypage/deal', env('APP_URL').'/mypage/deal'
         );
 
         return [

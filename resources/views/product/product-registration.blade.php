@@ -446,6 +446,17 @@
 
         $(document)
             .on('click', '.setting_category .category_list li > a', function(e) {
+                // var allLinks = $('.setting_category .category_list li > a');
+                // var otherLinks = allLinks.not(this);
+                // otherLinks.parent('li').css('background-color','');
+                // otherLinks.parent('li').css('color','');
+                // console.log(e)
+                //$('.setting_category .category_list li > a').parent('li').css('background-color','');
+                //$('.setting_category .category_list li > a').css('color','');
+                // $(this).parent('li').css('background-color','#FFF5F6')
+                // $(this).css('color','var(--main_color)')
+                // $(this).next('img').css('filter','grayscale(0)')
+
                 e.preventDefault(); // a 태그의 기본 동작 방지
 
                 // 클릭된 a 태그의 바로 다음 형제 요소(ul.depth2) 선택
@@ -488,6 +499,13 @@
                     // 모든 .depth2 요소를 숨김
                     $('.depth2').hide();
                     // 클릭된 a 태그의 바로 다음 .depth2만 표시
+                    // $nextDepth2.next('a').each(function(){
+                    //     $(this).css('color','#000')
+                    //     $(this).next('img').css('filter','grayscale(1)')
+                    //     console.log(1)
+                    // })
+                    
+                    //$nextDepth2.next('a').css('color','var(--main_color)')
                     $nextDepth2.show();
                 }
             })
@@ -1425,6 +1443,29 @@
                     $('.w-full .text-primary').addClass('active');
                     $('.w-full .text-primary span').data('category_idx', result['category_idx']);
                     $('.w-full .text-primary span').text( result['category'] );
+
+                    // $('.setting_category .category_list li a').each(function () {
+                    //     var url = $(this).prop('href');
+                    //     var s_url = url.split('pre=');
+                    //     var param1 = "?pre="+result['category_parent_idx'];
+                    //     if (url.indexOf(param1) > -1 && s_url[1] == result['category_parent_idx']){
+                    //         console.log(3)
+                    //         $(this).parent('li').css('background-color','#FFF5F6')
+                    //         $(this).css('color','var(--main_color)')
+                    //         $(this).next('img').css('filter','grayscale(0)')
+                    //         $(this).next('.depth2').show();
+                    //         var nextDepth = $(this).next('.depth2').find('a');
+                    //         nextDepth.each(function(){
+                    //             var url2 = $(this).prop('href');
+                    //             var s_url2 = url2.split('&');
+                    //             var s_url3 = s_url2[0].split('ca=');
+                    //             if (s_url3[1] == result['category_idx']) {
+                    //                 $(this).parent('li').css('background-color','#FFF5F6')
+                    //                 $(this).css('color','var(--main_color)')
+                    //             }
+                    //         });
+                    //     }
+                    // })
 
                     // 첨부파일 이미지 출력
                     if (result['attachment'] != null) {

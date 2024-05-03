@@ -486,7 +486,7 @@ class CommunityService {
                 $alarmParams['target_company_type'] = $user->type;
                 $alarmService->sendAlarm($alarmParams);
                 $this->pushService->sendPush('올펀 게시글 알림', '구독한 '. $board->name .'에 새 글이 등록되었습니다.', 
-                    $user->idx, $type = 3, '/community?board_name='.$board->name ,'/community?board_name='.$board->name);
+                    $user->idx, $type = 3, env('APP_URL').'/community?board_name='.$board->name ,env('APP_URL').'/community?board_name='.$board->name);
             }
         }
         return [

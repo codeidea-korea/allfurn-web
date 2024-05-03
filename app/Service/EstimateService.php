@@ -119,14 +119,14 @@ class EstimateService {
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
                 '견적서 요청 알림', '('.$params['request_company_name'].')에게 견적서를 요청 받았습니다.',
-                $user[0] -> idx, $type = 5, 'allfurn:///mypage/responseEstimate'
+                $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/responseEstimate'
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
                 'TS_1856', '[견적서 요청 알림]',
                 [ 
                     '회사명' => $params['request_company_name'],
-                    '견적서작성링크' => 'allfurn-web.codeidea.io/mypage/responseEstimate'
+                    '견적서작성링크' => env('APP_URL2').'/mypage/responseEstimate'
                 ], 
                 $user[0] -> phone_number, null
             );
@@ -177,14 +177,14 @@ class EstimateService {
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
                 '견적서 도착 알림', '('.$params['response_estimate_res_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
-                $user[0] -> idx, $type = 5, 'allfurn:///mypage/requestEstimate'
+                $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
                 'TS_1857', '[견적서 도착 알림]',
                 [ 
                     '회사명' => $params['response_estimate_res_company_name'],
-                    '견적서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate'
+                    '견적서링크' => env('APP_URL2').'/mypage/requestEstimate'
                 ],
                 $user[0] -> phone_number, null
             );
@@ -272,7 +272,7 @@ class EstimateService {
         // 구매자
         $this -> pushService -> sendPush(
             '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
-            $params['response_estimate_req_user_idx'], $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate', '/mypage/requestEstimate'
+            $params['response_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
         );
 
         $sql =
@@ -301,14 +301,14 @@ class EstimateService {
         if(count($user) > 0) {
             $this -> pushService -> sendPush(
                 '발주서 도착 알림', '('.$company[0] -> company_name.')님이 발주서를 요청했습니다.',
-                $user[0] -> idx, $type = 5, 'allfurn://mypage/responseEstimate', '/mypage/responseEstimate'
+                $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/responseEstimate', env('APP_URL').'/mypage/responseEstimate'
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
                 'TS_1858', '[발주서 도착 알림]',
                 [ 
                     '회사명' => $company[0] -> company_name,
-                    '발주서링크' => 'allfurn-web.codeidea.io/mypage/responseEstimate'
+                    '발주서링크' => env('APP_URL2').'/mypage/responseEstimate'
                 ], 
                 $user[0] -> phone_number, null
             );
@@ -334,14 +334,14 @@ class EstimateService {
             if(count($user) > 0) {
                 $this -> pushService -> sendPush(
                     '발주서 확인 알림', '('.$estimate[0] -> response_company_name.') 님이 요청하신 발주서를 확인했습니다.',
-                    $user[0] -> idx, $type = 5, 'allfurn://mypage/requestEstimate'
+                    $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
                 );
 
                 $this -> pushService -> sendKakaoAlimtalk(
                     'TS_1859', '[발주서 확인 알림]',
                     [ 
                         '회사명' => $estimate[0] -> response_company_name,
-                        '발주서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate'
+                        '발주서링크' => env('APP_URL2').'/mypage/requestEstimate'
                     ],
                     $user[0] -> phone_number, null
                 );
@@ -508,14 +508,14 @@ class EstimateService {
             if(count($user) > 0 && $params['isKakao'] == 'false') {
                 $this -> pushService -> sendPush(
                     '견적서 도착 알림', '('.$params['response_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
-                    $user[0] -> idx, $type = 5, 'https://allfurn-web.codeidea.io/mypage/requestEstimate'
+                    $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
                 );
 
                 $this -> pushService -> sendKakaoAlimtalk(
                     'TS_1857', '[견적서 도착 알림]',
                     [ 
                         '회사명' => $params['response_company_name'],
-                        '견적서링크' => 'allfurn-web.codeidea.io/mypage/requestEstimate?status=R'
+                        '견적서링크' => env('APP_URL2').'/mypage/requestEstimate?status=R'
                     ],
                     $user[0] -> phone_number, null
                 );

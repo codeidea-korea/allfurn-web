@@ -135,8 +135,8 @@ class MessageController extends BaseController
             'company_type' => $data['company']->company_type,
         ];
         $data['chattingHtml'] = '';
-        $data['companyIdx'] = Auth::user()['company_idx'];
         $lastCommunicatedDate = '';
+        $data['companyIdx'] = Auth::user()['company_idx'];
         
         if(isset($data['chatting'])) {
             foreach($data['chatting'] as $key => $chat) {
