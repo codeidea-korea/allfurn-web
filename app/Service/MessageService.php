@@ -613,13 +613,6 @@ class MessageService
                 // 이미지
                 return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                             <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
-                            ' . ($chat->is_read === 1 ? '' 
-                                : '<div class="timestamp _alert" data-key="'.$chat->idx.'" style="
-                                    position: relative;
-                                    top: -16px;
-                                    left: 10px;
-                                    color: black;
-                                ">1</div>') . '
                             <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                         </div>';
             } else if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
@@ -693,13 +686,6 @@ class MessageService
 
         return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                     <div class="chat_box">' . $contentHtml . '</div>
-                    ' . ($chat->is_read === 1 ? '' 
-                        : '<div class="timestamp _alert" data-key="'.$chat->idx.'" style="
-                            position: relative;
-                            top: -16px;
-                            left: 10px;
-                            color: black;
-                        ">1</div>') . '
                     <div class="timestamp">' . ($chat->message_register_times ?? substr(date('H:i:s'), 0, 5)) . '</div>
                 </div>';
     }

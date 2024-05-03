@@ -83,6 +83,7 @@ $header_banner = '';
                                     <div class="txt_box">
                                         <h3>
                                             {{ $room->name }}
+                                <span id="chat-{{ $room->idx }}-unreadCount">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                                             <span>{{ $room->last_message_time }}</span>
                                         </h3>
                                         <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
@@ -144,6 +145,8 @@ $header_banner = '';
 
         if(newestRoom.length > 0) {
             rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
+                const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
+                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
         } else {
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
@@ -153,6 +156,7 @@ $header_banner = '';
                     +'    <div class="txt_box">'
                     +'        <h3>'
                     +'            '+messages.roomName
+                        +'        <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>'
                     +'            <span>'+messages.title+'</span>'
                     +'        </h3>'
                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'

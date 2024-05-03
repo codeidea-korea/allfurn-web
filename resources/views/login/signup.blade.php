@@ -145,7 +145,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled>
                                     </div>
                                 </dd>
                             </dl>
@@ -273,7 +273,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled>
                                     </div>
                                 </dd>
                             </dl>
@@ -901,8 +901,8 @@ function submitAction() {
     }
     form.append('companyName', $(`#${suffix}_businessname`).val());
     if (userType != "N" && userType != "S") {
-        form.append('isDomestic', $(base + ' [name="add_1"]:checked').data('value'));
-        if ($(base + ' [name="add_1"]:checked').data('value') === 1) {
+        form.append('isDomestic', $(base + ' [name="add_1"]:checked').val());
+        if ($(base + ' [name="add_1"]:checked').val() === 1) {
             form.append('domesticType', $(base + ' .dropdown__title').data('domestic_type'));
             form.append('address', $(base + ' .dropdown__title').text());
         } else {

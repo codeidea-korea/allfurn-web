@@ -155,7 +155,7 @@ $header_banner = '';
                                             </div>
                                         </div>
                                         <div class="mt-2 w-full">
-                                            <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled required>
+                                            <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled required>
                                         </div>
                                     </dd>
                                 </dl>
@@ -283,7 +283,7 @@ $header_banner = '';
                                             </div>
                                         </div>
                                         <div class="mt-2 w-full">
-                                            <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled required>
+                                            <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled required>
                                         </div>
                                     </dd>
                                 </dl>
