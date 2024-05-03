@@ -13,7 +13,7 @@ $header_banner = '';
 
 
 <div id="content">
-    <section class="login_common flex items-center">
+    <section class="login_common flex items-center justify-center">
         <div class="login_inner">
             <img class="logo" src="./img/logo.svg" alt="">
 
