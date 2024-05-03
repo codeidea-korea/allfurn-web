@@ -20,7 +20,7 @@ $header_banner = '';
 </div>
 
 <div id="content">
-    <section class="join_common flex items-center justify-center">
+    <section class="join_common flex justify-center">
         <div class="join_inner">
             <div class="form_box">
                 <div class="mb-3">
