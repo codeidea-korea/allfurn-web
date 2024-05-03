@@ -31,6 +31,7 @@ $header_banner = '';
                             <div class="txt_box">
                                 <h3>
                                     {{ $room->name }}
+                                    <span id="chat-{{ $room->idx }}-unreadCount">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                                     <span>{{ $room->last_message_time }}</span>
                                 </h3>
                                 <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
@@ -83,7 +84,7 @@ $header_banner = '';
                                     <div class="txt_box">
                                         <h3>
                                             {{ $room->name }}
-                                <span id="chat-{{ $room->idx }}-unreadCount">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
+                                            <span id="chat-{{ $room->idx }}-unreadCount">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                                             <span>{{ $room->last_message_time }}</span>
                                         </h3>
                                         <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
@@ -132,6 +133,7 @@ $header_banner = '';
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
     Pusher.logToConsole = false;
+    var openedRoomIdx = 0;
             
     const pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
@@ -139,14 +141,14 @@ $header_banner = '';
 
     var cchannel = pusher.subscribe('user-cmd-{{ $user_idx }}');
     cchannel.bind('user-cmd-event-{{ $user_idx }}', function(messages) {
-        console.log(JSON.stringify(messages));
+//        console.log(JSON.stringify(messages));
         const rooms = document.querySelector('._chatting_rooms > li');
         const newestRoom = $('._chatting_rooms > li[data-key='+messages.roomIdx+']');
 
         if(newestRoom.length > 0) {
             rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
-                const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+            const count = Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
+            $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
         } else {
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
@@ -156,7 +158,7 @@ $header_banner = '';
                     +'    <div class="txt_box">'
                     +'        <h3>'
                     +'            '+messages.roomName
-                        +'        <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>'
+                    +'            <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>'
                     +'            <span>'+messages.title+'</span>'
                     +'        </h3>'
                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
@@ -165,8 +167,8 @@ $header_banner = '';
             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
         }
         // 활성화 처리 및 텍스트 변경
-        $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
-        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
     });
     </script>
 

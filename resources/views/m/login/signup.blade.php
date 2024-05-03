@@ -132,8 +132,8 @@ $header_banner = '';
                                     <dt class="necessary">사업자 주소</dt>
                                     <dd>
                                         <div class="flex gap-5 py-2">
-                                            <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)"><label for="add_1_1">국내</label></p>
-                                            <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)"><label for="add_1_2">해외</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)" value="1"><label for="add_1_1">국내</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)" value="2"><label for="add_1_2">해외</label></p>
                                         </div>
                                         <div class="add_tab">
                                             <!-- 국내 -->
@@ -165,7 +165,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex gap-1">
                                         <div class="flex-1">
-                                            <input type="email" id="w_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
+                                            <input type="text" id="w_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'w')" type="button">중복체크</button>
                                     </dd>
@@ -260,8 +260,8 @@ $header_banner = '';
                                     <dt class="necessary">사업자 주소</dt>
                                     <dd>
                                         <div class="flex gap-5 py-2">
-                                            <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)"><label for="add_1_3">국내</label></p>
-                                            <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)"><label for="add_1_4">해외</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)" value="1"><label for="add_1_3">국내</label></p>
+                                            <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)" value="2"><label for="add_1_4">해외</label></p>
                                         </div>
                                         <div class="add_tab">
                                             <!-- 국내 -->
@@ -293,7 +293,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex gap-1">
                                         <div class="flex-1">
-                                            <input type="email" id="r_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="text" id="r_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                             <label for="" class="error"></label>
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'r')" type="button">중복체크</button>
@@ -378,7 +378,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex  gap-1">
                                         <div class="flex-1">
-                                            <input type="email" id="s_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="text" id="s_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 's')" type="button">중복체크</button>
                                     </dd>
@@ -458,7 +458,7 @@ $header_banner = '';
                                     <dt class="necessary">아이디</dt>
                                     <dd class="flex  gap-1">
                                         <div class="flex-1">
-                                            <input type="email" id="n_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                            <input type="text" id="n_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                         </div>
                                         <button type="button" class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'n')" type="button">중복체크</button>
                                     </dd>
@@ -637,7 +637,7 @@ $('.step2_next').on('click',function(){
     if (base === '#wholesale-tab-pane' || base === '#retail-tab-pane') {
         const address = $(base + ' [name="businessaddress"]').val();
         const addressdetail = $(base + ' [name="businessaddressdetail"]').val();
-        if(!address || address.length < 1 || !addressdetail || addressdetail.length < 1) {
+        if(($(base + ' [name="add_1"]:checked').val() === 1 && (!address || address.length < 1)) || !addressdetail || addressdetail.length < 1) {
             $('#email_dupcheck_ment').html('필수항목을 입력해주세요.');
             modalOpen('#modal-email--duplicated');
             return;
@@ -788,7 +788,7 @@ $(document).ready(function() {
         var errors = 0;
         $(base + ' .input-guid__input').map(function() {
             if( $(this).val().length === 0 ) {
-                if ( $(this).attr('name') === 'businessaddress' && $(base + ' [name="add_1"]:checked').data('value') === 1 ) {
+                if ( $(this).attr('name') === 'businessaddress' && $(base + ' [name="add_1"]:checked').val() === '2' ) {
                 } else {
                     errors++;    
                 }  

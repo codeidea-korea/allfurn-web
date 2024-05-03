@@ -805,6 +805,16 @@ class MessageService
                     continue;
                 }
                 $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $targetUser->type, 'user_company_idx' => $targetUser->company_idx], 'Y');
+                if(empty($companyInfo)) {
+                    $companyInfo = (object)[
+                        'idx' => $targetUser->company_idx,
+                        'room_idx' => $message->room_idx,
+                        'profile_image' => config('constants.ALLFURN.PROFILE_IMAGE'),
+                        'company_name' => $targetUser->name,
+                        'company_type' => $targetUser->type,
+                        'is_alarm' => 'Y',
+                    ];
+                }
                 if(($targetUser->type == $room->first_company_type && $targetUser->company_idx == $room->first_company_idx) 
                     || ($targetUser->type == $room->second_company_type && $targetUser->company_idx == $room->second_company_idx)) {
                 

@@ -71,6 +71,7 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
     Pusher.logToConsole = false;
+    var openedRoomIdx = 0;
             
     var pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
@@ -86,8 +87,10 @@
 
             if(newestRoom.length > 0) {
                 rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
-                const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+                if(openedRoomIdx != messages.roomIdx) {
+                    const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
+                    $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+                }
             } else {
                 const tmpChattingRoom = 
                         '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
@@ -97,7 +100,7 @@
                         +'    <div class="txt_box">'
                         +'        <h3>'
                         +'            '+messages.roomName
-                        +'        <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>'
+                        + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>' : '')
                         +'            <span>'+messages.title+'</span>'
                         +'        </h3>'
                         +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
@@ -105,9 +108,24 @@
                         +'</li>';
                 $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
             }
+            if(openedRoomIdx == messages.roomIdx) {
+                // 내가 보낸 것이 아닌데 보고 있는 경우 읽음 처리를 한다.
+                fetch('/message/read?room_idx=' + messages.roomIdx, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{csrf_token()}}'
+                    }
+                }).then(response => {
+                    return response.json();
+                }).then(json => {
+                    if (json.result === 'success') {
+                        $('.chatting_list > .chatting.left > ._alert').remove();
+                    }
+                });
+            }
             // 활성화 처리 및 텍스트 변경
-            $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
-            $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
+            $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
         } else {
             $('.chatting_list > .chatting.right > ._alert').remove();
         }
@@ -202,6 +220,8 @@
                 loadEvent(idx);
 
                 const roomIdx = idx;
+                openedRoomIdx = roomIdx;
+                $('#chat-'+openedRoomIdx+'-unreadCount').text('');
                 pusher.disconnect(); // TESTSETSETSE
                 pusher = new Pusher('51b26f4641d16394d3fd', {
                     cluster: 'ap3'
@@ -217,8 +237,10 @@
 
                         if(newestRoom.length > 0) {
                             rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
-                const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+                            if(openedRoomIdx != messages.roomIdx) {
+                                const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
+                                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+                            }
                         } else {
                             const tmpChattingRoom = 
                                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
@@ -228,7 +250,7 @@
                                     +'    <div class="txt_box">'
                                     +'        <h3>'
                                     +'            '+messages.roomName
-                        +'        <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>'
+                                    + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>' : '')
                                     +'            <span>'+messages.title+'</span>'
                                     +'        </h3>'
                                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
@@ -236,9 +258,24 @@
                                     +'</li>';
                             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
                         }
+                        if(openedRoomIdx == messages.roomIdx) {
+                            // 내가 보낸 것이 아닌데 보고 있는 경우 읽음 처리를 한다.
+                            fetch('/message/read?room_idx=' + messages.roomIdx, {
+                                method: 'GET',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                                }
+                            }).then(response => {
+                                return response.json();
+                            }).then(json => {
+                                if (json.result === 'success') {
+                                    $('.chatting_list > .chatting.left > ._alert').remove();
+                                }
+                            });
+                        }
                         // 활성화 처리 및 텍스트 변경
-                        $($('._chatting_rooms > li')[0]).find('.txt_box > desc').text(messages.title);
-                        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span').text(messages.times);
+                        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+        $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
                     } else {
                         $('.chatting_list > .chatting.right > ._alert').remove();
                     }
@@ -259,21 +296,6 @@
                     }
                     if(messages.companyIdx != {{ $companyIdx }}) {
                         messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
-            $('.chatting_list > .chatting.right > ._alert').remove();
-
-                        // 내가 보낸 것이 아닌데 보고 있는 경우 읽음 처리를 한다.
-                        fetch('/message/read?room_idx=' + messages.roomIdx, {
-                            method: 'GET',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{csrf_token()}}'
-                            }
-                        }).then(response => {
-                            return response.json();
-                        }).then(json => {
-                            if (json.result === 'success') {
-                                $('.chatting_list > .chatting.left > ._alert').remove();
-                            }
-                        });
                     }
                     $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
                     
