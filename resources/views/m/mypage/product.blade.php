@@ -115,8 +115,8 @@
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
-                                            <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
-                                                <img src="{{ $represent -> product_image }}" alt="item03" class="rounded-md" />
+                                            <button class="state_preview block w-full" onclick="modalProductPreview({{ $represent->idx }}, false)">
+                                                <img src="{{ $represent -> product_image }}" alt="item03" class="rounded-md w-full" />
                                             </button>
                                         </div>
                                         <div class="flex flex-col w-full">
