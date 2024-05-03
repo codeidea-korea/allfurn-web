@@ -123,7 +123,7 @@ class EstimateService {
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
-                'TS_1856', '[견적서 요청 알림]',
+                'TS_5420', '[견적서 요청 알림]',
                 [ 
                     '회사명' => $params['request_company_name'],
                     '견적서작성링크' => env('APP_URL2').'/mypage/responseEstimate'
@@ -181,7 +181,7 @@ class EstimateService {
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
-                'TS_1857', '[견적서 도착 알림]',
+                'TS_5417', '[견적서 도착 알림]',
                 [ 
                     '회사명' => $params['response_estimate_res_company_name'],
                     '견적서링크' => env('APP_URL2').'/mypage/requestEstimate'
@@ -305,7 +305,7 @@ class EstimateService {
             );
 
             $this -> pushService -> sendKakaoAlimtalk(
-                'TS_1858', '[발주서 도착 알림]',
+                'TS_5422', '[발주서 도착 알림]',
                 [ 
                     '회사명' => $company[0] -> company_name,
                     '발주서링크' => env('APP_URL2').'/mypage/responseEstimate'
@@ -338,7 +338,7 @@ class EstimateService {
                 );
 
                 $this -> pushService -> sendKakaoAlimtalk(
-                    'TS_1859', '[발주서 확인 알림]',
+                    'TS_5426', '[발주서 확인 알림]',
                     [ 
                         '회사명' => $estimate[0] -> response_company_name,
                         '발주서링크' => env('APP_URL2').'/mypage/requestEstimate'
@@ -512,7 +512,7 @@ class EstimateService {
                 );
 
                 $this -> pushService -> sendKakaoAlimtalk(
-                    'TS_1857', '[견적서 도착 알림]',
+                    'TS_5417', '[견적서 도착 알림]',
                     [ 
                         '회사명' => $params['response_company_name'],
                         '견적서링크' => env('APP_URL2').'/mypage/requestEstimate?status=R'
