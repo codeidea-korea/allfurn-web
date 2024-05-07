@@ -122,8 +122,8 @@
                                 <dt class="necessary">사업자 주소</dt>
                                 <dd>
                                     <div class="flex gap-5 py-2">
-                                        <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)"><label for="add_1_1">국내</label></p>
-                                        <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)"><label for="add_1_2">해외</label></p>
+                                        <p><input type="radio" class="radio-form" id="add_1_1" name="add_1" onchange="addressChange(this)" value="1"><label for="add_1_1">국내</label></p>
+                                        <p><input type="radio" class="radio-form" id="add_1_2" name="add_1" onchange="addressChange(this)" value="2"><label for="add_1_2">해외</label></p>
                                     </div>
                                     <div class="add_tab">
                                         <!-- 국내 -->
@@ -145,7 +145,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <input id="w_businessaddressdetail" name="businessaddressdetail" type="text" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled>
                                     </div>
                                 </dd>
                             </dl>
@@ -155,7 +155,7 @@
                                 <dt class="necessary">아이디</dt>
                                 <dd class="flex gap-1">
                                     <div class="flex-1">
-                                        <input type="email" id="w_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
+                                        <input type="text" id="w_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요." >
                                     </div>
                                     <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'w')" type="button">중복체크</button>
                                 </dd>
@@ -250,8 +250,8 @@
                                 <dt class="necessary">사업자 주소</dt>
                                 <dd>
                                     <div class="flex gap-5 py-2">
-                                        <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)"><label for="add_1_3">국내</label></p>
-                                        <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)"><label for="add_1_4">해외</label></p>
+                                        <p><input type="radio" class="radio-form" id="add_1_3" name="add_1" onchange="addressChange(this)" value="1"><label for="add_1_3">국내</label></p>
+                                        <p><input type="radio" class="radio-form" id="add_1_4" name="add_1" onchange="addressChange(this)" value="2"><label for="add_1_4">해외</label></p>
                                     </div>
                                     <div class="add_tab">
                                         <!-- 국내 -->
@@ -273,7 +273,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 검색해주세요" disabled>
+                                        <input type="text" id="r_businessaddressdetail" name="businessaddressdetail" class="input-form w-full input-guid__input" placeholder="주소를 입력해주세요" disabled>
                                     </div>
                                 </dd>
                             </dl>
@@ -283,7 +283,7 @@
                                 <dt class="necessary">아이디</dt>
                                 <dd class="flex gap-1">
                                     <div class="flex-1">
-                                        <input type="email" id="r_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                        <input type="text" id="r_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                         <label for="" class="error"></label>
                                     </div>
                                     <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'r')" type="button">중복체크</button>
@@ -368,7 +368,7 @@
                                 <dt class="necessary">아이디</dt>
                                 <dd class="flex  gap-1">
                                     <div class="flex-1">
-                                        <input type="email" id="s_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                        <input type="text" id="s_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                     </div>
                                     <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 's')" type="button">중복체크</button>
                                 </dd>
@@ -448,7 +448,7 @@
                                 <dt class="necessary">아이디</dt>
                                 <dd class="flex  gap-1">
                                     <div class="flex-1">
-                                        <input type="email" id="n_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
+                                        <input type="text" id="n_useremail" name="useremail"  required class="input-form w-full input-guid__input" placeholder="아이디를 입력해주세요.">
                                     </div>
                                     <button class="btn btn-black-line" disabled onclick="checkBeforeAuthCode('email', 'n')" type="button">중복체크</button>
                                 </dd>
@@ -650,10 +650,10 @@ $(document).ready(function() {
         var errors = 0;
         $(base + ' .input-guid__input').map(function() {
             if( $(this).val().length === 0 ) {
-                if ( $(this).attr('name') === 'businessaddress' && $(base + ' [name="add_1"]:checked').data('value') === 1 ) {
+                if ( $(this).attr('name') === 'businessaddress' && $(base + ' [name="add_1"]:checked').val() === '2' ) {
                 } else {
                     errors++;    
-                }  
+                } 
             }
         });
         if (!$('#register-agreement_1').is(':checked') || !$('#register-agreement_2').is(':checked')) { errors++; }
@@ -901,8 +901,8 @@ function submitAction() {
     }
     form.append('companyName', $(`#${suffix}_businessname`).val());
     if (userType != "N" && userType != "S") {
-        form.append('isDomestic', $(base + ' [name="add_1"]:checked').data('value'));
-        if ($(base + ' [name="add_1"]:checked').data('value') === 1) {
+        form.append('isDomestic', $(base + ' [name="add_1"]:checked').val());
+        if ($(base + ' [name="add_1"]:checked').val() === 1) {
             form.append('domesticType', $(base + ' .dropdown__title').data('domestic_type'));
             form.append('address', $(base + ' .dropdown__title').text());
         } else {

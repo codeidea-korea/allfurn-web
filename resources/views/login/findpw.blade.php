@@ -32,7 +32,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8 _step1">
+                    <div class="mb-8 _step1" style='display:none;'>
                         <dl class="flex">
                             <dt><label for="num">인증번호</label></dt>
                             <dd class="flex gap-1 login_common" style="min-height:0;">
@@ -45,7 +45,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8 _step2">
+                    <div class="mb-8 _step2" style='display:none;'>
                         <dl class="flex">
                             <dt class="necessary"><label for="w_userpw">새 비밀번호</label></dt>
                             <dd>
@@ -58,7 +58,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8 _step2">
+                    <div class="mb-8 _step2" style='display:none;'>
                         <dl class="flex">
                             <dt class="necessary"><label for="r_userpw">새 비밀번호 확인</label></dt>
                             <dd>
@@ -69,7 +69,7 @@
                         </dl>
                     </div>
                 </div>
-                <div class="btn_box _step2">
+                <div class="btn_box _step2" style='display:none;'>
                     <button class="btn w-[300px] btn-primary" type="button" onclick="updatePassword()">완료</button>
                 </div>
 

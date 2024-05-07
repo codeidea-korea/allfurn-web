@@ -55,7 +55,7 @@ $header_banner = '';
                     </dl>
                 </div>
 -->
-                <div class="mb-3 _step1">
+                <div class="mb-3 _step1" style='display:none;'>
                     <dl>
                         <dt><label for="num">인증번호</label></dt>
                         <dd class="flex gap-1 login_common" style="min-height:0;">
@@ -69,7 +69,7 @@ $header_banner = '';
                     </dl>
                 </div>
 
-                <div class="mb-3 _step2">
+                <div class="mb-3 _step2" style='display:none;'>
                     <dl>
                         <dt class="necessary"><label for="w_userpw">새 비밀번호</label></dt>
                         <dd>
@@ -82,7 +82,7 @@ $header_banner = '';
                         </dd>
                     </dl>
                 </div>
-                <div class="mb-3 _step2">
+                <div class="mb-3 _step2" style='display:none;'>
                     <dl>
                         <dt class="necessary"><label for="r_userpw">새 비밀번호 확인</label></dt>
                         <dd>
@@ -93,7 +93,7 @@ $header_banner = '';
                     </dl>
                 </div>
             </div>
-            <div class="btn_box _step2">
+            <div class="btn_box _step2" style='display:none;'>
                 <button class="btn btn-primary" type="button" onclick="updatePassword()">완료</button>
             </div>
 

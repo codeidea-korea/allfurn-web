@@ -269,7 +269,7 @@ class MessageController extends BaseController
             unset($value["phone_number"]);
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'TS_1855', '[상품 문의 미확인 알림]', $value, $receiver));
+                'TS_5406', '[상품 문의 미확인 알림]', $value, $receiver));
         }
 
         return $result;
