@@ -112,3 +112,8 @@ const refreshHandle = (item)=>{
         $(this).prop("checked",false);
     });
 }
+
+function linkToPage(url){
+    $('#loadingContainer').show();
+    location.href = url;
+}

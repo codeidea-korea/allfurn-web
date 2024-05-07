@@ -21,7 +21,7 @@
                         <li>
                             <div class="txt_box">
                                 <div>
-                                    <a href="/wholesaler/detail/{{ $wholesaler->company_idx }}">
+                                    <a href="javascript:detailGo({{ $wholesaler->company_idx }})">
                                         @if($loop->index<20)
                                             <img src="/img/icon/crown.png" alt="">
                                         @endif
@@ -56,6 +56,10 @@
     </section>
 </div>
 <script>
+    function detailGo(idx){
+        $('#loadingContainer').show();
+        location.href = '/wholesaler/detail/'+idx;
+    }
     function toggleCompanyLike(idx) {
         $.ajax({
             headers: {

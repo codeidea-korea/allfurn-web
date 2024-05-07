@@ -474,5 +474,14 @@
         $(".sub_filter .filter_box button").eq(1)
             .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
     }
+
+    $(document).ready(function(){
+        $(document).on('click', '.my_menu_list a', function(){
+            $('#loadingContainer').show();
+        });
+        $(window).on('load', function(){
+            $('#loadingContainer').hide();
+        });
+    });
 </script>
 @endsection

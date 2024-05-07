@@ -551,5 +551,14 @@
             $(".sub_filter_result").css('display', 'flex');
         }
     }
+
+    $(document).ready(function(){
+        $(document).on('click', '.my_menu_list a', function(){
+            $('#loadingContainer').show();
+        });
+        $(window).on('load', function(){
+            $('#loadingContainer').hide();
+        });
+    });
 </script>
 @endsection

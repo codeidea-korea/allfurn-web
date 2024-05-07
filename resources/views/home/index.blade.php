@@ -48,7 +48,7 @@
                         ?>
                         @if($item->banner_type == 'img')
                             <li class="swiper-slide">
-                                <a href="{{$link}}">
+                                <a href="javascript:linkToPage('{{$link}}');">
                                     <span class="brand">{{ $item->company_name }}</span>
                                     @if(isset($item->folder) && isset($item->filename))
                                         <img src="{{preImgUrl().$item->folder."/".$item->filename}}" alt="">
@@ -59,7 +59,7 @@
                             </li>
                         @else
                             <li class="swiper-slide" style="height:660px;background-color:{{$item->bg_color}};">
-                                <a href="{{$link}}">
+                                <a href="javascript:linkToPage('{{$link}}');">
                                     <span class="brand">{{ $item->company_name }}</span>
                                     <p style="color:{{ $item->font_color }};"><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
                                 </a>

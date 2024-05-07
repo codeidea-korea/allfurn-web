@@ -497,28 +497,41 @@ class WholesalerService {
             ->where('AF_product.company_type', 'W')
             ->where('AF_product.state', 'S')
             ->whereNotNull('AF_product_ad.idx')->get();
-        foreach($products as $product){
-            array_push($arr_product_idx, $product->product_idx);
+
+        if ($products->count() > 0){
+            foreach($products as $product){
+                array_push($arr_product_idx, $product->idx);
+            }
+            array_unique($arr_product_idx);
+            sort($arr_product_idx);
+            $arrayWithoutEmptyValues = array_filter($arr_product_idx, function($value) {
+                return !empty($value);
+            });
+            $product_idx_list = implode(',', $arrayWithoutEmptyValues);
+
+            $data['event'] = Product::select(
+                    'AF_product.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+                , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+            )
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->whereRaw("AF_product.idx in (".$product_idx_list.")")
+            ->orderBy('AF_product.idx', 'DESC')
+            ->get();
+        }else{
+            $data['event'] = Product::select(
+                    'AF_product.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+                , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+            )
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->orderBy('AF_product.idx', 'DESC')
+            ->get();
         }
-
-        array_unique($arr_product_idx);
-        sort($arr_product_idx);
-        $arrayWithoutEmptyValues = array_filter($arr_product_idx, function($value) {
-            return !empty($value);
-        });
-        $product_idx_list = implode(',', $arrayWithoutEmptyValues);
-
-        $data['event'] = Product::select(
-                'AF_product.*'
-            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
-            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
-        )
-        ->leftjoin('AF_attachment as at', function($query) {
-            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-        })
-        ->whereRaw("AF_product.idx in (".$product_idx_list.")")
-        ->orderBy('AF_product.idx', 'DESC')
-        ->get();
 
         /*
         $data['event'] = Product::select(

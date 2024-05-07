@@ -56,13 +56,13 @@
                         @else 
                             <li class="swiper-slide" style="background-image:url('/img/main_visual.png')">
                         @endif
-                            <a href="{{$link}}">
+                            <a href="javascript:linkToPage('{{$link}}');">
                                 <span class="brand">{{ $item->company_name }}</span>
                             </a>
                         </li>
                     @else
                         <li class="swiper-slide" style="background-color:{{$item->bg_color}};">
-                            <a href="{{$link}}">
+                            <a href="javascript:linkToPage('{{$link}}');">
                                 <span class="brand">{{ $item->company_name }}</span>
                                 <p style="color:{{ $item->font_color }};"><b>{{ $item->subtext1 }}</b><br/>{{ $item->subtext2 }}</p>
                             </a>
