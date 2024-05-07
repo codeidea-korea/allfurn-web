@@ -43,8 +43,7 @@
                         <div class="txt_box">
                             <h3>
                                 {{ $room->name }}
-                                <span id="chat-{{ $room->idx }}-unreadCount">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
-                                <span>{{ $room->last_message_time }}</span>
+                                <span id="chat-{{ $room->idx }}-unreadCount" class="num">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                             </h3>
                             <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
                         </div>

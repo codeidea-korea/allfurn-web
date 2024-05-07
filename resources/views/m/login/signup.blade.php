@@ -721,7 +721,7 @@ function step1Next(){
         $('#frm3')[0].reset();
         $('#register_form-submit').attr('disabled', true);
         if (inN === 0) { $('#add_1_1').prop('checked', true);  } else { $('#add_1_3').prop('checked', true); }
-
+        $(window).scrollTop(0)
         $('.nextBtn').removeClass('hidden')
     }
 }
