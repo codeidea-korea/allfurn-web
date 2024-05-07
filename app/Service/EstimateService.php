@@ -46,11 +46,21 @@ class EstimateService {
 
         $user = User::find(Auth::user()['idx']);
         if (Auth::user()['type'] === 'W') {
-            $company = CompanyWholesale::find(Auth::user()['company_idx']);
+            $company = CompanyWholesale::select('AF_wholesale.*',
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) AS blImgUrl'))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', '=', 'AF_wholesale.business_license_attachment_idx');
+            })
+            ->where('AF_wholesale.idx', Auth::user()['company_idx'])->first();
         } else if(Auth::user()['type'] === 'R'){;
-            $company = CompanyRetail::find(Auth::user()['company_idx']);
+            $company = CompanyRetail::select('AF_retail.*',
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) AS blImgUrl'))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', '=', 'AF_retail.business_license_attachment_idx');
+            })
+            ->where('AF_retail.idx', Auth::user()['company_idx'])->first();
         } else {
-            $company = CompanyNormal::find(Auth::user()['company_idx']);
+            $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")->where('idx', Auth::user()['company_idx'])->first();
         }
 
         return

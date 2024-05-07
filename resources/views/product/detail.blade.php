@@ -272,9 +272,11 @@
                                 <td><input type="text" name="request_phone_number" class="input-form" value="" /></td>
                                 <th>주요판매처</th>
                                 <td>
-                                    <select name="" id="" class="input-form">
-                                        <option value="0">매장 판매</option>
-                                    </select>
+                                    <div class="input-form">
+                                        <select name="" id="" class="w-full h-full">
+                                            <option value="0">매장 판매</option>
+                                        </select>
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -544,7 +546,7 @@
 
                     $('input[name="request_business_license_number"]').val(json.company.business_license_number);
                     $('input[name="request_phone_number"]').val(json.company.phone_number);
-                    $('input[name="request_address1"]').val(json.company.business_address + ' ' + json.company.business_address_detail);
+                    $('input[name="request_address1"]').val((json.company.business_address ? json.company.business_address : '') + ' ' + (json.company.business_address_detail ?  json.company.business_address_detai : ''));
 
                     $('.product_address').text(json.product_address);
 
@@ -564,7 +566,9 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('previewBusinessLicense').style.backgroundImage = "url('" + e.target.result + "')";
-                document.getElementById('previewBusinessLicense').style.backgroundSize = '100%';
+                document.getElementById('previewBusinessLicense').style.backgroundSize = 'contain';
+                document.getElementById('previewBusinessLicense').style.backgroundPosition = 'center';
+                document.getElementById('previewBusinessLicense').style.backgroundRepeat = 'no-repeat';
                 document.getElementById('deleteBusinessLicense').classList.remove('hidden');
                 document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.add('hidden'));
             };
