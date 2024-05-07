@@ -643,6 +643,7 @@ $('.step2_next').on('click',function(){
             return;
         }
     }
+    $(window).scrollTop(0)
     $('.join_header h3').text('약관 동의')
     $('.step2').addClass('hidden')
     $('.step3').removeClass('hidden')
@@ -720,6 +721,7 @@ function step1Next(){
         $('#register_form-submit').attr('disabled', true);
         if (inN === 0) { $('#add_1_1').prop('checked', true);  } else { $('#add_1_3').prop('checked', true); }
 
+        $(window).scrollTop(0)
         $('.nextBtn').removeClass('hidden')
     }
 }
