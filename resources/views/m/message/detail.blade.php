@@ -59,10 +59,12 @@ $header_banner = '';
                     @if($company->company_type === 'W' || $company->company_type === 'R')
                     <div class="add">{{ $company->business_address }} {{ $company->business_address_detail }}</div>
                     <p>{{ $company->phone_number }}</p>
-                    <a href="/m/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
-                    @else
+                    <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
+                    @elseif($company->idx == 1)
                     <div class="add">경기도 고양시 일산동구 산두로213번길 18 (정발산동)</div>
-                    <p>031-813-5588</p>
+		    <p>031-813-5588</p>
+		    @else
+			    
                     @endif
                 </div>
             </div>
@@ -117,20 +119,20 @@ $header_banner = '';
         var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
         const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
 
-        if(messages.date != lastCommunicatedDate) {
+        if($('.chatting_list > .date > span').filter(tm => tm.innerText == messages.date+' '+messages.dateOfWeek+'요일').length > 0) {
             const dateTag = '<div class="date"><span>'+messages.date+' '+messages.dateOfWeek+'요일</span></div>';
             $('.chatting_list').html($('.chatting_list').html() + dateTag);
         }
-        $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+        //$('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
         
-        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-        $('._room{{ $room_idx }}LastMent').text(messages.title);
+        //$('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+        //$('._room{{ $room_idx }}LastMent').text(messages.title);
 
         if('{{$chatting_keyword}}' != '') {
             $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
             boldSearchKeywordInRoom();
         }
-        if(messages.companyIdx != {{ $companyIdx }}) {
+         if(messages.companyIdx != {{ $companyIdx }}) {
             messages.contentHtml = messages.contentHtml.replace('chatting right', 'chatting left');
             $('.chatting_list > .chatting.right > ._alert').remove();
 
@@ -147,13 +149,33 @@ $header_banner = '';
                     $('.chatting_list > .chatting.left > ._alert').remove();
                 }
             });
-        }
-    });
-    setTimeout(() => {
-        document.querySelector('.chatting_list').focus();
+	 }
+	 $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+
         $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
-    }, 100);
-    document.querySelector('.chat-box:last-child').focus();
+        $('._room{{ $room_idx }}LastMent').text(messages.title);
+	    //
+        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight)
+    });
+//    setTimeout(() => {
+//        document.querySelector('.chatting_list').focus();
+//        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
+//    }, 100);
+    setInterval(() => {
+     fetch('/message/read?room_idx={{$room_idx}}', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                }
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.result === 'success') {
+                    $('.chatting_list > .chatting.left > ._alert').remove();
+                }
+            });
+    }, 800);
+        $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight)
     </script>
 
     <script>
@@ -310,15 +332,29 @@ $header_banner = '';
             const data = new FormData();
             const imageFiles = document.getElementById('img_file').files;
             data.append('room_idx', roomIdx);
+
+            const fileName = document.getElementById('img_file').value.slice(document.getElementById('img_file').value.lastIndexOf(".") + 1).toLowerCase();
+            const isImageFile = fileName == "jpg" || fileName == "png" || fileName == "gif";
+
+//            alert('fileName : ' + fileName);
             if (imageFiles.length > 0) {
                 data.append('message_image', imageFiles[0]);
             }
+            if (!isImageFile) {
+                alert('지원하지 않는 파일입니다.\n 지원되는 확장자 : jpg, png, gif.\n 입력 확장자 : [' + fileName + ']');
+                delete elem.dataset.processing;
+                return false;
+            }
+            
             if (document.getElementById('product_idx')) {
                 data.append('product_idx', document.getElementById('product_idx').value);
             }
             if (imageFiles.length < 1 && !document.getElementById('product_idx')) {
+                delete elem.dataset.processing;
                 return false;
+	    
             }
+            data.append('message', '');
             fetch('/message/send', {
                 method: 'POST',
                 headers: {
