@@ -153,6 +153,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::put('/move/interest-products', 'MypageController@moveMyInterestProducts');
     Route::get('/company', 'MypageController@company');
     Route::post('/company', 'MypageController@updateCompany');
+    Route::post('/business_license_file/update', 'MypageController@updateBusinessLicenseFile');
     Route::post('/toggle/company/like', 'MypageController@toggleCompanyLike');
     Route::delete('/company/location/{idx}', 'MypageController@deleteCompanyLocation');
     Route::get('/edit/company', 'MypageController@editCompany');

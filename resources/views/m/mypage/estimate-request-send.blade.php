@@ -91,6 +91,8 @@
                             <p class="txt-primary">* 사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
                         </div>
                         <div id="previewBusinessLicense" class="file-form full mt-2">
+                            <input type="hidden" name="request_business_license_fidx" value="" />
+                            <input type="hidden" name="is_business_license_img" value="0" />
                             <input type="file" name="request_business_license" id="request_business_license" />
                             <div class="text">
                                 <img src="/img/member/img_icon.svg" alt="" class="mx-auto" />
@@ -101,6 +103,9 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                 </button>
                             </div>
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <button type="button" class="btn btn-line flex-1 business_license_modify hidden">기본 사업자등록증으로 등록하기</button>
                         </div>
                         <div class="btn_box mt-7 check_btn">
                             <p class="mb-2">
@@ -221,16 +226,19 @@
 
                 throw new Error('Sever Error');
             }).then(json => {
+                console.log(1)
+                console.log(json)
                 if (json.success) {
-                    $('#request_time').text(json.now1);
-                    $('input[name="request_time"]').val(json.now2);
-
-                    $('#estimate_group_code').text(json.group_code);
-                    $('input[name="estimate_group_code"]').val(json.group_code);
-
-                    $('.product_address').text(json.product_address);
-
-                    modalOpen('#request_estimate-modal');
+                    $('input[name="request_business_license_fidx"]').val(json.company.business_license_attachment_idx);
+                    if (json.company.blImgUrl != null && json.company.blImgUrl != '') { 
+                        $('input[name="is_business_license_img"]').val('1'); 
+                    } else { 
+                        $('input[name="is_business_license_img"]').val('0'); 
+                    }
+                    document.getElementById('previewBusinessLicense').style.backgroundImage = "url('" + json.company.blImgUrl + "')";
+                    document.getElementById('previewBusinessLicense').style.backgroundSize = '100%';
+                    document.getElementById('deleteBusinessLicense').classList.remove('hidden');
+                    document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.add('hidden'));
                 } else {
                     alert(json.message);
                     return false;
@@ -258,6 +266,8 @@
                 document.getElementById('deleteBusinessLicense').classList.add('hidden');
                 document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.remove('hidden'));
             }
+            $('input[name="is_business_license_img"]').val('1');
+            $('.business_license_modify').removeClass('hidden');
         }
         document.querySelector('[name="request_business_license"]').addEventListener('change', (e) => { 
             storedFiles = [];
@@ -273,42 +283,69 @@
 
             const e = new Event('change');
             element.dispatchEvent(e);
+            $('input[name="is_business_license_img"]').val('0');
+            $('.business_license_modify').addClass('hidden');
         }
         document.getElementById('deleteBusinessLicense').addEventListener('click', deleteBusinessLicense);
+
+        // 기본 사업자등록증으로 지정
+        $('.business_license_modify').click(function(){
+            if(!$('#request_business_license').val()) {
+                alert("사업자등록증을 첨부해주세요!");
+                $('#request_business_license').focus();
+                return false;
+            }
+
+            const fformData = new FormData(document.getElementById('isForm'));
+            fformData.append('reg_type', '1');
+            fformData.append('files[]', storedFiles[0]);
+
+            fetch('/mypage/business_license_file/update', {
+                method  : 'POST',
+                headers : {
+                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+                },
+                body    : fformData
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.result == 'success') {
+                    alert('기본 사업자등록증으로 등록되었습니다.'); return false;
+                } else {
+                    alert('일시적인 오류로 처리되지 않았습니다.'); return false;
+                }
+            });
+
+        });
 
         const goNext = () => {
             if(!$('input[name="request_business_license_number"]').val()) {
                 alert('사업자번호를 입력해주세요!');
                 $('input[name="request_business_license_number').focus();
-
                 return false;
             }
 
             if(!$('input[name="request_phone_number"]').val()) {
                 alert('전화번호를 입력해주세요!');
                 $('input[name="request_phone_number').focus();
-
                 return false;
             }
 
             if(!$('input[name="request_address1"]').val()) {
                 alert('주소를 입력해주세요!');
                 $('input[name="request_address1').focus();
-
                 return false;
             }
 
-            if(!$('#request_business_license').val()) {
+            if($('input[name="is_business_license_img"]').val() != '1') {
                 alert("사업자등록증을 첨부해주세요!");
                 $('#request_business_license').focus();
-
                 return false;
             }
 
             if(!$('#all_prod').is(':checked')) {
                 alert('입력된 사항을 다시한번 확인해주시고 아래의 항목에 체크해주세요.');
                 $('#all_prod').focus();
-
                 return false;
             }
 
@@ -323,28 +360,24 @@
             if(!$('input[name="request_business_license_number"]').val()) {
                 alert('사업자번호를 입력해주세요!');
                 $('input[name="request_business_license_number').focus();
-
                 return false;
             }
 
             if(!$('input[name="request_phone_number"]').val()) {
                 alert('전화번호를 입력해주세요!');
                 $('input[name="request_phone_number').focus();
-
                 return false;
             }
 
             if(!$('input[name="request_address1"]').val()) {
                 alert('주소를 입력해주세요!');
                 $('input[name="request_address1').focus();
-
                 return false;
             }
 
-            if(!$('#request_business_license').val()) {
+            if($('input[name="is_business_license_img"]').val() != '1') {
                 alert("사업자등록증을 첨부해주세요!");
                 $('#request_business_license').focus();
-
                 return false;
             }
 
@@ -392,6 +425,8 @@
                 let num = Number($(this).siblings('input').val());
                 $(this).siblings('input').val(`${num + 1}`);
             });
+
+            openEstimateModal();
         });
     </script>
 @endsection

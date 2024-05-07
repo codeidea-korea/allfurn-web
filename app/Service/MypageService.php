@@ -2351,4 +2351,39 @@ class MypageService
 
         return $pointList;
     }
+
+    /**
+     * 견적서 요청 페이지에서 업로드한 사업자등록증 업로드
+     */
+    public function requestLicenseAttachment(string $filePath)
+    {
+        $amt = new Attachment;
+        $amt->folder = explode("/", $filePath)[0];
+        $amt->filename = explode("/", $filePath)[1];
+        $amt->register_time = DB::raw('now()');
+        $amt->save();
+
+        return $amt->idx;
+    }
+
+    /**
+     * 견적서 요청 페이지에서 업로드한 사업자등록증을 기본 사업자등록증으로 지정
+     */
+    public function updateBusinessLicenseFile(array $params = [])
+    {
+        if ($params['request_company_type'] == "W"){
+            $company = CompanyWholesale::where('idx', $params['request_company_idx'])->update([
+                'business_license_attachment_idx' => $params['attachmentIdx']
+            ]);
+        }else if ($params['request_company_type'] == "R"){
+            $company = CompanyRetail::where('idx', $params['request_company_idx'])->update([
+                'business_license_attachment_idx' => $params['attachmentIdx']
+            ]);
+        }
+
+        return [
+            'result'    => 'success',
+            'message'   => ''
+        ];
+    }
 }

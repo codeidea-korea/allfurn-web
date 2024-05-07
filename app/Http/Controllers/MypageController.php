@@ -640,6 +640,29 @@ class MypageController extends BaseController
         return response()->json($this->mypageService->updateCompany($params));
     }
 
+    public function updateBusinessLicenseFile(Request $request): JsonResponse
+    {
+        $data = $request -> all();
+
+        if (isset($data['files'])) {
+            $attachmentIdx = '';
+            foreach ($data['files'] as $file) {
+                if(is_file($file)) {
+                    $filePath = $file -> store('business-license-image', 's3');
+                    $attachmentIdx .= $this->mypageService->requestLicenseAttachment($filePath).',';
+                }
+            }
+            if (isset($data['attachmentIdx'])) {
+                $data['attachmentIdx'] .= ','.substr($attachmentIdx, 0, -1);
+            } else {
+                $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
+            }
+        }
+
+        $result = $this->mypageService->updateBusinessLicenseFile($data);
+        return response()->json($result);
+    }
+
     /**
      * 업체 소재지 삭제
      * @param $idx

@@ -52,6 +52,10 @@ class EstimateController extends BaseController {
             } else {
                 $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
             }
+        }else{
+            if ($request->request_business_license_fidx != ""){
+                $data['attachmentIdx'] = $request->request_business_license_fidx;
+            }
         }
 
         $estimateIdx = $this -> estimateService -> insertRequest($data);
