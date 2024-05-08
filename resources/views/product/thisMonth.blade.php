@@ -147,7 +147,7 @@
                     <div class="filter_box">
                         <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                         <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                        <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
+                        <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
                     </div>
                     <div class="total">전체 0개</div>
                 </div>
@@ -448,7 +448,7 @@
         }    
 
         function displaySelectedOrders() {
-            if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
+            if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
                 $(".filter_on_box .order").empty().append(
                     '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
                     '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
@@ -464,7 +464,7 @@
         }
 
         function toggleFilterBox() {
-            if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "recommendation"){
+            if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
                 $(".sub_filter_result").hide();
             } else {
                 $(".sub_filter_result").css('display', 'flex');

@@ -347,12 +347,12 @@
             <h4>정렬 선택</h4>
             <ul class="filter_list">
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count" value="recommendation" checked>
-                    <label for="filter_interest_count">추천순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time" value="register_time" checked>
+                    <label for="filter_register_time">최신 상품 등록순</label>
                 </li>
                 <li>
-                    <input type="radio" class="radio-form" name="filter_cate" id="filter_register_time" value="register_time">
-                    <label for="filter_register_time">최신 상품 등록순</label>
+                    <input type="radio" class="radio-form" name="filter_cate" id="filter_interest_count" value="recommendation" >
+                    <label for="filter_interest_count">추천순</label>
                 </li>
                 <li>
                     <input type="radio" class="radio-form" name="filter_cate" id="filter_access_count" value="companyAccessCount">

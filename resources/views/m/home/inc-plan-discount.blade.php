@@ -30,6 +30,6 @@
                 </ul>
             </div>
         </div>
-        <a href="/product/thisMonth" class="btn btn-line4 mt-7">더보기</a>
+        <a href="/product/planDiscountDetail" class="btn btn-line4 mt-7">더보기</a>
     </div>
 </section>

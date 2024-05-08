@@ -234,7 +234,7 @@
                     <div class="filter_box">
                         <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
                         <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
-                        <button class="" onclick="modalOpen('#filter_align-modal')">추천순</button>
+                        <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
                         <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                     </div>
                 </div>
@@ -456,7 +456,7 @@
         }
 
         function displaySelectedOrders() {
-            if($("#filter_align-modal .radio-form:checked").val() != "recommendation") {
+            if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
                 $(".sub_filter .filter_box button").eq(2).addClass('on')         
             } else {
                 $(".sub_filter .filter_box button").eq(2).removeClass('on')
