@@ -686,8 +686,14 @@
     }
 
     const deleteProduct = () => {
+        var proc = "{{request()->get('type')}}"; 
+        if (proc == "temp"){
+            var fetchUrl = '/mypage/product-temp/';
+        }else{
+            var fetchUrl = '/mypage/product/';
+        }
         const idx = document.getElementById('confirmDeleteProductBtn').dataset.idx;
-        fetch('/mypage/product/' + idx, {
+        fetch(fetchUrl + idx, {
             method  : 'DELETE',
             headers : {
                 'X-CSRF-TOKEN'  : '{{csrf_token()}}'

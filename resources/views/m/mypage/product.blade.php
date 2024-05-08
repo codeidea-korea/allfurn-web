@@ -115,8 +115,8 @@
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
-                                            <button class="state_preview block w-full" onclick="modalProductPreview({{ $represent->idx }}, false)">
-                                                <img src="{{ $represent -> product_image }}" alt="item03" class="rounded-md w-full" />
+                                            <button class="state_preview" onclick="modalProductPreview({{ $represent->idx }}, false)">
+                                                <img src="{{ $represent -> product_image }}" alt="item03" class="rounded-md" />
                                             </button>
                                         </div>
                                         <div class="flex flex-col w-full">
@@ -751,8 +751,14 @@
         }
 
         const deleteProduct = () => {
+            var proc = "{{request()->get('type')}}"; 
+            if (proc == "temp"){
+                var fetchUrl = '/mypage/product-temp/';
+            }else{
+                var fetchUrl = '/mypage/product/';
+            }
             const idx = document.getElementById('confirmDeleteProductBtn').dataset.idx;
-            fetch('/mypage/product-temp/' + idx, {
+            fetch(fetchUrl + idx, {
                 method  : 'DELETE',
                 headers : {
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
