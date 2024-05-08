@@ -159,10 +159,18 @@ class HomeService
             DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
                 WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl,
+                CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl '
             ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_attachment as app', function($query) {
+                $query->on('app.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.appbig_attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_attachment as app51', function($query) {
+                $query->on('app51.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.app51_attachment_idx, ",", 1)'));
             })
             ->where('AF_banner_ad.state', 'G')
             ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
