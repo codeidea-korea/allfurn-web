@@ -40,7 +40,7 @@
                         ?>
                         @if( $banner->banner_type == 'img' )
                             <a href="{{$link}}" class="!p-0">
-                                <img src="{{$banner->mainImgUrl}}" alt="">
+                                <img src="{{$banner->mainImgUrl}}" class="h-[240px] object-cover" alt="">
                             </a>
                         @else
                             <a href="{{$link}}">
