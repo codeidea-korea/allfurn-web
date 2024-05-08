@@ -195,6 +195,7 @@
                 </div>
                 <div class="flex justify-center">
                     <button class="bg-primary text-white h-[42px] rounded-sm w-full font-medium" onclick="searchKeyword()">검색</button>
+                </div>
             </div>
         </div>
     </div>
