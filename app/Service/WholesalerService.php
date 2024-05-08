@@ -599,7 +599,7 @@ class WholesalerService {
         ->where('AF_banner_ad.company_type', 'W')
         ->whereRaw('DATE(AF_banner_ad.start_date) <= CURDATE()')
         ->whereRaw('DATE(AF_banner_ad.end_date) >= CURDATE()')
-        ->where('AF_banner_ad.ad_location', 'wholesaletop')
+        ->where('AF_banner_ad.ad_location', 'wholesalethismonth')
         ->where('AF_banner_ad.is_delete', 0)
         ->where('AF_banner_ad.is_open', 1)
         ->groupBy('AF_banner_ad.company_idx')
