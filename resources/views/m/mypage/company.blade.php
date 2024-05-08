@@ -25,8 +25,8 @@
                         <li class="">
                             <div class="!w-full txt_box">
                                 <div class="flex items-center gap-2">
-                                    <div class="profile_img w-1/5">
-                                        <img src="{{ $info -> profile_image ?: '/img/profile_img.svg'}}" alt="">
+                                    <div class="profile_img">
+                                        <img src="{{ $info -> profile_image ?: '/img/profile_img.svg'}}" class="w-[68px] h-[68px] object-cover rounded-full" alt="">
                                     </div>
                                     <div>
                                         <a href="/mypage/edit/company">

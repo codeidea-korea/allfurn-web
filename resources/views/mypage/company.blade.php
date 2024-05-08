@@ -13,7 +13,7 @@
                 <div class="txt_box">
                     <div class="flex items-center gap-4">
                         <div class="profile_img">
-                            <img src="{{ $info -> profile_image ?: '/img/profile_img.svg'}}" alt="" />
+                            <img src="{{ $info -> profile_image ?: '/img/profile_img.svg'}}" class="w-[80px] h-[80px] object-cover rounded-full" alt="" />
                         </div>
                         <div>
                             <a href="/mypage/edit/company">
