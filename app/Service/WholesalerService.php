@@ -529,6 +529,7 @@ class WholesalerService {
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
+            ->whereRaw("AF_product.idx in (0)")
             ->orderBy('AF_product.idx', 'DESC')
             ->get();
         }
