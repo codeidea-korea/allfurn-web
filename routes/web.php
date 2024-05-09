@@ -90,6 +90,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::post('/interest/{productIdx}', 'ProductController@interestToggle');
     Route::get('/category', 'ProductController@listByCategory');
     Route::get('/search', 'ProductController@listBySearch');
+    Route::get('/getSearchList', 'ProductController@listBySearchAjax');
     Route::get('/searchBar', 'ProductController@listBySearch2');
     Route::get('/thisMonth', 'ProductController@thisMonth');
     Route::get('/thisMonthDetail', 'ProductController@thisMonthDetail');

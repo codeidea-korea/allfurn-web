@@ -388,7 +388,7 @@
             <ul class="filter_list">
                 <li>
                     <input type="radio" class="radio-form" name="filter_cate_2" id="filter_reg_time" value="reg_time" checked>
-                    <label for="filter_reg_time">신상품순</label>
+                    <label for="filter_reg_time">최신 상품 등록순</label>
                 </li>
                 <li>
                     <input type="radio" class="radio-form" name="filter_cate_2" id="filter_search" value="search">

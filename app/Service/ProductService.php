@@ -901,6 +901,64 @@ class ProductService
         return $data;
     }
 
+    public function listByCategoryAjax(array $param = []) {
+        $list = Product::select('AF_product.*',
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                        WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                        ELSE "" END) as companyName,
+                    CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
+                    (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
+                    (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt
+            '))
+            ->whereIn('AF_product.state', ['S', 'O'])
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_wholesale as aw', function($query){
+                $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
+            });
+
+        if ($param['categories'] != "" && $param['categories'] != null) {
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
+            $list->whereRaw("AF_product.category_idx in ({$searchCategory->cateIds})");
+        }
+
+        if (isset($param['keyword'])) {
+            $list->whereRaw("(AF_product.name like '%".$param['keyword']."%' or AF_product.product_detail like '%".$param['keyword']."%')");
+        }
+
+        if ($param['locations'] != "" && $param['locations'] != null) {
+            $arr_locations = explode(',', $param['locations']);
+            $whereLocations = "(";
+            foreach($arr_locations as $location) {
+                $quotedLocations[] = "'".$location."'";
+                $whereLocations .= "aw.business_address like '%".$location."%' or ";
+            }
+            $whereLocations = substr($whereLocations, 0, strlen($whereLocations) - 3);
+            $whereLocations .= ")";
+            $list->whereRaw($whereLocations);
+        }
+
+        if (isset($param['orderedElement'])) {
+            switch($param['orderedElement']) {
+                case 'order':
+                    $list->orderBy('orderCnt', 'desc');
+                    break;
+                case 'search':
+                    $list->orderBy('access_count', 'desc');
+                    break;
+                default:
+                    $list->orderBy('access_date', 'desc');
+                    break;
+            }
+        } else {
+            $list->orderBy('access_date', 'desc');
+        }
+        
+        $result = $list->paginate(20);
+        return $result;
+    }
+
     public function countSearchWholesales(string $keyword)
     {
         return CompanyWholesale::select('AF_wholesale.idx')

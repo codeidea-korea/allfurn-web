@@ -381,20 +381,49 @@ class ProductController extends BaseController
     // 키워드 검색 (상품 리스트 가져오기)
     public function listBySearch(Request $request)
     {
+        // 상단 배너
+        // $banners = $this->productService->getBannerList();
+        // $categoryList = $this->productService->getCategoryList();
+        // $todayCount = $this->productService->getTodayCount();
 
-        Log::debug("----------- ProductController / listBySearch -----------------");
+        // $bestNewProducts = $this->productService->getBestNewProductList();
+        // $company = $this->productService->getRecentlyAddedProductCompanyList();
 
-        $data['keyword'] = $request->query('kw');
-        $data['categoryIdx'] = $request->query('ca');
-        $data['parentIdx'] = $request->query('pre');
-        $data['property'] = $request->query('prop');
-        $data['sort'] = $request->query('so');
+        // return view(getDeviceType() . 'product.newProduct', [
+        //     'banners' => $banners,
+        //     'todayCount' => $todayCount,
+        //     'categoryList' => $categoryList,
+        //     'bestNewProducts' => $bestNewProducts,
+        //     'company' => $company,
+        // ]);
 
-        $productList = $this->productService->listByCategory($data);
+
+
+        $categoryList = $this->productService->getCategoryList();
+        $searchResultProductCount = DB::table('AF_product')->where('AF_product.name', 'like', "%{$request->query('kw')}%")->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")->count();
 
         return view(getDeviceType().'product.searchBy', [
-            'productList' => $productList
+            'searchResultProductCount' => $searchResultProductCount, 
+            'categoryList'=>$categoryList,
         ]);
+    }
+
+    public function listBySearchAjax(Request $request){
+        $data['keyword'] = $request->query('keyword');
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['locations'] = $request->locations == null ? "" : $request->locations;
+        $data['orderedElement'] = $request->orderedElement == null ? "" : $request->orderedElement;
+
+        $list = $this->productService->listByCategoryAjax($data);
+
+        
+        $html = view('product.inc-search-product-result', ['list' => $list])->render();
+        //$modalHtml = view(getDeviceType() . 'product.inc-product-modal-common', ['product' => $list])->render();
+        $list['html'] = $html;
+        $list['test'] = $list->total();
+        //$list['modalHtml'] = $modalHtml;
+
+        return response()->json($list);
     }
 
     // 카테고리 검색 (상품 리스트 가져오기)

@@ -1,6 +1,6 @@
 
 <!-- 알림 켜기 / 끄기 -->
-<div class="modal" id="alarm_on_modal">
+<div class="modal hidden" id="alarm_on_modal">
     <div class="modal_bg" onclick="modalClose('#alarm_on_modal')"></div>
     <div class="modal_inner modal-sm">
         <div class="modal_body agree_modal_body">
@@ -15,7 +15,7 @@
 
 
 <!-- 신고 -->
-<div class="modal" id="declaration_modal"">
+<div class="modal hidden" id="declaration_modal"">
     <div class="modal_bg" onclick="modalClose('#declaration_modal')"></div>
     <div class="modal_inner modal-md">
         <div class="modal_body filter_body">
