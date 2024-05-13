@@ -333,7 +333,7 @@
             return response.json();
         }).then(json => {
             if (json.success == true) {
-                location.href = '/product/searchBar?kw=' + keyword;
+                location.href = '/product/search?kw=' + keyword;
             }
         });
     }

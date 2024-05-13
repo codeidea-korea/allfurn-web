@@ -381,24 +381,6 @@ class ProductController extends BaseController
     // 키워드 검색 (상품 리스트 가져오기)
     public function listBySearch(Request $request)
     {
-        // 상단 배너
-        // $banners = $this->productService->getBannerList();
-        // $categoryList = $this->productService->getCategoryList();
-        // $todayCount = $this->productService->getTodayCount();
-
-        // $bestNewProducts = $this->productService->getBestNewProductList();
-        // $company = $this->productService->getRecentlyAddedProductCompanyList();
-
-        // return view(getDeviceType() . 'product.newProduct', [
-        //     'banners' => $banners,
-        //     'todayCount' => $todayCount,
-        //     'categoryList' => $categoryList,
-        //     'bestNewProducts' => $bestNewProducts,
-        //     'company' => $company,
-        // ]);
-
-
-
         $categoryList = $this->productService->getCategoryList();
         $searchResultProductCount = DB::table('AF_product')->where('AF_product.name', 'like', "%{$request->query('kw')}%")->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")->count();
 

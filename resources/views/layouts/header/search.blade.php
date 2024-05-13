@@ -235,7 +235,7 @@
             return response.json();
         }).then(json => {
             if (json.success == true) {
-                location.replace('/product/searchBar?kw=' + keyword);
+                location.replace('/product/search?kw=' + keyword);
             }
         });
     }
