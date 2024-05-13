@@ -1381,7 +1381,7 @@ class MypageService
 
         } else {
             // INFO: 앱 배포 승인을 위해서 잠시 추가
-            if(Auth::user()['idx'] == 3371 && $params['authcode'] == '1111') {
+            if(Auth::user()['idx'] == 1648 && $params['authcode'] == '1111') {
                 return [
                     'result' => 'success',
                     'code' => '0',
