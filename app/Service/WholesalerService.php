@@ -199,15 +199,15 @@ class WholesalerService {
 
     public function listByCategoryAjax(array $param = []) {
 
-         $whereCategory = "";
-        if (isset($params['categories']) && !empty($params['categories'])) {
-            $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
-        }
+        $whereCategory = "";
+        // if (isset($params['categories']) && !empty($params['categories'])) {
+        //     $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
+        // }
         if ($param['categories'] != "" && $param['categories'] != null) {
             $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
-            $list->whereRaw("AF_product.category_idx in ({$searchCategory->cateIds})");
+            $whereCategory = "WHERE ap.category_idx in ({$searchCategory->cateIds})";
         }
-
+        //DB::enableQueryLog();
         $list = DB::table(DB::raw('
             ( SELECT 
                 AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.business_address
@@ -251,8 +251,8 @@ class WholesalerService {
         }
 
         //소재지 필터링
-        if (isset($params['locations']) && !empty($params['locations'])) {
-            $locations = explode(',', $params['locations']);
+        if (isset($param['locations'])) {
+            $locations = explode(',', $param['locations']);
             $list->where(function ($query) use ($locations) {
                 foreach ($locations as $key => $loc) {
                     if($key == 0) {
@@ -268,8 +268,8 @@ class WholesalerService {
         }
 
         //순서 필터링
-        if (isset($params['orderedElement']) && !empty($params['orderedElement'])) {
-            switch ($params['orderedElement']) {
+        if ($param['orderedElement'] != "" && $param['orderedElement'] != null) {
+            switch ($param['orderedElement']) {
                 case 'order':
                     $list->orderBy('orderCnt', 'asc'); 
                     break;
@@ -279,11 +279,13 @@ class WholesalerService {
                 default:
                     $list->orderBy('access_date', 'DESC');
             }
+        }else{
+            $list->orderBy('access_date', 'desc');
         }
 
 
         $list = $list->paginate(20);
-
+        //dd(DB::getQueryLog());
         foreach($list as $key => $value) {
 
             $list[$key]->categoryList = 

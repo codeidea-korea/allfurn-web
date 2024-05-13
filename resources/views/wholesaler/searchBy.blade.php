@@ -52,27 +52,24 @@
     let isLoading = false;
     let isLastPage = false;
     let currentPage = 0;
-    let firstLoad = true;
-
     function loadWholesalerList(needEmpty, target) {
         if(isLoading) return;
         if(!needEmpty && isLastPage) return;
 
-        $("#zoom_view-modal-new .slide_arrow.more_btn").hide();
         isLoading = true;
-        if(needEmpty) currentPage = 0;
+        if(needEmpty) currentPage = 0;;
         $('#loadingContainer').show();
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: '/wholesaler/getSearchList',
             method: 'GET',
-            data: { 
+            data: {
                 'keyword' : "{{$_GET['kw']}}",
                 'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','),
-                'locations' : getIndexesOfSelectedLocation().join(','),
+                'locations' : getIndexesOfSelectedLocations().join(','),
                 'orderedElement' : $("#filter_align-modal02 .radio-form:checked").val(),
-            }, 
+            },
             beforeSend : function() {
                 if(target) {
                     target.prop("disabled", true);
@@ -92,44 +89,70 @@
                 }
 
                 isLastPage = currentPage === result.last_page;
-            }, 
+            },
             complete : function () {
                 displaySelectedCategories();
                 displaySelectedLocation();
                 displaySelectedOrders();
                 toggleFilterBox();
                 isLoading = false;
-                if(firstLoad && new URLSearchParams(window.location.search).get("scroll")=="true") {
-                    window.scrollTo(0, 2100);
-                    firstLoad = false;
-                }
                 $('#loadingContainer').hide();
             }
         })
     }
+
+    // 카테고리 및 소팅
+    $(document).on('click', '[id^="filter"] .btn-primary', function() {
+        loadWholesalerList(true, $(this))
+    });
+
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
+
+        loadWholesalerList(true);
+    }
+
+    const orderRemove = (item)=> {
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#filter_align-modal02 .radio-form").eq(0).prop('checked', true);
+
+        loadWholesalerList(true);
+    }
+
+    $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_location-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal02 .radio-form").eq(0).prop('checked', true);
+        
+        loadWholesalerList(true);
+    });
+
 
     function getIndexesOfSelectedCategory() {
         let categories = [];
         $("#filter_category-modal .check-form:checked").each(function(){
             categories.push($(this).attr('id'));
         });
+
         return categories;
     }
 
-    function getIndexesOfSelectedLocation() {
+    function getIndexesOfSelectedLocations() {
         let locations = [];
         $("#filter_location-modal .check-form:checked").each(function(){
             locations.push($(this).data('location'));
         });
+
         return locations;
     }
 
     function displaySelectedCategories() {
-        let html = "";  
+        let html = "";
         $("#filter_category-modal .check-form:checked").each(function(){
-            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() + 
-                    "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
-                    "</span>";
+            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
+                "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                "</span>";
         });
         $(".filter_on_box .category").empty().append(html);
 
@@ -140,6 +163,7 @@
         } else {
             $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
+            //$("ul.obtain_list .sub_filter_result").show();
         }
     }
 
@@ -147,9 +171,9 @@
         let html = "";
 
         $("#filter_location-modal .check-form:checked").each(function() {
-            html += '<span>'+ $(this).data('location') + 
-                    '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
-                    '</span>';
+            html += '<span>'+ $(this).data('location') +
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>';                    "</span>";
         });
         $(".filter_on_box .location").empty().append(html);
 
@@ -157,20 +181,11 @@
         if(totalOfSelectedLocations === 0) {
             $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
             $(".sub_filter .filter_box button").eq(1).removeClass('on');
-            
+
         } else {
             $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(1).addClass('on');
         }
-    }    
-
-    function displaySelectedOrders() {
-        // if($("#filter_align-modal02 .radio-form:checked").val() != "reg_time") {
-        //     $(".sub_filter .filter_box button").eq(2).addClass('on')         
-        // } else {
-        //     $(".sub_filter .filter_box button").eq(2).removeClass('on')
-        // }
-        $(".sub_filter .filter_box button").eq(2).text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
     }
 
     function toggleFilterBox() {
@@ -181,34 +196,28 @@
         }
     }
 
-    // 카테고리 선택
-    $(document).on('click', '[id^="filter"] .btn-primary', function() { 
-        loadWholesalerList(true, $(this));
-    });
-
-    // 카테고리 삭제
-    const filterRemove = (item)=>{
-        $(item).parents('span').remove(); //해당 카테고리 삭제
-        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
-
-        loadWholesalerList(true);
+    function displaySelectedOrders() {
+        $(".sub_filter .filter_box button").eq(2).text($("#filter_align-modal02 .radio-form:checked").siblings('label').text());
     }
 
-    // 정렬 삭제
-    const orderRemove = (item)=> {
-        $(item).parents('span').remove(); 
-        $("#filter_align-modal02 .radio-form").eq(0).prop('checked', true);
-
-        loadWholesalerList(true);
+    function toggleCompanyLike(idx) {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url : '/wholesaler/like/' + idx,
+            method: 'POST',
+            success : function(result) {
+                if (result.success) {
+                    if (result.like === 0) {
+                        $('.zzim_btn[data-company-idx='+idx+']').removeClass('active');
+                    } else {
+                        $('.zzim_btn[data-company-idx='+idx+']').addClass('active');
+                    }
+                }
+            }
+        })
     }
-
-    // 초기화
-    $(".refresh_btn").on('click', function() {
-        $("#filter_category-modal .check-form:checked").prop('checked', false);
-        $("#filter_location-modal .check-form:checked").prop('checked', false);
-        $("#filter_align-modal02 .radio-form").eq(0).prop('checked', true);
-        loadWholesalerList(true);
-    });
 
     $(document).ready(function(){
         $('#loadingContainer').show();
