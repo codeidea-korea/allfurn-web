@@ -87,7 +87,7 @@
                         <li class="no_prod txt-gray">
                             <i><svg><use xlink:href="/img/icon-defs.svg#Search"></use></svg></i>
                             카테고리 상품 결과가 없습니다.
-                            <a href="javascript:;">올펀 상품 보러가기</a>
+                            <a href="/product/new">올펀 상품 보러가기</a>
                         </li>
                         @endif
                     </ul>
