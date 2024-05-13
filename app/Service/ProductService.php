@@ -919,7 +919,7 @@ class ProductService
             });
 
         if ($param['categories'] != "" && $param['categories'] != null) {
-            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereRaw("parent_idx in (".$param['categories'].")")->where('is_delete', 0)->first();
             $list->whereRaw("AF_product.category_idx in ({$searchCategory->cateIds})");
         }
 
@@ -948,7 +948,7 @@ class ProductService
                     $list->orderBy('access_count', 'desc');
                     break;
                 default:
-                    $list->orderBy('accreess_date', 'desc');
+                    $list->orderBy('access_date', 'desc');
                     break;
             }
         } else {
