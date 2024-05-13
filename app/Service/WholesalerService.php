@@ -197,6 +197,137 @@ class WholesalerService {
         return $data;
     }
 
+    public function listByCategoryAjax(array $param = []) {
+
+         $whereCategory = "";
+        if (isset($params['categories']) && !empty($params['categories'])) {
+            $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
+        }
+        if ($param['categories'] != "" && $param['categories'] != null) {
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
+            $list->whereRaw("AF_product.category_idx in ({$searchCategory->cateIds})");
+        }
+
+        $list = DB::table(DB::raw('
+            ( SELECT 
+                AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.business_address
+                , CASE WHEN COUNT(DISTINCT aba.idx) > 0 THEN 1 ELSE 0 END AS isAd
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0) AS totalAdPrice
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0)/ 100000 * 0.1  AS addtionalRate
+                , AF_wholesale.inquiry_count AS companyInquiryCount
+                , SUM(DISTINCT(ap.inquiry_count)) AS productInquiryCount
+                , AF_wholesale.access_count AS companyAccessCount
+                , SUM(DISTINCT(ap.access_count))  AS productAccessCount
+                , COUNT(DISTINCT(ao.idx)) as orderCnt
+                , COUNT(DISTINCT(ap.idx)) as productCnt
+                , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
+            FROM AF_wholesale
+            JOIN AF_product ap
+            ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O")
+            LEFT JOIN AF_order as ao
+            ON ao.product_idx = ap.idx
+            LEFT JOIN AF_banner_ad aba 
+            ON aba.company_idx = AF_wholesale.idx AND is_delete = 0 AND is_open = 1
+            LEFT JOIN AF_category ac
+            ON ac.idx = ap.category_idx
+            LEFT JOIN AF_category ac2
+            ON ac2.idx = ac.parent_idx
+            '.$whereCategory.'
+            GROUP BY AF_wholesale.idx
+            ) AS wholesalerList        
+        '))->select('*'
+                , DB::raw('(companyInquiryCount + productInquiryCount + productAccessCount + companyAccessCount) * (1+ addtionalRate) AS score')
+                , DB::raw('ROW_NUMBER() OVER(ORDER BY score DESC) AS rank')
+                , DB::raw(
+                    '(SELECT if(count(*) > 0, 1, 0)
+                            FROM AF_company_like AS acl 
+                            WHERE acl.company_idx = wholesalerList.company_idx AND acl.user_idx = '.Auth::user()->idx.'
+                        ) AS isCompanyInterest')
+                , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
+        );
+
+        if (isset($param['keyword'])) {
+            $list->whereRaw("wholesalerList.company_name like '%".$param['keyword']."%'");
+        }
+
+        //소재지 필터링
+        if (isset($params['locations']) && !empty($params['locations'])) {
+            $locations = explode(',', $params['locations']);
+            $list->where(function ($query) use ($locations) {
+                foreach ($locations as $key => $loc) {
+                    if($key == 0) {
+                        $query->where('wholesalerList.business_address', 'like', "$loc%");
+                    } else {
+                        $query->orWhere('wholesalerList.business_address', 'like', "$loc%");
+                    }
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'wholesalerList.business_address', $relativeTables);
+                    }
+                }
+            });
+        }
+
+        //순서 필터링
+        if (isset($params['orderedElement']) && !empty($params['orderedElement'])) {
+            switch ($params['orderedElement']) {
+                case 'order':
+                    $list->orderBy('orderCnt', 'asc'); 
+                    break;
+                case 'search':
+                    $list->orderBy('productAccessCount', 'desc'); 
+                    break;
+                default:
+                    $list->orderBy('access_date', 'DESC');
+            }
+        }
+
+
+        $list = $list->paginate(20);
+
+        foreach($list as $key => $value) {
+
+            $list[$key]->categoryList = 
+                Product::select('ac2.name', 'ac2.idx', DB::raw('count(ac2.idx) as cnt'))
+                ->where('company_idx', $value->company_idx)
+                ->where('company_type','W')
+                ->whereIN('AF_product.state', ['S', 'O'])
+                ->leftjoin('AF_category as ac', function ($query) {
+                    $query->on('ac.idx', 'AF_product.category_idx');
+                })
+                ->leftjoin('AF_category as ac2', function ($query) {
+                    $query->on('ac2.idx', 'ac.parent_idx');
+                })
+                ->groupBy('ac2.idx')
+                ->orderBy('cnt', 'desc')
+                ->get();
+
+            $list[$key]->productList = 
+                DB::table(DB::raw(
+                    '(SELECT * FROM AF_product 
+                     WHERE company_idx = '. $value->company_idx.'
+                        AND state IN ("S", "O")) AS ap'
+                ))
+                ->select(
+                        'ap.idx AS productIdx'
+                    , DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
+                    , DB::raw('(SELECT if(count(idx) > 0, 1, 0) 
+                                FROM AF_product_interest api 
+                                WHERE api.product_idx = ap.idx 
+                                    AND api.user_idx = '.Auth::user()->idx.'
+                                ) as isInterest')
+                )
+                ->leftjoin('AF_attachment as at', function($query) {
+                    $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
+                })
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.access_date','desc')
+                ->limit(3)
+                ->get();
+        }
+
+        return $list;     
+    }
+
     public function getPopularBrand()
     {
         // 인기 브랜드

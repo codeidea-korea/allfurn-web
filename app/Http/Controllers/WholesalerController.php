@@ -135,7 +135,22 @@ class WholesalerController extends BaseController
             'query'=>$query,
             'categoryList'=>$categoryList,
         ]);
-        
+    }
+
+    public function listBySearchAjax(Request $request){
+        $data['keyword'] = $request->query('keyword');
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        $data['locations'] = $request->locations == null ? "" : $request->locations;
+        $data['orderedElement'] = $request->orderedElement == null ? "" : $request->orderedElement;
+
+        $list = $this->wholesalerService->listByCategoryAjax($data);
+
+        $html = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $list])->render();
+        //$modalHtml = view(getDeviceType() . 'product.inc-product-modal-common', ['product' => $list])->render();
+        $list['html'] = $html;
+        //$list['modalHtml'] = $modalHtml;
+
+        return response()->json($list);
     }
 
     // 업체 카테고리 상품 가져오기

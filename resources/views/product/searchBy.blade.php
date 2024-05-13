@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="sub_filter mt-5">
-                    <div class="total"><span>‘{{$_GET['kw']}}'</span> 검색 결과 총 {{number_format($searchResultProductCount)}}개의 상품</div>
+                    <div class="total"><span>‘{{$_GET['kw']}}'</span> 검색 결과 총 0개의 상품</div>
                     <div class="filter_box">
                         <button onclick="modalOpen('#filter_align-modal02')">최신 상품 등록순</button>
                     </div>

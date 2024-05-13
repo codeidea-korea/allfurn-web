@@ -948,7 +948,7 @@ class ProductService
                     $list->orderBy('access_count', 'desc');
                     break;
                 default:
-                    $list->orderBy('access_date', 'desc');
+                    $list->orderBy('accreess_date', 'desc');
                     break;
             }
         } else {

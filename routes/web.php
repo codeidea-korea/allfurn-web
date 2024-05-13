@@ -269,6 +269,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/detail/{wholesalerIdx}', 'WholesalerController@detail')->name('.detail');
     Route::post('/like/{wholesalerIdx}', 'WholesalerController@likeToggle')->name('.like');
     Route::get('/search', 'WholesalerController@listBySearch');
+    Route::get('/getSearchList', 'WholesalerController@listBySearchAjax');
     Route::get('/best', 'WholesalerController@best');
     Route::get('/gather', 'WholesalerController@gather');
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
