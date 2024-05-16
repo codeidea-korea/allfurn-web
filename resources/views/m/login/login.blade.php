@@ -27,6 +27,13 @@ $header_banner = '';
             <div class="tab_content">
                 <!-- 아이디로 로그인 -->
                 <div class="active">
+                <div style="
+                    color: var(--main_color) !important;
+                    text-align: center;
+                    padding-top: 0.5rem;
+                ">
+                    아이디를 잊으셨다면 전화번호로 로그인하세요!
+                </div>
                     <form id="idlogin" method="POST" action="/check-user">
                     @csrf
                     <label for="LGI-01_loginId">아이디</label>
