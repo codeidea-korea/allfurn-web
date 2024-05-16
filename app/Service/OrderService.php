@@ -177,7 +177,7 @@ class OrderService
                 'AF_order.order_state'=>'N',
                 'AF_order.is_cancel'=>0
             ])
-            ->join('AF_product as ap', 'ap.idx', 'AF_order.product_idx')
+            //->join('AF_product as ap', 'ap.idx', 'AF_order.product_idx')
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
             })

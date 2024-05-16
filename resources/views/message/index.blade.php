@@ -43,7 +43,7 @@
                         <div class="txt_box">
                             <h3>
                                 {{ $room->name }}
-                                <span id="chat-{{ $room->idx }}-unreadCount" class="num">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
+                                <span id="chat-{{ $room->idx }}-unreadCount" class="{{  $room->unread_count == 0 ? '' : 'num' }}">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                             </h3>
                             <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
                         </div>
@@ -88,7 +88,9 @@
                 rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
                 if(openedRoomIdx != messages.roomIdx) {
                     const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-                    $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+		    $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+		    $('#chat-'+messages.roomIdx+'-unreadCount').removeClass('num');
+		     $('#chat-'+messages.roomIdx+'-unreadCount').addClass('num');
                 }
             } else {
                 const tmpChattingRoom = 
@@ -99,7 +101,7 @@
                         +'    <div class="txt_box">'
                         +'        <h3>'
                         +'            '+messages.roomName
-                        + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>' : '')
+                        + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount" class="num">1</span>' : '')
                         +'            <span>'+messages.title+'</span>'
                         +'        </h3>'
                         +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
@@ -220,7 +222,8 @@
 
                 const roomIdx = idx;
                 openedRoomIdx = roomIdx;
-                $('#chat-'+openedRoomIdx+'-unreadCount').text('');
+		$('#chat-'+openedRoomIdx+'-unreadCount').text('');
+		 $('#chat-'+openedRoomIdx+'-unreadCount').removeClass('num');
                 pusher.disconnect(); // TESTSETSETSE
                 pusher = new Pusher('51b26f4641d16394d3fd', {
                     cluster: 'ap3'
@@ -238,7 +241,10 @@
                             rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
                             if(openedRoomIdx != messages.roomIdx) {
                                 const count = $('#chat-'+messages.roomIdx+'-unreadCount').text() == "" ? 0 : Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-                                $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+				$('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+				$('#chat-'+messages.roomIdx+'-unreadCount').removeClass('num');
+
+ $('#chat-'+messages.roomIdx+'-unreadCount').addClass('num');
                             }
                         } else {
                             const tmpChattingRoom = 
@@ -249,7 +255,7 @@
                                     +'    <div class="txt_box">'
                                     +'        <h3>'
                                     +'            '+messages.roomName
-                                    + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount">1</span>' : '')
+                                    + (openedRoomIdx != messages.roomIdx ? ' <span id="chat-'+messages.roomIdx+'-unreadCount" class="num">1</span>' : '')
                                     +'            <span>'+messages.title+'</span>'
                                     +'        </h3>'
                                     +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
@@ -268,7 +274,8 @@
                                 return response.json();
                             }).then(json => {
                                 if (json.result === 'success') {
-                                    $('.chatting_list > .chatting.left > ._alert').remove();
+					$('.chatting_list > .chatting.left > ._alert').remove();
+
                                 }
                             });
                         }

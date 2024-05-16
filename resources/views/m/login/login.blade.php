@@ -242,8 +242,7 @@ function confirmAuthCode() {
                                     +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
                                     +'</li>';
                         }
-                        $('.joined_id').html(tmpHtml);
-                    $('._step2').show(); $('#btn_smscode_confirm').hide();
+                        $('.joined_id').html(tmpHtml); $('#btn_smscode_confirm').hide(); $('._step2').show();
                         $('#btn_selected_id_login').show();
                     } else {
                         time = 1;

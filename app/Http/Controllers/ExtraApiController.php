@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\PushQ;
-use App\Models\AuthToken;
+use App\Models\PushToken;
 use App\Models\PushSendLog;
 use Session;
 
@@ -48,7 +48,7 @@ class ExtraApiController extends BaseController
                 if(empty($userIdx)) {
                     continue;
                 }
-                $authToken = AuthToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
+                $authToken = PushToken::where('user_idx', '=', $userIdx)->orderBy('register_time', 'DESC')->first();
 
                 if(empty($authToken)) {
                     continue;

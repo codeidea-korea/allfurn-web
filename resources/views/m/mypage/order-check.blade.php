@@ -8,9 +8,12 @@
 
     $product_total_count = 0;
     $product_total_price = 0;
+    $product_option_price = 0;
+    
     foreach ($response as $res) {
         $product_total_count += $res -> product_count;
         $product_total_price += $res -> product_total_price;
+        $product_option_price += $res -> product_option_price;
     }
 @endphp
 
@@ -135,7 +138,20 @@
                                         </tr>
                                         <tr>
                                             <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                            <td>없음</td>
+                                            <td>
+                                            @if (!empty(json_decode($res -> product_option_json)))
+                                                <table class="my_table w-full text-left">
+                                                    @foreach (json_decode($res -> product_option_json) as $key => $val)
+                                                        <tr>
+                                                            <th>{{ $val -> optionName }}</th>
+                                                            <td>{{ key($val -> optionValue) }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </table>
+                                            @else
+                                                없음
+                                            @endif   
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>견적단가</th>
@@ -174,6 +190,10 @@
                             <p>
                                 <span class="txt-gray fs14">주문금액 ({{ $product_total_count }}개)</span>
                                 <b>{{ number_format($product_total_price) }}원</b>
+                            </p>
+                            <p>
+                                <span class="txt-gray fs14">옵션금액</span>
+                                <b>{{ number_format($product_option_price) }}원</b>
                             </p>
                             <p>
                                 <span class="txt-gray fs14">배송비</span>

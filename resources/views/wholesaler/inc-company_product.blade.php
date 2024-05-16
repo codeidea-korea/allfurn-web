@@ -1,3 +1,45 @@
+<section class="sub_section sub_section_bot">
+    <div class="inner">
+        <div class="main_tit mb-8 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <h3>도매 업체</h3>
+            </div>
+        </div>
+        <div class="sub_filter">
+            <div class="filter_box">
+                <button onclick="modalOpen('#filter_category-modal')">카테고리</button>
+                <button onclick="modalOpen('#filter_location-modal')">소재지</button>
+                <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+            </div>
+            <div class="total">전체 428개</div>
+        </div>
+        <div class="sub_filter">
+            <div class="filter_box">
+                <button class="on" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary">3</b></button>
+                <button class="on" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary">2</b></button>
+                <button onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
+            </div>
+            <div class="total">전체 428개</div>
+        </div>
+        <div class="sub_filter_result">
+            <div class="filter_on_box">
+                <div class="category">
+                    <span>소파/거실 <button onclick="filterRemove(this)"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button></span>
+                    <span>식탁/의자 <button onclick="filterRemove(this)"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button></span>
+                    <span>수납/서랍장/옷장 <button onclick="filterRemove(this)"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button></span>
+                </div>
+                <div class="location">
+                    <span>인천 <button onclick="filterRemove(this)"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button></span>
+                    <span>광주 <button onclick="filterRemove(this)"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></button></span>
+                </div>
+            </div>
+            <button class="refresh_btn">초기화 <svg><use xlink:href="./img/icon-defs.svg#refresh"></use></svg></button>
+        </div>
+        <ul class="obtain_list"></ul>
+    </div>
+</section>
+
+
 @if( count( $companyProduct ) > 0 )
     <section class="sub_section sub_section_bot">
         <div class="inner">
