@@ -64,7 +64,7 @@
                                 있는</strong>
                             <h2>올펀(All-Furn)을 만나보세요</h2>
                             <div class="button-wrap">
-                                <button type="button" class="button" style="border:1px solid #dedede" onclick="location.href='/signin'">모바일로 로그인</button>
+{{--                                <button type="button" class="button" style="border:1px solid #dedede" onclick="location.href='/signin'">모바일로 로그인</button> --}}
                                 <button type="button" onclick="download()" class="button  button--solid" style="margin-top:10px;">올펀 앱 다운로드 
                                     {{-- <i class="ico__arrow--right18"></i> --}}
                                 </button>
@@ -155,6 +155,26 @@
 
     <script type="text/javascript">
     // 인앱 로그인인지 여부
+function checkMobile(){
+    var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
+    if ( varUA.indexOf('android') > -1) {
+        return "android";
+    } else if ( varUA.indexOf("iphone") > -1||varUA.indexOf("ipad") > -1||varUA.indexOf("ipod") > -1 ) {
+        //IOS
+        return "ios";
+    } else {
+        return "other";
+    }
+}
+    function download() {
+
+    if(checkMobile() == 'ios') {
+        location.href="https://apps.apple.com/us/app/%EC%98%AC%ED%8E%80-%EA%B8%80%EB%A1%9C%EB%B2%8C-%EA%B0%80%EA%B5%AC-%EB%8F%84-%EC%86%8C%EB%A7%A4-no-1-%ED%94%8C%EB%9E%AB%ED%8F%BC/id1658683212";
+    } else {
+        location.href="https://play.google.com/store/apps/details?id=com.appknot.allfurn";
+    }
+
+    }
     
     const isInApp = window.AppWebview || (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.AppWebview);
     if(isInApp) {
