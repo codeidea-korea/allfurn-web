@@ -50,7 +50,9 @@
                             <span class="expiration_date hidden"> 15일</span> 
                             {{-- <div class="input-form ml-3 "> --}}
                                 <select name="expiration_date" id="expiration_date" class="input-form w-140">
-                                    <option value="0">15일</option>
+                                    @for ($i = 15; $i >= 1; $i--)
+                                        <option value="{{ $i }}">{{ $i }}일</option>
+                                    @endfor
                                 </select>
                             {{-- </div> --}}
                         </div>
@@ -320,6 +322,7 @@
         $('.response_phone_number').removeClass('hidden');
 
         $('#expiration_date').addClass('hidden');
+        $('.expiration_date').text($('#expiration_date option:selected').text());
         $('.expiration_date').removeClass('hidden');
 
         $('#product_delivery_info').addClass('hidden');
@@ -374,7 +377,7 @@
         $('.prev').addClass('hidden');
         $('.next').removeClass('hidden');
 
-        $('html, body').animate({ scrollTop: '370' }, 200);
+        $('html, body').animate({ scrollTop: '920' }, 200);
     }
 
     const searchCompanyStart = () => {
@@ -421,7 +424,7 @@
             }
             return false;
             */
-
+            $('#loadingContainer').show();
             fetch('/estimate/updateResponseMulti', {
                 method  : 'POST',
                 headers : {
@@ -434,15 +437,17 @@
             }).then(json => {
                 if (json.success) {
                     if(isKakao) { 
-                            shareEstimate();
-                            setTimeout(() => {
-                                location.reload();    
-                            }, 1000);
-                        } else {
-                            alert('견적서 보내기가 완료되었습니다.');
-                            location.reload();
-                        }
+                        shareEstimate();
+                        setTimeout(() => {
+                            location.reload();    
+                        }, 1000);
+                    } else {
+                        $('#loadingContainer').hide();
+                        alert('견적서 보내기가 완료되었습니다.');
+                        location.reload();
+                    }
                 } else {
+                    $('#loadingContainer').hide();
                     alert('일시적인 오류로 처리되지 않았습니다.');
                     return false;
                 }

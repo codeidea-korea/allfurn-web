@@ -855,7 +855,7 @@
 
             <div class="btn_box mt-10">
                 <div class="flex gap-5">
-                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="modalClose('#check_order-modal')">닫기</a>
+                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="location.reload()">주문서 확인</a>
                 </div>
             </div>
         </div>
@@ -1216,7 +1216,7 @@
                                         </tr>
                                         <tr>
                                             <th>비고</th>
-                                            <td><input type="text" name="product_memo[]" value="` + product_memo + `"class="input-form w-full" value="" /></td>
+                                            <td>` + product_memo + `</td>
                                         </tr>
                                         </tbody>
                                     </table>

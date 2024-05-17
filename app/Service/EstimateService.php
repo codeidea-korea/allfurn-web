@@ -169,7 +169,7 @@ class EstimateService {
         $estimate -> response_account = $params['response_estimate_account1'].' '.$params['response_estimate_response_account2'];
         $estimate -> response_memo = $params['response_estimate_res_memo'];
         $estimate -> response_time = $params['response_estimate_res_time'];
-
+        $estimate -> expiration_date = $params['expiration_date'];
         $estimate -> product_each_price = $params['response_estimate_product_each_price'];
         $estimate -> product_delivery_info = $params['response_estimate_product_delivery_info'];
         $estimate -> product_option_price = $params['response_estimate_product_option_price'];
@@ -457,6 +457,7 @@ class EstimateService {
                 } else {
                     $estimate -> response_time = date('Y-m-d H:i:s');
                 }
+                $estimate -> expiration_date = $params['expiration_date'];
 
                 $estimate -> product_delivery_info = $params['product_delivery_info'];
                 $estimate -> product_delivery_price = $params['product_delivery_price'];

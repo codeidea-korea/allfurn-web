@@ -314,8 +314,10 @@
                             <th>유 효 기 한</th>
                             <td>
                                 견적일로부터 
-                                <select name="" id="" class="input-form ml-3">
-                                    <option value="0">15일</option>
+                                <select name="expiration_date" id="expiration_date" class="input-form ml-3">
+                                    @for ($i = 15; $i >= 1; $i--)
+                                        <option value="{{ $i }}">{{ $i }}일</option>
+                                    @endfor
                                 </select>
                             </td>
                         </tr>
@@ -328,7 +330,16 @@
                             <td colspan="3">
                                 <span class="response_account hidden"></span>
                                 <select name="response_estimate_account1" id="response_estimate_response_account1" class="input-form">
+                                    <option value="KEB하나은행">KEB하나은행</option>
+                                    <option value="SC제일은행">SC제일은행</option>
+                                    <option value="국민은행">국민은행</option>
+                                    <option value="신한은행">신한은행</option>
+                                    <option value="외환은행">외환은행</option>
                                     <option value="우리은행">우리은행</option>
+                                    <option value="한국시티은행">한국시티은행</option>
+                                    <option value="기업은행">기업은행</option>
+                                    <option value="농협">농협</option>
+                                    <option value="수협">수협</option>
                                 </select>
                                 <input type="text" name="response_estimate_response_account2" id="response_estimate_response_account2" class="input-form" value="" />
                             </td>
@@ -616,7 +627,7 @@
 
             <div class="btn_box mt-10">
                 <div class="flex gap-5">
-                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="modalClose('#check_estimate-modal')">닫기</a>
+                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="location.reload()">주문서 확인</a>
                 </div>
             </div>
         </div>
@@ -793,7 +804,7 @@
 
             <div class="btn_box mt-10">
                 <div class="flex gap-5">
-                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="modalClose('#check_order-modal')">닫기</a>
+                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="location.reload()">주문서 확인</a>
                 </div>
             </div>
         </div>
@@ -911,7 +922,7 @@
             console.log(key, value);
         }
         
-
+        $('#loadingContainer').show();
         fetch('/estimate/updateResponse', {
             method  : 'POST',
             headers : {
@@ -922,10 +933,11 @@
             return response.json();
         }).then(json => {
             if (json.success) {
+                $('#loadingContainer').hide();
                 alert('견적서 보내기가 완료되었습니다.');
-
                 location.reload();
             } else {
+                $('#loadingContainer').hide();
                 alert('일시적인 오류로 처리되지 않았습니다.');
                 return false;
             }
