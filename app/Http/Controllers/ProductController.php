@@ -262,7 +262,7 @@ class ProductController extends BaseController
         $data['categories'] = $request->categories == null ? "" : $request->categories;
         $data['locations'] = $request->locations == null ? "" : $request->locations;
         if($request->orderedElement == null || $request->orderedElement == 'register_time') {
-            $data['orderedElement'] = 'AF_product.access_date';
+            $data['orderedElement'] = 'AF_product.register_time';
         } else {
             $data['orderedElement'] = $request->orderedElement;
         }

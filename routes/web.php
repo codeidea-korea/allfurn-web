@@ -220,7 +220,7 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::post('/report', 'MessageController@report');
     Route::post('/send/message', 'MessageController@sendRoomMessage');
     Route::get('/rooms', 'MessageController@getRooms');
-    Route::get('/unread','MessageController@sendToUnreadRecipients');
+    // Route::get('/unread','MessageController@sendToUnreadRecipients');
     Route::get('/read','MessageController@readRoomAlarmCount');
 });
 
@@ -303,4 +303,5 @@ Route::prefix('help')->name('help')->middleware('auth')->group(function() {
     Route::delete('/inquiry/{idx}', 'HelpController@removeInquiry');
 });
 
+Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');

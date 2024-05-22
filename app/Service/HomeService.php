@@ -125,9 +125,9 @@ class HomeService
                 'AF_product.state' => 'S'
             ]);
             if(getDeviceType() == 'm.') {
-                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(8)->get();
+                $data['new_product'] = $data['new_product']->orderBy('AF_product.register_time', 'desc')->limit(8)->get();
             } else {
-                $data['new_product'] = $data['new_product']->orderBy('access_date', 'desc')->limit(256)->get();
+                $data['new_product'] = $data['new_product']->orderBy('AF_product.register_time', 'desc')->limit(256)->get();
             }
 
         // MD가 추천하는 테마별 상품
