@@ -1099,8 +1099,8 @@ class MessageService
     {
         return Message::select(
               DB::raw('CASE second_company_type 
-                        WHEN "W" THEN (SELECT phone_number FROM AF_user WHERE type = "W" AND company_idx = second_company_idx AND parent_idx = 0)
-                        WHEN "R" THEN (SELECT phone_number FROM AF_user WHERE type = "R" AND company_idx = second_company_idx AND parent_idx = 0)
+                        WHEN "W" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "W" AND company_idx = second_company_idx AND parent_idx = 0)
+                        WHEN "R" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "R" AND company_idx = second_company_idx AND parent_idx = 0)
                     END AS phone_number')
             , DB::raw('CASE first_company_type 
                         WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = first_company_idx)
@@ -1111,8 +1111,8 @@ class MessageService
         )
         ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
         ->where('AF_message.is_read', 0)
-        ->whereRaw('AF_message.register_time <= NOW() - INTERVAL 24 HOUR')
-        ->where('second_company_idx', 33) // INFO: 테스트를 위해서 조건을 추가.
+        ->whereRaw('DATE(AF_message.register_time) = (CURDATE() - INTERVAL 1 DAY)')
+        // ->where('second_company_idx', 1823) // INFO: 테스트를 위해서 조건을 추가.
         ->get();
     }
 }

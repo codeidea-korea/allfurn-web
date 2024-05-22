@@ -154,6 +154,15 @@ $( document ).ready( function() {
             $('._step2').hide();
         }
     });
+    $("#smscode").on("input", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        if ($(this).val().length >= 6) {
+            $("#btn_smscode_confirm").prop("disabled", false);
+        } else {
+            $("#btn_smscode_confirm").prop("disabled", true);
+            $('._step2').hide();
+        }
+    });
 });
 
 function gotoFindpw() {

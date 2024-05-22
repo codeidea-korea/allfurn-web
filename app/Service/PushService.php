@@ -35,7 +35,7 @@ class PushService
         $pushMessage->title = $title;
         $pushMessage->type = 'M';
         $pushMessage->content = $msg;
-        $pushMessage->sender = '010-6776-4224';
+        $pushMessage->sender = '031-813-5588';
         $pushMessage->receiver = $receiver;
         $pushMessage->save();
 
@@ -44,7 +44,7 @@ class PushService
         $userId = "allfurn";
 
         $data = "key=" . $key . "&user_id=" . $userId 
-            . "&sender=" . urlencode('010-6776-4224') . "&receiver=" . urlencode($receiver) . "&msg=" . urlencode($msg) 
+            . "&sender=" . urlencode('031-813-5588') . "&receiver=" . urlencode($receiver) . "&msg=" . urlencode($msg) 
             . "&msg_type=SMS";
     
         $ch = curl_init();
@@ -176,7 +176,7 @@ class PushService
         $token = urlencode($this->generateToken());
         $senderkey = urlencode('a2c2d74285465d194fdbfb2d35aa5d2e59e11e50');
         $tpl_code = urlencode($templateCode);
-        $sender = urlencode('010-6776-4224');
+        $sender = urlencode('031-813-5588');
         $receiver_1 = urlencode($receiver);
         $subject_1 = rawurlencode($alimtalkTemplate->templtName);
         $message_1 = rawurlencode($alimtalkTemplate->templtContent);
@@ -208,7 +208,7 @@ class PushService
         $pushMessage->title = $title;
         $pushMessage->type = 'A';
         $pushMessage->content = $message_1;
-        $pushMessage->sender = '010-6776-4224';
+        $pushMessage->sender = '031-813-5588';
         $pushMessage->receiver = $receiver;
         $pushMessage->save();
 

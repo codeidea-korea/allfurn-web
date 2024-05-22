@@ -129,6 +129,14 @@ $( document ).ready( function() {
             $("#btn_smscode_confirm").prop("disabled", true);
         }
     });
+    $("#smscode").on("input", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        if ($(this).val().length >= 6) {
+            $("#btn_smscode_confirm").prop("disabled", false);
+        } else {
+            $("#btn_smscode_confirm").prop("disabled", true);
+        }
+    });
 
     $("#btn_smscode_confirm").on("click", function () {
         if ($('.time').text() == '0:00'){
