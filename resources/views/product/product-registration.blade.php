@@ -517,11 +517,12 @@
                 for (i = 0; i < files.length; i++) {
                     var readImg = new FileReader();
                     var file = files[i];
-
+                    console.log('t1 : '+i)
                     if (file.type.match('image.*')){
                         storedFiles.push(file);
                         readImg.onload = (function(file) {
                             return function(e) {
+                                console.log('t2 : ' + $('.product-img__add').length)
                                 let imgCnt = $('.product-img__add').length + 1;
 
                                 if (imgCnt == 9) {

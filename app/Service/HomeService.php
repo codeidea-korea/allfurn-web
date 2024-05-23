@@ -269,7 +269,7 @@ class HomeService
                 $query->on('ab.idx', 'AF_board_article.board_idx')->where('ab.is_business', 0);
             })
             ->where('AF_board_article.is_delete', 0)
-            ->orderBy('viewCnt', 'desc')
+            ->orderBy('AF_board_article.register_time', 'desc')
             ->limit(5)
             ->get();
 
