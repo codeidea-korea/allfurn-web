@@ -398,7 +398,9 @@ class MessageService
 
         try{
             $decodedContent = json_decode($content, true);
-            if(!isset($decodedContent) && empty($decodedContent['type'])) { return $content; }
+            if(!isset($decodedContent) 
+                || !is_array($decodedContent)
+                || empty($decodedContent['type'])) { return $content; }
             switch($decodedContent['type']) {
                 case 'welcome':
                     $message = "올펀 가입을 축하드립니다.";
