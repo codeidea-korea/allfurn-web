@@ -115,3 +115,46 @@ function setArrayNumer( $arr )
 
     return $nData;
 }
+
+// 올톡 : 확인 안 한 갯수
+function unCheckedAllTalkCount()
+{
+    if (auth()->check()){
+        $msg = Illuminate\Support\Facades\DB::table('AF_message')->where('user_idx', auth()->user()->idx)->where('is_read', 0)->count();
+        return $msg;
+    }else{
+        return 0;
+    }
+}
+
+// 마이올펀 : 판매현황 (요청받은 견적,주문서 수) / 구매현황 (받은 견적, 주문서 수) / 문의내역
+function unCheckedMyAllFurn()
+{
+    if (auth()->check()){
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx')->where('idx', auth()->user()->idx)->first();
+        $sql = "SELECT 
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'N') 
+                AS count_res_n,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'O') 
+                AS count_res_o,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'R') 
+                AS count_req_r,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'O')
+                AS count_req_o
+            FROM DUAL";
+
+        $estimate = Illuminate\Support\Facades\DB::select($sql);
+        $total = $estimate[0]->count_res_n + $estimate[0]->count_res_o + $estimate[0]->count_req_r + $estimate[0]->count_req_o;
+        if ($total > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
