@@ -72,6 +72,9 @@ class MessageService
             })
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
+            , DB::raw("IF(max(IFNULL(AF_message.is_read, 0)) > 0, 1, 0) as is_read")
+                , DB::raw("max(AF_message.register_time) as register_time")
+
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,first_company_idx,first_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
@@ -98,6 +101,11 @@ class MessageService
         if (isset($params['room_idx']) && !empty($params['room_idx'])) {
             $roomQuery->where('AF_message_room.idx', $params['room_idx']);
         }
+        
+        $roomQuery->groupBy('first_company_idx', 'first_company_type', 'second_company_idx', 'second_company_type', 'AF_message.room_idx');
+        $roomQuery->orderBy('is_read', 'DESC');
+        $roomQuery->orderBy('register_time', 'DESC');
+
         return $roomQuery;
     }
 
@@ -852,7 +860,7 @@ class MessageService
             $message->content, 
             $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년') .' '. intVal(date('m')) .'월 '. intVal(date('d')) . '일',
-            substr(date('H:i:s'), 0, 5),
+            substr(date('H:i:s'), 1, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
             $this->getRoomMessageTitle($message->content),
             empty($companyInfo->company_name) ? '올펀' : $companyInfo->company_name
@@ -1057,7 +1065,7 @@ class MessageService
             $message->content, 
             $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년') .' '. intVal(date('m')) .'월 '. intVal(date('d')) . '일',
-            substr(date('H:i:s'), 0, 5),
+            substr(date('H:i:s'), 1, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
             $this->getRoomMessageTitle($message->content),
             $companyInfo->company_name
