@@ -132,7 +132,7 @@
     })
 
     window.addEventListener('scroll', function() {
-        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
+        if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 300 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
             loadNewProductList();
         }
     });
@@ -141,6 +141,7 @@
     let isLastPage = false;
     let currentPage = 0;
     let firstLoad = true;
+    let preCpage = '';
     function loadNewProductList(needEmpty, target) {
         if(isLoading) return;
         if(!needEmpty && isLastPage) return;
@@ -157,7 +158,8 @@
                 'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','),
                 'locations' : getIndexesOfSelectedLocation().join(','),
-                'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val()
+                'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val(), 
+                'prevCpage' : preCpage,
             },
             beforeSend : function() {
                 if(target) {
