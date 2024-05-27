@@ -241,7 +241,11 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 <li>
                     <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
                         <p>견적서 관리 / <span class="main_color">견적서 보내기</span></p>
-                        <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                        <div class="flex items-center">
+                            <!-- 신규알람 건수 추가 -->
+                            <!-- <p class="text-sm main_color">0건</p> -->
+                            <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
+                        </div>
                     </a>
                 </li>
                 {{--<!--

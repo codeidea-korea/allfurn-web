@@ -68,6 +68,7 @@ textarea{
   width:100%
 }
 
+.my_menu_list li a {padding-right:10px; }
 .my_menu_list .active{
   color: var(--main_color);
 }

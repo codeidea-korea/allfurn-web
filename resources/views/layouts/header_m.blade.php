@@ -60,7 +60,9 @@
         <li class="{{$header_depth=='category'?'active':'' }}"><a href="/home/category"><svg><use xlink:href="/img/m/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
         <li class="{{$header_depth=='like'?'active':'' }}"><a href="/like/product"><svg><use xlink:href="/img/m/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
         <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="/"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
-        <li class="{{$header_depth=='talk'?'active':'' }}"><a href="/message"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span></a></li>
+        <!-- 안읽은 메세지 수 숫자로 표기 -->
+        <li class="{{$header_depth=='talk'?'active':'' }}"><a href="/message"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span><!-- <b>5</b> --></a></li>
+        <!-- 확인하지 않은 내용 있을 때 붉은점 noread 클래스 추가 -->
         <li class="{{$header_depth=='mypage'?'active':'' }}"><a href="/mypage"><svg><use xlink:href="/img/m/icon-defs.svg#quick_my"></use></svg><span>마이올펀</span></a></li>
     </ul>
 </div>

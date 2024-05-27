@@ -400,8 +400,11 @@ header.top_fixed {position:sticky; top:0; }
 .quick_menu ul.menu li {display:flex; align-items:center; justify-content:center; height:100%; text-align:center; }
 .quick_menu ul.menu li span {font-size:10px; }
 .quick_menu ul.menu li svg {width:23px; height:23px; margin:0 auto; stroke:#46433F; }
+.quick_menu ul.menu li a {position:relative; }
 .quick_menu ul.menu li.active svg {stroke:var(--main_color); }
 .quick_menu ul.menu li.active span {color:var(--main_color); }
+.quick_menu ul.menu li.noread a:before {content:''; position:absolute; right:0; top:0; width:5px; height:5px; background-color:var(--main_color); border-radius:50%; }
+.quick_menu ul.menu li b {position:absolute;right: -6px;top: 7px;padding: 0px 5px;background-color:var(--main_color);border-radius:30px;color:#fff;height: 18px;line-height: 18px;font-size: 12px; font-weight:400; }
 .quick_menu .category_list {overflow-y:auto; position:fixed; left:0; top:54px; display:none; width:100%; height:calc(100% - 110px); background-color:#fff; }
 .quick_menu .category_list.show {display:block; }
 .quick_menu .category_list > ul > li {position:relative; border-bottom:1px solid rgba(218, 221, 224, 0.60); }
