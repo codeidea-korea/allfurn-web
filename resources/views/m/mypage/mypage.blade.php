@@ -240,7 +240,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 </li>
                 <li>
                     <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
-                        <p>견적서 관리 / <span class="main_color">견적서 보내기</span></p>
+                        <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>
                         <div class="flex items-center">
                             <!-- 신규알람 건수 추가 -->
                             <!-- <p class="text-sm main_color">0건</p> -->
