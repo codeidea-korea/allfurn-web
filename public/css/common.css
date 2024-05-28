@@ -508,3 +508,16 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 #prod_regist_btn {z-index:50; position:fixed; right:40px; bottom:40px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:var(--main_color); color:#fff; text-align:center; line-height:1.15; }
 #prod_regist_btn.hidden {display:none; }
 #prod_regist_btn a {display:block; }
+
+
+
+/* ------------------------------------
+    메인 > 팝업
+------------------------------------ */
+.intro_popup .popup_slide {overflow:hidden; position:relative; }
+.intro_popup .popup_slide img {width:100%; }
+.intro_popup .btn_bot {display:flex; gap:10px; width:100%; padding:10px; }
+.intro_popup .btn_bot button {flex-grow:1; width:50%; }
+.intro_popup .pager {z-index:10; position:absolute; bottom:5px; text-align:center; }
+.intro_popup .pager .swiper-pagination-bullet {background:#fff; opacity:1; }
+.intro_popup .pager .swiper-pagination-bullet-active {background:var(--main_color); }

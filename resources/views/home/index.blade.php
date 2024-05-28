@@ -3,6 +3,29 @@
 @section('content')
 @include('layouts.header')
 
+
+<!-- 팝업창 추가 -->
+<!--
+<div class="modal" id="popup01">
+    <div class="modal_bg" onclick="modalClose('#popup01')"></div>
+    <div class="modal_inner">
+        <button class="close_btn" onclick="modalClose('#popup01')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body intro_popup">
+            <div class="popup_slide">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide"><img src="./img/pop_banner.png" alt=""></li>
+                    <li class="swiper-slide"><img src="./img/pop_banner.png" alt=""></li>
+                </ul>
+                <div class="pager"></div>
+            </div>
+            <div class="btn_bot">
+                <button class="btn btn-line3 noTodaybtn">오늘하루 그만보기</button>
+                <button class="btn btn-primary" onclick="modalClose('#popup01')">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+-->
 <div id="content">
     <div class="main_visual">
         <div class="inner">
@@ -312,6 +335,41 @@
 
 
 <script>
+
+// 팝업
+const popup = new Swiper('.modal .intro_popup .popup_slide',{
+    loop: true,
+    speed:700,
+    autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+    },
+    pagination: {
+        el: ".modal .intro_popup .pager",
+        type: "bullets",
+    },
+})
+// 팝업 > 오늘하루 그만보기
+$('.modal .noTodaybtn').click(function(){
+    modalClose('#popup01')
+
+    const today = new Date().toLocaleDateString();
+    // 세션 스토리지에 오늘 날짜 저장
+    sessionStorage.setItem('hideForToday', today);
+})
+
+$(document).ready(function () {
+    const today = new Date().toLocaleDateString();
+    const hideForToday = sessionStorage.getItem('hideForToday');
+
+    if (hideForToday === today) {
+        // 이미 오늘 하루 동안 보지 않기를 선택한 경우, 페이지의 어떤 부분을 숨기거나 처리할 수 있습니다.
+        $("#popup01").removeClass("show");
+    } else {
+        $("#popup01").addClass("show");
+    }
+});
+
 // main_visual 
 const main_visual = new Swiper(".main_visual .slide_box", {
     effect: "creative",
