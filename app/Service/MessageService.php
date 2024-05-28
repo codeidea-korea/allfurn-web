@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Service;
 
 
@@ -72,7 +70,7 @@ class MessageService
             })
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
-            , DB::raw("IF(max(IFNULL(AF_message.is_read, 0)) > 0, 1, 0) as is_read")
+            , DB::raw("max(IFNULL(AF_message.is_read, 0)) as is_read")
                 , DB::raw("max(AF_message.register_time) as register_time")
 
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
@@ -93,6 +91,8 @@ class MessageService
             })
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
+            , DB::raw("max(IFNULL(AF_message.is_read, 0)) as is_read")
+                , DB::raw("max(AF_message.register_time) as register_time")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,second_company_idx,first_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
@@ -559,6 +559,8 @@ class MessageService
      */
     public function readRoomAlarmCount($idx)
     {
+        date_default_timezone_set('Asia/Seoul');
+
         Message::where('room_idx', '=', $idx)
             ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
             ->update(['is_read' => 1]);
@@ -809,6 +811,8 @@ class MessageService
             ->get();
         $userType = '';
         $userCompanyIdx = 1;
+        date_default_timezone_set('Asia/Seoul');
+
         if(isset($targetUsers)) {
             foreach($targetUsers as $key => $targetUser) {
                 if($user['idx'] == $targetUser->idx) {
@@ -1056,6 +1060,7 @@ class MessageService
 
 
         setlocale(LC_ALL, "ko_KR.utf-8");
+        date_default_timezone_set('Asia/Seoul');
         // 대상 업체 메시지 전달
         $companyInfo = $this->getCompany(['room_idx' => $message->room_idx], 'Y');
         event(new ChatMessage($message->room_idx, 

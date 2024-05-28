@@ -318,7 +318,9 @@ class PushService
             'notification' => $notification_opt,
             'android' => $android_opt, 
             'data' => array(
-                'start_url' => $weblink
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                'start_url' => $weblink,
+                'open_url' => $weblink
             )
         );
 

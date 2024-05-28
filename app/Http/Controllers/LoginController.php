@@ -138,7 +138,7 @@ class LoginController extends BaseController
                 'code' => 102,
                 'message' => '해당 번호로 가입된 회원 없음'
             ]);
-        }
+        }        
 
         if($isUser) {
             $target = "$user->phone_number";
@@ -184,6 +184,13 @@ class LoginController extends BaseController
         
         $users = [];
         if($isUser) {
+            if($user->state != "JS") {
+                return response()->json([
+                    'result' => 'fail',
+                    'code' => 102,
+                    'message' => '가입 승인이 되면 로그인이 가능합니다.'
+                ]);
+            }
             $new_param['target'] = $user->phone_number;
             $users = $this->loginService->getUsersByPhoneNumber($user->phone_number);
         } else {
@@ -227,6 +234,13 @@ class LoginController extends BaseController
                 'result' => 'fail',
                 'code' => 102,
                 'message' => '해당 번호로 가입된 회원 없음'
+            ]);
+        }
+        if($user->state != "JS") {
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '가입 승인이 되면 로그인이 가능합니다.'
             ]);
         }
         $this->loginService->getAuthToken($user->idx);
