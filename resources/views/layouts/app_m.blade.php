@@ -74,33 +74,33 @@
     const isInApp = window.AppWebview || (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.AppWebview);
     
     const accessToken = localStorage.getItem('accessToken');
-    if(accessToken && accessToken.length > 1) {
-        const callTime = new Date().getTime();
-        $.ajax({
-    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
-            url: '/tokenpass-signin',
-            data: {
-                'accessToken': accessToken
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                if (result.success) {
-                    if(location.pathname.indexOf('/signin') > -1) {
-                        location.href = '/';
-                    } else {
-                        location.reload();
-                    }
-                } else {
-                    localStorage.clear();
-                    location.href = '/signin';
-                }
-            }
-        });
-    } else {
-        localStorage.clear();
-        location.href = '/signin';
-    }
+    // if(accessToken && accessToken.length > 1) {
+    //     const callTime = new Date().getTime();
+    //     $.ajax({
+    // //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
+    //         url: '/tokenpass-signin',
+    //         data: {
+    //             'accessToken': accessToken
+    //         },
+    //         type: 'POST',
+    //         dataType: 'json',
+    //         success: function(result) {
+    //             if (result.success) {
+    //                 if(location.pathname.indexOf('/signin') > -1) {
+    //                     location.href = '/';
+    //                 } else {
+    //                     location.reload();
+    //                 }
+    //             } else {
+    //                 localStorage.clear();
+    //                 location.href = '/signin';
+    //             }
+    //         }
+    //     });
+    // } else {
+    //     localStorage.clear();
+    //     location.href = '/signin';
+    // }
     </script>
 
 @endif
