@@ -239,7 +239,68 @@
                     </ul>
                 </div>
             </div>
-            
+
+            <div id="main-event" class="modal">
+                <div class="modal__container" style="width: 600px;">
+                    <div class="modal__content">
+                        <button type="button" onclick="modalClose('#main-event');" class="close-button ico_circle_delete">
+                            <span class="a11y">닫기</span>
+                        </button>
+                        <div class="modal-box__container">
+                            <div class="modal-box__content">
+                                <div class="modal__desc">
+                                    <div class="modal-box__swiper">
+                                        <div id="modalkvSwipe" class="modalkeyvisual swiper-container">
+                                            <div class="swiper-wrapper">
+                                                @foreach($data['popup'] as $item)
+                                                    <div class="swiper-slide">
+                                                        <?php
+                                                            $link = '';
+                                                            switch ($item->web_link_type) {
+                                                                case 0: //Url
+                                                                    $link = $item->web_link;
+                                                                    break;
+                                                                case 1: //상품
+                                                                    $link = '/product/detail/'.$item->web_link;
+                                                                    break;
+                                                                case 2: //업체
+                                                                    $link = '/wholesaler/detail/'.$item->web_link;
+                                                                    break;
+                                                                case 3: //커뮤니티
+                                                                    $link = '/community/detail/'.$item->web_link;
+                                                                    break;
+                                                                default: //공지사항
+                                                                    $link = '/help/notice/'.$item->web_link;
+                                                                    break;
+                                                            }
+                                                        ?>
+                                                        <a href="{{$link}}">
+                                                            <p class="event__banner"
+                                                            style="background-image:url({{$item->imgUrl}})" data-web_link="{{$item->web_link}}"></p>
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="swiper-util">
+                                                <div>
+                                                    <div class="swiper-pagination"></div>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-button-prev"></div>
+                                            <div class="swiper-button-next"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal__util">
+                                    <a onclick="popupClose()" class="modal__hide-button"><span>오늘 하루 보지않기</span></a>
+                                    <a onclick="popupUrl()" class="modal__detail-button" style="cursor: pointer;"><span>자세히 보기</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -524,6 +585,67 @@ $(document)
         }
     })
 ;
+
+var modalswiper = new Swiper('#modalkvSwipe', {
+    autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+    },
+    loop: true,
+    slidesPerView: 1,
+    spaceBetween: 0,
+    paginationClickable: true,
+    keyboard: true,
+    speed: 500,
+    pagination: {
+        el: '#modalkvSwipe .swiper-pagination',
+        type: 'fraction',
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+});
+$('#modalkvSwipe .swiper-slide').hover(function(){
+    modalswiper.autoplay.stop();
+}, function(){
+    modalswiper.autoplay.start();
+});
+
+var getCookie = function (cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+var setCookie = function (cname, cvalue) {
+    var todayDate = new Date();
+    todayDate.setHours(23, 59, 59, 999);
+    var expires = "expires=" + todayDate.toString(); // UTC기준의 시간에 exdays인자로 받은 값에 의해서 cookie가 설정 됩니다.
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+var popupClose = function(){
+    setCookie("mainEventPopupClose","Y");
+    modalClose('#main-event');
+}
+
+function popupUrl() {
+    location.replace($('#modalkvSwipe .swiper-slide-active a').prop('href'));
+}
+
+$(document).ready(function(){
+    var cookiedata = document.cookie;
+    console.log('tt',cookiedata);
+    if(cookiedata.indexOf("mainEventPopupClose=Y")<0){
+        //modalOpen("#main-event");
+    }
+});
 </script>
 
 
