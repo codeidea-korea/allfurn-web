@@ -8,28 +8,48 @@
 @section('content')
 @include('layouts.header_m')
 
-<!-- 팝업창 추가 -->
-<!--
-<div class="modal" id="popup01">
-    <div class="modal_bg" onclick="modalClose('#popup01')"></div>
+
+<div class="modal" id="main-event">
+    <div class="modal_bg" onclick="modalClose('#main-event')"></div>
     <div class="modal_inner">
-        <button class="close_btn" onclick="modalClose('#popup01')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button class="close_btn" onclick="modalClose('#main-event')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body intro_popup">
             <div class="popup_slide">
                 <ul class="swiper-wrapper">
-                    <li class="swiper-slide"><img src="./img/pop_banner.png" alt=""></li>
-                    <li class="swiper-slide"><img src="./img/pop_banner.png" alt=""></li>
+                    @foreach($data['popup'] as $item)
+                        <?php
+                        $link = '';
+                        switch ($item->web_link_type) {
+                            case 0: //Url
+                                $link = $item->web_link;
+                                break;
+                            case 1: //상품
+                                $link = '/product/detail/'.$item->web_link;
+                                break;
+                            case 2: //업체
+                                $link = '/wholesaler/detail/'.$item->web_link;
+                                break;
+                            case 3: //커뮤니티
+                                $link = '/community/detail/'.$item->web_link;
+                                break;
+                            default: //공지사항
+                                $link = '/help/notice/'.$item->web_link;
+                                break;
+                        }
+                        ?>
+                        <li class="swiper-slide"><a href="{{$item->web_link}}"><img src="{{$item->imgUrl}}" alt=""></a></li>
+                    @endforeach
                 </ul>
                 <div class="pager"></div>
             </div>
             <div class="btn_bot">
-                <button class="btn btn-line3 noTodaybtn">오늘하루 그만보기</button>
-                <button class="btn btn-primary" onclick="modalClose('#popup01')">닫기</button>
+                <button class="btn btn-line3 noTodaybtn" onclick="popupClose()">오늘하루 그만보기</button>
+                <button class="btn btn-primary" onclick="modalClose('#main-event')">닫기</button>
             </div>
         </div>
     </div>
 </div>
--->
+
 <div id="content">
     <div class="main_visual">
         <div class="slide_box bg_gradient">
@@ -510,6 +530,39 @@ $(document)
     })
 ;
 
+var getCookie = function (cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+var setCookie = function (cname, cvalue) {
+    var todayDate = new Date();
+    todayDate.setHours(23, 59, 59, 999);
+    var expires = "expires=" + todayDate.toString(); // UTC기준의 시간에 exdays인자로 받은 값에 의해서 cookie가 설정 됩니다.
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+var popupClose = function(){
+    setCookie("mainEventPopupClose","Y");
+    modalClose('#main-event');
+}
+
+function popupUrl() {
+    location.replace($('#modalkvSwipe .swiper-slide-active a').prop('href'));
+}
+
+$(document).ready(function(){
+    var cookiedata = document.cookie;
+    if(cookiedata.indexOf("mainEventPopupClose=Y")<0){
+        modalOpen("#main-event");
+    }
+});
 </script>
 
 

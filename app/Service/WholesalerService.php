@@ -408,7 +408,7 @@ class WholesalerService {
             ON ac.idx = ap.category_idx
             LEFT JOIN AF_category ac2
             ON ac2.idx = ac.parent_idx
-            '.$whereCategory.'
+            '.$whereCategory.' 
             GROUP BY AF_wholesale.idx
             ) AS wholesalerList        
         '))->select('*'
@@ -421,6 +421,9 @@ class WholesalerService {
                         ) AS isCompanyInterest')
                 , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
         );
+
+        // 상품이 3개 이상인것만 가져오도록
+        $list->whereRaw('wholesalerList.productCnt >= 3');
 
         //소재지 필터링
         if (isset($params['locations']) && !empty($params['locations'])) {

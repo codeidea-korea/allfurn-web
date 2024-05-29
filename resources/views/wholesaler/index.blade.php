@@ -304,7 +304,8 @@
         if(!needEmpty && isLastPage) return;
 
         isLoading = true;
-        if(needEmpty) currentPage = 0;;
+        if(needEmpty) currentPage = 0;
+        $('#loadingContainer').show();
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -337,6 +338,7 @@
                 isLastPage = currentPage === result.list.last_page;
             },
             complete : function () {
+                $('#loadingContainer').hide();
                 displaySelectedCategories();
                 displaySelectedLocation();
                 displaySelectedOrders();
