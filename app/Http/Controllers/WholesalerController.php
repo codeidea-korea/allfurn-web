@@ -12,6 +12,8 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Session;
 
 class WholesalerController extends BaseController
@@ -94,10 +96,29 @@ class WholesalerController extends BaseController
     // 도매업체 모아보기
     public function gather()
     {
-        $data = $this->wholesalerService->getWholesalerData();
+        //인기브랜드(광고)
+        $popularbrand_ad = $this->wholesalerService->getPopularBrand();
 
-        return view('wholesaler.gether', [
-            'data'=>$data
+        return view(getDeviceType().'wholesaler.gather', [
+            'data' => $popularbrand_ad
+        ]);
+    }
+    public function gatherDetail(Request $request)
+    {
+        $cidx = $request->query('cIdx');
+
+        $list = DB::table('AF_product')->select('AF_product.*',
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+            WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+            ELSE "" END) as companyName,
+            CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+            (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+        ))->leftjoin('AF_attachment as at', function ($query) {
+            $query->on('AF_product.attachment_idx', 'at.idx');
+        })->where('company_idx', $cidx)->where('company_type', 'W')->where('state', 'S')->orderByDesc('idx')->get();
+
+        return view('product.inc-product-modal-common', [
+            'product' => $list,
         ]);
     }
 

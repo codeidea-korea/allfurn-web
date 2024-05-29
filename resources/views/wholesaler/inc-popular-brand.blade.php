@@ -42,7 +42,7 @@
     </div>
     <div class="right_box">
         <div class="count_pager"><b>1</b> / 12</div>
-        <!-- a href="/wholesaler/gather">모아보기</a //-->
+        <a href="/wholesaler/gather">모아보기</a>
     </div>
 </div>
 @endif
