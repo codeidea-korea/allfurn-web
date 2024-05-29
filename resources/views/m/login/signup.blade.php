@@ -1020,7 +1020,7 @@ function submitAction() {
     }
     form.append('companyName', $(`#${suffix}_businessname`).val());
     if (userType != "N" && userType != "S") {
-        form.append('isDomestic', $(base + ' [name="add_1"]:checked').data('value'));
+        form.append('isDomestic', $(base + ' [name="add_1"]:checked').val() == 1 ? 2 : 1);
         if ($(base + ' [name="add_1"]:checked').data('value') === 1) {
             form.append('domesticType', $(base + ' .dropdown__title').data('domestic_type'));
             form.append('address', $(base + ' .dropdown__title').text());

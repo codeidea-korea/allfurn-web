@@ -319,7 +319,7 @@ class PushService
             'android' => $android_opt, 
             'data' => array(
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                'start_url' => $weblink,
+                'start_url' => 'https://all-furn.com/signin?replaceUrl='.urlencode($weblink),
                 'open_url' => $weblink
             )
         );

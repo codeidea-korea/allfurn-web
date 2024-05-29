@@ -35,12 +35,18 @@ class LoginController extends BaseController
         $this->pushService = $pushService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $replaceUrl = $request->input('replaceUrl');
+        
         if(Auth::check()) {
-            return redirect('/');
+            if(empty($replaceUrl)) {
+                return redirect('/');
+            } else {
+                return redirect($replaceUrl);
+            }
         }
-        return view(getDeviceType() . 'login.login');
+        return view(getDeviceType() . 'login.login', ['replaceUrl' => $replaceUrl]);
     }
 
     public function findid()
