@@ -35,7 +35,7 @@ class MagazineController extends BaseController
         $params['offset'] = 0;
         
         if(getDeviceType() == "m.") {
-            $params['limit'] = 1;
+            $params['limit'] = 5;
         } else {
             $params['limit'] = 3;
         }

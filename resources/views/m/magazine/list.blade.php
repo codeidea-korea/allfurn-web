@@ -70,10 +70,10 @@
             <div class="furniture_slide overflow-hidden">
                 <ul class="furniture_news swiper-wrapper">
                     @foreach ( $furnitureNewsList as $item )
-                    <li class="swiper-slide">
-                        <div class="img_box">
-                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
-                                @if($item->content)
+                        <li class="swiper-slide">
+                            <div class="img_box">
+                                <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                    @if($item->content)
                                         @php
                                             $tmp = '';
                                             $pos = strpos($item->content, '<img src=', 0);
@@ -96,16 +96,16 @@
                                         @endphp
                                         <img src="{{ $tmp ? $tmp : '' }}" alt="">
                                     @endif
-                            </a>
-                        </div>
-                        <div class="txt_box">
-                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
-                                <div class="tit">{{ $item->title }}</div>
-                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
-                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
-                            </a>
-                        </div>
-                    </li>
+                                </a>
+                            </div>
+                            <div class="txt_box">
+                                <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                    <div class="tit">{{ $item->title }}</div>
+                                    <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
+                                    <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                                </a>
+                            </div>
+                        </li>
                     @endforeach
                 </ul>
             </div>
