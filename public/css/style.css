@@ -241,7 +241,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 .popular_prod .popular_banner .txt_box {padding-top:150px; text-align:center; position:absolute; top:0;left:50%;transform: translateX(-50%);width:100%;}
 .popular_prod .popular_banner .txt_box p {color:#fff; font-size:30px; font-weight:500; }
 .popular_prod .popular_banner .txt_box p b {font-size:40px; font-weight:700; }
-.popular_prod .popular_banner .txt_box a {display:inline-block; padding:10px 28px; margin-top:14px; background-color:rgba(255, 255, 255, 0.80); border-radius:40px; }
+.popular_prod .popular_banner .txt_box a {display:inline-block; padding:10px 28px; margin-top:14px; border:1px solid #333; background-color:rgba(255, 255, 255, 0.80); border-radius:40px; }
 .popular_prod .popular_banner img{width:100%;object-fit: cover;border-radius: 4px;}
 
 .popular_prod.type02 .slide_box ul {grid-template-columns: repeat(5,1fr);}
