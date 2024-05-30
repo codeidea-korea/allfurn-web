@@ -67,46 +67,48 @@
                 </div>
             </div>
             <div class="sub_desc mb-5">국내외 가구 박람회 소식과 가구 트랜드를 보여드립니다.</div>
-            <ul class="furniture_news">
-                @foreach ( $furnitureNewsList as $item )
-                <li>
-                    <div class="img_box">
-                        <a href="/magazine/furniture/detail/{{ $item->idx }}">
-                            @if($item->content)
-                                    @php
-                                        $tmp = '';
-                                        $pos = strpos($item->content, '<img src=', 0);
-                                        
-                                        if ( $pos !== false ) {
+            <div class="furniture_slide overflow-hidden">
+                <ul class="furniture_news swiper-wrapper">
+                    @foreach ( $furnitureNewsList as $item )
+                    <li class="swiper-slide">
+                        <div class="img_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                @if($item->content)
+                                        @php
+                                            $tmp = '';
+                                            $pos = strpos($item->content, '<img src=', 0);
                                             
-                                            $pos_from = strpos($item->content, 'https', $pos);
-                                            $pos_to = strpos($item->content, '>', $pos_from);
-                                            $sub = substr($item->content, $pos_from, $pos_to);
-                                            $image_end = strpos($sub, '.jpg');
-                                            
-                                            if ($image_end) {
-                                                $tmp = substr($sub, 0, $image_end + 4);
-                                            } else {
-                                                $image_end = strpos($sub, '.png');
-                                                $tmp = substr($sub, 0, $image_end + 4);
+                                            if ( $pos !== false ) {
+                                                
+                                                $pos_from = strpos($item->content, 'https', $pos);
+                                                $pos_to = strpos($item->content, '>', $pos_from);
+                                                $sub = substr($item->content, $pos_from, $pos_to);
+                                                $image_end = strpos($sub, '.jpg');
+                                                
+                                                if ($image_end) {
+                                                    $tmp = substr($sub, 0, $image_end + 4);
+                                                } else {
+                                                    $image_end = strpos($sub, '.png');
+                                                    $tmp = substr($sub, 0, $image_end + 4);
+                                                }
+                                                
                                             }
-                                            
-                                        }
-                                    @endphp
-                                    <img src="{{ $tmp ? $tmp : '' }}" alt="">
-                                @endif
-                        </a>
-                    </div>
-                    <div class="txt_box">
-                        <a href="/magazine/furniture/detail/{{ $item->idx }}">
-                            <div class="tit">{{ $item->title }}</div>
-                            <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
-                            <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
-                        </a>
-                    </div>
-                </li>
-                @endforeach
-            </ul>
+                                        @endphp
+                                        <img src="{{ $tmp ? $tmp : '' }}" alt="">
+                                    @endif
+                            </a>
+                        </div>
+                        <div class="txt_box">
+                            <a href="/magazine/furniture/detail/{{ $item->idx }}">
+                                <div class="tit">{{ $item->title }}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 40, $end = '...') !!}</div>
+                                <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
+                            </a>
+                        </div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
             <a href="/magazine/furniture" class="btn btn-line4 mt-7">더보기</a>
         </div>
     </section>
@@ -181,6 +183,12 @@
             type: "fraction",
         }
     });
+
+    // 가구소식 슬라이드
+    const furniture = new Swiper(".news_con03 .furniture_slide",{
+        slidesPerView: 1.1,
+        spaceBetween:10
+    })
 
     $('.search_box input').keydown(function (event) {
         if(event.key === "Enter") {
