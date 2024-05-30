@@ -27,7 +27,7 @@
                         <div class="top">
                             <div class="member">
                                 <svg class="w-4 h-4"><use xlink:href="/img/icon-defs.svg#member"></use></svg>
-                                회원수 : {{ $club->member_count+1 }}
+                                회원수 : {{ $club->member_count }}
                             </div>
                             <button class="member_btn">전체 회원 <span>닫기</span><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#member_arrow"></use></svg></button>
                         </div>
