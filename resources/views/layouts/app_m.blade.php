@@ -84,7 +84,7 @@
             success: function(result) {
                 if (result.success) {
                     if(location.pathname.indexOf('/signin') > -1) {
-                        location.replace('{{ $replaceUrl }}');
+                        location.replace('/');
                     } else {
                         location.reload();
                     }
