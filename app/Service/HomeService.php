@@ -626,7 +626,10 @@ class HomeService
     // 상단 공지
     public function getSpeakerLoud()
     {
-        $speaker = DB::table('AF_speaker')->where('state', 'G')->where('is_delete', '0')->where('is_open', 1)->first();
+        $speaker = DB::table('AF_speaker')
+                    ->where('start_date', '<', DB::raw("now()"))
+                    ->where('end_date', '>', DB::raw("now()"))
+                    ->where('state', 'G')->where('is_delete', '0')->where('is_open', 1)->limit(3)->get();
         return response()->json([
             'speaker'=>$speaker
         ]);

@@ -103,16 +103,16 @@
 </div>
 
 <script>
-    // 상단 공지 슬라이드
-    var header_banner = new Swiper(".header_banner_slide", {
-        direction: "vertical",
-        spaceBetween: 30,
-        speed:700,
-        autoplay: {
-            delay: 2000,
-            disableOnInteraction: false,
-        },
-    });
+// 상단 공지 슬라이드
+var header_banner = new Swiper(".header_banner_slide", {
+    direction: "vertical",
+    spaceBetween: 30,
+    speed:700,
+    autoplay: {
+        delay: 2000,
+        disableOnInteraction: true,
+    },
+});
 
 const getSearchData = () => {
     fetch("/home/getSearchData", {
@@ -372,14 +372,19 @@ function getSpeakerLoud() {
         type			: 'POST',
         dataType		: 'json',
         success		: function(result) {
-            let speaker_link;
-            if (result.speaker.web_link == "4"){
-                speaker_link = '/help/notice/';
-            }else{
-                speaker_link = result.speaker.web_link;
-            }
-            let htmlText = `<a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>${result.speaker.speaker_text}<svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>`;
-            $('.header_banner .inner').html(htmlText);
+            let htmlText = ''; 
+            result.speaker.forEach(function (e, idx) {
+                console.log(e)
+                let speaker_link;
+                if (e.web_link == "4"){
+                    speaker_link = '/help/notice/';
+                }else{
+                    speaker_link = e.web_link;
+                }
+                htmlText += `<li class="swiper-slide"><a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>${e.speaker_text}<svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a></li>`;
+            })
+            $('.header_banner_slide .swiper-wrapper').html(htmlText);
+            header_banner.update();
         }
     });
 }
