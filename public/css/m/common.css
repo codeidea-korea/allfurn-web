@@ -360,6 +360,7 @@ header .header_top .right_link .alarm_btn svg {width:24px; height:24px; }
 header .header_top.sub_header .title {font-size: 18px;font-weight: 600;position: absolute;transform: translateX(-50%);left: 50%;}
 
 header .header_banner {padding:8px 0; background-color: var(--main_color); font-size:14px; color:#fff; font-weight:400; }
+header .header_banner .header_banner_slide {overflow:hidden; height:27px;}
 header .header_banner a {gap:10px; }
 header .header_banner svg {width:24px; height:24px; }
 

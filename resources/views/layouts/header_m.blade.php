@@ -33,10 +33,16 @@
     </div>
     <div class="header_banner {{ $header_banner }} {{ ($header_depth=='category'|| $header_depth=='prodlist') ? 'hidden' : '' }}">
         <div class="inner">
-            <a href="javascript:;" class="flex items-center">
-                <svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>
-                <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg>
-            </a>
+            <div class="header_banner_slide">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide">
+                        <a href="javascript:;" class="flex items-center">
+                            <svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>
+                            <svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </header>
@@ -157,6 +163,19 @@
 </div>
 
 <script type="text/javascript">
+
+    // 상단 공지 슬라이드
+    var header_banner = new Swiper(".header_banner_slide", {
+        direction: "vertical",
+        spaceBetween: 30,
+        speed:700,
+        autoplay: {
+            delay: 2000,
+            disableOnInteraction: false,
+        },
+    });
+
+    
     const getSearchData = () => {
         fetch("/home/getSearchData", {
             headers: {
