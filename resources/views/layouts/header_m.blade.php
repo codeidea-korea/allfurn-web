@@ -390,7 +390,6 @@
             success		: function(result) {
                 let htmlText = ''; 
                 result.speaker.forEach(function (e, idx) {
-                    console.log(e)
                     let speaker_link;
                     if (e.web_link == "4"){
                         speaker_link = '/help/notice/';
