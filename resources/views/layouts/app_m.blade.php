@@ -52,53 +52,6 @@
 
 </head>
 <body>
-
-@if (  !empty(Auth::user()) && !empty(Auth::user()['account']) )
-
-@else
-
-<script type="text/javascript">
-    // 인앱 로그인인지 여부
-    function checkMobile(){
-        var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
-        if ( varUA.indexOf('android') > -1) {
-            return "android";
-        } else if ( varUA.indexOf("iphone") > -1||varUA.indexOf("ipad") > -1||varUA.indexOf("ipod") > -1 ) {
-            //IOS
-            return "ios";
-        } else {
-            return "other";
-        }
-    }
-    const accessToken = localStorage.getItem('accessToken');
-    if(accessToken && accessToken.length > 1) {
-        const callTime = new Date().getTime();
-        $.ajax({
-    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
-            url: '/tokenpass-signin',
-            data: {
-                'accessToken': accessToken
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                if (result.success) {
-                    if(location.pathname.indexOf('/signin') > -1) {
-                        location.replace('/');
-                    } else {
-                        location.reload();
-                    }
-                } else {
-                    localStorage.clear();
-                    location.href = '/signin';
-                }
-            }
-        });
-    }
-    </script>
-
-@endif
-
 @yield('content')
 @include('layouts.modal')
 @include('layouts.footer_m')
