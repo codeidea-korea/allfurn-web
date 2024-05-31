@@ -396,7 +396,7 @@ class WholesalerService {
                 , SUM(DISTINCT(ap.access_count))  AS productAccessCount
                 , COUNT(DISTINCT(ao.idx)) as orderCnt
                 , COUNT(DISTINCT(ap.idx)) as productCnt
-                , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
+                , COALESCE(MAX(ap.register_time)) as access_date
             FROM AF_wholesale
             JOIN AF_product ap
             ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O")
