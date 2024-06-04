@@ -450,6 +450,7 @@
             const roomIdx = elem.dataset.roomIdx;
             const data = new FormData();
             data.append('room_idx', roomIdx);
+            data.append('message', '');
             const imageFiles = document.getElementById('img_file').files;
             if (imageFiles.length > 0) {
                 data.append('message_image', imageFiles[0]);

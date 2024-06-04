@@ -74,7 +74,7 @@ class MessageService
                 , DB::raw("max(AF_message.register_time) as register_time")
 
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
-                    ,first_company_idx,first_company_idx) AS other_company_idx")
+                    ,first_company_idx,second_company_idx) AS other_company_idx")
                 , DB::raw("IF(first_company_idx = '".$user->company_idx."' 
                     ,first_company_type,second_company_type) AS other_company_type"))->distinct();
         } else {
@@ -99,12 +99,12 @@ class MessageService
                     ,second_company_type,first_company_type) AS other_company_type"))->distinct();
         }
         if (isset($params['room_idx']) && !empty($params['room_idx'])) {
-            $roomQuery->where('AF_message_room.idx', $params['room_idx']);
+            $roomQuery = $roomQuery->where('AF_message_room.idx', $params['room_idx']);
         }
         
-        $roomQuery->groupBy('first_company_idx', 'first_company_type', 'second_company_idx', 'second_company_type', 'AF_message.room_idx');
-        $roomQuery->orderBy('is_read', 'DESC');
-        $roomQuery->orderBy('register_time', 'DESC');
+        $roomQuery = $roomQuery->groupBy('first_company_idx', 'first_company_type', 'second_company_idx', 'second_company_type', 'AF_message.room_idx');
+        $roomQuery = $roomQuery->orderBy('is_read', 'DESC');
+        $roomQuery = $roomQuery->orderBy('register_time', 'DESC');
 
         return $roomQuery;
     }
@@ -159,17 +159,32 @@ class MessageService
                     ) AS locations')
                 )->first();
                 
+        } else if ($room->other_company_type === 'S' || $room->other_company_type === 'N') {
+            
+            $company = DB::table('AF_normal AS company')
+                ->leftJoin('AF_attachment AS attach', 'attach.idx', 'company.namecard_attachment_idx')
+                ->leftJoin('AF_user_push_set AS push', function($query) use ($room) {
+                    $query->on('push.company_idx', 'company.idx')->where('push.company_type', $room->other_company_type);
+                })
+                ->where('company.idx', $room->other_company_idx)
+                ->select('company.idx'
+                    , DB::raw('company.name as company_name')
+                    , DB::raw('company.phone_number as phone_number')
+                    , DB::raw('"'.$room->other_company_type.'" AS company_type')
+                    , DB::raw('CONCAT("'.preImgUrl().'",attach.folder,"/",attach.filename) AS profile_image')
+                    , DB::raw('IF(push.idx,"Y","N") AS is_alarm')
+                )->first();
         } else {
 
-	    $company_idx = 1;
-	    $company_name = '올펀';
-	    $company_type = 'A';
+            $company_idx = 1;
+            $company_name = '올펀';
+            $company_type = 'A';
 	    
-	    if($user->company_idx > 1 && $revers == 'N') {
-	        $company_idx = $user->company_idx;
-            $company_name = $user->name;
-            $company_type = 'U';
-	    }
+            if($user->company_idx > 1 && $revers == 'N') {
+                $company_idx = $user->company_idx;
+                $company_name = $user->account;
+                $company_type = 'U';
+            }
             $is_alarm = DB::table('AF_user_push_set AS push')
                 ->where('push.company_idx', 1)
                 ->where('push.company_type', "A")
@@ -814,20 +829,20 @@ class MessageService
         date_default_timezone_set('Asia/Seoul');
 
         if(isset($targetUsers)) {
+            $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['company_idx']], 'Y');
+            if(empty($companyInfo)) {
+                $companyInfo = (object)[
+                    'idx' => $user['company_idx'],
+                    'room_idx' => $message->room_idx,
+                    'profile_image' => config('constants.ALLFURN.PROFILE_IMAGE'),
+                    'company_name' => $user['account'],
+                    'company_type' => $user['type'],
+                    'is_alarm' => 'Y',
+                ];
+            }
             foreach($targetUsers as $key => $targetUser) {
                 if($user['idx'] == $targetUser->idx) {
                     continue;
-                }
-                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $targetUser->type, 'user_company_idx' => $targetUser->company_idx], 'Y');
-                if(empty($companyInfo)) {
-                    $companyInfo = (object)[
-                        'idx' => $targetUser->company_idx,
-                        'room_idx' => $message->room_idx,
-                        'profile_image' => config('constants.ALLFURN.PROFILE_IMAGE'),
-                        'company_name' => $targetUser->name,
-                        'company_type' => $targetUser->type,
-                        'is_alarm' => 'Y',
-                    ];
                 }
                 if(($targetUser->type == $room->first_company_type && $targetUser->company_idx == $room->first_company_idx) 
                     || ($targetUser->type == $room->second_company_type && $targetUser->company_idx == $room->second_company_idx)) {
