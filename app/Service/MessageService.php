@@ -1128,21 +1128,35 @@ class MessageService
     public function getUnreadRecipientsList()
     {
         return Message::select(
-              DB::raw('CASE second_company_type 
-                        WHEN "W" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "W" AND company_idx = second_company_idx AND parent_idx = 0)
-                        WHEN "R" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "R" AND company_idx = second_company_idx AND parent_idx = 0)
-                    END AS phone_number')
-            , DB::raw('CASE first_company_type 
-                        WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = first_company_idx)
-                        WHEN "R" THEN (SELECT company_name FROM AF_retail    WHERE idx = first_company_idx)
-                    END 
-                    AS 회사명')
-            , DB::raw('"' .str_replace("https://", "", env("APP_URL"))."/message" .'" AS 올톡링크')
+            DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                amr.second_company_idx, amr.first_company_idx) as receive_company_idx'),
+            DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                amr.second_company_type, amr.first_company_type) as receive_company_type'),
+            DB::raw('CASE if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.second_company_type, amr.first_company_type) 
+                    WHEN "W" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "W" AND company_idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.second_company_idx, amr.first_company_idx) AND parent_idx = 0)
+                    WHEN "R" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "R" AND company_idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.second_company_idx, amr.first_company_idx) AND parent_idx = 0)
+                    WHEN "S" || "N" THEN (SELECT phone_number FROM AF_normal    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.second_company_idx, amr.first_company_idx))
+                END AS phone_number'),
+            DB::raw('CASE sender_company_type 
+                    WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.first_company_idx, amr.second_company_idx))
+                    WHEN "R" THEN (SELECT company_name FROM AF_retail    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.first_company_idx, amr.second_company_idx))
+                    WHEN "S" || "N" THEN (SELECT name FROM AF_normal    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
+                    amr.first_company_idx, amr.second_company_idx))
+                END 
+                AS 회사명'),
+            DB::raw("'" . env("APP_URL")."/message' AS 올톡링크")
         )
         ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
         ->where('AF_message.is_read', 0)
         ->whereRaw('DATE(AF_message.register_time) = (CURDATE() - INTERVAL 1 DAY)')
         // ->where('second_company_idx', 1823) // INFO: 테스트를 위해서 조건을 추가.
+        ->distinct()
         ->get();
     }
 }
