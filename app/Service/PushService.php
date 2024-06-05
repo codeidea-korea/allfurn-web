@@ -271,9 +271,9 @@ class PushService
         $pushMessage->is_delete = 0;
         
         $pushMessage->save();
-
         
-        $authToken = PushToken::where('user_idx', '=', $to)->orderBy('register_time', 'DESC')->first();
+        
+        $authToken = PushToken::where('user_idx', '=', $to)->where('expired', '=', 0)->orderBy('register_time', 'DESC')->first();
         if(empty($authToken)) {
         
             $sendLog = new PushSendLog();
@@ -317,8 +317,9 @@ class PushService
             'token' => $authToken->push_token,
             'notification' => $notification_opt,
             'android' => $android_opt, 
-            'data' => array(
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+	    'data' => array(
+		    "click_action" => "FLUTTER_NOTIFICATION_CLICK",
+
                 'start_url' => 'https://all-furn.com/signin?replaceUrl='.urlencode($weblink),
                 'open_url' => $weblink
             )

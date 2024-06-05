@@ -122,7 +122,11 @@ class LoginService
     }
     
     public function getUserByPhoneNumber(string $phone_number) {
-        $user = User::select("*")->where([
+
+//        $this->pushService->sendPush('Allfurn - 채팅', '테스트 : 123', 
+//		1648, 5, env('APP_URL').'/message', env('APP_URL').'/message');
+
+	    $user = User::select("*")->where([
                 ['phone_number', $phone_number]
             ])->first();
         return $user;
@@ -165,6 +169,7 @@ class LoginService
         $pushToken = new PushToken;
         $pushToken->user_idx = $authToken['user_idx'];
         $pushToken->push_token = $fcmToken;
+        $pushToken->expired = 0;
         $pushToken->save();
 
         $result['code'] = 'S001';
