@@ -62,7 +62,7 @@
                             @foreach($arr as $item)
                                 <div class="dropdown my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
-                                        <p class="dropdown__title" data-placeholder="{{$item->optionName}} 선택 (@if($item->required == 1)필수@else선택@endif)">
+                                        <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
                                             @if($item->required == 1)
                                                 (필수)
@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                            <div class="opt_result_area">
+                            <div class="opt_result_area ori">
                                 {{-- @if($required)
                                     <div class="option_result mt-3 mb-3">
                                         <div class="option_top selection__result required">
@@ -398,52 +398,99 @@
                                         <th>상품번호</th>
                                         <td>{{ $data['detail'] -> product_number }}</td>
                                     </tr>
-                                    <tr>
-                                        <th>상품수량</th>
-                                        <td>
-                                            <div class="count_box">
-                                                <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                <input type="text" name="product_count" value="1" readOnly />
-                                                <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]') 
+                                        <input type="hidden" name="product_count" value="1" readOnly />
+                                    @else
+                                        <tr>
+                                            <th>상품수량</th>
+                                            <td>
+                                                <div class="count_box">
+                                                    <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                    <input type="text" name="product_count" value="1" readOnly />
+                                                    <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endif 
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                         <td>
-                                            @if (!empty(json_decode($data['detail']['product_option'])))
-                                            <table class="my_table w-full text-left">
-                                                @foreach (json_decode($data['detail']['product_option']) as $key => $val)
-                                                @if ($val -> required === '1')
-                                                <tr>
-                                                    <th>
-                                                        {{ $val -> optionName }}
-                                                        <input type="hidden" name="product_option_key[]" value="{{ $val -> optionName }}" readOnly />
-                                                    </th>
-                                                    <td>
-                                                        <select name="product_option_value[]" class="input-form w-2/3">
-                                                            @foreach ($val -> optionValue as $opVal)
-                                                            <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                </tr>
-                                                @endif
+                                            @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                                <input type="hidden" name="product_option_exist" value="1" readOnly />
+                                                <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
+                                                @foreach($arr as $item)
+                                                    <div class="dropdown for_estimate_each my_filterbox mt-3" style="position: relative;">
+                                                        <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
+                                                            <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
+                                                                {{$item->optionName}} 선택
+                                                                @if($item->required == 1)
+                                                                    (필수)
+                                                                @else
+                                                                    (선택)
+                                                                @endif
+                                                            </p>
+                                                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                                        </a>
+                                                        <div class="filter_dropdown_wrap w-full" style="display: none;">
+                                                            <ul>
+                                                                @foreach($item->optionValue as $sub)
+                                                                    <li class="dropdown__item" style="display: inherit;gap:0;padding:0;border:0;border-radius:0;margin-top:0;" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                                                                        <a href="javascript:;" class="flex items-center">
+                                                                            {{$sub->propertyName}}
+                                                                            @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                                                <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
+                                                                            @endif
+                                                                        </a>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </div>
+                                                    </div>
                                                 @endforeach
-                                            </table>
+                                                <div class="prod_detail_top" style="padding:0">
+                                                    <div class="txt_box" style="display:inherit;width:100%;min-height:auto;padding-left:0;">
+                                                        <div class="opt_result_area for_estimate"></div>
+                                                    </div>
+                                                </div>
                                             @else
-                                            없음
-                                            @endif
+                                                없음
+                                                <input type="hidden" name="product_option_exist" value="0" readOnly />
+                                            @endif 
+                                        
+                                            {{-- @if (!empty(json_decode($data['detail']['product_option'])))
+                                                <table class="my_table w-full text-left">
+                                                    @foreach (json_decode($data['detail']['product_option']) as $key => $val)
+                                                        @if ($val -> required === '1')
+                                                            <tr>
+                                                                <th>
+                                                                    {{ $val -> optionName }}
+                                                                    <input type="hidden" name="product_option_key[]" value="{{ $val -> optionName }}" readOnly />
+                                                                </th>
+                                                                <td>
+                                                                    <select name="product_option_value[]" class="input-form w-2/3">
+                                                                        <option value="">선택</option>
+                                                                        @foreach ($val -> optionValue as $opVal)
+                                                                            <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                </table>
+                                            @else
+                                                없음
+                                            @endif --}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>판매가격</th>
-                                        <td class="txt-gray">
-                                        {{ 
-                                            ($data['detail'] -> price > 0) ? 
-                                                number_format($data['detail'] -> price).'원' 
-                                                : $data['detail'] -> price_text 
-                                        }}
+                                        <td class="txt-gray product_price" data-total_price={{$data['detail']->price}}>
+                                            {{ 
+                                                ($data['detail'] -> price > 0) ? 
+                                                    number_format($data['detail'] -> price).'원' 
+                                                    : $data['detail'] -> price_text 
+                                            }}
                                         </td>
                                         <input type="hidden" name="product_each_price" value="{{ $data['detail'] -> price }}" />
                                         <input type="hidden" name="product_each_price_text" value="{{ $data['detail'] -> price_text }}" />
@@ -473,6 +520,7 @@
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script type="text/javascript">
+        var opt_idx = 0;
         var isProc = false;
         var optionTmp = [];
 
@@ -501,7 +549,7 @@
             $(this).toggleClass('active');
             $(".filter_dropdown_wrap").toggle();
             $(".filter_dropdown svg").toggleClass("active");
-            event.stopPropagation(); // 이벤트 전파 방지
+            //event.stopPropagation(); // 이벤트 전파 방지
         });
 
         $(".filter_dropdown_wrap ul li a").click(function(){
@@ -525,6 +573,7 @@
 
         // 옵션 선택
         $('body').on('click', '.dropdown li', function () {
+            opt_idx++;
             var required = false;
             var requiredCnt = $('.dropdown.required').length;
             var idx = $(this).parents('.dropdown').index();
@@ -551,7 +600,7 @@
                 required = true;
 
                 if (requiredCnt > 1 && optionTmp.length != idx-1) {
-                    alert('상위 필수 옵션 선택 후 해당 옵션을 선택해주세요.'); return false;
+                    //alert('상위 필수 옵션 선택 후 해당 옵션을 선택해주세요.'); return false;
                 }
 
                 optionTmp.push({
@@ -559,6 +608,7 @@
                     'option_name': $(this).data('option_name'),
                     'option_price': $(this).data('price'),
                 })
+                console.log(optionTmp)
 
                 if (requiredCnt > optionTmp.length) {
                     return;
@@ -566,7 +616,6 @@
                     $('.selection__result').map(function () {
                         eqCnt = 0;
                         for(i=0; i<optionTmp.length; i++) {
-                            //console.log('selected_option_name', $(this).find('.selection__text').text())
                             if ($(this).find('.selection__text').text() == optionTmp[i]['option_name']) {
                                 eqCnt ++;
 
@@ -588,16 +637,16 @@
                 var htmlText = '<div class="option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
                 if (required) {
                     optionTmp.map(function (item) {
-                        htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                        htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                     })
                 } else {
-                    htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                    htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                 }
                 htmlText += '</div>' +
                         '<div class="option_count">' +
                             '<div>' +
                                 '<button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>' +
-                                '<input type="text" id="qty_input" name="qty_input" value="1" maxlength="3">' +
+                                '<input type="text" id="qty_input" name="qty_input" value="1" maxlength="3" data-opt_idx="'+opt_idx+'">' +
                                 '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
                             '</div>' +
                             '<p>';
@@ -629,7 +678,7 @@
             }
             var price = 0;
             var total_qty = 0;
-            $('.selection__result').map(function () {
+            $('.ori .selection__result').map(function () {
                 var resultPrice = 0;
                 $(this).find('.selection__text').map(function () {
                     resultPrice += parseInt($(this).data('price'));
@@ -652,6 +701,7 @@
         // 수량 변경
         $(document).on('click', '.option_count .btn_minus', function (e) {
             e.preventDefault();
+            var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
             var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
             var num = parseInt(stat, 10);
             num--;
@@ -659,19 +709,20 @@
                 alert('더이상 줄일수 없습니다.');
                 num = 1;
             }
-
-            $(this).parents('.option_count').find("input[name='qty_input']").val(num);
+            $("input[data-opt_idx='"+oidx+"']").val(num);
+            //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
             reCal();
         });
 
         // 수량 변경
         $(document).on('click', '.option_count .btn_plus', function (e) {
             e.preventDefault();
+            var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
             var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
             var num = parseInt(stat, 10);
             num++;
-
-            $(this).parents('.option_count').find("input[name='qty_input']").val(num);
+            $("input[data-opt_idx='"+oidx+"']").val(num);
+            //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
             reCal();
         });
 
@@ -681,7 +732,9 @@
 
         // 옵션 삭제
         $(document).on('click', '.ico_opt_remove', function () {
-            $(this).parents('.option_result').remove();
+            var oidx = $(this).data('opt_idx');
+            $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+            //$(this).parents('.option_result').remove();
             reCal();
         })
 
@@ -782,7 +835,6 @@
                 throw new Error('Sever Error');
             }).then(json => {
                 if (json.success) {
-                    console.log(json);
                     $('#request_time').text(json.now1);
                     $('input[name="request_time"]').val(json.now2);
                     $('#estimate_group_code').text(json.group_code);
@@ -893,7 +945,6 @@
             }).then(response => {
                 return response.json();
             }).then(json => {
-                //console.log(json); return false;
                 if (json.result == 'success') {
                     alert('기본 사업자등록증으로 등록되었습니다.'); return false;
                 } else {
@@ -970,12 +1021,26 @@
             const formData = new FormData(document.getElementById('isForm'));
             formData.append('reg_type', '1');
             formData.append('files[]', storedFiles[0]);
-            /*
-            for (const [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-            return false;
-            */
+
+            let optArr = '[';
+            $('.for_estimate_each').each(function(e, i){
+                let oname = $(this).find('.dropdown__title').data('placeholder');
+                if (e > 0) optArr += ',';
+                optArr += `{"optionName":"${oname}","optionValue":{`;
+                $('.for_estimate .option_result').each(function(e2, i2){
+                    let optionName = $(this).find('.selection__text').data('option_name')
+                    let optionPrice = $(this).find('.selection__text').data('price')
+                    let optionQty = $(this).find('#qty_input').val();
+                    if (e2 > 0) optArr += ',';
+                    optArr += `"${optionName}":"${optionPrice}/${optionQty}"`;
+                });
+                optArr += `}}`;
+            });
+            optArr += ']';
+            formData.append('product_option_json', optArr);
+            //console.log(optArr);
+
+            formData.append('product_total_price', $('.product_price').data('total_price'));
 
             fetch('/estimate/insertRequest', {
                 method  : 'POST',
@@ -996,8 +1061,6 @@
                 }
             });
         }
-
-        
 
         $(function(){
             $('.count_box .minus').off().on('click', function(){

@@ -64,7 +64,7 @@
                             @foreach($arr as $item)
                                 <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown2 w-full h-full flex justify-between items-center">
-                                        <p class="dropdown__title" data-placeholder="{{$item->optionName}} 선택 (@if($item->required == 1)필수@else선택@endif)">
+                                        <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
                                             @if($item->required == 1)
                                                 (필수)
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                            <div class="opt_result_area">
+                            <div class="opt_result_area ori">
                                 {{-- <div class="option_result mt-3 mb-3">
                                     <div class="option_top">
                                         <div>Round - 오디오랙 / 화이트 / 2단 200mm</div>
@@ -486,7 +486,7 @@
         }
         var price = 0;
         var total_qty = 0;
-        $('.selection__result').map(function () {
+        $('.ori .selection__result').map(function () {
             var resultPrice = 0;
             $(this).find('.selection__text').map(function () {
                 resultPrice += parseInt($(this).data('price'));
@@ -509,6 +509,7 @@
     // 수량 변경
     $(document).on('click', '.option_count .btn_minus', function (e) {
         e.preventDefault();
+        var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
         var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
         var num = parseInt(stat, 10);
         num--;
@@ -516,19 +517,20 @@
             alert('더이상 줄일수 없습니다.');
             num = 1;
         }
-
-        $(this).parents('.option_count').find("input[name='qty_input']").val(num);
+        $("input[data-opt_idx='"+oidx+"']").val(num);
+        //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
         reCal();
     });
 
     // 수량 변경
     $(document).on('click', '.option_count .btn_plus', function (e) {
         e.preventDefault();
+        var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
         var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
         var num = parseInt(stat, 10);
         num++;
-
-        $(this).parents('.option_count').find("input[name='qty_input']").val(num);
+        $("input[data-opt_idx='"+oidx+"']").val(num);
+        //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
         reCal();
     });
 
@@ -538,7 +540,9 @@
 
     // 옵션 삭제
     $(document).on('click', '.ico_opt_remove', function () {
-        $(this).parents('.option_result').remove();
+        var oidx = $(this).data('opt_idx');
+        $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+        //$(this).parents('.option_result').remove();
         reCal();
     })
 </script>

@@ -203,12 +203,16 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
 });
 
 
-Route::prefix('alarm')->name('alarm')->middleware('auth')->group(function() {
+Route::prefix('alarm')->name('alarm')
+		      ->middleware('auth')
+		      ->group(function() {
     Route::get('/{type?}', 'AlarmController@index');
     Route::post('/send', 'AlarmController@send');
 });
 
-Route::prefix('message')->name('message')->middleware('auth')->group(function() {
+Route::prefix('message')->name('message')
+			->middleware('auth')
+			->group(function() {
     Route::get('/', 'MessageController@index');
     Route::get('/room/detail', 'MessageController@index');
     Route::get('/room', 'MessageController@room');
@@ -224,7 +228,9 @@ Route::prefix('message')->name('message')->middleware('auth')->group(function() 
     Route::get('/read','MessageController@readRoomAlarmCount');
 });
 
-Route::prefix('community')->name('community')->middleware('auth')->group(function() {
+Route::prefix('community')->name('community')
+			  ->middleware('auth')
+			  ->group(function() {
     Route::get('/', 'CommunityController@index')->name('.index');
     Route::delete('/remove/{idx}', 'CommunityController@removeArticle');
     Route::get('/articles', 'CommunityController@getArticleList');
@@ -281,7 +287,9 @@ Route::prefix('download')->name('download')->group(function() {
     Route::get('/image/name-card/{idx}', 'DownloadController@downloadNameCard');
 });
 
-Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function() {
+Route::prefix('magazine')->name('magazine')
+			 ->middleware('auth')
+			 ->group(function() {
     Route::get('/', 'MagazineController@index');
     Route::get('/daily', 'MagazineController@dailyNews');
     Route::get('/daily/detail/{idx}', 'MagazineController@newsDetail');
@@ -291,7 +299,9 @@ Route::prefix('magazine')->name('magazine')->middleware('auth')->group(function(
     Route::get('/detail/{idx}', 'MagazineController@detail');
 });
 
-Route::prefix('help')->name('help')->middleware('auth')->group(function() {
+Route::prefix('help')->name('help')
+->middleware('auth')
+	->group(function() {
     Route::get('/', 'HelpController@index');
     Route::get('/faq', 'HelpController@faq')->name('.faq');
     Route::get('/notice', 'HelpController@notice')->name('.notice');

@@ -103,19 +103,28 @@ class EstimateService {
         $estimate -> product_count = $params['product_count'];
         $estimate -> product_each_price = $params['product_each_price'];
         $estimate -> product_each_price_text = $params['product_each_price_text'];
-        $estimate -> product_total_price = $params['product_each_price'] * $params['product_count'];
 
-        if(isset($params['product_option_key'])) {
-            if(count($params['product_option_key']) > 0) {
-                $product_option_arr = array();
-                for($i = 0; $i < count($params['product_option_key']); $i++) {
-                    $product_option_value = explode(',', $params['product_option_value'][$i]);
+        if ($params['product_option_exist'] == '1'){
+            $estimate->product_total_price = $params['product_total_price'];
+        }else{
+            $estimate->product_total_price = $params['product_each_price'] * $params['product_count'];
+        }
 
-                    $product_option_arr[$i]['optionName'] = $params['product_option_key'][$i];
-                    $product_option_arr[$i]['optionValue'][$product_option_value[0]] = $product_option_value[1];
+        if (isset($params['product_option_json'])) {
+            $estimate -> product_option_json = $params['product_option_json'];
+        }else{
+            if(isset($params['product_option_key'])) {
+                if(count($params['product_option_key']) > 0) {
+                    $product_option_arr = array();
+                    for($i = 0; $i < count($params['product_option_key']); $i++) {
+                        $product_option_value = explode(',', $params['product_option_value'][$i]);
+    
+                        $product_option_arr[$i]['optionName'] = $params['product_option_key'][$i];
+                        $product_option_arr[$i]['optionValue'][$product_option_value[0]] = $product_option_value[1];
+                    }
+    
+                    $estimate -> product_option_json = json_encode($product_option_arr, JSON_UNESCAPED_UNICODE);
                 }
-
-                $estimate -> product_option_json = json_encode($product_option_arr, JSON_UNESCAPED_UNICODE);
             }
         }
 

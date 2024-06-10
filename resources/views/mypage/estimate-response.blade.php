@@ -1053,6 +1053,7 @@
                         $('.request_estimate_product_option').append(`<table class="my_table w-full text-left request_estimate_product_option_table">`);
 
                         product_option_json = JSON.parse(json.data[0].product_option_json);
+                        console.log(product_option_json)
                         for(var key in product_option_json) {
                             $('.request_estimate_product_option_table').append(
                             `<tr>
