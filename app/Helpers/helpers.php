@@ -120,8 +120,17 @@ function setArrayNumer( $arr )
 function unCheckedAllTalkCount()
 {
     if (auth()->check()){
-        $msg = Illuminate\Support\Facades\DB::table('AF_message')->where('user_idx', auth()->user()->idx)->where('is_read', 0)->count();
-        return $msg;
+        $sql = "SELECT SUM(IF(IFNULL(msg.is_read, 0) = 0, 1, 0)) AS total_unread 
+            FROM ALLFURN.AF_message msg
+            JOIN ALLFURN.AF_message_room room on msg.room_idx = room.idx
+            WHERE (
+                (room.first_company_idx = ".auth()->user()->company_idx." AND room.first_company_type = '".auth()->user()->type."')
+                OR (room.second_company_idx = ".auth()->user()->company_idx." AND room.second_company_type = '".auth()->user()->type."')
+            )
+            AND user_idx != " . auth()->user()->idx;
+        $msg = Illuminate\Support\Facades\DB::select($sql);
+
+        return $msg[0]->total_unread;
     }else{
         return 0;
     }

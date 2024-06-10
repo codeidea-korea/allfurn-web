@@ -6,7 +6,7 @@
 <div id="content">
     <div class="detail_mo_top">
         <div class="inner">
-            <a class="back_img" href="javascript:history.back()"><svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg></a>
+            <a class="back_img" href="/community"><svg><use xlink:href="/img/icon-defs.svg#left_arrow"></use></svg></a>
             <div class="more_btn">
                 <button><svg><use xlink:href="/img/icon-defs.svg#more_dot"></use></svg></button>
                 <div>
