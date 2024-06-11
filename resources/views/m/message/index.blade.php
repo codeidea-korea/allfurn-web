@@ -40,7 +40,7 @@ $header_banner = '';
                     @endforeach
                     <!-- Ajax include -->
                 </ul>
-
+{{--
                 <div class="search_box">
                     <div class="top_search">
                         <a href="javascript:;" class="search_close">
@@ -100,7 +100,7 @@ $header_banner = '';
                         </ul>
                     </div>
         
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -231,8 +231,8 @@ $header_banner = '';
 
         {{-- 대화방 이동 --}}
         const visibleRoom = (idx) => {
-            
-            let params = {room_idx: idx}
+            cchannel.disconnect();
+            cchannel.unbind('user-cmd-event-{{ $user_idx }}');
 
             window.location.href = location.pathname + '/room?' + new URLSearchParams({ room_idx: idx, chatting_keyword: $('#chatting_keyword').val() });
         }

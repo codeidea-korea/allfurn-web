@@ -22,17 +22,32 @@ if('{{ $replaceUrl ?? "" }}' != '') {
 
 <script type="text/javascript">
     // 인앱 로그인인지 여부
-    function checkMobile(){
-        var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
-        if ( varUA.indexOf('android') > -1) {
-            return "android";
-        } else if ( varUA.indexOf("iphone") > -1||varUA.indexOf("ipad") > -1||varUA.indexOf("ipod") > -1 ) {
-            //IOS
-            return "ios";
-        } else {
-            return "other";
+    
+    var isMobile = {
+        Android: function () {
+            return navigator.userAgent.match(/Chrome/) == null ? false : true;
+        },
+        iOS: function () {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+        },
+        any: function () {
+            return (isMobile.Android() || isMobile.iOS());
         }
+    };
+
+    try{
+        if(isMobile.any()) {
+
+            if(!window.AppWebview && '{{ $replaceUrl ?? "" }}' != '') {
+                location.href = 'allfurn://' + decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
+                    .replace('https://all-furn-web/', '')
+                    .replace('https://allfurn-web.codeidea.io/', '')));
+            }
+        }
+    } catch (e){
+        console.log(e)
     }
+    
     const accessToken = localStorage.getItem('accessToken');
     if(accessToken && accessToken.length > 1) {
         const callTime = new Date().getTime();
@@ -89,6 +104,7 @@ if('{{ $replaceUrl ?? "" }}' != '') {
                 </div>
                     <form id="idlogin" method="POST" action="/check-user">
                     @csrf
+                    <input type="hidden" name="after_url" value='{{ $replaceUrl ?? "" }}'>
                     <label for="LGI-01_loginId">아이디</label>
                     <input type="text" id="LGI-01_loginId" name="account" class="login_input input-form w-full" required autocomplete="email" autofocus placeholder="아이디를 입력해주세요.">
                     <label for="LGI-01_loginPassWord">비밀번호</label>
@@ -262,6 +278,7 @@ function signin() {
     data.phonenumber = $('#cellphone').val().replace(/-/g, '');
     data.joinedid = joined_id;
     data.code = 'SE';
+    const after_url = $('input[name=after_url]').val();
 
     $.ajax({
         url				: '/signup/signinAuthCode',
@@ -274,7 +291,11 @@ function signin() {
         },
         success : function(result) {
             if (result.success) {
-                window.location.href = '/';
+                if(after_url == '') {
+                    window.location.href = '/';
+                }else {
+                    window.location.href = decodeURI(after_url);
+                }
             } else {
                 alert(result.message);
             }
