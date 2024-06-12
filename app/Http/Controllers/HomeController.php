@@ -71,6 +71,9 @@ class HomeController extends BaseController
                 if($params->input('isweb')) {
                     $data['isweb'] = $params->input('isweb');
                 }
+                if($params->input('replaceUrl')) {
+                    $data['replaceUrl'] = $params->input('replaceUrl');
+                }
                 
                 return view('home/mWelcome', $data);
                 

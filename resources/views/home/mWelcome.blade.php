@@ -151,6 +151,53 @@
                 <a href="#">개인정보 처리 방침</a>
             </div>
         </footer>
+        
+        <script type="text/javascript">
+            // 인앱 로그인인지 여부
+            
+            var isMobile = {
+                Android: function () {
+                    return navigator.userAgent.match(/Chrome/) == null ? false : true;
+                },
+                iOS: function () {
+                    return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+                },
+                any: function () {
+                    return (isMobile.Android() || isMobile.iOS());
+                }
+            };
+
+            try{
+                if(isMobile.any() && !window.AppWebview && '{{ $replaceUrl ?? "" }}' != '') {
+
+                    if(isMobile.Android()) {
+                        
+                        const intentUrl = 'intent://'+ 
+                                                decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
+                                                    .replace('https://all-furn-web/', '')
+                                                    .replace('https://allfurn-web.codeidea.io/', '')))
+                                                +'#Intent;scheme=allfurn;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.appknot.allfurn;end;';
+
+                        const win = window.open(intentUrl);
+                        setTimeout(() => {
+                            win.close();
+                        }, 2000);
+
+                    } else if(isMobile.iOS()) {
+                        const intentUrl = 'allfurn://' + decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
+                            .replace('https://all-furn-web/', '')
+                            .replace('https://allfurn-web.codeidea.io/', '')));
+
+                        const win = window.open(intentUrl);
+                        setTimeout(() => {
+                            win.close();
+                        }, 2000);
+                    }
+                }
+            } catch (e){
+                console.log(e)
+            }
+        </script>
     @endif
 
     <script type="text/javascript">

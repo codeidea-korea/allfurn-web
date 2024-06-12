@@ -1310,7 +1310,7 @@
 
             form.append("name", $('#form-list01').val());
 
-            for (var i = storedFiles.length - 1; i >= 0; i--) {
+            for (var i = 0; i < storedFiles.length; i++) {
                 form.append('files[]', storedFiles[i]);
             }
 
@@ -1563,18 +1563,24 @@
                     // 인증 정보
                     $('#auth_info').text(result['auth_info']);
                     $('.auth-wrap__selected').removeClass('hidden');
-                    result['auth_info'].split(', ').forEach(str => {
-                        if (authList.indexOf(str) == -1) {
-                            $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
-                            $('#auth_info_text').val(str);
-                            $('#auth_info_text').css('display', 'block');
-                        } else {
-                            $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
-                        }
-                    });
+                    if(result['auth_info']) {
+                        result['auth_info'].split(', ').forEach(str => {
+                            if (authList.indexOf(str) == -1) {
+                                $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                                $('#auth_info_text').val(str);
+                                $('#auth_info_text').css('display', 'block');
+                            } else {
+                                $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                            }
+                        });
+                    }
 
+                    // 결제정보
+                    $('#payment0' + result['pay_type']).prop('checked', true);
                     // 상세 내용 작성
-                    editer.html.set(result['product_detail']);
+                    setTimeout(() => {
+                        editer.html.set(result['product_detail']);
+                    }, 1000);
 
                     // 주문 옵션 추가
                     var obj = $.parseJSON(result['product_option']);
@@ -1654,6 +1660,7 @@
 
     $(document).ready(function(){
         init_editor();
+        $('.select-group__dropdown').css('display', 'none');
 
         if ($(location).attr('href').includes('modify')) {
             let idx = "{{ $productIdx }}";

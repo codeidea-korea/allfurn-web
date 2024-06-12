@@ -36,13 +36,10 @@ if('{{ $replaceUrl ?? "" }}' != '') {
     };
 
     try{
-        if(isMobile.any()) {
-
-            if(!window.AppWebview && '{{ $replaceUrl ?? "" }}' != '') {
-                location.href = 'allfurn://' + decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
-                    .replace('https://all-furn-web/', '')
-                    .replace('https://allfurn-web.codeidea.io/', '')));
-            }
+        if(isMobile.any() && !window.AppWebview && '{{ $replaceUrl ?? "" }}' != '') {
+            setTimeout(() => {
+                location.href = '/?isweb=Y&replaceUrl={{ $replaceUrl ?? "" }}';
+            }, 300);
         }
     } catch (e){
         console.log(e)
