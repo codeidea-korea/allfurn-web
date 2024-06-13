@@ -149,6 +149,7 @@
                                             <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
                                             <td>
                                                 @if (!empty(json_decode($product -> product_option)))
+                                                <input type="hidden" name="product_option_exist" value="1" readOnly />
                                                     <table class="my_table w-full text-left">
                                                         @foreach (json_decode($product -> product_option) as $key => $val)
                                                             @if ($val -> required === '1')
@@ -170,6 +171,7 @@
                                                     </table>
                                                 @else
                                                     없음
+                                                    <input type="hidden" name="product_option_exist" value="0" readOnly />
                                                 @endif
                                             </td>
                                         </tr>

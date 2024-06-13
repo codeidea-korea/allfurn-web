@@ -11,7 +11,7 @@
         <section class="sub !pt-0">
             <div class="sub_category !pb-0 !mb-0">
                 <ul>
-                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="/product/search?kw={{$_GET['kw']}}">상품</a></li>
+                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="/product/search?kw={{$_GET['kw']}}&kp=P">상품</a></li>
                     <li class="active w-full"><a class="inline-block w-full py-3 text-center" href="javascript:(0);">업체</a></li>
                 </ul>
             </div>

@@ -60,6 +60,7 @@
                         </div>
 
                         @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                            <input type="hidden" name="product_option_exist" value="1" readOnly />
                             <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
                                 <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
@@ -106,6 +107,8 @@
                                     </div>
                                 </div> --}}
                             </div>
+                        @else
+                            <input type="hidden" name="product_option_exist" value="0" readOnly />
                         @endif 
 
                         {{-- <?php $product_opt = json_decode( $data['detail']['product_option'] ); ?>

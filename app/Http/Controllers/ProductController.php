@@ -384,6 +384,10 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $searchResultProductCount = DB::table('AF_product')->where('AF_product.name', 'like', "%{$request->query('kw')}%")->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")->count();
 
+        if($searchResultProductCount < 1 && empty($request->query('kp'))) {
+            return redirect("/wholesaler/search?kw={$request->query('kw')}");
+        }
+
         return view(getDeviceType().'product.searchBy', [
             'searchResultProductCount' => $searchResultProductCount, 
             'categoryList'=>$categoryList,

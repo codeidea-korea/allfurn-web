@@ -150,7 +150,13 @@ if( !empty( $point ) ) {
                 <li class="{{ $pageType === 'estimate' ? 'active' : ''}}">
                     <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
                         <p>견적서 관리 / <span class="main_color">견적서 보내기</span></p>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
+                        
+                        <div class="flex items-center">
+                            @if(unCheckedMyAllFurn() > 0)
+                            <p class="text-sm main_color">{{ unCheckedMyAllFurn() }}건</p>
+                            @endif
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"></path></svg>
+                        </div>
                     </a>
                 </li>
                 @if($user -> parent_idx === 0)

@@ -12,7 +12,7 @@
                 </div>
                 <div class="sub_category">
                     <ul>
-                        <li><a href="/product/search?kw={{$_GET['kw']}}">상품</a></li>
+                        <li><a href="/product/search?kw={{$_GET['kw']}}&kp=P">상품</a></li>
                         <li class="active"><a href="javascript:void(0);">업체</a></li>
                     </ul>
                 </div>
