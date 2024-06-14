@@ -59,9 +59,10 @@
 
     @if( count( $bannerList ) > 0 )
         <section class="sub_section nopadding">
-            <div class="line_common_banner">
-                <ul class="swiper-wrapper">
+            <div class="line_common_banner slide_box overflow-hidden">
+                <div class="swiper-wrapper">
                     @foreach( $bannerList AS $key => $banner)
+                    <ul class="swiper-slide">
                         <?php
                             $link = '';
                             switch ($banner->web_link_type) {
@@ -83,11 +84,11 @@
                             }
                         ?>
                         @if( $banner->banner_type == 'img' )
-                            <li class="swiper-slide" style="background-image:url({{$banner->appBigImgUrl}}) ">
+                            <li style="background-image:url({{$banner->appBigImgUrl}}) " onclick="location.href='{{$link}}'">
                                 <a href="{{$link}}"></a>
                             </li>
                         @else
-                            <li class="swiper-slide" style="color:{{$banner->font_color}};">
+                            <li style="color:{{$banner->font_color}};" onclick="location.href='{{$link}}'">
                                 <a href="{{$link}}">
                                     <div class="txt_box">
                                         <p>{{$banner->subtext1}} <br/>{{$banner->subtext2}}</p>
@@ -96,8 +97,9 @@
                                 </a>
                             </li>
                         @endif
+                        </ul>
                     @endforeach
-                </ul>
+                </div>
                 <div class="count_pager"><b>1</b> / 12</div>
             </div>
         </section>
@@ -248,6 +250,11 @@
     // line_common_banner
     const line_common_banner = new Swiper(".line_common_banner", {
         loop: true,
+        autoplay: {
+            delay: 2000,
+            disableOnInteraction: false
+        },
+        speed: 2000,
         slidesPerView: 1,
         spaceBetween: 0,
         pagination: {

@@ -98,11 +98,11 @@
 
         @if( count( $dealmiddle ) > 0 )
         <section class="sub_section nopadding">
-            <div class="line_common_banner">
-                <ul class="swiper-wrapper">
+            <div class="line_common_banner slide_box overflow-hidden">
+                <div class="swiper-wrapper">
                     @foreach( $dealmiddle AS $k => $mid )
-                        <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->appBigImgUrl . ');background-size:100%;' : 'background-color:' . $mid->font_color . ';' }}">
-                            @php
+                    <ul class="swiper-slide">
+                    @php
                                 $link = '';
                                 switch ($mid->web_link_type) {
                                     case 0: //Url
@@ -122,6 +122,7 @@
                                         break;
                                 }
                             @endphp
+                        <li style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->appBigImgUrl . ');background-size:100%;' : 'background-color:' . $mid->font_color . ';' }}" onclick="location.href='{{$link}}'">
                             @if( $mid->banner_type == 'img' )
                                 <a href="{{$link}}"></a>
                             @else
@@ -133,6 +134,7 @@
                                 </a>
                             @endif
                         </li>
+                    </ul>
                     @endforeach
                 </ul>
                 <div class="count_pager"><b>1</b> / 12</div>
@@ -299,6 +301,11 @@
         // line_common_banner
         const line_common_banner = new Swiper(".line_common_banner", {
             loop: true,
+            autoplay: {
+                delay: 2000,
+                disableOnInteraction: false
+            },
+            speed: 2000,
             slidesPerView: 1,
             spaceBetween: 0,
             pagination: {
