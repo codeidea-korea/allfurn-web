@@ -167,3 +167,32 @@ function unCheckedMyAllFurn()
         return false;
     }
 }
+
+// 마이올펀 : 요청받은 견적 수
+function countUnCheckedMyAllFurn()
+{
+    if (auth()->check()){
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx')->where('idx', auth()->user()->idx)->first();
+        $sql = "SELECT 
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'N') 
+                AS count_res_n,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'O') 
+                AS count_res_o,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'R') 
+                AS count_req_r,
+                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'O')
+                AS count_req_o
+            FROM DUAL";
+
+        $estimate = Illuminate\Support\Facades\DB::select($sql);
+        $total = $estimate[0]->count_res_n;
+
+        return $total;
+    }else{
+        return 0;
+    }
+}

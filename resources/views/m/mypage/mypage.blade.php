@@ -243,8 +243,8 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>
                         <div class="flex items-center">
                             <!-- 신규알람 건수 추가 -->
-                            @if(unCheckedMyAllFurn() > 0)
-                            <p class="text-sm main_color">{{ unCheckedMyAllFurn() }}건</p>
+                            @if(countUnCheckedMyAllFurn() > 0)
+                            <p class="text-sm main_color">{{ countUnCheckedMyAllFurn() }}건</p>
                             @endif
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </div>

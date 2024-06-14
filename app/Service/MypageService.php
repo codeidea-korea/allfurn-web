@@ -1061,6 +1061,21 @@ class MypageService
         }
         if (isset($profile_image_attachment_idx)) {
             $company->profile_image_attachment_idx = $profile_image_attachment_idx;
+
+            if(Auth::user()['type'] === 'W') {
+                DB::table('AF_wholesale')->where('idx', '=', Auth::user()['company_idx'])->update([
+                    'logo_attachment' => $profile_image_attachment_idx
+                ]);
+            } else if(Auth::user()['type'] === 'R') {
+                DB::table('AF_retail')->where('idx', '=', Auth::user()['company_idx'])->update([
+                    'business_license_attachment_idx' => $profile_image_attachment_idx
+                ]);
+            } else if(Auth::user()['type'] === 'S' || Auth::user()['type'] === 'N') {
+                DB::table('AF_normal')->where('idx', '=', Auth::user()['company_idx'])->update([
+                    'namecard_attachment_idx' => $profile_image_attachment_idx
+                ]);
+            }
+
         }
         if (isset($top_banner_attachment_idx)) {
             $company->top_banner_attachment_idx = $top_banner_attachment_idx;
