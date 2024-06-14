@@ -149,7 +149,7 @@ if( !empty( $point ) ) {
                 @endif
                 <li class="{{ $pageType === 'estimate' ? 'active' : ''}}">
                     <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
-                        <p>견적서 관리 / <span class="main_color">견적서 보내기</span></p>
+                        <p>견적서 관리 /<br/> <span class="main_color">견적서 보내기</span></p>
                         
                         <div class="flex items-center">
                             @if(unCheckedMyAllFurn() > 0)
