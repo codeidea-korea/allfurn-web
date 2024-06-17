@@ -273,10 +273,16 @@ class HomeService
         $data['community'] = Article::select('AF_board_article.*', 'ab.name',
             DB::raw('(SELECT CASE WHEN COUNT(*) > 999 THEN "999+" ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = AF_board_article.idx AND is_delete = 0) as replyCnt,
             (SELECT COUNT(*) cnt FROM AF_board_views WHERE article_idx = AF_board_article.idx) as viewCnt'))
+            /*
             ->join('AF_board as ab', function ($query) {
                 $query->on('ab.idx', 'AF_board_article.board_idx')->where('ab.is_business', 0);
             })
+            */
+            ->join('AF_board as ab', 'ab.idx', 'AF_board_article.board_idx')
+            ->where('ab.view_access', 'like', "%".Auth::user()['type']."%")
+            ->whereNotIn('ab.idx', [12,22])
             ->where('AF_board_article.is_delete', 0)
+            ->where('ab.is_open', 1)
             ->orderBy('AF_board_article.register_time', 'desc')
             ->limit(5)
             ->get();
