@@ -74,7 +74,7 @@
                                 <tr>
                                     <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
                                     <td>
-                                        <input type="text" name="request_address1" class="input-form w-full" value="{{ $company -> business_address }} {{ $company -> business_address_detail }}" />
+                                        <input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="{{ $company -> business_address }} {{ $company -> business_address_detail }}" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -211,7 +211,17 @@
 
 
 
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
+        // 주소 API 호출
+        const callMapApi = elem => {
+            const ele = elem;
+            new daum.Postcode({
+                oncomplete  : function(data) {
+                    $(ele).val(data.roadAddress);
+                }
+            }).open();
+        }
         var storedFiles = [];
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기

@@ -337,7 +337,7 @@
                             </tr>
                             <tr>
                                 <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                                <td colspan="3"><input type="text" name="request_address1" class="input-form w-full" value="" /></td>
+                                <td colspan="3"><input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
                             </tr>
                             <tr>
                                 <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
@@ -519,7 +519,17 @@
 
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript">
+        // 주소 API 호출
+        const callMapApi = elem => {
+            const ele = elem;
+            new daum.Postcode({
+                oncomplete  : function(data) {
+                    $(ele).val(data.roadAddress);
+                }
+            }).open();
+        }
         var opt_idx = 0;
         var isProc = false;
         var optionTmp = [];
