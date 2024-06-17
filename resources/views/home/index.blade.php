@@ -139,7 +139,7 @@
                          </a>
                     </li>
                     <li class="swiper-slide">
-                         <a href="/product/planDiscountDetail">
+                         <a href="/product/thisMonth">
                             <img src="/img/main/event_icon.png" alt="">
                             <span>할인/이벤트 상품</span>
                          </a>
