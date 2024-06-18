@@ -11,6 +11,7 @@
     <div class="company_detail_top">
         <div class="banner" style="background-image:url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')">
             <div class="profile_img">
+            <span>{{$data['info']->company_name}}</span>
                 <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="">
             </div>
         </div>
