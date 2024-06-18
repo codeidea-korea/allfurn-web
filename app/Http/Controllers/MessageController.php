@@ -271,7 +271,7 @@ class MessageController extends BaseController
 //            $result[] = $receiver;
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'TS_5406', '[상품 문의 미확인 알림]', $value, $receiver, null));
+                'TT_3925', '[상품 문의 미확인 알림]', $value, $receiver, null));
         }
 
         return $result;

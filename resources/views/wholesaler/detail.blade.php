@@ -6,9 +6,10 @@
     <div class="company_detail_top">
         <div class="inner">
             <div class="banner" style="background-image:url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')">
-                <div class="profile_img">
-                    <span>{{$data['info']->company_name}}</span>
-                    <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" alt="">
+
+                <div class="profile_img" style="border:inherit!important;background:inherit!iimportant">
+                    <span style="@if($data['info']->imgUrl == null) z-index:25; @endif">{{$data['info']->company_name}}</span>
+                    <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" class="w-[130px] h-[130px] object-cover rounded-full border-2 border-white" alt="">
                 </div>
                 <div class="link_box">
                     <button class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
