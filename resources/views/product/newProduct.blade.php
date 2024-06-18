@@ -147,8 +147,8 @@
     /* ----------------------------- */
     $(document).ready(function(){
         setTimeout(() => {
-            loadNewProductList();
-            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
+//            loadNewProductList();
+//            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     })
 
@@ -157,6 +157,28 @@
             loadNewProductList();
         }
     });
+
+    function saveDetail(idx){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $('.prod_list').html());
+
+        location.href='/product/detail/' + idx;
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $(".prod_list").html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadNewProductList();
+                $("#filter_location-modal .btn-primary").text('상품 찾아보기');
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
 
     let isLoading = false;
     let isLastPage = false;

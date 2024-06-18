@@ -228,9 +228,34 @@
     /* ----------------------------- */
     $(document).ready(function(){
         setTimeout(() => {
-            loadMagazineList();
+//            loadMagazineList();
         }, 50);
     })
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $($(".magazine_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/magazine/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $($(".magazine_list")[0]).html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadMagazineList();
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
 
     // 매거진 스크롤 로딩
     window.addEventListener('scroll', function() {
@@ -289,7 +314,7 @@
             $(".magazine_list").append(
             '<li>'+
             '        <div class="txt_box">'+
-            '            <a href="/magazine/detail/' + magazine.idx + '">' +
+            '            <a href="javascript:saveDetail(' + magazine.idx + ')">' +
             '                <div class="top">' +
             '                   <span>' + magazine.category_list + '</span>'+
             '                   <b>' + formatDate(magazine.register_time) + '</b>' +
@@ -297,7 +322,7 @@
             '               <div class="tit">' + magazine.title + '</div>' +
             '           </a>' +
             '    </div>' +
-            '    <div class="img_box"><a href="/magazine/detail/' + magazine.idx +'"><img src="' + magazine.image_url + '" alt=""></a></div>' +
+            '    <div class="img_box"><a href="javascript:saveDetail(' + magazine.idx +')"><img src="' + magazine.image_url + '" alt=""></a></div>' +
             '</li>'
             );
         });

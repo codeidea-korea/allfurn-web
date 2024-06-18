@@ -286,7 +286,7 @@
     // ---------- 도매 업체 --------------
     $(document).ready(function(){
         setTimeout(() => {
-            loadWholesalerList();
+//            loadWholesalerList();
         }, 10);
     })
 
@@ -295,6 +295,31 @@
             loadWholesalerList();
         }
     });
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $($(".obtain_list")[1]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/wholesaler/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $($(".obtain_list")[1]).html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadWholesalerList();
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
 
     let isLoading = false;
     let isLastPage = false;

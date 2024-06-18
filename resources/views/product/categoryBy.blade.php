@@ -288,9 +288,34 @@
         }
     });
 
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $($(".prod_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $($(".prod_list")[0]).html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadProductList();
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
+
     let isLoading = false;
     let isLastPage = {{$data['list']->lastPage()}} == 1;
-    let currentPage = 1;
+    let currentPage = 0;
     function loadProductList() {
         if(isLoading) return;
         if(isLastPage) return;
@@ -351,7 +376,7 @@
             html += '' +
                 '<li class="prod_item">' +
                 '   <div class="img_box">' +
-                '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt=""></a>' +
+                '       <a href="javascript:saveDetail(' + product.idx + ')"><img src="' + product.imgUrl + '" alt=""></a>' +
                 '       <button class="zzim_btn prd_' + product.idx + ' ' + (product.isInterest== 1 ? 'active' : '')   +'" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
                 '   </div>' +
                 '   <div class="txt_box">' +
