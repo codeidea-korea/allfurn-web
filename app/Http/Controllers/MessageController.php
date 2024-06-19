@@ -266,9 +266,12 @@ class MessageController extends BaseController
         foreach($list->toArray() as $key => $value) {
         
             $receiver = $value['phone_number'];
+            unset($value["receive_company_idx"]);
+            unset($value["receive_company_type"]);
             unset($value["phone_number"]);
+            unset($value["올톡링크"]);
 
-//            $result[] = $receiver;
+            $result[] = $receiver;
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
                 'TT_3925', '[상품 문의 미확인 알림]', $value, $receiver, null));

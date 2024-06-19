@@ -190,16 +190,22 @@ class PushService
         $button['linkPc'] = $alimtalkTemplate->buttons[0]->linkPc;
         $button['linkIos'] = $alimtalkTemplate->buttons[0]->linkIos;
         $button['linkAnd'] = $alimtalkTemplate->buttons[0]->linkAnd;
-        $button2 = array();
-        $button2['name'] = $alimtalkTemplate->buttons[1]->name;
-        $button2['linkType'] = $alimtalkTemplate->buttons[1]->linkType;
-        $button2['linkTypeName'] = $alimtalkTemplate->buttons[1]->linkTypeName;
-        $button2['linkMo'] = $alimtalkTemplate->buttons[1]->linkMo;
-        $button2['linkPc'] = $alimtalkTemplate->buttons[1]->linkPc;
-        $button2['linkIos'] = $alimtalkTemplate->buttons[1]->linkIos;
-        $button2['linkAnd'] = $alimtalkTemplate->buttons[1]->linkAnd;
 
-        $button_1 = rawurlencode('{"button":['. json_encode($button) . ',' .json_encode($button2) . ']}');
+        if(count($alimtalkTemplate->buttons) > 1) {
+
+            $button2 = array();
+            $button2['name'] = $alimtalkTemplate->buttons[1]->name;
+            $button2['linkType'] = $alimtalkTemplate->buttons[1]->linkType;
+            $button2['linkTypeName'] = $alimtalkTemplate->buttons[1]->linkTypeName;
+            $button2['linkMo'] = $alimtalkTemplate->buttons[1]->linkMo;
+            $button2['linkPc'] = $alimtalkTemplate->buttons[1]->linkPc;
+            $button2['linkIos'] = $alimtalkTemplate->buttons[1]->linkIos;
+            $button2['linkAnd'] = $alimtalkTemplate->buttons[1]->linkAnd;
+
+            $button_1 = rawurlencode('{"button":['. json_encode($button) . ',' .json_encode($button2) . ']}');
+        } else {
+            $button_1 = rawurlencode('{"button":['. json_encode($button) . ']}');
+        }
         $failover = 'Y';
         $fsubject_1 = rawurlencode($title);
         $fmessage_1 = rawurlencode($alimtalkTemplate->templtContent);

@@ -220,12 +220,38 @@
     }
 
     $(document).ready(function(){
-        $('#loadingContainer').show();
+//        $('#loadingContainer').show();
         setTimeout(() => {
-            loadWholesalerList();
-            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
+//            loadWholesalerList();
+//            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     })
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $($(".obtain_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/wholesaler/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $($(".obtain_list")[0]).html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+            $('#loadingContainer').show();
+            setTimeout(() => {
+                loadWholesalerList();
+                $("#filter_location-modal .btn-primary").text('상품 찾아보기');
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
 
     window.addEventListener('scroll', function() {
         if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 300 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
