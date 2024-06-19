@@ -139,7 +139,7 @@ class WholesalerService {
                 ,(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
                 ))
                 ->where(['AF_product.company_idx'=>$item->companyIdx, 'AF_product.company_type'=> 'W'])
-                ->whereIn('AF_product.state', ['S','O']);
+                ->whereIn('AF_product.state', ['S','O'])->whereNull('AF_product.deleted_at');
 
             if (isset($param['category']) && !empty($param['category'])) {
                 $imgList->where('ac2.code','REGEXP', $param['category']);
@@ -293,6 +293,7 @@ class WholesalerService {
                 ->where('company_idx', $value->company_idx)
                 ->where('company_type','W')
                 ->whereIN('AF_product.state', ['S', 'O'])
+                ->whereNull('AF_product.deleted_at')
                 ->leftjoin('AF_category as ac', function ($query) {
                     $query->on('ac.idx', 'AF_product.category_idx');
                 })
@@ -477,6 +478,7 @@ class WholesalerService {
                 ->where('company_idx', $value->company_idx)
                 ->where('company_type','W')
                 ->whereIN('AF_product.state', ['S', 'O'])
+                ->whereNull('AF_product.deleted_at')
                 ->leftjoin('AF_category as ac', function ($query) {
                     $query->on('ac.idx', 'AF_product.category_idx');
                 })
@@ -582,6 +584,7 @@ class WholesalerService {
         $data['category'] = Product::select('ac2.name', 'ac2.idx', DB::raw('count(ac2.idx) as cnt'))
             ->where(['company_idx'=>$param['wholesalerIdx'], 'company_type'=>'W'])
             -> whereIN('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
             ->leftjoin('AF_category as ac', function ($query) {
                 $query->on('ac.idx', 'AF_product.category_idx');
             })
@@ -632,6 +635,7 @@ class WholesalerService {
             ->where('AF_product.company_idx', $param['wholesalerIdx'])
             ->where('AF_product.company_type', 'W')
             ->where('AF_product.state', 'S')
+            ->whereNull('AF_product.deleted_at')
             ->whereNotNull('AF_product_ad.idx')->get();
 
         if ($products->count() > 0){
@@ -654,6 +658,7 @@ class WholesalerService {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
             ->whereRaw("AF_product.idx in (".$product_idx_list.")")
+            ->whereNull('AF_product.deleted_at')
             ->orderBy('AF_product.idx', 'DESC')
             ->get();
         }else{
@@ -666,6 +671,7 @@ class WholesalerService {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
             ->whereRaw("AF_product.idx in (0)")
+            ->whereNull('AF_product.deleted_at')
             ->orderBy('AF_product.idx', 'DESC')
             ->get();
         }
@@ -707,6 +713,7 @@ class WholesalerService {
         ->where('AF_product.state', 'S')
         ->where('AF_product.is_represent', 1)
         ->whereNotNull('AF_product.access_date')
+        ->whereNull('AF_product.deleted_at')
         ->orderBy('AF_product.access_date', 'DESC')
         ->limit(5)
         ->get();
@@ -749,6 +756,7 @@ class WholesalerService {
                 ->where('company_idx', $value->company_idx)
                 ->where('company_type','W')
                 ->whereIN('AF_product.state', ['S', 'O'])
+                ->whereNull('AF_product.deleted_at')
                 ->leftjoin('AF_category as ac', function ($query) {
                     $query->on('ac.idx', 'AF_product.category_idx');
                 })
@@ -889,6 +897,7 @@ class WholesalerService {
                 ->where('company_idx', $value->company_idx)
                 ->where('company_type','W')
                 ->whereIN('AF_product.state', ['S', 'O'])
+                ->whereNull('AF_product.deleted_at')
                 ->leftjoin('AF_category as ac', function ($query) {
                     $query->on('ac.idx', 'AF_product.category_idx');
                 })

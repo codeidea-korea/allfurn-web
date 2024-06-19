@@ -1193,7 +1193,8 @@ class MypageService
                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
                        ELSE COUNT(*) END cnt FROM AF_product_interest WHERE product_idx = p.idx) AS interest_product_count")
-        );
+        )
+        ->whereNull('p.deleted_at');
         if (isset($params['categories'])) {
             $query->whereIn('c2.name', explode(',', $params['categories']));
         }
@@ -1305,7 +1306,7 @@ class MypageService
     {
         Product::where('company_idx', Auth::user()['company_idx'])
             ->where('company_type', Auth::user()['type'])
-            ->where('idx', $idx)->delete();
+            ->where('idx', $idx)->update(['deleted_at' => date('Y-m-d H:i:s')]);
         return [
             'result' => 'success',
             'message' => ''

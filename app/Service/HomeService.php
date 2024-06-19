@@ -123,7 +123,7 @@ class HomeService
             ->where([
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
-            ]);
+            ])->whereNull('AF_product.deleted_at');
             if(getDeviceType() == 'm.') {
                 $data['new_product'] = $data['new_product']->orderBy('AF_product.register_time', 'desc')->limit(80)->get();
             } else {
@@ -344,6 +344,7 @@ class HomeService
                 'AF_product.is_new_product' => 1,
                 'AF_product.state' => 'S'
             ])
+            ->whereNull('AF_product.deleted_at')
             ->inRandomOrder()
             ->limit(8)
             ->get();

@@ -258,6 +258,7 @@ class ProductService
                 $query->on('ac2.idx', '=', 'ac.parent_idx');
             })
             ->where('AF_product.user_idx', Auth::user()->idx)
+            ->whereNull('AF_product.deleted_at')
             ->orderBy('AF_product.idx', 'desc')
             ->get();
         return $data;
@@ -275,6 +276,7 @@ class ProductService
                 $query->on('ac2.idx', '=', 'ac.parent_idx');
             })
             ->whereIn('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
             ->get();
         return $data;
     }
@@ -541,7 +543,7 @@ class ProductService
                 $query->on('ac2.idx', 'ac.parent_idx');
             })
             ->where('AF_product.is_new_product', 1)
-            ->whereIn('AF_product.state', ['S', 'O']);
+            ->whereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if ($param['target'] != 'ALL') {
             $list_b->where('ac2.code', 'REGEXP', $param['target']);
@@ -617,7 +619,7 @@ class ProductService
                 $query -> on('ar.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
             })
             ->where('AF_product.is_new_product', 1)
-            ->whereIn('AF_product.state', ['S', 'O']);
+            ->whereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
             
         if($params['categories'] != "") {
             $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
@@ -675,7 +677,7 @@ class ProductService
                     $query->on('AF_product.idx', '=', 'api.product_idx');
         })
         ->where('AF_product.company_idx', $params['company_idx'])
-        ->WhereIn('AF_product.state', ['S', 'O']);
+        ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if($params['categories'] != "") {
             $list->whereIN('ac2.idx', explode(",", $params['categories']));
@@ -829,6 +831,7 @@ class ProductService
                                 AF_product.register_time as reg_time
                                 '))
             ->whereIn('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             });
@@ -911,6 +914,7 @@ class ProductService
                     (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt
             '))
             ->whereIn('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
             })
@@ -991,6 +995,7 @@ class ProductService
             ->where('is_new_product', 1)
             ->whereNotNull('access_date')
             ->whereIn('state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
             ->groupBy('company_idx')
             ->havingRaw('COUNT(AF_product.idx) > 3')
             ->orderBy('access_date', 'desc')
@@ -1072,7 +1077,7 @@ class ProductService
 
         $list->where('AF_product.category_idx', $param['categoryIdx'])
             ->whereIn('AF_product.state', ['S', 'O'])
-            ->orderby('AF_product.access_date', 'desc');
+            ->orderby('AF_product.access_date', 'desc')->whereNull('AF_product.deleted_at');
 
         $data['list'] = $list->paginate(20);
 
