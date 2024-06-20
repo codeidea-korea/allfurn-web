@@ -1643,6 +1643,7 @@
                 }
 
                 //closeModal('#default-modal10');
+                window.product_detail = result['product_detail'];
             }
         });
     }

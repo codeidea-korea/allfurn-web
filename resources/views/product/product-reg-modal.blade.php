@@ -1160,8 +1160,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-10 flex justify-center product-detail__img-area">
+                <div class="mt-10 flex justify-center product-detail__img-area" style="display: flex; flex-direction:column; align-items: center;">
+                    <!--
                     <img src="https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
+                    -->
                 </div>
             </div>
             <div class="flex justify-center">

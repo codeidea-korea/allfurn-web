@@ -1310,15 +1310,17 @@ function loadProduct() {
                 // 인증 정보
                 $('#auth_info').text(result['auth_info']);
                 $('.auth-wrap__selected').removeClass('hidden');
-                result['auth_info'].split(', ').forEach(str => {
-                    if (authList.indexOf(str) == -1) {
-                        $('#prod_certifi-modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
-                        $('#auth_info_text').val(str);
-                        $('#auth_info_text').css('display', 'block');
-                    } else {
-                        $('#prod_certifi-modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
-                    }
-                });
+                if(result['auth_info']) {
+                    result['auth_info'].split(', ').forEach(str => {
+                        if (authList.indexOf(str) == -1) {
+                            $('#prod_certifi-modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                            $('#auth_info_text').val(str);
+                            $('#auth_info_text').css('display', 'block');
+                        } else {
+                            $('#prod_certifi-modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                        }
+                    });
+                }
 
                 // 상세 내용 작성
                 editer.html.set(result['product_detail']);
@@ -1379,6 +1381,7 @@ function loadProduct() {
                     $('.access_date').text(result['access_date'].split(' ')[0].replace(/-/g, '.'));
                 }
             }
+            window.product_detail = result['product_detail'];
         }
     });
 }

@@ -787,10 +787,13 @@
             }
             $('#productPreviewModal').on( 'load', function() {
                 document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
+                const productDetail = document.querySelector('#productPreviewModal').contentWindow.product_detail;
                 document.querySelector('#state_preview_modal .modal_body').innerHTML =
                     document.querySelector('#productPreviewModal').contentWindow.document.getElementById('state_preview_modal').innerHTML;
                 $('#loadingContainer').hide();
                 modalOpen('#state_preview_modal');
+
+                $('#state_preview_modal .product-detail__img-area').html(productDetail);
             });
         }
 

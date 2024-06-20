@@ -1168,7 +1168,8 @@ class MypageService
                 ,"0 AS access_count");
         } else {
             $query = Product::from('AF_product AS p')->where('company_type', Auth::user()['type'])
-                ->where('company_idx', Auth::user()['company_idx']);
+                ->where('company_idx', Auth::user()['company_idx'])
+                ->whereNull('deleted_at');
             $query->where('is_represent', 0);
             $query->addSelect(DB::raw("CASE WHEN inquiry_count >= 100000000 THEN CONCAT(inquiry_count/100000000,'억')
                            WHEN inquiry_count >= 10000000 THEN CONCAT(inquiry_count/10000000,'천만')
@@ -1183,18 +1184,17 @@ class MypageService
         }
 
         $query->leftJoin('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(p.attachment_idx, ",", 1)'))
-        ->leftJoin('AF_category AS c1', 'c1.idx', 'p.category_idx')
-        ->leftJoin('AF_category AS c2', 'c2.idx', 'c1.parent_idx')
-        ->select('p.*', 'c1.name AS child_category', 'c2.name AS parent_category'
-            , DB::raw("DATE_FORMAT(p.update_time, '%Y.%m.%d') AS update_time")
-            , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS product_image')
-            , DB::raw("(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
-                       WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
-                       WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
-                       WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
-                       ELSE COUNT(*) END cnt FROM AF_product_interest WHERE product_idx = p.idx) AS interest_product_count")
-        )
-        ->whereNull('p.deleted_at');
+            ->leftJoin('AF_category AS c1', 'c1.idx', 'p.category_idx')
+            ->leftJoin('AF_category AS c2', 'c2.idx', 'c1.parent_idx')
+            ->select('p.*', 'c1.name AS child_category', 'c2.name AS parent_category'
+                , DB::raw("DATE_FORMAT(p.update_time, '%Y.%m.%d') AS update_time")
+                , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS product_image')
+                , DB::raw("(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
+                        WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
+                        WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
+                        WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
+                        ELSE COUNT(*) END cnt FROM AF_product_interest WHERE product_idx = p.idx) AS interest_product_count")
+        );
         if (isset($params['categories'])) {
             $query->whereIn('c2.name', explode(',', $params['categories']));
         }
@@ -1322,7 +1322,7 @@ class MypageService
     {
         ProductTemp::where('company_idx', Auth::user()['company_idx'])
             ->where('company_type', Auth::user()['type'])
-            ->where('idx', $idx)->delete();
+            ->where('idx', $idx)->update(['deleted_at' => date('Y-m-d H:i:s')]);
         return [
             'result' => 'success',
             'message' => ''
