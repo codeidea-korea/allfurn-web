@@ -94,7 +94,7 @@
                     <td>{{ $list -> response_time ? $list -> response_time : '('.$list -> request_time.')' }}</td>
                     <td>{{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}</td>
                     <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt > 1 ? '외 '.$list -> cnt.'개' : ''}}</td>
-                    <td>{{ $list -> company_type == 'W' ? $list -> request_w_company_name : $list -> request_r_company_name }}</td>
+                    <td>{{ $list -> request_company_name }}</td>
                     <td>
                         @if ($list -> estimate_state == 'N')
                         <button class="btn outline_primary btn-h-auto request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적 요청서 확인</button>

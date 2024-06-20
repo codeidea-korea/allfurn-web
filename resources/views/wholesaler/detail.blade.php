@@ -439,6 +439,30 @@
             loadProductList();
         }
     });
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af-top', $(document).scrollTop());
+        sessionStorage.setItem('af-currentPage', currentPage);
+        sessionStorage.setItem('af-backupItem', $($(".prod_list")[1]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af-backupItem")){
+            $($(".prod_list")[1]).html(sessionStorage.getItem("af-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af-top"));
+            currentPage = sessionStorage.getItem("af-currentPage");
+        } else {
+
+            setTimeout(() => {
+                loadProductList();
+            }, 50);
+        }
+        sessionStorage.clear();
+    }
 
     $(document).on('click', '[id^="filter"] .btn-primary', function() { 
         loadProductList(true, $(this));

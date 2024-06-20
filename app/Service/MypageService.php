@@ -2106,10 +2106,12 @@ class MypageService
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
                 DATE_FORMAT(e.response_time, '%Y.%m.%d') AS response_time,
                 w.company_name AS request_w_company_name,
-                r.company_name AS request_r_company_name
+                r.company_name AS request_r_company_name,
+                IF(e.request_company_type = 'W', w.company_name, IF(e.request_company_type = 'R', r.company_name, n.name)) AS request_company_name
             FROM AF_estimate e
             LEFT JOIN AF_wholesale w ON e.request_company_idx = w.idx 
             LEFT JOIN AF_retail r ON e.request_company_idx = r.idx 
+            LEFT JOIN AF_normal n ON e.request_company_idx = n.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
             WHERE 1 = 1 {$where}
             GROUP BY e.estimate_code
