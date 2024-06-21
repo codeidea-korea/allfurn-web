@@ -58,6 +58,8 @@ $header_banner = '';
                 <div class="company_info">
                     @if($company->company_type === 'W' || $company->company_type === 'R')
                     <div class="add">{{ $company->business_address }} {{ $company->business_address_detail }}</div>
+                    @endif
+                    @if($company->company_type === 'W')
                     <p>{{ $company->phone_number }}</p>
                     <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
                     @elseif($company->idx == 1)

@@ -2017,7 +2017,14 @@ class MypageService
                 e.idx AS estimate_idx,
 
                 DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
-                IF(a1.idx IS NOT NULL, CONCAT('".preImgUrl()."', a1.folder, '/', a1.filename), '') AS business_license,
+
+                (
+                    CASE e.request_company_type 
+                        WHEN 'W' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = wr.business_license_attachment_idx)
+                        WHEN 'R' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = rr.business_license_attachment_idx)
+                        WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr.namecard_attachment_idx)
+                    END
+                ) AS business_license,
 
                 DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_time,
 
@@ -2035,6 +2042,11 @@ class MypageService
             FROM AF_estimate e
             LEFT JOIN AF_wholesale w ON e.response_company_idx = w.idx 
             LEFT JOIN AF_retail r ON e.response_company_idx = r.idx 
+            
+            LEFT JOIN AF_wholesale wr ON e.request_company_idx = wr.idx 
+            LEFT JOIN AF_retail rr ON e.request_company_idx = rr.idx 
+            LEFT JOIN AF_normal nr ON e.request_company_idx = nr.idx 
+
             LEFT JOIN AF_product p ON e.product_idx = p.idx 
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
             LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
