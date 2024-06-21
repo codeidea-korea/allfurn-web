@@ -54,7 +54,7 @@
                     <div class="line_common_banner">
                         <ul class="swiper-wrapper">
                             @foreach( $dealmiddle AS $k => $mid )
-                                <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->mainImgUrl . ');' : 'background-color:' . $mid->font_color . ';' }}">
+                                <li class="swiper-slide" style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->mainImgUrl . ');' : 'background-color:' . $mid->bg_color . ';' }}">
                                     @php
                                         $link = '';
                                         switch ($mid->web_link_type) {
@@ -78,7 +78,7 @@
                                     @if( $mid->banner_type == 'img' )
                                         <a href="{{$link}}"></a>
                                     @else
-                                        <a href="{{link}}">
+                                        <a href="{{$link}}">
                                             <div class="txt_box" style="color:{{$mid->font_color}}">
                                                 <p>{{$mid->subtext1}} <br/>{{$mid->subtext2}}</p>
                                                 <span>{{$mid->content}}</span>

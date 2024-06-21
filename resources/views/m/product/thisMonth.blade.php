@@ -122,12 +122,12 @@
                                         break;
                                 }
                             @endphp
-                        <li style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->appBigImgUrl . ');background-size:100%;' : 'background-color:' . $mid->font_color . ';' }}" onclick="location.href='{{$link}}'">
+                        <li style="{{ $mid->banner_type == 'img' ? 'background-image:url(' . $mid->appBigImgUrl . ');background-size:100%;' : 'background-color:' . $mid->bg_color . ';' }}" onclick="location.href='{{$link}}'">
                             @if( $mid->banner_type == 'img' )
                                 <a href="{{$link}}"></a>
                             @else
                                 <a href="{{$link}}">
-                                    <div class="txt_box">
+                                    <div class="txt_box" style="color:{{$mid->font_color}}">
                                         <p>{{$mid->subtext1}}<br/>{{$mid->subtext2}}</p>
                                         <span>{{$mid->content}}</span>
                                     </div>
