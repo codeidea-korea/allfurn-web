@@ -159,17 +159,17 @@
     });
 
     function saveDetail(idx){
-        sessionStorage.setItem('af-top', $(document).scrollTop());
-        sessionStorage.setItem('af-currentPage', currentPage);
-        sessionStorage.setItem('af-backupItem', $('.prod_list').html());
+        sessionStorage.setItem('af3-top', $(document).scrollTop());
+        sessionStorage.setItem('af3-currentPage', currentPage);
+        sessionStorage.setItem('af3-backupItem', $('.prod_list').html());
 
         location.href='/product/detail/' + idx;
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af-backupItem")){
-            $(".prod_list").html(sessionStorage.getItem("af-backupItem"));
-            $(document).scrollTop(sessionStorage.getItem("af-top"));
-            currentPage = sessionStorage.getItem("af-currentPage");
+        if(sessionStorage.getItem("af3-backupItem")){
+            $(".prod_list").html(sessionStorage.getItem("af3-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af3-top"));
+            currentPage = sessionStorage.getItem("af3-currentPage");
         } else {
             
             setTimeout(() => {

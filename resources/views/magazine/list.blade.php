@@ -233,9 +233,9 @@
     })
 
     function saveDetail(idx, otherLink){
-        sessionStorage.setItem('af-top', $(document).scrollTop());
-        sessionStorage.setItem('af-currentPage', currentPage);
-        sessionStorage.setItem('af-backupItem', $($(".magazine_list")[0]).html());
+        sessionStorage.setItem('af1-top', $(document).scrollTop());
+        sessionStorage.setItem('af1-currentPage', currentPage);
+        sessionStorage.setItem('af1-backupItem', $($(".magazine_list")[0]).html());
 
         if(otherLink) {
             location.href=otherLink;
@@ -244,10 +244,10 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af-backupItem")){
-            $($(".magazine_list")[0]).html(sessionStorage.getItem("af-backupItem"));
-            $(document).scrollTop(sessionStorage.getItem("af-top"));
-            currentPage = sessionStorage.getItem("af-currentPage");
+        if(sessionStorage.getItem("af1-backupItem")){
+            $($(".magazine_list")[0]).html(sessionStorage.getItem("af1-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af1-top"));
+            currentPage = sessionStorage.getItem("af1-currentPage");
         } else {
             
             setTimeout(() => {

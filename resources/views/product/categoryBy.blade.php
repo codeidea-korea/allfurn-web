@@ -289,9 +289,9 @@
     });
 
     function saveDetail(idx, otherLink){
-        sessionStorage.setItem('af-top', $(document).scrollTop());
-        sessionStorage.setItem('af-currentPage', currentPage);
-        sessionStorage.setItem('af-backupItem', $($(".prod_list")[0]).html());
+        sessionStorage.setItem('af2-top', $(document).scrollTop());
+        sessionStorage.setItem('af2-currentPage', currentPage);
+        sessionStorage.setItem('af2-backupItem', $($(".prod_list")[0]).html());
 
         if(otherLink) {
             location.href=otherLink;
@@ -300,10 +300,10 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af-backupItem")){
-            $($(".prod_list")[0]).html(sessionStorage.getItem("af-backupItem"));
-            $(document).scrollTop(sessionStorage.getItem("af-top"));
-            currentPage = sessionStorage.getItem("af-currentPage");
+        if(sessionStorage.getItem("af2-backupItem")){
+            $($(".prod_list")[0]).html(sessionStorage.getItem("af2-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af2-top"));
+            currentPage = sessionStorage.getItem("af2-currentPage");
         } else {
             
             setTimeout(() => {

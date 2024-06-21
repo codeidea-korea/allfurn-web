@@ -228,9 +228,9 @@
     })
 
     function saveDetail(idx, otherLink){
-        sessionStorage.setItem('af-top', $(document).scrollTop());
-        sessionStorage.setItem('af-currentPage', currentPage);
-        sessionStorage.setItem('af-backupItem', $($(".obtain_list")[0]).html());
+        sessionStorage.setItem('af7-top', $(document).scrollTop());
+        sessionStorage.setItem('af7-currentPage', currentPage);
+        sessionStorage.setItem('af7-backupItem', $($(".obtain_list")[0]).html());
 
         if(otherLink) {
             location.href=otherLink;
@@ -239,10 +239,10 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af-backupItem")){
-            $($(".obtain_list")[0]).html(sessionStorage.getItem("af-backupItem"));
-            $(document).scrollTop(sessionStorage.getItem("af-top"));
-            currentPage = sessionStorage.getItem("af-currentPage");
+        if(sessionStorage.getItem("af7-backupItem")){
+            $($(".obtain_list")[0]).html(sessionStorage.getItem("af7-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af7-top"));
+            currentPage = sessionStorage.getItem("af7-currentPage");
         } else {
             $('#loadingContainer').show();
             setTimeout(() => {
