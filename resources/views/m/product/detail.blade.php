@@ -488,9 +488,10 @@
             return;
         }
         var price = 0;
+        var instancePrice = {{$data['detail']->price}}; // 단위가 
         var total_qty = 0;
         $('.ori .selection__result').map(function () {
-            var resultPrice = 0;
+            var resultPrice = instancePrice;
             $(this).find('.selection__text').map(function () {
                 resultPrice += parseInt($(this).data('price'));
             })
