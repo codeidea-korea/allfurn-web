@@ -140,19 +140,19 @@ function unCheckedAllTalkCount()
 function unCheckedMyAllFurn()
 {
     if (auth()->check()){
-        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx')->where('idx', auth()->user()->idx)->first();
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
         $sql = "SELECT 
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'N') 
+                WHERE response_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'N') 
                 AS count_res_n,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'O') 
+                WHERE response_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'O') 
                 AS count_res_o,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'R') 
+                WHERE request_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'R') 
                 AS count_req_r,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'O')
+                WHERE request_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'O')
                 AS count_req_o
             FROM DUAL";
 
@@ -172,19 +172,19 @@ function unCheckedMyAllFurn()
 function countUnCheckedMyAllFurn()
 {
     if (auth()->check()){
-        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx')->where('idx', auth()->user()->idx)->first();
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
         $sql = "SELECT 
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'N') 
+                WHERE response_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'N') 
                 AS count_res_n,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user->company_idx." AND estimate_state = 'O') 
+                WHERE response_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'O') 
                 AS count_res_o,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'R') 
+                WHERE request_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'R') 
                 AS count_req_r,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE request_company_idx = ".$user->company_idx." AND estimate_state = 'O')
+                WHERE request_company_idx = ".$user->company_idx." and response_company_type = '".$user->type."' AND estimate_state = 'O')
                 AS count_req_o
             FROM DUAL";
 

@@ -2109,6 +2109,7 @@ class MypageService
         $user = User::find(Auth::user()['idx']);
         $request['response_company_type'] = $user['type'];
         $where .= " AND e.response_company_idx = ".$user['company_idx'];
+        $where .= " AND e.response_company_type = '".$user['type']."'";
 
         $sql =
             "SELECT 
@@ -2121,7 +2122,7 @@ class MypageService
                 r.company_name AS request_r_company_name,
                 IF(e.request_company_type = 'W', w.company_name, IF(e.request_company_type = 'R', r.company_name, n.name)) AS request_company_name
             FROM AF_estimate e
-            LEFT JOIN AF_wholesale w ON e.request_company_idx = w.idx 
+            LEFT JOIN AF_wholesale w ON e.request_company_idx = w.idx
             LEFT JOIN AF_retail r ON e.request_company_idx = r.idx 
             LEFT JOIN AF_normal n ON e.request_company_idx = n.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx

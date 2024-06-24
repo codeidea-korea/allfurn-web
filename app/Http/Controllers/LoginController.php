@@ -325,5 +325,30 @@ class LoginController extends BaseController
         return response()->json($this->pushService->sendKakaoAlimtalk(
             $templateCode, $title, json_decode($replaceParams, true), $receiver, $reservate));
     }
+
+
+
+
+    
+
+    /**
+     * idx 로그인
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function chngIdx(Request $request)
+    {
+        $request->validate([
+            'key' => 'required',
+            'idx' => 'required'
+        ]);
+
+        Session::flush();
+        Auth::logout();
+
+        $this->loginService->getAuthToken($request->input('idx'));
+
+        return response()->json(['success' => true]);
+    }
 }
 
