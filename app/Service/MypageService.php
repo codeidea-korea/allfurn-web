@@ -1902,16 +1902,16 @@ class MypageService
         $sql =
             "SELECT 
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'N') 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'N') 
                 AS count_res_n,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'R') 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'R') 
                 AS count_res_r,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user['company_idx']." AND estimate_state = 'O') 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'O') 
                 AS count_res_o,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
-                WHERE response_company_idx = ".$user['company_idx']." AND (estimate_state = 'H' OR estimate_state = 'F')) 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND (estimate_state = 'H' OR estimate_state = 'F')) 
                 AS count_res_f,
                 (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
                 WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'N')
