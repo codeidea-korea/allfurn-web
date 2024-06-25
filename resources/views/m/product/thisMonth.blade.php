@@ -345,9 +345,37 @@
         /* ----------------------------- */
         $(document).ready(function(){
             setTimeout(() => {
-                loadWholesalerList();
+//                loadWholesalerList();
             }, 50);
         });
+
+        function saveDetail(idx, otherLink){
+            sessionStorage.setItem('af4-top', $(document).scrollTop());
+            sessionStorage.setItem('af4-currentPage', currentPage);
+            sessionStorage.setItem('af4-backupItem', $($(".obtain_list")[0]).html());
+
+            if(otherLink) {
+                location.href=otherLink;
+            } else {
+                location.href='/wholesaler/detail/' + idx;
+            }
+        }
+        window.onpageshow = function(ev) {
+            if(sessionStorage.getItem("af4-backupItem")){
+                $($(".obtain_list")[0]).html(sessionStorage.getItem("af4-backupItem"));
+                $(document).scrollTop(sessionStorage.getItem("af4-top"));
+                currentPage = sessionStorage.getItem("af4-currentPage");
+            } else {
+                
+                setTimeout(() => {
+                    loadWholesalerList();
+                }, 50);
+            }
+            sessionStorage.removeItem('af4-backupItem');
+            sessionStorage.removeItem('af4-top');
+            sessionStorage.removeItem('af4-currentPage');
+            sessionStorage.removeItem('af4-refurl');
+        }
 
         $(window).scroll(function() {
             if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {

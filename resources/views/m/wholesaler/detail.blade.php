@@ -378,9 +378,36 @@
     /* --- 전체 상품 비동기 조회 --- */
     $(document).ready(function(){
         setTimeout(() => {
-            loadProductList();
+//            loadProductList();
         }, 50);
     })
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af5-top', $(document).scrollTop());
+        sessionStorage.setItem('af5-currentPage', currentPage);
+        sessionStorage.setItem('af5-backupItem', $($(".prod_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af5-backupItem")){
+            $($(".prod_list")[0]).html(sessionStorage.getItem("af5-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af5-top"));
+            currentPage = sessionStorage.getItem("af5-currentPage");
+        } else {
+
+            setTimeout(() => {
+                loadProductList();
+            }, 50);
+        }
+        sessionStorage.removeItem('af5-backupItem');
+        sessionStorage.removeItem('af5-top');
+        sessionStorage.removeItem('af5-currentPage');
+        sessionStorage.removeItem('af5-refurl');
+    }
 
     window.addEventListener('scroll', function() {
         if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 20 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {

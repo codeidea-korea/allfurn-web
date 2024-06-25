@@ -203,9 +203,37 @@
     /* ----------------------------- */
     $(document).ready(function(){
         setTimeout(() => {
-            loadMagazineList();
+//            loadMagazineList();
         }, 50);
     })
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af1-top', $(document).scrollTop());
+        sessionStorage.setItem('af1-currentPage', currentPage);
+        sessionStorage.setItem('af1-backupItem', $($(".magazine_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/magazine/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af1-backupItem")){
+            $($(".magazine_list")[0]).html(sessionStorage.getItem("af1-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af1-top"));
+            currentPage = sessionStorage.getItem("af1-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadMagazineList();
+            }, 50);
+        }
+        sessionStorage.removeItem('af1-backupItem');
+        sessionStorage.removeItem('af1-top');
+        sessionStorage.removeItem('af1-currentPage');
+        sessionStorage.removeItem('af1-refurl');
+    }
 
     // 매거진 스크롤 로딩
     window.addEventListener('scroll', function() {

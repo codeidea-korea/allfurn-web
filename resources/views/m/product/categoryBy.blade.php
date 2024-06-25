@@ -302,7 +302,7 @@
             html += '' +
                 '<li class="prod_item">' +
                 '   <div class="img_box">' +
-                '       <a href="/product/detail/' + product.idx + '"><img src="' + product.imgUrl + '" alt="' + product.name + '"></a>' +
+                '       <a href="javascript:saveDetail(' + product.idx + ')"><img src="' + product.imgUrl + '" alt="' + product.name + '"></a>' +
                 '           <button class="zzim_btn prd_' + product.idx + '" pidx="' + product.idx + '"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>' +
                 '   </div>' +
                 '   <div class="txt_box">' +
@@ -429,6 +429,34 @@
             loadNewProductList();
         }
     });
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af2-top', $(document).scrollTop());
+        sessionStorage.setItem('af2-currentPage', currentPage);
+        sessionStorage.setItem('af2-backupItem', $($(".prod_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af2-backupItem")){
+            $($(".prod_list")[0]).html(sessionStorage.getItem("af2-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af2-top"));
+            currentPage = sessionStorage.getItem("af2-currentPage");
+        } else {
+            
+            setTimeout(() => {
+                loadNewProductList();
+            }, 50);
+        }
+        sessionStorage.removeItem('af2-backupItem');
+        sessionStorage.removeItem('af2-top');
+        sessionStorage.removeItem('af2-currentPage');
+        sessionStorage.removeItem('af2-refurl');
+    }
 
     $(document).ready(function(){
         urlSearch = new URLSearchParams(location.search);

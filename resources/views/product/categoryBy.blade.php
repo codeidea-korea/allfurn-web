@@ -310,7 +310,10 @@
                 loadProductList();
             }, 50);
         }
-        sessionStorage.clear();
+        sessionStorage.removeItem('af2-backupItem');
+        sessionStorage.removeItem('af2-top');
+        sessionStorage.removeItem('af2-currentPage');
+        sessionStorage.removeItem('af2-refurl');
     }
 
     let isLoading = false;

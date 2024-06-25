@@ -156,7 +156,10 @@ window.onpageshow = function(ev) {
             $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     }
-    sessionStorage.clear();
+        sessionStorage.removeItem('af3-backupItem');
+        sessionStorage.removeItem('af3-top');
+        sessionStorage.removeItem('af3-currentPage');
+        sessionStorage.removeItem('af3-refurl');
 }
 
     let isLoading = false;

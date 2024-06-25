@@ -328,7 +328,10 @@
                     loadWholesalerList();
                 }, 50);
             }
-            sessionStorage.clear();
+            sessionStorage.removeItem('af4-backupItem');
+            sessionStorage.removeItem('af4-top');
+            sessionStorage.removeItem('af4-currentPage');
+            sessionStorage.removeItem('af4-refurl');
         }
 
         // 신규 등록 상품 - 카테고리 선택

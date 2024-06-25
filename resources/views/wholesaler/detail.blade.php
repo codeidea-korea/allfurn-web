@@ -430,7 +430,7 @@
     /* --- 전체 상품 비동기 조회 --- */
     $(document).ready(function(){
         setTimeout(() => {
-            loadProductList();
+//            loadProductList();
         }, 50);
     })
 
@@ -461,7 +461,10 @@
                 loadProductList();
             }, 50);
         }
-        sessionStorage.clear();
+        sessionStorage.removeItem('af5-backupItem');
+        sessionStorage.removeItem('af5-top');
+        sessionStorage.removeItem('af5-currentPage');
+        sessionStorage.removeItem('af5-refurl');
     }
 
     $(document).on('click', '[id^="filter"] .btn-primary', function() { 

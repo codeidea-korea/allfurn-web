@@ -163,9 +163,9 @@
     }
 
     $(document).ready(function(){
-        $('#loadingContainer').show();
+//        $('#loadingContainer').show();
         setTimeout(() => {
-            loadWholesalerList();
+//            loadWholesalerList();
         }, 50);
     })
 
@@ -174,6 +174,35 @@
             loadWholesalerList();
         }
     });
+
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af7-top', $(document).scrollTop());
+        sessionStorage.setItem('af7-currentPage', currentPage);
+        sessionStorage.setItem('af7-backupItem', $($(".obtain_list")[0]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/wholesaler/detail/' + idx;
+        }
+    }
+    window.onpageshow = function(ev) {
+        if(sessionStorage.getItem("af7-backupItem")){
+            $($(".obtain_list")[0]).html(sessionStorage.getItem("af7-backupItem"));
+            $(document).scrollTop(sessionStorage.getItem("af7-top"));
+            currentPage = sessionStorage.getItem("af7-currentPage");
+        } else {
+            $('#loadingContainer').show();
+            setTimeout(() => {
+                loadWholesalerList();
+//                $("#filter_location-modal .btn-primary").text('상품 찾아보기');
+            }, 50);
+        }
+        sessionStorage.removeItem('af7-backupItem');
+        sessionStorage.removeItem('af7-top');
+        sessionStorage.removeItem('af7-currentPage');
+        sessionStorage.removeItem('af7-refurl');
+    }
 
     $(window).on('load', function(){
         //$('#loadingContainer').hide();

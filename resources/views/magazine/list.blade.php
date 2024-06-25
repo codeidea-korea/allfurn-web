@@ -254,7 +254,10 @@
                 loadMagazineList();
             }, 50);
         }
-        sessionStorage.clear();
+        sessionStorage.removeItem('af1-backupItem');
+        sessionStorage.removeItem('af1-top');
+        sessionStorage.removeItem('af1-currentPage');
+        sessionStorage.removeItem('af1-refurl');
     }
 
     // 매거진 스크롤 로딩

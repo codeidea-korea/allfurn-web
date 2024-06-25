@@ -318,7 +318,10 @@
                 loadWholesalerList();
             }, 50);
         }
-        sessionStorage.clear();
+        sessionStorage.removeItem('af6-backupItem');
+        sessionStorage.removeItem('af6-top');
+        sessionStorage.removeItem('af6-currentPage');
+        sessionStorage.removeItem('af6-refurl');
     }
 
     let isLoading = false;

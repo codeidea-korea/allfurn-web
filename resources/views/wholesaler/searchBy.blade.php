@@ -250,7 +250,10 @@
                 $("#filter_location-modal .btn-primary").text('상품 찾아보기');
             }, 50);
         }
-        sessionStorage.clear();
+        sessionStorage.removeItem('af7-backupItem');
+        sessionStorage.removeItem('af7-top');
+        sessionStorage.removeItem('af7-currentPage');
+        sessionStorage.removeItem('af7-refurl');
     }
 
     window.addEventListener('scroll', function() {
