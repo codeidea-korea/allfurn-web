@@ -425,7 +425,7 @@
     }
 
     $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() + 20 >= $(document).height() && !isLoading && !isLastPage) {
+        if ($(window).scrollTop() + $(window).height() + 800 >= $(document).height() && !isLoading && !isLastPage) {
             loadNewProductList();
         }
     });
