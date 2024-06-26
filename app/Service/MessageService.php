@@ -906,7 +906,7 @@ class MessageService
      */
     public function uploadImage($image, $path): string
     {
-        $stored = Storage::disk('s3')->put($path, $image);
+        $stored = Storage::disk('vultr')->put($path, $image);
         $explodeFileName = explode('/',$stored);
         $fileName = end($explodeFileName);
         $file = preImgUrl() . $path.'/' . $fileName;
