@@ -471,7 +471,7 @@ class HomeService
     public function deleteImage($imageUrl): array
     {
         $imgPath = $imageUrl.str_replace(env.AWS_S3_URL, '');
-        Storage::disk('s3')->delete($imgPath);
+        Storage::disk('vultr')->delete($imgPath);
 
         return [
             'result' => 'success',

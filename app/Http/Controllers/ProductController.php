@@ -203,7 +203,7 @@ class ProductController extends BaseController
     public function imageDelete(Request $request)
     {
         $imgPath = ($request->src) . str_replace(env . AWS_S3_URL, '');
-        Storage::disk('s3')->delete($imgPath);
+        Storage::disk('vultr')->delete($imgPath);
 
         $this->productService->deleteImage($request->idx);
 

@@ -942,7 +942,7 @@ class MypageService
      */
     public function uploadImage($image, $path): string
     {
-        $stored = Storage::disk('s3')->put($path, $image);
+        $stored = Storage::disk('vultr')->put($path, $image);
         $explodeFileName = explode('/',$stored);
         $fileName = end($explodeFileName);
         $file = preImgUrl() . $path.'/' . $fileName;
@@ -962,7 +962,7 @@ class MypageService
         if ($path === '') {
             $path = trim(substr($imageUrl, 0, strrpos($imageUrl, '/')),'/');
         }
-        Storage::disk('s3')->delete($path.'/'.$fileName);
+        Storage::disk('vultr')->delete($path.'/'.$fileName);
         return [
             'result' => 'success',
             'message' => ''

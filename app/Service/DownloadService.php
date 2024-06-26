@@ -30,6 +30,6 @@ class DownloadService
      */
     public function image($url): string
     {
-        return Storage::disk('s3')->get($url);
+        return Storage::disk('vultr')->get($url);
     }
 }

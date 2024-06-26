@@ -424,7 +424,7 @@ class CommunityService {
      */
     public function uploadImage($image): string
     {
-        $stored = Storage::disk('s3')->put('articles', $image);
+        $stored = Storage::disk('vultr')->put('articles', $image);
         $explodeFileName = explode('/',$stored);
         $fileName = end($explodeFileName);
         $file = preImgUrl() . 'articles/' . $fileName;
@@ -440,7 +440,7 @@ class CommunityService {
     {
         $explodeImage = explode('/', $imageUrl);
         $fileName = end($explodeImage);
-        Storage::disk('s3')->delete('articles/'.$fileName);
+        Storage::disk('vultr')->delete('articles/'.$fileName);
         return [
             'result' => 'success',
             'message' => ''
