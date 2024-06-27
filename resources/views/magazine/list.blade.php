@@ -235,6 +235,7 @@
     function saveDetail(idx, otherLink){
         sessionStorage.setItem('af1-top', $(document).scrollTop());
         sessionStorage.setItem('af1-currentPage', currentPage);
+        sessionStorage.setItem('af1-href', location.href);
         sessionStorage.setItem('af1-backupItem', $($(".magazine_list")[0]).html());
 
         if(otherLink) {
@@ -244,7 +245,7 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af1-backupItem")){
+        if(sessionStorage.getItem("af1-backupItem") && location.href == sessionStorage.getItem("af1-href")){
             $($(".magazine_list")[0]).html(sessionStorage.getItem("af1-backupItem"));
             $(document).scrollTop(sessionStorage.getItem("af1-top"));
             currentPage = sessionStorage.getItem("af1-currentPage");

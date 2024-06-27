@@ -296,6 +296,7 @@
     function saveDetail(idx, otherLink){
         sessionStorage.setItem('af6-top', $(document).scrollTop());
         sessionStorage.setItem('af6-currentPage', currentPage);
+        sessionStorage.setItem('af6-href', location.href);
         sessionStorage.setItem('af6-backupItem', $($(".obtain_list")[1]).html());
 
         if(otherLink) {
@@ -305,7 +306,7 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af6-backupItem")){
+        if(sessionStorage.getItem("af6-backupItem") && location.href == sessionStorage.getItem("af6-href")){
             $($(".obtain_list")[1]).html(sessionStorage.getItem("af6-backupItem"));
             $(document).scrollTop(sessionStorage.getItem("af6-top"));
             currentPage = sessionStorage.getItem("af6-currentPage");

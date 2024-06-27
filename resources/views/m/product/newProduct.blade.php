@@ -140,12 +140,13 @@
 function saveDetail(idx){
     sessionStorage.setItem('af3-top', $(document).scrollTop());
     sessionStorage.setItem('af3-currentPage', currentPage);
+    sessionStorage.setItem('af3-href', location.href);
     sessionStorage.setItem('af3-backupItem', $('.prod_list').html());
 
     location.href='/product/detail/' + idx;
 }
 window.onpageshow = function(ev) {
-    if(sessionStorage.getItem("af3-backupItem")){
+    if(sessionStorage.getItem("af3-backupItem") && location.href == sessionStorage.getItem("af3-href")){
         $(".prod_list").html(sessionStorage.getItem("af3-backupItem"));
         $(document).scrollTop(sessionStorage.getItem("af3-top"));
         currentPage = sessionStorage.getItem("af3-currentPage");

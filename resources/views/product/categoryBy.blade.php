@@ -291,6 +291,7 @@
     function saveDetail(idx, otherLink){
         sessionStorage.setItem('af2-top', $(document).scrollTop());
         sessionStorage.setItem('af2-currentPage', currentPage);
+        sessionStorage.setItem('af2-href', location.href);
         sessionStorage.setItem('af2-backupItem', $($(".prod_list")[0]).html());
 
         if(otherLink) {
@@ -300,7 +301,7 @@
         }
     }
     window.onpageshow = function(ev) {
-        if(sessionStorage.getItem("af2-backupItem")){
+        if(sessionStorage.getItem("af2-backupItem") && location.href == sessionStorage.getItem("af2-href")){
             $($(".prod_list")[0]).html(sessionStorage.getItem("af2-backupItem"));
             $(document).scrollTop(sessionStorage.getItem("af2-top"));
             currentPage = sessionStorage.getItem("af2-currentPage");
