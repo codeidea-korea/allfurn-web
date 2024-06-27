@@ -1232,7 +1232,7 @@ class ProductService
                 ap.idx as idx, 
                 ap.company_idx, 
                 ac.name as category_name, 
-                CONCAT('https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/', at.folder,'/', at.filename) as imgUrl,
+                CONCAT('https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/', at.folder,'/', at.filename) as imgUrl,
                 (
                     CASE 
                         WHEN ap.company_type = 'W' 
@@ -1431,7 +1431,7 @@ class ProductService
                 ap.category_name,
                 ap.category_idx,
                 ap.isInterest,
-                GROUP_CONCAT(CONCAT('https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/', at.folder,'/', at.filename) SEPARATOR '|' ) as imgUrl
+                GROUP_CONCAT(CONCAT('https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/', at.folder,'/', at.filename) SEPARATOR '|' ) as imgUrl
             FROM 	
                 AF_banner_ad AS ab
                 LEFT JOIN AF_wholesale AS aw ON aw.idx=ab.company_idx	
@@ -1535,7 +1535,7 @@ class ProductService
                 ac2.idx AS category_idx,
                 ac2.name AS category_name,
                 aw.company_name, 
-		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+		        CONCAT("https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/", at.folder, "/", at.filename) as imgUrl,
                 (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
                 (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
             FROM
@@ -1574,7 +1574,7 @@ class ProductService
                 ac2.idx AS category_idx,
                 ac2.name AS category_name,
                 aw.company_name, 
-		        CONCAT("https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/", at.folder, "/", at.filename) as imgUrl,
+		        CONCAT("https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/", at.folder, "/", at.filename) as imgUrl,
                 (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
                 (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
             FROM

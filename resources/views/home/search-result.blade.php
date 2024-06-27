@@ -44,7 +44,7 @@
                             <ul>
                                 <li>
                                     <a href="javascript:;">
-                                        <i><img class="category__ico" src="https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/product/65eb364492edcb02df94fb038753c10868ecf25416b2963ce8bf92c626b7eed2.png"></i>
+                                        <i><img class="category__ico" src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/65eb364492edcb02df94fb038753c10868ecf25416b2963ce8bf92c626b7eed2.png"></i>
                                         <span>침대/매트리스</span>
                                     </a>
                                     <ul class="depth2">

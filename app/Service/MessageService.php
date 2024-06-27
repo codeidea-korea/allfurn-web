@@ -764,7 +764,7 @@ class MessageService
                 'productIdx' => $params['product_idx'],
                 'productName' => $product->name,
                 'productPrice' => ($product->price_text ?? $product->price),
-                'productThumbnailURL' => 'https://allfurn-prod-s3-bucket.s3.ap-northeast-2.amazonaws.com/product/' 
+                'productThumbnailURL' => preImgUrl() . 'product/' 
                     . Attachment::whereIn('idx', explode(',', $product->attachment_idx))->first()->filename,
             ], JSON_UNESCAPED_UNICODE);
             $message = new Message;
