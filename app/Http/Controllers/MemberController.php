@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Session;
 
 class MemberController extends BaseController {
@@ -102,7 +103,7 @@ class MemberController extends BaseController {
         if ($data['userType'] != 'N' && $data['userType'] != 'S') {
             $storageName = 'business-license-image';
         }
-        $file = $request->file('file')->store($storageName, 's3');
+        $stored = Storage::disk('vultr')->put($storageName, $request->file('file'));
         $data['attachmentIdx'] = $this->memberService->saveAttachment($file);
         $data['companyIdx'] = $this->memberService->createCompany($data);
         $userIdx = $this->memberService->createUser($data);

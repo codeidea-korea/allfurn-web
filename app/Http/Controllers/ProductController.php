@@ -113,8 +113,8 @@ class ProductController extends BaseController
             $attachmentIdx = '';
             foreach ($data['files'] as $file) {
                 if (is_file($file)) {
-                    $filePath = $file->store('product', 's3');
-                    $attachmentIdx .= $this->productService->saveAttachment($filePath) . ',';
+                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $attachmentIdx .= $this->productService->saveAttachment($stored) . ',';
                 }
             }
 
@@ -190,8 +190,9 @@ class ProductController extends BaseController
     // 상품 등록/수정 - 에디터 이미지 등록
     public function imageUpload(Request $request)
     {
-        $file = $request->file('file')->store($request->folder, 's3');
-        $imgIdx = $this->productService->saveAttachment($file);
+        $stored = Storage::disk('vultr')->put($request->folder, $request->file('file'));
+
+        $imgIdx = $this->productService->saveAttachment($stored);
 
         return response()->json([
             'link' => preImgUrl() . $file,
