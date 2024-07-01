@@ -584,7 +584,7 @@ class CommunityService {
                 $alarmParams['depth3'] = 'REPLY';
                 $article = Article::find($article_idx);
                 $user = User::find($article->user_idx);
-                if ($article->user_idx != Auth::user()['idx']) {
+                if (!empty($article->user_idx) && $article->user_idx != Auth::user()['idx']) {
                     $alarmParams['target_company_idx'] = $user->company_idx;
                     $alarmParams['target_company_type'] = $user->type;
                     $alarmParams['link_url'] = '/community/detail/' . $article->idx;
@@ -594,12 +594,14 @@ class CommunityService {
             }
 
             //fcm 푸시
-            if ($parent_idx) {
-                $this->pushService->sendPush('올펀 게시글 알림', '작성한 댓글에 답글이 작성되었습니다.', 
-                    $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$re_reply->article_idx, env('APP_URL').'/community/detail/'.$re_reply->article_idx);
-            } else {
-                $this->pushService->sendPush('올펀 게시글 알림', '작성한 게시글에 댓글이 작성되었습니다.', 
-                    $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$article->idx, env('APP_URL').'/community/detail/'.$article->idx);
+            if(!empty($user)) {
+                if ($parent_idx) {
+                    $this->pushService->sendPush('올펀 게시글 알림', '작성한 댓글에 답글이 작성되었습니다.', 
+                        $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$re_reply->article_idx, env('APP_URL').'/community/detail/'.$re_reply->article_idx);
+                } else {
+                    $this->pushService->sendPush('올펀 게시글 알림', '작성한 게시글에 댓글이 작성되었습니다.', 
+                        $user->idx, $type = 3, env('APP_URL').'/community/detail/'.$article->idx, env('APP_URL').'/community/detail/'.$article->idx);
+                }
             }
             
         }
