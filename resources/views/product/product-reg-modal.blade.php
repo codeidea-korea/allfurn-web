@@ -1181,7 +1181,7 @@
             <p class="text-center py-4"><b>상품 등록을 취소하시겠습니까?<br/>입력한 내용은 임시 등록됩니다.</b></p>
             <div class="flex gap-2 justify-center">
                 <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#alert-registration_cancel')">취소</button>
-                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#alert-registration_cancel')">확인</button>
+                <button class="btn w-full btn-primary mt-5" onclick="location.href='/mypage/product?order=DESC';">확인</button>
             </div>
         </div>
     </div>
