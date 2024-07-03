@@ -233,6 +233,7 @@ class LoginController extends BaseController
 
         $user = User::where('phone_number', '=', $request->input('phonenumber'))
             ->where('account', '=', $request->input('joinedid'))
+            ->where('state', '=', 'JS')
             ->first();
 
         if(empty($user)) {

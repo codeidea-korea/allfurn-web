@@ -442,7 +442,8 @@ $(document).on('change', '#form-list02', function() {
             readImg.readAsDataURL(file);
 
         } else {
-            alert('the file '+ file.name + ' is not an image<br/>');
+//            alert('the file '+ file.name + ' is not an image<br/>');
+            alert('이미지가 아닙니다. 파일형식을 확인해주세요.');
         }
 
         if(files.length === (i+1)){

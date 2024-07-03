@@ -101,6 +101,7 @@
                 @endif
             </div>
         </div>
+        {{-- 
         <div class="pagenation flex items-center justify-center py-6">
             <a href="javascript:;" class="active">1</a>
             <a href="javascriot:;">2</a>
@@ -108,6 +109,7 @@
             <a href="javascriot:;">4</a>
             <a href="javascriot:;">5</a>
         </div>
+        --}}
     </div>
 
     <!-- 검색 유형 -->
