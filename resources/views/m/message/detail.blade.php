@@ -130,7 +130,7 @@ $header_banner = '';
         //$('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
         //$('._room{{ $room_idx }}LastMent').text(messages.title);
 
-        if('{{$chatting_keyword}}' != '') {
+        if('{{$chatting_keyword}}' != '' && '{{$chatting_keyword}}' != 'undefined') {
             $('#chatting_keyword_inroom').val('{{$chatting_keyword}}');
             boldSearchKeywordInRoom();
         }
@@ -492,7 +492,7 @@ $header_banner = '';
 
             // 대화방 안에서 검색입력이 되어 있다면 검색어 강조 표기를 한다.
             const keyword = $('#chatting_keyword_inroom').val();
-            if(keyword == '') {
+            if(keyword == '' || keyword == 'undefined') {
                 keywordCursorInRoom = 0;
                 return;
             }

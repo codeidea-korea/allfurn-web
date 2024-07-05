@@ -225,7 +225,7 @@
             prevEl: ".wholesaler_con01 .slide_arrow.prev",
         },
         pagination: {
-            el: ".wholesaler_con01 .count_pager",
+            el: ".count_pager",
             type: "fraction",
         },
         thumbs: {
@@ -326,9 +326,9 @@
         sessionStorage.removeItem('af6-refurl');
     }
 
-    let isLoading = false;
-    let isLastPage = false;
-    let currentPage = 0;
+    var isLoading = false;
+    var isLastPage = false;
+    var currentPage = 0;
     function loadWholesalerList(needEmpty, target) {
         if(isLoading) return;
         if(!needEmpty && isLastPage) return;
