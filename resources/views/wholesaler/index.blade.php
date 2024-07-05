@@ -236,15 +236,16 @@
     // line_common_banner
     const line_common_banner = new Swiper(".line_common_banner", {
         loop: true,
+        autoplay: {
+            delay: 2000,
+            disableOnInteraction: false
+        },
+        speed: 2000,
         slidesPerView: 1,
         spaceBetween: 0,
         navigation: {
             nextEl: ".line_common_banner .slide_arrow.next",
             prevEl: ".line_common_banner .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".line_common_banner .count_pager",
-            type: "fraction",
         }
     });
 
