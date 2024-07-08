@@ -128,7 +128,8 @@ class LoginService
 
 	    $user = User::select("*")->where([
                 ['phone_number', $phone_number]
-            ])->first();
+            ])
+            ->where('state', '=', 'JS')->first();
         return $user;
     }
     
