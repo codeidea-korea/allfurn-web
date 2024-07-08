@@ -57,7 +57,7 @@
 
             {{-- <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button> --}}
             <ul class="right_link flex items-center">
-                <li><a href="/message">올톡<!--<span class="talk_num">0</span></a>--></li>
+                <li><a href="/message">올톡@if (unCheckedAllTalkCount() > 0) <span class="talk_num">{{ unCheckedAllTalkCount() }}</span> @endif</a> </li>
                 @if(Auth::user()['type'] == 'W')
                     <li><a href="/mypage/deal">마이올펀</a></li>
                 @elseif(Auth::user()['type'] == 'R')
