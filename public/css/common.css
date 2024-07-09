@@ -316,6 +316,7 @@ header .header_top .right_link {gap:20px; }
 header .header_top .right_link .alarm_btn {position:relative; }
 header .header_top .right_link .alarm_btn span {position:absolute; right:-4px; top:-6px; padding:1px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; }
 header .header_top .right_link .alarm_btn svg {width:24px; height:24px; }
+header .header_top .right_link a {display:flex; align-items:center;}
 header .header_top .right_link .talk_num {display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; margin-left:5px; background-color:var(--main_color); color:#fff; font-size:13px; border-radius:50%; }
 
 header .header_banner {padding:13px 0; background-color: var(--main_color); font-size:18px; color:#fff; font-weight:400; }
