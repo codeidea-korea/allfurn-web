@@ -64,9 +64,9 @@ $header_banner = '';
                     <a href="/wholesaler/detail/{{ $company->idx }}">업체 자세히 보기 <img src="/img/icon/filter_arrow.svg" alt=""></a>
                     @elseif($company->idx == 1)
                     <div class="add">경기도 고양시 일산동구 산두로213번길 18 (정발산동)</div>
-		    <p>031-813-5588</p>
-		    @else
-			    
+                    <p>031-813-5588</p>
+                    @else
+
                     @endif
                 </div>
             </div>
@@ -102,7 +102,7 @@ $header_banner = '';
     <script>
     Pusher.logToConsole = true;
     var opened_room_idx = {{ $room_idx }};
-            
+
     const pusher = new Pusher('51b26f4641d16394d3fd', {
         cluster: 'ap3'
     });
@@ -117,8 +117,8 @@ $header_banner = '';
     var channel = pusher.subscribe('chat-{{ $room_idx }}');
     channel.bind('chat-event-{{ $room_idx }}', function(messages) {
         console.log(JSON.stringify(messages));
-                
-        var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text(); 
+
+        var tm = $($('.chatting_list > .date')[$('.chatting_list > .date').length - 1]).find('span').text();
         const lastCommunicatedDate = tm.substring(0, tm.indexOf('요일') - 2);
 
         if($('.chatting_list > .date > span').filter(tm => tm.innerText == messages.date+' '+messages.dateOfWeek+'요일').length > 0) {
@@ -126,7 +126,7 @@ $header_banner = '';
             $('.chatting_list').html($('.chatting_list').html() + dateTag);
         }
         //$('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
-        
+
         //$('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
         //$('._room{{ $room_idx }}LastMent').text(messages.title);
 
@@ -151,12 +151,12 @@ $header_banner = '';
                     $('.chatting_list > .chatting.left > ._alert').remove();
                 }
             });
-	 }
-	 $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
+         }
+         $('.chatting_list').html($('.chatting_list').html() + messages.contentHtml);
 
         $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight);
         $('._room{{ $room_idx }}LastMent').text(messages.title);
-	    //
+            //
         $('.chatting_list').scrollTop($('.chatting_list')[0].scrollHeight)
     });
 //    setTimeout(() => {
@@ -184,19 +184,19 @@ $header_banner = '';
 
         {{-- 대화방 내용 가져오기 --}}
         const visibleRoom = (idx) => {
-            
+
             let params = {room_idx: idx}
-                        
+
             pageNo = 1;
-            
+
             fetch('/message/room?' + new URLSearchParams(params)).then(response => {
-                
+
                 if (response.ok) {
                     return response.text();
                 }
-                
+
                 throw new Error('Sever Error');
-                
+
             }).then(html => {
                 if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
                     document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
@@ -205,25 +205,25 @@ $header_banner = '';
                 loadEvent(idx);
 
                 const roomIdx = idx;
-                
+
             }).catch(error => {
             })
         }
         var pageNo = 1;
         const getChatting = (idx) => {
-            
+
             let params = {room_idx: idx, pageNo: pageNo}
-                            
+
             pageNo = pageNo + 1;
-            
+
             fetch('/message/chatting?' + new URLSearchParams(params)).then(response => {
-                
+
                 if (response.ok) {
                     return response.json();
                 }
-                
+
                 throw new Error('Sever Error');
-                
+
             }).then(data => {
                 if (document.querySelector('.new[data-room-idx="'+idx+'"]')) {
                     document.querySelector('.new[data-room-idx="'+idx+'"]').remove();
@@ -239,12 +239,12 @@ $header_banner = '';
                 loadEvent(idx);
                 boldSearchKeywordInRoom();
                 document.querySelector('.chat-box:last-child').focus();
-                
+
             }).catch(error => {
             })
         }
         const loadEvent = () => {
-                    
+
             // 우측 검색아이콘 클릭시
             $('.chatting_box .right_search_btn').off().on('click',function(){
                 $('.chatting_box .top_search').addClass('active')
@@ -347,14 +347,14 @@ $header_banner = '';
                 delete elem.dataset.processing;
                 return false;
             }
-            
+
             if (document.getElementById('product_idx')) {
                 data.append('product_idx', document.getElementById('product_idx').value);
             }
             if (imageFiles.length < 1 && !document.getElementById('product_idx')) {
                 delete elem.dataset.processing;
                 return false;
-	    
+
             }
             data.append('message', '');
             fetch('/message/send', {
@@ -433,16 +433,16 @@ $header_banner = '';
                 }
                 return;
             }
-            
+
             if(!$('#btnNextSearchInroom').hasClass('active')) {
                 $('#btnNextSearchInroom').addClass('active');
             }
             keywordCursorInRoom = keywordCursorInRoom + 1;
 
             $('.text-white.bg-stone-900').removeClass('cursorthis');
-            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop
                 - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
-            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML = 
+            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML =
                 $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML.replaceAll('text-white bg-stone-900', 'text-white bg-stone-900 cursorthis');
         }
         const nextBoldSearchKeywordInRoom = () => {
@@ -461,9 +461,9 @@ $header_banner = '';
             keywordCursorInRoom = keywordCursorInRoom - 1;
 
             $('.text-white.bg-stone-900').removeClass('cursorthis');
-            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop
                 - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
-            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML = 
+            $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML =
                 $(targets[targets.length - keywordCursorInRoom - 1])[0].outerHTML.replaceAll('text-white bg-stone-900', 'text-white bg-stone-900 cursorthis');
         }
         const cleanBoldKeyword = (tag) => {
@@ -504,7 +504,7 @@ $header_banner = '';
                     $('#btnPrevSearchInroom').removeClass('active');
                 }
             }
-            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop 
+            $('.chatting_list').scrollTop($(targets[targets.length - keywordCursorInRoom - 1])[0].offsetTop
                 - $(targets[targets.length - keywordCursorInRoom - 1])[0].offsetHeight - 35);
             for(var idx = 0; idx < targets.length; idx++) {
                 targets[idx].outerHTML = targets[idx].outerHTML.replaceAll(keyword, '<span class="text-white bg-stone-900">'+keyword+'</span>');
@@ -558,13 +558,13 @@ $header_banner = '';
         /*
         {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
         document.getElementById('keyword').addEventListener('keyup', e => {
-            
+
             if ( $('#keyword').val() === '' ) {
                 $('#recent_keyword').show();
             } else {
                 $('#recent_keyword').hide();
             }
-            
+
             if (e.key === 'Enter') { // enter key
                 const params = {};
                 params['keyword'] = e.currentTarget.value;
@@ -572,7 +572,7 @@ $header_banner = '';
             }
         })
         */
-        
+
 
         $(document).on('keyup', '#chat_message', function(e) {
             if (e.key === 'Enter') { // enter key
