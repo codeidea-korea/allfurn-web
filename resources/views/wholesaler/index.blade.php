@@ -246,6 +246,10 @@
         navigation: {
             nextEl: ".line_common_banner .slide_arrow.next",
             prevEl: ".line_common_banner .slide_arrow.prev",
+        },
+        pagination: {
+            el: ".line_common_banner .count_pager",
+            type: "fraction",
         }
     });
 
