@@ -727,6 +727,7 @@ class MessageService
     {
         $user = Auth::user();
         $params = $request->all();
+        $isInExtra = false;
 
         if(!isset($params['room_idx']) && isset($params['idx']) && isset($params['type'])) {
             if ($params['type'] == 'product' || $params['type'] == 'inquiry') {
@@ -736,20 +737,7 @@ class MessageService
             }
 
             $params['room_idx'] = $this->getRoomByProduct($params, $user);
-            
-            if(empty($companyInfo)) {
-                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['company_idx']], 'Y');
-            }
-            $userAction = new UserRequireAction;
-            $userAction->request_user_id = Auth::user()['idx'];
-            $userAction->request_user_type = Auth::user()['type'];
-            $userAction->response_user_id = $companyInfo->company_idx;
-            $userAction->response_user_type = $companyInfo->company_type;
-            $userAction->request_type = 2;
-            if(!empty($params['product_idx'])) {
-                $userAction->product_id = $params['product_idx'];
-            }
-            $userAction -> save();
+            $isInExtra = true;
         }
 
         $image = $request->file('message_image');
@@ -903,6 +891,23 @@ class MessageService
 //        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
 //            $message->user_idx.'', 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
         
+        if($isInExtra) {
+
+            if(empty($companyInfo)) {
+                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['company_idx']], 'Y');
+            }
+            $userAction = new UserRequireAction;
+            $userAction->request_user_id = Auth::user()['idx'];
+            $userAction->request_user_type = Auth::user()['type'];
+            $userAction->response_user_id = $companyInfo->idx;
+            $userAction->response_user_type = $companyInfo->company_type;
+            $userAction->request_type = 2;
+            if(!empty($params['product_idx'])) {
+                $userAction->product_id = $params['product_idx'];
+            }
+            $userAction -> save();
+        }
+
         return [
             'result' => 'success',
             'message' => $message->content,

@@ -640,4 +640,15 @@ class ProductController extends BaseController
 
         return response()->json($data);
     }
+
+    // 상품/업체 - 사용자 이력성 데이터 저장
+    public function saveUserAction(Request $request)
+    {
+        $data['response_user_id'] = $request->query('company_idx');
+        $data['response_user_type'] = $request->query('company_type');
+        $data['product_idx'] = $request->query('product_idx');
+        $data['request_type'] = $request->query('request_type');
+        
+        return response()->json($this->productService->saveUserAction($data));
+    }
 }

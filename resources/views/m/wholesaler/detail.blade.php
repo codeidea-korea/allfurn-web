@@ -47,7 +47,7 @@
                     </div>
                     <div class="btn_box">
                         <button class="btn btn-primary-line phone" onClick="sendMessage()"><svg class="w-5 h-5"><use xlink:href="/img/icon-defs.svg#inquiry"></use></svg>문의하기</button>
-                        <button class="btn btn-primary" onClick="location.href='tel:{{$data['info']->phone_number}}';"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화하기</button>
+                        <button class="btn btn-primary" onClick="openPhoneDialog('tel:{{$data['info']->phone_number}}')"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화하기</button>
                     </div>
                 </div>
             </div>
@@ -324,6 +324,26 @@
                 } else {
                     alert(reslult.message);
                 }
+
+                isProc = false;
+            }
+        });
+    }
+    function openPhoneDialog(phoneno){
+        if (isProc) {
+            return;
+        }
+        isProc = true;
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url             : '/product/saveUserAction?company_idx={{$data['info']->idx}}&company_type=W&product_idx=&request_type=1',
+            enctype         : 'multipart/form-data',
+            processData     : false,
+            contentType     : false,
+            type			: 'GET',
+            success: function (result) {
+                location.href=phoneno;
 
                 isProc = false;
             }

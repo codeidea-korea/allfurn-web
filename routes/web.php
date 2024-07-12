@@ -103,6 +103,7 @@ Route::prefix('product')->name('product')->group(function() {
     Route::get('/popularListTab/{categoryIdx}', 'ProductController@getPopularSumListTab');
     Route::get('/popularBrand', 'ProductController@popularBrandList');
     Route::get('/jsonPopularBrand', 'ProductController@jsonPopularBrand');
+    Route::get('/saveUserAction', 'ProductController@saveUserAction');
 });
 
 Route::prefix('estimate') -> name('estimate') -> group(function(){

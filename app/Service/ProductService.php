@@ -18,6 +18,8 @@ use App\Models\ProductRecent;
 use App\Models\ProductTemp;
 use App\Models\UserAddress;
 use App\Models\MonthWholesaleSetting;
+use App\Models\UserRequireAction;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -1650,5 +1652,21 @@ class ProductService
         return true;
     }
 
+    // 상품/업체 - 사용자 이력성 데이터 저장
+    function saveUserAction($data) {
+
+        $userAction = new UserRequireAction;
+        $userAction->request_user_id = Auth::user()['idx'];
+        $userAction->request_user_type = Auth::user()['type'];
+        $userAction->response_user_id = $data['response_user_id'];
+        $userAction->response_user_type = $data['response_user_type'];
+        $userAction->request_type = $data['request_type'];
+        if(!empty($data['product_idx'])) {
+            $userAction->product_id = $data['product_idx'];
+        }
+        $userAction -> save();
+
+        return true;
+    }
     
 }

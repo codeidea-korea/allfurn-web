@@ -154,7 +154,7 @@
                     </div>
                     <div class="btn_box">
                         <button class="btn btn-line3" onclick="location.href='/mypage/sendRequestEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
-                        <button class="btn btn-primary" onClick="location.href='tel:{{$data['detail']->companyPhoneNumber}}';"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
+                        <button class="btn btn-primary" onClick="openPhoneDialog('tel:{{$data['detail']->companyPhoneNumber}}')"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
                     </div>
                     <div class="quick_btn_box" onClick="sendMessage()">
                         <button>채팅<br/>문의</button>
@@ -355,6 +355,26 @@
                 } else {
 
                 }
+            }
+        });
+    }
+    function openPhoneDialog(phoneno){
+        if (isProc) {
+            return;
+        }
+        isProc = true;
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url             : '/product/saveUserAction?company_idx={{$data['detail']->company_idx}}&company_type=W&product_idx={{ $data['detail'] -> idx }}&request_type=1',
+            enctype         : 'multipart/form-data',
+            processData     : false,
+            contentType     : false,
+            type			: 'GET',
+            success: function (result) {
+                location.href=phoneno;
+
+                isProc = false;
             }
         });
     }
