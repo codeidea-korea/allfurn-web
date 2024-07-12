@@ -16,6 +16,7 @@ use App\Events\ChatMessage;
 use App\Events\ChatUser;
 use App\Models\PushToken;
 use App\Models\Attachment;
+use App\Models\UserRequireAction;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -735,6 +736,20 @@ class MessageService
             }
 
             $params['room_idx'] = $this->getRoomByProduct($params, $user);
+            
+            if(empty($companyInfo)) {
+                $companyInfo = $this->getCompany(['room_idx' => $message->room_idx, 'user_type' => $user['type'], 'user_company_idx' => $user['company_idx']], 'Y');
+            }
+            $userAction = new UserRequireAction;
+            $userAction->request_user_id = Auth::user()['idx'];
+            $userAction->request_user_type = Auth::user()['type'];
+            $userAction->response_user_id = $companyInfo->company_idx;
+            $userAction->response_user_type = $companyInfo->company_type;
+            $userAction->request_type = 2;
+            if(!empty($params['product_idx'])) {
+                $userAction->product_id = $params['product_idx'];
+            }
+            $userAction -> save();
         }
 
         $image = $request->file('message_image');
@@ -888,7 +903,6 @@ class MessageService
 //        $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
 //            $message->user_idx.'', 5, 'allfurn:///message/room?room_idx=' . $message->room_idx, 'https://allfurn-web.codeidea.io/message/room?room_idx=' . $message->room_idx);
         
-
         return [
             'result' => 'success',
             'message' => $message->content,
@@ -1128,10 +1142,12 @@ class MessageService
     public function getUnreadRecipientsList()
     {
         return Message::select(
+            /*
             DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
                 amr.second_company_idx, amr.first_company_idx) as receive_company_idx'),
             DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
                 amr.second_company_type, amr.first_company_type) as receive_company_type'),
+                */
             DB::raw('CASE if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
                     amr.second_company_type, amr.first_company_type) 
                     WHEN "W" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "W" AND company_idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 

@@ -11,6 +11,7 @@ use App\Models\Estimate;
 use App\Models\Order;
 use App\Models\Attachment;
 use App\Models\Banner;
+use App\Models\UserRequireAction;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -129,6 +130,17 @@ class EstimateService {
         }
 
         $estimate -> save();
+
+        $userAction = new UserRequireAction;
+        $userAction->request_user_id = Auth::user()['idx'];
+        $userAction->request_user_type = Auth::user()['type'];
+        $userAction->response_user_id = $params['response_company_idx'];
+        $userAction->response_user_type = $params['response_company_type'];
+        $userAction->request_type = 3;
+        if(!empty($params['product_idx'])) {
+            $userAction->product_id = $params['product_idx'];
+        }
+        $userAction -> save();
 
         $sql =
             "SELECT * FROM AF_user
