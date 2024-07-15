@@ -1,5 +1,5 @@
 -- 사용자 액션 history
-
+(select count(*) from AF_user_require_action where response_user_id = and response_user_type = )
 create table AF_user_require_action (
     idx int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     request_user_id int(10) NOT NULL default 0 comment '요청자(고객) 식별자',
