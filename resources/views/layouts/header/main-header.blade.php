@@ -173,7 +173,7 @@
                         
                         banners += "<div class='swiper-slide'>";
                         banners += `    <a href='${link}'>`;
-                        banners += `        <p class='event__banner' style='background-image:url("https://allfurn-dev.s3.ap-northeast-2.amazonaws.com/banner_ad/${banner.filename}")'></p>`;
+                        banners += `        <p class='event__banner' style='background-image:url("https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/banner_ad/${banner.filename}")'></p>`;
                         banners += '    </a>';
                         banners += '</div>';
                     

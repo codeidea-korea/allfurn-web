@@ -17,6 +17,7 @@ use App\Events\ChatUser;
 use App\Models\PushToken;
 use App\Models\Attachment;
 use App\Models\UserRequireAction;
+use App\Models\QPushSend;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -1151,6 +1152,14 @@ class MessageService
 
     public function getUnreadRecipientsList()
     {
+        // DATE_FORMAT(created_at, '%Y-%m-%d')
+        if(QPushSend::whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')")->count() > 0) {
+            return [];
+        }
+        $queue = new QPushSend;
+        $queue->request_type = 1;
+        $queue->save();
+
         return Message::select(
             /*
             DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
