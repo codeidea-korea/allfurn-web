@@ -24,7 +24,7 @@ class PushService
 {
     /**
      * 문자 발송
-     * 
+     *
      * @param string $title
      * @param string $msg
      * @param string $receiver (, 로 구분)
@@ -43,22 +43,22 @@ class PushService
         $key = "gvjdctknhn7hflva18ysh4k8vpqluylc";
         $userId = "allfurn";
 
-        $data = "key=" . $key . "&user_id=" . $userId 
-            . "&sender=" . urlencode('031-813-5588') . "&receiver=" . urlencode($receiver) . "&msg=" . urlencode($msg) 
+        $data = "key=" . $key . "&user_id=" . $userId
+            . "&sender=" . urlencode('031-813-5588') . "&receiver=" . urlencode($receiver) . "&msg=" . urlencode($msg)
             . "&msg_type=SMS";
-    
+
         $ch = curl_init();
-    
+
         curl_setopt($ch, CURLOPT_URL, 'https://apis.aligo.in/send/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, ($data));
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-    
+
         $headers = array();
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
+
         $result = curl_exec($ch);
 //        echo curl_error($ch);
 //        echo $result;
@@ -103,19 +103,19 @@ class PushService
 
         $data = "apikey=" . $apikey . "&userid=" . $userid . "&token=" . $token . "&senderkey=" . $senderkey
             . "&tpl_code=" . $tpl_code;
-    
+
         $ch = curl_init();
-    
+
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/template/list/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-    
+
         $headers = array();
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
+
         $result = curl_exec($ch);
 //        echo curl_error($ch);
 //        echo $result;
@@ -126,7 +126,7 @@ class PushService
 
     /**
      * 알림톡 발송 sendKakaoAlimtalk
-     * 
+     *
      * @param string $templateCode
      * @param string $replaceParams 대치코드별 값이 들어 있는 연관 배열
      * @param string $receiver (, 로 구분)
@@ -154,12 +154,12 @@ class PushService
                 for($idx = 0; $idx < count($alimtalkTemplate->buttons); $idx++) {
                     $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
                     $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{'.$key.'}', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
-                    
+
                     $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{'.$key.'
                     }', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
                     $alimtalkTemplate->buttons[$idx]->linkPc = str_replace('#{'.$key.'
                     }', $value, $alimtalkTemplate->buttons[$idx]->linkPc);
-                    
+
                     $alimtalkTemplate->buttons[$idx]->linkMo = str_replace('#{
                         '.$key.'
                     }', $value, $alimtalkTemplate->buttons[$idx]->linkMo);
@@ -169,7 +169,7 @@ class PushService
                 }
             }
         }
-//        $alimtalkTemplate->templtContent = nl2br($alimtalkTemplate->templtContent); 
+//        $alimtalkTemplate->templtContent = nl2br($alimtalkTemplate->templtContent);
 
         $apikey = urlencode('gvjdctknhn7hflva18ysh4k8vpqluylc');
         $userid = 'allfurn';
@@ -180,7 +180,7 @@ class PushService
         $receiver_1 = urlencode($receiver);
         $subject_1 = rawurlencode($alimtalkTemplate->templtName);
         $message_1 = rawurlencode($alimtalkTemplate->templtContent);
-//        $strjson = 
+//        $strjson =
 
         $button = array();
         $button['name'] = $alimtalkTemplate->buttons[0]->name;
@@ -225,20 +225,20 @@ class PushService
         if(!empty($reservate) && $reservate != '') {
             $data = $data . '&senddate='. urlencode($reservate);
         }
-    
+
 //        echo $data;
         $ch = curl_init();
-    
+
         curl_setopt($ch, CURLOPT_URL, 'https://kakaoapi.aligo.in/akv10/alimtalk/send/');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_POST, 1);
 //        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-    
+
         $headers = array();
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
+
         $result = curl_exec($ch);
 //        echo curl_error($ch);
 //        echo $result;
@@ -249,13 +249,13 @@ class PushService
 
     /**
      * fcm 푸시 발송 - 테이블 쌓기로 변경
-     * 
-     * @param string $title 
-     * @param string $msg 
-     * @param string $to 
-     * @param int $type 
-     * @param string $applink 
-     * @param string $weblink 
+     *
+     * @param string $title
+     * @param string $msg
+     * @param string $to
+     * @param int $type
+     * @param string $applink
+     * @param string $weblink
      */
     public function sendPush($title, $msg, $to, $type = 5, $applink = '', $weblink = '')
     {
@@ -275,13 +275,13 @@ class PushService
         $pushMessage->send_date = date('Y-m-d H:i:s', strtotime('+5 seconds'));
         $pushMessage->is_ad = 0;
         $pushMessage->is_delete = 0;
-        
+
         $pushMessage->save();
-        
-        
+
+
         $authToken = PushToken::where('user_idx', '=', $to)->where('expired', '=', 0)->orderBy('register_time', 'DESC')->first();
         if(empty($authToken)) {
-        
+
             $sendLog = new PushSendLog();
             $sendLog->user_idx = $to;
             $sendLog->push_idx = 0;
@@ -294,7 +294,7 @@ class PushService
             $sendLog->save();
             return;
         }
-        
+
         $scope = 'https://www.googleapis.com/auth/firebase.messaging';
 
         $client = new Google_Client();
@@ -310,7 +310,7 @@ class PushService
 
         $android_opt = array (
             'notification' => array(
-//                'default_sound'         => true, 
+//                'default_sound'         => true,
 //                'priority' => 'high',
 //                'click_action' => 'TOP_STORY_ACTIVITY',
                 'title' => $title,
@@ -322,9 +322,9 @@ class PushService
         $message = array(
             'token' => $authToken->push_token,
             'notification' => $notification_opt,
-            'android' => $android_opt, 
-	    'data' => array(
-		    "click_action" => "FLUTTER_NOTIFICATION_CLICK",
+            'android' => $android_opt,
+            'data' => array(
+                    "click_action" => "FLUTTER_NOTIFICATION_CLICK",
 
                 'start_url' => 'https://all-furn.com/signin?replaceUrl='.urlencode($weblink),
                 'open_url' => $weblink
@@ -334,22 +334,22 @@ class PushService
         $data = array (
             "message" => $message
         );
-    
+
         $ch = curl_init();
-    
+
         curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/allfurn-e0712/messages:send');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data, JSON_UNESCAPED_UNICODE));
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
-    
+
         $headers = array();
         $headers[] = 'Content-Type: application/json';
         $headers[] = 'Authorization: Bearer ' . $auth_key['access_token'];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
+
         $result = curl_exec($ch);
-        
+
         $sendLog = new PushSendLog();
         $sendLog->user_idx = $to;
         $sendLog->token = $authToken->push_token;
