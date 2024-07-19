@@ -67,6 +67,7 @@ class HelpController extends BaseController
     {
         $params['offset'] = $data['offset'] = $request->input('offset') ?: 1;
         $params['limit'] = $data['limit'] = $this->limit;
+        $data['gk'] = $request->input('gk');
 
         $data['pageType'] = 'guide';
         $data = array_merge($data, $this->helpService->getGuideList($params));
