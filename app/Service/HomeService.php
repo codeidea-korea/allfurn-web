@@ -324,6 +324,7 @@ class HomeService
             ->where('start_date', '<', DB::raw('now()'))
             ->where('end_date', '>', DB::raw('now()'))
             ->where('is_delete', 0)
+            ->orderBy('AF_popup.order_idx','desc')
             ->get();
 
         return $data;
