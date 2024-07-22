@@ -1299,6 +1299,7 @@
                 editer.events.focus();
                 return;
             }
+            $('#loadingContainer').show();
 
             // if (proc) {
             //     alert('등록중입니다.');
@@ -1399,6 +1400,7 @@
                 type			: 'POST',
                 success: function (result) {
                     proc = false;
+                    $('#loadingContainer').hide();
                     if (result.success) {
                         switch (regType) {
                             case 1: // 임시저장
@@ -1412,6 +1414,8 @@
                                 break;
                         }
                     }
+                }, error: function (e) {
+                    $('#loadingContainer').hide();
                 }
             });
         }

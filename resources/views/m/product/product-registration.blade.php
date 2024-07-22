@@ -928,6 +928,7 @@ const goStep = (item, pn)=>{
 }
 
 function saveProduct(regType) {
+    $('#loadingContainer').show();
     console.log(regType);
     var form = new FormData();
     form.append("reg_type", regType);
@@ -1031,6 +1032,7 @@ function saveProduct(regType) {
         type			: 'POST',
         success: function (result) {
             proc = false;
+            $('#loadingContainer').hide();
             if (result.success) {
                 switch (regType) {
                     case 1: // 임시저장
@@ -1044,6 +1046,8 @@ function saveProduct(regType) {
                         break;
                 }
             }
+        }, error: function (e) {
+            $('#loadingContainer').hide();
         }
     });
 }
