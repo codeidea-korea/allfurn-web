@@ -6,7 +6,7 @@
 <div id="content">
     <div class="inner">
         @include('help.inc-help-heder')
-        <!-- 최대 10개 출력 -->
+        <!-- 최대 10개 출력 --> 
         <div class="accordion divide-y divide-gray-200">
             @foreach($list as $row)
                 <div class="accordion-item">
@@ -16,7 +16,7 @@
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
-                    <div class="accordion-body hidden p-5 bg-stone-50">
+                    <div class="accordion-body @if(empty($gk) || $gk != $row->idx) hidden @endif p-5 bg-stone-50">
                             {!! $row->content !!} 
                     </div>
                 </div>

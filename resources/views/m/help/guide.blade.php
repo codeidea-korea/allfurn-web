@@ -45,7 +45,7 @@
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
-                    <div class="accordion-body hidden p-5 bg-stone-50">
+                    <div class="accordion-body @if(empty($gk) || $gk != $row->idx) hidden @endif p-5 bg-stone-50">
                         {{-- <p class="text-sm text-primary">A</p> --}}
                         <p class="">
                             {!! $row->content !!}

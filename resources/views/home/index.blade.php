@@ -27,12 +27,21 @@
                             case 3: //커뮤니티
                                 $link = '/community/detail/'.$item->web_link;
                                 break;
+                            case 4: //커뮤니티
+                                $link = '/help/notice/'.$item->web_link;
+                                break;
+                            case 5: //커뮤니티
+                                $link = $item->web_link;
+                                break;
+                            case 6: // 이용가이드
+                                $link = '/help/guide?gk='.$item->web_link;
+                                break;
                             default: //공지사항
                                 $link = '/help/notice/'.$item->web_link;
                                 break;
                         }
                         ?>
-                        <li class="swiper-slide"><a href="{{$item->web_link}}"><img src="{{$item->imgUrl}}" alt=""></a></li>
+                        <li class="swiper-slide"><a href="{{$link}}"><img src="{{$item->imgUrl}}" alt=""></a></li>
                     @endforeach
                 </ul>
                 <div class="pager"></div>
