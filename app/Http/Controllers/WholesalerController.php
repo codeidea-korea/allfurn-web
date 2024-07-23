@@ -184,7 +184,7 @@ class WholesalerController extends BaseController
                 break;
 
             case "register_time" : 
-                $data['orderedElement'] = 'access_date';
+                $data['orderedElement'] = 'register_time';
                 break;
 
             default:

@@ -277,10 +277,10 @@ class WholesalerService {
                     $list->orderBy('productAccessCount', 'desc'); 
                     break;
                 default:
-                    $list->orderBy('access_date', 'DESC');
+                    $list->orderBy('register_time', 'DESC');
             }
         }else{
-            $list->orderBy('access_date', 'desc');
+            $list->orderBy('register_time', 'desc');
         }
 
 
