@@ -99,7 +99,7 @@
             <div class="modal_search w-full bg-white search_list">
                 <div class="search_btn">
                     <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg>
-                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요" autocomplete="one-time-code">
+                    <input type="text" name="kw" id="sKeyword" class="w-full text-base bg-transparent text-stone-800" placeholder="검색어를 입력하세요" autocomplete="one-time-code" value="{{$_GET['kw']}}">
                 </div>
                 <div class="text-sm flex justify-between py-3 mt-3">
                     <span class="font-bold">최근 검색어</span>
