@@ -354,7 +354,7 @@ header .header_top .search_btn {display:flex; flex-grow:1; align-items:center; g
 header .header_top .search_btn svg {width:24px; height:24px; }
 header .header_top .right_link {gap:20px; }
 header .header_top .right_link .alarm_btn {position:relative; display:block; }
-header .header_top .right_link .alarm_btn span {position:absolute; right:-4px; top:-6px; padding:1px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; }
+header .header_top .right_link .alarm_btn span {position:absolute; right:-6px; top:-6px; display:flex; align-items:center; justify-content:center; width:18px; height:18px; padding:1px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; }
 header .header_top .right_link .alarm_btn svg {width:24px; height:24px; }
 
 header .header_top.sub_header .title {font-size: 18px;font-weight: 600;position: absolute;transform: translateX(-50%);left: 50%;}

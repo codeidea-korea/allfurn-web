@@ -314,7 +314,7 @@ header .header_top .search_btn {display:flex; align-items:center; gap:10px; widt
 header .header_top .search_btn svg {width:24px; height:24px; }
 header .header_top .right_link {gap:20px; }
 header .header_top .right_link .alarm_btn {position:relative; }
-header .header_top .right_link .alarm_btn span {position:absolute; right:-4px; top:-6px; padding:1px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; }
+header .header_top .right_link .alarm_btn span {position:absolute; right:-6px; top:-6px; display:flex; align-items:center; justify-content:center; width:18px; height:18px; padding:1px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; }
 header .header_top .right_link .alarm_btn svg {width:24px; height:24px; }
 header .header_top .right_link a {display:flex; align-items:center;}
 header .header_top .right_link .talk_num {display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; margin-left:5px; background-color:var(--main_color); color:#fff; font-size:13px; border-radius:50%; }
