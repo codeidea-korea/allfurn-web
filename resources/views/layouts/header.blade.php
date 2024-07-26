@@ -68,7 +68,7 @@
                     <li><a href="/mypage/purchase">마이올펀</a></li>
                 @endif
                 <li><a href="/like/product">좋아요</a></li>
-                <li><a class="alarm_btn" href="/alarm"><span hidden></span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
+                <li><a class="alarm_btn" href="/alarm"><span style="display: none;"></span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
             </ul>
         </div>
     </div>
