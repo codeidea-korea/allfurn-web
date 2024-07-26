@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="content">
-                {!! $article->content !!}
+                {!! stripslashes($article->content) !!}
             </div>
         </div>
         <div class="bottom">

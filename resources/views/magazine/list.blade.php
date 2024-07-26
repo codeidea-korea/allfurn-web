@@ -52,8 +52,8 @@
                                 @if (now()->diffInHours($item->register_time) < 24)
                                     <span class="new">NEW</span>
                                 @endif
-                                <div class="tit">{{ $item->title }}</div>
-                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags($item->content)), $limit = 140, $end = '...') !!}</div>
+                                <div class="tit">{{ stripslashes($item->title) }}</div>
+                                <div class="desc">{!! Illuminate\Support\Str::limit(html_entity_decode(strip_tags(stripslashes($item->content))), $limit = 140, $end = '...') !!}</div>
                                 <span>{{ Carbon\Carbon::parse($item->register_time)->format('Y.m.d') }}</span>
                             </a></li>
                         @endforeach

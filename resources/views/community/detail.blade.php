@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="content">
-                {!! $article->content !!}
+                {!! stripslashes($article->content) !!}
             </div>
             <div class="bottom">
                 <div class="link_box">

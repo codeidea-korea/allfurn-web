@@ -22,7 +22,7 @@
                 <div class="tag">
                     <span>{{$article->board_name}}</span>
                 </div>
-                <h3>{{$article->title}}</h3>
+                <h3>{{stripslashes($article->title)}}</h3>
                 <p>{{ $article->is_admin ? '관리자' : $article->writer }}</p>
                 <div class="info">
                     <p>
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="content">
-                {!! $article->content !!}
+                {!! stripslashes($article->content) !!}
             </div>
         </div>
         <div class="bottom">

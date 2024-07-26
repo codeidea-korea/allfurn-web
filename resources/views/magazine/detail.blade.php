@@ -11,7 +11,7 @@
             <div class="magazine__wrap">
                 <div class="magazine__title">
                     <div>
-                        <h2>{{ $detail->title }}</h2>
+                        <h2>{{ stripslashes($detail->title) }}</h2>
                         @if ($detail->start_date !== '0000-00-00' && $detail->end_date !== '0000-00-00' && $detail->start_date && $detail->end_date)
                         <p>{{ $detail->start_date }} - {{ $detail->end_date }}</p>
                         @endif
@@ -37,7 +37,7 @@
 
                 <div class="magazine__detail">
                     <p class="magazine__text">
-                        {!! $detail->content !!}
+                        {!! stripslashes($detail->content) !!}
                     </p>
 
                 </div>
