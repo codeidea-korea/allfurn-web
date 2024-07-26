@@ -222,7 +222,7 @@
     $(document).ready(function(){
 //        $('#loadingContainer').show();
         setTimeout(() => {
-//            loadWholesalerList();
+            loadWholesalerList(true);
 //            $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     })

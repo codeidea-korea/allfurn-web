@@ -930,7 +930,12 @@ class ProductService
         }
 
         if (isset($param['keyword'])) {
-            $list->whereRaw("(AF_product.name like '%".$param['keyword']."%' or AF_product.product_detail like '%".$param['keyword']."%')");
+            $keyword = $param['keyword'];
+            $list->Where(function($query) use($keyword) {
+                    $query->whereRaw("(AF_product.name like '%".$keyword."%' or AF_product.product_detail like '%".$keyword."%')")
+                        ->orWhere('aw.company_name','like',"%{$keyword}%")
+                        ->orWhere('aw.owner_name','like',"%{$keyword}%");
+                });
         }
 
         if ($param['locations'] != "" && $param['locations'] != null) {

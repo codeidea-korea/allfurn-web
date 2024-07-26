@@ -383,7 +383,19 @@ class ProductController extends BaseController
     public function listBySearch(Request $request)
     {
         $categoryList = $this->productService->getCategoryList();
-        $searchResultProductCount = DB::table('AF_product')->where('AF_product.name', 'like', "%{$request->query('kw')}%")->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")->count();
+        $keyword = $request->query('kw');
+        $searchResultProductCount = DB::table('AF_product')
+        ->leftjoin('AF_wholesale as saler', function ($query) {
+            $query->on('AF_product.company_idx', 'saler.idx')
+                ->where('AF_product.company_type', 'W');
+        })
+        ->where('AF_product.name', 'like', "%{$request->query('kw')}%")
+        ->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")
+        ->orWhere(function($query) use($keyword) {
+            $query->where('saler.company_name','like',"%{$keyword}%")
+                ->orWhere('saler.owner_name','like',"%{$keyword}%");
+        })
+        ->count();
 
         if($searchResultProductCount < 1 && empty($request->query('kp'))) {
             return redirect("/wholesaler/search?kw={$request->query('kw')}");

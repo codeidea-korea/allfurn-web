@@ -165,7 +165,7 @@
     $(document).ready(function(){
 //        $('#loadingContainer').show();
         setTimeout(() => {
-//            loadWholesalerList();
+            loadWholesalerList(true);
         }, 50);
     })
 
