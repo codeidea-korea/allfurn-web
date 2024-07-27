@@ -204,9 +204,15 @@ class WholesalerService {
         // if (isset($params['categories']) && !empty($params['categories'])) {
         //     $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
         // }
+
+        if (isset($param['keyword'])) {
+            $keyword = $param['keyword'];
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " (AF_wholesale.company_name like '%".$param['keyword']."%' 
+                or AF_wholesale.owner_name like '%".$param['keyword']."%') ";
+        }
         if ($param['categories'] != "" && $param['categories'] != null) {
             $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
-            $whereCategory = "WHERE ap.category_idx in ({$searchCategory->cateIds})";
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
         }
         //DB::enableQueryLog();
         $list = DB::table(DB::raw('
@@ -247,14 +253,6 @@ class WholesalerService {
                         ) AS isCompanyInterest')
                 , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
         );
-
-        if (isset($param['keyword'])) {
-            $keyword = $param['keyword'];
-            $list->Where(function($query) use($keyword) {
-                $query->whereRaw("wholesalerList.company_name like '%".$keyword."%'")
-                    ->orWhere('wholesalerList.owner_name','like',"%{$keyword}%");
-            });
-        }
 
         //소재지 필터링
         if (isset($param['locations'])) {

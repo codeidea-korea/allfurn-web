@@ -72,6 +72,7 @@
                 }
 
                 isLastPage = currentPage === result.last_page;
+                $('#loadingContainer').hide();
             },
             complete : function () {
                 displaySelectedCategories();
@@ -165,7 +166,7 @@
     $(document).ready(function(){
 //        $('#loadingContainer').show();
         setTimeout(() => {
-            loadWholesalerList(true);
+//            loadWholesalerList(true);
         }, 50);
     })
 
@@ -193,9 +194,8 @@
             $(document).scrollTop(sessionStorage.getItem("af7-top"));
             currentPage = sessionStorage.getItem("af7-currentPage");
         } else {
-            $('#loadingContainer').show();
             setTimeout(() => {
-                loadWholesalerList();
+                loadWholesalerList(true);
 //                $("#filter_location-modal .btn-primary").text('상품 찾아보기');
             }, 50);
         }

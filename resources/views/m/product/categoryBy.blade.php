@@ -426,7 +426,7 @@
 
     $(window).scroll(function() {
         if ($(window).scrollTop() + $(window).height() + 800 >= $(document).height() && !isLoading && !isLastPage) {
-            loadNewProductList();
+            loadNewProductList(true);
         }
     });
 
@@ -450,7 +450,7 @@
         } else {
             
             setTimeout(() => {
-                loadNewProductList();
+                loadNewProductList(true);
             }, 50);
         }
         sessionStorage.removeItem('af2-backupItem');
