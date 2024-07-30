@@ -59,6 +59,10 @@ class HomeController extends BaseController
                 $data = $this->homeService->getHomeData();
                 $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 
+                if($params->input('replaceUrl')) {
+                    return redirect($params->input('replaceUrl'));
+                }
+
                 return view('m/home/index', [
                     'data'=>$data,
                     'xtoken' => $xtoken,
@@ -89,6 +93,10 @@ class HomeController extends BaseController
             if (Auth::check()) {
                 $schData = $this->homeService->getSearchData();
                 $data = $this->homeService->getHomeData();
+
+                if($params->input('replaceUrl')) {
+                    return redirect($params->input('replaceUrl'));
+                }
 
                 return view('home/index', [
                     'data'=>$data,
