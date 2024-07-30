@@ -97,6 +97,9 @@
                                             <li>
                                                 <a href="javascript:;" class="flex items-center">착불</a>
                                             </li>
+                                            <li>
+                                                <a href="javascript:;" class="flex items-center">협의</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
