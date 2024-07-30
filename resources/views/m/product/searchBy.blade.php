@@ -153,14 +153,14 @@
     $(document).ready(function(){
         $('#loadingContainer').show();
         setTimeout(() => {
-            loadNewProductList();
+            loadNewProductList(true);
             $("#filter_location-modal .btn-primary").text('상품 찾아보기');
         }, 50);
     })
 
     window.addEventListener('scroll', function() {
         if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 300 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
-            loadNewProductList();
+            loadNewProductList(true);
         }
     });
 

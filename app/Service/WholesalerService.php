@@ -50,7 +50,7 @@ class WholesalerService {
             CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'
         ))
             //  COUNT(cah.idx) as searchCnt
-            ->join('AF_product as ap', function ($query) {
+            ->leftjoin('AF_product as ap', function ($query) {
                 $query->on('ap.company_idx', 'AF_wholesale.idx')
                     ->where('ap.company_type', 'W')
                     ->whereIn('ap.state', ['S', 'O']);
@@ -72,7 +72,8 @@ class WholesalerService {
             //         ->where('cah.company_type', 'W');
             // })
             ->groupBy('AF_wholesale.idx')
-            ->having('productCnt', '>', 4);
+//            ->having('productCnt', '>', 4);
+;
 
         if (isset($param['location']) && !empty($param['location'])) {
             $location = explode('|', $param['location']);
@@ -203,14 +204,20 @@ class WholesalerService {
         // if (isset($params['categories']) && !empty($params['categories'])) {
         //     $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
         // }
+
+        if (isset($param['keyword'])) {
+            $keyword = $param['keyword'];
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " (AF_wholesale.company_name like '%".$param['keyword']."%' 
+                or AF_wholesale.owner_name like '%".$param['keyword']."%') ";
+        }
         if ($param['categories'] != "" && $param['categories'] != null) {
             $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
-            $whereCategory = "WHERE ap.category_idx in ({$searchCategory->cateIds})";
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
         }
         //DB::enableQueryLog();
         $list = DB::table(DB::raw('
             ( SELECT 
-                AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.business_address
+                AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.owner_name as owner_name, AF_wholesale.business_address
                 , CASE WHEN COUNT(DISTINCT aba.idx) > 0 THEN 1 ELSE 0 END AS isAd
                 , COALESCE(SUM(DISTINCT (aba.banner_price)), 0) AS totalAdPrice
                 , COALESCE(SUM(DISTINCT (aba.banner_price)), 0)/ 100000 * 0.1  AS addtionalRate
@@ -221,8 +228,9 @@ class WholesalerService {
                 , COUNT(DISTINCT(ao.idx)) as orderCnt
                 , COUNT(DISTINCT(ap.idx)) as productCnt
                 , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
+                , ap.register_time as register_time
             FROM AF_wholesale
-            JOIN AF_product ap
+            LEFT JOIN AF_product ap
             ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O")
             LEFT JOIN AF_order as ao
             ON ao.product_idx = ap.idx
@@ -245,10 +253,6 @@ class WholesalerService {
                         ) AS isCompanyInterest')
                 , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
         );
-
-        if (isset($param['keyword'])) {
-            $list->whereRaw("wholesalerList.company_name like '%".$param['keyword']."%'");
-        }
 
         //소재지 필터링
         if (isset($param['locations'])) {
