@@ -220,7 +220,7 @@ const getSearchData = () => {
     });
 }
 
-$(document).ready(function(f){
+$(document).ready(function(f){    
     getCategoryList();
     checkAlert();
     //getCategoryBanners();
@@ -287,6 +287,20 @@ $(document).on('click', function(e) {
     if ($(e.target).closest('.search_active').length) {
         getSearchData();
         $('.search_list').show();
+        var search_swhiper = new Swiper(".search_swhiper", {
+            autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+            },
+            navigation: {
+                nextEl: ".search-button-next",
+                prevEl: ".search-button-prev",
+            },
+            pagination: {
+                el: ".count_pagination",
+                type: "fraction",
+            },
+        });
         console.log('show')
     }
     // .search_list 외의 영역 클릭 시 숨기기
@@ -348,21 +362,6 @@ function checkAlert() {
         }
     })
 }
-
-var search_swhiper = new Swiper(".search_swhiper", {
-    autoplay: {
-        delay: 2500,
-        disableOnInteraction: false,
-    },
-    navigation: {
-        nextEl: ".search-button-next",
-        prevEl: ".search-button-prev",
-    },
-    pagination: {
-        el: ".count_pagination",
-        type: "fraction",
-    },
-});
 
 function getSpeakerLoud() {
     $.ajax({

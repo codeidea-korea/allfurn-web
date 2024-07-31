@@ -368,7 +368,7 @@ class HomeService
             $data['keywords'] = UserSearch::where('user_idx', Auth::user()['idx'])
                 ->where('type', 'S')
                 ->orderBy('register_time','desc')
-                ->limit(5)
+                ->limit(3)
                 ->get();
             
             

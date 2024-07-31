@@ -225,6 +225,12 @@
 
         // thismonth_con01
         const thismonth_con01 = new Swiper(".thismonth_con01 .slide_box", {
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false
+            },
+            speed: 3000,
             slidesPerView: 1,
             spaceBetween: 0,
             navigation: {
