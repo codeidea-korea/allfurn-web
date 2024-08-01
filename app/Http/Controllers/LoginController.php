@@ -231,7 +231,7 @@ class LoginController extends BaseController
         ]);
         Log::info("***** LoginController > signinAuthCode :: $request->input('phonenumber')");
 
-        $user = User::where('phone_number', '=', $request->input('phonenumber'))
+        $user = User::whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $request->input('phonenumber'))."'")
             ->where('account', '=', $request->input('joinedid'))
             ->where('state', '=', 'JS')
             ->first();

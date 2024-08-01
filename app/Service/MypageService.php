@@ -2012,7 +2012,7 @@ class MypageService
     public function getRequestEstimateDetail(array $params) {
         $sql =
             "SELECT 
-                *,
+                e.*,
 
                 e.idx AS estimate_idx,
 
