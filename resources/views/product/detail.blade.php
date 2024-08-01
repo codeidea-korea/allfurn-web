@@ -889,6 +889,11 @@
                     document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.add('hidden'));
 
                     modalOpen('#request_estimate-modal');
+                    
+                    $('.check_btn').addClass('hidden');
+                    $('.request_estimate').removeClass('hidden');
+                    $('.order_prod_list').removeClass('hidden');
+                    $('.request_estimate_btn').removeClass('hidden');
                 } else {
                     alert(json.message);
                     return false;

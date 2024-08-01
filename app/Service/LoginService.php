@@ -126,17 +126,16 @@ class LoginService
 //        $this->pushService->sendPush('Allfurn - 채팅', '테스트 : 123', 
 //		1648, 5, env('APP_URL').'/message', env('APP_URL').'/message');
 
-	    $user = User::select("*")->where([
-                ['phone_number', $phone_number]
-            ])
+	    $user = User::select("*")
+            ->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phone_number)."'")
             ->where('state', '=', 'JS')->first();
         return $user;
     }
     
     public function getUsersByPhoneNumber(string $phone_number) {
-        $user = User::select("*")->where([
-                ['phone_number', $phone_number]
-            ])->get();
+        $user = User::select("*")
+            ->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phone_number)."'")
+            ->get();
         return $user;
     }
 
