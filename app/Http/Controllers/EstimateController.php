@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Service\EstimateService;
 use App\Service\ProductService;
 use App\Service\OrderService;
+use App\Service\CommunityService;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -16,17 +17,21 @@ class EstimateController extends BaseController {
     private $estimateService;
     private $orderService;
     private $productService;
+    private $communityService;
+    
 
     public function __construct (
         OrderService $orderService,
         ProductService $productService,
-        EstimateService $estimateService
+        EstimateService $estimateService,
+        CommunityService $communityService
     ) {
         $this -> middleware('auth');
 
         $this -> orderService = $orderService;
         $this -> productService = $productService;
         $this -> estimateService = $estimateService;
+        $this -> communityService = $communityService;
     }
 
     // 견적 요청서 > 요청번호 or 견적서 > 견적번호 생성
@@ -42,8 +47,7 @@ class EstimateController extends BaseController {
             $attachmentIdx = '';
             foreach ($data['files'] as $file) {
                 if(is_file($file)) {
-                    $filePath = $file -> store('estimate', 's3');
-                    $attachmentIdx .= $this -> estimateService -> insertRequestAttachment($filePath).',';
+                    $attachmentIdx .= $this -> estimateService -> insertRequestAttachment($file).',';
                 }
             }
 

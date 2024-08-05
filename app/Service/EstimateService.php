@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\Attachment;
 use App\Models\Banner;
 use App\Models\UserRequireAction;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -166,15 +167,16 @@ class EstimateService {
         return $estimate -> idx;
     }
 
-    public function insertRequestAttachment(string $filePath) {
-        $attachment = new Attachment;
-
-        $attachment -> folder = explode('/', $filePath)[0];
-        $attachment -> filename = explode('/', $filePath)[1];
-        $attachment -> register_time = DB::raw('now()');
-        $attachment -> save();
-
-        return $attachment -> idx;
+    public function insertRequestAttachment($image)
+    {
+        $stored = Storage::disk('vultr')->put('estimate', $image);
+        $explodeFileName = explode('/',$stored);
+        $fileName = end($explodeFileName);
+        $attach = new Attachment();
+        $attach->folder = 'estimate';
+        $attach->filename = $fileName;
+        $attach->save();
+        return $attach->idx;
     }
 
     public function updateResponse(array $params) {

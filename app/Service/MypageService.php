@@ -2013,18 +2013,17 @@ class MypageService
         $sql =
             "SELECT 
                 e.*,
+                p.*,
 
                 e.idx AS estimate_idx,
 
                 DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
 
-                (
-                    CASE e.request_company_type 
+                IF(a1.idx IS NOT NULL, CONCAT('".preImgUrl()."', a1.folder, '/', a1.filename), (CASE e.request_company_type 
                         WHEN 'W' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = wr.business_license_attachment_idx)
                         WHEN 'R' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = rr.business_license_attachment_idx)
                         WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr.namecard_attachment_idx)
-                    END
-                ) AS business_license,
+                    END)) AS business_license,
 
                 DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_time,
 

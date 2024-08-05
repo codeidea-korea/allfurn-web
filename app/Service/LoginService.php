@@ -135,6 +135,7 @@ class LoginService
     public function getUsersByPhoneNumber(string $phone_number) {
         $user = User::select("*")
             ->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phone_number)."'")
+            ->where('state', '=', 'JS')
             ->get();
         return $user;
     }
