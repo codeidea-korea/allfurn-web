@@ -1353,24 +1353,22 @@ class MypageService
             $type = 'S';
             $target = $params['phone_number'];
         
-            $url = env('ALLFURN_API_DOMAIN').'/user/send-authcode.php';
-            $response = Http::asForm()->post($url, [
-                'data' => '{"target":"'.$target.'", "type":"'.$type.'"}',
+            $authcode = rand(101013, 987987);
+            UserAuthCode::insert([
+                'type' => $type,
+                'target' => $target,
+                'authcode' => $authcode,
+                'is_authorized' => 0,
+                'register_time' => DB::raw('now()')
             ]);
-            $body = json_decode($response->body(), true);
-            if ($body['code'] === '0') {
-                return [
-                    'result' => 'success',
-                    'code' => '0',
-                    'message' => ''
-                ];
-            } else {
-                return [
-                    'result' => 'fail',
-                    'code' => $body['code'],
-                    'message' => $body['msg']['ko']
-                ];
-            }
+            $pushService = new PushService();
+            $pushService->sendSMS('핸드폰 번호 인증', '올펀 서비스 ['.$authcode.'] 본인확인 인증번호를 입력하세요.', $target);
+
+            return [
+                'result' => 'success',
+                'code' => '0',
+                'message' => ''
+            ];
             
         }
 

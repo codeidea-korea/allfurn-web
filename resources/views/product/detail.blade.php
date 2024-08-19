@@ -519,7 +519,7 @@
 
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript">
         // 주소 API 호출
         const callMapApi = elem => {

@@ -354,7 +354,7 @@
 @endsection
 
 @section('script')
-    <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js?autoload=false"></script>
+    <script defer src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js?autoload=false"></script>
     <script>
 
         // 주소록 가져오기

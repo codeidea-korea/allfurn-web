@@ -117,3 +117,40 @@ function linkToPage(url){
     $('#loadingContainer').show();
     location.href = url;
 }
+
+
+function getThumbFile(_IMG, maxWidth, width, height){
+    var canvas = document.createElement("canvas");
+    if(width < maxWidth) {
+        return _IMG;
+    }
+    canvas.width = (maxWidth);
+    canvas.height = ((maxWidth / (width*1.0))*height);
+    canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
+
+    var dataURL = canvas.toDataURL("image/png");
+    var byteString = atob(dataURL.split(',')[1]);
+    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    var tmpThumbFile = new Blob([ab], {type: mimeString});
+
+    return tmpThumbFile;
+}
+
+$('.file_input').on('change', function() {
+    var file = this.files[0];
+    if (file.size > 300 * 1024) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var image = new Image();
+            image.onload = function() {
+                file = getThumbFile(image, 500, this.width, this.height);
+            };
+            image.src = event.target.result;
+        };
+    }
+});

@@ -352,7 +352,7 @@
     <link href="/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script type="text/javascript" src="/js/froala_editor.pkgd.min.js"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
         // 소재지 추가 버튼
         const addRegionBtn = () => {

@@ -410,7 +410,7 @@
 
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
         let member_idx = document.getElementById('member_idx').value;
         let validateCheckList = {};

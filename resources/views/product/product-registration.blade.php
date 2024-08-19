@@ -519,7 +519,6 @@
                     var file = files[i];
                     console.log('t1 : '+i)
                     if (file.type.match('image.*')){
-                        storedFiles.push(file);
                         readImg.onload = (function(file) {
                             return function(e) {
                                 console.log('t2 : ' + $('.product-img__add').length)
@@ -529,6 +528,14 @@
                                     openModal('#alert-modal08');
                                     return;
                                 }
+                                var image = new Image;
+                                image.onload = function() {
+                                    if(this.width > 500) {
+                                        file = getThumbFile(image, 500, this.width, this.height);
+                                    }
+                                    storedFiles.push(file);
+                                };
+                                image.src = e.target.result;
 
                                 $('.desc__product-img-wrap').append(
                                     '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +

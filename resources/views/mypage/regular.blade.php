@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <div id="container" class="container">
     <div class="inner">
         <div class="content">

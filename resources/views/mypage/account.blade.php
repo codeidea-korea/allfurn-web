@@ -61,7 +61,7 @@
 
 
 
-<script src="/js/jquery-1.12.4.js" ></script>
+<script defer src="/js/jquery-1.12.4.js" ></script>
 <script>
     let time = 299;
     let time_proc_interval = '';

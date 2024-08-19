@@ -19,9 +19,9 @@
     <meta name="twitter:title" content="" />
     <title>All FURN  | Home</title>
 
-    <script src="/js/plugin.js" type="text/javascript"></script>
+    <script defer src="/js/plugin.js" type="text/javascript" async></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
-    <script src="/js/jquery-1.12.4.js?20240424125855"></script>
+    <script src="/js/jquery-1.12.4.js?20240424125855" async></script>
 </head>
 
 <style>

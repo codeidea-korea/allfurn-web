@@ -105,8 +105,8 @@ $header_banner = '';
 </div>
 
 <script src="/js/jquery-1.12.4.js?20240329113305"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js" ></script>
-<script src="/js/validate/messages_ko.min.js" ></script>
+<script defer src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js" ></script>
+<script defer src="/js/validate/messages_ko.min.js" ></script>
 <script>
 
 $( document ).ready( function() {

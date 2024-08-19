@@ -413,6 +413,14 @@ $(document).on('change', '#form-list02', function() {
                         openModal('#alert-modal08');
                         return;
                     }
+                    var image = new Image;
+                    image.onload = function() {
+                        if(this.width > 500) {
+                            file = getThumbFile(image, 500, this.width, this.height);
+                        }
+                        storedFiles.push(file);
+                    };
+                    image.src = e.target.result;
 
                     $('.desc__product-img-wrap').append(
                         '<div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-400 product-img__add" file="' + file.name +  '">' +

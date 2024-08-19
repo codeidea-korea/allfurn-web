@@ -638,7 +638,7 @@ class MessageService
             $extension = end($extension);
             $extension = strtolower($extension);
 
-            if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+            if(in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp'])) {
                 // 이미지
                 return '<div class="chatting ' . ($user['idx'] == $chat->user_idx && $revers == 'Y' ? 'right' : 'left') . '">
                             <img src="'.$chatContent['imgUrl'].'" class="border rounded-md object-cover w-[300px]">
@@ -748,7 +748,9 @@ class MessageService
 
         $image = $request->file('message_image');
         if ($image) {
+            // todo
             $imageUrl = $this->uploadImage($image, 'message');
+
             $message = new Message;
             $message->room_idx = $params['room_idx'];
             $message->type = 2;
@@ -920,9 +922,7 @@ class MessageService
             'roomIdx' => $message->room_idx
         ];
     }
-
-
-
+    
     /**
      * 이미지 업로드
      * @param $image

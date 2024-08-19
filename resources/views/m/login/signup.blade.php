@@ -750,9 +750,9 @@ const addressChange = (e) => {
 }
 </script>
 
-<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js?autoload=false"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js" ></script>
-<script src="/js/validate/messages_ko.min.js" ></script>
+<script defer src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js?autoload=false"></script>
+<script defer src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.0/jquery.validate.min.js" ></script>
+<script defer src="/js/validate/messages_ko.min.js" ></script>
 
 <script>
 var isProc = false; // 중복등록 방지용

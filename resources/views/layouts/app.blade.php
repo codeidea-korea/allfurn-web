@@ -36,16 +36,16 @@
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
-    <script src="/js/pci.js?{{ date('Ymdhis') }}"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
-    <script src="/js/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
-    <script src="/js/common.js?{{ date('Ymdhis') }}"></script>
+    <script defer src="/js/pci.js?{{ date('Ymdhis') }}"></script>
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    {{-- <script defer src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
+    <script src="/js/swiper-bundle.min.js?{{ date('Ymd') }}"></script>
+    <script src="/js/common.js?{{ date('Ymd') }}"></script>
     <!-- flatpickr(datepicker) -->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script> --}}
-    <script src="/js/flatpickr_ko.js?{{ date('Ymdhis') }}"></script>
-    <script src="/js/flatpickr.js?{{ date('Ymdhis') }}"></script>
+    {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
+    {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script> --}}
+    <script defer src="/js/flatpickr_ko.js?{{ date('Ymdhis') }}"></script>
+    <script defer src="/js/flatpickr.js?{{ date('Ymdhis') }}"></script>
     
 </head>
 <body>

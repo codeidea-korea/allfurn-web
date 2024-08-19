@@ -115,7 +115,7 @@
     </div>
 </div>
 
-<script src="/js/jquery-1.12.4.js" ></script>
+<script defer src="/js/jquery-1.12.4.js" ></script>
 <script>
     $(function(){
         getCategoryList();
