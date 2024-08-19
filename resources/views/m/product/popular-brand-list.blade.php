@@ -100,8 +100,15 @@
             console.log(product);
             html += '' +
                 '<ul>' +
-                '   <li class="popular_banner">' +
-                '   </li>';
+                '<li class="popular_banner">' +
+                '    <img src="'+product.imgUrl+'" class="" alt="'+product.companyName+'">' +
+                '    <div class="txt_box">' +
+                '        <p>' +
+                '            <b></b><br>' +
+                '        </p>' +
+                '        <a href="/wholesaler/detail/'+product.company_idx+'"><b>'+product.companyName+' </b> 홈페이지 가기</a>' +
+                '    </div>' +
+                '</li>';
             var ff = $.extend(true, [], product.product_interest );
             product.product_info.forEach(function(item, index) {
                 var _active = '';
