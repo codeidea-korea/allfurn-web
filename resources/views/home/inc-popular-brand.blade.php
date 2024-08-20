@@ -17,7 +17,7 @@
                             <li class="popular_banner" style="background:url('{{ $brand->imgUrl }}') no-repeat center center / cover;">
                                 <div class="txt_box">
                                     <p>
-                                        <b>{{$brand->subtext1 == '' ? '&nbsp;' : $brand->subtext1}}</b><br/>{{$brand->subtext2 == '' ? '&nbsp;' : $brand->subtext2}}
+                                        <b>{{$brand->subtext1 == '' ? ' ' : $brand->subtext1}}</b><br/>{{$brand->subtext2 == '' ? ' ' : $brand->subtext2}}
                                     </p>
                                     <a href="/wholesaler/detail/{{ $brand->company_idx }}"><b>{{ $brand->companyName }} </b> 홈페이지 가기</a>
                                 </div>
