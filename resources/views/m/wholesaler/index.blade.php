@@ -16,7 +16,7 @@
                     @foreach($data['popularbrand_ad'] as $key => $brand)
                     <ul class="swiper-slide">
                         <li class="popular_banner">
-                            <img src="{{$brand->appBigImgUrl}}" class="h-[320px]" alt="{{ $brand->companyName }}">
+                            <img src="{{$brand->appBigImgUrl}}" alt="{{ $brand->companyName }}">
                             <div class="txt_box">
                                 <p>
                                     <b>{{ $brand->subtext1 }}</b><br/>{{ $brand->subtext2 }}

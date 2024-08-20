@@ -17,7 +17,7 @@
                         @foreach( $dealbrand AS $key => $deal )
                         <ul class="swiper-slide">
                             <li class="popular_banner">
-                                <img src="{{$deal->appBigImgUrl}}" class="h-[320px]" alt="{{$deal->company_name}}">
+                                <img src="{{$deal->appBigImgUrl}}" alt="{{$deal->company_name}}">
                                 <div class="txt_box">
                                     <p>
                                         <b>{{$deal->subtext1}}</b><br/>{{$deal->subtext2}}
@@ -275,7 +275,8 @@
         });
 
         // thismonth_con01
-        const thismonth_con01 = new Swiper(".thismonth_con01 .slide_box", {
+	const thismonth_con01 = new Swiper(".thismonth_con01 .slide_box", {
+
             loop: true,
             autoplay: {
                 delay: 3000,
