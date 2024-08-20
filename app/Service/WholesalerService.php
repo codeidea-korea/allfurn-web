@@ -50,10 +50,11 @@ class WholesalerService {
             CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'
         ))
             //  COUNT(cah.idx) as searchCnt
-            ->leftjoin('AF_product as ap', function ($query) {
+            ->join('AF_product as ap', function ($query) {
                 $query->on('ap.company_idx', 'AF_wholesale.idx')
                     ->where('ap.company_type', 'W')
-                    ->whereIn('ap.state', ['S', 'O']);
+                    ->whereIn('ap.state', ['S', 'O'])
+                    ->whereNull('ap.deleted_at');
             })
             ->leftjoin('AF_category as ac', function ($query) {
                 $query->on('ac.idx', 'ap.category_idx');
@@ -72,7 +73,7 @@ class WholesalerService {
             //         ->where('cah.company_type', 'W');
             // })
             ->groupBy('AF_wholesale.idx')
-//            ->having('productCnt', '>', 4);
+            ->havingRaw('COUNT(ap.idx) > ?', [1]);
 ;
 
         if (isset($param['location']) && !empty($param['location'])) {
@@ -230,8 +231,8 @@ class WholesalerService {
                 , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
                 , ap.register_time as register_time
             FROM AF_wholesale
-            LEFT JOIN AF_product ap
-            ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O")
+            JOIN AF_product ap
+            ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O") and ap.deleted_at is null
             LEFT JOIN AF_order as ao
             ON ao.product_idx = ap.idx
             LEFT JOIN AF_banner_ad aba 

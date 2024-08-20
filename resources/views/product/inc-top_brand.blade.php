@@ -9,10 +9,9 @@
                                 <li class="popular_banner">
                                     <img src="{{$deal->mainImgUrl}}" class="h-[716px]" alt="{{$deal->company_name}}">
                                     <div class="txt_box">
-                                        <p>
-                                            <b>{{$deal->subtext1}}</b><br/>
-                                            {{$deal->subtext2}}
-                                        </p>
+                                    <p>
+                                        <b>{{$deal->subtext1 == '' ? '&nbsp;' : $deal->subtext1}}</b><br/>{{$deal->subtext2 == '' ? '&nbsp;' : $deal->subtext2}}
+                                    </p>
                                         <a href="/wholesaler/detail/{{$deal->company_idx}}"><b>{{$deal->company_name}} </b> 홈페이지 가기</a>
                                     </div>
                                 </li>
