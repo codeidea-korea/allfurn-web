@@ -611,7 +611,7 @@ class MypageController extends BaseController
     public function uploadCompanyIntroduceImage(Request $request): Response
     {
         $request->validate([
-            'images' => 'image|mimes:png,jpg,jpeg|max:2048'
+            'images' => 'image|mimes:png,jpg,jpeg,webp|max:2048'
         ]);
         return response($this->mypageService->uploadImage($request->file('images'), 'company/introduce'), 200);
     }

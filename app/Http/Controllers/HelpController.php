@@ -70,6 +70,13 @@ class HelpController extends BaseController
         $data['gk'] = $request->input('gk');
 
         $data['pageType'] = 'guide';
+
+        $response = array();
+        $response = array_merge($response, $this->helpService->getNoticeList(array(
+            'offset' => 1,
+            'limit' => 3
+        )));
+        $data['notices'] = $response['list'];
         $data = array_merge($data, $this->helpService->getGuideList($params));
         return view(getDeviceType().'help.guide', $data);
     }

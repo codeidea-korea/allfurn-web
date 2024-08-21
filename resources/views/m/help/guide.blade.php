@@ -34,6 +34,22 @@
                 <a href="/help/faq" class="font-medium py-3 text-stone-400 w-full text-center">자주 묻는 질문</a>
             </div>
         </div>
+        <!-- 공지 최대 3개 출력 --> 
+        <div class="accordion divide-y divide-gray-200">
+            @foreach($notices as $row)
+                <div class="accordion-item">
+                    <button class="accordion-header py-3 px-5 w-full text-left" type="button">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-lg">[공지] {{ $row->title }}</span>
+                            <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
+                        </div>
+                    </button>
+                    <div class="accordion-body hidden p-5 bg-stone-50">
+                            {!! $row->content !!} 
+                    </div>
+                </div>
+            @endforeach
+        </div>
         <!-- 아코디언 리스트 최대 10개씩 출력 -->
         <div class="accordion divide-y divide-gray-200">
             @foreach($list as $row)

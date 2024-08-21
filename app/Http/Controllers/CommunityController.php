@@ -142,7 +142,7 @@ class CommunityController extends BaseController
     public function uploadImage(Request $request): Response
     {
         $request->validate([
-            'images' => 'image|mimes:png,jpg,jpeg|max:4096'
+            'images' => 'image|mimes:png,jpg,jpeg,webp|max:4096'
         ]);
         return response($this->communityService->uploadImage($request->file('images')), 200);
     }

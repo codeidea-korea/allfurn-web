@@ -225,7 +225,7 @@
             prevEl: ".wholesaler_con01 .slide_arrow.prev",
         },
         pagination: {
-            el: ".count_pager",
+            el: ".wholesaler_con01 .count_pager",
             type: "fraction",
         },
         thumbs: {

@@ -144,7 +144,7 @@ class CommunityTempController extends BaseController
     public function uploadImage(Request $request): Response
     {
         $request->validate([
-            'images' => 'image|mimes:png,jpg,jpeg|max:2048'
+            'images' => 'image|mimes:png,jpg,jpeg,webp|max:2048'
         ]);
         return response($this->communityService->uploadImage($request->file('images')), 200);
     }
