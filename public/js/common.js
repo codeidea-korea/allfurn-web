@@ -124,8 +124,8 @@ function getThumbFile(_IMG, maxWidth, width, height){
     if(width < maxWidth) {
         return _IMG;
     }
-    canvas.width = (maxWidth);
-    canvas.height = ((maxWidth / (width*1.0))*height);
+    canvas.width = width; // (maxWidth);
+    canvas.height = height; // ((maxWidth / (width*1.0))*height);
     canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
 
     var dataURL = canvas.toDataURL("image/png");

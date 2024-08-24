@@ -436,6 +436,10 @@
     <script>
     const productIdx = "{{ $productIdx }}"
         var storedFiles = [];
+        var stored100Files = [];
+        var stored400Files = [];
+        var stored600Files = [];
+        
         var subCategoryIdx = null;
         var deleteImage = [];
         var proc = false;
@@ -530,12 +534,38 @@
                                 }
                                 var image = new Image;
                                 image.onload = function() {
-                                    if(this.width > 500) {
-                                        file = getThumbFile(image, 500, this.width, this.height);
-                                    }
+                                    file = getThumbFile(image, 500, this.width, this.height);
                                     storedFiles.push(file);
                                 };
                                 image.src = e.target.result;
+
+                                var image100 = new Image;
+                                image100.width = 100;
+                                image100.height = 100;
+                                image100.onload = function() {
+                                    const i100 = getThumbFile(image100, 100, this.width, this.height);
+                                    stored100Files.push(i100);
+                                };
+                                image100.src = e.target.result;
+
+                                var image400 = new Image;
+                                image400.width = 400;
+                                image400.height = 400;
+                                image400.onload = function() {
+                                    const i400 = getThumbFile(image400, 400, this.width, this.height);
+                                    stored400Files.push(i400);
+                                };
+                                image400.src = e.target.result;
+
+                                var image600 = new Image;
+                                image600.width = 600;
+                                image600.height = 600;
+                                image600.onload = function() {
+                                    const i600 = getThumbFile(image600, 600, this.width, this.height);
+                                    stored600Files.push(i600);
+                                };
+                                image600.src = e.target.result;
+
 
                                 $('.desc__product-img-wrap').append(
                                     '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
@@ -583,6 +613,9 @@
                 $(this).parent().parent().remove('');
                 for(var i = 0; i < storedFiles.length; i++) {
                     if(storedFiles[i].name == file) {
+                        stored100Files.splice(i, 1);
+                        stored400Files.splice(i, 1);
+                        stored600Files.splice(i, 1);
                         storedFiles.splice(i, 1);
                         break;
                     }
@@ -1321,6 +1354,15 @@
 
             for (var i = 0; i < storedFiles.length; i++) {
                 form.append('files[]', storedFiles[i]);
+            }
+            for (var i = 0; i < stored100Files.length; i++) {
+                form.append('files100[]', stored100Files[i]);
+            }
+            for (var i = 0; i < stored400Files.length; i++) {
+                form.append('files400[]', stored400Files[i]);
+            }
+            for (var i = 0; i < stored600Files.length; i++) {
+                form.append('files600[]', stored600Files[i]);
             }
 
             var property = '';

@@ -19,6 +19,7 @@ use App\Models\ProductTemp;
 use App\Models\UserAddress;
 use App\Models\MonthWholesaleSetting;
 use App\Models\UserRequireAction;
+use App\Models\ThumbnailMpg;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -380,12 +381,36 @@ class ProductService
         $product->register_time = DB::raw('now()');
         $product->save();
 
+        if(isset($param['thumb_idx']) && isset($param['thumb100_idx']) && isset($param['thumb400_idx']) && isset($param['thumb600_idx'])) {
+            
+            for($idx = 0; $idx < count($param['thumb_idx']); $idx++) {
+                $thumbnail = new ThumbnailMpg;
+                $thumbnail->main_attach_idx = $param['thumb_idx'][$idx];
+                $thumbnail->size_100_attach_idx = $param['thumb100_idx'][$idx];
+                $thumbnail->size_400_attach_idx = $param['thumb400_idx'][$idx];
+                $thumbnail->size_600_attach_idx = $param['thumb600_idx'][$idx];
+                $thumbnail->save();
+            }
+        }
+
         return $product->idx;
     }
 
     public function modify(array $param)
     {
 
+        if(isset($param['thumb_idx']) && isset($param['thumb100_idx']) && isset($param['thumb400_idx']) && isset($param['thumb600_idx'])) {
+            
+            for($idx = 0; $idx < count($param['thumb_idx']); $idx++) {
+                $thumbnail = new ThumbnailMpg;
+                $thumbnail->main_attach_idx = $param['thumb_idx'][$idx];
+                $thumbnail->size_100_attach_idx = $param['thumb100_idx'][$idx];
+                $thumbnail->size_400_attach_idx = $param['thumb400_idx'][$idx];
+                $thumbnail->size_600_attach_idx = $param['thumb600_idx'][$idx];
+                $thumbnail->save();
+            }
+        }
+        
         return Product::where('idx', $param['productIdx'])
             ->update(['category_idx' => $param['category_idx'],
             'company_type' => Auth::user()->type,
