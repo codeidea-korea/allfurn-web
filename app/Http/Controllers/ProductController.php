@@ -135,13 +135,13 @@ class ProductController extends BaseController
                     $stored = Storage::disk('vultr')->put('product', $file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
-            }
 
-            if (isset($data['thumb100_idx'])) {
-                array_push($data['thumb100_idx'], $attachmentIdx);
-            } else {
-                $data['thumb100_idx'] = array();
-                array_push($data['thumb100_idx'], $attachmentIdx);
+                if (isset($data['thumb100_idx'])) {
+                    array_push($data['thumb100_idx'], $attachmentIdx);
+                } else {
+                    $data['thumb100_idx'] = array();
+                    array_push($data['thumb100_idx'], $attachmentIdx);
+                }
             }
         }
 
@@ -152,13 +152,13 @@ class ProductController extends BaseController
                     $stored = Storage::disk('vultr')->put('product', $file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
-            }
 
-            if (isset($data['thumb400_idx'])) {
-                array_push($data['thumb400_idx'], $attachmentIdx);
-            } else {
-                $data['thumb400_idx'] = array();
-                array_push($data['thumb400_idx'], $attachmentIdx);
+                if (isset($data['thumb400_idx'])) {
+                    array_push($data['thumb400_idx'], $attachmentIdx);
+                } else {
+                    $data['thumb400_idx'] = array();
+                    array_push($data['thumb400_idx'], $attachmentIdx);
+                }
             }
         }
 
@@ -169,13 +169,13 @@ class ProductController extends BaseController
                     $stored = Storage::disk('vultr')->put('product', $file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
-            }
 
-            if (isset($data['thumb600_idx'])) {
-                array_push($data['thumb600_idx'], $attachmentIdx);
-            } else {
-                $data['thumb600_idx'] = array();
-                array_push($data['thumb600_idx'], $attachmentIdx);
+                if (isset($data['thumb600_idx'])) {
+                    array_push($data['thumb600_idx'], $attachmentIdx);
+                } else {
+                    $data['thumb600_idx'] = array();
+                    array_push($data['thumb600_idx'], $attachmentIdx);
+                }
             }
         }
 
