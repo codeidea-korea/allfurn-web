@@ -122,7 +122,7 @@ function linkToPage(url){
 function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
     if(width < maxWidth) {
-        return _IMG;
+//        return _IMG;
     }
     canvas.width = width; // (maxWidth);
     canvas.height = height; // ((maxWidth / (width*1.0))*height);
