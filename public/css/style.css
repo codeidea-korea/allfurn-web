@@ -453,7 +453,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 .prod_detail_top .txt_box .name .tag span.event {color:#fff; background-color:var(--main_color); }
 .prod_detail_top .info p {margin-bottom:30px; font-size:20px; font-weight:600; }
 .prod_detail_top .info hr {margin:16px 0; border:0 none; border-top:1px solid rgba(218, 221, 224, 0.60); }
-.prod_detail_top .info .company_info a {display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background-color:#f5f5f5; border-radius:3px; }
+.prod_detail_top .info .company_info a {display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border:1px solid var(--main_color); background-color:#fff; border-radius:3px; }
 .prod_detail_top .info .company_info b {font-weight:600; color:#46433F; }
 .prod_detail_top .info .company_info span {display:flex; align-items:center; }
 .prod_detail_top .info .company_info svg {width:20px; height:20px; opacity:0.6; }
