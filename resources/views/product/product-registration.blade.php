@@ -936,12 +936,18 @@
         function preview() {
             //$('#state_preview_modal .left-wrap__img img').attr('src', $('.product-img__add:first img').attr('src'));
             setImg = '';
+            setThumbImg = '';
+            var idx = 1;
+            var totalSize = $('.product-img__add').length;
             $('.product-img__add').map(function () {
-                setImg += '<li class="swiper-slide">' +
+                setImg += '<li class="swiper-slide" role="group" aria-label="'+(idx)+' / '+totalSize+'">' +
+                    '<img src="' + $(this).find('img').attr('src') + '" alt="' + $(this).find('img').attr('alt') + '">' +
+                    '</li>';
+                setThumbImg += '<li class="swiper-slide swiper-slide-visible" role="group" aria-label="'+(idx++)+' / '+totalSize+'">' +
                     '<img src="' + $(this).find('img').attr('src') + '" alt="' + $(this).find('img').attr('alt') + '">' +
                     '</li>';
             })
-            $('.left_thumb').html(setImg);
+            $('.left_thumb > ul').html(setThumbImg);
             $('.big_thumb > ul').html(setImg);
             // 썸네일 첫번째 이미지 선택
             //$('.left_thumb li:first-child').addClass('selected');
@@ -1074,22 +1080,22 @@
 
             // 미리보기 창 오픈
             modalOpen('#state_preview_modal');
+
+            const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
+                slidesPerView: 'auto',
+                direction: "vertical",
+                spaceBetween: 8,
+            });
+
+            // thismonth_con01
+            const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+                slidesPerView: 1,
+                spaceBetween: 0,
+                thumbs: {
+                    swiper: detail_thumb_list,
+                },
+            });
         }
-
-        const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
-            slidesPerView: 'auto',
-            direction: "vertical",
-            spaceBetween: 8,
-        });
-
-        // thismonth_con01
-        const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
-            slidesPerView: 1,
-            spaceBetween: 0,
-            thumbs: {
-                swiper: detail_thumb_list,
-            },
-        });
 
 
         // 옵션값 추가

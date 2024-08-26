@@ -728,6 +728,22 @@
             modalOpen('#state_preview_modal');
 
             $('#state_preview_modal .product-detail__img-area').html(productDetail);
+            
+            // thismonth_con01 - pager
+            const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
+                slidesPerView: 'auto',
+                direction: "vertical",
+                spaceBetween: 8,
+            });
+
+            // thismonth_con01 
+            const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
+                slidesPerView: 1,
+                spaceBetween: 0,
+                thumbs: {
+                    swiper: detail_thumb_list,
+                },
+            });
         });
     }
 
