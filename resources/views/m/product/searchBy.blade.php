@@ -160,7 +160,7 @@
 
     window.addEventListener('scroll', function() {
         if ((window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight + 300 >= document.documentElement.scrollHeight && !isLoading && !isLastPage) {
-            loadNewProductList(true);
+            loadNewProductList(false);
         }
     });
 
