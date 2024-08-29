@@ -455,8 +455,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .prod_detail_top .info hr {margin:16px 0; border:0 none; border-top:1px solid rgba(218, 221, 224, 0.60); }
 .prod_detail_top .info .company_info a {display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border:1px solid var(--main_color); background-color:#fff; border-radius:3px; }
 .prod_detail_top .info .company_info b {font-weight:600; color:#46433F; }
-.prod_detail_top .info .company_info span {display:flex; align-items:center; }
-.prod_detail_top .info .company_info svg {width:20px; height:20px; opacity:0.6; }
+.prod_detail_top .info .company_info span {display:flex; align-items:center; color:#FB4760; }
+.prod_detail_top .info .company_info svg {width:20px; height:20px; }
 .prod_detail_top .info .link_box {display:flex; gap:8px; margin-top:30px; }
 .prod_detail_top .info .link_box .btn {flex:1; font-weight:400; }
 .prod_detail_top .info .link_box .btn svg {display:inline-flex; margin-right:5px; width:26px; height:26px; }

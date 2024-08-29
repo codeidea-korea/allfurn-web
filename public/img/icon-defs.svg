@@ -169,6 +169,9 @@
   <symbol id="more_icon" viewBox="0 0 18 18" fill="none">
     <path d="M6.75 13.5L11.25 9L6.75 4.5" stroke="#46433F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
+  <symbol id="more_icon_red" viewBox="0 0 18 18" fill="none">
+    <path d="M6.75 13.5L11.25 9L6.75 4.5" stroke="#FB4760" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
 
   <symbol id="zzim" viewBox="0 0 30 30">
     <path d="M23.75 17.5C25.6125 15.675 27.5 13.4875 27.5 10.625C27.5 8.80164 26.7757 7.05295 25.4864 5.76364C24.197 4.47433 22.4484 3.75 20.625 3.75C18.425 3.75 16.875 4.375 15 6.25C13.125 4.375 11.575 3.75 9.375 3.75C7.55164 3.75 5.80295 4.47433 4.51364 5.76364C3.22433 7.05295 2.5 8.80164 2.5 10.625C2.5 13.5 4.375 15.6875 6.25 17.5L15 26.25L23.75 17.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

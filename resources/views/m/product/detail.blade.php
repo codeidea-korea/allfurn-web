@@ -144,7 +144,7 @@
                         <div class="company_info">
                             <a href="/wholesaler/detail/{{$data['detail']->company_idx}}" class="txt-gray">    
                                 <b>{{$data['detail']->companyName}}</b>
-                                <span>업체 모든 제품 보러가기 <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></span>
+                                <span>업체 모든 제품 보러가기 <svg><use xlink:href="/img/icon-defs.svg?08#more_icon_red"></use></svg></span>
                             </a>
                         </div>
                         <div class="link_box">
