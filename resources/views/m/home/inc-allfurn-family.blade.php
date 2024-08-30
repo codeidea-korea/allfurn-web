@@ -2,7 +2,7 @@
     <div class="inner">
         <div class="main_tit mb-2 flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <h3>올펀 패밀리</h3>
+                <h3>가구 관련 협력업체</h3>
             </div>
         </div>
         <ul class="grid grid-cols-2">
