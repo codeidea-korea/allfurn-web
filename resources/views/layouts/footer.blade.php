@@ -8,6 +8,37 @@
         <div id="prod_regist_btn" class="">
             <a href="/product/registration">상품<br>등록</a>
         </div>
+        <div style="z-index:50; position:fixed; right:110px; bottom:40px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:var(--main_color); color:#fff; text-align:center; line-height:1.15;">
+            <a href="javascript:shareCatalog();">카탈로그<br>전달</a>
+        </div>
+
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
+        <script>
+            function shareCatalog() {
+                Kakao.Share.sendDefault({
+                    objectType: 'feed',
+                    content: {
+                        title: '우리 올펀으로 편하게 거래해요!\n가구 사업자용 B2B 플랫폼',
+                        description: '상품 등록으로, 매장 거래처 확보하세요!',
+                        imageUrl:'{{ env("APP_URL") }}/img/logo.png',
+                        link: {
+                        mobileWebUrl: 'https://developers.kakao.com',
+                        webUrl: 'https://developers.kakao.com',
+                        },
+                    },
+                    buttons: [
+                        {
+                            title: '카다로그 보기',
+                            link: {
+                                mobileWebUrl: "{{ env('APP_URL') }}/catalog/{{Auth::user()['company_idx']}}",
+                                webUrl: "{{ env('APP_URL') }}/catalog/{{Auth::user()['company_idx']}}",
+                            },
+                        },
+                    ],
+                });
+            }
+        </script>
     @endif
 @endif
 

@@ -44,6 +44,8 @@ Route::prefix('signup')->group(function() {
 Route::get('/allimtalk/templates', 'LoginController@getTemplates');
 Route::post('/allimtalk/send', 'LoginController@asend');
 
+Route::get('/catalog/{wholesalerIdx}', 'WholesalerController@catalog')->name('.wholesaler.catalog');
+
 Route::get('/signout', 'LoginController@signOut')->name('signOut');
 Route::get('/terms', 'MemberController@terms')->name('terms');
 Route::post('/saveTerms', 'MemberController@saveTerms')->name('saveTerms');
