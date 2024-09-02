@@ -726,6 +726,179 @@ class WholesalerService {
         return $data;
     }
 
+
+    public function detailByCatalog(array $param = [])
+    {
+        CompanyWholesale::where('idx', $param['wholesalerIdx'])
+            ->update(['access_count' => DB::raw('access_count+1')]);
+
+        $data['info'] = CompanyWholesale::select('AF_wholesale.*',
+        DB::raw('(CASE WHEN AF_wholesale.inquiry_count >= 100000000 THEN CONCAT(AF_wholesale.inquiry_count/100000000,"억")
+                           WHEN AF_wholesale.inquiry_count >= 10000000 THEN CONCAT(AF_wholesale.inquiry_count/10000000,"천만")
+                           WHEN AF_wholesale.inquiry_count >= 10000 THEN CONCAT(AF_wholesale.inquiry_count/10000, "만")
+                           WHEN AF_wholesale.inquiry_count >= 1000 THEN CONCAT(AF_wholesale.inquiry_count/1000, "천")
+                           ELSE AF_wholesale.inquiry_count END) as inquiryCnt,
+                        (CASE WHEN AF_wholesale.access_count >= 100000000 THEN CONCAT(AF_wholesale.access_count/100000000,"억")
+                           WHEN AF_wholesale.access_count >= 10000000 THEN CONCAT(AF_wholesale.access_count/10000000,"천만")
+                           WHEN AF_wholesale.access_count >= 10000 THEN CONCAT(AF_wholesale.access_count/10000, "만")
+                           WHEN AF_wholesale.access_count >= 1000 THEN CONCAT(AF_wholesale.access_count/1000, "천")
+                           ELSE AF_wholesale.access_count END) as visitCnt,
+                        (SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
+                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
+                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
+                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
+                           ELSE COUNT(*) END cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W") as likeCnt,'
+//                        (SELECT COUNT(*) cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W" AND user_idx = '.Auth::user()->idx.') as isLike,
+                        .'CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl, CONCAT("'.preImgUrl().'", at2.folder, "/", at2.filename) as imgUrl2'))
+            ->where('AF_wholesale.idx', $param['wholesalerIdx'])
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_wholesale.profile_image_attachment_idx');
+            })
+            ->leftjoin('AF_attachment as at2', function ($query) {
+                $query->on('at2.idx', 'AF_wholesale.top_banner_attachment_idx');
+            })
+            ->first();
+
+        $data['category'] = Product::select('ac2.name', 'ac2.idx', DB::raw('count(ac2.idx) as cnt'))
+            ->where(['company_idx'=>$param['wholesalerIdx'], 'company_type'=>'W'])
+            -> whereIN('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at')
+            ->leftjoin('AF_category as ac', function ($query) {
+                $query->on('ac.idx', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_category as ac2', function ($query) {
+                $query->on('ac2.idx', 'ac.parent_idx');
+            })
+            ->groupBy('ac2.idx')
+            ->orderBy('cnt', 'desc')
+            ->get();
+
+        // 이벤트 상품
+        // product_ad, banner_ad
+        // banner_ad에서 도매업체-인기브랜드(popularbrand), 이달의딜-인기브랜드(dealbrand)는 선택한 상품들, 나머지는 상품을 링크한 경우의 해당 상품들
+        // 현재 광고중인 상품들
+
+        $arr_product_idx = array();
+
+        // 배너광고에서 광고 위치별로 상품을 가져온다. 
+        $banners = Banner::select('*')->where('state', 'G')->where('start_date', '<', DB::raw('now()'))->where('end_date', '>', DB::raw('now()'))->where('company_type', 'W')->where('company_idx', $param['wholesalerIdx'])->get();
+        foreach($banners as $banner){
+            if ($banner->ad_location == "popularbrand" || $banner->ad_location == "dealbrand"){
+                // 도매업체-인기브랜드, 이달의딜-인기브랜드는 선택한 상품들 정보로...
+                $banner_product_info = json_decode($banner->product_info, true);
+                foreach ($banner_product_info as $key => $info) {
+                    if ($info['mdp_gidx'] != ""){
+                        array_push($arr_product_idx, $info['mdp_gidx']);
+                    }
+                }
+            }else{
+                // 그 외 배너광고는 상품이 연결되었을 경우 해당 상품 정보로...
+                if ($banner->web_link_type == "1" && $banner->web_link != ""){
+                    $web_link = explode('/', $banner->web_link);
+                    if ($web_link != ""){
+                        array_push($arr_product_idx, $web_link[3]);
+                    }
+                }
+            }
+        }
+
+        // 상품광고 정보 가져오기
+        $products = Product::select('AF_product.idx')
+            ->leftjoin('AF_product_ad', function($query) {
+                $query->on('AF_product_ad.product_idx', 'AF_product.idx')
+                ->where('AF_product_ad.state', 'G')
+                ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
+                ->where('AF_product_ad.end_date', '>', DB::raw('now()'));
+            })
+            ->where('AF_product.company_idx', $param['wholesalerIdx'])
+            ->where('AF_product.company_type', 'W')
+            ->where('AF_product.state', 'S')
+            ->whereNull('AF_product.deleted_at')
+            ->whereNotNull('AF_product_ad.idx')->get();
+
+        if ($products->count() > 0){
+            foreach($products as $product){
+                array_push($arr_product_idx, $product->idx);
+            }
+            array_unique($arr_product_idx);
+            sort($arr_product_idx);
+            $arrayWithoutEmptyValues = array_filter($arr_product_idx, function($value) {
+                return !empty($value);
+            });
+            $product_idx_list = implode(',', $arrayWithoutEmptyValues);
+
+            $data['event'] = Product::select(
+                    'AF_product.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+//                , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+            )
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->whereRaw("AF_product.idx in (".$product_idx_list.")")
+            ->whereNull('AF_product.deleted_at')
+            ->orderBy('AF_product.idx', 'DESC')
+            ->get();
+        }else{
+            $data['event'] = Product::select(
+                    'AF_product.*'
+                , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+//                , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+            )
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->whereRaw("AF_product.idx in (0)")
+            ->whereNull('AF_product.deleted_at')
+            ->orderBy('AF_product.idx', 'DESC')
+            ->get();
+        }
+
+        /*
+        $data['event'] = Product::select(
+             'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+        )
+        ->leftjoin('AF_product_ad', function($query) {
+            $query->on('AF_product_ad.product_idx', 'AF_product.idx')
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
+            ->where('AF_product_ad.end_date', '>', DB::raw('now()'));
+        })
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->where('AF_product.company_idx', $param['wholesalerIdx'])
+        ->where('AF_product.company_type', 'W')
+        ->where('AF_product.state', 'S')
+        ->whereNotNull('AF_product_ad.idx')
+        ->orderBy('AF_product_ad.price', 'DESC')
+        ->orderBy('AF_product_ad.register_time', 'DESC')
+        ->get();
+        */
+
+        // 추천 상품
+        $data['recommend'] = Product::select(
+             'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
+//            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+        )
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->where('AF_product.company_idx', $param['wholesalerIdx'])
+        ->where('AF_product.state', 'S')
+        ->where('AF_product.is_represent', 1)
+        ->whereNotNull('AF_product.access_date')
+        ->whereNull('AF_product.deleted_at')
+        ->orderBy('AF_product.access_date', 'DESC')
+        ->limit(5)
+        ->get();
+
+        return $data;
+    }
+
     // 도매업체 > 이 달의 도매
     // 광고위치가 wholesaletop인 도매업체만 출력
     function getThisMonthWholesaler(array $params = [])

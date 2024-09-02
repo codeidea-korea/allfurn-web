@@ -43,7 +43,9 @@
     <div class="bot_quick">
         <button type="button" class="tab_btn active" onclick="tabChange(this,0)">판매상품</button>
         <button type="button" class="tab_btn" onclick="tabChange(this,1)">업체소개</button>
+        <!--
         <button type="button" class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
+-->
         <button type="button" onClick="shareMessage();"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
     </div>
 
@@ -73,7 +75,9 @@
                             <li class="swiper-slide prod_item">
                                 <div class="img_box">
                                     <a href="{{ env('APP_URL') }}/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                    <!--
                                     <button class="zzim_btn"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#zzim"></use></svg></button>
+                                    -->
                                 </div>
                                 <div class="txt_box">
                                     <a href="{{ env('APP_URL') }}/product/detail/{{$item->idx}}">
@@ -125,7 +129,7 @@
                     </div>
                     <div class="txt">
                         <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
-                        <a href="{{ env('APP_URL') }}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
+                        <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
                     </div>
                 </div>
                 <div class="info">
@@ -293,7 +297,7 @@
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: '/wholesaler/wholesalerAddProduct',
+            url: '/wholesalerAddProduct/catalog',
             method: 'GET',
             data: { 
                 'page': ++currentPage,
@@ -329,6 +333,18 @@
             loadProductList();
         }
     });
+    function saveDetail(idx, otherLink){
+        sessionStorage.setItem('af5-top', $(document).scrollTop());
+        sessionStorage.setItem('af5-currentPage', currentPage);
+        sessionStorage.setItem('af5-href', location.href);
+        sessionStorage.setItem('af5-backupItem', $($(".prod_list")[1]).html());
+
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
+        }
+    }
 </script>
 
 </body>

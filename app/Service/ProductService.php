@@ -713,6 +713,44 @@ class ProductService
         return $list->orderby($params['orderedElement'], 'desc')->paginate(32);
     }
 
+
+    //도메업체 상품 상품
+    //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    public function getWholesalerAddedProductListByCatalog($params) {
+        $list = Product::select(
+            'AF_product.*'
+        , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
+        , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew')
+//        , DB::raw('(SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest')
+        // , DB::raw('(SELECT COUNT(*) cnt FROM AF_order WHERE product_idx = AF_product.idx ) as orderCnt')
+        // , DB::raw('(SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as searchCnt')
+        , DB::raw('(interest_count + AF_product.inquiry_count) AS popularity'),
+        )
+        ->leftjoin('AF_attachment as at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+        })
+        ->leftjoin('AF_category as ac', function($query) {
+            $query->on('ac.idx', '=', 'AF_product.category_idx');
+        })
+        ->leftjoin('AF_category as ac2', function($query) {
+            $query->on('ac2.idx', '=', 'ac.parent_idx');
+        })
+        ->leftjoin(
+            DB::raw('(SELECT product_idx, COUNT(*) AS interest_count
+                FROM AF_product_interest
+                GROUP BY product_idx) AS api'), function($query) {
+                    $query->on('AF_product.idx', '=', 'api.product_idx');
+        })
+        ->where('AF_product.company_idx', $params['company_idx'])
+        ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
+
+        if($params['categories'] != "") {
+            $list->whereIN('ac2.idx', explode(",", $params['categories']));
+        }
+
+        return $list->orderby($params['orderedElement'], 'desc')->paginate(32);
+    }
+
     public function addOrder(array $param = [])
     {
         $order = new Order;

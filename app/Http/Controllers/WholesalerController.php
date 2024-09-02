@@ -204,21 +204,4 @@ class WholesalerController extends BaseController
         $data = $this->wholesalerService->getThisMonthWholesaler($target);
         return view(getDeviceType().'wholesaler.thisMonth', [ 'wholesalerList' => $data]);
     }
-
-    public function catalog(Request $request, int $wholesalerIdx)
-    {
-        $data['wholesalerIdx'] = $wholesalerIdx;
-        $categoryList = $this->productService->getCategoryList();
-
-        $todayCount = $this->productService->getTodayCount();
-        
-        $data = $this->wholesalerService->detail($data);
-        $data['info']->place = substr( $data['info']->business_address, 0, 6 );
-
-        return view('wholesaler.catalog', [
-            'todayCount'=>$todayCount,
-            'categoryList'=>$categoryList,
-            'data'=>$data
-        ]);
-    }
 }
