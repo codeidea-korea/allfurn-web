@@ -8,8 +8,8 @@
         <div id="prod_regist_btn" class="">
             <a href="/product/registration">상품<br>등록</a>
         </div>
-        <div style="z-index:50; position:fixed; right:110px; bottom:40px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:var(--main_color); color:#fff; text-align:center; line-height:1.15;">
-            <a href="javascript:shareCatalog();">카탈로그<br>전달</a>
+        <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
+            <a href="javascript:shareCatalog();">카탈로그<br>보내기</a>
         </div>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
