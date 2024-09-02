@@ -61,6 +61,7 @@ body {min-width:auto; }
 #catalog .bot_quick button {display:flex; align-items:center; justify-content:center; gap:4px; font-size:16px; }
 #catalog .bot_quick button.tab_btn {font-size:20px; }
 #catalog .bot_quick button.tab_btn.active {color:var(--main_color); }
+#catalog .bot_quick button.addLike.active svg {stroke: var(--main_color); fill: var(--main_color);}
 #catalog .bot_quick svg {width:24px; height:24px; stroke:#46433F; fill:transparent; }
 
 /* 인트로 */
