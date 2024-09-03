@@ -9,7 +9,7 @@
             <a href="/product/registration">상품<br>등록</a>
         </div>
         <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
-            <a href="javascript:shareCatalog();">카탈로그<br>보내기</a>
+            <a href="javascript:shareCatalog();">카달로그<br>보내기</a>
         </div>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
