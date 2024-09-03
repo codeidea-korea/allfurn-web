@@ -50,10 +50,10 @@
     </div>
 
 
-    <div class="catalog_txt">금주의 <span>추</span><span>천</span>상품<br/> 빠르게 받아 보세요!</div>
+    <!-- <div class="catalog_txt">금주의 <span>추</span><span>천</span>상품<br/> 빠르게 받아 보세요!</div> -->
     <div class="logo">
         <div>
-            <span>e-Catalog</span>
+            <span>Catalog</span>
             <p>{{$data['info']->company_name}}</p>
         </div>
     </div>
