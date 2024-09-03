@@ -242,6 +242,93 @@ class ProductService
     }
 
 
+    public function getProductDataByCatalog(int $productIdx, string $type = '') {
+
+        if ($type != '' && $type == 'temp') {
+
+            $data['detail'] = ProductTemp::select('AF_product_temp.*', 'ac2.idx as category_parent_idx',
+                DB::raw('CONCAT(ac2.name, CONCAT(" > ", ac.name)) as category,
+            (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
+                  WHEN AF_product_temp.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
+                  ELSE "" END) as companyName,                  
+            (CASE WHEN AF_product_temp.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product_temp.company_idx)
+                  WHEN AF_product_temp.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product_temp.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
+                  COUNT(DISTINCT pa.idx) as isAd'))
+                ->leftjoin('AF_product_ad as pa', function ($query) {
+                    $query->on('pa.product_idx', 'AF_product_temp.idx')
+                        ->where('pa.state', 'G')
+                        ->where('pa.start_date', '<', DB::raw('now()'))
+                        ->where('pa.end_date', '>', DB::raw('now()'));
+                })
+                ->leftjoin('AF_category as ac', function($query) {
+                    $query->on('ac.idx', '=', 'AF_product_temp.category_idx');
+                })
+                ->leftjoin('AF_category as ac2', function($query) {
+                    $query->on('ac2.idx', '=', 'ac.parent_idx');
+                })
+                ->where('AF_product_temp.idx', $productIdx)
+                ->first();
+                
+        } else {
+            
+            $data['detail'] = Product::select('AF_product.*', 'ac2.idx as category_parent_idx',
+                DB::raw('CONCAT(ac2.name, CONCAT(" > ", ac.name)) as category,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyName,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyPhoneNumber,
+            (CASE WHEN AF_product.company_type = "W" THEN (SELECT CONCAT(aw.business_address, " ", aw.business_address_detail) FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (SELECT CONCAT(ar.business_address, " ", ar.business_address_detail) FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
+                  ELSE "" END) AS product_address,
+                  COALESCE(pa.idx, aba.idx, 0) AS isAd'
+                ))
+                ->leftjoin('AF_product_ad as pa', function ($query) {
+                    $query->on('pa.product_idx', 'AF_product.idx')
+                        ->where('pa.state', 'G')
+                        ->where('pa.start_date', '<', DB::raw('now()'))
+                        ->where('pa.end_date', '>', DB::raw('now()'));
+                })
+                ->leftjoin('AF_category as ac', function($query) {
+                    $query->on('ac.idx', '=', 'AF_product.category_idx');
+                })
+                ->leftjoin('AF_category as ac2', function($query) {
+                    $query->on('ac2.idx', '=', 'ac.parent_idx');
+                })
+                ->leftjoin('AF_banner_ad as aba', function($query) {
+                    $query->on('AF_product.idx', '=', DB::raw("SUBSTRING_INDEX(aba.web_link, '/', -1)"))
+                        ->where('aba.start_date', '<', DB::raw("now()"))
+                        ->where('aba.end_date', '>', DB::raw("now()"))
+                        ->where('aba.ad_location', 'plandiscount')
+                        ->where('aba.is_delete', 0)
+                        ->where('aba.is_open', 1);
+                })
+                ->where('AF_product.idx', $productIdx)
+                ->first();
+
+            $data['recommend'] = Product::select('AF_product.*',
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
+            (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd'))
+                ->where([
+                    'AF_product.company_type' => $data['detail']->company_type,
+                    'AF_product.company_idx' => $data['detail']->company_idx,
+                    'AF_product.is_represent' => 1,
+                    'AF_product.state' => 'S'
+                ])
+                ->where('AF_product.idx', '<>' ,$productIdx)
+                ->leftjoin('AF_attachment as at', function($query) {
+                    $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+                })
+                ->orderBy('AF_product.idx', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        return $data;
+    }
+
     public function getProductOption(int $product_idx)
     {
         return Product::select('AF_product.product_option')

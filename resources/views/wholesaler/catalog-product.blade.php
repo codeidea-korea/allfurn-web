@@ -118,10 +118,6 @@
                     <?php echo str_replace('\"', '', html_entity_decode($data['info']->introduce)); ?>
                 </div>
             </div>
-
-            <!-- 상품 상세 -->
-            <div id="product_detail">
-            </div>
         </div>
 
         <div class="company_detail">
@@ -228,7 +224,6 @@
         }else{
             $('#catalog').removeClass('totop')
         }
-        tabIndexes.push(num);
     }
 
     setTimeout(function(){
@@ -344,26 +339,12 @@
         sessionStorage.setItem('af5-href', location.href);
         sessionStorage.setItem('af5-backupItem', $($(".prod_list")[1]).html());
 
-        $.ajax({
-            method: 'GET',
-            url: '/catalog/product/detail/' + idx,
-            async: false,
-            success : function (result) {
-                $('#product_detail').html(result.detail.product_detail);
-                tabChange(this, 2);
-            }
-        });
-    }
-    const tabIndexes = [];
-    window.onpopstate = function(event) { 
-        if(event) {
-            console.log(event);
-            if(tabIndexes.length > 0) {
-                const idx = tabIndexes.pop();
-                tabChange(this, idx);
-            }
+        if(otherLink) {
+            location.href=otherLink;
+        } else {
+            location.href='/product/detail/' + idx;
         }
-    };
+    }
 </script>
 
 </body>

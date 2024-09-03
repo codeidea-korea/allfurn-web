@@ -67,4 +67,12 @@ class CatalogController extends BaseController
         $list['html'] = view('wholesaler.inc-catalog-common', ['list' => $list])->render();
         return response()->json($list);
     }
+
+    // 상품 상세 데이터 가져오기
+    public function productDetail(int $productIdx)
+    {
+        $data = $this->productService->getProductDataByCatalog($productIdx);
+        $data['detail']->product_detail = str_replace('\"', '', str_replace('width: 300px;', 'width: fit-content;',html_entity_decode($data['detail']->product_detail)));
+        return response()->json($data);
+    }
 }
