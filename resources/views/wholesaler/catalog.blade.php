@@ -51,6 +51,12 @@
 
 
     <!-- <div class="catalog_txt">금주의 <span>추</span><span>천</span>상품<br/> 빠르게 받아 보세요!</div> -->
+
+    <button type="button" class="back_btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>    
+        뒤로가기
+    </button>
+
     <div class="logo">
         <div>
             <span>Catalog</span>
@@ -223,6 +229,7 @@
     const tabChange = (item,num)=>{
         $(item).addClass('active').siblings().removeClass('active');
         $('.tab_content > div').eq(num).addClass('active').siblings().removeClass('active')
+        $(window).scrollTop(0)
         if(num == 1){
             $('#catalog').addClass('totop')
         }else{
