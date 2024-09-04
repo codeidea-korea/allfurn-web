@@ -51,6 +51,7 @@
 
 
     <!-- <div class="catalog_txt">금주의 <span>추</span><span>천</span>상품<br/> 빠르게 받아 보세요!</div> -->
+
     <div class="logo">
         <div>
             <span>Catalog</span>
@@ -74,13 +75,13 @@
                             @foreach($data['recommend'] as $item)
                             <li class="swiper-slide prod_item">
                                 <div class="img_box">
-                                    <a href="{{ env('APP_URL') }}/product/detail/{{$item->idx}}"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
+                                    <a href="javascript:saveDetail({{$item->idx}})"><img src="{{$item->imgUrl}}" alt="{{$item->name}}"></a>
                                     <!--
                                     <button class="zzim_btn"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#zzim"></use></svg></button>
                                     -->
                                 </div>
                                 <div class="txt_box">
-                                    <a href="{{ env('APP_URL') }}/product/detail/{{$item->idx}}">
+                                    <a href="javascript:saveDetail({{$item->idx}})">
                                         <span>{{$item->company_name}}</span>
                                         <p>{{$item->name}}</p>
                                         <b>{{$item->is_price_open ? number_format($item->price, 0).'원': $item->price_text}}</b>
@@ -117,10 +118,6 @@
                 <div class="info_box">
                     <?php echo str_replace('\"', '', html_entity_decode($data['info']->introduce)); ?>
                 </div>
-            </div>
-
-            <!-- 상품 상세 -->
-            <div id="product_detail">
             </div>
         </div>
 
@@ -223,12 +220,12 @@
     const tabChange = (item,num)=>{
         $(item).addClass('active').siblings().removeClass('active');
         $('.tab_content > div').eq(num).addClass('active').siblings().removeClass('active')
+        $(window).scrollTop(0)
         if(num == 1){
             $('#catalog').addClass('totop')
         }else{
             $('#catalog').removeClass('totop')
-        }
-        tabIndexes.push(num);
+	    }
     }
 
     setTimeout(function(){
@@ -274,8 +271,8 @@
                 description: '상품 등록으로, 매장 거래처 확보하세요!',
                 imageUrl:'https://devallfurn-web.codeidea.io/img/logo.png',
                 link: {
-                mobileWebUrl: 'https://developers.kakao.com',
-                webUrl: 'https://developers.kakao.com',
+                mobileWebUrl: 'https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}',
+                webUrl: 'https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}',
                 },
             },
             buttons: [
@@ -339,31 +336,13 @@
         }
     });
     function saveDetail(idx, otherLink){
-        sessionStorage.setItem('af5-top', $(document).scrollTop());
-        sessionStorage.setItem('af5-currentPage', currentPage);
-        sessionStorage.setItem('af5-href', location.href);
-        sessionStorage.setItem('af5-backupItem', $($(".prod_list")[1]).html());
+        sessionStorage.setItem('catalog-top', $(document).scrollTop());
+        sessionStorage.setItem('catalog-currentPage', currentPage);
+        sessionStorage.setItem('catalog-href', location.href);
+        sessionStorage.setItem('catalog-backupItem', $($(".tab_content")[0]).html());
 
-        $.ajax({
-            method: 'GET',
-            url: '/catalog/product/detail/' + idx,
-            async: false,
-            success : function (result) {
-                $('#product_detail').html(result.detail.product_detail);
-                tabChange(this, 2);
-            }
-        });
+        location.href = '/catalog/{{$data['info']->idx}}/product/detail/' + idx;
     }
-    const tabIndexes = [];
-    window.onpopstate = function(event) { 
-        if(event) {
-            console.log(event);
-            if(tabIndexes.length > 0) {
-                const idx = tabIndexes.pop();
-                tabChange(this, idx);
-            }
-        }
-    };
 </script>
 
 </body>

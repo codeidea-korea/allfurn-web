@@ -69,10 +69,17 @@ class CatalogController extends BaseController
     }
 
     // 상품 상세 데이터 가져오기
-    public function productDetail(int $productIdx)
+    public function productDetail(int $wholesalerIdx, int $productIdx)
     {
-        $data = $this->productService->getProductDataByCatalog($productIdx);
-        $data['detail']->product_detail = str_replace('\"', '', str_replace('width: 300px;', 'width: fit-content;',html_entity_decode($data['detail']->product_detail)));
-        return response()->json($data);
+        $product = $this->productService->getProductDataByCatalog($productIdx);
+        
+        $data['wholesalerIdx'] = $wholesalerIdx;
+        $data = $this->wholesalerService->detailByCatalog($data);
+        $data['info']->place = substr( $data['info']->business_address, 0, 6 );
+        $data['detail'] = str_replace('\"', '', str_replace('width: 300px;', 'width: fit-content;',html_entity_decode($product['detail']->product_detail)));
+
+        return view('wholesaler.catalog-product', [
+            'data'=>$data
+        ]);
     }
 }
