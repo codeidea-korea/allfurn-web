@@ -146,7 +146,7 @@
 </div>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-<script> Kakao.init('1f2208aef04c65a1cbc6002ca4c149ae'); </script>
+<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
 
 <script>
     function shareMessage() {
@@ -155,18 +155,18 @@
             content: {
                 title: '우리 올펀으로 편하게 거래해요!\n가구 사업자용 B2B 플랫폼',
                 description: '상품 등록으로, 매장 거래처 확보하세요!',
-                imageUrl:'https://devallfurn-web.codeidea.io/img/logo.png',
+                imageUrl:'https://all-furn.com/img/logo.png',
                 link: {
-                mobileWebUrl: 'https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}',
-                webUrl: 'https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}',
+                mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
+                webUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
                 },
             },
             buttons: [
                 {
                     title: '카다로그 보기',
                     link: {
-                        mobileWebUrl: "https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}",
-                        webUrl: "https://devallfurn-web.codeidea.io/catalog/{{$data['info']->idx}}",
+                        mobileWebUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
+                        webUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
                     },
                 },
             ],
