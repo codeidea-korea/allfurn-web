@@ -343,6 +343,12 @@
 
         location.href = '/catalog/{{$data['info']->idx}}/product/detail/' + idx;
     }
+    if(localStorage.getItem('p')) {
+        if(localStorage.getItem('p') == 1) {
+            tabChange($('.bot_quick > button:nth-child(2)'),1);
+        }
+        localStorage.removeItem('p');
+    }
 </script>
 
 </body>
