@@ -349,9 +349,9 @@
         Kakao.Share.sendDefault({
             objectType: 'feed',
             content: {
-                title: '우리 올펀으로 편하게 거래해요!\n가구 사업자용 B2B 플랫폼',
-                description: '상품 등록으로, 매장 거래처 확보하세요!',
-                imageUrl:'https://all-furn.com/img/logo.png',
+                title: '[{{$data['info']->company_name}}] 카다로그가 도착했습니다.',
+                description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
+                imageUrl:'https://all-furn.com/img/logo_kakao_catalog.png',
                 link: {
                 mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
                 webUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',

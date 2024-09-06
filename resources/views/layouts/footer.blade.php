@@ -8,6 +8,10 @@
         <div id="prod_regist_btn" class="">
             <a href="/product/registration">상품<br>등록</a>
         </div>
+    @endif
+    
+    @if(request()->is(['', '/', 'mypage/*', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
+                    
         <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
             <a href="javascript:shareCatalog();">카달로그<br>보내기</a>
         </div>
@@ -19,9 +23,9 @@
                 Kakao.Share.sendDefault({
                     objectType: 'feed',
                     content: {
-                        title: '우리 올펀으로 편하게 거래해요!\n가구 사업자용 B2B 플랫폼',
-                        description: '상품 등록으로, 매장 거래처 확보하세요!',
-                        imageUrl:"{{ env('APP_URL') }}"+'/img/logo.png',
+                        title: '[{{Auth::user()['company_name']}}] 카다로그가 도착했습니다.',
+                        description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
+                        imageUrl:"{{ env('APP_URL') }}"+'/img/logo_kakao_catalog.png',
                         link: {
                         mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{Auth::user()['company_idx']}}',
                         webUrl: "{{ env('APP_URL') }}"+'/catalog/{{Auth::user()['company_idx']}}',
@@ -40,6 +44,39 @@
             }
         </script>
     @endif
+    
+    @elseif(request()->is(['wholesaler/detail/*' ]))
+        <div style="z-index:51; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
+            <a href="javascript:shareCatalog();">카달로그<br>받기</a>
+        </div>
+
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
+<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
+        <script>
+            function shareCatalog() {
+                Kakao.Share.sendDefault({
+                    objectType: 'feed',
+                    content: {
+                        title: '[{{$data['info']->company_name}}] 카다로그가 도착했습니다.',
+                        description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
+                        imageUrl:"{{ env('APP_URL') }}"+'/img/logo_kakao_catalog.png',
+                        link: {
+                        mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
+                        webUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
+                        },
+                    },
+                    buttons: [
+                        {
+                            title: '카다로그 보기',
+                            link: {
+                                mobileWebUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
+                                webUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
+                            },
+                        },
+                    ],
+                });
+            }
+        </script>
 @endif
 
 <footer>
