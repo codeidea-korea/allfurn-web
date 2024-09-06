@@ -612,7 +612,7 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 #prod_regist_btn.hidden {display:none; }
 #prod_regist_btn a {display:block; }
 
-#move_back_btn {z-index:50; position:fixed; right:18px; bottom:130px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:rgba(255,255,255,0.8); color:#868686; text-align:center; line-height:1.15; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+#move_back_btn {z-index:50; position:fixed; right:18px; bottom:180px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:rgba(255,255,255,0.8); color:#868686; text-align:center; line-height:1.15; box-shadow:0 0 10px rgba(0,0,0,0.1); }
 #move_back_btn.hidden {display:none; }
 #move_back_btn a {display:block; }
 

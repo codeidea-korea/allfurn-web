@@ -105,6 +105,79 @@
                     <ul class="prod_list grid2">
                     </ul>
                 </div>
+
+                <div class="company_detail">
+                    <div class="detail">
+                        <div class="top_info">
+                            <div class="tit">
+                                <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
+                                <p>가구 도매 플랫폼</p>
+                            </div>
+                            <div class="txt">
+                                <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
+                            </div>
+                        </div>
+                        <div class="info">
+                            <table>
+                                <colgroup>
+                                    <col width="100px">
+                                    <col width="*">
+                                </colgroup>
+                                <tbody>
+                                    @if($data['info']->owner_name)
+                                        <tr>
+                                            <th>대표자</th>
+                                            <td>{{$data['info']->owner_name}}</td>
+                                        </tr>
+                                    @endif
+                                    @if($data['info']->phone_number)
+                                        <tr>
+                                            <th>대표전화</th>
+                                            <td>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['info']->phone_number); @endphp</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->work_day)
+                                        <tr>
+                                            <th>근무일</th>
+                                            <td>{{$data['info']->work_day}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->how_order)
+                                        <tr>
+                                            <th>발주방법</th>
+                                            <td>{{$data['info']->how_order}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->manager)
+                                        <tr>
+                                            <th>담당자</th>
+                                            <td>{{$data['info']->manager}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->manager_number)
+                                        <tr>
+                                            <th>담당자연락처</th>
+                                            <td>{{$data['info']->manager_number}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->website)
+                                        <tr>
+                                        <th>웹사이트</th>
+                                        <td><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>    
+                                    </tr>
+                                    @endif
+                                    @if ($data['info']->business_address)
+                                        <tr>
+                                            <th>주소</th>
+                                            <td>{{$data['info']->business_address .' '.$data['info']->business_address_detail}}</td>    
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 업체소개 -->
@@ -115,84 +188,93 @@
                         <span>상품문의<svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#more_icon"></use></svg></span>
                     </a>
                 </div>
+
+                <div class="company_detail mb-3">
+                    <div class="detail">
+                        
+                        <div class="info">
+                            <table>
+                                <colgroup>
+                                    <col width="100px">
+                                    <col width="*">
+                                </colgroup>
+                                <tbody>
+                                    @if($data['info']->owner_name)
+                                        <tr>
+                                            <th>대표자</th>
+                                            <td>{{$data['info']->owner_name}}</td>
+                                        </tr>
+                                    @endif
+                                    @if($data['info']->phone_number)
+                                        <tr>
+                                            <th>대표전화</th>
+                                            <td>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['info']->phone_number); @endphp</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->work_day)
+                                        <tr>
+                                            <th>근무일</th>
+                                            <td>{{$data['info']->work_day}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->how_order)
+                                        <tr>
+                                            <th>발주방법</th>
+                                            <td>{{$data['info']->how_order}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->manager)
+                                        <tr>
+                                            <th>담당자</th>
+                                            <td>{{$data['info']->manager}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->manager_number)
+                                        <tr>
+                                            <th>담당자연락처</th>
+                                            <td>{{$data['info']->manager_number}}</td>
+                                        </tr>
+                                    @endif
+                                    @if ($data['info']->website)
+                                        <tr>
+                                        <th>웹사이트</th>
+                                        <td><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>    
+                                    </tr>
+                                    @endif
+                                    @if ($data['info']->business_address)
+                                        <tr>
+                                            <th>주소</th>
+                                            <td>{{$data['info']->business_address .' '.$data['info']->business_address_detail}}</td>    
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="info_box">
                     <?php echo str_replace('\"', '', html_entity_decode($data['info']->introduce)); ?>
+                </div>
+
+                <div class="company_detail">
+                    <div class="detail">
+                        <div class="top_info">
+                            <div class="tit">
+                                <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
+                                <p>가구 도매 플랫폼</p>
+                            </div>
+                            <div class="txt">
+                                <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="company_detail">
-            <div class="detail">
-                <div class="top_info">
-                    <div class="tit">
-                        <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
-                        <p>가구 도매 플랫폼</p>
-                    </div>
-                    <div class="txt">
-                        <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
-                        <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
-                    </div>
-                </div>
-                <div class="info">
-                    <table>
-                        <colgroup>
-                            <col width="100px">
-                            <col width="*">
-                        </colgroup>
-                        <tbody>
-                            @if($data['info']->owner_name)
-                                <tr>
-                                    <th>대표자</th>
-                                    <td>{{$data['info']->owner_name}}</td>
-                                </tr>
-                            @endif
-                            @if($data['info']->phone_number)
-                                <tr>
-                                    <th>대표전화</th>
-                                    <td>@php echo preg_replace('/^(\d{2,3})(\d{3,4})(\d{4})$/', '$1-$2-$3', $data['info']->phone_number); @endphp</td>
-                                </tr>
-                            @endif
-                            @if ($data['info']->work_day)
-                                <tr>
-                                    <th>근무일</th>
-                                    <td>{{$data['info']->work_day}}</td>
-                                </tr>
-                            @endif
-                            @if ($data['info']->how_order)
-                                <tr>
-                                    <th>발주방법</th>
-                                    <td>{{$data['info']->how_order}}</td>
-                                </tr>
-                            @endif
-                            @if ($data['info']->manager)
-                                <tr>
-                                    <th>담당자</th>
-                                    <td>{{$data['info']->manager}}</td>
-                                </tr>
-                            @endif
-                            @if ($data['info']->manager_number)
-                                <tr>
-                                    <th>담당자연락처</th>
-                                    <td>{{$data['info']->manager_number}}</td>
-                                </tr>
-                            @endif
-                            @if ($data['info']->website)
-                                <tr>
-                                <th>웹사이트</th>
-                                <td><a @if(strpos($data['info']->website, 'http') !== false) href="{{$data['info']->website}}" target="_blank" @endif>{{$data['info']->website}}</a></td>    
-                            </tr>
-                            @endif
-                            @if ($data['info']->business_address)
-                                <tr>
-                                    <th>주소</th>
-                                    <td>{{$data['info']->business_address .' '.$data['info']->business_address_detail}}</td>    
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
 
