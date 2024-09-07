@@ -23,7 +23,7 @@
                 Kakao.Share.sendDefault({
                     objectType: 'feed',
                     content: {
-                        title: '[{{Auth::user()['company_name']}}] 카다로그가 도착했습니다.',
+                        title: '[{{Auth::user()['name']}}] 카다로그가 도착했습니다.',
                         description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
                         imageUrl:"{{ env('APP_URL') }}"+'/img/logo_kakao_catalog.png',
                         link: {
@@ -44,8 +44,9 @@
             }
         </script>
     @endif
+@endif
     
-    @elseif(request()->is(['wholesaler/detail/*' ]))
+    @if(request()->is(['wholesaler/detail/*' ]))
         <div style="z-index:51; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
             <a href="javascript:shareCatalog();">카달로그<br>받기</a>
         </div>

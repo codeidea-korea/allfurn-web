@@ -745,20 +745,20 @@ $(document).ready(function() {
         }
     });
     
+
+    $.validator.addMethod('eng_number', function( value ) {
+        return /[a-z]/.test(value) && /[0-9]/.test(value)
+    });
+
+
+    $.validator.addMethod('emailDupCheck', function(value) {
+        return email_dup_check;
+    });
+
+    $.validator.addMethod('businessCodeDupCheck', function(value) {
+        return business_code_dup_check;
+    })
 });
-
-$.validator.addMethod('eng_number', function( value ) {
-    return /[a-z]/.test(value) && /[0-9]/.test(value)
-});
-
-
-$.validator.addMethod('emailDupCheck', function(value) {
-    return email_dup_check;
-});
-
-$.validator.addMethod('businessCodeDupCheck', function(value) {
-    return business_code_dup_check;
-})
 
 
 // 우편번호/주소 검색
