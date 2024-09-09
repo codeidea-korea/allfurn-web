@@ -577,19 +577,22 @@ class HomeService
 
         //멤버별 상품 3개 - 대표상품 먼저
         foreach($data['family'] as $key => $value) {
-            $data['family'][$key]['productList'] = 
+            $data['family'][$key]['productList'] = [];
+            if(!empty($value->company_idx)) {
+                $data['family'][$key]['productList'] = 
                 DB::table(DB::raw('(select * from AF_product where company_idx = '. $value->company_idx .') AS ap'))
                 ->leftjoin('AF_attachment as at', function($query) {
                     $query->on('at.idx', DB::raw('SUBSTRING_INDEX(ap.attachment_idx, ",", 1)'));
                 })
                 ->select('ap.idx AS productIdx', 
-                    DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'),
-                    DB::raw('(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'),
+                    DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
+                    , DB::raw('(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'),
                 )
                 ->limit(3)
                 ->orderByRaw('ap.is_represent = 1 desc')
                 ->orderBy('ap.register_time','desc')
                 ->get();
+            }
         }
 
         return $data;
