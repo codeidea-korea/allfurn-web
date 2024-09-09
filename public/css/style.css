@@ -29,7 +29,7 @@ section.sub_section_bot {padding:70px 0 140px; }
 /* 도매업체 공통 */
 .obtain_list li + li {margin-top:20px; }
 .obtain_list li {display:flex; padding:18px; background-color:#F5F5F5; border-radius:3px; }
-.obtain_list li .txt_box {display:flex; flex-direction:column; justify-content:space-between; width:50%; }
+.obtain_list li .txt_box {display:flex; flex-direction:column; justify-content:space-between; width:50%; cursor:pointer; }
 .obtain_list li .txt_box a {display:flex; align-items:center; font-size:20px; font-weight:600; }
 .obtain_list li .txt_box a img {margin-right:10px; }
 .obtain_list li .txt_box a svg {width:24px; height:24px; }

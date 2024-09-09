@@ -1,8 +1,8 @@
 @foreach ( $list as $wholesaler )
 <li>
-    <div class="txt_box">
+    <div class="txt_box" onclick="saveDetail({{ $wholesaler->company_idx }})">
         <div>
-            <a href="javascript:saveDetail({{ $wholesaler->company_idx }})">
+            <a href="javascript:;">
                 @if($wholesaler->rank <= 50)
                     <img src="/img/icon/crown.png" alt="">
                 @endif
