@@ -44,6 +44,16 @@ class CatalogController extends BaseController
         ]);
     }
 
+    public function wholesalerInfoJson(Request $request, int $wholesalerIdx)
+    {
+        $data['wholesalerIdx'] = $wholesalerIdx;
+        
+        $data = $this->wholesalerService->detailByCatalog($data);
+        $data['info']->place = substr( $data['info']->business_address, 0, 6 );
+
+        return response()->json($data);
+    }
+
     // 업체 카테고리 상품 가져오기
     public function wholesalerAddProduct(Request $request)
     {

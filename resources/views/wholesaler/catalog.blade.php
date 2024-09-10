@@ -46,7 +46,7 @@
         <!--
         <button type="button" class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
 -->
-        <button type="button" onClick="shareMessage();"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
+        <button type="button" onClick="shareCatalog({{$data['info']->idx}})"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
     </div>
 
 
@@ -277,9 +277,7 @@
         
     </div>
 </div>
-
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
+@include('layouts.includes.send-catalog')
 
 <script>
     const prodSlide = new Swiper("#catalog .slide_box", {
@@ -343,29 +341,6 @@
 
                 isProc = false;
             }
-        });
-    }
-    function shareMessage() {
-        Kakao.Share.sendDefault({
-            objectType: 'feed',
-            content: {
-                title: '[{{$data['info']->company_name}}] 카다로그가 도착했습니다.',
-                description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
-                imageUrl:'https://all-furn.com/img/logo_kakao_catalog.png',
-                link: {
-                mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
-                webUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
-                },
-            },
-            buttons: [
-                {
-                    title: '카다로그 보기',
-                    link: {
-                        mobileWebUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
-                        webUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
-                    },
-                },
-            ],
         });
     }
     let isLoading = false;

@@ -78,73 +78,19 @@
     <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
         <a href="/product/registration">상품<br/>등록</a>
     </div>
-    @if(request()->is(['', '/', 'mypage/*', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-            <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
-                <a href="javascript:shareCatalog();">카달로그<br>보내기</a>
-            </div>
-
-            <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-            <script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
-            <script>
-                function shareCatalog() {
-                    Kakao.Share.sendDefault({
-                        objectType: 'feed',
-                        content: {
-                            title: '[{{Auth::user()['name']}}] 카다로그가 도착했습니다.',
-                            description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
-                            imageUrl:"{{ env('APP_URL') }}"+'/img/logo_kakao_catalog.png',
-                            link: {
-                            mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{Auth::user()['company_idx']}}',
-                            webUrl: "{{ env('APP_URL') }}"+'/catalog/{{Auth::user()['company_idx']}}',
-                            },
-                        },
-                        buttons: [
-                            {
-                                title: '카다로그 보기',
-                                link: {
-                                    mobileWebUrl: "{{ env('APP_URL') }}"+"/catalog/{{Auth::user()['company_idx']}}",
-                                    webUrl: "{{ env('APP_URL') }}"+"/catalog/{{Auth::user()['company_idx']}}",
-                                },
-                            },
-                        ],
-                    });
-                }
-            </script>
+    @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
+        <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
+            <a href="javascript:shareCatalog({{Auth::user()['company_idx']}});">카탈로그<br>보내기</a>
+        </div>
+        @include('layouts.includes.send-catalog')
     @endif
 @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
     <div style=" display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
-        <a href="javascript:shareCatalog();">카달로그<br>받기</a>
+        <a href="javascript:shareCatalog({{$data['info']->idx}});">카탈로그<br>받기</a>
     </div>
-
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-    <script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
-    <script>
-        function shareCatalog() {
-            Kakao.Share.sendDefault({
-                objectType: 'feed',
-                content: {
-                    title: '[{{$data['info']->company_name}}] 카다로그가 도착했습니다.',
-                    description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
-                    imageUrl:"{{ env('APP_URL') }}"+'/img/logo_kakao_catalog.png',
-                    link: {
-                    mobileWebUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
-                    webUrl: "{{ env('APP_URL') }}"+'/catalog/{{$data['info']->idx}}',
-                    },
-                },
-                buttons: [
-                    {
-                        title: '카다로그 보기',
-                        link: {
-                            mobileWebUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
-                            webUrl: "{{ env('APP_URL') }}"+"/catalog/{{$data['info']->idx}}",
-                        },
-                    },
-                ],
-            });
-        }
-    </script>
+    @include('layouts.includes.send-catalog')
 @endif
 
 @if(Route::currentRouteName() != '')

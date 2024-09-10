@@ -57,6 +57,10 @@ class HelpService
 
         $query = Notice::where('is_open', 1)->where('is_delete', 0);
 
+        if(!empty($params['is_pick'])) {
+            $query->where('is_pick', 1);
+        }
+
         $data['count'] = $query->count();
         $list = $query->orderBy('idx', 'desc')->offset($offset)->limit($limit)->get();
         $data['list'] = $list;

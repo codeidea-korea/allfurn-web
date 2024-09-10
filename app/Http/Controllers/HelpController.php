@@ -74,7 +74,8 @@ class HelpController extends BaseController
         $response = array();
         $response = array_merge($response, $this->helpService->getNoticeList(array(
             'offset' => 1,
-            'limit' => 3
+            'limit' => 3,
+            'is_pick' => 1
         )));
         $data['notices'] = $response['list'];
         $data = array_merge($data, $this->helpService->getGuideList($params));
