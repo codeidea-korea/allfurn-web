@@ -608,11 +608,13 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 /* ------------------------------------
     상품등록 퀵버튼
 ------------------------------------ */
-#prod_regist_btn {z-index:50; position:fixed; right:18px; bottom:70px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:var(--main_color); color:#fff; text-align:center; line-height:1.15; }
+.right_quick_box {z-index:50; position:fixed; right:18px; bottom:70px; display:flex; flex-direction:column; gap:10px; }
+.right_quick_box > div {order:2; }
+#prod_regist_btn {order:4; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:var(--main_color); color:#fff; text-align:center; line-height:1.15; }
 #prod_regist_btn.hidden {display:none; }
 #prod_regist_btn a {display:block; }
 
-#move_back_btn {z-index:50; position:fixed; right:18px; bottom:180px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:rgba(255,255,255,0.8); color:#868686; text-align:center; line-height:1.15; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+#move_back_btn {order:0; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:rgba(255,255,255,0.8); color:#868686; text-align:center; line-height:1.15; box-shadow:0 0 10px rgba(0,0,0,0.1); }
 #move_back_btn.hidden {display:none; }
 #move_back_btn a {display:block; }
 

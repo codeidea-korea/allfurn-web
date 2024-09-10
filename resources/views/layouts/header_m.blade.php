@@ -73,12 +73,13 @@
     </ul>
 </div>
 
+<div class="right_quick_box">
 @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
     <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
         <a href="/product/registration">상품<br/>등록</a>
     </div>
     @if(request()->is(['', '/', 'mypage/*', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-            <div style="z-index:50; position:fixed; right:18px; bottom:123px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
+            <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
                 <a href="javascript:shareCatalog();">카달로그<br>보내기</a>
             </div>
 
@@ -113,7 +114,7 @@
 @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
-    <div style="z-index:51; position:fixed; right:18px; bottom:123px; display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
+    <div style=" display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
         <a href="javascript:shareCatalog();">카달로그<br>받기</a>
     </div>
 
@@ -151,6 +152,7 @@
         <a href="javascript:history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a>
     </div>
 @endif
+</div>
 
 <!-- 검색 -->
 <div class="modal" id="search_modal">
