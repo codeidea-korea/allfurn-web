@@ -69,7 +69,7 @@
             <div class="active">
                 @if($data['recommend']->count() > 0)
                 <div>
-                    <h3>가구 추천 상품</h3>
+                    <h3>{{$data['info']->company_name}} 추천 상품</h3>
                     <div class="swiper-container slide_box">
                         <ul class="swiper-wrapper">
                             @foreach($data['recommend'] as $item)
@@ -96,7 +96,7 @@
 
                 <div class="catalog_con02">
                     <div class="catalog_title">
-                        <h3>가구 전체 상품</h3>
+                        <h3>{{$data['info']->company_name}} 전체 상품</h3>
                         <button class="prod_type">카드타입</button>
                     </div>
                     <div class="text-right mb-3 txt-gray fs14 total">

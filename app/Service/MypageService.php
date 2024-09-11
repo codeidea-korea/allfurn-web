@@ -1764,6 +1764,7 @@ class MypageService
                 }
                 $product->is_represent = 1;
             }
+            $product->access_date = date('Y-m-d H:i:s');
             $product->save();
             return [
                 'result' => 'success',

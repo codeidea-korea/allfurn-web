@@ -19,6 +19,8 @@
     <meta name="twitter:title" content="" />
     <title>All FURN  | Home</title>
 
+    <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
     <script defer src="/js/plugin.js" type="text/javascript" async></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
     <script src="/js/jquery-1.12.4.js?20240424125855" async></script>
@@ -172,10 +174,8 @@
 
                     if(isMobile.Android()) {
                         
-                        const intentUrl = 'intent://'+ 
-                                                decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
-                                                    .replace('https://all-furn-web/', '')
-                                                    .replace('https://allfurn-web.codeidea.io/', '')))
+                        const intentUrl = 'Intent://deeplink?path='+ 
+                                                decodeURI('{{ $replaceUrl ?? "" }}')
                                                 +'#Intent;scheme=allfurn;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.appknot.allfurn;end;';
 
                         const win = window.open(intentUrl);
