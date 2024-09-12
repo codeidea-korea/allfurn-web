@@ -60,9 +60,16 @@ class HelpService
         if(!empty($params['is_pick'])) {
             $query->where('is_pick', 1);
         }
+        if(!empty($params['npick'])) {
+            $query->where('is_pick', 0);
+        }
 
         $data['count'] = $query->count();
-        $list = $query->orderBy('idx', 'desc')->offset($offset)->limit($limit)->get();
+        if(!empty($params['is_pick'])) {
+            $list = $query->orderBy('update_time', 'asc')->offset($offset)->limit($limit)->get();
+        } else {
+            $list = $query->orderBy('idx', 'desc')->offset($offset)->limit($limit)->get();
+        }
         $data['list'] = $list;
         $data['pagination'] = paginate($params['offset'], $params['limit'], $data['count']);
         return $data;
