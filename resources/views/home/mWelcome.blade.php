@@ -178,20 +178,20 @@
                                                 decodeURI('{{ $replaceUrl ?? "" }}')
                                                 +'#Intent;scheme=allfurn;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.appknot.allfurn;end;';
 
-                        const win = window.open(intentUrl);
+                        const win = window.open(intentUrl, "_blank");
                         setTimeout(() => {
                             win.close();
-                        }, 2000);
+                        }, 5000);
 
                     } else if(isMobile.iOS()) {
                         const intentUrl = 'allfurn://' + decodeURI(('{{ $replaceUrl ?? "" }}'.replace('https://www.all-furn-web/', '')
                             .replace('https://all-furn-web/', '')
                             .replace('https://allfurn-web.codeidea.io/', '')));
 
-                        const win = window.open(intentUrl);
+                        const win = window.open(intentUrl, "_blank");
                         setTimeout(() => {
                             win.close();
-                        }, 2000);
+                        }, 5000);
                     }
                 }
             } catch (e){
