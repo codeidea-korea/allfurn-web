@@ -438,9 +438,14 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $keyword = $request->query('kw');
         $searchResultProductCount = DB::table('AF_product')
-        ->leftjoin('AF_wholesale as saler', function ($query) {
+        ->join('AF_wholesale as saler', function ($query) {
             $query->on('AF_product.company_idx', 'saler.idx')
                 ->where('AF_product.company_type', 'W');
+        })
+        ->join('AF_user as user', function ($query) {
+            $query->on('user.company_idx', 'saler.idx')
+                ->where('user.type', 'W')
+                ->where('user.is_delete', 0);
         })
         ->where('AF_product.name', 'like', "%{$request->query('kw')}%")
         ->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")

@@ -1072,6 +1072,11 @@ class ProductService
             })
             ->leftjoin('AF_wholesale as aw', function($query){
                 $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
+            })
+            ->join('AF_user as user', function ($query) {
+                $query->on('user.company_idx', 'aw.idx')
+                    ->where('user.type', 'W')
+                    ->where('user.is_delete', 0);
             });
 
         if ($param['categories'] != "" && $param['categories'] != null) {
