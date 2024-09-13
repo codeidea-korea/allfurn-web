@@ -238,7 +238,7 @@ class WholesalerService {
             FROM AF_wholesale
             JOIN AF_product ap
             ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O") and ap.deleted_at is null
-            JOIN AF_user as user ON user.company_idx = AF_wholesale.idx and user.type = "W" and user.is_delete = 0 
+            JOIN AF_user as user ON user.company_idx = AF_wholesale.idx and user.type = "W" and user.is_delete = 0  and user.state = "JS" 
             LEFT JOIN AF_order as ao
             ON ao.product_idx = ap.idx
             LEFT JOIN AF_banner_ad aba 

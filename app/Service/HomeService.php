@@ -572,6 +572,7 @@ class HomeService
         ->where('AF_family_ad.is_delete', 0)
         ->where('AF_family_ad.is_open', 1)
         ->groupBy('AF_family_ad.idx', 'afac.company_idx')
+        ->inRandomOrder()
         ->get();
 
 

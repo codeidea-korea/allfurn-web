@@ -445,6 +445,7 @@ class ProductController extends BaseController
         ->join('AF_user as user', function ($query) {
             $query->on('user.company_idx', 'saler.idx')
                 ->where('user.type', 'W')
+                ->where('user.state', 'JS')
                 ->where('user.is_delete', 0);
         })
         ->where('AF_product.name', 'like', "%{$request->query('kw')}%")
