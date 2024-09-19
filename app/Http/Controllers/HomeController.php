@@ -15,6 +15,8 @@ use Illuminate\View\View;
 use App\Service\ProductService;
 use App\Service\MypageService;
 use App\Service\LoginService;
+use App\Models\FamilyAd;
+use Illuminate\Support\Facades\DB;
 
 
 class HomeController extends BaseController
@@ -217,9 +219,23 @@ class HomeController extends BaseController
         if(getDeviceType() != "m.") {
             return redirect('/');
         }
+        // 올펀패밀리
+        $family_ad = FamilyAd::select('AF_family_ad.*', 
+            DB::raw('
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
+            })
+            ->where('AF_family_ad.state', 'G')
+            ->where('AF_family_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_family_ad.is_delete', 0)
+            ->where('AF_family_ad.is_open', 1)
+            ->orderByRaw('ad_price desc, RAND()')->get();
 
         $categoryList = $this->productService->getCategoryListV2();
-        return view("m.home.category", ['categoryList' => $categoryList]);
+        return view("m.home.category", ['categoryList' => $categoryList, 'family_ad' => $family_ad]);
     }
 }
 

@@ -319,7 +319,19 @@ function getCategoryList() {
         dataType		: 'json',
         success		: function(result) {
             let htmlText = '<ul>';
-            result.forEach(function (e, idx) {
+            htmlText += '<li>'
+                        +'    <a>'
+                        +'        <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/acf77c0381a0cfcfd3e0a11207b2d7130484704a6fe33df4e87bbb6604ecf04a.png"></i>'
+                        +'        <span onclick="javascript:(0);">가구연관협력업체</span>'
+                        +'    </a>'
+                        +'    <ul class="depth2">';
+
+            result.family_ad.forEach(function (e, idx) {
+                htmlText += '<li><a href="/family/'+e.idx+'">'+e.family_name+'</a></li>';
+            })
+            htmlText += '    </ul></li>';
+
+            result.category.forEach(function (e, idx) {
                 htmlText += '<li>';
                 htmlText += '<a href="/product/category?pre='+e.idx+'">';
                 htmlText += '<i><img src="'+ e.imgUrl + '"></i>';
