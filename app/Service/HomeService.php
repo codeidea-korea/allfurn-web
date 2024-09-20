@@ -593,17 +593,13 @@ class HomeService
                 ->orderBy('ap.register_time','desc')
                 ->get();
             }
-            
-            $data['family'][$key]['thumbnails'] = FamilyAd::select(
-                    DB::raw('CONCAT("'.preImgUrl().'", tat.folder,"/", tat.filename) as subImgUrl'))
-                ->leftjoin('AF_mapping_thumb_attachment AS mat', function($query) {
-                    $query->on('mat.main_attach_idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
-                })
-                ->leftjoin('AF_attachment AS tat', function($query) {
-                    $query->on('tat.idx', 'mat.size_400_attach_idx');
-                })
+            $dd = rtrim($data['family'][$key]['attachments'], ',');
+            $expdd = explode(",",$dd);
+            $data['family'][$key]['thumbnails'] = DB::table('AF_attachment')->select(
+                    DB::raw('CONCAT("'.preImgUrl().'", folder,"/", filename) as subImgUrl'))
+                ->whereIn('idx', $expdd)
 //                ->limit(3)
-                ->orderBy('tat.idx','desc')
+                ->orderBy('idx','desc')
                 ->get();
         }
 

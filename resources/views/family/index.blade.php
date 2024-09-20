@@ -23,9 +23,11 @@
                             <div>
                                 <a href="{{ $member->companyType === 'W' ? '/wholesaler/detail/' . $member->company_idx : 'javascript:void(0)' }}">
                                     <img src="/img/icon/crown.png" alt="">
-                                    {{ $member->company_name }}
                                     @if ($member->companyType === 'W')
+                                    {{ $member->company_name }}
                                         <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
+                                    @else
+                                    {{ $member->family_name }}
                                     @endif
                                 </a>
                                 <i>{{ $member->location }}</i>
