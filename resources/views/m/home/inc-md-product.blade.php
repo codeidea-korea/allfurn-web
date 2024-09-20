@@ -25,6 +25,8 @@
                     <div class="slide_box">
                         <ul class="swiper-wrapper">
                             @foreach ($theme['groups'] as $key => $goods) 
+                                @if($loop->index >= 10)
+                                @else
                                 <li class="swiper-slide prod_item">
                                     <div class="img_box">
                                         <a href="/product/detail/{{ $goods['mdp_gidx'] }}"><img src="{{ $goods['mdp_gimg'] }}" alt=""></a>
@@ -38,6 +40,7 @@
                                         </a>
                                     </div>
                                 </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>

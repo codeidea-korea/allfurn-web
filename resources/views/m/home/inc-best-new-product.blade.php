@@ -12,6 +12,8 @@
             <div class="slide_box prod_slide-2">
                 <ul class="swiper-wrapper">
                     @foreach($data['productAd'] as $item)
+                        @if($loop->index >= 120)
+                        @else
                         <li class="swiper-slide prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
@@ -25,6 +27,7 @@
                                 </a>
                             </div>
                         </li>
+                        @endif
                     @endforeach
                 </ul>
             </div>

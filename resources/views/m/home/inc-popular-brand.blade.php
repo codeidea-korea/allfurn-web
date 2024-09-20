@@ -10,6 +10,8 @@
         <div class="slide_box overflow-hidden">
             {{-- <div class="swiper-wrapper">
                 @foreach($data['popularbrand_ad'] as $key => $brand)
+                        @if($loop->index >= 5)
+                        @else
                     <ul class="swiper-slide">
                         <li class="popular_banner">
                             <div class="txt_box">
@@ -28,6 +30,7 @@
                             </li>
                         @endforeach
                     </ul>
+                    @endif
                 @endforeach
             </div> --}}
             <div class="swiper-wrapper">
