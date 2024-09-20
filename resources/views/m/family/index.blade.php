@@ -55,6 +55,16 @@
                                 </div>
                             @endforeach
                         </div>
+                        
+                        @if($member->thumbnails && count($member->thumbnails) > 0)
+                        <div class="prod_box">
+                            @foreach ($member->thumbnails as $product)
+                                <div class="img_box">
+                                    <img src="{{ $product->subImgUrl }}" alt="">
+                                </div>
+                            @endforeach
+                        </div>
+                        @endif
                     </li>
                 @endforeach
             </ul>
