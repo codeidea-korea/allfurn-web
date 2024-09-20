@@ -1057,34 +1057,41 @@ class ProductService
     }
 
     public function listByCategoryAjax(array $param = []) {
-        $list = Product::select('AF_product.*',
-            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                    WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+        $list = DB::table(DB::raw('
+                (select prod.* from AF_product as prod join AF_user as user ON user.company_idx = prod.company_idx and user.type = prod.company_type and user.state = "JS") as aprod
+            '))->select('aprod.*',
+            DB::raw('(CASE WHEN aprod.company_type = "W" THEN aw.company_name
+                    WHEN aprod.company_type = "R" THEN ar.company_name
                     ELSE "" END) as companyName,
                 CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
-                (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt
+                (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = aprod.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
+                (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = aprod.idx) as orderCnt
             '))
-            ->whereIn('AF_product.state', ['S', 'O'])
-            ->whereNull('AF_product.deleted_at')
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            ->leftJoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(aprod.attachment_idx, ",", 1)'));
             })
-            ->leftjoin('AF_wholesale as aw', function($query){
-                $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
-            });
+            ->leftJoin('AF_wholesale as aw', function($query){
+                $query->on('aw.idx', 'aprod.company_idx')-> where('aprod.company_type', 'W');
+            })
+            ->leftJoin('AF_retail as ar', function($query){
+                $query->on('ar.idx', 'aprod.company_idx')-> where('aprod.company_type', 'R');
+            })
+            ->whereIn('aprod.state', ['S', 'O'])
+            ->whereNull('aprod.deleted_at');
 
         if ($param['categories'] != "" && $param['categories'] != null) {
             $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereRaw("parent_idx in (".$param['categories'].")")->where('is_delete', 0)->first();
-            $list->whereRaw("AF_product.category_idx in ({$searchCategory->cateIds})");
+            $list->whereRaw("aprod.category_idx in ({$searchCategory->cateIds})");
         }
 
         if (isset($param['keyword'])) {
             $keyword = $param['keyword'];
             $list->Where(function($query) use($keyword) {
-                    $query->whereRaw("(AF_product.name like '%".$keyword."%' or AF_product.product_detail like '%".$keyword."%')")
+                    $query->whereRaw("(aprod.name like '%".$keyword."%' or aprod.product_detail like '%".$keyword."%')")
                         ->orWhere('aw.company_name','like',"%{$keyword}%")
-                        ->orWhere('aw.owner_name','like',"%{$keyword}%");
+                        ->orWhere('aw.owner_name','like',"%{$keyword}%")
+                        ->orWhere('ar.company_name','like',"%{$keyword}%")
+                        ->orWhere('ar.owner_name','like',"%{$keyword}%");
                 });
         }
 

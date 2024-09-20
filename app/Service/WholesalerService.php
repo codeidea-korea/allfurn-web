@@ -56,6 +56,11 @@ class WholesalerService {
                     ->whereIn('ap.state', ['S', 'O'])
                     ->whereNull('ap.deleted_at');
             })
+            ->join('AF_user as user', function ($query) {
+                $query->on('user.company_idx', 'AF_wholesale.idx')
+                    ->where('user.type', 'W')
+                    ->where('user.is_delete', 0);
+            })
             ->leftjoin('AF_category as ac', function ($query) {
                 $query->on('ac.idx', 'ap.category_idx');
             })
@@ -233,10 +238,11 @@ class WholesalerService {
             FROM AF_wholesale
             JOIN AF_product ap
             ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O") and ap.deleted_at is null
+            JOIN AF_user as user ON user.company_idx = AF_wholesale.idx and user.type = "W" and user.is_delete = 0  and user.state = "JS" 
             LEFT JOIN AF_order as ao
             ON ao.product_idx = ap.idx
             LEFT JOIN AF_banner_ad aba 
-            ON aba.company_idx = AF_wholesale.idx AND is_delete = 0 AND is_open = 1
+            ON aba.company_idx = AF_wholesale.idx AND aba.is_delete = 0 AND aba.is_open = 1
             LEFT JOIN AF_category ac
             ON ac.idx = ap.category_idx
             LEFT JOIN AF_category ac2

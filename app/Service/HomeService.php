@@ -572,6 +572,7 @@ class HomeService
         ->where('AF_family_ad.is_delete', 0)
         ->where('AF_family_ad.is_open', 1)
         ->groupBy('AF_family_ad.idx', 'afac.company_idx')
+        ->inRandomOrder()
         ->get();
 
 
@@ -588,9 +589,10 @@ class HomeService
                     DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
                     , DB::raw('(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'),
                 )
+                ->inRandomOrder()
                 ->limit(3)
-                ->orderByRaw('ap.is_represent = 1 desc')
-                ->orderBy('ap.register_time','desc')
+//                ->orderByRaw('ap.is_represent = 1 desc')
+//                ->orderBy('ap.register_time','desc')
                 ->get();
             }
         }

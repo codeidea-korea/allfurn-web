@@ -28,7 +28,7 @@
             content: {
                 title: '['+companyName+'] 카탈로그가 도착했습니다.',
                 description: '제품 정보와 업체 정보를 모두 확인 해보세요!',
-                imageUrl: domain + '/img/logo_kakao_catalog.png',
+                imageUrl: domain + '/img/logo_kakao_catalog2.png',
                 link: {
                 mobileWebUrl: domain + '/catalog/' + companyIndex,
                 webUrl: domain + '/catalog/' + companyIndex,

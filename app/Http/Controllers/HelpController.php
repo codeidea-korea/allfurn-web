@@ -54,6 +54,16 @@ class HelpController extends BaseController
 
         $data['noticeIdx'] = $idx;
         $data['pageType'] = 'notice';
+
+        $response = array();
+        $response = array_merge($response, $this->helpService->getNoticeList(array(
+            'offset' => 1,
+            'limit' => 500,
+            'is_pick' => 1
+        )));
+        $data['notices'] = $response['list'];
+        $params['npick'] = 'Y';
+        
         $data = array_merge($data, $this->helpService->getNoticeList($params));
         return view(getDeviceType().'help.notice', $data);
     }
@@ -74,7 +84,7 @@ class HelpController extends BaseController
         $response = array();
         $response = array_merge($response, $this->helpService->getNoticeList(array(
             'offset' => 1,
-            'limit' => 3,
+            'limit' => 500,
             'is_pick' => 1
         )));
         $data['notices'] = $response['list'];

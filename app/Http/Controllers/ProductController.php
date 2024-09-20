@@ -20,6 +20,7 @@ use function Symfony\Component\Translation\t;
 use App\Models\Banner;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FamilyAd;
 
 class ProductController extends BaseController
 {
@@ -83,7 +84,25 @@ class ProductController extends BaseController
     // 상품 카테고리 리스트 가져오기 리뉴얼 : 2뎁스까지 한번에 가져옴. (코드아이디어)
     public function getCategoryListV2()
     {
-        return $this->productService->getCategoryListV2();
+        // 올펀패밀리
+        $family_ad = FamilyAd::select('AF_family_ad.*', 
+            DB::raw('
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
+            })
+            ->where('AF_family_ad.state', 'G')
+            ->where('AF_family_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_family_ad.is_delete', 0)
+            ->where('AF_family_ad.is_open', 1)
+            ->orderByRaw('ad_price desc, RAND()')->get();
+
+        return response()->json([
+            'category' => $this->productService->getCategoryListV2(),
+            'family_ad' => $family_ad
+        ]);
     }
 
     /**
@@ -438,9 +457,15 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $keyword = $request->query('kw');
         $searchResultProductCount = DB::table('AF_product')
-        ->leftjoin('AF_wholesale as saler', function ($query) {
+        ->join('AF_wholesale as saler', function ($query) {
             $query->on('AF_product.company_idx', 'saler.idx')
                 ->where('AF_product.company_type', 'W');
+        })
+        ->join('AF_user as user', function ($query) {
+            $query->on('user.company_idx', 'saler.idx')
+                ->where('user.type', 'W')
+                ->where('user.state', 'JS')
+                ->where('user.is_delete', 0);
         })
         ->where('AF_product.name', 'like', "%{$request->query('kw')}%")
         ->orWhere('AF_product.product_detail', 'like', "%{$request->query('kw')}%")

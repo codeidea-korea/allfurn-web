@@ -12,6 +12,17 @@
     <section class="category_con01">
         <div class="category_list">
             <ul>
+                <li>
+                    <a>
+                        <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/acf77c0381a0cfcfd3e0a11207b2d7130484704a6fe33df4e87bbb6604ecf04a.png"></i>
+                        <span onclick="javascript:(0);">가구연관협력업체</span>
+                    </a>
+                    <ul class="depth2">
+                        @foreach($family_ad as $key => $family)
+                            <li><a href="/family/{{$family->idx}}">{{ $family->family_name }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
                 @foreach ( $categoryList as $category )
                     <li>
                         <a>
