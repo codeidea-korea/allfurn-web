@@ -574,6 +574,14 @@ class HomeService
         ->groupBy('AF_family_ad.idx', 'afac.company_idx')
         ->get();
 
+        $dd = rtrim($data['family'][0]['attachments'], ',');
+        $expdd = explode(",",$dd);
+        $data['family'][0]['thumbnails'] = DB::table('AF_attachment')->select(
+                DB::raw('CONCAT("'.preImgUrl().'", folder,"/", filename) as subImgUrl'))
+            ->whereIn('idx', $expdd)
+//                ->limit(3)
+//            ->orderBy('idx','desc')
+            ->first();
 
         //멤버별 상품 3개 - 대표상품 먼저
         foreach($data['family'] as $key => $value) {
@@ -593,14 +601,6 @@ class HomeService
                 ->orderBy('ap.register_time','desc')
                 ->get();
             }
-            $dd = rtrim($data['family'][$key]['attachments'], ',');
-            $expdd = explode(",",$dd);
-            $data['family'][$key]['thumbnails'] = DB::table('AF_attachment')->select(
-                    DB::raw('CONCAT("'.preImgUrl().'", folder,"/", filename) as subImgUrl'))
-                ->whereIn('idx', $expdd)
-//                ->limit(3)
-                ->orderBy('idx','desc')
-                ->get();
         }
 
         return $data;

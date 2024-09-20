@@ -4,7 +4,10 @@
 @include('layouts.header')
 
 <div id="content">
-    <div class="my_top_area type02 inner flex items-center justify-between">
+                        
+    <div class="my_top_area type02 inner flex items-center justify-between" style="@if($family[0]->thumbnails)
+                            background: url({{ $family[0]->thumbnails->subImgUrl }})
+                        @endif">
         <div class="profile flex gap-4 items-center">
             <img src="{{$family[0]->imgUrl}}" alt="">
             <a href="javascript:;">
@@ -50,15 +53,6 @@
                                 </div>
                             @endforeach
                         </div>
-                        @if($member->thumbnails && count($member->thumbnails) > 0)
-                        <div class="prod_box">
-                            @foreach ($member->thumbnails as $product)
-                                <div class="img_box">
-                                    <img src="{{ $product->subImgUrl }}" alt="">
-                                </div>
-                            @endforeach
-                        </div>
-                        @endif
                     </li>
                 @endforeach
             </ul>
