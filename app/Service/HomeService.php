@@ -572,9 +572,16 @@ class HomeService
         ->where('AF_family_ad.is_delete', 0)
         ->where('AF_family_ad.is_open', 1)
         ->groupBy('AF_family_ad.idx', 'afac.company_idx')
-        ->inRandomOrder()
         ->get();
 
+        $dd = rtrim($data['family'][0]['attachments'], ',');
+        $expdd = explode(",",$dd);
+        $data['family'][0]['thumbnails'] = DB::table('AF_attachment')->select(
+                DB::raw('CONCAT("'.preImgUrl().'", folder,"/", filename) as subImgUrl'))
+            ->whereIn('idx', $expdd)
+//                ->limit(3)
+//            ->orderBy('idx','desc')
+            ->first();
 
         //멤버별 상품 3개 - 대표상품 먼저
         foreach($data['family'] as $key => $value) {
@@ -589,10 +596,9 @@ class HomeService
                     DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
                     , DB::raw('(SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'),
                 )
-                ->inRandomOrder()
                 ->limit(3)
-//                ->orderByRaw('ap.is_represent = 1 desc')
-//                ->orderBy('ap.register_time','desc')
+                ->orderByRaw('ap.is_represent = 1 desc')
+                ->orderBy('ap.register_time','desc')
                 ->get();
             }
         }

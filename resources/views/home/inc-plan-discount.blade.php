@@ -13,6 +13,8 @@
             <div class="slide_box overflow-hidden">
                 <ul class="swiper-wrapper">
                     @foreach ($data['plandiscount_ad'] as $key => $goods)
+                        @if($loop->index >= 10)
+                        @else
                         <li class="swiper-slide prod_item type02">
                             <div class="img_box">
                                 <a href="{{ $goods->web_link }}">
@@ -30,6 +32,7 @@
                                 </a>
                             </div>
                         </li>
+                        @endif
                     @endforeach 
                 </ul>
             </div>

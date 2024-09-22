@@ -14,6 +14,8 @@
             <div class="slide_box prod_slide-2">
                 <ul class="swiper-wrapper">
                     @foreach($data['new_product'] as $item)
+                        @if($loop->index >= 40)
+                        @else
                         <li class="swiper-slide prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
@@ -27,10 +29,13 @@
                                 </a>
                             </div>
                         </li>
+                        @endif
                     @endforeach
+                    <!--
                     <li class="swiper-slide more_btn">
                         <button onclick="location.href='/product/new?scroll=true'">더보기</button>
                     </li>
+-->
                 </ul>
             </div>
             <button class="slide_arrow prev"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>

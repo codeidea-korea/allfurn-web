@@ -4,7 +4,10 @@
 @include('layouts.header')
 
 <div id="content">
-    <div class="my_top_area type02 inner flex items-center justify-between">
+                        
+    <div class="my_top_area type02 inner flex items-center justify-between" style="@if($family[0]->thumbnails)
+                            background: url({{ $family[0]->thumbnails->subImgUrl }})
+                        @endif">
         <div class="profile flex gap-4 items-center">
             <img src="{{$family[0]->imgUrl}}" alt="">
             <a href="javascript:;">
@@ -23,9 +26,11 @@
                             <div>
                                 <a href="{{ $member->companyType === 'W' ? '/wholesaler/detail/' . $member->company_idx : 'javascript:void(0)' }}">
                                     <img src="/img/icon/crown.png" alt="">
-                                    {{ $member->company_name }}
                                     @if ($member->companyType === 'W')
+                                    {{ $member->company_name }}
                                         <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
+                                    @else
+                                    {{ $member->family_name }}
                                     @endif
                                 </a>
                                 <i>{{ $member->location }}</i>

@@ -28,9 +28,11 @@
                             <div class="flex items-center justify-between">
                                 <a href="{{ $member->companyType === 'W' ? '/wholesaler/detail/' . $member->company_idx : 'javascript:void(0)' }}">
                                     <img src="/img/icon/crown.png" alt="">
-                                    {{ $member->company_name }}
                                     @if ($member->companyType === 'W')
+                                    {{ $member->company_name }}
                                         <svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg>
+                                    @else
+                                    {{ $member->family_name }}
                                     @endif
                                 </a>
                                 <button class="zzim_btn {{ $member->isCompanyInterest == 1 ? 'active' : '' }}" data-company-idx='{{$member->company_idx}}' onclick="toggleCompanyLike('{{$member->companyType}}', {{$member->company_idx}})"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
