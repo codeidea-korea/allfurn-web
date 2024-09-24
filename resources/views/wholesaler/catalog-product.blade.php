@@ -39,7 +39,7 @@
     <div class="bot_quick">
         <button type="button" class="tab_btn active" onclick="history.back();">판매상품</button>
         <button type="button" class="tab_btn" onclick="localStorage.setItem('p', 1);history.back();">업체소개</button>
-        <button type="button" onClick="shareCatalog({{$data['info']->idx}})"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
+        <button type="button" onClick="shareCatalog({{$data['info']->idx}},5)"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
     </div>
 
 

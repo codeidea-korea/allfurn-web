@@ -3,7 +3,7 @@
 <script>
     var isProccessing2ShareCatalog = false;
 
-    function shareCatalog(companyIndex) {
+    function shareCatalog(companyIndex, requestType) {
         if(isProccessing2ShareCatalog) {
             return;
         }
@@ -19,6 +19,16 @@
                 companyName = result.info.company_name;
             }
         })
+        $.ajax({
+            url             : '/event/saveUserAction?company_idx='+companyIndex+'&company_type=W&product_idx=0&request_type=' + requestType,
+            enctype         : 'multipart/form-data',
+            processData     : false,
+            contentType     : false,
+            type			: 'GET',
+            async: false,
+            success: function (result) {
+            }
+        });
         if(!companyName || companyName == '') {
             isProccessing2ShareCatalog = false;
             return;

@@ -337,7 +337,7 @@
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url             : '/product/saveUserAction?company_idx={{$data['info']->idx}}&company_type=W&product_idx=&request_type=1',
+            url             : '/event/saveUserAction?company_idx={{$data['info']->idx}}&company_type=W&product_idx=&request_type=1',
             enctype         : 'multipart/form-data',
             processData     : false,
             contentType     : false,
