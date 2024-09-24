@@ -1818,8 +1818,13 @@ class ProductService
     function saveUserAction($data) {
 
         $userAction = new UserRequireAction;
-        $userAction->request_user_id = Auth::user()['idx'];
-        $userAction->request_user_type = Auth::user()['type'];
+        if (Auth::check()) {
+            $userAction->request_user_id = Auth::user()['idx'];
+            $userAction->request_user_type = Auth::user()['type'];
+        } else {
+            $userAction->request_user_id = 0;
+            $userAction->request_user_type = 'W';
+        }
         $userAction->response_user_id = $data['response_user_id'];
         $userAction->response_user_type = $data['response_user_type'];
         $userAction->request_type = $data['request_type'];
