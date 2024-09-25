@@ -46,7 +46,7 @@
         <!--
         <button type="button" class="addLike {{ ($data['info']->isLike == 1) ? 'active' : '' }}" onClick="addLike({{$data['info']->idx}});"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#zzim"></use></svg>좋아요</button>
 -->
-        <button type="button" onClick="shareCatalog({{$data['info']->idx}})"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
+        <button type="button" onClick="shareCatalog({{$data['info']->idx}},5)"><svg><use xlink:href="{{ env('APP_URL') }}/img/icon-defs.svg#share"></use></svg>공유하기</button>
     </div>
 
 
