@@ -198,11 +198,12 @@ $( document ).ready( function() {
             }
         }
     });
+    
+    $.validator.addMethod('eng_number', function( value ) {
+        return /[a-z]/.test(value) && /[0-9]/.test(value)
+    });
 });
 
-$.validator.addMethod('eng_number', function( value ) {
-    return /[a-z]/.test(value) && /[0-9]/.test(value)
-});
 function updatePassword(){
     var data = new Object() ;
     data.userid = $('#userid').val();
