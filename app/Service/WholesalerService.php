@@ -566,21 +566,9 @@ class WholesalerService {
             ->update(['access_count' => DB::raw('access_count+1')]);
 
         $data['info'] = CompanyWholesale::select('AF_wholesale.*',
-        DB::raw('(CASE WHEN AF_wholesale.inquiry_count >= 100000000 THEN CONCAT(AF_wholesale.inquiry_count/100000000,"억")
-                           WHEN AF_wholesale.inquiry_count >= 10000000 THEN CONCAT(AF_wholesale.inquiry_count/10000000,"천만")
-                           WHEN AF_wholesale.inquiry_count >= 10000 THEN CONCAT(AF_wholesale.inquiry_count/10000, "만")
-                           WHEN AF_wholesale.inquiry_count >= 1000 THEN CONCAT(AF_wholesale.inquiry_count/1000, "천")
-                           ELSE AF_wholesale.inquiry_count END) as inquiryCnt,
-                        (CASE WHEN AF_wholesale.access_count >= 100000000 THEN CONCAT(AF_wholesale.access_count/100000000,"억")
-                           WHEN AF_wholesale.access_count >= 10000000 THEN CONCAT(AF_wholesale.access_count/10000000,"천만")
-                           WHEN AF_wholesale.access_count >= 10000 THEN CONCAT(AF_wholesale.access_count/10000, "만")
-                           WHEN AF_wholesale.access_count >= 1000 THEN CONCAT(AF_wholesale.access_count/1000, "천")
-                           ELSE AF_wholesale.access_count END) as visitCnt,
-                        (SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,"억")
-                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,"천만")
-                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, "만")
-                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, "천")
-                           ELSE COUNT(*) END cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W") as likeCnt,
+        DB::raw('AF_wholesale.inquiry_count as inquiryCnt,
+                        AF_wholesale.access_count as visitCnt,
+                        (SELECT COUNT(*) cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W") as likeCnt,
                         (SELECT COUNT(*) cnt FROM AF_company_like WHERE company_idx = AF_wholesale.idx AND company_type = "W" AND user_idx = '.Auth::user()->idx.') as isLike,
                         CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl, CONCAT("'.preImgUrl().'", at2.folder, "/", at2.filename) as imgUrl2'))
             ->where('AF_wholesale.idx', $param['wholesalerIdx'])
