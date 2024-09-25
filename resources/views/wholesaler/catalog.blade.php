@@ -115,7 +115,7 @@
                             </div>
                             <div class="txt">
                                 <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
-                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
+                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                             </div>
                         </div>
                         <div class="info">
@@ -266,7 +266,7 @@
                             </div>
                             <div class="txt">
                                 <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
-                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">더 많은 가구 정보 보러가기</a>
+                                <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                             </div>
                         </div>
                     </div>
