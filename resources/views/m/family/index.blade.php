@@ -11,7 +11,6 @@
 <div id="content">
     <div class="pt-3 type02">
         <div class="type02 flex flex-col gap-2 items-center">
-            <img src="{{$family[0]->imgUrl}}" class="w-[260px] object-cover" alt="">
             <a href="javascript:;">
                 <div class="flex items-center">
                     <p class="profile_id">{{ $family[0]->family_name }}</p>
