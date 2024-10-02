@@ -391,7 +391,7 @@
             if (product.is_price_open == 1) {
                 html += product.price.toLocaleString('ko-KR') + '원';
             } else {
-                html += product.price_text;
+                html += (product.price_text.replace('가격 안내 문구 선택','업체 문의'));
             }
             html += '' +
                 '</b>' +
