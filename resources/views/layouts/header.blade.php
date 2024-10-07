@@ -319,15 +319,15 @@ function getCategoryList() {
         dataType		: 'json',
         success		: function(result) {
             let htmlText = '<ul>';
-            htmlText += '<li>'
+            htmlText += '<li class="coop">'
                         +'    <a>'
-                        +'        <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/acf77c0381a0cfcfd3e0a11207b2d7130484704a6fe33df4e87bbb6604ecf04a.png"></i>'
+                        +'        <i><svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="19.5" cy="19.5" r="19" transform="rotate(-90 19.5 19.5)" stroke="white"/><path d="M14.1819 30.491L25.5273 19.1455L14.1819 7.80005" stroke="white" stroke-width="2"/></svg></i>'
                         +'        <b onclick="javascript:(0);">가구관련협력업체</b>'
                         +'    </a>'
                         +'    <ul class="depth2">';
 
             result.family_ad.forEach(function (e, idx) {
-                htmlText += '<li><a href="/family/'+e.idx+'">'+e.family_name+'</a></li>';
+                htmlText += '<li><a href="/family/'+e.idx+'">'+e.family_name+'<i><svg width="38" height="37" viewBox="0 0 38 37" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.6669 2.02355C17.2492 -0.361158 20.7508 -0.36116 22.3331 2.02355L26.1522 7.77969C26.6837 8.58075 27.4859 9.1636 28.412 9.42155L35.0666 11.275C37.8236 12.0429 38.9057 15.3732 37.1266 17.6149L32.8324 23.0259C32.2347 23.7789 31.9283 24.722 31.9692 25.6825L32.2628 32.5841C32.3845 35.4434 29.5515 37.5016 26.8698 36.5024L20.3967 34.0904C19.4958 33.7547 18.5042 33.7547 17.6033 34.0904L11.1302 36.5024C8.44848 37.5016 5.61555 35.4434 5.73719 32.5841L6.03081 25.6825C6.07167 24.722 5.76525 23.7789 5.16763 23.0259L0.873404 17.6149C-0.905654 15.3732 0.176428 12.0429 2.93336 11.275L9.58795 9.42155C10.5141 9.1636 11.3163 8.58075 11.8478 7.77969L15.6669 2.02355Z" fill="#F4465E"/></svg></i></a></li>';
             })
             htmlText += '    </ul></li>';
 

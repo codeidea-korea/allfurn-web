@@ -348,6 +348,16 @@ header .header_banner svg {width:24px; height:24px; }
 .header_category .category_list .depth2 li:hover {background-color:#FFF5F6;}
 .header_category .category_list .depth2 li:hover a {color:var(--main_color); }
 
+/* 가구관련협력업체 */
+.header_category .category_list > ul > li.coop {background-color:var(--main_color); }
+.header_category .category_list > ul > li.coop > a {position:relative; justify-content:center; color:#fff; }
+.header_category .category_list > ul > li.coop > a i {position:absolute; right:10px; top:10px; }
+.header_category .category_list > ul > li.coop > a i img {filter:brightness(10); }
+.header_category .category_list > ul > li.coop .depth2 {padding:4px; }
+.header_category .category_list > ul > li.coop .depth2 li a {display:flex; align-items:center; flex-direction:row-reverse; justify-content:flex-end; gap:5px; background-color:#ffeef0; color:#F4465E; border-radius:5px; }
+.header_category .category_list > ul > li.coop .depth2 li a svg {width:25px; height:25px; }
+.header_category .category_list > ul > li.coop .depth2 li + li {margin-top:5px; }
+
 
 /* ------------------------------------
     푸터
