@@ -135,6 +135,11 @@
         <div class="inner">
             <div class="slide_box overflow-hidden">
                 <ul class="swiper-wrapper">
+                    <li class="swiper-slide coop">
+                         <a href="javascript:;">
+                            <span>가구 관련 협력업체</span>
+                         </a>
+                    </li>    
                     <li class="swiper-slide">
                          <a href="/product/best-new">
                             <img src="/img/main/best_icon.png" alt="">
@@ -167,6 +172,8 @@
                     </li>
                 </ul>
             </div>
+            <button class="slide_arrow prev type02"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow next type02"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
         </div>
     </div>
 
@@ -382,6 +389,10 @@ $('.main_visual .slide_box').hover(function(){
 const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
     slidesPerView: 5,
     spaceBetween: 12,
+    navigation: {
+        nextEl: ".main_mid_banner .slide_arrow.next",
+        prevEl: ".main_mid_banner .slide_arrow.prev",
+    },
 });
 
 // category_banner
