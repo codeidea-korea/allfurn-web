@@ -136,7 +136,7 @@
             <div class="slide_box">
                 <ul class="swiper-wrapper">
                     <li class="swiper-slide coop">
-                         <a href="javascript:;">
+                        <a href="/family">
                             <span>가구 관련 협력업체</span>
                          </a>
                     </li>   

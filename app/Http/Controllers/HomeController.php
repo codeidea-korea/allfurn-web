@@ -173,6 +173,12 @@ class HomeController extends BaseController
         return $this->homeService->checkAlert();
     }
 
+    //올펀 패밀리
+    public function getAllFamily() {
+        $data = $this->homeService->getAllFamily();
+        return view(getDeviceType().'family.list', $data);
+    }
+
     //올펀 패밀리 상세
     public function getFamilyMember($idx) {
         $data = $this->homeService->getFamilyMember($idx);
@@ -232,7 +238,7 @@ class HomeController extends BaseController
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderByRaw('ad_price desc, RAND()')->get();
+            ->orderByRaw('ifnull(AF_family_ad.orders,999)')->get();
 
         $categoryList = $this->productService->getCategoryListV2();
         return view("m.home.category", ['categoryList' => $categoryList, 'family_ad' => $family_ad]);

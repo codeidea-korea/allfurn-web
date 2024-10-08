@@ -61,6 +61,7 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 Route::post('checkAlert', 'HomeController@checkAlert');
 
 Route::prefix('/family')->name('family')->group(function() {
+    Route::get('/', 'HomeController@getAllFamily');
     Route::get('/{idx}', 'HomeController@getFamilyMember');
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
