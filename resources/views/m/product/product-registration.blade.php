@@ -898,7 +898,7 @@ function init_editor() {
         useClasses: false,
 
         imageUploadParam: 'file',
-        imageUploadURL: '/product/image',
+        imageUploadURL: '/community/image',
         imageUploadParams: {folder: 'product'},
         imageUploadMethod: 'POST',
         imageMaxSize: 20 * 1024 * 1024,
