@@ -139,9 +139,21 @@ class CommunityService {
                    WHEN TIMESTAMPDIFF(SECOND ,article.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,article.register_time, now())/3600),'시간 전')
                    ELSE DATE_FORMAT(article.register_time, '%Y.%m.%d')
               END diff_time
-            , 1 AS like_count
-            , 1 AS view_count
-            , 1 AS reply_count
+            , (SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
+                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
+                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
+                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
+                           ELSE COUNT(*) END cnt FROM AF_article_like WHERE article_idx = article.idx) AS like_count
+            , (SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
+                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
+                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
+                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
+                           ELSE COUNT(*) END cnt FROM AF_board_views WHERE article_idx = article.idx) AS view_count
+            , (SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
+                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
+                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
+                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
+                           ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = article.idx AND is_delete = 0) AS reply_count
             , IF(AF_board.is_anonymous=1,'익명',
                     IF(AF_wholesale.company_name IS NOT NULL,AF_wholesale.company_name,
                         IF(AF_retail.company_name IS NOT NULL,AF_retail.company_name,AF_user.name)
