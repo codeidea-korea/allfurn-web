@@ -239,156 +239,271 @@
 </div>
 
 <!-- 견적서 작성하기 -->
-<div id="response_estimate-modal" class="modal">
+<!-- new 견적서 -->
+<div class="modal" id="response_estimate-modal">
     <div class="modal_bg" onclick="modalClose('#response_estimate-modal')"></div>
     <div class="modal_inner modal-xl">
         <button class="close_btn" onclick="modalClose('#response_estimate-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <h3 class="text-xl font-bold">견적서 작성하기</h3>
-            <form method="PUT" name="udForm" id="udForm" action="/estimate/update" enctype="multipart/form-data">
-                <table class="table_layout mt-5">
-                    <colgroup>
-                        <col width="120px">
-                        <col width="330px">
-                        <col width="120px">
-                        <col width="330px">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="4">견적서를 요청한 자</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>업 체 명</th>
-                            <td><b class="response_estimate_req_company_name"></b></td>
-                            <th>사업자번호</th>
-                            <td class="response_estimate_req_business_license_number"></td>
-                        </tr>
-                        <tr>
-                            <th>전 화 번 호</th>
-                            <td class="response_estimate_req_phone_number" colspan="3"></td>
-                        </tr>
-                        <tr>
-                            <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                            <td class="response_estimate_req_address1" colspan="3"></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="modal_body new_estimate_body">
+            <h3 class="py-5 text-xl font-semibold text-black text-center">견적 요청서</h3>
+            <h4 class="py-3 text-xl font-semibold text-white text-center">견 적 서</h4>
+            <div class="py-5 px-3">
+                <div class="img_box">
+                    <img class="mx-auto" src="/img/prod_thumb3.png" alt="">
+                </div>
 
-                <table class="table_layout mt-5">
-                    <colgroup>
-                        <col width="120px">
-                        <col width="330px">
-                        <col width="120px">
-                        <col width="330px">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="4">견적서를 보내는 자</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th colspan="4">아래와 같이 견적서를 보냅니다.</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <tr>
-                            <th>견 적 일 자</th>
-                            <td class="response_estimate_res_time"></td>
-                            <input type="hidden" name="response_estimate_res_time" value="" />
-                            <th>견 적 번 호</th>
-                            <td class="response_estimate_res_code"></td>
-                        </tr>
-                        <tr>
-                            <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                            <td class="response_estimate_res_company_name"></td>
-                            <input type="hidden" name="response_estimate_res_company_name" id="response_res_estimate_company_name" value="" />
-                            <th>사업자번호</th>
-                            <td><input type="text" name="response_estimate_res_business_license_number" id="response_res_business_license_number" class="input-form" value="" /></td>
-                        </tr>
-                        <tr>
-                            <th>전 화 번 호</th>
-                            <td><input type="text" name="response_estimate_res_phone_number" id="response_estimate_res_phone_number" class="input-form" value="" /></td>
-                            <th>유 효 기 한</th>
-                            <td>
-                                견적일로부터 
-                                <select name="expiration_date" id="expiration_date" class="input-form ml-3">
-                                    @for ($i = 15; $i >= 1; $i--)
-                                        <option value="{{ $i }}">{{ $i }}일</option>
-                                    @endfor
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                            <td colspan="3"><input type="text" name="response_estimate_res_address1" id="response_estimate_res_address1" class="input-form w-full" value="" /></td>
-                        </tr>
-                        <tr>
-                            <th>계 좌 번 호</th>
-                            <td colspan="3">
-                                <span class="response_account hidden"></span>
-                                <select name="response_estimate_account1" id="response_estimate_response_account1" class="input-form">
-                                    <option value="KEB하나은행">KEB하나은행</option>
-                                    <option value="SC제일은행">SC제일은행</option>
-                                    <option value="국민은행">국민은행</option>
-                                    <option value="신한은행">신한은행</option>
-                                    <option value="외환은행">외환은행</option>
-                                    <option value="우리은행">우리은행</option>
-                                    <option value="한국시티은행">한국시티은행</option>
-                                    <option value="기업은행">기업은행</option>
-                                    <option value="농협">농협</option>
-                                    <option value="수협">수협</option>
-                                </select>
-                                <input type="text" name="response_estimate_response_account2" id="response_estimate_response_account2" class="input-form" value="" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                            <td colspan="3"><input type="text" name="response_estimate_res_memo" id="response_estimate_res_memo" class="input-form w-full" value="" /></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="py-3">
+                    <p class="text-base font-semibold text-center">이태리매트리스_엔트리플러스 (SS) /이태리  최고급 침대 및 이태리 장인이 직접 수제공한 작품</p>
+                    <table class="mt-5 table_layout">
+                        <colgroup>
+                            <col width="160px">
+                            <col width="*">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>상품수량</th>
+                                <td>
+                                    <div class="count_box">
+                                        <button class="minus"><svg><use xlink:href="./img/icon-defs.svg#minus"></use></svg></button>
+                                        <input type="text" value="1개">
+                                        <button class="plus"><svg><use xlink:href="./img/icon-defs.svg#plus"></use></svg></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
+                                <td>없음</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                <ul class="order_prod_list mt-3">
-                    <li>
-                        <div class="img_box">
-                            <img src="/img/prod_thumb3.png" alt="" class="response_estimate_product_thumbnail" />
-                        </div>
-                        <div class="right_box">
-                            <h6 class="response_estimate_product_name"></h6>
-                            <table class="table_layout">
-                                <colgroup>
-                                    <col width="160px">
-                                    <col width="*">
-                                </colgroup>
-                                <tbody><tr>
+                <div class="mt-4 px-10">
+                    <div class="custom_input2 text-right">
+                        <input type="checkbox" id="new_esti_1" />
+                        <label for="new_esti_1"> 전체상품 견적받기</label>
+                    </div>
+                    <div class="pt-5">
+                        <ul class="all_prod prod_list grid2 mb-5">
+                            <!-- ajax -->
+                            <li class="prod_item">
+                                <div class="img_box custom_input2">
+                                    <input type="checkbox" id="new_esti_2" />
+                                    <label for="new_esti_2">
+                                        <img src="/img/prod_thumb.png" alt="">
+                                    </label>
+                                </div>
+                                <div class="txt_box">
+                                    <a href="/prod_detail.php">
+                                        <span>올펀가구</span>
+                                        <p>[자체제작]오크 원목 프리미엄 원형 테이블 우드 모던 미니테이블</p>
+                                        <b>수량마다 상이</b>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="javascript:;" class="btn btn-gray flex-1" onclick="moreProd(this)">더 보기</a>
+                    </div>
+                </div>
+
+                <div class="mt-10 px-10 add_inquiry">
+                    <h3>추가 문의 사항</h3>
+                    <textarea name="" id="" class="" placeholder="견적 요청드립니다. (200자)"></textarea>
+                </div>
+
+                <div class="btn_box mt-10 px-10">
+                    <div class="flex gap-5">
+                        <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#response_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- new 견적서 - 2 -->
+<div class="modal" id="new_estimate2-modal">
+    <div class="modal_bg" onclick="modalClose('#new_estimate2-modal')"></div>
+    <div class="modal_inner modal-xl">
+        <button class="close_btn" onclick="modalClose('#new_estimate2-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body new_estimate_body">
+            <h3 class="py-5 text-xl font-semibold text-black text-center">견적 요청서</h3>
+            <h4 class="py-3 text-xl font-semibold text-white text-center">견 적 서</h4>
+
+            <div class="company_info">
+                <h5>업체 정보 확인 <svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#drop_b_arrow"></use></svg></h5>
+                <div class="company_cont p-3">
+                    <table class="table_layout mt-5">
+                        <colgroup>
+                            <col width="160px">
+                            <col width="*">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="2">수신자</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>수 신 업 체</th>
+                                <td><b class="request_estimate_req_company_name">(주)미네르바 가구</b></td>
+                            </tr>
+                            <tr>
+                                <th>전 화 번 호</th>
+                                <td class="request_estimate_req_phone_number">010-1234-5678</td>
+                            </tr>
+                            <tr>
+                                <th>사업자번호</th>
+                                <td class="request_estimate_req_business_license_number">123-81-12354</td>
+                            </tr>
+                            <tr>
+                                <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
+                                <td class="request_estimate_req_address1">경기도 고양시 일산동구 산두로 213번길 18(정발산동) 1층</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table_layout mt-5">
+                        <colgroup>
+                            <col width="160px">
+                            <col width="*">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="2">공급자</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>견 적 날 짜</th>
+                                <td class="response_estimate_res_time">
+                                </td>
+                                <input type="hidden" name="response_estimate_res_time" value="" />
+                            </tr>
+                            <tr>
+                                <th>견 적 번 호</th>
+                                <td class="response_estimate_res_code"></td>
+                            </tr>
+                            <tr>
+                                <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
+                                <td class="response_estimate_res_company_name"></td>
+                            </tr>
+                            <tr>
+                                <th>사업자번호</th>
+                                <td><input type="text" name="response_estimate_res_business_license_number" id="response_res_business_license_number" value=""></td>
+                            </tr>
+                            <tr>
+                                <th>전 화 번 호</th>
+                                <td><input type="text" name="response_estimate_res_phone_number" id="response_estimate_res_phone_number" class="input-form" value="" /></td>
+                            </tr>
+                            <tr>
+                                <th>유 효 기 한</th>
+                                <td>
+                                    견적일로 부터
+                                    <select name="expiration_date" id="expiration_date" class="input-form ml-3">
+                                        @for ($i = 15; $i >= 1; $i--)
+                                            <option value="{{ $i }}">{{ $i }}일</option>
+                                        @endfor
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>배 송 방 법</th>
+                                <td>
+                                    <select name="response_estimate_product_delivery_info" id="response_estimate_product_delivery_info" class="input-form w-2/3">
+                                        <option value="업체 협의 (착불)">착불</option>
+                                        <option value="매장 배송 (무료)">무료</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>배 송 비 용</th>
+                                <td>
+                                    <b class="txt-primary">
+                                        <input type="text" name="response_estimate_product_delivery_price" id="response_estimate_product_delivery_price" class="input-form txt-primary w-2/3" value="" />
+                                    </b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
+                                <td class="add_inquiry">
+                                    <textarea name="response_estimate_res_address1" id="response_estimate_res_address1"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>계 좌 번 호</th>
+                                <td>
+                                    <span class="response_account hidden"></span>
+                                    <select name="response_estimate_account1" id="response_estimate_response_account1" class="input-form">
+                                        <option value="KEB하나은행">KEB하나은행</option>
+                                        <option value="SC제일은행">SC제일은행</option>
+                                        <option value="국민은행">국민은행</option>
+                                        <option value="신한은행">신한은행</option>
+                                        <option value="외환은행">외환은행</option>
+                                        <option value="우리은행">우리은행</option>
+                                        <option value="한국시티은행">한국시티은행</option>
+                                        <option value="기업은행">기업은행</option>
+                                        <option value="농협">농협</option>
+                                        <option value="수협">수협</option>
+                                    </select>
+                                    <input type="text" name="response_estimate_response_account2" id="response_estimate_response_account2" class="input-form" value="" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
+                                <td class="add_inquiry">
+                                    <textarea name="response_estimate_res_memo" id="response_estimate_res_memo"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="py-10 text-center">
+                <p>아래와 같이 견적합니다.</p>
+            </div>
+
+            <div class="py-5 px-3">
+
+                <div class="info_box p-4">
+                    <div class="img_box">
+                        <img class="mx-auto" src="/img/prod_thumb3.png" alt="">
+                    </div>
+
+                    <div class="py-3">
+                        <p class="text-base font-semibold text-center">이태리매트리스_엔트리플러스 (SS) /이태리  최고급 침대 및 이태리 장인이 직접 수제공한 작품</p>
+                        <table class="mt-5 table_layout">
+                            <colgroup>
+                                <col width="160px">
+                                <col width="*">
+                            </colgroup>
+                            <tbody>
+                                <tr>
                                     <th>상품번호</th>
-                                    <td class="txt-gray response_estimate_product_number"></td>
+                                    <td class="txt-gray response_estimate_product_number">A23A24224VEOPMR</td>
                                 </tr>
                                 <tr>
                                     <th>상품수량</th>
-                                    <td class="txt-primary"><b class="response_estimate_product_count"></b></td>
+                                    <td class="txt-danger response_estimate_product_count">5개</td>
                                 </tr>
                                 <tr>
                                     <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                    <td class="response_estimate_product_option">없음</td>
+                                    <td class="response_estimate_product_option">그레이</td>
                                 </tr>
                                 <tr>
                                     <th>견적단가</th>
-                                    <td><input type="text" name="response_estimate_product_each_price" id="response_estimate_product_each_price" class="input-form w-2/3 txt-primary" value="" /></td>
+                                    <td><input type="text" class="txt-danger" name="response_estimate_product_each_price" id="response_estimate_product_each_price"> 원</td>
                                 </tr>
                                 <tr>
                                     <th>견적금액</th>
                                     <td>
-                                        <b><span class="response_estimate_product_total_price"></span>원</b>
+                                        <span class="response_estimate_product_total_price"></span>원
                                         <input type="hidden" name="response_estimate_product_total_price" id="response_estimate_product_total_price" value="" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>배송지역</th>
-                                    <td class="response_estimate_product_address"></td>
+                                    <td class="response_estimate_product_address">경기도 일산</td>
                                 </tr>
                                 <tr>
                                     <th>배송방법</th>
@@ -400,52 +515,45 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>배송비</th>
-                                    <td><input type="text" name="response_estimate_product_delivery_price" id="response_estimate_product_delivery_price" class="input-form txt-primary w-2/3" value="" /></td>
+                                    <th>배송비용</th>
+                                    <td>
+                                        <input type="text" class="txt-danger" name="response_estimate_product_delivery_price" id="response_estimate_product_delivery_price">
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>비고</th>
-                                    <td><input type="text" name="response_estimate_product_memo" id="response_estimate_product_memo" class="input-form w-full" value="" /></td>
+                                    <td class="add_inquiry"><textarea name="response_estimate_product_memo" id="response_estimate_product_memo"></textarea></td>
                                 </tr>
-                            </tbody></table>
+                            </tbody>
+                        </table>
+                        <div class="order_price_total mt-10">
+                            <h5>총 견적 금액</h5>
+                            <div class="price">
+                                <p class="!w-full">
+                                    <span class="fs14 response_estimate_product_count">이태리매트리스 1개</span>
+                                    <b><span class="response_estimate_product_total_price"></span>원</b>
+                                    <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
+                                </p>
+                                <p class="!w-full">
+                                    <span class="fs14">배송비</span>
+                                    <b><span class="response_estimate_product_delivery_price"></span>원</b>
+                                </p>
+                            </div>
+                            <div class="total">
+                                <p>총 견적 금액</p>
+                                <b><span class="response_estimate_estimate_total_price"></span>원</b>
+                                <input type="hidden" name="response_estimate_estimate_total_price" id="response_estimate_estimate_total_price" value="" />
+                            </div>
                         </div>
-                    </li>
-                </ul>
-
-                <div class="order_price_total mt-10">
-                    <h5>총 견적금액</h5>
-                    <div class="price">
-                        <p>
-                            <span class="txt-gray fs14">
-                                견적금액 (<span class="response_estimate_product_count"></span>)
-                            </span>
-                            <b><span class="response_estimate_product_total_price"></span>원</b>
-                        </p>
-                        <p>
-                            <span class="txt-gray fs14">
-                                옵션금액
-                            </span>
-                            <b><span class="response_estimate_product_option_price"></span>원</b>
-                            <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
-                        </p>
-                        <p>
-                            <span class="txt-gray fs14">배송비</span>
-                            <b><span class="response_estimate_product_delivery_price"></span>원</b>
-                        </p>
-                    </div>
-                    <div class="total">
-                        <p>총 견적금액</p>
-                        <b><span class="response_estimate_estimate_total_price"></span>원</b>
-                        <input type="hidden" name="response_estimate_estimate_total_price" id="response_estimate_estimate_total_price" value="" />
                     </div>
                 </div>
 
-                <div class="btn_box mt-10">
+                <div class="btn_box mt-10 px-10">
                     <div class="flex gap-5">
                         <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="updateResponse()">견적서 보내기</a>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
