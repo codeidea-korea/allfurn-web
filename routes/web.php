@@ -288,6 +288,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/gatherDetail', 'WholesalerController@gatherDetail');
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
     Route::get('/wholesalerAddProduct', 'WholesalerController@wholesalerAddProduct');
+    Route::get('/wholesalerAddProduct2', 'WholesalerController@wholesalerAddProduct2');
 });
 
 Route::prefix('download')->name('download')->group(function() {

@@ -59,8 +59,7 @@ class HelpService
 
         if(!empty($params['is_pick'])) {
             $query->where('is_pick', 1);
-        }
-        if(!empty($params['npick'])) {
+        } else {
             $query->where('is_pick', 0);
         }
 
@@ -89,8 +88,7 @@ class HelpService
 
         if(!empty($params['is_pick'])) {
             $query->where('is_pick', 1);
-        }
-        if(!empty($params['npick'])) {
+        } else {
             $query->where('is_pick', 0);
         }
         $data['count'] = $query->count();
