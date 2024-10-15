@@ -534,3 +534,51 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .intro_popup .pager {z-index:10; position:absolute; bottom:5px; text-align:center; }
 .intro_popup .pager .swiper-pagination-bullet {background:#fff; opacity:1; }
 .intro_popup .pager .swiper-pagination-bullet-active {background:var(--main_color); }
+
+
+/* ------------------------------------
+    241002 견적서 추가
+------------------------------------ */
+.new_estimate_body h4 {background-color:#ff0000; color:#fff; }
+.new_estimate_body .prod_item .img_box {position:relative; }
+.new_estimate_body .prod_item .img_box.custom_input2 label::before {z-index:10; position:absolute; right:20px; bottom:20px; width:30px; height:30px; }
+.new_estimate_body .prod_list.all_prod li {display:none; }
+.new_estimate_body .prod_list.all_prod li:nth-of-type(1),
+.new_estimate_body .prod_list.all_prod li:nth-of-type(2),
+.new_estimate_body .prod_list.all_prod li:nth-of-type(3),
+.new_estimate_body .prod_list.all_prod li:nth-of-type(4) {display:block; }
+.new_estimate_body .prod_list.all_prod.active li {display:block; }
+.new_estimate_body .hidden {display:none !important; }
+.new_estimate_body .info_box {border:1px solid #ddd; }
+.new_estimate_body .company_info h5 {position:relative; padding:10px 20px; font-weight:500; color:#5a5a5a; background-color:#f5f5f5; cursor:pointer; }
+.new_estimate_body .company_info h5 svg {position:absolute; right:20px; top:calc(50% - 10px); width:20px; height:20px; stroke:#000; transition:all 0.5s; }
+.new_estimate_body .company_cont {display:none; }
+.new_estimate_body .company_info.active h5 svg {transform:rotate(180deg); }
+.new_estimate_body .company_info.active .company_cont {display:block; }
+.new_estimate_body input,
+.new_estimate_body select {width:100%; border:1px solid #ddd; padding:5px 10px; }
+.new_estimate_body select {display:inline-flex; width:auto; }
+.add_inquiry h3 {padding:10px 0; text-align:center; font-weight:500; background-color:#f5f5f5; }
+.add_inquiry textarea {resize:none; height:125px; border:1px solid #ddd; padding:15px; }
+/* 인풋박스 커스텀 */
+.custom_input2 input[type="checkbox"] {
+    position: absolute;
+    clip: rect(0 0 0 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+}
+  
+.custom_input2 label::before{
+    display: inline-block;
+    cursor: pointer;
+    content:"";
+    width:24px;
+    height:24px;
+    background: url(/img/check_off.svg) center/contain no-repeat;
+}
+  
+.custom_input2 input[type="checkbox"]:checked + label::before{
+    background: url(/img/check_on.svg) center/contain no-repeat;
+}
