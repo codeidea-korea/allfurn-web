@@ -162,6 +162,10 @@ class ProductService
             (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
                   ELSE "" END) as companyPhoneNumber,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.business_license_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.business_license_number from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyBusinessLicenseNumber,
+                  
             (CASE WHEN AF_product.company_type = "W" THEN (SELECT CONCAT(aw.business_address, " ", aw.business_address_detail) FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (SELECT CONCAT(ar.business_address, " ", ar.business_address_detail) FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
                   ELSE "" END) AS product_address,

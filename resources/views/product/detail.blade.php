@@ -285,207 +285,319 @@
     </div>
 
     <!-- 견적 요청서 모달 -->
-    <div id="request_estimate-modal" class="modal">
+     <!-- new 견적서 -->
+<!-- new 견적서 -->
+<form method="PUT" name="isForm" id="isForm" >
+    <input type="hidden" name="request_company_idx" value="{{ $data['company'] -> idx }}" />
+    <input type="hidden" name="request_company_type" value="{{ $data['user'] -> type }}" />
+    
+    <div class="modal" id="request_estimate-modal">
         <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
         <div class="modal_inner modal-xl">
-            <button class="close_btn" onclick="modalClose('#request_estimate-modal'); estimateModalReset();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-            <div class="modal_body agree_modal_body">
-                <h3 class="text-xl font-bold">견적 요청서</h3>
-                <br />
-                <form method="PUT" name="isForm" id="isForm" >
-                    <input type="hidden" name="request_company_idx" value="{{ $data['company'] -> idx }}" />
-                    <input type="hidden" name="request_company_type" value="{{ $data['user'] -> type }}" />
-                    <table class="table_layout mt-5">
-                        <colgroup>
-                            <col width="120px">
-                            <col width="330px">
-                            <col width="120px">
-                            <col width="330px">
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th colspan="4">견적서를 요청한 자</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>요 청 일 자</th>
-                                <td id="request_time"></td>
-                                <input type="hidden" name="request_time" value="" />
-                                <th>요 청 번 호</th>
-                                <td id="estimate_group_code" class="txt-gray"></td>
-                                <input type="hidden" name="estimate_group_code" value="" />
-                            </tr>
-                            <tr>
-                                <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                                <td id="request_company_name">{{ $data['company'] -> company_name }}</td>
-                                <input type="hidden" name="request_company_name" value="{{ $data['company'] -> company_name }}" />
-                                <th>사업자번호</th>
-                                <td><input type="text" name="request_business_license_number" class="input-form" value="" /></td>
-                            </tr>
-                            <tr>
-                                <th>전 화 번 호</th>
-                                <td><input type="text" name="request_phone_number" class="input-form" value="" /></td>
-                                <th>주요판매처</th>
-                                <td>
-                                    <div class="input-form">
-                                        <select name="" id="" class="w-full h-full">
-                                            <option value="0">매장 판매</option>
-                                        </select>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                                <td colspan="3"><input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
-                            </tr>
-                            <tr>
-                                <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                                <td colspan="3"><input type="text" name="request_memo" class="input-form w-full" value="" /></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    * 다수의 견적서 도착 알림톡이 발송될 수 있습니다.
-                    <div class="mt-10">
-                        <p>사업자등록증 또는 명함 첨부 (필수)</p>
-                        <p class="txt-primary">* 사업자가 아닌 경우 견적서를 요청하실 수 없습니다.</p>
+            <button type="button" class="close_btn" onclick="modalClose('#request_estimate-modal'); estimateModalReset();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body new_estimate_body">
+                <h3 class="py-5 text-xl font-semibold text-black text-center">견적 요청서</h3>
+                <h4 class="py-3 text-xl font-semibold text-white text-center">견 적 서</h4>
+                <div class="py-5 px-3">
+                    <div class="img_box">
+                        <img class="mx-auto" src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt="" />
                     </div>
-                    <div id="previewBusinessLicense" class="file-form full mt-2">
-                        <input type="hidden" name="request_business_license_fidx" value="" />
-                        <input type="hidden" name="is_business_license_img" value="0" />
-                        <input type="file" name="request_business_license" id="request_business_license" class="file_input" />
-                        <div class="text">
-                            <img src="/img/member/img_icon.svg" alt="" class="mx-auto" />
-                            <p class="mt-1 default-add-image">이미지 추가</p>
+
+                    <div class="py-3">
+                        <p class="text-base font-semibold text-center">{{ $data['detail'] -> name }}</p>
+                        <table class="mt-5 table_layout">
+                            <colgroup>
+                                <col width="160px">
+                                <col width="*">
+                            </colgroup>
+                            <tbody>
+                                @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]') 
+                                    <input type="hidden" name="product_count" value="1" readOnly />
+                                @else
+                                    <tr>
+                                        <th>상품수량</th>
+                                        <td>
+                                            <div class="count_box">
+                                                <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                <input type="text" id="requestEstimateProductCount" value="1">
+                                                <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif 
+                                <tr>
+                                    <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
+                                    <td>
+                                        @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                            <input type="hidden" name="product_option_exist" value="1" readOnly />
+                                            <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
+                                            @foreach($arr as $item)
+                                                <div class="dropdown for_estimate_each my_filterbox mt-3" style="position: relative;">
+                                                    <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
+                                                        <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
+                                                            {{$item->optionName}} 선택
+                                                            @if($item->required == 1)
+                                                                (필수)
+                                                            @else
+                                                                (선택)
+                                                            @endif
+                                                        </p>
+                                                        <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                                    </a>
+                                                    <div class="filter_dropdown_wrap w-full" style="display: none;">
+                                                        <ul>
+                                                            @foreach($item->optionValue as $sub)
+                                                                <li class="dropdown__item" style="display: inherit;gap:0;padding:0;border:0;border-radius:0;margin-top:0;" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                                                                    <a href="javascript:;" class="flex items-center">
+                                                                        {{$sub->propertyName}}
+                                                                        @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                                            <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
+                                                                        @endif
+                                                                    </a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <div class="prod_detail_top" style="padding:0">
+                                                <div class="txt_box" style="display:inherit;width:100%;min-height:auto;padding-left:0;">
+                                                    <div class="opt_result_area for_estimate"></div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            없음
+                                            <input type="hidden" name="product_option_exist" value="0" readOnly />
+                                        @endif 
+                                    
+                                        {{-- @if (!empty(json_decode($data['detail']['product_option'])))
+                                            <table class="my_table w-full text-left">
+                                                @foreach (json_decode($data['detail']['product_option']) as $key => $val)
+                                                    @if ($val -> required === '1')
+                                                        <tr>
+                                                            <th>
+                                                                {{ $val -> optionName }}
+                                                                <input type="hidden" name="product_option_key[]" value="{{ $val -> optionName }}" readOnly />
+                                                            </th>
+                                                            <td>
+                                                                <select name="product_option_value[]" class="input-form w-2/3">
+                                                                    <option value="">선택</option>
+                                                                    @foreach ($val -> optionValue as $opVal)
+                                                                        <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </table>
+                                        @else
+                                            없음
+                                        @endif --}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 px-10">
+                        <div class="custom_input2 text-right">
+                            <input type="checkbox" id="new_esti_1" />
+                            <label for="new_esti_1"> 전체상품 견적받기</label>
                         </div>
-                        <div class="absolute top-2.5 right-2.5">
-                            <button type="button" id="deleteBusinessLicense" class="file_del w-[28px] h-[28px] bg-stone-600/50 rounded-full hidden">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
+                        <div class="pt-5">
+                            <ul class="all_prod prod_list grid2 mb-5">
+                                        <!-- ajax -->
+                            </ul>
+                            <a href="javascript:;" id="btnMoreProduct" class="btn btn-gray flex-1" onclick="loadProductList()">더 보기</a>
                         </div>
                     </div>
-                    <div class="flex justify-end mt-2">
-                        <button type="button" class="btn btn-line w-60 business_license_modify hidden">기본 사업자등록증으로 등록하기</button>
+
+                    <div class="mt-10 px-10 add_inquiry">
+                        <h3>추가 문의 사항</h3>
+                        <textarea name="request_memo" id="" class="" placeholder="견적 요청드립니다. (200자)"></textarea>
                     </div>
-                    <div class="flex justify-end mt-2 request_estimate hidden" style="padding: 10px; font-size: 16px; font-weight: 500; color: #fff; background: #8E8E8E; margin-top: 3.00rem;">
-                        아래 상품의 견적을 요청합니다.
-                    </div>
-                    <div class="btn_box mt-10 check_btn">
-                        <p class="mb-2">
-                            <input type="checkbox" id="all_prod" class="radio-form" />
-                            <label for="all_prod">위 입력된 사항을 확인했습니다.</label>
-                        </p>
+
+                    <div class="btn_box mt-10 px-10">
                         <div class="flex gap-5">
-                            <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="goNext()">확인</a>
+                            <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
                         </div>
                     </div>
-                    <ul class="order_prod_list hidden">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- new 견적서 - 2 -->
+    <div class="modal" id="new_estimate2-modal">
+        <div class="modal_bg" onclick="modalClose('#new_estimate2-modal')"></div>
+        <div class="modal_inner modal-xl">
+            <button type="button" class="close_btn" onclick="modalClose('#new_estimate2-modal'); estimateModalReset();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body new_estimate_body">
+                <h3 class="py-5 text-xl font-semibold text-black text-center">견적 요청서</h3>
+                <h4 class="py-3 text-xl font-semibold text-white text-center">견 적 서</h4>
+
+                <input type="hidden" name="request_business_license_fidx" value="" />
+                <input type="hidden" name="is_business_license_img" value="0" />
+                <!--
+                <input type="file" name="request_business_license" id="request_business_license" class="file_input" />
+                                        -->
+
+                <div class="company_info">
+                    <h5>업체 정보 확인 <svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg></h5>
+                    <div class="company_cont p-3">
+                        <input type="hidden" name="request_company_name" value="{{ $data['company'] -> company_name }}" />
+                        <table class="table_layout mt-5">
+                            <colgroup>
+                                <col width="160px">
+                                <col width="*">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">수신자</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>수 신 업 체</th>
+                                    <td><b id="request_company_name">{{ $data['company'] -> company_name }}</b></td>
+                                </tr>
+                                <tr>
+                                    <th>전 화 번 호</th>
+                                    <td><input type="text" name="request_phone_number" class="input-form" value="" /></td>
+                                </tr>
+                                <tr>
+                                    <th>사업자번호</th>
+                                    <td><input type="text" name="request_business_license_number" class="input-form" value="" /></td>
+                                </tr>
+                                <tr>
+                                    <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
+                                    <td><input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <input type="hidden" name="request_time" value="" />
+                        <input type="hidden" name="estimate_group_code" value="" />
+                        <table class="table_layout mt-5">
+                            <colgroup>
+                                <col width="160px">
+                                <col width="*">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">공급자</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>견 적 날 짜</th>
+                                    <td id="request_time">2024년 10월 26일</td>
+                                </tr>
+                                <tr>
+                                    <th>견 적 번 호</th>
+                                    <td id="estimate_group_code" class="txt-gray">Allfurn2311030001</td>
+                                </tr>
+                                <tr>
+                                    <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
+                                    <td>{{$data['detail']->companyName}}</td>
+                                </tr>
+                                <tr>
+                                    <th>사업자번호</th>
+                                    <td>{{$data['detail']->companyBusinessLicenseNumber}}</td>
+                                </tr>
+                                <tr>
+                                    <th>전 화 번 호</th>
+                                    <td>{{$data['detail']->companyPhoneNumber}}</td>
+                                </tr>
+                                <!--
+                                <tr>
+                                    <th>유 효 기 한</th>
+                                    <td>
+                                        견적일로 부터
+                                        <select name="" id="">
+                                            <option value="">1일</option>
+                                            <option value="">2일</option>
+                                            <option value="">3일</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>배 송 방 법</th>
+                                    <td>{{ $data['detail']->delivery_info }}</td>
+                                </tr>
+                                <tr>
+                                    <th>배 송 비 용</th>
+                                    <td><b class="txt-primary">150,000원</b></td>
+                                </tr>
+                                -->
+                                <tr>
+                                    <th>배 송 방 법</th>
+                                    <td>{{ $data['detail']->delivery_info }}</td>
+                                </tr>
+                                <tr>
+                                    <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
+                                    <td class="add_inquiry">{{ $data['detail']->product_address }}</td>
+                                </tr>
+                                <!--
+                                <tr>
+                                    <th>계 좌 번 호</th>
+                                    <td>
+                                        <select name="" id="" class="!w-full mb-1">
+                                            <option value="">우리은행</option>
+                                            <option value="">기업은행</option>
+                                            <option value="">국민은행</option>
+                                        </select>
+                                        <input type="text" value="365-35-955364-001">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
+                                    <td class="add_inquiry"><textarea name="" id=""></textarea></td>
+                                </tr>
+                                -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="py-10 text-center">
+                    <p>아래와 같이 견적합니다.</p>
+                </div>
+
+                <div class="py-5 px-3">
+
+                    <div class="info_box p-4">
+                        <div class="img_box">
+                            <img class="mx-auto" src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt="" />
+                        </div>
                         <input type="hidden" name="response_company_idx" value="{{ $data['detail'] -> company_idx }}" />
                         <input type="hidden" name="response_company_type" value="{{ $data['detail'] -> company_type }}" />
                         <input type="hidden" name="product_idx" value="{{ $data['detail'] -> idx }}" />
-                        <li>
-                            <div class="img_box">
-                                <img src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt="" />
-                            </div>
-                            <div class="right_box">
-                                <h6>{{ $data['detail'] -> name }}</h6>
-                                <table class="table_layout">
-                                    <colgroup>
-                                        <col width="160px">
-                                        <col width="*">
-                                    </colgroup>
+
+                        <div class="py-3">
+                            <p class="text-base font-semibold text-center">{{ $data['detail'] -> name }}</p>
+                            <table class="mt-5 table_layout">
+                                <colgroup>
+                                    <col width="160px">
+                                    <col width="*">
+                                </colgroup>
+                                <tbody>
                                     <tr>
                                         <th>상품번호</th>
-                                        <td>{{ $data['detail'] -> product_number }}</td>
+                                        <td class="txt-gray">{{ $data['detail'] -> product_number }}</td>
                                     </tr>
-                                    @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]') 
-                                        <input type="hidden" name="product_count" value="1" readOnly />
-                                    @else
-                                        <tr>
-                                            <th>상품수량</th>
-                                            <td>
-                                                <div class="count_box">
-                                                    <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" name="product_count" value="1" readOnly />
-                                                    <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endif 
+                                    <tr>
+                                        <th>상품수량</th>
+                                        <td class="txt-danger _requestEstimateCount">5개</td>
+                                    </tr>
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                        <td>
-                                            @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
-                                                <input type="hidden" name="product_option_exist" value="1" readOnly />
-                                                <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
-                                                @foreach($arr as $item)
-                                                    <div class="dropdown for_estimate_each my_filterbox mt-3" style="position: relative;">
-                                                        <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
-                                                            <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
-                                                                {{$item->optionName}} 선택
-                                                                @if($item->required == 1)
-                                                                    (필수)
-                                                                @else
-                                                                    (선택)
-                                                                @endif
-                                                            </p>
-                                                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
-                                                        </a>
-                                                        <div class="filter_dropdown_wrap w-full" style="display: none;">
-                                                            <ul>
-                                                                @foreach($item->optionValue as $sub)
-                                                                    <li class="dropdown__item" style="display: inherit;gap:0;padding:0;border:0;border-radius:0;margin-top:0;" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
-                                                                        <a href="javascript:;" class="flex items-center">
-                                                                            {{$sub->propertyName}}
-                                                                            @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
-                                                                                <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
-                                                                            @endif
-                                                                        </a>
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                                <div class="prod_detail_top" style="padding:0">
-                                                    <div class="txt_box" style="display:inherit;width:100%;min-height:auto;padding-left:0;">
-                                                        <div class="opt_result_area for_estimate"></div>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                없음
-                                                <input type="hidden" name="product_option_exist" value="0" readOnly />
-                                            @endif 
-                                        
-                                            {{-- @if (!empty(json_decode($data['detail']['product_option'])))
-                                                <table class="my_table w-full text-left">
-                                                    @foreach (json_decode($data['detail']['product_option']) as $key => $val)
-                                                        @if ($val -> required === '1')
-                                                            <tr>
-                                                                <th>
-                                                                    {{ $val -> optionName }}
-                                                                    <input type="hidden" name="product_option_key[]" value="{{ $val -> optionName }}" readOnly />
-                                                                </th>
-                                                                <td>
-                                                                    <select name="product_option_value[]" class="input-form w-2/3">
-                                                                        <option value="">선택</option>
-                                                                        @foreach ($val -> optionValue as $opVal)
-                                                                            <option value="{{ $opVal -> propertyName }},{{ $opVal -> price }}">{{ $opVal -> propertyName }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                </table>
-                                            @else
-                                                없음
-                                            @endif --}}
-                                        </td>
+                                        <td class="_requestEstimateOption">그레이</td>
                                     </tr>
                                     <tr>
-                                        <th>판매가격</th>
-                                        <td class="txt-gray product_price" data-total_price={{$data['detail']->price}}>
+                                        <th>견적단가</th>
+                                        <td type="text" class="txt-danger" data-total_price={{$data['detail']->price}}>
                                             {{ 
                                                 ($data['detail'] -> price > 0) ? 
                                                     number_format($data['detail'] -> price).'원' 
@@ -496,23 +608,67 @@
                                         <input type="hidden" name="product_each_price_text" value="{{ $data['detail'] -> price_text }}" />
                                     </tr>
                                     <tr>
-                                        <th>배송지역</th>
-                                        <td>{{ $data['detail'] -> product_address }}</td>
-                                        <input type="hidden" name="product_delivery_info" value="{{ $data['detail'] -> delivery_info }}" />
+                                        <th>견적금액</th>
+                                        <td class="_requestEstimateTotalPrice">6,250,000 원</td>
                                     </tr>
-                                </table>
+                                    <tr>
+                                        <th>배송지역</th>
+                                        <td class="_requestEstimateAddress">{{ $data['detail'] -> product_address }}</td>
+                                    </tr>
+                                    <!--
+                                    <tr>
+                                        <th>배송방법</th>
+                                        <td>
+                                            <select name="" id="">
+                                                <option value="">착불</option>
+                                                <option value="">착불</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>배송비용</th>
+                                        <td><input type="text" class="txt-danger" value="150,000 원"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>비고</th>
+                                        <td class="add_inquiry"><textarea name="" id=""></textarea></td>
+                                    </tr>
+                                    -->
+                                </tbody>
+                            </table>
+                            <div class="order_price_total mt-10">
+                                <h5>총 견적 금액</h5>
+                                <div class="price">
+                                    <p class="!w-full">
+                                        <span class="fs14">이태리매트리스 1개</span>
+                                        <b class="_requestEstimateTotalPrice">6,250,000원</b>
+                                    </p>
+                                    <!--
+                                    <p class="!w-full">
+                                        <span class="fs14">배송비</span>
+                                        <b>150,000원</b>
+                                    </p>
+                                    -->
+                                </div>
+                                <div class="total">
+                                    <p>총 견적 금액</p>
+                                    <b class="_requestEstimateTotalPrice">6,400,000원</b>
+                                </div>
                             </div>
-                        </li>
-                    </ul>
-                    <div class="btn_box mt-10 request_estimate_btn hidden">
-                        <div class="flex gap-5">
-                            <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="insertRequest()">견적서 요청하기</a>
                         </div>
                     </div>
-                </form>
+
+                    <div class="btn_box mt-10 px-10">
+                        <div class="flex gap-5">
+                            <a href="javascript:;" class="btn btn-primary flex-1" onclick="insertRequest()">견적서 요청하기</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</form>
+
 
 
 
@@ -881,11 +1037,13 @@
                     } else { 
                         $('input[name="is_business_license_img"]').val('0'); 
                     }
+                    /*
                     document.getElementById('previewBusinessLicense').style.backgroundImage = "url('" + json.company.blImgUrl + "')";
                     document.getElementById('previewBusinessLicense').style.backgroundSize = 'contain';
                     document.getElementById('previewBusinessLicense').style.backgroundPosition = 'center';
                     document.getElementById('previewBusinessLicense').style.backgroundRepeat = 'no-repeat';
                     document.getElementById('deleteBusinessLicense').classList.remove('hidden');
+                    */
                     document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.add('hidden'));
 
                     modalOpen('#request_estimate-modal');
@@ -940,6 +1098,7 @@
             $('input[name="is_business_license_img"]').val('1');
             $('.business_license_modify').removeClass('hidden');
         }
+        /*
         document.querySelector('[name="request_business_license"]').addEventListener('change', (e) => { 
             storedFiles = [];
             storedFiles.push(e.currentTarget.files[0]);
@@ -958,7 +1117,8 @@
             $('input[name="is_business_license_img"]').val('0');
             $('.business_license_modify').addClass('hidden');
         }
-        document.getElementById('deleteBusinessLicense').addEventListener('click', deleteBusinessLicense);
+            */
+//        document.getElementById('deleteBusinessLicense').addEventListener('click', deleteBusinessLicense);
 
         // 기본 사업자등록증으로 지정
         $('.business_license_modify').click(function(){
@@ -1104,13 +1264,72 @@
                 if (num !== 1) {
                     $(this).siblings('input').val(`${num - 1}`);
                 }
+                const count = $('#requestEstimateProductCount').val();
+                $('._requestEstimateCount').text(count + '개');
+                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
             });
 
             $('.count_box .plus').off().on('click', function(){
                 let num = Number($(this).siblings('input').val());
                 $(this).siblings('input').val(`${num + 1}`);
+                const count = $('#requestEstimateProductCount').val();
+                $('._requestEstimateCount').text(count + '개');
+                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
             });
         });
 
+
+
+        let isLoading = false;
+        let isLastPage = false;
+        let currentPage = 0;
+        let firstLoad = true;
+        function loadProductList(needEmpty) {
+            if(isLoading) return;
+            if(!needEmpty && isLastPage) return;
+            isLoading = true;
+            if(needEmpty) currentPage = 0;
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: '/wholesaler/wholesalerAddProduct2',
+                method: 'GET',
+                data: { 
+                    'page': ++currentPage,
+                    'categories' : '',  
+                    'orderedElement' : 'register_time',
+                    'company_idx'   : '{{$data['detail'] -> company_idx}}'
+                }, 
+                beforeSend : function() {
+                },
+                success: function(result) {
+                    console.log(result);
+                    if(needEmpty) {
+                        $("#request_estimate-modal").find(".prod_list").empty();
+                    }
+                    $("#request_estimate-modal").find(".prod_list").append(result.data.html);
+    //                $(".total").text('전체 ' + result.total.toLocaleString('ko-KR') + '개');
+                    isLastPage = currentPage === result.last_page;
+                    if(isLastPage) {
+                        $('#btnMoreProduct').hide();
+                    }
+                }, 
+                complete : function () {
+                    isLoading = false;
+                }
+            })
+        }
+        $('#new_estimate2-modal .company_info h5').on('click',function(){
+            $('.company_info').toggleClass('active')
+        })
+        loadProductList(true);
+
+        const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
+        var optionPrice = 0;
+        $('input[name=request_address1]').change(function(){
+            $('._requestEstimateAddress').text(this.value);
+        });
+        $('._requestEstimateCount').text($('#requestEstimateProductCount').val() + '개');
+        $('._requestEstimateTotalPrice').text(($('#requestEstimateProductCount').val() * (price + optionPrice)).toLocaleString('en-US') + '원');
+        $('input[name=product_option_exist]').text('없음');
     </script>
 @endsection
