@@ -433,7 +433,7 @@ $(document).on('change', '#form-list02', function() {
                     let imgCnt = $('.product-img__add').length + 1;
 
                     if (imgCnt == 9) {
-                        openModal('#alert-modal08');
+                        alert('파일은 8개 까지 등록 가능합니다.');
                         return;
                     }
                     var image = new Image;
@@ -1018,6 +1018,7 @@ function saveProduct(regType) {
     for (var i = 0; i < storedFiles.length; i++) {
         form.append('files[]', storedFiles[i]);
     }
+    /*
     for (var i = 0; i < stored100Files.length; i++) {
         form.append('files100[]', stored100Files[i]);
     }
@@ -1026,7 +1027,7 @@ function saveProduct(regType) {
     }
     for (var i = 0; i < stored600Files.length; i++) {
         form.append('files600[]', stored600Files[i]);
-    }
+    }*/
 
     var property = '';
     $('#prod_property-modal .sub_property_area').each(function(o){
