@@ -658,6 +658,7 @@ class WholesalerService {
             })
             ->whereRaw("AF_product.idx in (".$product_idx_list.")")
             ->whereNull('AF_product.deleted_at')
+            ->where('AF_product.state', 'S')
             ->orderBy('AF_product.idx', 'DESC')
             ->get();
         }else{
@@ -671,6 +672,7 @@ class WholesalerService {
             })
             ->whereRaw("AF_product.idx in (0)")
             ->whereNull('AF_product.deleted_at')
+            ->where('AF_product.state', 'S')
             ->orderBy('AF_product.idx', 'DESC')
             ->get();
         }
