@@ -934,6 +934,8 @@ class ProductService
                                 AF_product.register_time as reg_time'
             ))
             ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
             ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
             ->join('AF_product', function ($query) {
@@ -1051,7 +1053,7 @@ class ProductService
             $list->orderBy('reg_time', 'desc');
         }
 
-        $list->inRandomOrder();
+//        $list->inRandomOrder();
 
         Log::debug("---------------------------------------");
         $data['list'] = $list->distinct()->paginate(20);
