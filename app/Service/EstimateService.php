@@ -76,24 +76,38 @@ class EstimateService {
             ]);
     }
 
+    /**
+     * 견적서 추가 다건
+     * @param array $params request
+     * @param string $serialKey 시리얼키
+     */
     public function insertRequests(array $params) {
         if(array_key_exists('product_idxs', $params)) {
             $productIdxs = $params['product_idxs'];
+            $serialIdx = 0;
             foreach ($productIdxs as $idx) {
                 $productParam = array_merge(array(), $params);
                 $productInfo = Product::where('idx', $idx)->first();
                 $params['product_idx'] = $idx;
+                $params['product_count'] = 1;
                 $params['product_each_price'] = $productInfo->price;
                 $params['product_each_price_text'] = $productInfo->price_text;
-                    
-                insertRequest($params);
+                $serialIdx = $serialIdx + 1;
+                $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
+
+                insertRequest($params, $serialKey);
             }
         } else {
-            insertRequest($params);
+            insertRequest($params, '-0001');
         }
     }
     
-    public function insertRequest(array $params, string serialKey = '-0001') {
+    /**
+     * 견적서 추가
+     * @param array $params request
+     * @param string $serialKey 시리얼키
+     */
+    public function insertRequest(array $params, string $serialKey) {
         $check = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> count();
         if($check < 0) {
             throw new \Exception('', 500);
@@ -102,7 +116,7 @@ class EstimateService {
         $estimate = new Estimate;
 
         $estimate -> estimate_group_code = $params['estimate_group_code'];
-        $estimate -> estimate_code = $params['estimate_group_code'].serialKey;
+        $estimate -> estimate_code = $params['estimate_group_code'].$serialKey;
         $estimate -> estimate_state = 'N';
 
         $estimate -> request_company_idx = $params['request_company_idx'];

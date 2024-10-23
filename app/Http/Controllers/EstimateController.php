@@ -62,7 +62,7 @@ class EstimateController extends BaseController {
             }
         }
 
-        $estimateIdx = $this -> estimateService -> insertRequest($data);
+        $estimateIdx = $this -> estimateService -> insertRequests($data);
 
         return 
             response() -> json([
