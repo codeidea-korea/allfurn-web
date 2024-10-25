@@ -319,7 +319,7 @@
                                         <td>
                                             <div class="count_box">
                                                 <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                <input type="text" id="requestEstimateProductCount" value="1">
+                                                <input type="text" id="requestEstimateProductCount" name="product_count" value="1">
                                                 <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                             </div>
                                         </td>
@@ -402,7 +402,7 @@
 
                     <div class="mt-4 px-10">
                         <div class="custom_input2 text-right">
-                            <input type="checkbox" id="new_esti_1" />
+                            <input type="checkbox" id="new_esti_1" name="all_product" />
                             <label for="new_esti_1"> 전체상품 견적받기</label>
                         </div>
                         <div class="pt-5">
