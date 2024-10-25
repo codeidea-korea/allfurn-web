@@ -82,7 +82,28 @@ class EstimateService {
      * @param string $serialKey 시리얼키
      */
     public function insertRequests(array $params) {
-        if(array_key_exists('product_idxs', $params)) {
+        // 모든 상품에 대한 견적
+        if(array_key_exists('all_product', $params)) {
+            $products = Product::where('company_idx', $params['response_company_idx'])
+                ->where('company_type', $params['response_company_type'])
+                ->whereIn('state', ['S', 'O'])
+                ->whereNull('deleted_at')
+                ->get();
+                
+            $serialIdx = 0;
+            foreach ($products as $product) {
+                $productParam = array_merge(array(), $params);
+                $params['product_idx'] = $idx;
+                $params['product_count'] = 1;
+                $params['product_each_price'] = $product->price;
+                $params['product_each_price_text'] = $product->price_text;
+                $serialIdx = $serialIdx + 1;
+                $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
+
+                insertRequest($params, $serialKey);
+            }
+        // 지정 상품에 대한 견적
+        } else if(array_key_exists('product_idxs', $params)) {
             $productIdxs = $params['product_idxs'];
             $serialIdx = 0;
             foreach ($productIdxs as $idx) {
@@ -97,6 +118,7 @@ class EstimateService {
 
                 insertRequest($params, $serialKey);
             }
+        // 기본 단건 견적
         } else {
             insertRequest($params, '-0001');
         }
