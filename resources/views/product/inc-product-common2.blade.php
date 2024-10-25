@@ -1,7 +1,7 @@
 @foreach ($list as $item )
     <li class="prod_item">
         <div class="img_box custom_input2">
-            <input type="checkbox" id="new_esti_{{ $item->idx }}" />
+            <input type="checkbox" id="new_esti_{{ $item->idx }}" name="product_idxs[]" value="{{ $item->idx }}" />
             <label for="new_esti_{{ $item->idx }}">
                 <img src="{{ $item->imgUrl }}" alt="">
             </label>
