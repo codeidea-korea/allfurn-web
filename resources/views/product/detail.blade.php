@@ -290,7 +290,7 @@
 <form method="PUT" name="isForm" id="isForm" >
     <input type="hidden" name="request_company_idx" value="{{ $data['company'] -> idx }}" />
     <input type="hidden" name="request_company_type" value="{{ $data['user'] -> type }}" />
-    
+
     <div class="modal" id="request_estimate-modal">
         <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
         <div class="modal_inner modal-xl">
@@ -402,8 +402,8 @@
 
                     <div class="mt-4 px-10">
                         <div class="custom_input2 text-right">
-                            <input type="checkbox" id="new_esti_1" name="all_product" />
-                            <label for="new_esti_1"> 전체상품 견적받기</label>
+                            <input type="checkbox" id="new_esti_1" name="all_product" onclick="requestEstimateAllCheck()" />
+                            <label for="new_esti_1" class="flex items-center justify-end gap-2"> 전체상품 견적받기</label>
                         </div>
                         <div class="pt-5">
                             <ul class="all_prod prod_list grid2 mb-5">
@@ -415,7 +415,7 @@
 
                     <div class="mt-10 px-10 add_inquiry">
                         <h3>추가 문의 사항</h3>
-                        <textarea name="request_memo" id="" class="" placeholder="견적 요청드립니다. (200자)"></textarea>
+                        <textarea name="request_memo" id="" class="w-full" placeholder="견적 요청드립니다. (200자)"></textarea>
                     </div>
 
                     <div class="btn_box mt-10 px-10">
@@ -850,8 +850,8 @@
                 $(this).find('.selection__text').map(function () {
                     resultPrice += parseInt($(this).data('price'));
                 })
-                resultPrice = resultPrice * $(this).parents('.option_result').find('#qty_input').val();
-                total_qty += parseInt($(this).parents('.option_result').find('#qty_input').val());
+                resultPrice = resultPrice * $(this).parents('.option_result').find('input[name=qty_input]').val();
+                total_qty += parseInt($(this).parents('.option_result').find('input[qty_input]').val());
                 $(this).find('.selection__price span').text(resultPrice.toLocaleString());
                 price += resultPrice;
             })
@@ -893,7 +893,7 @@
             reCal();
         });
 
-        $(document).on('keyup', '#qty_input', function () {
+        $(document).on('keyup', 'input[name=qty_input]', function () {
             reCal();
         })
 
@@ -1226,7 +1226,7 @@
                 $('.for_estimate .option_result').each(function(e2, i2){
                     let optionName = $(this).find('.selection__text').data('option_name')
                     let optionPrice = $(this).find('.selection__text').data('price')
-                    let optionQty = $(this).find('#qty_input').val();
+                    let optionQty = $(this).find('input[name=qty_input]').val();
                     if (e2 > 0) optArr += ',';
                     optArr += `"${optionName}":"${optionPrice}/${optionQty}"`;
                 });
@@ -1261,6 +1261,9 @@
         $(function(){
             $('.count_box .minus').off().on('click', function(){
                 let num = Number($(this).siblings('input').val());
+                if(isNaN(num)) {
+                    num = 1;
+                }
                 if (num !== 1) {
                     $(this).siblings('input').val(`${num - 1}`);
                 }
@@ -1271,6 +1274,9 @@
 
             $('.count_box .plus').off().on('click', function(){
                 let num = Number($(this).siblings('input').val());
+                if(isNaN(num)) {
+                    num = 1;
+                }
                 $(this).siblings('input').val(`${num + 1}`);
                 const count = $('#requestEstimateProductCount').val();
                 $('._requestEstimateCount').text(count + '개');
@@ -1312,6 +1318,9 @@
                     if(isLastPage) {
                         $('#btnMoreProduct').hide();
                     }
+                    if($('#new_esti_1').is(":checked")) {
+                        $('.prod_item > .custom_input2 > input').prop('checked', true);
+                    }
                 }, 
                 complete : function () {
                     isLoading = false;
@@ -1322,14 +1331,25 @@
             $('.company_info').toggleClass('active')
         })
         loadProductList(true);
-
-        const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
-        var optionPrice = 0;
         $('input[name=request_address1]').change(function(){
             $('._requestEstimateAddress').text(this.value);
         });
         $('._requestEstimateCount').text($('#requestEstimateProductCount').val() + '개');
-        $('._requestEstimateTotalPrice').text(($('#requestEstimateProductCount').val() * (price + optionPrice)).toLocaleString('en-US') + '원');
+
+        const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
+        var optionPrice = 0;
+        if({{ $data['detail']->is_price_open ? 0 : 1 }}) {
+            $('._requestEstimateTotalPrice').text({{ $data['detail']->price_text }});
+        } else {
+            $('._requestEstimateTotalPrice').text(($('#requestEstimateProductCount').val() * (price + optionPrice)).toLocaleString('en-US') + '원');
+        }
         $('input[name=product_option_exist]').text('없음');
+        function requestEstimateAllCheck(){
+            if($('#new_esti_1').is(":checked")) {
+                $('.prod_item > .custom_input2 > input').prop('checked', true);
+            } else {
+                $('.prod_item > .custom_input2 > input').prop('checked', false);
+            }
+        }
     </script>
 @endsection
