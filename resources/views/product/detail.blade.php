@@ -1238,6 +1238,8 @@
 
             formData.append('product_total_price', $('.product_price').data('total_price'));
 
+            $('#loadingContainer').show();
+
             fetch('/estimate/insertRequest', {
                 method  : 'POST',
                 headers : {
@@ -1247,6 +1249,8 @@
             }).then(response => {
                 return response.json();
             }).then(json => {
+                $('#loadingContainer').hide();
+                
                 if (json.success) {
                     //openModal('#alert-modal02');
                     alert('견적서 요청이 완료되었습니다.');

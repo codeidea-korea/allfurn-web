@@ -62,7 +62,10 @@ class EstimateService {
             })
             ->where('AF_retail.idx', Auth::user()['company_idx'])->first();
         } else {
-            $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")->where('idx', Auth::user()['company_idx'])->first();
+            $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")
+                ->where('idx', Auth::user()['company_idx'])
+                ->whereIn('type', ['S', 'N'])
+                ->first();
         }
 
         return
@@ -93,19 +96,21 @@ class EstimateService {
             $serialIdx = 0;
             foreach ($products as $product) {
                 $productParam = array_merge(array(), $params);
-                $params['product_idx'] = $idx;
+                $params['product_idx'] = $product->idx;
                 $params['product_count'] = 1;
                 $params['product_each_price'] = $product->price;
                 $params['product_each_price_text'] = $product->price_text;
                 $serialIdx = $serialIdx + 1;
                 $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
 
-                insertRequest($params, $serialKey);
+                $this->insertRequest($params, $serialKey);
             }
         // 지정 상품에 대한 견적
         } else if(array_key_exists('product_idxs', $params)) {
+            $this->insertRequest($params, '-0001');
+            $serialIdx = 1;
             $productIdxs = $params['product_idxs'];
-            $serialIdx = 0;
+
             foreach ($productIdxs as $idx) {
                 $productParam = array_merge(array(), $params);
                 $productInfo = Product::where('idx', $idx)->first();
@@ -116,11 +121,11 @@ class EstimateService {
                 $serialIdx = $serialIdx + 1;
                 $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
 
-                insertRequest($params, $serialKey);
+                $this->insertRequest($params, $serialKey);
             }
         // 기본 단건 견적
         } else {
-            insertRequest($params, '-0001');
+            $this->insertRequest($params, '-0001');
         }
     }
     
