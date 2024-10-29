@@ -16,6 +16,8 @@ body {min-width:auto; }
 #catalog .catalog_content .company_img {position:absolute; left:calc(50% - 46px); top:-46px; width:92px; height:92px; padding:2px; background-color:#fff; border-radius:50%; }
 #catalog .catalog_content .company_img img {width:88px; height:88px; object-fit:cover; border-radius:50%; }
 
+#catalog .catalog_content iframe {max-width:100%;}
+
 @media all and (max-width:400px){
     #catalog .catalog_txt {top:280px; }
     #catalog .catalog_content {margin-top:350px; }
