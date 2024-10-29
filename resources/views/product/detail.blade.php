@@ -415,7 +415,7 @@
 
                     <div class="mt-10 px-10 add_inquiry">
                         <h3>추가 문의 사항</h3>
-                        <textarea name="request_memo" id="" class="w-full" placeholder="견적 요청드립니다. (200자)"></textarea>
+                        <textarea name="request_memo" id="" class="w-full" maxlength="200" placeholder="견적 요청드립니다. (200자)"></textarea>
                     </div>
 
                     <div class="btn_box mt-10 px-10">
@@ -465,15 +465,15 @@
                                 </tr>
                                 <tr>
                                     <th>전 화 번 호</th>
-                                    <td><input type="text" name="request_phone_number" class="input-form" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_phone_number" class="input-form" value="" /></td>
                                 </tr>
                                 <tr>
                                     <th>사업자번호</th>
-                                    <td><input type="text" name="request_business_license_number" class="input-form" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_business_license_number" class="input-form" value="" /></td>
                                 </tr>
                                 <tr>
                                     <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                                    <td><input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1338,7 +1338,7 @@
 
         const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
         var optionPrice = 0;
-        if({{ $data['detail']->is_price_open ? 0 : 1 }}) {
+        if({{ $data['detail']->is_price_open || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 0 : 1 }}) {
             $('._requestEstimateTotalPrice').text({{ $data['detail']->price_text }});
         } else {
             $('._requestEstimateTotalPrice').text(($('#requestEstimateProductCount').val() * (price + optionPrice)).toLocaleString('en-US') + '원');
