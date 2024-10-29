@@ -103,11 +103,11 @@ class EstimateService {
                 $serialIdx = $serialIdx + 1;
                 $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
 
-                $this->insertRequest($params, $serialKey);
+                $this->insertRequest($params, '-'.$serialKey);
             }
         // 지정 상품에 대한 견적
         } else if(array_key_exists('product_idxs', $params)) {
-            $this->insertRequest($params, '-0001');
+            $this->insertRequest($params, '-00001');
             $serialIdx = 1;
             $productIdxs = $params['product_idxs'];
 
@@ -121,11 +121,11 @@ class EstimateService {
                 $serialIdx = $serialIdx + 1;
                 $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
 
-                $this->insertRequest($params, $serialKey);
+                $this->insertRequest($params, '-'.$serialKey);
             }
         // 기본 단건 견적
         } else {
-            $this->insertRequest($params, '-0001');
+            $this->insertRequest($params, '-00001');
         }
     }
     
@@ -206,7 +206,7 @@ class EstimateService {
             WHERE type = '".$params['response_company_type']."' AND company_idx = ".$params['response_company_idx']." AND parent_idx = 0";
         $user = DB::select($sql);
 
-        if(count($user) > 0) {
+        if(count($user) > 0 && $serialKey == '-00001') {
             $this -> pushService -> sendPush(
                 '견적서 요청 알림', '('.$params['request_company_name'].')에게 견적서를 요청 받았습니다.',
                 $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/responseEstimate'

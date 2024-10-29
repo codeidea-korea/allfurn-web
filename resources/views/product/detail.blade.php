@@ -98,7 +98,7 @@
                                         <div class="option_count">
                                             <div>
                                                 <button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                <input type="text" id="qty_input" name="qty_input" value="1" maxlength="3">
+                                                <input type="text" name="qty_input" value="1" maxlength="3">
                                                 <button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                             </div>
                                             <p class="selection__price">
@@ -332,7 +332,7 @@
                                             <input type="hidden" name="product_option_exist" value="1" readOnly />
                                             <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                             @foreach($arr as $item)
-                                                <div class="dropdown for_estimate_each my_filterbox mt-3" style="position: relative;">
+                                                <div class="dropdown  my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif" style="position: relative;">
                                                     <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                             {{$item->optionName}} 선택
@@ -415,7 +415,7 @@
 
                     <div class="mt-10 px-10 add_inquiry">
                         <h3>추가 문의 사항</h3>
-                        <textarea name="request_memo" id="" class="w-full" placeholder="견적 요청드립니다. (200자)"></textarea>
+                        <textarea name="request_memo" maxlength="200" id="" class="w-full" placeholder="견적 요청드립니다. (200자)"></textarea>
                     </div>
 
                     <div class="btn_box mt-10 px-10">
@@ -465,15 +465,15 @@
                                 </tr>
                                 <tr>
                                     <th>전 화 번 호</th>
-                                    <td><input type="text" name="request_phone_number" class="input-form" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_phone_number" class="input-form" value="" /></td>
                                 </tr>
                                 <tr>
                                     <th>사업자번호</th>
-                                    <td><input type="text" name="request_business_license_number" class="input-form" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_business_license_number" class="input-form" value="" /></td>
                                 </tr>
                                 <tr>
                                     <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                                    <td><input type="text" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
+                                    <td><input type="text" maxlength="60" name="request_address1" onClick="callMapApi(this);" class="input-form w-full" value="" /></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -593,7 +593,7 @@
                                     </tr>
                                     <tr>
                                         <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                        <td class="_requestEstimateOption">그레이</td>
+                                        <td class="_requestEstimateOption">없음</td>
                                     </tr>
                                     <tr>
                                         <th>견적단가</th>
@@ -741,7 +741,7 @@
         $('body').on('click', '.dropdown li', function () {
             opt_idx++;
             var required = false;
-            var requiredCnt = $('.dropdown.required').length;
+            var requiredCnt = $('.dropdown.required').length / 2;
             var idx = $(this).parents('.dropdown').index();
             var same = false;
 
@@ -803,16 +803,20 @@
                 var htmlText = '<div class="option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
                 if (required) {
                     optionTmp.map(function (item) {
+                        $('._requestEstimateOption').text(item['option_name']);
+
                         htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                     })
                 } else {
+                    $('._requestEstimateOption').text($(this).data('option_name'));
+
                     htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                 }
                 htmlText += '</div>' +
                         '<div class="option_count">' +
                             '<div>' +
                                 '<button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>' +
-                                '<input type="text" id="qty_input" name="qty_input" value="1" maxlength="3" data-opt_idx="'+opt_idx+'">' +
+                                '<input type="text" id="requestEstimateProductCount" style="width: 40px;" name="qty_input" value="1" maxlength="3" data-opt_idx="'+opt_idx+'">' +
                                 '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
                             '</div>' +
                             '<p>';
@@ -846,15 +850,16 @@
             var instancePrice = {{$data['detail']->price}}; // 단위가 
             var total_qty = 0;
             $('.ori .selection__result').map(function () {
-                var resultPrice = instancePrice;
+                var resultPrice = 0;
                 $(this).find('.selection__text').map(function () {
                     resultPrice += parseInt($(this).data('price'));
                 })
                 resultPrice = resultPrice * $(this).parents('.option_result').find('input[name=qty_input]').val();
-                total_qty += parseInt($(this).parents('.option_result').find('input[qty_input]').val());
+                total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val());
                 $(this).find('.selection__price span').text(resultPrice.toLocaleString());
                 price += resultPrice;
             })
+            $('._requestEstimateCount').text(total_qty + '개');
             if (price > 0) {
                 $('.product_price').text(price.toLocaleString()+'원');
                 $('.product_price').data('total_price', price);
@@ -862,6 +867,11 @@
                 var total = parseInt('{{str_replace(',', '', $data['detail']->price)}}') * total_qty;
                 $('.product_price').text(total.toLocaleString()+'원');
                 $('.product_price').data('total_price', total);
+            }
+            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+            } else {
+                $('._requestEstimateTotalPrice').text($('.product_price').text());
             }
         }
 
@@ -1271,9 +1281,13 @@
                 if (num !== 1) {
                     $(this).siblings('input').val(`${num - 1}`);
                 }
-                const count = $('#requestEstimateProductCount').val();
+                const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
-                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+                if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                    $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+                } else {
+                    $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+                }
             });
 
             $('.count_box .plus').off().on('click', function(){
@@ -1282,9 +1296,13 @@
                     num = 1;
                 }
                 $(this).siblings('input').val(`${num + 1}`);
-                const count = $('#requestEstimateProductCount').val();
+                const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
-                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+                if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                    $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+                } else {
+                    $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+                }
             });
         });
 
@@ -1342,10 +1360,11 @@
 
         const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
         var optionPrice = 0;
-        if({{ $data['detail']->is_price_open ? 0 : 1 }}) {
-            $('._requestEstimateTotalPrice').text({{ $data['detail']->price_text }});
+        if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+            $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
         } else {
-            $('._requestEstimateTotalPrice').text(($('#requestEstimateProductCount').val() * (price + optionPrice)).toLocaleString('en-US') + '원');
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
         }
         $('input[name=product_option_exist]').text('없음');
         function requestEstimateAllCheck(){
