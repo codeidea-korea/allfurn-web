@@ -322,6 +322,10 @@
                                                 <input type="text" id="requestEstimateProductCount" name="product_count" value="1">
                                                 <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                             </div>
+                                            @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                            @else
+                                            <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endif 
@@ -349,7 +353,7 @@
                                                             @foreach($item->optionValue as $sub)
                                                                 <li class="dropdown__item" style="display: inherit;gap:0;padding:0;border:0;border-radius:0;margin-top:0;" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                                     <a href="javascript:;" class="flex items-center">
-                                                                        {{$sub->propertyName}}
+                                                                        {{$sub->propertyName}}&nbsp;-&nbsp;
                                                                         @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
                                                                             <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                                         @endif
@@ -396,6 +400,9 @@
                                         @endif --}}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -420,7 +427,11 @@
 
                     <div class="btn_box mt-10 px-10">
                         <div class="flex gap-5">
-                            <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                            @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]') 
+                                <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                            @else
+                                <a href="javascript:;" class="btn btn-primary flex-1" onclick="if($('.dropdown.required').length > $('.selection__result.required').length) { alert('옵션을 선택해주세요.'); return false; }modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -640,7 +651,7 @@
                                 <h5>총 견적 금액</h5>
                                 <div class="price">
                                     <p class="!w-full">
-                                        <span class="fs14">이태리매트리스 1개</span>
+                                        <span class="fs14">{{ $data['detail'] -> name }} <span class="_requestEstimateCount">1</span></span>
                                         <b class="_requestEstimateTotalPrice">6,250,000원</b>
                                     </p>
                                     <!--
@@ -746,7 +757,7 @@
             var same = false;
 
             if (!$(this).parents('.dropdown').is('.required')) {
-                if (required > 0 && $('.selection__result.required').length < 1) {
+                if (requiredCnt > 0 && $('.selection__result.required').length < 1) {
                     $(this).parents('.dropdown').find('.dropdown__title').text($(this).parents('.dropdown').find('.dropdown__title').data('placeholder'));
                     alert('필수 옵션 선택 후 선택해주세요.'); return false;
                 }
