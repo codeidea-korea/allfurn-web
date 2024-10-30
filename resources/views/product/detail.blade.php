@@ -322,11 +322,14 @@
                                                 <input type="text" id="requestEstimateProductCount" name="product_count" value="1">
                                                 <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                             </div>
-                                            @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
-                                            @else
-                                            <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
-                                            @endif
                                         </td>
+                                        @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                        @else
+                                        <th>가격</th>
+                                        <td>
+                                            <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
+                                        </td>
+                                        @endif
                                     </tr>
                                 @endif 
                                 <tr>
@@ -400,9 +403,15 @@
                                         @endif --}}
                                     </td>
                                 </tr>
+                                @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
                                 <tr>
-                                    <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
+                                    <th>가격</th>
+                                    <td>
+                                        <span class="_requestEstimateTotalPrice">{{$data['detail']->price}}원</span>
+                                    </td>
                                 </tr>
+                                @else
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -428,9 +437,9 @@
                     <div class="btn_box mt-10 px-10">
                         <div class="flex gap-5">
                             @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]') 
-                                <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                            <a href="javascript:;" class="btn btn-primary flex-1" onclick="if($('.dropdown.required').length > $('.selection__result.required').length) { alert('옵션을 선택해주세요.'); return false; }modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
                             @else
-                                <a href="javascript:;" class="btn btn-primary flex-1" onclick="if($('.dropdown.required').length > $('.selection__result.required').length) { alert('옵션을 선택해주세요.'); return false; }modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
+                            <a href="javascript:;" class="btn btn-primary flex-1" onclick="modalClose('#request_estimate-modal'); modalOpen('#new_estimate2-modal');">다음 (1/2)</a>
                             @endif
                         </div>
                     </div>
@@ -608,12 +617,7 @@
                                     </tr>
                                     <tr>
                                         <th>견적단가</th>
-                                        <td type="text" class="txt-danger" data-total_price={{$data['detail']->price}}>
-                                            {{ 
-                                                ($data['detail'] -> price > 0) ? 
-                                                    number_format($data['detail'] -> price).'원' 
-                                                    : $data['detail'] -> price_text 
-                                            }}
+                                        <td type="text" class="txt-danger _requestEstimateTotalPrice2" data-total_price={{$data['detail']->price}}>
                                         </td>
                                         <input type="hidden" name="product_each_price" value="{{ $data['detail'] -> price }}" />
                                         <input type="hidden" name="product_each_price_text" value="{{ $data['detail'] -> price_text }}" />
@@ -881,8 +885,10 @@
             }
             if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
                 $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+                $('._requestEstimateTotalPrice2').text("{{ $data['detail']->price_text }}");
             } else {
                 $('._requestEstimateTotalPrice').text($('.product_price').text());
+                $('._requestEstimateTotalPrice2').text(price.toLocaleString()+'원');
             }
         }
 
@@ -1373,9 +1379,11 @@
         var optionPrice = 0;
         if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
             $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+            $('._requestEstimateTotalPrice2').text("{{ $data['detail']->price_text }}");
         } else {
             const count = Number($('#requestEstimateProductCount').val()+'');
             $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+            $('._requestEstimateTotalPrice2').text((price + optionPrice).toLocaleString('en-US'));
         }
         $('input[name=product_option_exist]').text('없음');
         function requestEstimateAllCheck(){
@@ -1385,5 +1393,7 @@
                 $('.prod_item > .custom_input2 > input').prop('checked', false);
             }
         }
+        $('._requestEstimateTotalPrice').text($('.product_price').text());
+        $('._requestEstimateTotalPrice2').text($('.product_price').text());
     </script>
 @endsection
