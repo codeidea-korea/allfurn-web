@@ -625,7 +625,7 @@ class WholesalerService {
 
         // 상품광고 정보 가져오기
         $products = Product::select('AF_product.idx')
-            ->leftjoin('AF_product_ad', function($query) {
+            ->join('AF_product_ad', function($query) {
                 $query->on('AF_product_ad.product_idx', 'AF_product.idx')
                 ->where('AF_product_ad.state', 'G')
                 ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
