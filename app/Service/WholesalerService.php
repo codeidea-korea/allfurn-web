@@ -602,7 +602,15 @@ class WholesalerService {
         $arr_product_idx = array();
 
         // 배너광고에서 광고 위치별로 상품을 가져온다. 
-        $banners = Banner::select('*')->where('state', 'G')->where('start_date', '<', DB::raw('now()'))->where('end_date', '>', DB::raw('now()'))->where('company_type', 'W')->where('company_idx', $param['wholesalerIdx'])->get();
+        $banners = Banner::select('*')
+            ->where('state', 'G')
+            ->where('start_date', '<', DB::raw('now()'))
+            ->where('end_date', '>', DB::raw('now()'))
+            ->where('company_type', 'W')
+            ->where('company_idx', $param['wholesalerIdx'])
+            ->where('is_delete', 0)
+            ->where('is_open', 1)
+            ->get();
         foreach($banners as $banner){
             if ($banner->ad_location == "popularbrand" || $banner->ad_location == "dealbrand"){
                 // 도매업체-인기브랜드, 이달의딜-인기브랜드는 선택한 상품들 정보로...
@@ -625,7 +633,7 @@ class WholesalerService {
 
         // 상품광고 정보 가져오기
         $products = Product::select('AF_product.idx')
-            ->join('AF_product_ad', function($query) {
+            ->leftJoin('AF_product_ad', function($query) {
                 $query->on('AF_product_ad.product_idx', 'AF_product.idx')
                 ->where('AF_product_ad.state', 'G')
                 ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
