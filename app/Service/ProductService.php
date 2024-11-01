@@ -801,7 +801,7 @@ class ProductService
             $list->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        return $list->orderby($params['orderedElement'], 'desc')->paginate(32);
+        return $list-> orderBy('AF_product.orders', 'asc')->orderby($params['orderedElement'], 'desc')->paginate(32);
     }
 
 

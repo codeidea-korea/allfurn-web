@@ -207,6 +207,9 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::get('/sendResponseOrder/{code}', 'MypageController@getSendResponseOrder');
     Route::get('/checkResponseEstimate/{idx}', 'MypageController@getCheckResponseEstimate');
     Route::get('/checkOrder/{idx}', 'MypageController@getCheckOrder');
+
+    Route::post('/products-orders/represents', 'MypageController@saveProductOrderRepresents');
+    Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
 });
 
 

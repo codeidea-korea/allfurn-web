@@ -1144,8 +1144,10 @@ class MypageService
                 $query->where('AF_product.name', 'like', "%{$params['keyword']}%");
             }
 
-            // 최근 등록순 / 등록순
-            $query -> orderBy('AF_product.register_time', $params['order']);
+            // 추천상품 정렬순 / 등록순
+            $query
+             -> orderBy('AF_product.represent_orders', 'asc')
+             -> orderBy('AF_product.register_time', $params['order']);
 
             return $query->get();
     }
@@ -1208,6 +1210,10 @@ class MypageService
         $data['count'] = $query->count();
 
         // 최근 등록순 / 등록순
+        if (isset($params['type']) && $params['type'] == 'temp') {
+        } else {
+            $query-> orderBy('p.orders', 'asc');
+        }
         $list = $query -> orderBy('p.register_time', $params['order']) -> offset($offset) -> limit($limit) -> get();
 
         $data['list'] = $list;
@@ -2408,6 +2414,39 @@ class MypageService
             $company = CompanyRetail::where('idx', $params['request_company_idx'])->update([
                 'business_license_attachment_idx' => $params['attachmentIdx']
             ]);
+        }
+
+        return [
+            'result'    => 'success',
+            'message'   => ''
+        ];
+    }
+
+    /**
+     * 정렬 순서 저장하기
+     * @param array $params
+     * @param string $type
+     * @return array
+     */
+    public function saveProductOrder(array $params, string $type): array
+    {
+        $productIdxs = $params['productIdx'];
+
+        if($type == 'represent') {
+            $orders = $params['representOrders'];
+        } else if($type == 'normal') {
+            $orders = $params['orders'];
+        }
+        if(is_array($orders)) {
+            for($idx = 0; $idx < count($productIdxs); $idx++) {
+                $updateQuery = Product::where('idx', $productIdxs[$idx]);
+
+                if($type == 'represent') {
+                    $updateQuery->update(['represent_orders' => $orders[$idx]]);
+                } else if($type == 'normal') {
+                    $updateQuery->update(['orders' => $orders[$idx]]);
+                }
+            }
         }
 
         return [

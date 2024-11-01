@@ -723,6 +723,7 @@ class WholesalerService {
         ->where('AF_product.is_represent', 1)
         ->whereNotNull('AF_product.access_date')
         ->whereNull('AF_product.deleted_at')
+        ->orderBy('AF_product.represent_orders', 'ASC')
         ->orderBy('AF_product.access_date', 'DESC')
         ->limit(5)
         ->get();
