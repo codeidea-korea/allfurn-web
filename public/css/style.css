@@ -122,8 +122,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .community_tab ul li {position:relative; width:100%; text-align:center; }
 .community_tab ul li:before {content:''; position:absolute; right:0; top:calc(50% - 9px); width:2px; height:18px; background-color:#dadde0; }
 .community_tab ul li:last-of-type:before {display:none; }
-.community_tab ul li a {display:block; border-bottom:1px solid transparent; padding:14px 0; font-size:18px; font-weight:500; color:#bbbbb5; }
-.community_tab ul li.active a {border-bottom:1px solid var(--main_color); font-weight:600; color:#46433f; }
+.community_tab ul li a {display:block; border-bottom:1px solid transparent; padding:14px 0; font-size:18px; font-weight:500; color:#000; }
+.community_tab ul li.active a {border-bottom:1px solid var(--main_color); font-weight:600; color:var(--main_color); }
 
 /* 커뮤니티 공통 - 리스트 */
 .community_list ul li {overflow:hidden; display:flex; border:1px solid #DADDE0; border-radius:3px; }
