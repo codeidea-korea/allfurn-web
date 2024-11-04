@@ -100,7 +100,6 @@
                         <button class="prod_type">카드타입</button>
                     </div>
                     <div class="text-right mb-3 txt-gray fs14 total">
-                        전체 
                     </div>
                     <ul class="prod_list grid2">
                     </ul>
