@@ -86,7 +86,7 @@
                 <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
                     <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400">(최대 5개)</span></h3>
                     <div class="btn_box">
-                        <button class="btn btn-primary" onclick="saveRepresentOrders()">정렬순서 저장</button>
+                        <button class="btn btn-primary !bg-[#9c9c9c] px-4 _btnSaveRepresentOrders" onclick="saveRepresentOrders()">정렬순서 저장</button>
                     </div>
                 </div>
                 <ul>
@@ -141,8 +141,7 @@
                 <h3 class="font-medium">전체</h3>
                 @if(request() -> get('type') !== 'temp') 
                 <div class="btn_box">
-                    <button class="btn btn-primary px-4" onclick="saveOrders()">정렬순서 저장</button>
-                    <button class="btn btn-primary !bg-[#9c9c9c] px-4" onclick="saveOrders()">정렬순서 저장</button>
+                    <button class="btn btn-primary !bg-[#9c9c9c] px-4 _btnSaveOrders" onclick="saveOrders()">정렬순서 저장</button>
                 </div>
                 @endif
             </div>
@@ -253,7 +252,7 @@
 
             @if(request() -> get('type') !== 'temp') 
             <div class="btn_box text-right -mt-10">
-                <button class="btn btn-primary px-4" onclick="saveOrders()">정렬순서 저장</button>
+                <button class="btn btn-primary !bg-[#9c9c9c] px-4 _btnSaveOrders" onclick="saveOrders()">정렬순서 저장</button>
             </div>
             @endif
         </div>
@@ -783,6 +782,8 @@
 
         orders[productIdx] = order;
     });
+    $('input[name=orders]').hide();
+    $('input[name=representOrders]').hide();
     function checkBeforePageMove(){
         const data = {
             productIdx: [], representOrders: []
@@ -802,6 +803,11 @@
         return true;
     }
     function saveRepresentOrders () {
+        if($('._btnSaveRepresentOrders').hasClass('!bg-[#9c9c9c]')) {
+            $('._btnSaveRepresentOrders').removeClass('!bg-[#9c9c9c]');
+            $('input[name=representOrders]').show();
+            return;
+        }
         const data = {
             productIdx: [], representOrders: []
         };
@@ -828,10 +834,17 @@
                 } else {
                     alert(result.msg);
                 }
+                location.reload();
             }
         })
     }
     function saveOrders () {
+        if($('._btnSaveOrders').hasClass('!bg-[#9c9c9c]')) {
+            $('._btnSaveOrders').removeClass('!bg-[#9c9c9c]');
+            $('input[name=orders]').show();
+            return;
+        }
+        
         const data = {
             productIdx: [], orders: []
         };
@@ -858,6 +871,7 @@
                 } else {
                     alert(result.msg);
                 }
+                location.reload();
             }
         })
     }
