@@ -57,9 +57,6 @@
             @if (count($represents) < 1 && count($list) < 1 && request() -> get('keyword'))
             <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
                 <h3 class="font-medium">추천 상품</h3>
-                <div class="btn_box">
-                    <button class="btn btn-primary" onclick="saveRepresentOrders()">정렬순서 저장</button>
-                </div>
             </div>
             <ul>
                 <li class="no_prod txt-gray">
@@ -88,6 +85,9 @@
                 @else
                 <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
                     <h3 class="font-medium">추천 상품 <span class="text-sm text-gray-400">(최대 5개)</span></h3>
+                    <div class="btn_box">
+                        <button class="btn btn-primary" onclick="saveRepresentOrders()">정렬순서 저장</button>
+                    </div>
                 </div>
                 <ul>
                     @foreach($represents as $represent)
@@ -246,6 +246,12 @@
                             <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
+                    @endif
+                    
+                    @if(request() -> get('type') !== 'temp') 
+                    <div class="btn_box">
+                        <button class="btn btn-primary" onclick="saveOrders()">정렬순서 저장</button>
+                    </div>
                     @endif
                 </div>
             @endif
