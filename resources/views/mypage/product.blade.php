@@ -101,10 +101,10 @@
                             <div class="flex flex-col w-full">
                                 <div class="flex items-center justify-between pb-4 mb-4 border-b">
                                     <span class="text-sm px-2 py-0.5 rounded-sm bg-primary text-white font-medium">{{ config('constants.PRODUCT_STATUS')[$represent -> state] }}</span>
-                                    <button type="button" class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
+                                    <button type="button" class="recommend-btn ml-auto mr-1" data-represent-id="{{ $represent -> idx }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                     </button>
-                                    <input type="number" name="representOrders" min="1" max="99999" data-idx="{{ $represent -> idx }}" value="{{ $represent -> represent_orders }}" style="border: black solid;">
+                                    <input type="number" name="representOrders" min="1" max="99999" data-idx="{{ $represent -> idx }}" value="{{ $represent -> represent_orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
                                 </div>
                                 <div class="flex items-start">
                                     <div class="w-full">
@@ -141,7 +141,8 @@
                 <h3 class="font-medium">전체</h3>
                 @if(request() -> get('type') !== 'temp') 
                 <div class="btn_box">
-                    <button class="btn btn-primary" onclick="saveOrders()">정렬순서 저장</button>
+                    <button class="btn btn-primary px-4" onclick="saveOrders()">정렬순서 저장</button>
+                    <button class="btn btn-primary !bg-[#9c9c9c] px-4" onclick="saveOrders()">정렬순서 저장</button>
                 </div>
                 @endif
             </div>
@@ -185,11 +186,11 @@
                             <div class="flex flex-col w-full">
                                 <div class="flex items-center justify-between pb-4 mb-4 border-b">
                                     <span class="text-sm px-2 py-0.5 rounded-sm bg-stone-200 text-stone-500 font-medium">{{ config('constants.PRODUCT_STATUS')[$row -> state] }}</span>
-                                    <button type="button" class="recommend-btn" data-represent-id="{{ $row -> idx }}">
+                                    <button type="button" class="recommend-btn ml-auto mr-1" data-represent-id="{{ $row -> idx }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                     </button>
                                     @if(request() -> get('type') !== 'temp') 
-                                    <input type="number" name="orders" min="1" max="99999" data-idx="{{ $row -> idx }}" value="{{ $row -> orders }}" style="border: black solid;">
+                                    <input type="number" name="orders" min="1" max="99999" data-idx="{{ $row -> idx }}" value="{{ $row -> orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
                                     @endif
                                 </div>
                                 <div class="flex items-start">
@@ -223,7 +224,7 @@
                     </li>
                     @endforeach
                 </ul>
-                <div class="pagenation flex items-center justify-center py-12">
+                <div class="pagenation flex items-center justify-center pt-12">
                     @if($pagination['prev'] > 0)
                     <button type="button" id="prev-paginate" class="prev" onClick="moveToList({{$pagination['prev']}});">
                         <svg width="7" height="12" viewBox="0 0 7 12" fill="none"
@@ -247,13 +248,13 @@
                         </svg>
                     </button>
                     @endif
-                    
-                    @if(request() -> get('type') !== 'temp') 
-                    <div class="btn_box">
-                        <button class="btn btn-primary" onclick="saveOrders()">정렬순서 저장</button>
-                    </div>
-                    @endif
                 </div>
+            @endif
+
+            @if(request() -> get('type') !== 'temp') 
+            <div class="btn_box text-right -mt-10">
+                <button class="btn btn-primary px-4" onclick="saveOrders()">정렬순서 저장</button>
+            </div>
             @endif
         </div>
     </div>
