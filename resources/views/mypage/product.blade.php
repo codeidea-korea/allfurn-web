@@ -104,7 +104,7 @@
                                     <button type="button" class="recommend-btn ml-auto mr-1" data-represent-id="{{ $represent -> idx }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                     </button>
-                                    <input type="number" name="representOrders" min="1" max="99999" data-idx="{{ $represent -> idx }}" value="{{ $represent -> represent_orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
+                                    <input type="number" name="representOrders" min="1" max="99999" data-idx="{{ $represent -> idx }}" value="{{ $represent -> represent_orders == 99999 ? '' : $represent -> represent_orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
                                 </div>
                                 <div class="flex items-start">
                                     <div class="w-full">
@@ -189,7 +189,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                     </button>
                                     @if(request() -> get('type') !== 'temp') 
-                                    <input type="number" name="orders" min="1" max="99999" data-idx="{{ $row -> idx }}" value="{{ $row -> orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
+                                    <input type="number" name="orders" min="1" max="99999" data-idx="{{ $row -> idx }}" value="{{ $row -> orders == 99999 ? '' : $row -> orders }}" style="border:1px solid #9c9c9c; padding-left:15px; border-radius:3px; text-align:center;">
                                     @endif
                                 </div>
                                 <div class="flex items-start">
@@ -774,11 +774,23 @@
         const productIdx = $(this).attr('data-idx');
         const order = $(this).val();
 
+        if(0 > order || order > 99998) {
+            alert('입력할 수 없는 값의 범위입니다.');
+            $(this).val('');
+            return;
+        }
+
         representOrders[productIdx] = order;
     });
     $('input[name=orders]').off().on('change', function(){
         const productIdx = $(this).attr('data-idx');
         const order = $(this).val();
+
+        if(0 > order || order > 99998) {
+            alert('입력할 수 없는 값의 범위입니다.');
+            $(this).val('');
+            return;
+        }
 
         orders[productIdx] = order;
     });
