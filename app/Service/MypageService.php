@@ -1312,7 +1312,7 @@ class MypageService
     {
         Product::where('company_idx', Auth::user()['company_idx'])
             ->where('company_type', Auth::user()['type'])
-            ->where('idx', $idx)->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            ->where('idx', $idx)->update(['deleted_at' => date('Y-m-d H:i:s'), 'status' => 'C']);
         return [
             'result' => 'success',
             'message' => ''
