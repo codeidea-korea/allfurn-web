@@ -97,7 +97,7 @@ class ProductController extends BaseController
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderByRaw('ad_price desc, RAND()')->get();
+            ->orderByRaw('ifnull(AF_family_ad.orders,999)')->get();
 
         return response()->json([
             'category' => $this->productService->getCategoryListV2(),

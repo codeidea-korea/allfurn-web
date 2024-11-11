@@ -57,7 +57,7 @@ class CommunityService {
             $data['keyword'] = $params['keyword'];
         }
         // 게시글 리스트 가져오기
-        $articles = $this->getArticlesDB($params);
+        $articles = $this->getArticlesDB($params); // TODO
         $data['articleTotalCount'] = $articles['count'];
         $data['articles'] = $articles['list'];
 

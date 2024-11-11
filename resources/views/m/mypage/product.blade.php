@@ -75,6 +75,9 @@
                         @if (count($represents) < 1 && count($list) < 1 && request() -> get('keyword'))
                         <div class="flex items-center pb-8 justify-between border-b-2 border-stone-900 mb-8">
                             <h3 class="font-medium">추천 상품</h3>
+                            <div class="btn_box">
+                                <button class="btn btn-primary" onclick="saveRepresentOrders()">정렬순서 저장</button>
+                            </div>
                         </div>
                         <ul>
                             <li class="no_prod txt-gray">
@@ -112,6 +115,7 @@
                                         <button type="button" class="recommend-btn" data-represent-id="{{ $represent -> idx }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400 active"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                         </button>
+                                        <input type="number" name="representOrders" min="1" max="99999" data-idx="{{ $represent -> idx }}" value="{{ $represent -> represent_orders }}" style="border: black solid;">
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
@@ -152,6 +156,11 @@
                     <div class="mt-9">
                         <div class="flex items-center pb-4 justify-between border-b-2 border-stone-900 mb-4">
                             <h3 class="font-medium">전체</h3>
+                            @if(request() -> get('type') !== 'temp') 
+                            <div class="btn_box">
+                                <button class="btn btn-primary" onclick="saveOrders()">정렬순서 저장</button>
+                            </div>
+                            @endif
                         </div>
                         @if ($count < 1)
                             @if (request() -> get('keyword'))
@@ -185,6 +194,9 @@
                                         <button class="recommend-btn" data-represent-id="{{ $row -> idx }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="change_btn lucide lucide-star text-stone-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                         </button>
+                                        @if(request() -> get('type') !== 'temp') 
+                                        <input type="number" name="orders" min="1" max="99999" data-idx="{{ $row -> idx }}" value="{{ $row -> orders }}" style="border: black solid;">
+                                        @endif
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="w-1/5 rounded-md overflow-hidden shrink-0 relative">
@@ -634,6 +646,9 @@
         }
 
         const moveToList = page => {
+            if(!checkBeforePageMove()) {
+                return;
+            }
             const params = getParams();
             params['offset'] = page;
 
@@ -812,6 +827,99 @@
                     },
                 });
             });
+        }
+
+        var representOrders = {};
+        var orders = {};
+        $('input[name=representOrders]').off().on('change', function(){
+            const productIdx = $(this).attr('data-idx');
+            const order = $(this).val();
+
+            representOrders[productIdx] = order;
+        });
+        $('input[name=orders]').off().on('change', function(){
+            const productIdx = $(this).attr('data-idx');
+            const order = $(this).val();
+
+            orders[productIdx] = order;
+        });
+        function checkBeforePageMove(){
+            const data = {
+                productIdx: [], representOrders: []
+            };
+            for (var key in orders) {
+                data.productIdx.push(key);
+            }
+            for (var key in representOrders) {
+                data.productIdx.push(key);
+            }
+            if(data.productIdx.length < 1) {
+                return true;
+            }
+            if(!confirm('순서를 저장하지 않았습니다. 페이지 이동을 하시겠습니까? 저장하지 않은 내용은 초기화 됩니다.')) {
+                return false;
+            }
+            return true;
+        }
+        function saveRepresentOrders () {
+            const data = {
+                productIdx: [], representOrders: []
+            };
+            for (var key in representOrders) {
+                data.productIdx.push(key);
+                data.representOrders.push(representOrders[key]);
+            }
+            if(data.productIdx.length < 1) {
+                return;
+            }
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : '/mypage/products-orders/represents',
+                data: data,
+                method: 'POST',
+                success : function(result) {
+                    console.log(result);
+
+                    if (result.result == 'success') {
+                        alert('저장되었습니다.');
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            })
+        }
+        function saveOrders () {
+            const data = {
+                productIdx: [], orders: []
+            };
+            for (var key in orders) {
+                data.productIdx.push(key);
+                data.orders.push(orders[key]);
+            }
+            if(data.productIdx.length < 1) {
+                return;
+            }
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : '/mypage/products-orders/normal',
+                data: data,
+                method: 'POST',
+                success : function(result) {
+                    console.log(result);
+                    
+                    if (result.result == 'success') {
+                        alert('저장되었습니다.');
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            })
         }
 
         

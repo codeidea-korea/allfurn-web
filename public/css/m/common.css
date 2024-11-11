@@ -433,6 +433,20 @@ header.top_fixed {position:sticky; top:0; }
 
 .category_con01 .category_list .depth2 li a.active{color: var(--main_color);}
 
+/* 가구관련협력업체 */
+.category_con01 .category_list > ul > li.coop {padding:0 10px; }
+.category_con01 .category_list > ul > li.coop > a {justify-content:center; color:#fff; font-size:20px; background-color:var(--main_color); }
+.category_con01 .category_list > ul > li.coop > a i {display:none; }
+.category_con01 .category_list > ul > li.coop > a:before {display:none; }
+.category_con01 .category_list > ul > li.coop > a:after {content:''; position:absolute; right:10px; top:calc(50% - 15px); width:30px; height:30px; background:url('data:image/svg+xml;utf8,<svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="19.5" cy="19.5" r="19" transform="rotate(180 19.5 19.5)" stroke="white"/><path d="M30.491 24.8182L19.1455 13.4728L7.80005 24.8182" stroke="white" stroke-width="2"/></svg>') no-repeat center center / contain; transform:rotate(180deg); }
+.category_con01 .category_list > ul > li.coop.active > a:after {transform:rotate(0); }
+
+.category_con01 .category_list > ul > li.coop .depth2 {width:100%; padding:10px 0; background-color:#fff; }
+.category_con01 .category_list > ul > li.coop .depth2 ul {display:grid; grid-template-columns:repeat(2,1fr); gap:5px; }
+.category_con01 .category_list > ul > li.coop .depth2 ul li { background-color:#ffeef0; border-radius:5px; }
+.category_con01 .category_list > ul > li.coop .depth2 ul li a {position:relative; display:flex; flex-direction: row-reverse; align-items:center; justify-content:flex-end; gap:5px; color:var(--main_color); font-size:16px;  }
+.category_con01 .category_list > ul > li.coop .depth2 ul li a svg {width:23px; height:23px; }
+
 /* ------------------------------------
     푸터
 ------------------------------------ */

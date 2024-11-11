@@ -62,7 +62,10 @@ class EstimateService {
             })
             ->where('AF_retail.idx', Auth::user()['company_idx'])->first();
         } else {
-            $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")->where('idx', Auth::user()['company_idx'])->first();
+            $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")
+                ->where('idx', Auth::user()['company_idx'])
+                ->whereIn('type', ['S', 'N'])
+                ->first();
         }
 
         return
@@ -76,7 +79,62 @@ class EstimateService {
             ]);
     }
 
-    public function insertRequest(array $params) {
+    /**
+     * 견적서 추가 다건
+     * @param array $params request
+     * @param string $serialKey 시리얼키
+     */
+    public function insertRequests(array $params) {
+        // 모든 상품에 대한 견적
+        if(array_key_exists('all_product', $params)) {
+            $products = Product::where('company_idx', $params['response_company_idx'])
+                ->where('company_type', $params['response_company_type'])
+                ->whereIn('state', ['S', 'O'])
+                ->whereNull('deleted_at')
+                ->get();
+                
+            $serialIdx = 0;
+            foreach ($products as $product) {
+                $productParam = array_merge(array(), $params);
+                $params['product_idx'] = $product->idx;
+                $params['product_count'] = 1;
+                $params['product_each_price'] = $product->price;
+                $params['product_each_price_text'] = $product->price_text;
+                $serialIdx = $serialIdx + 1;
+                $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
+
+                $this->insertRequest($params, '-'.$serialKey);
+            }
+        // 지정 상품에 대한 견적
+        } else if(array_key_exists('product_idxs', $params)) {
+            $this->insertRequest($params, '-00001');
+            $serialIdx = 1;
+            $productIdxs = $params['product_idxs'];
+
+            foreach ($productIdxs as $idx) {
+                $productParam = array_merge(array(), $params);
+                $productInfo = Product::where('idx', $idx)->first();
+                $params['product_idx'] = $idx;
+                $params['product_count'] = 1;
+                $params['product_each_price'] = $productInfo->price;
+                $params['product_each_price_text'] = $productInfo->price_text;
+                $serialIdx = $serialIdx + 1;
+                $serialKey = str_pad($serialIdx, "5", "0", STR_PAD_LEFT);
+
+                $this->insertRequest($params, '-'.$serialKey);
+            }
+        // 기본 단건 견적
+        } else {
+            $this->insertRequest($params, '-00001');
+        }
+    }
+    
+    /**
+     * 견적서 추가
+     * @param array $params request
+     * @param string $serialKey 시리얼키
+     */
+    public function insertRequest(array $params, string $serialKey) {
         $check = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> count();
         if($check < 0) {
             throw new \Exception('', 500);
@@ -85,7 +143,7 @@ class EstimateService {
         $estimate = new Estimate;
 
         $estimate -> estimate_group_code = $params['estimate_group_code'];
-        $estimate -> estimate_code = $params['estimate_group_code'].'-0001';
+        $estimate -> estimate_code = $params['estimate_group_code'].$serialKey;
         $estimate -> estimate_state = 'N';
 
         $estimate -> request_company_idx = $params['request_company_idx'];
@@ -148,7 +206,7 @@ class EstimateService {
             WHERE type = '".$params['response_company_type']."' AND company_idx = ".$params['response_company_idx']." AND parent_idx = 0";
         $user = DB::select($sql);
 
-        if(count($user) > 0) {
+        if(count($user) > 0 && $serialKey == '-00001') {
             $this -> pushService -> sendPush(
                 '견적서 요청 알림', '('.$params['request_company_name'].')에게 견적서를 요청 받았습니다.',
                 $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/responseEstimate'

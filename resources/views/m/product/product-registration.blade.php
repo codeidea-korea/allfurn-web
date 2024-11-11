@@ -398,6 +398,27 @@ var _tmp = 0;
         $(`.${item}`).addClass('hidden')
     }
 
+    function getThumbFile(_IMG, maxWidth, width, height){
+    var canvas = document.createElement("canvas");
+    if(width < maxWidth) {
+//        return _IMG;
+    }
+    canvas.width = width; // (maxWidth);
+    canvas.height = height; // ((maxWidth / (width*1.0))*height);
+    canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
+
+    var dataURL = canvas.toDataURL("image/png");
+    var byteString = atob(dataURL.split(',')[1]);
+    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    var tmpThumbFile = new Blob([ab], {type: mimeString});
+
+    return tmpThumbFile;
+}
 $(document).on('change', '#form-list02', function() {
     var files = this.files;
     var i = 0;
@@ -412,7 +433,7 @@ $(document).on('change', '#form-list02', function() {
                     let imgCnt = $('.product-img__add').length + 1;
 
                     if (imgCnt == 9) {
-                        openModal('#alert-modal08');
+                        alert('파일은 8개 까지 등록 가능합니다.');
                         return;
                     }
                     var image = new Image;
@@ -923,6 +944,29 @@ function init_editor() {
         }
     });
 }
+//에디터
+const editor = new FroalaEditor('.prod_detail_area', {
+    key: 'wFE7nG5E4I4D3A11A6eMRPYf1h1REb1BGQOQIc2CDBREJImA11C8D6B5B1G4D3F2F3C8==',
+    height:300,
+    requestHeaders: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    imageUploadParam: 'images',
+    imageUploadURL: '/community/image',
+    imageUploadMethod: 'POST',
+    imageMaxSize: 5 * 1024 * 1024,
+    imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+    events: {
+        'image.uploaded': response => {
+            const img_url = response;
+            editor.image.insert(img_url, false, null, editor.image.get(), response);
+            return false;
+        },
+        'image.removed': img => {
+            const imageUrl = img[0].src;
+        }
+    }
+});
 
 //### step 이동 및 값 체크
 const goStep = (item, pn)=>{
@@ -971,9 +1015,10 @@ function saveProduct(regType) {
     var form = new FormData();
     form.append("reg_type", regType);
     form.append("name", $('#form-list01').val());
-    for (var i = storedFiles.length - 1; i >= 0; i--) {
+    for (var i = 0; i < storedFiles.length; i++) {
         form.append('files[]', storedFiles[i]);
     }
+    /*
     for (var i = 0; i < stored100Files.length; i++) {
         form.append('files100[]', stored100Files[i]);
     }
@@ -982,7 +1027,7 @@ function saveProduct(regType) {
     }
     for (var i = 0; i < stored600Files.length; i++) {
         form.append('files600[]', stored600Files[i]);
-    }
+    }*/
 
     var property = '';
     $('#prod_property-modal .sub_property_area').each(function(o){

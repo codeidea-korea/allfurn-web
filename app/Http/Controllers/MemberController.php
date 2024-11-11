@@ -103,8 +103,9 @@ class MemberController extends BaseController {
         if ($data['userType'] != 'N' && $data['userType'] != 'S') {
             $storageName = 'business-license-image';
         }
+        //	$file = $request->file('file')->store($storageName, 's3');
         $stored = Storage::disk('vultr')->put($storageName, $request->file('file'));
-        $data['attachmentIdx'] = $this->memberService->saveAttachment($file);
+        $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
         $data['companyIdx'] = $this->memberService->createCompany($data);
         $userIdx = $this->memberService->createUser($data);
         

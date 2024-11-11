@@ -1134,16 +1134,7 @@
                                                 `<input type="hidden" name="product_option_key_` + json.data[i].product_idx + `[]" value="` + product_option[key].optionName + `" readOnly />
                                             </th>
                                             <td>
-                                                <select name="product_option_value_` + json.data[i].product_idx + `[]" class="input-form w-2/3 option">`;
-                                                    for(var key2 in optionValue) {
-                                                        var selected = 
-                                                            (optionValue[key2].propertyName === Object.keys(product_option_json[key]['optionValue'])[0]) ? 'selected' : '';
-
-                                                        product_option_html +=
-                                                            `<option value="` + optionValue[key2].propertyName + `,` + optionValue[key2].price + `" ` + selected + `>` + optionValue[key2].propertyName + `</option>`
-                                                    };
-                                    product_option_html +=
-                                                `</select>
+                                            `+optionValue[key].propertyName+`
                                             </td>
                                         </tr>`;
                                 }

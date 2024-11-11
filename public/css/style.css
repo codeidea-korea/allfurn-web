@@ -122,8 +122,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .community_tab ul li {position:relative; width:100%; text-align:center; }
 .community_tab ul li:before {content:''; position:absolute; right:0; top:calc(50% - 9px); width:2px; height:18px; background-color:#dadde0; }
 .community_tab ul li:last-of-type:before {display:none; }
-.community_tab ul li a {display:block; border-bottom:1px solid transparent; padding:14px 0; font-size:18px; font-weight:500; color:#bbbbb5; }
-.community_tab ul li.active a {border-bottom:1px solid var(--main_color); font-weight:600; color:#46433f; }
+.community_tab ul li a {display:block; border-bottom:1px solid transparent; padding:14px 0; font-size:18px; font-weight:500; color:#000; }
+.community_tab ul li.active a {border-bottom:1px solid var(--main_color); font-weight:600; color:var(--main_color); }
 
 /* 커뮤니티 공통 - 리스트 */
 .community_list ul li {overflow:hidden; display:flex; border:1px solid #DADDE0; border-radius:3px; }
@@ -200,10 +200,18 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 /* main_mid_banner */
 .main_mid_banner {padding:30px 0 15px; }
+.main_mid_banner .inner {position:relative; }
 .main_mid_banner .slide_box li {border:1px solid #ede8d9; background-color:#ffeef0; border-radius:3px; text-align:center; }
 .main_mid_banner .slide_box li a {display:block; padding:17px 0; }
 .main_mid_banner .slide_box li img {width:50px; margin:0 auto; }
 .main_mid_banner .slide_box li span {font-size:18px; }
+.main_mid_banner .slide_box li.coop {display:flex; align-items:center; justify-content:center; height:112px; background-color:#FB4760; }
+.main_mid_banner .slide_box li.coop a {color:#fff; }
+.main_mid_banner .slide_box li.coop span {font-size:20px; }
+.main_mid_banner .slide_arrow {z-index:10; position:absolute; top:calc(50% - 20px); width:40px; height:40px; }
+.main_mid_banner .slide_arrow svg {width:40px; height:40px; }
+.main_mid_banner .slide_arrow.prev {left:-40px; transform:rotate(180deg); }
+.main_mid_banner .slide_arrow.next {right:-40px; transform:rotate(180deg); }
 
 /* category_banner */
 .category_banner .inner {padding:30px 0; border-bottom: 1px solid rgba(218, 221, 224, 0.60); }
@@ -705,3 +713,13 @@ section.sub_section_bot {padding:70px 0 140px; }
 
 
 .fr-box.fr-basic .fr-element{padding:0!important;}
+
+/* 가구관련 협력업체 */
+.coop_list {padding:50px 0; }
+.coop_list h3 {font-size:24px; }
+.coop_list ul {display:grid; grid-template-columns:repeat(4,1fr); gap:20px 10px; margin-top:40px; }
+.coop_list ul li a {text-align:center; }
+.coop_list ul li i {overflow:Hidden; display:block; width:100%; height:120px; border:1px solid #ddd; border-radius:5px; }
+.coop_list ul li i img {width:131px; height:100%; margin:0 auto; object-fit:contain; }
+.coop_list ul li span {display:block; margin-top:10px; text-align:center; }
+

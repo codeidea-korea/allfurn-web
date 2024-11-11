@@ -33,16 +33,16 @@
                                 $link = '/community/detail/'.$item->web_link;
                                 break;
                             case 4: //커뮤니티
-                                $link = '/help/notice/'.$item->web_link;
+                                $link = $item->web_link;
                                 break;
                             case 5: //커뮤니티
                                 $link = $item->web_link;
                                 break;
                             case 6: // 이용가이드
-                                $link = '/help/guide?gk='.$item->web_link;
+                                $link = $item->web_link;
                                 break;
                             default: //공지사항
-                                $link = '/help/notice/'.$item->web_link;
+                                $link = $item->web_link;
                                 break;
                         }
                         ?>
@@ -135,6 +135,11 @@
         <div class="inner">
             <div class="slide_box">
                 <ul class="swiper-wrapper">
+                    <li class="swiper-slide coop">
+                        <a href="/family">
+                            <span>가구 관련 협력업체</span>
+                         </a>
+                    </li>   
                     <li class="swiper-slide">
                         <a href="/product/best-new">
                             <img src="/img/main/best_icon.png" alt="">
@@ -167,6 +172,9 @@
                     </li>
                 </ul>
             </div>
+
+            <button class="slide_arrow prev type02"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
+            <button class="slide_arrow next type02"><svg><use xlink:href="./img/icon-defs.svg#slide_arrow"></use></svg></button>
         </div>
     </div>
 
@@ -351,6 +359,10 @@ const main_visual = new Swiper(".main_visual .slide_box", {
 const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
     slidesPerView: 'auto',
     //spaceBetween: 8,
+    navigation: {
+        nextEl: ".main_mid_banner .slide_arrow.next",
+        prevEl: ".main_mid_banner .slide_arrow.prev",
+    },
 });
 
 // category_banner

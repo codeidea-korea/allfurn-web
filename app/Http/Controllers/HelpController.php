@@ -82,7 +82,7 @@ class HelpController extends BaseController
         $data['pageType'] = 'guide';
 
         $response = array();
-        $response = array_merge($response, $this->helpService->getNoticeList(array(
+        $response = array_merge($response, $this->helpService->getGuideList(array(
             'offset' => 1,
             'limit' => 500,
             'is_pick' => 1

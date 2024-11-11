@@ -312,7 +312,7 @@ class HomeService
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderByRaw('ad_price desc, RAND()')->get();
+            ->orderByRaw('ifnull(AF_family_ad.orders,999)')->get();
 
         // 팝업
         $data['popup'] = Popup::select('AF_popup.*',
@@ -526,6 +526,25 @@ class HomeService
                 'success'=>false
             ]);
         }
+    }
+
+    public function getAllFamily() {
+        $data['family'] = FamilyAd::select(
+            'AF_family_ad.*',
+            DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl')
+        )
+        ->leftjoin('AF_attachment AS at', function($query) {
+            $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
+        })
+        ->where('AF_family_ad.state', 'G')
+        ->where('AF_family_ad.start_date', '<', DB::raw("now()"))
+        ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
+        ->where('AF_family_ad.is_delete', 0)
+        ->where('AF_family_ad.is_open', 1)
+        ->orderByRaw('ifnull(AF_family_ad.orders,999)')
+        ->get();
+
+        return $data;
     }
 
     public function getFamilyMember($idx) {

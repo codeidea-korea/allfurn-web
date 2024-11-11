@@ -9,7 +9,7 @@
                             background: url({{ $family[0]->thumbnails->subImgUrl }})
                         @endif">
         <div class="profile flex gap-4 items-center">
-            <img src="{{$family[0]->imgUrl}}" alt="">
+            
             <a href="javascript:;">
                 <div class="flex items-center">
                     <p class="profile_id">{{ $family[0]->family_name }}</p>

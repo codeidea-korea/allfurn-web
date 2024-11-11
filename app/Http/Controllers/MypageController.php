@@ -1274,4 +1274,13 @@ class MypageController extends BaseController
         
     }
 
+
+    public function saveProductOrderRepresents(Request $request): Response
+    {
+        return response($this->mypageService->saveProductOrder($request->all(), 'represent'), 200);
+    }
+    public function saveProductOrderNormal(Request $request): Response
+    {
+        return response($this->mypageService->saveProductOrder($request->all(), 'normal'), 200);
+    }
 }

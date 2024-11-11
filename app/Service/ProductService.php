@@ -162,6 +162,10 @@ class ProductService
             (CASE WHEN AF_product.company_type = "W" THEN (select aw.phone_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (select ar.phone_number from AF_retail as ar where ar.idx = AF_product.company_idx)
                   ELSE "" END) as companyPhoneNumber,
+            (CASE WHEN AF_product.company_type = "W" THEN (select aw.business_license_number from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                  WHEN AF_product.company_type = "R" THEN (select ar.business_license_number from AF_retail as ar where ar.idx = AF_product.company_idx)
+                  ELSE "" END) as companyBusinessLicenseNumber,
+                  
             (CASE WHEN AF_product.company_type = "W" THEN (SELECT CONCAT(aw.business_address, " ", aw.business_address_detail) FROM AF_wholesale AS aw WHERE aw.idx = AF_product.company_idx)
                   WHEN AF_product.company_type = "R" THEN (SELECT CONCAT(ar.business_address, " ", ar.business_address_detail) FROM AF_retail AS ar WHERE ar.idx = AF_product.company_idx)
                   ELSE "" END) AS product_address,
@@ -797,7 +801,7 @@ class ProductService
             $list->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        return $list->orderby($params['orderedElement'], 'desc')->paginate(32);
+        return $list-> orderBy('AF_product.orders', 'asc')->orderby($params['orderedElement'], 'desc')->paginate(32);
     }
 
 
@@ -930,6 +934,8 @@ class ProductService
                                 AF_product.register_time as reg_time'
             ))
             ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
             ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
             ->join('AF_product', function ($query) {
@@ -1047,7 +1053,7 @@ class ProductService
             $list->orderBy('reg_time', 'desc');
         }
 
-        $list->inRandomOrder();
+//        $list->inRandomOrder();
 
         Log::debug("---------------------------------------");
         $data['list'] = $list->distinct()->paginate(20);

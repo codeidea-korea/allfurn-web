@@ -9,8 +9,7 @@
             @foreach($data['family_ad'] as $key => $family)
                 <li>
                     <a href='/family/{{$family->idx}}'>
-                        <div class="img_box"><img style="width:131px" src="{{ $family->imgUrl }}" alt=""></div>
-                        <p>{{ $family->family_name }}</p>
+                        <div class="img_box"><p>{{ $family->family_name }}<img style="width:131px" src="{{ $family->imgUrl }}" alt=""></p></div>
                     </a>
                 </li>
             @endforeach

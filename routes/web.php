@@ -61,6 +61,7 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 Route::post('checkAlert', 'HomeController@checkAlert');
 
 Route::prefix('/family')->name('family')->group(function() {
+    Route::get('/', 'HomeController@getAllFamily');
     Route::get('/{idx}', 'HomeController@getFamilyMember');
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
@@ -206,6 +207,9 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::get('/sendResponseOrder/{code}', 'MypageController@getSendResponseOrder');
     Route::get('/checkResponseEstimate/{idx}', 'MypageController@getCheckResponseEstimate');
     Route::get('/checkOrder/{idx}', 'MypageController@getCheckOrder');
+
+    Route::post('/products-orders/represents', 'MypageController@saveProductOrderRepresents');
+    Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
 });
 
 
@@ -287,6 +291,7 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/gatherDetail', 'WholesalerController@gatherDetail');
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
     Route::get('/wholesalerAddProduct', 'WholesalerController@wholesalerAddProduct');
+    Route::get('/wholesalerAddProduct2', 'WholesalerController@wholesalerAddProduct2');
 });
 
 Route::prefix('download')->name('download')->group(function() {

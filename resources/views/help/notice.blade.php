@@ -12,7 +12,7 @@
                 <div class="accordion-item">
                     <button class="accordion-header py-4 px-5 w-full text-left" type="button">
                         <div class="flex flex-col gap-2">
-                            <span class="text-lg">[공지] {{ $row->title }}</span>
+                            <span class="text-lg">{{ $row->title }}</span>
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>

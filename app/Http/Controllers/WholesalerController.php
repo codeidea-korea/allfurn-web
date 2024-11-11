@@ -197,6 +197,30 @@ class WholesalerController extends BaseController
         $list['html'] = view('product.inc-product-common', ['list' => $list])->render();
         return response()->json($list);
     }
+
+    // 업체 카테고리 상품 가져오기
+    public function wholesalerAddProduct2(Request $request)
+    {
+        $data['categories'] = $request->categories == null ? "" : $request->categories;
+        switch($request->orderedElement){
+            case "access_count":
+                $data['orderedElement'] = 'access_count';
+                break;
+
+            case "register_time" : 
+                $data['orderedElement'] = 'register_time';
+                break;
+
+            default:
+                $data['orderedElement'] = 'popularity';
+                break;
+        }
+        $data['company_idx'] = $request->company_idx;
+
+        $list = $this->productService->getWholesalerAddedProductList($data);
+        $list['html'] = view('product.inc-product-common2', ['list' => $list])->render();
+        return response()->json($list);
+    }
     
     public function getThisMonthWholesaler()
     {
