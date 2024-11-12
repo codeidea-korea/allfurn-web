@@ -138,6 +138,8 @@ const foldToggle = (item)=>{
 }
 
 
+
+
 function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
     if(width < maxWidth) {
