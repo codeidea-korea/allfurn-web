@@ -10,7 +10,7 @@
                 <li>
                     <a href='/family/{{$family->idx}}'>
                         <div class="img_box">
-                            <p style="display: inline-flex;flex-direction: row;flex-wrap: nowrap;justify-content: space-around;align-items: center;">
+                            <p style="display: inline-flex; flex-direction: row-reverse;flex-wrap: nowrap;justify-content: space-around;align-items: center;">
                                 <span style="padding: 10px;">{{ $family->family_name }}</span>
                                 <img style="width:131px" src="{{ $family->imgUrl }}" alt="">
                             </p></div>
