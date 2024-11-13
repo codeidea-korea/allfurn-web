@@ -312,7 +312,8 @@ class HomeService
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderByRaw('if(ifnull(AF_family_ad.orders,999) < 1, 999, AF_family_ad.orders)')->get();
+            ->orderByRaw('if(ifnull(AF_family_ad.orders,999) < 1, 999, AF_family_ad.orders)')
+            ->orderByRaw('AF_family_ad.updated_at desc')->get();
 
         // 팝업
         $data['popup'] = Popup::select('AF_popup.*',
@@ -542,6 +543,7 @@ class HomeService
         ->where('AF_family_ad.is_delete', 0)
         ->where('AF_family_ad.is_open', 1)
         ->orderByRaw('if(ifnull(AF_family_ad.orders,999) < 1, 999, AF_family_ad.orders)')
+            ->orderByRaw('AF_family_ad.updated_at desc')
         ->get();
 
         return $data;
