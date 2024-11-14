@@ -312,6 +312,8 @@ class MessageService
                         'unread_count' => $room->unread_count,
                         'last_message_content' => $this->getRoomMessageTitle($room->content),
                         'last_message_time' => $room->register_time,
+	                'register_date' => $room->register_date ?? "",
+	                'register_times' => $room->register_times ?? "",
                     ];
                     break;
                 case 'W': // 도매
@@ -364,6 +366,8 @@ class MessageService
                     'unread_count' => $room->unread_count ?? 0,
                     'last_message_content' => $this->getRoomMessageTitle($room->content),
                     'last_message_time' => $room->register_time ?? "",
+                    'register_date' => $room->register_date ?? "",
+                    'register_times' => $room->register_times ?? "",
                 ];
             }
         }
@@ -389,7 +393,9 @@ class MessageService
                 , DB::raw("CASE WHEN TIMESTAMPDIFF(SECOND ,AF_message.register_time, now()) < 86400 THEN DATE_FORMAT(AF_message.register_time, '%H:%i')
                    WHEN TIMESTAMPDIFF(SECOND ,AF_message.register_time, now()) < 259200 THEN '어제'
                    ELSE DATE_FORMAT(AF_message.register_time, '%m월%d일')
-                END register_time"))
+                END register_time")
+		, DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') as register_date")
+		, DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i:%s') as register_times"))
             ->orderBy('idx','desc');
         if ($keyword) {
             $company = false;
