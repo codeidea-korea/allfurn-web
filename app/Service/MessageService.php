@@ -395,7 +395,7 @@ class MessageService
                    ELSE DATE_FORMAT(AF_message.register_time, '%m월%d일')
                 END register_time")
 		, DB::raw("DATE_FORMAT(AF_message.register_time, '%Y년 %c월 %e일') as register_date")
-		, DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i:%s') as register_times"))
+		, DB::raw("DATE_FORMAT(AF_message.register_time, '%H:%i') as register_times"))
             ->orderBy('idx','desc');
         if ($keyword) {
             $company = false;
@@ -896,7 +896,7 @@ class MessageService
             $message->content, 
             $this->convertHtmlContentByMessage($message, 'Y'),
             date('Y년') .' '. intVal(date('m')) .'월 '. intVal(date('d')) . '일',
-            substr(date('H:i:s'), 1, 5),
+            substr(date('H:i:s'), 0, 5),
             ["일","월","화","수","목","금","토"][date('w', time())],
             $this->getRoomMessageTitle($message->content),
             empty($companyInfo->company_name) ? '올펀' : $companyInfo->company_name

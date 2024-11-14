@@ -48,7 +48,7 @@
                             <div class="desc">
 				<span class="_room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</span>
 				<span class="_room{{ $room->idx }}LastDate">
-				    @if($room->register_date == date('Y년 n월 j일')
+				    @if($room->register_date == date('Y년 n월 j일'))
 					{{ $room->register_times }}
 				    @else
 					{{ $room->register_date }}
@@ -116,7 +116,7 @@
                         +'        </h3>'
                         +'        <div class="desc">'
                         +'            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
-                        +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + d.getMonth() + '월 ' + d.getDate() + '일') ? messages.times : messages.date) +'</span>'
+                        +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
 			+'        </div>'
                         +'    </div>'
                         +'</li>';
@@ -138,7 +138,10 @@
                 });
             }
             // 활성화 처리 및 텍스트 변경
-            $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+	    var d = new Date();
+        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').html('            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
+                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
+		    );
         $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
         } else {
             $('.chatting_list > .chatting.right > ._alert').remove();
@@ -274,7 +277,7 @@
                                     +'        </h3>'
 				    +'        <div class="desc">'
 		                    +'            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
-		                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + d.getMonth() + '월 ' + d.getDate() + '일') ? messages.times : messages.date) +'</span>'
+		                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
 				    +'        </div>'
                                     +'    </div>'
                                     +'</li>';
@@ -297,7 +300,10 @@
                             });
                         }
                         // 활성화 처리 및 텍스트 변경
-                        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+	    var d = new Date();
+        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').html('            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
+                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
+		    );
         $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
                     } else {
                         $('.chatting_list > .chatting.right > ._alert').remove();
