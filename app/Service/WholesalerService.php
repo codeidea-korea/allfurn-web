@@ -728,6 +728,15 @@ class WholesalerService {
         ->limit(5)
         ->get();
 
+        // 상품 정렬 순서 입력 여부 가져오기
+        $data['use_custom_orders'] = DB::select('SELECT IF( EXISTS(
+             SELECT *
+             FROM AF_product
+             WHERE company_idx = '.$param['wholesalerIdx'].'
+            AND company_type = "W"
+            AND deleted_at is null 
+             AND orders is not null AND orders > 0 AND orders < 999), 1, 0) as used');
+             
         return $data;
     }
 
@@ -900,6 +909,15 @@ class WholesalerService {
         ->orderBy('AF_product.access_date', 'DESC')
         ->limit(5)
         ->get();
+
+        // 상품 정렬 순서 입력 여부 가져오기
+        $data['use_custom_orders'] = DB::select('SELECT IF( EXISTS(
+            SELECT *
+            FROM AF_product
+            WHERE company_idx = '.$param['wholesalerIdx'].'
+            AND company_type = "W"
+            AND deleted_at is null 
+            AND orders is not null AND orders > 0 AND orders < 999), 1, 0) as used');
 
         return $data;
     }

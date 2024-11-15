@@ -99,7 +99,22 @@
                         <h3>{{$data['info']->company_name}} 전체 상품</h3>
                         <button class="prod_type">카드타입</button>
                     </div>
+                    <!-- 원래 퍼블리싱이었으나 카테고리 추가로 아래 필터 영역을 복붙했습니다. 디자인에 맞춰 수정해주시면 좋겠습니다.
                     <div class="text-right mb-3 txt-gray fs14 total">
+                    </div>
+                    -->
+                    <div class="sub_filter">
+                        <div class="filter_box">
+                            <button onclick="modalOpen('#filter_category-modal')">카테고리 <b class='txt-primary'></b></button>
+                            <button onclick="modalOpen('#filter_align-modal03')">최신순</button>
+                        </div>
+                        <div class="total">전체 0개</div>
+                    </div>
+                    <div class="sub_filter_result" hidden>
+                        <div class="filter_on_box">
+                            <div class="category"></div>
+                        </div>
+                        <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                     </div>
                     <ul class="prod_list grid2">
                     </ul>
@@ -359,7 +374,7 @@
             method: 'GET',
             data: { 
                 'page': ++currentPage,
-                'categories' : null,
+                'categories' : getIndexesOfSelectedCategory().join(','),
                 'orderedElement' : 'register_time',
                 'company_idx'   : '{{$data['info']->idx}}'
             }, 
@@ -371,7 +386,11 @@
             success: function(result) {
                 console.log(result);
                 if(needEmpty) {
-                    $(".box").last().find(".prod_list").empty();
+                    $(".prod_list").empty();
+                }
+                if(target) {
+                    target.prop("disabled", false);
+                    modalClose('#' + target.parents('[id^="filter"]').attr('id'));
                 }
                 
                 $(".prod_list").append(result.data.html);
@@ -381,9 +400,54 @@
                 isLastPage = currentPage === result.last_page;
             }, 
             complete : function () {
+                displaySelectedCategories();
+                displaySelectedOrders();
+                toggleFilterBox();
                 isLoading = false;
             }
         })
+    }
+
+    function getIndexesOfSelectedCategory() {
+        let categories = [];
+        $("#filter_category-modal .check-form:checked").each(function(){
+            categories.push($(this).attr('id'));
+        });
+
+        return categories;
+    }
+
+    function displaySelectedCategories() {
+        
+        let html = "";  
+        $("#filter_category-modal .check-form:checked").each(function(){
+            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() + 
+                    "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                    "</span>";
+        });
+        $(".filter_on_box .category").empty().append(html);
+
+        let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
+        if(totalOfSelectedCategories === 0) {
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+            $(".sub_filter .filter_box button").eq(0).removeClass('on');
+        } else {
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
+            $(".sub_filter .filter_box button").eq(0).addClass('on');
+        }
+    } 
+
+    function displaySelectedOrders() {
+        $(".sub_filter .filter_box button").eq(1)
+            .text($("#filter_align-modal03 .radio-form:checked").siblings('label').text());
+    }
+
+    function toggleFilterBox() {
+        if($(".modal .check-form:checked").length === 0){
+            $(".sub_filter_result").hide();
+        } else {
+            $(".sub_filter_result").css('display', 'flex');
+        }
     }
 
     window.addEventListener('scroll', function() {
@@ -405,7 +469,34 @@
         }
         localStorage.removeItem('p');
     }
+
+    $(document).on('click', '[id^="filter"] .btn-primary', function() { 
+        loadProductList(true, $(this));
+    });
+
+    // 카테고리 삭제
+    const filterRemove = (item)=>{
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#" + $(item).data('id')).prop('checked', false);//모달 안 체크박스에서 check 해제
+
+        loadProductList(true);
+    }
+
+    // 초기화
+    $(".refresh_btn").on('click', function() {
+        $("#filter_category-modal .check-form:checked").prop('checked', false);
+        $("#filter_align-modal03 .radio-form").eq(0).prop('checked', true);
+        
+        loadProductList(true);
+    });
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.search_list').length) {
+            $('.search_list').hide();
+            console.log('hide')
+        }
+    });
 </script>
 
+@include('layouts.modal')
 </body>
 </html>

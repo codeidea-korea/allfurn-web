@@ -1212,7 +1212,7 @@ class MypageService
         // 최근 등록순 / 등록순
         if (isset($params['type']) && $params['type'] == 'temp') {
         } else {
-            $query-> orderBy('p.orders', 'asc');
+            $query->orderByRaw('if(ifnull(p.orders,999)<1,999,p.orders)');
         }
         $list = $query -> orderBy('p.register_time', $params['order']) -> offset($offset) -> limit($limit) -> get();
 

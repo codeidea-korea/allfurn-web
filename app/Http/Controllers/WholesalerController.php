@@ -187,8 +187,12 @@ class WholesalerController extends BaseController
                 $data['orderedElement'] = 'register_time';
                 break;
 
-            default:
+            case "popularity" : 
                 $data['orderedElement'] = 'popularity';
+                break;
+
+            default:
+                $data['orderedElement'] = 'custom_orders';
                 break;
         }
         $data['company_idx'] = $request->company_idx;
@@ -211,8 +215,12 @@ class WholesalerController extends BaseController
                 $data['orderedElement'] = 'register_time';
                 break;
 
-            default:
+            case "popularity" : 
                 $data['orderedElement'] = 'popularity';
+                break;
+
+            default:
+                $data['orderedElement'] = 'custom_orders';
                 break;
         }
         $data['company_idx'] = $request->company_idx;
