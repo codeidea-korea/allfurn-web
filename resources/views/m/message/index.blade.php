@@ -33,7 +33,16 @@ $header_banner = '';
                                     {{ $room->name }}
                                     <span id="chat-{{ $room->idx }}-unreadCount"  class="{{  $room->unread_count <= 0 ? '' : 'num' }}">{{ $room->unread_count == 0 ? '' : $room->unread_count }}</span>
                                 </h3>
-                                <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
+                                <div class="desc">
+				   <span class="_room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</span>
+				   <span class="_room{{ $room->idx }}LastDate">
+				    @if($room->register_date == date('Y년 n월 j일'))
+					{{ $room->register_times }}
+				    @else
+					{{ $room->register_date }}
+				    @endif
+				   </span>
+				</div>
                             </div>
                         </a>
                     </li>
@@ -86,7 +95,16 @@ $header_banner = '';
                                             <span id="chat-{{ $room->idx }}-unreadCount" class="{{  $room->unread_count <= 0 ? '' : 'num' }}">{{ $room->unread_count <= 0 ? '' : $room->unread_count }}</span>
                                             <span>{{ $room->last_message_time }}</span>
                                         </h3>
-                                        <div class="desc _room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</div>
+                                        <div class="desc">
+					    <span class="_room{{ $room->idx }}LastMent">{{ $room->last_message_content }}</span>
+					    <span class="_room{{ $room->idx }}LastDate">
+						@if($room->register_date == date('Y년 n월 j일'))
+						    {{ $room->register_times }}
+						@else
+						    {{ $room->register_date }}
+						@endif
+					   </span>
+					</div>
                                     </div>
                                 </a>
                             </li>
@@ -152,6 +170,7 @@ $header_banner = '';
 
  $('#chat-'+messages.roomIdx+'-unreadCount').addClass('num');
         } else {
+	        var d = new Date();
             const tmpChattingRoom = 
                     '<li onclick="visibleRoom('+messages.roomIdx+')" data-key="'+messages.roomIdx+'">'
                     +'    <div class="img_box">'
@@ -163,13 +182,19 @@ $header_banner = '';
                     +'            <span id="chat-'+messages.roomIdx+'-unreadCount" class="num">1</span>'
                     +'            <span>'+messages.title+'</span>'
                     +'        </h3>'
-                    +'        <div class="desc _room'+messages.roomIdx+'LastMent">'+messages.title+'</div>'
+		    +'        <div class="desc">'
+                    +'            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
+                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
+		    +'        </div>'
                     +'    </div>'
                     +'</li>';
             $('._chatting_rooms').html(tmpChattingRoom + $('._chatting_rooms').html());
         }
         // 활성화 처리 및 텍스트 변경
-        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').text(messages.title);
+	    var d = new Date();
+        $($('._chatting_rooms > li')[0]).find('.txt_box > .desc').html('            <span class="_room'+messages.roomIdx+'LastMent">'+ messages.title +'</span>'
+                    +'            <span class="_room'+messages.roomIdx+'LastDate">'+ (messages.date == (d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + (d.getDate()) + '일') ? messages.times : messages.date) +'</span>'
+		    );
         $($('._chatting_rooms > li')[0]).find('.txt_box > h3 > span:nth-child(2)').text(messages.times);
     });
     </script>
