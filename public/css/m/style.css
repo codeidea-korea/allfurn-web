@@ -673,7 +673,8 @@ section.sub_section_bot {padding:30px 0 70px; }
 .message_con01 .list_box .message_list li .txt_box h3 {display:flex; align-items:center; justify-content:space-between; font-weight:600; }
 .message_con01 .list_box .message_list li .txt_box h3 span {color:var(--gray_color); font-size:12px; font-weight:400; }
 .message_con01 .list_box .message_list li .txt_box h3 span.num {width:18px; height:18px; margin-right:auto; margin-left:10px; border-radius:50%; text-align:center; background-color:var(--main_color); color:#fff; }
-.message_con01 .list_box .message_list li .txt_box .desc {overflow:hidden; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.message_con01 .list_box .message_list li .txt_box .desc {overflow:hidden; display:flex; align-items:center; justify-content:space-between; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.message_con01 .list_box .message_list li .txt_box .desc span:first-of-type {overflow:hidden; width:calc(100% - 90px); text-overflow:ellipsis; }
 
 .message_con01 .search_box {z-index:100; position:absolute; left:100%; top:0; overflow-y:auto; width:100%; height:100%; background-color: #fff; transition:all 0.4s; }
 .message_con01 .search_box.active {left:0; }

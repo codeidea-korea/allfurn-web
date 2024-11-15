@@ -644,7 +644,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .message_con01 .list_box .message_list li .txt_box h3 {display:flex; align-items:center; justify-content:space-between; font-weight:600; }
 .message_con01 .list_box .message_list li .txt_box h3 span {color:var(--gray_color); font-size:14px; font-weight:400; }
 .message_con01 .list_box .message_list li .txt_box h3 span.num {width:18px; height:18px; margin-right:auto; margin-left:10px; border-radius:50%; text-align:center; background-color:var(--main_color); color:#fff; }
-.message_con01 .list_box .message_list li .txt_box .desc {overflow:hidden; font-size:15px; text-overflow:ellipsis; white-space:nowrap; }
+.message_con01 .list_box .message_list li .txt_box .desc {overflow:hidden; display:flex; align-items:center; justify-content:space-between; font-size:15px; text-overflow:ellipsis; white-space:nowrap; }
+.message_con01 .list_box .message_list li .txt_box .desc span:first-of-type {overflow:hidden; width:calc(100% - 90px); text-overflow:ellipsis; }
 
 .message_con01 .chatting_box {position:relative; display:flex; flex-direction:column; justify-content: space-between; width:calc(100% - 400px); }
 .message_con01 .chatting_box .top_info {position:relative; display:flex; align-items:center; justify-content:space-between; height:73px; border-bottom:1px solid #dbdbdb; padding:16px; }
