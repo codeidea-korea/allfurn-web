@@ -423,6 +423,9 @@
                 </li><li>
                     <input type="radio" class="radio-form" name="filter_cate_3" id="filter03_popularity" value="popularity">
                     <label for="filter03_popularity">인기순</label>
+                </li><li>
+                    <input type="radio" class="radio-form" name="filter_cate_3" id="filter03_custom_orders" value="custom_orders" @if( isset( $data ) && isset( $data['use_custom_orders'] ) && $data['use_custom_orders'][0]->used == 1) checked @endif>
+                    <label for="filter03_custom_orders">업체 추천순</label>
                 </li>
             </ul>
             <div class="btn_bot">

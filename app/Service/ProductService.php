@@ -795,13 +795,19 @@ class ProductService
                     $query->on('AF_product.idx', '=', 'api.product_idx');
         })
         ->where('AF_product.company_idx', $params['company_idx'])
+        ->where('AF_product.company_type', 'W')
         ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if($params['categories'] != "") {
             $list->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        return $list-> orderBy('AF_product.orders', 'asc')->orderby($params['orderedElement'], 'desc')->paginate(32);
+        if($params['orderedElement'] == 'custom_orders') {
+            $list-> orderByRaw('if(ifnull(orders,999)<1,999,orders)')->orderby('register_time', 'desc');
+        } else {
+            $list-> orderby($params['orderedElement'], 'desc');
+        }
+        return $list->paginate(32);
     }
 
 
@@ -833,13 +839,19 @@ class ProductService
                     $query->on('AF_product.idx', '=', 'api.product_idx');
         })
         ->where('AF_product.company_idx', $params['company_idx'])
+        ->where('AF_product.company_type', 'W')
         ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if($params['categories'] != "") {
             $list->whereIN('ac2.idx', explode(",", $params['categories']));
         }
 
-        return $list->orderby($params['orderedElement'], 'desc')->paginate(32);
+        if($params['orderedElement'] == 'custom_orders') {
+            $list-> orderByRaw('if(ifnull(orders,999)<1,999,orders)')->orderby('register_time', 'desc');
+        } else {
+            $list-> orderby($params['orderedElement'], 'desc');
+        }
+        return $list->paginate(32);
     }
 
     public function addOrder(array $param = [])
