@@ -795,6 +795,7 @@ class ProductService
                     $query->on('AF_product.idx', '=', 'api.product_idx');
         })
         ->where('AF_product.company_idx', $params['company_idx'])
+        ->where('AF_product.company_type', 'W')
         ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if($params['categories'] != "") {
@@ -838,6 +839,7 @@ class ProductService
                     $query->on('AF_product.idx', '=', 'api.product_idx');
         })
         ->where('AF_product.company_idx', $params['company_idx'])
+        ->where('AF_product.company_type', 'W')
         ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
 
         if($params['categories'] != "") {
