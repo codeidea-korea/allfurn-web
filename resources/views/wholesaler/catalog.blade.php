@@ -375,7 +375,7 @@
             data: { 
                 'page': ++currentPage,
                 'categories' : getIndexesOfSelectedCategory().join(','),
-                'orderedElement' : 'register_time',
+                'orderedElement' : $("#filter_align-modal03 .radio-form:checked").val(),
                 'company_idx'   : '{{$data['info']->idx}}'
             }, 
             beforeSend : function() {
