@@ -896,7 +896,7 @@ class WholesalerService {
         $data['recommend'] = Product::select(
              'AF_product.*'
             , DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl')
-            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
+//            , DB::raw('(SELECT count(*)cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '. Auth::user()->idx .') as isInterest')
         )
         ->leftjoin('AF_attachment as at', function($query) {
             $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
