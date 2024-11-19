@@ -298,7 +298,14 @@
         <div class="modal_body filter_body">
             <h4>카테고리 선택</h4>
             <ul class="filter_list">
-                @if(isset($categoryList) != '')
+                @if(isset($data) && isset($data['category']) != '')
+                    @foreach($data['category'] as $category)
+                        <li>
+                            <input type="checkbox" class="check-form" id="{{$category->idx}}">
+                            <label for="{{$category->idx}}">{{$category->name}}</label>
+                        </li>
+                    @endforeach
+                @elseif(isset($categoryList) != '')
                     @foreach ($categoryList as $category)
                         <li>
                             <input type="checkbox" class="check-form" id="{{$category->idx}}">
