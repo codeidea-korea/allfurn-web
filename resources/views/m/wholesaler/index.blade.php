@@ -199,7 +199,88 @@
     </section>
     @endif
 
-    <section class="sub_section wholesalerListSection">
+    <div class="category_banner">
+        <div class="inner">
+            <div class="slide_box overflow-hidden">
+                <ul class="swiper-wrapper">
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=1">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/65eb364492edcb02df94fb038753c10868ecf25416b2963ce8bf92c626b7eed2.png"></i>
+                            <span>침대/매트리스</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=2">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/9177229a5b701fd8a27c5227e217e969aef03e4ac1e838bc0f0dbeaf890a658d.png"></i>
+                            <span>소파/거실</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=3">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/829b9d9b454a99a976a8a18d4498586967649378efb80392916cd079062f33eb.png"></i>
+                            <span>식탁/의자</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=4">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/5900a96c73bfbd507e6c6276e2b69242cfa463e0f1b9eaf298194231d7d469d2.png"></i>
+                            <span>서랍장/옷장</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=5">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/7b0a1e320be055bac8c26a8a48d90a77e182344054842a321d979b72576033a9.png"></i>
+                            <span>서재/공부방</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=6">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/56a4064e6c04bf8425c066000729439a1507c8003dc785f8ccd96837bbf0bad7.png"></i>
+                            <span>화장대/거울</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=7">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/12a41e2421f9c2dfa78fdaf09a0b49b8bdc4be3b79107c4d31155d910004a277.png"></i>
+                            <span>키즈/주니어</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=8">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/04596ce9bac70876a7727a80a7afb0e86ced673b87858dc69b37cf70411898d3.png"></i>
+                            <span>진열장/장식장</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=9">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/602aa2cc488c5d8d70aa5bf43b366ea1ad6d4d434d46afed6ce35dd1a58bdb5f.png"></i>
+                            <span>의자</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=10">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/b3f728a02f5e35f6ea8fd6354c81bb9fbd1523d7b5eee50e5044a5b125247957.png"></i>
+                            <span>테이블</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=14">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/7d4e93baa251aa36f901b4a7141c8ae12973cf80c1152782d43edadb6dbd8a3a.png"></i>
+                            <span>사무용가구</span>
+                        </a>
+                    </li>
+                    <li class="swiper-slide" >
+                        <a href="/product/category?pre=233">
+                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/321d01555dfa7fdda84e01a64f39443c56e6be61d2935182a435889f9a3a9336.png"></i>
+                            <span>조달가구</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="sub_section wholesalerListSection" id="wholesalerList">
         <div class="inner">
             <div class="main_tit mb-5 flex justify-between items-center">
                 <div class="flex items-center gap-4">
@@ -223,6 +304,23 @@
 
 
 <script>
+     $(window).on('load',function(){
+        if(window.location.search == "?list"){
+            let winT = $('#wholesalerList').offset().top;
+            $('body,html').animate({scrollTop:winT},300)
+        }
+    });
+
+    // category_banner
+    const category_banner = new Swiper(".category_banner .slide_box", {
+        slidesPerView: 'auto',
+        //spaceBetween: 17,
+    });
+
+    $('.category_banner li').on('click',function(){
+        $(this).addClass('on').siblings().removeClass('on')
+    })
+
     // wholesaler_con01 - pager
     const wholesaler_con01_pager = new Swiper(".wholesaler_con01 .pager_box", {
         slidesPerView: 'auto',

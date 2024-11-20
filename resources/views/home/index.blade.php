@@ -141,6 +141,12 @@
                          </a>
                     </li>    
                     <li class="swiper-slide">
+                         <a href="/wholesaler?list">
+                            <img src="/img/main/shop_icon.png" alt="">
+                            <span>도매업체 보기</span>
+                         </a>
+                    </li>
+                    <li class="swiper-slide">
                          <a href="/product/best-new">
                             <img src="/img/main/best_icon.png" alt="">
                             <span>BEST 신상품</span>

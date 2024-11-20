@@ -139,7 +139,13 @@
                         <a href="/family">
                             <span>가구 관련 협력업체</span>
                          </a>
-                    </li>   
+                    </li> 
+                    <li class="swiper-slide">
+                         <a href="/wholesaler?list">
+                            <img src="/img/main/shop_icon.png" alt="">
+                            <span>도매업체<br/> 보기</span>
+                         </a>
+                    </li>
                     <li class="swiper-slide">
                         <a href="/product/best-new">
                             <img src="/img/main/best_icon.png" alt="">
