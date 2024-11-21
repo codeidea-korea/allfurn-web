@@ -269,7 +269,7 @@
             </div>
             <div class="sub_filter">
                 <div class="filter_box">
-                    <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>
+<!--                    <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>-->
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
                 </div>
@@ -314,21 +314,23 @@
     });
 
     // wholesaler_con01
-    const wholesaler_con01 = new Swiper(".wholesaler_con01 .slide_box", {
-        slidesPerView: 1,
-        spaceBetween: 0,
-        navigation: {
-            nextEl: ".wholesaler_con01 .slide_arrow.next",
-            prevEl: ".wholesaler_con01 .slide_arrow.prev",
-        },
-        pagination: {
-            el: ".wholesaler_con01 .count_pager",
-            type: "fraction",
-        },
-        thumbs: {
-            swiper: wholesaler_con01_pager,
-        },
-    });
+    if($(".wholesaler_con01 .count_pager").length > 0) {
+        const wholesaler_con01 = new Swiper(".wholesaler_con01 .slide_box", {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            navigation: {
+                nextEl: ".wholesaler_con01 .slide_arrow.next",
+                prevEl: ".wholesaler_con01 .slide_arrow.prev",
+            },
+            pagination: {
+                el: ".wholesaler_con01 .count_pager",
+                type: "fraction",
+            },
+            thumbs: {
+                swiper: wholesaler_con01_pager,
+            },
+        });
+    }
 
     // line_common_banner
     const line_common_banner = new Swiper(".line_common_banner", {
