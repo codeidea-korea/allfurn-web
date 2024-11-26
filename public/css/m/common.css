@@ -445,6 +445,7 @@ header.top_fixed {position:sticky; top:0; }
 .category_con01 .category_list > ul > li.coop .depth2 ul {display:grid; grid-template-columns:repeat(2,1fr); gap:5px; }
 .category_con01 .category_list > ul > li.coop .depth2 ul li { background-color:#ffeef0; border-radius:5px; }
 .category_con01 .category_list > ul > li.coop .depth2 ul li a {position:relative; display:flex; flex-direction: row-reverse; align-items:center; justify-content:flex-end; gap:5px; color:var(--main_color); font-size:16px;  }
+.category_con01 .category_list > ul > li.coop .depth2 ul li a img,
 .category_con01 .category_list > ul > li.coop .depth2 ul li a svg {width:23px; height:23px; }
 
 /* ------------------------------------
