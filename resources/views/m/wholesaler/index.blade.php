@@ -477,8 +477,21 @@
     });
 
     function selectCategory(categoryIdx) {
-        categories = [];
-        categories.push(categoryIdx);
+        let categories = []; // 모바일은 서브 필터가 없어 저장되면 안됨
+        var anyChoosed = false;
+        $("#filter_category-modal .check-form").each(function(){
+            if(Number(this.id) === categoryIdx) {
+                $(this).prop('checked', !$(this).is(':checked'));
+                if($(this).is(':checked')) {
+                    anyChoosed = true;
+                }
+            }
+        });
+        if(anyChoosed) {
+            $(".sub_filter_result").css('display', 'flex');
+        } else {
+            $(".sub_filter_result").hide();
+        }
         loadWholesalerList(true);
     }
 
@@ -502,7 +515,7 @@
 
     function getIndexesOfSelectedLocations() {
         let locations = [];
-        $("#filter_location-modal .check-form:checked").each(function(){
+        $("#filter_category-modal .check-form:checked").each(function(){
             locations.push($(this).data('location'));
         });
 
@@ -512,11 +525,11 @@
     function displaySelectedCategories() {
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
-            $(".sub_filter .filter_box button").eq(0).removeClass('on');
+//            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+//            $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
-            $(".sub_filter .filter_box button").eq(0).addClass('on');
+//            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
+//            $(".sub_filter .filter_box button").eq(0).addClass('on');
 
             $(".wholesalerListSection ul.obtain_list .sub_filter_result").show();
         }
