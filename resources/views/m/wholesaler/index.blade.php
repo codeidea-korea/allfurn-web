@@ -485,7 +485,6 @@
     });
 
     function selectCategory(categoryIdx) {
-        let categories = []; // 모바일은 서브 필터가 없어 저장되면 안됨
         var anyChoosed = false;
         $("#filter_category-modal .check-form").each(function(){
             if(Number(this.id) === categoryIdx) {
@@ -531,6 +530,15 @@
     }
 
     function displaySelectedCategories() {
+
+        let html = "";
+        $("#filter_category-modal .check-form:checked").each(function(){
+            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
+                "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                "</span>";
+        });
+        $(".filter_on_box .category").empty().append(html);
+
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
 //            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
@@ -539,11 +547,20 @@
 //            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
 //            $(".sub_filter .filter_box button").eq(0).addClass('on');
 
-            $(".wholesalerListSection ul.obtain_list .sub_filter_result").show();
+            $(".sub_section_bot ul.obtain_list .sub_filter_result").show();
         }
     }
 
     function displaySelectedLocation() {
+        let html = "";
+
+        $("#filter_location-modal .check-form:checked").each(function() {
+            html += '<span>'+ $(this).data('location') +
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>';                    "</span>";
+        });
+        $(".filter_on_box .location").empty().append(html);
+
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
             $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
@@ -557,6 +574,11 @@
 
     function displaySelectedOrders() {
         if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+            $(".filter_on_box .order").empty().append(
+                '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>'
+            );   
             $(".sub_filter .filter_box button").eq(2).addClass('on')         
         } else {
             $(".sub_filter .filter_box button").eq(2).removeClass('on')
