@@ -580,12 +580,19 @@ class WholesalerService {
             })
             ->first();
 
-        $data['category'] = Product::select('ac2.name', 'ac2.idx', DB::raw('count(ac2.idx) as cnt'))
+        $data['category'] = Product::select('ac2.name', 'ac2.idx', 
+                DB::raw('count(ac2.idx) as cnt'), 
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
             ->where(['company_idx'=>$param['wholesalerIdx'], 'company_type'=>'W'])
+            
             -> whereIN('AF_product.state', ['S', 'O'])
             ->whereNull('AF_product.deleted_at')
+            
             ->leftjoin('AF_category as ac', function ($query) {
                 $query->on('ac.idx', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('ac.icon_attachment_idx', 'at.idx');
             })
             ->leftjoin('AF_category as ac2', function ($query) {
                 $query->on('ac2.idx', 'ac.parent_idx');
@@ -773,12 +780,19 @@ class WholesalerService {
             })
             ->first();
 
-        $data['category'] = Product::select('ac2.name', 'ac2.idx', DB::raw('count(ac2.idx) as cnt'))
+        $data['category'] = Product::select('ac2.name', 'ac2.idx', 
+                DB::raw('count(ac2.idx) as cnt'), 
+                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
             ->where(['company_idx'=>$param['wholesalerIdx'], 'company_type'=>'W'])
+            
             -> whereIN('AF_product.state', ['S', 'O'])
             ->whereNull('AF_product.deleted_at')
+            
             ->leftjoin('AF_category as ac', function ($query) {
                 $query->on('ac.idx', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('ac.icon_attachment_idx', 'at.idx');
             })
             ->leftjoin('AF_category as ac2', function ($query) {
                 $query->on('ac2.idx', 'ac.parent_idx');
