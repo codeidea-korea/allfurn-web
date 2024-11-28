@@ -199,92 +199,27 @@
     </section>
     @endif
 
-    <div class="category_banner">
-        <div class="inner">
-            <div class="slide_box overflow-hidden">
-                <ul class="swiper-wrapper">
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=1">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/65eb364492edcb02df94fb038753c10868ecf25416b2963ce8bf92c626b7eed2.png"></i>
-                            <span>침대/매트리스</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=2">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/9177229a5b701fd8a27c5227e217e969aef03e4ac1e838bc0f0dbeaf890a658d.png"></i>
-                            <span>소파/거실</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=3">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/829b9d9b454a99a976a8a18d4498586967649378efb80392916cd079062f33eb.png"></i>
-                            <span>식탁/의자</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=4">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/5900a96c73bfbd507e6c6276e2b69242cfa463e0f1b9eaf298194231d7d469d2.png"></i>
-                            <span>서랍장/옷장</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=5">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/7b0a1e320be055bac8c26a8a48d90a77e182344054842a321d979b72576033a9.png"></i>
-                            <span>서재/공부방</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=6">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/56a4064e6c04bf8425c066000729439a1507c8003dc785f8ccd96837bbf0bad7.png"></i>
-                            <span>화장대/거울</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=7">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/12a41e2421f9c2dfa78fdaf09a0b49b8bdc4be3b79107c4d31155d910004a277.png"></i>
-                            <span>키즈/주니어</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=8">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/04596ce9bac70876a7727a80a7afb0e86ced673b87858dc69b37cf70411898d3.png"></i>
-                            <span>진열장/장식장</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=9">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/602aa2cc488c5d8d70aa5bf43b366ea1ad6d4d434d46afed6ce35dd1a58bdb5f.png"></i>
-                            <span>의자</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=10">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/b3f728a02f5e35f6ea8fd6354c81bb9fbd1523d7b5eee50e5044a5b125247957.png"></i>
-                            <span>테이블</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=14">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/product/7d4e93baa251aa36f901b4a7141c8ae12973cf80c1152782d43edadb6dbd8a3a.png"></i>
-                            <span>사무용가구</span>
-                        </a>
-                    </li>
-                    <li class="swiper-slide" >
-                        <a href="/product/category?pre=233">
-                            <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/321d01555dfa7fdda84e01a64f39443c56e6be61d2935182a435889f9a3a9336.png"></i>
-                            <span>조달가구</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
     <section class="sub_section wholesalerListSection" id="wholesalerList">
         <div class="inner">
             <div class="main_tit mb-5 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <h3>도매 업체</h3>
+                </div>
+            </div>
+            <div class="category_banner pb-3">
+                <div class="slide_box overflow-hidden">
+                    <ul class="swiper-wrapper">
+                        @if(isset($categoryList) != '')
+                            @foreach($categoryList as $category)
+                                <li class="swiper-slide" >
+                                    <a href="javascript:selectCategory({{$category->idx}});">
+                                        <i><img src="{{$category->imgUrl}}"></i>
+                                        <span>{{$category->name}}</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
+                    </ul>
                 </div>
             </div>
             <div class="sub_filter">
@@ -295,6 +230,16 @@
                     <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
                 </div>
                 <div class="total">전체 0개</div>
+            </div>
+            <div class="sub_filter_result" hidden>
+                <div class="filter_on_box">
+                    <div class="category">
+                        <!-- <span>침대/매트리스   <button data-id="1" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button></span> -->
+                    </div>
+                    <div class="location"></div>
+                    <div class="order"></div>
+                </div>
+                <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
             </div>
         </div>
 
@@ -477,6 +422,24 @@
         loadWholesalerList(true, $(this))
     });
 
+    function selectCategory(categoryIdx) {
+        var anyChoosed = false;
+        $("#filter_category-modal .check-form").each(function(){
+            if(Number(this.id) === categoryIdx) {
+                $(this).prop('checked', !$(this).is(':checked'));
+                if($(this).is(':checked')) {
+                    anyChoosed = true;
+                }
+            }
+        });
+        if(anyChoosed) {
+            $(".sub_filter_result").css('display', 'flex');
+        } else {
+            $(".sub_filter_result").hide();
+        }
+        loadWholesalerList(true);
+    }
+
     $(".refresh_btn").on('click', function() {
         $("#filter_category-modal .check-form:checked").prop('checked', false);
         $("#filter_location-modal .check-form:checked").prop('checked', false);
@@ -505,19 +468,37 @@
     }
 
     function displaySelectedCategories() {
+
+        let html = "";
+        $("#filter_category-modal .check-form:checked").each(function(){
+            html += "<span>" + $('label[for="' + $(this).attr('id') + '"]').text() +
+                "   <button data-id='"+ $(this).attr('id') +"' onclick=\"filterRemove(this)\"><svg><use xlink:href=\"/img/icon-defs.svg#x\"></use></svg></button>" +
+                "</span>";
+        });
+        $(".filter_on_box .category").empty().append(html);
+
         let totalOfSelectedCategories = $("#filter_category-modal .check-form:checked").length;
         if(totalOfSelectedCategories === 0) {
-            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
-            $(".sub_filter .filter_box button").eq(0).removeClass('on');
+//            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+//            $(".sub_filter .filter_box button").eq(0).removeClass('on');
         } else {
-            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
-            $(".sub_filter .filter_box button").eq(0).addClass('on');
+//            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedCategories);
+//            $(".sub_filter .filter_box button").eq(0).addClass('on');
 
-            $(".wholesalerListSection ul.obtain_list .sub_filter_result").show();
+            $(".sub_section_bot ul.obtain_list .sub_filter_result").show();
         }
     }
 
     function displaySelectedLocation() {
+        let html = "";
+
+        $("#filter_location-modal .check-form:checked").each(function() {
+            html += '<span>'+ $(this).data('location') +
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="filterRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>';                    "</span>";
+        });
+        $(".filter_on_box .location").empty().append(html);
+
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
             $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
@@ -531,6 +512,11 @@
 
     function displaySelectedOrders() {
         if($("#filter_align-modal .radio-form:checked").val() != "register_time") {
+            $(".filter_on_box .order").empty().append(
+                '<span>'+ $("#filter_align-modal .radio-form:checked").siblings('label').text() + 
+                '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
+                '</span>'
+            );   
             $(".sub_filter .filter_box button").eq(2).addClass('on')         
         } else {
             $(".sub_filter .filter_box button").eq(2).removeClass('on')
