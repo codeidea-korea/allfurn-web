@@ -501,12 +501,12 @@
 
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
-            $(".sub_filter .filter_box button").eq(1).removeClass('on');
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+            $(".sub_filter .filter_box button").eq(0).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
-            $(".sub_filter .filter_box button").eq(1).addClass('on');
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedLocations);
+            $(".sub_filter .filter_box button").eq(0).addClass('on');
         }
     }
 
@@ -517,12 +517,12 @@
                 '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
                 '</span>'
             );   
-            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+            $(".sub_filter .filter_box button").eq(1).addClass('on')         
         } else {
-            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+            $(".sub_filter .filter_box button").eq(1).removeClass('on')
         }
 
-        $(".sub_filter .filter_box button").eq(2)
+        $(".sub_filter .filter_box button").eq(1)
         .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
     }
 
