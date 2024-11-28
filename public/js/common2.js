@@ -106,6 +106,22 @@ const modalClose = (modal)=>{
         $('.search_wrap .search_intro').removeClass('hidden');
     }
 }
+const modalAllClose = ()=>{
+    $('.modal.show').each(function(){
+        $(this).removeClass('show')
+        $('body').removeClass('overflow-hidden');
+    })
+}
+
+const dropBtn = (item)=>{
+    $(item).toggleClass('active')
+    $(item).parent().toggleClass('active')
+}
+const dropItem = (item)=>{
+    $(item).parents('.dropdown_wrap').find('.dropdown_btn').text($(item).text())
+    $(item).parents('.dropdown_wrap').find('.dropdown_btn').removeClass('active')
+    $(item).parents('.dropdown_wrap').removeClass('active')
+}
 
 const refreshHandle = (item)=>{
     $(item).parent().siblings('.filter_list').find('input').each(function(){
