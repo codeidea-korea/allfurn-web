@@ -412,6 +412,7 @@
                 displaySelectedCategories();
                 displaySelectedLocation();
                 displaySelectedOrders();
+                toggleFilterBox();
                 isLoading = false;
             }
         })
@@ -438,6 +439,14 @@
             $(".sub_filter_result").hide();
         }
         loadWholesalerList(true);
+    }
+
+    function toggleFilterBox() {
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
+            $(".sub_filter_result").hide();
+        } else {
+            $(".sub_filter_result").css('display', 'flex');
+        }
     }
 
     $(".refresh_btn").on('click', function() {
@@ -508,6 +517,13 @@
             $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedLocations);
             $(".sub_filter .filter_box button").eq(0).addClass('on');
         }
+    }
+
+    const orderRemove = (item)=> {
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+
+        loadWholesalerList(true);
     }
 
     function displaySelectedOrders() {
