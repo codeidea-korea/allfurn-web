@@ -227,7 +227,7 @@
 <!--                    <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>-->
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                    <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
+                    <!-- <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button> -->
                 </div>
                 <div class="total">전체 0개</div>
             </div>
@@ -412,6 +412,7 @@
                 displaySelectedCategories();
                 displaySelectedLocation();
                 displaySelectedOrders();
+                toggleFilterBox();
                 isLoading = false;
             }
         })
@@ -438,6 +439,14 @@
             $(".sub_filter_result").hide();
         }
         loadWholesalerList(true);
+    }
+
+    function toggleFilterBox() {
+        if($(".modal .check-form:checked").length === 0 && $("#filter_align-modal .radio-form:checked").val() == "register_time"){
+            $(".sub_filter_result").hide();
+        } else {
+            $(".sub_filter_result").css('display', 'flex');
+        }
     }
 
     $(".refresh_btn").on('click', function() {
@@ -501,13 +510,20 @@
 
         let totalOfSelectedLocations = $("#filter_location-modal .check-form:checked").length;
         if(totalOfSelectedLocations === 0) {
-            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text("");
-            $(".sub_filter .filter_box button").eq(1).removeClass('on');
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text("");
+            $(".sub_filter .filter_box button").eq(0).removeClass('on');
 
         } else {
-            $(".sub_filter .filter_box button").eq(1).find('.txt-primary').text(totalOfSelectedLocations);
-            $(".sub_filter .filter_box button").eq(1).addClass('on');
+            $(".sub_filter .filter_box button").eq(0).find('.txt-primary').text(totalOfSelectedLocations);
+            $(".sub_filter .filter_box button").eq(0).addClass('on');
         }
+    }
+
+    const orderRemove = (item)=> {
+        $(item).parents('span').remove(); //해당 카테고리 삭제
+        $("#filter_align-modal .radio-form").eq(0).prop('checked', true);
+
+        loadWholesalerList(true);
     }
 
     function displaySelectedOrders() {
@@ -517,12 +533,12 @@
                 '   <button data-id="'+ $(this).attr('id') +'" onclick="orderRemove(this)"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>' +
                 '</span>'
             );   
-            $(".sub_filter .filter_box button").eq(2).addClass('on')         
+            $(".sub_filter .filter_box button").eq(1).addClass('on')         
         } else {
-            $(".sub_filter .filter_box button").eq(2).removeClass('on')
+            $(".sub_filter .filter_box button").eq(1).removeClass('on')
         }
 
-        $(".sub_filter .filter_box button").eq(2)
+        $(".sub_filter .filter_box button").eq(1)
         .text($("#filter_align-modal .radio-form:checked").siblings('label').text());
     }
 
