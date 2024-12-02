@@ -227,9 +227,10 @@ class HomeController extends BaseController
         }
         // 올펀패밀리
         $family_ad = FamilyAd::select('AF_family_ad.*', 
-            DB::raw('
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
-            ))
+                DB::raw('
+                    CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
+                )
+            )
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_family_ad.family_attachment_idx, ",", 1)'));
             })
@@ -238,7 +239,7 @@ class HomeController extends BaseController
             ->where('AF_family_ad.end_date', '>', DB::raw("now()"))
             ->where('AF_family_ad.is_delete', 0)
             ->where('AF_family_ad.is_open', 1)
-            ->orderByRaw('ifnull(AF_family_ad.orders,999)')->get();
+            ->orderByRaw('if(ifnull(AF_family_ad.orders,999) < 1, 999, ifnull(AF_family_ad.orders,999))')->get();
 
         $categoryList = $this->productService->getCategoryListV2();
         return view("m.home.category", ['categoryList' => $categoryList, 'family_ad' => $family_ad]);
