@@ -227,7 +227,7 @@
 <!--                    <button class="" onclick="modalOpen('#filter_category-modal')">카테고리 <b class="txt-primary"></b></button>-->
                     <button class="" onclick="modalOpen('#filter_location-modal')">소재지 <b class="txt-primary"></b></button>
                     <button class="" onclick="modalOpen('#filter_align-modal')">최신 상품 등록순</button>
-                    <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button>
+                    <!-- <button class="refresh_btn">초기화 <svg><use xlink:href="/img/icon-defs.svg#refresh"></use></svg></button> -->
                 </div>
                 <div class="total">전체 0개</div>
             </div>
