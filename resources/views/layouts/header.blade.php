@@ -327,7 +327,7 @@ function getCategoryList() {
                         +'    <ul class="depth2">';
 
             result.family_ad.forEach(function (e, idx) {
-                htmlText += '<li><a href="/family/'+e.idx+'">'+e.family_name+'<img src="'+e.imgUrl+'"></a></li>';
+                htmlText += '<li><a href="/family/'+e.idx+'"><div class="' + (e.family_info != '[]' ? '' : 'inactive') + '">'+e.family_name+'<img src="'+e.imgUrl+'"></div></a></li>';
             })
             htmlText += '    </ul></li>';
 
