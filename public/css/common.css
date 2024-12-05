@@ -433,7 +433,7 @@ header .header_banner svg {width:24px; height:24px; }
 .header_category .category_list > ul > li.coop .depth2 li a img,
 .header_category .category_list > ul > li.coop .depth2 li a svg {width:40px; height:40px; }
 .header_category .category_list > ul > li.coop .depth2 li + li {margin-top:5px; }
-.header_category .category_list > ul > li.coop .depth2 li a.inactive {opacity:.5; }
+.header_category .category_list > ul > li.coop .depth2 li .img_box.inactive {opacity:.5; }
 
 /* ------------------------------------
     푸터
