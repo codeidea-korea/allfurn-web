@@ -327,7 +327,18 @@ function getCategoryList() {
                         +'    <ul class="depth2">';
 
             result.family_ad.forEach(function (e, idx) {
-                htmlText += '<li><a href="/family/'+e.idx+'">'+e.family_name+'<img src="'+e.imgUrl+'"></a></li>';
+                htmlText += 
+                            '<li>'
+                            +'    <a href="/family/'+e.idx+'">'
+                            +'        <div class="img_box '+ (e.family_info != '[]' ? '' : 'inactive') + '">'
+                            +'            <p style="display: inline-flex;flex-direction: row-reverse;flex-wrap: nowrap;justify-content: space-around;align-items: center;">'
+                            +'                <span style="width:95px; padding: 10px; padding-right:0; text-align:left; word-break:keep-all;">'+e.family_name+'</span>'
+                            +'                <img style="width:40px; height:40px; " src="'+e.imgUrl+'" alt="">'
+                            +'            </p>'
+                            +'        </div>'
+                            +'    </a>'
+                            +'</li>';
+//                '<li><a href="/family/'+e.idx+'" class="' + (e.family_info != '[]' ? '' : 'inactive') + '">'+e.family_name+'<img src="'+e.imgUrl+'"></a></li>';
             })
             htmlText += '    </ul></li>';
 

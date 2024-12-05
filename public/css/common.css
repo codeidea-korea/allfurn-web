@@ -180,7 +180,6 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .add_textarea dt {padding:10px 30px; border-bottom:1px solid #d9d9d9; background-color:#efefef; font-size:24px; color:#696969; } 
 .add_textarea dd textarea {resize:none; width:100%; height:100px; padding:20px 30px; font-size:24px; }
 .add_textarea dd textarea::placeholder {color:#a7a7a7; }
-.add_textarea dd.txt {padding:20px 30px; font-size:24px; }
 
 .fold_area .target {cursor:pointer; }
 .fold_area .target .arrow {transform:rotate(180deg); }
@@ -434,7 +433,7 @@ header .header_banner svg {width:24px; height:24px; }
 .header_category .category_list > ul > li.coop .depth2 li a img,
 .header_category .category_list > ul > li.coop .depth2 li a svg {width:40px; height:40px; }
 .header_category .category_list > ul > li.coop .depth2 li + li {margin-top:5px; }
-
+.header_category .category_list > ul > li.coop .depth2 li .img_box.inactive {opacity:.5; }
 
 /* ------------------------------------
     푸터

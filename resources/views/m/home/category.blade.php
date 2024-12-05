@@ -25,7 +25,7 @@
                                         <div class="img_box {{ $family->family_info != '[]' ? '' : 'inactive' }}">
                                             <p style="display: inline-flex;flex-direction: row-reverse;flex-wrap: nowrap;justify-content: space-around;align-items: center;">
                                                 <span style="width:95px; padding: 10px; padding-right:0; text-align:left; word-break:keep-all;">{{ $family->family_name }}</span>
-                                                <img style="width:131px" src="{{ $family->imgUrl }}" alt="">
+                                                <img style="width:40px; height:40px; " src="{{ $family->imgUrl }}" alt="">
                                             </p>
                                         </div>
                                     </a>
