@@ -763,7 +763,7 @@ class ProductService
             });
         }
 
-        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(100);
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(20);
     }
 
 
