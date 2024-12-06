@@ -140,8 +140,8 @@ section.sub_section_bot {padding:70px 0 140px; }
 .community_list ul li .txt_box .bot .info svg {width:24px; height:24px; fill:transparent; stroke:#8e8e8e; }
 .community_list ul li .txt_box .bot .info span {padding:0 20px 0 5px; color:var(--gray_color); }
 .community_list ul li .txt_box .bot .date {font-size:14px; color:var(--gray_color); }
-.community_list ul li .img_box {overflow:hidden; display:flex; align-items: center; justify-content: center; width:300px; height:170px; border-radius:3px; }
-.community_list ul li .img_box img {width:300px; height:170px; object-fit:cover; }
+.community_list ul li .img_box {overflow:hidden; display:flex; align-items: center; justify-content: center; width:300px; height:175px; border-radius:3px; }
+.community_list ul li .img_box img {width:300px; height:auto; object-fit:cover; }
 
 .community_write_btn {position:fixed; right:40px; bottom:130px; }
 
