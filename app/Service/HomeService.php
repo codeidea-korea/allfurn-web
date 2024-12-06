@@ -85,50 +85,11 @@ class HomeService
 
 
         // 베스트 신상품 목록
-        $data['productAd'] = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
-            DB::raw('AF_product_ad.price as ad_price, 
-                (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
-            ->join('AF_product', function ($query) {
-                $query->on('AF_product.idx', 'AF_product_ad.product_idx')
-                    ->whereIn('AF_product.state', ['S', 'O']);
-            })
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->where('AF_product_ad.state', 'G')
-            ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
-            ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
-            ->where('AF_product_ad.ad_location', 1)
-            ->where('AF_product_ad.is_delete', 0)
-            ->where('AF_product_ad.is_open', 1)
-            ->orderByRaw('AF_product_ad.price desc, RAND()')->get();
+        $data['productAd'] = $this->getProductAds();
        
 
         // 신상품 목록 
-        $data['new_product'] = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
-            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->where([
-                'AF_product.is_new_product' => 1,
-                'AF_product.state' => 'S'
-            ])->whereNull('AF_product.deleted_at');
-            if(getDeviceType() == 'm.') {
-                $data['new_product'] = $data['new_product']->orderBy('AF_product.register_time', 'desc')->limit(80)->get();
-            } else {
-                $data['new_product'] = $data['new_product']->orderBy('AF_product.register_time', 'desc')->limit(256)->get();
-            }
+        $data['new_product'] = $this->getNewProducts();
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
@@ -155,7 +116,86 @@ class HomeService
         $data['md_product_interest'] = $md_product_interest;
 
         // 인기 브랜드
-        $data['popularbrand_ad'] = Banner::select('AF_banner_ad.*', 
+        $data['popularbrand_ad'] = $this->getPopularbrandAds();
+
+        // 할인 상품
+        $data['plandiscount_ad'] = $this->getPlandiscountAds();
+
+        // 동영상 광고
+        $data['video_ad'] = $this->getVideos();
+
+        // 매거진
+        $data['magazine'] = $this->getMagazines();
+
+        // 커뮤니티 인기글
+        $data['community'] = $this->getArticles();
+
+        // 가구모임
+        $data['club'] = $this->getClubs();
+
+        // 올펀패밀리
+        $data['family_ad'] = $this->getFamilies();
+
+        // 팝업
+        $data['popup'] = $this->getPopups();
+
+        return $data;
+    }
+
+
+
+    // 모듈 분리
+    function getProductAds() {
+        $product_ad = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
+            DB::raw('AF_product_ad.price as ad_price, 
+                (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->join('AF_product', function ($query) {
+                $query->on('AF_product.idx', 'AF_product_ad.product_idx')
+                    ->whereIn('AF_product.state', ['S', 'O']);
+            })
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->where('AF_product_ad.state', 'G')
+            ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
+            ->where('AF_product_ad.end_date', '>', DB::raw("now()"))
+            ->where('AF_product_ad.ad_location', 1)
+            ->where('AF_product_ad.is_delete', 0)
+            ->where('AF_product_ad.is_open', 1)
+            ->orderByRaw('AF_product_ad.price desc, RAND()')
+            ->get();
+
+        return $product_ad;
+    }
+    function getNewProducts() {
+        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
+            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                ELSE "" END) as companyName,
+                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
+            ))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->where([
+                'AF_product.is_new_product' => 1,
+                'AF_product.state' => 'S'
+            ])->whereNull('AF_product.deleted_at');
+            if(getDeviceType() == 'm.') {
+                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->limit(20)->get();
+            } else {
+                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->limit(20)->get();
+            }
+        return $new_product;
+    }
+    function getPopularbrandAds() {
+        $popularbrand_ad = Banner::select('AF_banner_ad.*', 
             DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
                 WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
                 ELSE "" END) as companyName,
@@ -180,7 +220,7 @@ class HomeService
             ->where('AF_banner_ad.is_open', 1)
             ->orderByRaw('AF_banner_ad.banner_price desc, RAND()')->get();
         
-        foreach($data['popularbrand_ad'] as $brand){
+        foreach($popularbrand_ad as $brand){
             $brand_product_interest = array();
             $brand_product_info = json_decode($brand->product_info, true);
             $brand->product_info = $brand_product_info;
@@ -193,9 +233,10 @@ class HomeService
             }
             $brand->product_interest = $brand_product_interest;
         }
-
-        // 할인 상품
-        $data['plandiscount_ad'] = Banner::select('AF_banner_ad.*', 
+        return $popularbrand_ad;
+    }
+    function getPlandiscountAds() {
+        $plandiscount_ad = Banner::select('AF_banner_ad.*', 
             DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
                 WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
                 ELSE "" END) as companyName,
@@ -223,7 +264,7 @@ class HomeService
             ->where('AF_banner_ad.is_open', 1)
             ->orderByRaw('banner_price desc, RAND()')->get();
 
-        foreach($data['plandiscount_ad'] as $goods){
+        foreach($plandiscount_ad as $goods){
             if (!is_null($goods->web_link)){
                 $tmp_web_link = explode('/', $goods->web_link);
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
@@ -237,9 +278,10 @@ class HomeService
                 $goods->gidx = '';
             }
         }
-
-        // 동영상 광고
-        $data['video_ad'] = VideoAd::select('AF_video_ad.*', 
+        return $plandiscount_ad;
+    }
+    function getVideos() {
+        $video_ad = VideoAd::select('AF_video_ad.*', 
             DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
             ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_video_ad.web_attachment_idx')
             ->where('AF_video_ad.state', 'G')
@@ -248,7 +290,7 @@ class HomeService
             ->where('AF_video_ad.is_delete', 0)
             ->where('AF_video_ad.is_open', 1)
             ->orderByRaw('AF_video_ad.price desc, RAND()')->get();
-        foreach($data['video_ad'] as $video){
+        foreach($video_ad as $video){
             if ($video->video_upload_type == '1'){
                 $tmpVideo = DB::table('AF_attachment')->selectRaw('CONCAT("'.preImgUrl().'", folder, "/", filename) as video_url')
                     ->where('idx', $video->video_attachment_idx)
@@ -258,19 +300,20 @@ class HomeService
                 $video->video_url = "";
             }
         }
-
-        // 매거진
-        $data['magazine'] = Magazine::select('AF_magazine.*',
-            DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
-        ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
-        ->where('is_delete', 0)
-        ->where('is_open', 1)
-        ->orderby('AF_magazine.register_time', 'desc')
-        ->limit(3)
-        ->get();
-
-        // 커뮤니티 인기글
-        $data['community'] = Article::select('AF_board_article.*', 'ab.name',
+        return $video_ad;
+    }
+    function getMagazines() {
+        return Magazine::select('AF_magazine.*',
+                DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
+            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
+            ->where('is_delete', 0)
+            ->where('is_open', 1)
+            ->orderby('AF_magazine.register_time', 'desc')
+            ->limit(3)
+            ->get();
+    }
+    function getArticles() {
+        return Article::select('AF_board_article.*', 'ab.name',
             DB::raw('(SELECT CASE WHEN COUNT(*) > 999 THEN "999+" ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = AF_board_article.idx AND is_delete = 0) as replyCnt,
             (SELECT COUNT(*) cnt FROM AF_board_views WHERE article_idx = AF_board_article.idx) as viewCnt'))
             /*
@@ -286,9 +329,9 @@ class HomeService
             ->orderBy('AF_board_article.register_time', 'desc')
             ->limit(5)
             ->get();
-
-        // 가구모임
-        $data['club'] = Club::select('*', 'AF_club_article.idx AS article_idx')
+    }
+    function getClubs() {
+        return Club::select('*', 'AF_club_article.idx AS article_idx')
             ->where('AF_club.is_open', 1)
             ->leftjoin('AF_club_article',  function($query) {
                 $query->on('AF_club.idx', 'AF_club_article.club_idx');
@@ -298,9 +341,23 @@ class HomeService
             ->orderBy('AF_club_article.register_time', 'desc')
             ->limit(3)
             ->get();
-
-        // 올펀패밀리
-        $data['family_ad'] = FamilyAd::select('AF_family_ad.*', 
+    }
+    // 팝업
+    function getPopups() {
+        return Popup::select('AF_popup.*',
+            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
+            ->leftjoin('AF_attachment as at', function ($query) {
+                $query->on('at.idx', 'AF_popup.attachment_idx');
+            })
+            ->where(['type' => 'B', 'location' => 'home'])
+            ->where('start_date', '<', DB::raw('now()'))
+            ->where('end_date', '>', DB::raw('now()'))
+            ->where('is_delete', 0)
+            ->orderBy('AF_popup.order_idx','asc')
+            ->get();
+    }
+    function getFamilies() {
+        return FamilyAd::select('AF_family_ad.*', 
                 DB::raw('
                     CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'
                 )
@@ -315,21 +372,6 @@ class HomeService
             ->where('AF_family_ad.is_open', 1)
             ->orderByRaw('if(ifnull(AF_family_ad.orders,999) < 1, 999, ifnull(AF_family_ad.orders,999))')
             ->orderByRaw('AF_family_ad.updated_at desc')->get();
-
-        // 팝업
-        $data['popup'] = Popup::select('AF_popup.*',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl'))
-            ->leftjoin('AF_attachment as at', function ($query) {
-                $query->on('at.idx', 'AF_popup.attachment_idx');
-            })
-            ->where(['type' => 'B', 'location' => 'home'])
-            ->where('start_date', '<', DB::raw('now()'))
-            ->where('end_date', '>', DB::raw('now()'))
-            ->where('is_delete', 0)
-            ->orderBy('AF_popup.order_idx','asc')
-            ->get();
-
-        return $data;
     }
 
     public function getNewProduct()
