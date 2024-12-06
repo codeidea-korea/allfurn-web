@@ -89,7 +89,10 @@ class HomeService
        
 
         // 신상품 목록 
-        $data['new_product'] = $this->getNewProducts();
+        $page = array();
+        $page['offset'] = 0;
+        $page['limit'] = 20;
+        $data['new_product'] = $this->getNewProducts($page);
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
@@ -167,12 +170,13 @@ class HomeService
             ->where('AF_product_ad.ad_location', 1)
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
+            // 분해 불가
             ->orderByRaw('AF_product_ad.price desc, RAND()')
             ->get();
 
         return $product_ad;
     }
-    function getNewProducts() {
+    function getNewProducts($page) {
         $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
@@ -188,9 +192,9 @@ class HomeService
                 'AF_product.state' => 'S'
             ])->whereNull('AF_product.deleted_at');
             if(getDeviceType() == 'm.') {
-                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->limit(20)->get();
+                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->offset($page['offset'])->limit($page['limit'])->get();
             } else {
-                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->limit(20)->get();
+                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->offset($page['offset'])->limit($page['limit'])->get();
             }
         return $new_product;
     }
