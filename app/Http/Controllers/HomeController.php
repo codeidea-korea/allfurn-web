@@ -244,5 +244,32 @@ class HomeController extends BaseController
         $categoryList = $this->productService->getCategoryListV2();
         return view("m.home.category", ['categoryList' => $categoryList, 'family_ad' => $family_ad]);
     }
+
+
+
+
+    // 슬릭 슬라이더에 들어갈 페이지 내용
+    public function getSlickSlideItems(Request $request)
+    {
+        $data['pageNo'] = $request->query('pageNo') == null ? 1 : $request->query('pageNo');
+        $data['pageSize'] = $request->query('pageSize') == null ? 20 : $request->query('pageSize');
+        $data['slideType'] = $request->query('slideType') == null ? 'best' : $request->query('slideType');
+
+        $page = array();
+        $page['offset'] = ($data['pageNo'] - 1) * $data['pageSize'];
+        $page['limit'] = $data['pageSize'];
+
+        if($data['slideType'] == 'best') {
+            // 베스트 신상품 목록
+            $data['views'] = $this->homeService->getProductAds($page);
+        } else if($data['slideType'] == 'new') {
+            // 신상품 목록 
+            $data['views'] = $this->homeService->getNewProducts($page);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
 }
 

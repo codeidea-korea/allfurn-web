@@ -85,7 +85,10 @@ class HomeService
 
 
         // 베스트 신상품 목록
-        $data['productAd'] = $this->getProductAds();
+        $page = array();
+        $page['offset'] = 0;
+        $page['limit'] = 20;
+        $data['productAd'] = $this->getProductAds($page);
        
 
         // 신상품 목록 
@@ -148,7 +151,7 @@ class HomeService
 
 
     // 모듈 분리
-    function getProductAds() {
+    function getProductAds($page) {
         $product_ad = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
@@ -172,6 +175,7 @@ class HomeService
             ->where('AF_product_ad.is_open', 1)
             // 분해 불가
             ->orderByRaw('AF_product_ad.price desc, RAND()')
+            ->offset($page['offset'])->limit($page['limit'])
             ->get();
 
         return $product_ad;

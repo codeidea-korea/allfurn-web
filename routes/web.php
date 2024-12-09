@@ -23,6 +23,8 @@ Route::prefix('home')->group(function() {
     Route::get('/searchResult', 'HomeController@searchResult');
     Route::post('/getNewProduct', 'HomeController@getNewProduct');
     Route::post('/getSpeakerLoud', 'HomeController@getSpeakerLoud');
+    
+    Route::get('/slick-slide/items', 'HomeController@getSlickSlideItems');
 });
 Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
