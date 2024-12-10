@@ -47,6 +47,9 @@
     <script defer src="/js/flatpickr_ko.js?{{ date('Ymdhis') }}"></script>
     <script defer src="/js/flatpickr.js?{{ date('Ymdhis') }}"></script>
     
+
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 </head>
 <body>
     @yield('content')
