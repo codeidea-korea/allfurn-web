@@ -18,7 +18,7 @@
                         @else
                         <li class=" prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
+                                <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" width="285" alt="" loading="lazy"></a>
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
@@ -49,6 +49,7 @@
         slidesToShow: 4,
         rows: 2,
         infinite: false,
+        slidesToScroll: 4,
         //   speed: 500,
         //   fade: true,
         //   cssEase: 'linear'
@@ -61,12 +62,12 @@
         $('.new_prod .slick_ul .slick-next').click();
     })
     $('.new_prod .slide_box ul').on('afterChange',function(event,slick,direction){
-        pager()
+        npager()
     })
     $(document).on('ready',function(){
-        pager()
+        npager()
     })
-    function pager(){
+    function npager(){
         let size = $('.new_prod .slick-dots li').length;
         let active = $('.new_prod .slick-dots li.slick-active').index() + 1
         $('.new_prod .count_pager').html(`<b>${active}</b> / ${size}`)
