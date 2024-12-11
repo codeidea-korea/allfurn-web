@@ -11,12 +11,12 @@
             </div>
         </div>
         <div class="relative">
-            <div class="slide_box prod_slide-2">
-                <ul class="swiper-wrapper">
+            <div class="slide_box ">
+                <ul class="slick_ul">
                     @foreach($data['new_product'] as $item)
                         @if($loop->index >= 40)
                         @else
-                        <li class="swiper-slide prod_item">
+                        <li class=" prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt=""></a>
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
@@ -44,13 +44,33 @@
     </div>
 </section>
 <script>
-$('.swiper-wrapper').slick({
-  dots: true,
-  infinite: true,
-  speed: 500,
-  fade: true,
-  cssEase: 'linear'
-});
+    $('.new_prod .slide_box ul').slick({
+        dots: true,
+        slidesToShow: 4,
+        rows: 2,
+        infinite: false,
+        //   speed: 500,
+        //   fade: true,
+        //   cssEase: 'linear'
+    });
+
+    $('.new_prod .slide_arrow.prev').on('click',function(){
+        $('.new_prod .slick_ul .slick-prev').click();
+    })
+    $('.new_prod .slide_arrow.next').on('click',function(){
+        $('.new_prod .slick_ul .slick-next').click();
+    })
+    $('.new_prod .slide_box ul').on('afterChange',function(event,slick,direction){
+        pager()
+    })
+    $(document).on('ready',function(){
+        pager()
+    })
+    function pager(){
+        let size = $('.new_prod .slick-dots li').length;
+        let active = $('.new_prod .slick-dots li.slick-active').index() + 1
+        $('.new_prod .count_pager').html(`<b>${active}</b> / ${size}`)
+    }
 </script>
 
 @php $product = $data['new_product'] @endphp

@@ -408,22 +408,22 @@ const category_banner = new Swiper(".category_banner .slide_box", {
 });
 
 // best_prod 
-const best_prod = new Swiper(".best_prod .slide_box", {
-    slidesPerView: 4,
-    spaceBetween: 20,
-    slidesPerGroup: 4,
-    grid: {
-        rows: 2,
-    },
-    navigation: {
-        nextEl: ".best_prod .slide_arrow.next",
-        prevEl: ".best_prod .slide_arrow.prev",
-    },
-    pagination: {
-        el: ".best_prod .count_pager",
-        type: "fraction",
-    },
-});
+// const best_prod = new Swiper(".best_prod .slide_box", {
+//     slidesPerView: 4,
+//     spaceBetween: 20,
+//     slidesPerGroup: 4,
+//     grid: {
+//         rows: 2,
+//     },
+//     navigation: {
+//         nextEl: ".best_prod .slide_arrow.next",
+//         prevEl: ".best_prod .slide_arrow.prev",
+//     },
+//     pagination: {
+//         el: ".best_prod .count_pager",
+//         type: "fraction",
+//     },
+// });
 
 // best_prod_modal
 const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
@@ -443,22 +443,22 @@ const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
 });
 
 // new_prod 
-const new_prod = new Swiper(".new_prod .slide_box", {
-    slidesPerView: 4,
-    spaceBetween: 20,
-    slidesPerGroup: 4,
-    grid: {
-        rows: 2,
-    },
-    navigation: {
-        nextEl: ".new_prod .slide_arrow.next",
-        prevEl: ".new_prod .slide_arrow.prev",
-    },
-    pagination: {
-        el: ".new_prod .count_pager",
-        type: "fraction",
-    },
-});
+// const new_prod = new Swiper(".new_prod .slide_box", {
+//     slidesPerView: 4,
+//     spaceBetween: 20,
+//     slidesPerGroup: 4,
+//     grid: {
+//         rows: 2,
+//     },
+//     navigation: {
+//         nextEl: ".new_prod .slide_arrow.next",
+//         prevEl: ".new_prod .slide_arrow.prev",
+//     },
+//     pagination: {
+//         el: ".new_prod .count_pager",
+//         type: "fraction",
+//     },
+// });
 
 // new_prod_modal
 const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
