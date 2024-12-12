@@ -87,14 +87,14 @@ class HomeService
         // 베스트 신상품 목록
         $page = array();
         $page['offset'] = 0;
-        $page['limit'] = 20;
+        $page['limit'] = 40;
         $data['productAd'] = $this->getProductAds($page);
        
 
         // 신상품 목록 
         $page = array();
         $page['offset'] = 0;
-        $page['limit'] = 20;
+        $page['limit'] = 40;
         $data['new_product'] = $this->getNewProducts($page);
 
         // MD가 추천하는 테마별 상품
