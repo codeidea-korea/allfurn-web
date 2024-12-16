@@ -93,7 +93,7 @@
                     <td>{{ $list -> estimate_code }}</td>
                     <td>{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</td>
                     <td>{{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}</td>
-                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt > 1 ? ' 외 '.$list -> cnt.'개' : ''}}</td>
+                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt >= 1 ? ' 외 '.$list -> cnt.'개' : ''}}</td>
                     <td>{{ $list -> company_type == 'W' ? $list -> response_w_company_name : $list -> response_r_company_name }}</td>
                     <td>
                         @if ($list -> estimate_state == 'N')
