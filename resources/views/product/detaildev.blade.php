@@ -1510,7 +1510,7 @@
                 var i = 1;
                 $('#orderProductList input[type="checkbox"]').each(function(index, element) {
                     if( $(this).is(':checked') ) {
-                        prodData.append("p_idx[" + i + "]", $('#check_'+index).val());
+                        prodData.append("p_idx[" + i + "]", $(element).val());
                         prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
                         i++;
                     }

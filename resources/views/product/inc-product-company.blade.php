@@ -1,8 +1,8 @@
 @foreach ($list as $key => $item )
     <div class="prod_info">
         <div class="img_box">
-            <input type="checkbox" id="check_{{ $key  }}" name="req_idx[{{ $key }}]" value="{{ $item->idx }}" class="hidden">
-            <label for="check_{{ $key  }}" class="add_btn" onclick="prodAdd(this)">추가</label>
+            <input type="checkbox" id="check_{{ $item->idx  }}" name="req_idx[{{ $item->idx }}]" value="{{ $item->idx }}" class="hidden">
+            <label for="check_{{ $item->idx  }}" class="add_btn" onclick="prodAdd(this)">추가</label>
             <img src="{{ $item->imgUrl }}" alt="">
         </div>
         <div class="info_box">
