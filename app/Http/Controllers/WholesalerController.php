@@ -236,4 +236,41 @@ class WholesalerController extends BaseController
         $data = $this->wholesalerService->getThisMonthWholesaler($target);
         return view(getDeviceType().'wholesaler.thisMonth', [ 'wholesalerList' => $data]);
     }
+
+    // 업체 카테고리 상품 가져오기
+    public function wholesalerProduct(Request $request)
+    {
+        if( empty( $request ) ) return false;
+
+        $data = [];
+        $data['idx']    = $request->idx;
+        $data['page']   = $request->page;
+        $data['limit']  = $request->limit;
+        $data['company_idx']    = $request->company_idx;
+
+        $list = $this->productService->getWholesalerProductList($data);
+        $ret['html'] = view('product.inc-product-company', ['list' => $list])->render();
+
+        return response()->json($ret);
+    }
+
+    public function wholesalerProduct2(Request $request)
+    {
+        if( empty( $request ) ) return false;
+
+        $list = $this->productService->getWholesalerProductListForIdx($request);
+        if( !empty( $list ) ) {
+            foreach( $list AS $k => $row ) {
+                for( $i = 0; $i < count( $request['p_idx'] ); $i++ ) {
+                    if( $row['idx'] == $request['p_idx'][$i] ) {
+                        $list[$k]->p_cnt = $request['p_cnt'][$i];
+                    }
+                }
+            }
+        }
+        $ret['html'] = view('product.inc-product-company2', ['list' => $list])->render();
+
+        //print_r( $list );
+        return response()->json($ret);
+    }
 }

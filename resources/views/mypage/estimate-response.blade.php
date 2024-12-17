@@ -93,11 +93,11 @@
                     <td>{{ $list -> estimate_code }}</td>
                     <td>{{ $list -> response_time ? $list -> response_time : '('.$list -> request_time.')' }}</td>
                     <td>{{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}</td>
-                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt > 1 ? '외 '.$list -> cnt.'개' : ''}}</td>
+                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt >= 1 ? '외 '.$list -> cnt.'개' : ''}}</td>
                     <td>{{ $list -> request_company_name }}</td>
                     <td>
                         @if ($list -> estimate_state == 'N')
-                        <button class="btn outline_primary btn-h-auto request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적 요청서 확인</button>
+                        <button class="btn outline_primary btn-h-auto request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적 요청서 확인</button>
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
                         <button class="btn outline_primary btn-h-auto check_estimate_detail" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
@@ -135,317 +135,22 @@
     </div>
 </div>
 
-<!-- 견적 요청서 확인하기 -->
-<div id="request_estimate-modal" class="modal">
-    <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
-    <div class="modal_inner modal-xl">
-        <button class="close_btn" onclick="modalClose('#request_estimate-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <h3 class="text-xl font-bold">견적 요청서 확인하기</h3>
-            <table class="table_layout mt-5">
-                <colgroup>
-                    <col width="120px">
-                    <col width="330px">
-                    <col width="120px">
-                    <col width="330px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th colspan="4">견적서를 요청한 자</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th colspan="4">아래 상품의 견적을 요청합니다.</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr>
-                        <th>요 청 일 자</th>
-                        <td class="request_estimate_req_time"></td>
-                        <th>요 청 번 호</th>
-                        <td class="request_estimate_req_code"></td>
-                    </tr>
-                    <tr>
-                        <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                        <td class="request_estimate_req_company_name"></td>
-                        <th>사업자번호</th>
-                        <td class="request_estimate_req_business_license_number"></td>
-                    </tr>
-                    <tr>
-                        <th>전 화 번 호</th>
-                        <td class="request_estimate_req_phone_number"></td>
-                        <th>주요판매처</th>
-                        <td>매장 판매</td>
-                    </tr>
-                    <tr>
-                        <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                        <td class="request_estimate_req_address1" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                        <td class="request_estimate_req_memo" colspan="3"></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div class="file-form full img_auto mt-10">
-                <img src="" alt="" class="request_estimate_req_business_license_thumbnail" />
-            </div>
-
-            <ul class="order_prod_list mt-3">
-                <li>
-                    <div class="img_box">
-                        <img src="/img/prod_thumb3.png" alt="" class="request_estimate_product_thumbnail" />
-                    </div>
-                    <div class="right_box">
-                        <h6 class="request_estimate_product_name"></h6>
-                        <table class="table_layout">
-                            <colgroup>
-                                <col width="160px">
-                                <col width="*">
-                            </colgroup>
-                            <tr>
-                                <th>상품번호</th>
-                                <td class="txt-gray request_estimate_product_number"></td>
-                            </tr>
-                            <tr>
-                                <th>상품수량</th>
-                                <td><span class="request_estimate_product_count"></span>개</td>
-                            </tr>
-                            <tr>
-                                <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                <td class="request_estimate_product_option">없음</td>
-                            </tr>
-                            <tr>
-                                <th>견적단가</th>
-                                <td class="txt-gray"><span class="request_estimate_product_each_price"></span></td>
-                            </tr>
-                            <tr>
-                                <th>배송지역</th>
-                                <td class="request_estimate_product_address"></td>
-                            </tr>
-                        </table>
-                    </div>
-                </li>
-            </ul>
-            <div class="btn_box mt-10">
-                <div class="flex gap-5">
-                    <a href="javascript: ;" class="btn btn-primary flex-1 response_estimate_detail">견적서 작성하기</a>
-                </div>
-            </div>
+<!-- 견적요청서 확인 및 작성 -->
+<div class="modal" id="request_confirm_write-modal">
+    <div class="modal_bg" onclick="modalClose('#request_confirm_write-modal')"></div>
+    <div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>견적 요청서 확인 및 작성</h3>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
         </div>
-    </div>
-</div>
 
-<!-- 견적서 작성하기 -->
-<div id="response_estimate-modal" class="modal">
-    <div class="modal_bg" onclick="modalClose('#response_estimate-modal')"></div>
-    <div class="modal_inner modal-xl">
-        <button class="close_btn" onclick="modalClose('#response_estimate-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <h3 class="text-xl font-bold">견적서 작성하기</h3>
-            <form method="PUT" name="udForm" id="udForm" action="/estimate/update" enctype="multipart/form-data">
-                <table class="table_layout mt-5">
-                    <colgroup>
-                        <col width="120px">
-                        <col width="330px">
-                        <col width="120px">
-                        <col width="330px">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="4">견적서를 요청한 자</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>업 체 명</th>
-                            <td><b class="response_estimate_req_company_name"></b></td>
-                            <th>사업자번호</th>
-                            <td class="response_estimate_req_business_license_number"></td>
-                        </tr>
-                        <tr>
-                            <th>전 화 번 호</th>
-                            <td class="response_estimate_req_phone_number" colspan="3"></td>
-                        </tr>
-                        <tr>
-                            <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                            <td class="response_estimate_req_address1" colspan="3"></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="modal_body">
+            <!-- // -->
+        </div>
 
-                <table class="table_layout mt-5">
-                    <colgroup>
-                        <col width="120px">
-                        <col width="330px">
-                        <col width="120px">
-                        <col width="330px">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th colspan="4">견적서를 보내는 자</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th colspan="4">아래와 같이 견적서를 보냅니다.</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <tr>
-                            <th>견 적 일 자</th>
-                            <td class="response_estimate_res_time"></td>
-                            <input type="hidden" name="response_estimate_res_time" value="" />
-                            <th>견 적 번 호</th>
-                            <td class="response_estimate_res_code"></td>
-                        </tr>
-                        <tr>
-                            <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                            <td class="response_estimate_res_company_name"></td>
-                            <input type="hidden" name="response_estimate_res_company_name" id="response_res_estimate_company_name" value="" />
-                            <th>사업자번호</th>
-                            <td><input type="text" name="response_estimate_res_business_license_number" id="response_res_business_license_number" class="input-form" value="" /></td>
-                        </tr>
-                        <tr>
-                            <th>전 화 번 호</th>
-                            <td><input type="text" name="response_estimate_res_phone_number" id="response_estimate_res_phone_number" class="input-form" value="" /></td>
-                            <th>유 효 기 한</th>
-                            <td>
-                                견적일로부터 
-                                <select name="expiration_date" id="expiration_date" class="input-form ml-3">
-                                    @for ($i = 15; $i >= 1; $i--)
-                                        <option value="{{ $i }}">{{ $i }}일</option>
-                                    @endfor
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                            <td colspan="3"><input type="text" name="response_estimate_res_address1" id="response_estimate_res_address1" class="input-form w-full" value="" /></td>
-                        </tr>
-                        <tr>
-                            <th>계 좌 번 호</th>
-                            <td colspan="3">
-                                <span class="response_account hidden"></span>
-                                <select name="response_estimate_account1" id="response_estimate_response_account1" class="input-form">
-                                    <option value="KEB하나은행">KEB하나은행</option>
-                                    <option value="SC제일은행">SC제일은행</option>
-                                    <option value="국민은행">국민은행</option>
-                                    <option value="신한은행">신한은행</option>
-                                    <option value="외환은행">외환은행</option>
-                                    <option value="우리은행">우리은행</option>
-                                    <option value="한국시티은행">한국시티은행</option>
-                                    <option value="기업은행">기업은행</option>
-                                    <option value="농협">농협</option>
-                                    <option value="수협">수협</option>
-                                </select>
-                                <input type="text" name="response_estimate_response_account2" id="response_estimate_response_account2" class="input-form" value="" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                            <td colspan="3"><input type="text" name="response_estimate_res_memo" id="response_estimate_res_memo" class="input-form w-full" value="" /></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <ul class="order_prod_list mt-3">
-                    <li>
-                        <div class="img_box">
-                            <img src="/img/prod_thumb3.png" alt="" class="response_estimate_product_thumbnail" />
-                        </div>
-                        <div class="right_box">
-                            <h6 class="response_estimate_product_name"></h6>
-                            <table class="table_layout">
-                                <colgroup>
-                                    <col width="160px">
-                                    <col width="*">
-                                </colgroup>
-                                <tbody><tr>
-                                    <th>상품번호</th>
-                                    <td class="txt-gray response_estimate_product_number"></td>
-                                </tr>
-                                <tr>
-                                    <th>상품수량</th>
-                                    <td class="txt-primary"><b class="response_estimate_product_count"></b></td>
-                                </tr>
-                                <tr>
-                                    <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                    <td class="response_estimate_product_option">없음</td>
-                                </tr>
-                                <tr>
-                                    <th>견적단가</th>
-                                    <td><input type="text" name="response_estimate_product_each_price" id="response_estimate_product_each_price" class="input-form w-2/3 txt-primary" value="" /></td>
-                                </tr>
-                                <tr>
-                                    <th>견적금액</th>
-                                    <td>
-                                        <b><span class="response_estimate_product_total_price"></span>원</b>
-                                        <input type="hidden" name="response_estimate_product_total_price" id="response_estimate_product_total_price" value="" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>배송지역</th>
-                                    <td class="response_estimate_product_address"></td>
-                                </tr>
-                                <tr>
-                                    <th>배송방법</th>
-                                    <td>
-                                        <select name="response_estimate_product_delivery_info" id="response_estimate_product_delivery_info" class="input-form w-2/3">
-                                            <option value="업체 협의 (착불)">착불</option>
-                                            <option value="매장 배송 (무료)">무료</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>배송비</th>
-                                    <td><input type="text" name="response_estimate_product_delivery_price" id="response_estimate_product_delivery_price" class="input-form txt-primary w-2/3" value="" /></td>
-                                </tr>
-                                <tr>
-                                    <th>비고</th>
-                                    <td><input type="text" name="response_estimate_product_memo" id="response_estimate_product_memo" class="input-form w-full" value="" /></td>
-                                </tr>
-                            </tbody></table>
-                        </div>
-                    </li>
-                </ul>
-
-                <div class="order_price_total mt-10">
-                    <h5>총 견적금액</h5>
-                    <div class="price">
-                        <p>
-                            <span class="txt-gray fs14">
-                                견적금액 (<span class="response_estimate_product_count"></span>)
-                            </span>
-                            <b><span class="response_estimate_product_total_price"></span>원</b>
-                        </p>
-                        <p>
-                            <span class="txt-gray fs14">
-                                옵션금액
-                            </span>
-                            <b><span class="response_estimate_product_option_price"></span>원</b>
-                            <input type="hidden" name="response_estimate_product_option_price" id="response_estimate_product_option_price" value="" />
-                        </p>
-                        <p>
-                            <span class="txt-gray fs14">배송비</span>
-                            <b><span class="response_estimate_product_delivery_price"></span>원</b>
-                        </p>
-                    </div>
-                    <div class="total">
-                        <p>총 견적금액</p>
-                        <b><span class="response_estimate_estimate_total_price"></span>원</b>
-                        <input type="hidden" name="response_estimate_estimate_total_price" id="response_estimate_estimate_total_price" value="" />
-                    </div>
-                </div>
-
-                <div class="btn_box mt-10">
-                    <div class="flex gap-5">
-                        <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="updateResponse()">견적서 보내기</a>
-                    </div>
-                </div>
-            </form>
+        <div class="modal_footer">
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
+            <button type="button" onClick="updateResponse();"><span class="prodCnt">1</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -880,50 +585,91 @@
     }
 
     const updateResponse = () => {
-        if(!$('input[name="response_estimate_res_phone_number"]').val()) {
-            alert('전화번호를 입력해주세요!');
-            $('input[name="response_estimate_res_phone_number').focus();
 
-            return false;
-        }
-
-        if(!$('input[name="response_estimate_res_address1"]').val()) {
-            alert('주소를 입력해주세요!');
-            $('input[name="response_estimate_res_address1').focus();
-
-            return false;
-        }
-
-        if(!$('input[name="response_estimate_response_account2"]').val()) {
-            alert('계좌번호를 입력해주세요!');
-            $('input[name="response_estimate_response_account2').focus();
-
-            return false;
-        }
-
-        if(!$('input[name="response_estimate_product_each_price"]').val()) {
-            alert('견적단가를 입력해주세요!');
-            $('input[name="response_estimate_product_each_price').focus();
-
-            return false;
-        }
-
-        if(!$('#response_estimate_product_delivery_price').val()) {
-            alert("배송비를 입력해주세요!");
-            $('#product_delivery_price').focus();
-
-            return false;
-        }
-
-        const formData = new FormData(document.getElementById('udForm'));
-        formData.append('estimate_idx', estimate_idx);
+        let formData = new FormData();
+        sum_price = 0;
+        $('.fold_area .prod_info').each(function (index) {
+        	product_price = 0;
+            $(this).find('input').each(function (idx, item) {
+                let i_name = $(item).attr('name'); // name 속성 가져오기
+                let i_val = '';
+                if(i_name == 'price'){
+					i_val = parseInt($(item).val()); // 값 가져오기	
+					if(isNaN(i_val)){
+						product_price = 0;
+						i_val = 0;
+					}else{
+						product_price = i_val;
+					}
+					formData.append(`products[${index}][${i_name}]`, i_val);  
+                }else{
+                	i_val = $(item).val(); // 값 가져오기	
+                	formData.append(`products[${index}][${i_name}]`, i_val);  
+                }
+            });
+            
+            formData.append(`products[${index}][product_delivery_info_temp]`, $('#delivery_type').text());
+            
+            var delivery_price = 0;
+            if($('#delivery_type').text() == '착불'){
+            	delivery_price = $('#delivery_price').val()
+            	if(delivery_price == ''){
+            		delivery_price = 0;
+            	}
+            }else{
+            	delivery_price = 0
+            }
+            formData.append(`products[${index}][product_delivery_price_temp]`, delivery_price);
+            
+            
+            
+            if($('#bank_type').text() != '은행선택'){
+            	formData.append(`products[${index}][response_account_temp]`, $('#bank_type').text() + " " + $('#account_number').val());
+            }else {
+            	formData.append(`products[${index}][response_account_temp]`, "");
+            }
+            
+            formData.append(`products[${index}][response_memo_temp]`, $('#etc_memo').val());
+            sum_price += product_price;
+        });
         
-        for (const [key, value] of formData.entries()) {
-            console.log(key, value);
+        $('.fold_area .prod_info').each(function (index) {
+            formData.append(`products[${index}][total_price]`, sum_price);
+        });
+
+        console.log(formData)
+        
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
         }
         
-        $('#loadingContainer').show();
-        fetch('/estimate/updateResponse', {
+        $.ajax({
+            url: '/estimatedev/updateResponse',
+            type: 'post',
+			processData	: false,
+			contentType: false,
+            data: formData,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+            },
+            success: function (res) {
+                if (res.success) {
+                    $('#loadingContainer').hide();
+                    alert('견적서 보내기가 완료되었습니다.');
+                    location.reload(); 
+                } else {
+                    $('#loadingContainer').hide();
+                    alert('일시적인 오류로 처리되지 않았습니다.');
+                    return false;
+                }
+            }, error: function (xhr, status, error) {
+                console.error("오류 발생: ", status, error);
+                alert("문제가 발생했습니다. 다시 시도해 주세요.");
+            }
+        });
+        
+        /*$('#loadingContainer').show();
+        fetch('/estimatedev/updateResponse', {
             method  : 'POST',
             headers : {
                 'X-CSRF-TOKEN'  : '{{csrf_token()}}'
@@ -932,16 +678,8 @@
         }).then(response => {
             return response.json();
         }).then(json => {
-            if (json.success) {
-                $('#loadingContainer').hide();
-                alert('견적서 보내기가 완료되었습니다.');
-                location.reload();
-            } else {
-                $('#loadingContainer').hide();
-                alert('일시적인 오류로 처리되지 않았습니다.');
-                return false;
-            }
-        });
+            
+        });*/
     }
 
     document.addEventListener('DOMContentLoaded', function(){
@@ -981,7 +719,7 @@
 
 
     
-    $(document).ready(function(){
+	$(document).ready(function(){
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
 
@@ -1013,146 +751,36 @@
             }
         });
 
-        // 견적 요청서 확인하기
-        $('.request_estimate_detail').click(function(){
+        $('.request_estimate_detail').click(function (){
             estimate_idx = $(this).data('idx');
             estimate_code = $(this).data('code');
+            estimate_group_code = $(this).data('group_code');
             response_company_type = $(this).data('response_company_type');
 
-            fetch('/mypage/requestEstimateDetail', {
-                method  : 'POST',
-                headers : {
-                    'Content-Type'  : 'application/json',
-                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            $.ajax({
+                url: '/mypage/requestEstimateDevDetail',
+                type: 'post',
+                data: {
+                    'group_code'   : estimate_group_code
                 },
-                body    : JSON.stringify({
-                    estimate_idx    : estimate_idx
-                })
-            }).then(response => {
-                return response.json();
-            }).then(json => {
-                if(json.result === 'success') {
-                    console.log(json.data[0]);
-
-                    $('.request_estimate_req_time').text(json.data[0].request_time);
-                    $('.request_estimate_req_code').text(json.data[0].estimate_code);
-                    $('.request_estimate_req_company_name').text(json.data[0].request_company_name);
-                    $('.request_estimate_req_business_license_number').text(json.data[0].request_business_license_number);
-                    $('.request_estimate_req_phone_number').text(json.data[0].request_phone_number);
-                    $('.request_estimate_req_address1').text(json.data[0].request_address1);
-                    $('.request_estimate_req_memo').text(json.data[0].request_memo ? json.data[0].request_memo : '');
-
-                    $('.request_estimate_req_business_license_thumbnail').attr('src', json.data[0].business_license);
-
-                    $('.request_estimate_product_thumbnail').attr('src', json.data[0].product_thumbnail);
-                    $('.request_estimate_product_name').text(json.data[0].product_name);
-                    $('.request_estimate_product_number').text(json.data[0].product_number);
-                    $('.request_estimate_product_count').text(json.data[0].product_count);
-                    if(json.data[0].product_option_json) {
-                        $('.request_estimate_product_option').html('');
-                        $('.request_estimate_product_option').append(`<table class="my_table w-full text-left request_estimate_product_option_table">`);
-
-                        product_option_json = JSON.parse(json.data[0].product_option_json);
-                        console.log(product_option_json)
-                        for(var key in product_option_json) {
-                            $('.request_estimate_product_option_table').append(
-                            `<tr>
-                                <th>` + product_option_json[key]['optionName'] + `</th>
-                                <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
-                            </tr>`);
-                        }
-
-                        $('.request_estimate_product_option').append(`</table>`);
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        $('#request_confirm_write-modal .modal_body').empty().append(res.html);
+                        $('.prodCnt').text( res.data.length );
+                        modalOpen('#request_confirm_write-modal');
+                    } else {
+                        alert(res.message);
                     }
-                    $('.request_estimate_product_each_price').text((parseInt(json.data[0].product_each_price) > 0) ? json.data[0].product_each_price + '원' : json.data[0].product_each_price_text);
-                    $('.request_estimate_product_address').text(json.data[0].product_address);
+                }, error: function (e) {
 
-                    modalOpen('#request_estimate-modal');
-                } else {
-                    alert(json.message);
                 }
             });
-        });
-
-        // 견적서 작성하기
-        $('.response_estimate_detail').click(function(){
-            fetch('/mypage/responseEstimateDetail', {
-                method  : 'POST',
-                headers : {
-                    'Content-Type'  : 'application/json',
-                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
-                },
-                body    : JSON.stringify({
-                    estimate_code           : estimate_code,
-                    response_company_type   : response_company_type
-                })
-            }).then(response => {
-                return response.json();
-            }).then(json => {
-                if(json.result === 'success') {
-                    console.log(json.data);
-                    modalClose('#request_estimate-modal');
-
-                    $('.response_estimate_req_company_name').text((json.data[0].response_req_company_name));
-                    $('.response_estimate_req_business_license_number').text((json.data[0].response_req_business_license_number));
-                    $('.response_estimate_req_phone_number').text((json.data[0].response_req_phone_number));
-                    $('.response_estimate_req_address1').text((json.data[0].response_req_address1));
-
-                    $('.response_estimate_res_time').text(json.data[0].response_res_time ? json.data[0].response_res_time : json.data[0].now1);
-                    $('input[name="response_estimate_res_time"]').val(json.data[0].now2);
-                    $('.response_estimate_res_code').text(json.data[0].estimate_code);
-                    $('.response_estimate_res_company_name').text(json.data[0].response_res_company_name);
-                    $('input[name="response_estimate_res_company_name"]').val(json.data[0].response_res_company_name);
-                    $('input[name="response_estimate_res_business_license_number"]').val(json.data[0].response_res_business_license_number);
-                    $('#response_estimate_res_phone_number').val(json.data[0].response_res_phone_number);
-                    $('#response_estimate_res_address1').val(json.data[0].response_res_address1);
-
-                    $('.response_estimate_product_thumbnail').attr('src', json.data[0].product_thumbnail);
-                    $('.response_estimate_product_name').text(json.data[0].name);
-                    $('.response_estimate_product_number').text(json.data[0].product_number);
-                    $('.response_estimate_product_count').text(json.data[0].product_count + '개');
-
-                    product_option_price = 0;
-                    if(json.data[0].product_option_json) {
-                        $('.response_estimate_product_option').html('');
-                        $('.response_estimate_product_option').append(`<table class="my_table w-full text-left response_estimate_product_option_table">`);
-
-                        product_option_json = JSON.parse(json.data[0].product_option_json);
-                        for(var key in product_option_json) {
-                            $('.response_estimate_product_option_table').append(
-                            `<tr>
-                                <th>` + product_option_json[key]['optionName'] + `</th>
-                                <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
-                            </tr>`);
-
-                            product_option_price += parseInt(Object.values(product_option_json[key]['optionValue'])[0]);
-                        }
-
-                        $('.response_estimate_product_option').append(`</table>`);
-
-                        product_option_price = parseInt(product_option_price) * parseInt(json.data[0].product_count);
-                    }
-
-                    $('#response_estimate_product_each_price').val(json.data[0].product_each_price);
-                    $('.response_estimate_product_total_price').text(json.data[0].product_total_price);
-                    $('#response_estimate_product_total_price').val(json.data[0].product_total_price.replace(/[^0-9]/g, ''));
-                    $('.response_estimate_product_address').text(json.data[0].product_address);
-                    $('.response_estimate_product_delivery_price').text(json.data[0].product_delivery_price ? json.data[0].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0');
-                    $('#response_estimate_product_delivery_price').val(json.data[0].product_delivery_price ? json.data[0].product_delivery_price : '0');
-                    $('#response_estimate_product_memo').val(json.data[0].product_memo);
-
-                    $('.response_estimate_product_option_price').text(product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('#response_estimate_product_option_price').val(product_option_price);
-
-                    $('.response_estimate_estimate_total_price').text(json.data[0].estimate_total_price ? (parseInt(json.data[0].estimate_total_price) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : (parseInt(json.data[0].product_total_price.replace(/[^0-9]/g, '')) + parseInt(product_option_price)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('#response_estimate_estimate_total_price').val(json.data[0].estimate_total_price ? parseInt(json.data[0].estimate_total_price) + parseInt(product_total_price) : parseInt(json.data[0].product_total_price.replace(/[^0-9]/g, '')) + parseInt(product_option_price));
-
-                    modalOpen('#response_estimate-modal');
-                } else {
-                    alert(json.message);
-                }
-            });
-        });
+		});
 
         // 견적서 확인하기
         $('.check_estimate_detail').click(function(){

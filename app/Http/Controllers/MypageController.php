@@ -1283,4 +1283,15 @@ class MypageController extends BaseController
     {
         return response($this->mypageService->saveProductOrder($request->all(), 'normal'), 200);
     }
+
+    // 견적서 관리 (요청한 상세)
+    public function getRequestEstimateDevDetail(Request $request): JsonResponse {
+        $data = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
+    }
 }

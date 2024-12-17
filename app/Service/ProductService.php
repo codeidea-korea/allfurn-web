@@ -1853,5 +1853,81 @@ class ProductService
 
         return array('success' => true);
     }
-    
+
+    public function getProductCount($company_idx)
+    {
+        if( !$company_idx ) return 0;
+
+        $cnt = Product::where('company_idx', $company_idx)->count();
+
+        return $cnt;
+    }
+
+
+
+    //도메업체 상품 상품
+    //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
+    public function getWholesalerProductList($param)
+    {
+        if( empty( $param ) ) return false;
+
+        $offset = ( $param['page'] - 1 ) * $param['limit'];
+
+        $list = Product::select(
+            'AF_product.*'
+            , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
+            , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew'))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_category as ac2', function($query) {
+                $query->on('ac2.idx', '=', 'ac.parent_idx');
+            })
+            ->where('AF_product.company_idx', $param['company_idx'])
+            ->where('AF_product.company_type', 'W')
+            ->WhereNotIn('AF_product.idx', [$param['idx']])
+            ->WhereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
+
+            $list-> orderby('update_time', 'desc')->offset($offset)->limit($param['limit']);
+
+        return $list->get();
+    }
+
+    public function getWholesalerProductListForIdx($param)
+    {
+        if( empty( $param ) ) return false;
+
+        $list = Product::select(
+            'AF_product.*'
+            ,'aw.company_name'
+            ,'aw.business_license_number'
+            ,'aw.business_license_attachment_idx'
+            ,'aw.phone_number'
+            ,'aw.business_address'
+            ,'aw.business_address_detail'
+            , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
+            , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew'))
+            ->leftjoin('AF_attachment as at', function($query) {
+                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_category as ac', function($query) {
+                $query->on('ac.idx', '=', 'AF_product.category_idx');
+            })
+            ->leftjoin('AF_category as ac2', function($query) {
+                $query->on('ac2.idx', '=', 'ac.parent_idx');
+            })
+            ->leftjoin('AF_wholesale as aw', function($query) {
+                $query->on('aw.idx', '=', 'AF_product.company_idx');
+            })
+            ->WhereIn('AF_product.idx', $param['p_idx'])
+            ->WhereIn('AF_product.state', ['S', 'O'])
+            ->whereNull('AF_product.deleted_at');
+
+        $list-> orderby('update_time', 'desc');
+
+        return $list->get();
+    }    
 }

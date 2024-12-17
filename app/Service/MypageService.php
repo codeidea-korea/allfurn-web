@@ -1945,7 +1945,7 @@ class MypageService
         if (isset($params['keywordType']) && isset($params['keyword'])) {
             switch($params['keywordType']) {
                 case 'estimateCode':
-                    $where .= " AND e.estimate_code LIKE '%{$params['keyword']}%' ";
+                    $where .= " AND e.estimate_group_code LIKE '%{$params['keyword']}%' ";
                     break;
                 case 'productName':
                     $where .= " AND p.name LIKE '%{$params['keyword']}%' ";
@@ -1959,7 +1959,7 @@ class MypageService
         } else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
             $orWhere = [];
 
-            $orWhere[] = " e.estimate_code LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " e.estimate_group_code LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " p.name LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " r.company_name LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " w.company_name LIKE '%{$params['keyword']}%' ";
@@ -1992,7 +1992,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
-                (COUNT(e.estimate_code) - 1) AS cnt,
+                (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
                 DATE_FORMAT(e.response_time, '%Y.%m.%d') AS response_time,
@@ -2003,7 +2003,7 @@ class MypageService
             LEFT JOIN AF_retail r ON e.response_company_idx = r.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
             WHERE 1 = 1 {$where}
-            GROUP BY e.estimate_code 
+            GROUP BY e.estimate_group_code 
             ORDER BY e.idx DESC";
         $estimate = DB::select($sql);
 
@@ -2054,7 +2054,8 @@ class MypageService
             LEFT JOIN AF_product p ON e.product_idx = p.idx 
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
             LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
-            WHERE e.idx = ".$params['estimate_idx'];
+            WHERE e.estimate_group_code = '".$params['group_code']."'";
+//            WHERE e.idx = ".$params['estimate_idx'];
         $estimate = DB::select($sql);
 
         return $estimate;
@@ -2069,7 +2070,7 @@ class MypageService
         if (isset($params['keywordType']) && isset($params['keyword'])) {
             switch($params['keywordType']) {
                 case 'estimateCode':
-                    $where .= " AND e.estimate_code LIKE '%{$params['keyword']}%' ";
+                    $where .= " AND e.estimate_group_code LIKE '%{$params['keyword']}%' ";
                     break;
                 case 'productName':
                     $where .= " AND p.name LIKE '%{$params['keyword']}%' ";
@@ -2083,7 +2084,7 @@ class MypageService
         } else if (!isset($params['keywordType']) && isset($params['keyword']) && !empty($params['keyword'])) {
             $orWhere = [];
 
-            $orWhere[] = " e.estimate_code LIKE '%{$params['keyword']}%' ";
+            $orWhere[] = " e.estimate_group_code LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " p.name LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " r.company_name LIKE '%{$params['keyword']}%' ";
             $orWhere[] = " w.company_name LIKE '%{$params['keyword']}%' ";
@@ -2118,7 +2119,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
-                (COUNT(e.estimate_code) - 1) AS cnt,
+                (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
                 DATE_FORMAT(e.response_time, '%Y.%m.%d') AS response_time,
@@ -2131,7 +2132,7 @@ class MypageService
             LEFT JOIN AF_normal n ON e.request_company_idx = n.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
             WHERE 1 = 1 {$where}
-            GROUP BY e.estimate_code
+            GROUP BY e.estimate_group_code
             ORDER BY e.idx DESC";
         $estimate = DB::select($sql);
         Log::info('sql 12345 -> '.$sql);
