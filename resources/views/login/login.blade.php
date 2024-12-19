@@ -35,7 +35,6 @@
                     </ul>
 
 <a href="{{ route('signUp') }}" class="btn w-full mt-2.5 btn-line2" style="    border-color: var(--main_color) !important;    color: var(--main_color) !important; margin-bottom: 0.625rem">올펀 가입하기</a>
-<a href="{{ route('social_naver') }}" class="btn w-full mt-2.5 btn-line2" style="    border-color: var(--main_color) !important;    color: var(--main_color) !important; margin-bottom: 0.625rem"><img height="50" src="http://static.nid.naver.com/oauth/small_g_in.PNG"/></a>
 
                     <button type="submit" id="LGI-01_loginBtn" class="btn w-full btn-primary" disabled>로그인하기</button>
                     </form>
