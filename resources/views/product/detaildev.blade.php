@@ -1562,6 +1562,10 @@
                     data: prodData,
                     success: function (res) {
                         console.log( res );
+                        $('#loadingContainer').hide();
+                        
+                        alert('견적서 요청이 완료되었습니다.');
+                        location.reload();
                     }, error: function (e) {
 
                     }
