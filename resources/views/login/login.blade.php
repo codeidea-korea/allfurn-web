@@ -35,6 +35,7 @@
                     </ul>
 
 <a href="{{ route('signUp') }}" class="btn w-full mt-2.5 btn-line2" style="    border-color: var(--main_color) !important;    color: var(--main_color) !important; margin-bottom: 0.625rem">올펀 가입하기</a>
+
 <!-- 소셜 로그인 작업 : 이경호 -->
 <a href="{{ $naver_apiURL }}" class="btn w-full mt-2.5 btn-line2" style="border-color: var(--main_color) !important; color: var(--main_color) !important; margin-bottom: 0.625rem">네이버 로그인</a>
 <a href="{{ $google_apiURL }}" class="btn w-full mt-2.5 btn-line2" style="border-color: var(--main_color) !important; color: var(--main_color) !important; margin-bottom: 0.625rem">구글 로그인</a>

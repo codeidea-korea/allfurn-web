@@ -93,11 +93,11 @@
                     <td>{{ $list -> estimate_code }}</td>
                     <td>{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</td>
                     <td>{{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}</td>
-                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt > 1 ? ' 외 '.$list -> cnt.'개' : ''}}</td>
+                    <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt >= 1 ? ' 외 '.$list -> cnt.'개' : ''}}</td>
                     <td>{{ $list -> company_type == 'W' ? $list -> response_w_company_name : $list -> response_r_company_name }}</td>
                     <td>
                         @if ($list -> estimate_state == 'N')
-                        <button class="btn outline_primary request_estimate_detail" data-idx="{{ $list -> estimate_idx }}">견적 요청서 확인</button>
+                        <button class="btn outline_primary request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}">견적 요청서 확인</button>
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
                         <button class="btn outline_primary response_estimate_detail" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
@@ -1007,7 +1007,7 @@
 
         // 견적 요청서 확인하기
         $('.request_estimate_detail').click(function(e){
-            estimate_idx = $(this).data('idx');
+            group_code = $(this).data('group_code');
 
             fetch('/mypage/requestEstimateDetail', {
                 method  : 'POST',
@@ -1016,7 +1016,7 @@
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
                 },
                 body    : JSON.stringify({
-                    estimate_idx    : estimate_idx
+                    group_code    : group_code
                 })
             }).then(response => {
                 return response.json();
@@ -1056,6 +1056,85 @@
                     }
                     $('.request_estimate_product_each_price').text((Number(json.data[0].product_each_price.replace(/[^0-9]/g, '')) > 0) ? json.data[0].product_each_price + '원' : json.data[0].product_each_price_text);
                     $('.request_estimate_product_address').text(json.data[0].product_address);
+
+
+                    $('.order_prod_list').html('');
+                    for(var i = 0; i < json.data.length; i++) {
+                        var product_option_html = '없음';
+                        if(json.data[i].product_option_json) {
+                            product_option_html = 
+                                '<table class="my_table w-full text-left response_estimate_product_option_table">';
+
+                                product_option_json = JSON.parse(json.data[i].product_option_json);
+                                for(var key in product_option_json) {
+                                    product_option_html +=
+                                    `<tr>
+                                        <th>` + product_option_json[key]['optionName'] + `</th>
+                                        <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
+                                    </tr>`;
+                                }
+
+                            product_option_html += 
+                                `</table>`;
+                        }
+
+                        let product_memo = json.data[i].product_memo ? json.data[i].product_memo : ''
+
+                        $('.order_prod_list').append(
+                            `<li>
+                                <div class="img_box">
+                                    <img src="` + json.data[i].product_thumbnail + `" alt="" />
+                                </div>
+                                <div class="right_box">
+                                    <h6>` + json.data[i].product_name + `</h6>
+                                    <table class="table_layout">
+                                        <colgroup>
+                                            <col width="160px">
+                                            <col width="*">
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <th>상품번호</th>
+                                            <td class="txt-gray">` + json.data[i].product_number + `</td>
+                                        </tr>
+                                        <tr>
+                                            <th>상품수량</th>
+                                            <td class="txt-primary">` + json.data[i].product_count + `개</td>
+                                        </tr>
+                                        <tr>
+                                            <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
+                                            <td>` + product_option_html + `</td>
+                                        </tr>
+                                        <tr>
+                                            <th>견적단가</th>
+                                            <td>` + json.data[i].product_each_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
+                                        </tr>
+                                        <tr>
+                                            <th>견적금액</th>
+                                            <td><b>` + json.data[i].product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</b></td>
+                                        </tr>
+                                        <tr>
+                                            <th>배송지역</th>
+                                            <td>` + json.data[i].address1 + `</td>
+                                        </tr>
+                                        <tr>
+                                            <th>배송방법</th>
+                                            <td>` + json.data[i].product_delivery_info + `</td>
+                                        </tr>
+                                        <tr>
+                                            <th>배송비</th>
+                                            <td class="txt-primary">` + json.data[i].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
+                                        </tr>
+                                        <tr>
+                                            <th>비고</th>
+                                            <td>` + product_memo + `</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>`
+                        );
+                    }
 
                     modalOpen('#request_estimate-modal');
                 } else {

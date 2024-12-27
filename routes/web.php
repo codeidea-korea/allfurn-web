@@ -212,6 +212,8 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
 
     Route::post('/products-orders/represents', 'MypageController@saveProductOrderRepresents');
     Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
+    
+    Route::post('/requestEstimateDevDetail', 'MypageController@getRequestEstimateDevDetail');
 });
 
 
@@ -294,6 +296,8 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
     Route::get('/wholesalerAddProduct', 'WholesalerController@wholesalerAddProduct');
     Route::get('/wholesalerAddProduct2', 'WholesalerController@wholesalerAddProduct2');
+    Route::get('/wholesalerProduct', 'WholesalerController@wholesalerProduct');
+    Route::post('/wholesalerProduct2', 'WholesalerController@wholesalerProduct2');
 });
 
 Route::prefix('download')->name('download')->group(function() {
@@ -329,3 +333,14 @@ Route::prefix('help')->name('help')
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
+
+// 임시로 작성
+Route::prefix('productdev')->name('productdev')->group(function() {
+    Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
+});
+
+// 임시로 작성
+Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
+    Route::post('/insertRequest', 'EstimateDevController@insertRequest');
+    Route::post('/updateResponse', 'EstimateDevController@updateResponse');
+});
