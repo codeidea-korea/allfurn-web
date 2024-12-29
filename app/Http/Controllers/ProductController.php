@@ -386,6 +386,8 @@ class ProductController extends BaseController
         $categoryList = $this->productService->getCategoryList();
         $todayCount = $this->productService->getTodayCount();
 
+        $data['prdCount'] = $this->productService->getProductCount( $data['detail']['company_idx']);
+
         // 견적서 > 업체 유형 / 이름 등의 정보를 얻기 위함
         $data['user'] = Auth::user();
         $data['company'] = $this->mypageService->getCompanyAccount();

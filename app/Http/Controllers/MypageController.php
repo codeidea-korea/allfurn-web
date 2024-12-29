@@ -919,7 +919,7 @@ class MypageController extends BaseController
         if (Auth::user()['type'] === 'W') { // 도매
             $user = User::where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_wholesale','AF_user.company_idx', 'AF_wholesale.idx')
-                ->select('AF_user.*', 'AF_wholesale.company_name', 'AF_wholesale.inquiry_count', 'AF_wholesale.access_count'
+                ->select('AF_user.*', 'AF_wholesale.company_name', 'AF_wholesale.business_license_number', 'AF_wholesale.inquiry_count', 'AF_wholesale.access_count'
                     , DB::raw("(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
                            WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
                            WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
@@ -931,12 +931,12 @@ class MypageController extends BaseController
         } else if (Auth::user()['type'] === 'R') { // 소매
             $user = User::where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_retail', 'AF_user.company_idx', 'AF_retail.idx')
-                ->select('AF_user.*', 'AF_retail.company_name')
+                ->select('AF_user.*', 'AF_retail.company_name', 'AF_retail.business_license_number')
                 ->first();
         } else { // 일반
             $user = User::where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_normal', 'AF_user.company_idx', 'AF_normal.idx')
-                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx')
+                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', DB::raw("'' as company_name"), DB::raw("'' as business_license_number"))
                 ->first();
         }
         return $user;
@@ -1286,12 +1286,14 @@ class MypageController extends BaseController
 
     // 견적서 관리 (요청한 상세)
     public function getRequestEstimateDevDetail(Request $request): JsonResponse {
-        $data = $this -> mypageService -> getRequestEstimateDetail($request -> all());
-
+        $data = [];
+        $data['lists'] = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+        
         return
             response() -> json([
                 'result'    => 'success',
-                'data'      => $data
+                'data'      => $data,
+                'html'      => view('mypage.inc-estimate-response', $data )->render()
             ]);
     }
 }

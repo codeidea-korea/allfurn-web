@@ -41,40 +41,78 @@ class EstimateController extends BaseController {
 
     // 견적서 요청 보냄 (단일)
     public function insertRequest(Request $request) {
-        $data = $request -> all();
+        $list = [];
+        $data_req = $request->all();
+        $data_prd = $this->productService->getWholesalerProductListForIdx($request);
 
-        if (isset($data['files'])) {
-            $attachmentIdx = '';
-            foreach ($data['files'] as $file) {
-                if(is_file($file)) {
-                    $attachmentIdx .= $this -> estimateService -> insertRequestAttachment($file).',';
+        $company = $this->makeEstimateCode();
+
+        $company_ori = $company->original['company'];
+
+        $tmp = 1;
+        $total_price = 0;
+        foreach( $data_prd AS $key => $row ) {
+            $list['prod'][$key]['group_code']   = $company->original['group_code'];
+            $list['prod'][$key]['estimate_code']   = $company->original['group_code'].'-'.sprintf('%04d', $tmp);
+            $list['prod'][$key]['estimate_state']   = 'R';
+
+            $list['prod'][$key]['company_idx']  = $request['company_idx'];
+            $list['prod'][$key]['company_type']  = $request['company_type'];
+            $list['prod'][$key]['company_name']  = $company_ori['company_name'];
+            $list['prod'][$key]['license_number']  = $company_ori['business_license_number'];
+            $list['prod'][$key]['license_attachment']  = $company_ori['business_license_attachment_idx'];
+            $list['prod'][$key]['phone_number']  = $company_ori['phone_number'];
+            $list['prod'][$key]['address1']  = $company_ori['business_address'];
+            $list['prod'][$key]['address2']  = $company_ori['business_address_detail'];
+            $list['prod'][$key]['memo']  = $request['p_memo'];
+            $list['prod'][$key]['reg_date'] = date('Y-m-d H:i:s');
+
+            $list['prod'][$key]['res_company_idx'] = $row['company_idx'];
+            $list['prod'][$key]['res_company_type'] = $row['company_type'];
+            $list['prod'][$key]['res_company_name'] = $row['company_name'];
+            $list['prod'][$key]['res_license_number'] = $row['business_license_number'];
+            $list['prod'][$key]['res_license_attachment'] = $row['business_license_attachment_idx'];
+            $list['prod'][$key]['res_phone_number'] = $row['phone_number'];
+            $list['prod'][$key]['res_address1'] = $row['business_address'];
+            $list['prod'][$key]['res_address2'] = $row['business_address_detail'];
+            $list['prod'][$key]['res_reg_date'] = date('Y-m-d H:i:s');
+
+            $list['prod'][$key]['prd_idx'] = $row['idx'];
+
+            $list['prod'][$key]['prd_count'] = 1;
+            for( $i = 0; $i < count( $data_req['p_idx'] ); $i++ ) {
+                if( $row['idx'] == $data_req['p_idx'][$i] ) {
+                    $list['prod'][$key]['prd_count'] = $data_req['p_cnt'][$i];
                 }
             }
+            $list['prod'][$key]['prd_price'] = $row['price'];
 
-            if (isset($data['attachmentIdx'])) {
-                $data['attachmentIdx'] .= ','.substr($attachmentIdx, 0, -1);
-            } else {
-                $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
-            }
-        }else{
-            if ($request->request_business_license_fidx != ""){
-                $data['attachmentIdx'] = $request->request_business_license_fidx;
-            }
+            $list['prod'][$key]['prod_each_price'] = $list['prod'][$key]['prd_count'] * $row['price'];
+            $list['prod'][$key]['prod_delivery_info'] = $row['delivery_info'];
+
+            $total_price += $list['prod'][$key]['prd_count'] * $row['price'];
+            $tmp++;
         }
 
-        $this -> estimateService -> insertRequests($data);
+        $list['total'] = $total_price;
 
-        return 
-            response() -> json([
-                'success'   => true,
-            ]);
+        $this->estimateService->insertRequestProduct( $list );
+
+        return response()->json($list);
     }
 
     // 견적서 보냄 (단일 → 1개)
     public function updateResponse(Request $request) {
         $data = $request -> all();
+        $estimateIdx = "";
 
-        $estimateIdx = $this -> estimateService -> updateResponse($data);
+        if(is_array($data)) {
+            for($i = 0; $i < count($data); $i++) {
+                $estimateIdx = $this -> estimateService -> updateResponse($data[$i]);
+            }
+        } else {
+            $estimateIdx = $this -> estimateService -> updateResponse($data);
+        }
 
         return 
             response() -> json([

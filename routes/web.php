@@ -333,14 +333,3 @@ Route::prefix('help')->name('help')
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
-
-// 임시로 작성
-Route::prefix('productdev')->name('productdev')->group(function() {
-    Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
-});
-
-// 임시로 작성
-Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
-    Route::post('/insertRequest', 'EstimateDevController@insertRequest');
-    Route::post('/updateResponse', 'EstimateDevController@updateResponse');
-});
