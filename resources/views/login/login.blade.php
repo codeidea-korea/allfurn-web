@@ -261,10 +261,6 @@ function confirmAuthCode() {
                     if (result.success) {
                     
                         if(result.users.length > 0) {
-                            $('.joined_id').html(tmpHtml); 
-                            $('#btn_smscode_confirm').hide(); 
-                            $('._step2').show();
-                            $('#btn_selected_id_login').show();
                             location.replace('/signin/choose-ids?cellphone='+data.target);
                         } else {
                             alert('먼저 가입하여 주세요.');
