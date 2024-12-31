@@ -893,3 +893,10 @@ section.sub_section_bot {padding:30px 0 70px; }
 /* 상품등록 > 상세내용 */
 .prod_detail_write .fr-box {margin:10px; }
 .prod_detail_write .fr-box.fr-basic .fr-element {padding:10px !important; }
+/* 로그인 아이디 선택 */
+.joined_id_box {margin: 20px 0;}
+.joined_id_box .joined_id_item {margin-bottom: 10px;}
+.joined_id_box .joined_id_item input[type="radio"] {display: none;}
+.joined_id_box .joined_id_item label {display: block;padding: 15px 20px;background: #fff;border: 1px solid #ddd;border-radius: 5px;cursor: pointer;transition: all 0.1s ease;}
+.joined_id_box .joined_id_item input[type="radio"]:checked + label {background: #fff;border-color: #FB4760;color: #FB4760;}
+.joined_id_box .joined_id_item label:hover {border-color: #FB4760;}

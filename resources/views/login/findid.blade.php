@@ -195,9 +195,6 @@ function confirmAuthCode() {
                     let tmpHtml = '';
 
                     for(var idx=0; idx<result.users.length; idx++) {
-                        
-                        
-                        
                         tmpHtml += '<li>'
                                 +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'" value="'+result.users[idx].account+'" class="radio-form" style="display:none;" '+(idx == 0 ? 'checked' : '')+'>'
                                 +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'

@@ -322,17 +322,11 @@ function confirmAuthCode() {
                 success : function(result) {
                     if (result.success) {
                     
-                        let tmpHtml = '';
-
-                        for(var idx=0; idx<result.users.length; idx++) {
-                            
-                            tmpHtml += '<li>'
-                                    +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'"  value="'+result.users[idx].account+'" class="radio-form">'
-                                    +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
-                                    +'</li>';
+                        if(result.users.length > 0) {
+                            location.replace('/signin/choose-ids?cellphone='+data.target);
+                        } else {
+                            alert('먼저 가입하여 주세요.');
                         }
-                        $('.joined_id').html(tmpHtml); $('#btn_smscode_confirm').hide(); $('._step2').show();
-                        $('#btn_selected_id_login').show();
                     } else {
                         time = 1;
                         alert(result.message);
