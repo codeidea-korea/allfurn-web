@@ -351,5 +351,27 @@ class LoginController extends BaseController
 
         return response()->json(['success' => true]);
     }
+
+    // 전화번호로 로그인 시 아이디 목록 조회
+    public function chooseLoginIds(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect('/');
+        }
+        $cellphone = $request->input('cellphone');
+        if(empty($cellphone)) {
+            return redirect('/login');
+        }
+        $users = $this->loginService->getUsersByPhoneNumber($cellphone);
+        if(count($users) == 1) {
+            $this->loginService->getAuthToken($users[0]->idx);
+            return redirect('/');
+        }
+
+        return view(getDeviceType() . 'login.choose_login_ids', [
+            'users' => $users,
+            'cellphone'  => $cellphone
+        ]);
+    }
 }
 

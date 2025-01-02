@@ -150,10 +150,9 @@ if('{{ $replaceUrl ?? "" }}' != '') {
                         <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
                     </ul>
 
-
+                    <button id="btn_smscode_confirm" class="btn w-full btn-primary" onclick="confirmAuthCode()" disabled type="button">인증완료</button>
                     <a href="{{ route('signUp') }}" class="btn w-full mt-2.5 btn-line2" style="    border-color: var(--main_color) !important;    color: var(--main_color) !important; margin-bottom: 0.625rem">올펀 가입하기</a>
 
-                    <button id="btn_smscode_confirm" class="btn w-full btn-primary" onclick="confirmAuthCode()" disabled type="button">인증완료</button>
                     <button id="btn_selected_id_login" class="btn w-full btn-primary mt-2.5" style="display:none;" type="button" onclick="signin()">선택한 아이디로 로그인</button>
                 </div>
             </div>
@@ -322,17 +321,11 @@ function confirmAuthCode() {
                 success : function(result) {
                     if (result.success) {
                     
-                        let tmpHtml = '';
-
-                        for(var idx=0; idx<result.users.length; idx++) {
-                            
-                            tmpHtml += '<li>'
-                                    +'    <input type="radio" name="joined_id" id="joined_id_'+idx+'"  value="'+result.users[idx].account+'" class="radio-form">'
-                                    +'    <label for="joined_id_'+idx+'">'+result.users[idx].account+'</label>'
-                                    +'</li>';
+                        if(result.users.length > 0) {
+                            location.replace('/signin/choose-ids?cellphone='+data.target);
+                        } else {
+                            alert('먼저 가입하여 주세요.');
                         }
-                        $('.joined_id').html(tmpHtml); $('#btn_smscode_confirm').hide(); $('._step2').show();
-                        $('#btn_selected_id_login').show();
                     } else {
                         time = 1;
                         alert(result.message);

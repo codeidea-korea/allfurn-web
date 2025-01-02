@@ -30,6 +30,8 @@ Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
+Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
+
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 
 Route::prefix('signup')->group(function() {
@@ -333,14 +335,3 @@ Route::prefix('help')->name('help')
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
-
-// 임시로 작성
-Route::prefix('productdev')->name('productdev')->group(function() {
-    Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
-});
-
-// 임시로 작성
-Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
-    Route::post('/insertRequest', 'EstimateDevController@insertRequest');
-    Route::post('/updateResponse', 'EstimateDevController@updateResponse');
-});

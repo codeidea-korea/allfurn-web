@@ -208,10 +208,10 @@ section.sub_section_bot {padding:70px 0 140px; }
 .main_mid_banner .slide_box li.coop {display:flex; align-items:center; justify-content:center; height:112px; background-color:#FB4760; }
 .main_mid_banner .slide_box li.coop a {color:#fff; }
 .main_mid_banner .slide_box li.coop span {font-size:20px; }
-.main_mid_banner .slide_arrow {z-index:10; position:absolute; top:calc(50% - 20px); width:40px; height:40px; }
-.main_mid_banner .slide_arrow svg {width:40px; height:40px; }
-.main_mid_banner .slide_arrow.prev {left:-40px; transform:rotate(180deg); }
-.main_mid_banner .slide_arrow.next {right:-40px; transform:rotate(180deg); }
+.main_mid_banner .slide_box .slide_arrow {z-index:10; position:absolute; top:calc(50% - 20px); width:40px; height:40px; }
+.main_mid_banner .slide_box .slide_arrow svg {width:40px; height:40px; }
+.main_mid_banner .slide_box .slide_arrow.prev {left:-40px; transform:rotate(180deg); }
+.main_mid_banner .slide_box .slide_arrow.next {right:-40px; transform:rotate(180deg); }
 
 /* category_banner */
 .category_banner .inner {padding:30px 0; border-bottom: 1px solid rgba(218, 221, 224, 0.60); }
@@ -726,3 +726,10 @@ section.sub_section_bot {padding:70px 0 140px; }
 .coop_list ul li i img {width:131px; height:100%; margin:0 auto; object-fit:contain; }
 .coop_list ul li span {display:block; margin-top:10px; text-align:center; }
 
+/* 로그인 아이디 선택 */
+.joined_id_box {margin: 20px 0;}
+.joined_id_box .joined_id_item {margin-bottom: 10px;}
+.joined_id_box .joined_id_item input[type="radio"] {display: none;}
+.joined_id_box .joined_id_item label {display: block;padding: 15px 20px;background: #fff;border: 1px solid #ddd;border-radius: 5px;cursor: pointer;transition: all 0.1s ease;}
+.joined_id_box .joined_id_item input[type="radio"]:checked + label {background: #fff;border-color: #FB4760;color: #FB4760;}
+.joined_id_box .joined_id_item label:hover {border-color: #FB4760;}

@@ -530,6 +530,7 @@
     var product_option_json = {};
 
     var product_option_price = 0;
+    var estimate_data = [];
 
     const selectedKeywordType = type => {
         document.getElementById('selectedKeywordType').dataset.keywordType = type;
@@ -583,13 +584,58 @@
 
         location.replace('/mypage/responseEstimate?' + new URLSearchParams(bodies));
     }
+    function getToday(afterDay){
+        var date = new Date();
+        date.setTime(new Date().getTime() + 1000*60*60*24* afterDay);
+        var year = date.getFullYear();
+        var month = ("0" + (1 + date.getMonth())).slice(-2);
+        var day = ("0" + date.getDate() + afterDay).slice(-2);
 
+        return year + "-" + month + "-" + day;
+    }
     const updateResponse = () => {
 
-        let formData = new FormData();
+        let products = [];
+
         sum_price = 0;
         $('.fold_area .prod_info').each(function (index) {
         	product_price = 0;
+            products.push({
+                estimate_idx: estimate_idx,
+                estimate_code: estimate_code,
+                estimate_group_code: estimate_group_code,
+                response_company_type: response_company_type,
+                //
+                product_idx: estimate_data.product_idx,
+                product_count: estimate_data.product_count,
+                name: estimate_data.name,
+                product_total_price: estimate_data.price,
+                response_estimate_estimate_total_price: 0,
+                memo: estimate_data.request_memo,
+
+                address1: estimate_data.request_address1,
+                phone_number: estimate_data.request_phone_number,
+                register_time: estimate_data.request_time,
+                response_estimate_req_user_idx: estimate_data.request_company_idx,
+ 
+                response_estimate_res_company_name: '{{ $user -> company_name }}',
+                response_estimate_res_business_license_number: '{{ $user -> business_license_number }}',
+                response_estimate_res_phone_number: '{{ $user -> phone_number }}',
+                response_estimate_res_address1: estimate_data.product_address || '',
+                response_estimate_account1: "",
+                response_estimate_response_account2: "",
+                response_estimate_res_memo: "", 
+                response_estimate_res_time: getToday(0),
+                expiration_date: getToday(15),
+                response_estimate_product_each_price: estimate_data.product_each_price || 0,
+                response_estimate_product_delivery_info: estimate_data.product_delivery_info || '',
+                response_estimate_product_option_price: estimate_data.product_option_price || 0,
+                response_estimate_product_delivery_price: estimate_data.product_delivery_price || 0,
+                response_estimate_product_total_price: 0,
+                response_estimate_product_memo: estimate_data.product_memo || '',
+            });
+
+
             $(this).find('input').each(function (idx, item) {
                 let i_name = $(item).attr('name'); // name 속성 가져오기
                 let i_val = '';
@@ -601,14 +647,14 @@
 					}else{
 						product_price = i_val;
 					}
-					formData.append(`products[${index}][${i_name}]`, i_val);  
+                    products[index][i_name] = i_val;
                 }else{
                 	i_val = $(item).val(); // 값 가져오기	
-                	formData.append(`products[${index}][${i_name}]`, i_val);  
+                    products[index][i_name] = i_val;
                 }
             });
             
-            formData.append(`products[${index}][product_delivery_info_temp]`, $('#delivery_type').text());
+            products[index]['product_delivery_info_temp'] = $('#delivery_type').text();
             
             var delivery_price = 0;
             if($('#delivery_type').text() == '착불'){
@@ -619,36 +665,30 @@
             }else{
             	delivery_price = 0
             }
-            formData.append(`products[${index}][product_delivery_price_temp]`, delivery_price);
-            
-            
+            products[index]['product_delivery_price_temp'] = delivery_price;
             
             if($('#bank_type').text() != '은행선택'){
-            	formData.append(`products[${index}][response_account_temp]`, $('#bank_type').text() + " " + $('#account_number').val());
+                products[index]['response_estimate_account1'] = $('#bank_type').text();
+                products[index]['response_estimate_response_account2'] = $('#account_number').val();
             }else {
-            	formData.append(`products[${index}][response_account_temp]`, "");
+                products[index]['response_estimate_account1'] = "";
+                products[index]['response_estimate_response_account2'] = "";
             }
-            
-            formData.append(`products[${index}][response_memo_temp]`, $('#etc_memo').val());
+            products[index]['request_memo'] = $('#etc_memo').val();
             sum_price += product_price;
         });
         
         $('.fold_area .prod_info').each(function (index) {
-            formData.append(`products[${index}][total_price]`, sum_price);
+            products[index]['response_estimate_estimate_total_price'] = sum_price;
+            products[index]['response_estimate_product_total_price'] = sum_price;
         });
-
-        console.log(formData)
-        
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
         
         $.ajax({
-            url: '/estimatedev/updateResponse',
+            url: '/estimate/updateResponse',
             type: 'post',
 			processData	: false,
-			contentType: false,
-            data: formData,
+			contentType: 'application/json',
+            data: JSON.stringify(products),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
             },
@@ -770,6 +810,7 @@
                 success: function (res) {
                     if( res.result === 'success' ) {
                         console.log( res );
+                        estimate_data = res.data;
                         $('#request_confirm_write-modal .modal_body').empty().append(res.html);
                         $('.prodCnt').text( res.data.length );
                         modalOpen('#request_confirm_write-modal');
@@ -886,7 +927,7 @@
                                         </tr>
                                         <tr>
                                             <th>배송방법</th>
-                                            <td>` + json.data[i].product_delivery_info.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `</td>
+                                            <td>` + (json.data[i].product_delivery_info || '').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `</td>
                                         </tr>
                                         <tr>
                                             <th>배송비</th>
