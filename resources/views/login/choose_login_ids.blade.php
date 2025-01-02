@@ -22,7 +22,7 @@
             <ul class="info_box">
                 <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
             </ul>
-            <button class="btn w-full btn-primary mt-2.5" onclick="signin()">선택한 아이디로 로그인</button>
+            <button type="button" class="btn w-full btn-primary mt-2.5" onclick="signin()">선택한 아이디로 로그인</button>
             <div class="link_box flex items-center justify-center">
                 <a href="/findid">아이디 찾기</a>
                 <a href="/findpw">비밀번호 재설정</a>
