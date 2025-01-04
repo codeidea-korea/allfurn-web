@@ -213,7 +213,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
 
     Route::post('/products-orders/represents', 'MypageController@saveProductOrderRepresents');
     Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
-
+    
     Route::post('/requestEstimateDevDetail', 'MypageController@getRequestEstimateDevDetail');
 });
 
@@ -335,30 +335,13 @@ Route::prefix('help')->name('help')
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
 
+// 임시로 작성
+Route::prefix('productdev')->name('productdev')->group(function() {
+    Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
+});
 
-// Route::prefix('social')->name('social')->group(function() {
-//     Route::get('/naver', 'SocialController@naverCallback')->name('naver');
-// });
-
-
-/**            
- * 네이버 로그인   
- */
-Route::get('/naver/login','SocialController@redirect')->name('naver.login');
-Route::get('/social/naver','SocialController@callback')->name('social.naver');
-Route::post('/social/naver', 'LoginController@socialCheckUser')->name('socialCheckUser');
-// Route::post('/social/naver', 'SocialController@naverUnlink')->name('naverUnlink');
-
-/**
- * 구글 로그인
- */
-Route::get('/google/login','SocialController@googleRedirect')->name('google.login');
-Route::get('/social/google','SocialController@googleCallback')->name('social.google');
-Route::post('/social/google', 'LoginController@socialCheckUser')->name('socialCheckUser');
-
-
-/**
- * 카카오 로그인
- */
-Route::get('/kakao/login','SocialController@kakaoRedirect')->name('kakao.login');
-Route::get('/social/kakao','SocialController@kakaoCallback')->name('social.kakao');
+// 임시로 작성
+Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
+    Route::post('/insertRequest', 'EstimateDevController@insertRequest');
+    Route::post('/updateResponse', 'EstimateDevController@updateResponse');
+});

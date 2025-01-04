@@ -21,7 +21,7 @@
     <div class="prod_box">
         @foreach ($wholesaler->productList as $product)
             <div class="img_box">
-                <a href="javascript:saveDetail({{ $wholesaler->company_idx }}, '/product/detail/{{ $product->productIdx }}')"><img src="{{ $product->imgUrl }}" alt=""></a>
+                <a href="javascript:saveDetail({{ $wholesaler->company_idx }}, '/product/detail/{{ $product->productIdx }}')"><img src="{{ $product->imgUrl }}" alt="" width="180" height="180" loading="lazy"></a>
                 <button class="zzim_btn prd_{{ $product->productIdx }} {{ $product->isInterest == 1 ? 'active' : '' }}" pidx="{{ $product->productIdx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
             </div>
         @endforeach

@@ -614,4 +614,76 @@ class EstimateService {
             }
         }
     }
+
+    public function insertRequestProduct(array $param)
+    {
+        if( empty( $param ) ) return false;
+
+        foreach( $param['prod'] AS $rows ) {
+            $estimate = new Estimate;
+
+            $estimate->estimate_group_code = $rows['group_code'];
+            $estimate->estimate_code = $rows['estimate_code'];
+            $estimate->estimate_state = 'N';
+            $estimate->estimate_total_price = $param['total'];
+            $estimate->request_company_idx = $rows['company_idx'];
+            $estimate->request_company_type = $rows['company_type'];
+            $estimate->request_company_name = $request_company_name = $rows['company_name'];
+            $estimate->request_business_license_number = $rows['license_number'];
+            $estimate->request_business_license_attachment_idx = $rows['license_attachment'];
+            $estimate->request_phone_number = $rows['phone_number'];
+            $estimate->request_address1 = $rows['address1'];
+            $estimate->request_address2 = $rows['address2'];
+            $estimate->request_memo = $rows['memo'];
+            $estimate->request_time = date('Y-m-d H:i:s');
+            $estimate->response_company_idx = $response_company_idx = $rows['res_company_idx'];
+            $estimate->response_company_type =$response_company_type = $rows['res_company_type'];
+            $estimate->response_company_name = $rows['res_company_name'];
+            $estimate->response_business_license_number = $rows['res_license_number'];
+            $estimate->response_business_license_attachment_idx = $rows['res_license_attachment'];
+            $estimate->response_phone_number = $rows['res_phone_number'];
+            $estimate->response_address1 = $rows['res_address1'];
+            $estimate->response_address2 = $rows['res_address2'];
+            $estimate->product_idx = $product_idx = $rows['prd_idx'];
+            $estimate->product_count = $rows['prd_count'];
+            $estimate->product_each_price = $rows['prd_price'];
+            $estimate->product_total_price = $rows['prod_each_price'];
+            $estimate->product_delivery_price = 0;
+            $estimate->product_delivery_info = $rows['prod_delivery_info'];
+
+            $estimate -> save();
+        }
+
+        $userAction = new UserRequireAction;
+        $userAction->request_user_id = Auth::user()['idx'];
+        $userAction->request_user_type = Auth::user()['type'];
+        $userAction->response_user_id = $response_company_idx;
+        $userAction->response_user_type = $response_company_type;
+        $userAction->request_type = 3;
+        if(!empty($params['product_idx'])) {
+            $userAction->product_id = $product_idx;
+        }
+        $userAction -> save();
+
+        $sql =
+            "SELECT * FROM AF_user
+            WHERE type = '".$response_company_type."' AND company_idx = ".$response_company_idx." AND parent_idx = 0";
+        $user = DB::select($sql);
+
+        if(count($user) > 0) {
+            $this -> pushService -> sendPush(
+                '견적서 요청 알림', '('.$request_company_name.')에게 견적서를 요청 받았습니다.',
+                $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/responseEstimate'
+            );
+
+            $this -> pushService -> sendKakaoAlimtalk(
+                'TS_5420', '[견적서 요청 알림]',
+                [ 
+                    '회사명' => $request_company_name,
+                    '견적서작성링크' => env('APP_URL2').'/mypage/responseEstimate'
+                ], 
+                $user[0] -> phone_number, null
+            );
+        }
+    }
 }
