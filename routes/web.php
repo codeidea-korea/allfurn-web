@@ -31,6 +31,7 @@ Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
+Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -212,6 +213,8 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
 
     Route::post('/products-orders/represents', 'MypageController@saveProductOrderRepresents');
     Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
+
+    Route::post('/requestEstimateDevDetail', 'MypageController@getRequestEstimateDevDetail');
 });
 
 
@@ -294,6 +297,8 @@ Route::prefix('wholesaler')->name('wholesaler')->group(function() {
     Route::get('/thismonth', 'WholesalerController@getThisMonthWholesaler');
     Route::get('/wholesalerAddProduct', 'WholesalerController@wholesalerAddProduct');
     Route::get('/wholesalerAddProduct2', 'WholesalerController@wholesalerAddProduct2');
+    Route::get('/wholesalerProduct', 'WholesalerController@wholesalerProduct');
+    Route::post('/wholesalerProduct2', 'WholesalerController@wholesalerProduct2');
 });
 
 Route::prefix('download')->name('download')->group(function() {
@@ -329,3 +334,31 @@ Route::prefix('help')->name('help')
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
+
+
+// Route::prefix('social')->name('social')->group(function() {
+//     Route::get('/naver', 'SocialController@naverCallback')->name('naver');
+// });
+
+
+/**            
+ * 네이버 로그인   
+ */
+Route::get('/naver/login','SocialController@redirect')->name('naver.login');
+Route::get('/social/naver','SocialController@callback')->name('social.naver');
+Route::post('/social/naver', 'LoginController@socialCheckUser')->name('socialCheckUser');
+// Route::post('/social/naver', 'SocialController@naverUnlink')->name('naverUnlink');
+
+/**
+ * 구글 로그인
+ */
+Route::get('/google/login','SocialController@googleRedirect')->name('google.login');
+Route::get('/social/google','SocialController@googleCallback')->name('social.google');
+Route::post('/social/google', 'LoginController@socialCheckUser')->name('socialCheckUser');
+
+
+/**
+ * 카카오 로그인
+ */
+Route::get('/kakao/login','SocialController@kakaoRedirect')->name('kakao.login');
+Route::get('/social/kakao','SocialController@kakaoCallback')->name('social.kakao');
