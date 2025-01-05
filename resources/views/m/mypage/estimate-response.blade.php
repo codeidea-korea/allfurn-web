@@ -88,9 +88,9 @@
                         </div>
                         <div class="px-4 pb-4 rounded-b-sm flex justify-between gap-2">
                             @if ($list -> estimate_state == 'N')
-                            <a href="/mypage/sendResponseEstimate/{{ $list -> estimate_idx }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm request_estimate_detail">견적 요청서 확인</a>
+                            <a href="/mypage/sendResponseEstimate/{{ $list -> estimate_group_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm request_estimate_detail">견적 요청서 확인</a>
                             @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
-                            <a href="/mypage/checkResponseEstimate/{{ $list -> estimate_idx }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_estimate_detail">견적서 확인</a>
+                            <a href="/mypage/checkResponseEstimate/{{ $list -> estimate_group_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_estimate_detail">견적서 확인</a>
                             @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
                             <a href="/mypage/checkOrder/{{ $list -> estimate_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_order_detail">주문서 확인</a>
                             @endif

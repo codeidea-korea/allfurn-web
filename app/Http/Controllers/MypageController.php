@@ -1153,7 +1153,7 @@ class MypageController extends BaseController
 
     // 모바일 > 받은 '견적 요청서 확인' 생성 (견적서 보내는 쪽)
     public function getSendResponseEstimate($idx): Response {
-        $params['estimate_idx'] = $idx;
+        $params['group_code'] = $idx;
 
         $data['user'] = $this -> getLoginUser();
         $data['request'] = $this -> mypageService -> getRequestEstimateDetail($params);

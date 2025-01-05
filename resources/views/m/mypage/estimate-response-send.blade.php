@@ -18,6 +18,8 @@
                         <input type="hidden" name="estimate_idx" id="estimate_idx" value="{{ $request[0] -> estimate_idx }}" />
                         <input type="hidden" name="estimate_code" id="estimate_code" value="{{ $request[0] -> estimate_code }}" />
                         <input type="hidden" name="response_company_type" id="response_company_type" value="{{ $user -> type }}" />
+                        <input type="hidden" name="estimate_group_code" id="estimate_group_code" value="{{ $request[0] -> estimate_group_code }}" />
+
                         <table class="table_layout input_type1">
                             <colgroup>
                                 <col width="35%">
@@ -349,6 +351,26 @@
 
 
 
+    <!-- 견적요청서 확인 및 작성 -->
+    <div class="modal" id="request_confirm_write-modal">
+        <div class="modal_bg" onclick="modalClose('#request_confirm_write-modal')"></div>
+        <div class="modal_inner new-modal">
+            <div class="modal_header">
+                <h3>견적 요청서 확인 및 작성</h3>
+                <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            </div>
+
+            <div class="modal_body">
+                <!-- // -->
+            </div>
+
+            <div class="modal_footer">
+                <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
+                <button type="button" onClick="updateResponse();"><span class="prodCnt">1</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
+            </div>
+        </div>
+    </div>
+
 
 
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
@@ -356,6 +378,7 @@
         var estimate_idx = $('#estimate_idx').val();
         var estimate_code = $('#estimate_code').val();
         var response_company_type = $('#response_company_type').val();
+        var estimate_group_code = $('#estimate_group_code').val();
 
         var product_option_price = 0;
 
@@ -428,16 +451,48 @@
 
         $(document).ready(function(){
             // 견적서 작성하기
+            
+            $('.response_estimate_detail').click(function (){
+                estimate_idx = $('#estimate_idx').val();
+                estimate_code = $('#estimate_code').val();
+                estimate_group_code = $('#estimate_group_code').val();
+                response_company_type = $('#response_company_type').val();
+
+                $.ajax({
+                    url: '/mypage/requestEstimateDevDetail',
+                    type: 'post',
+                    data: {
+                        'group_code'   : estimate_group_code
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    success: function (res) {
+                        if( res.result === 'success' ) {
+                            console.log( res );
+                            estimate_data = res.data;
+                            $('#request_confirm_write-modal .modal_body').empty().append(res.html);
+                            $('.prodCnt').text( res.data.length );
+                            modalOpen('#request_confirm_write-modal');
+                        } else {
+                            alert(res.message);
+                        }
+                    }, error: function (e) {
+
+                    }
+                });
+            });
+            /*
             $('.response_estimate_detail').click(function(){
-                fetch('/mypage/responseEstimateDetail', {
+                fetch('/mypage/requestEstimateDevDetail', {
                     method  : 'POST',
                     headers : {
                         'Content-Type'  : 'application/json',
                         'X-CSRF-TOKEN'  : '{{csrf_token()}}'
                     },
                     body    : JSON.stringify({
-                        estimate_code           : estimate_code,
-                        response_company_type   : response_company_type
+                        'group_code'   : estimate_group_code
                     })
                 }).then(response => {
                     return response.json();
@@ -510,6 +565,7 @@
                     }
                 });
             });
+            */
 
             $(document).on('keyup', '#response_estimate_product_each_price', function(e){
                 //if(!$(this).val()) $(this).val(0);
