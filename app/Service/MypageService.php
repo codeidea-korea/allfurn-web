@@ -1906,28 +1906,28 @@ class MypageService
         $user = User::find(Auth::user()['idx']);
         $sql =
             "SELECT 
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'N') 
                 AS count_res_n,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'R') 
                 AS count_res_r,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'O') 
                 AS count_res_o,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND (estimate_state = 'H' OR estimate_state = 'F')) 
                 AS count_res_f,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'N')
                 AS count_req_n,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'R') 
                 AS count_req_r,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'O')
                 AS count_req_o,
-                (SELECT COUNT(DISTINCT(estimate_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
                 WHERE request_company_idx = ".$user['company_idx']." AND (estimate_state = 'H' OR estimate_state = 'F')) 
                 AS count_req_f
             FROM DUAL";

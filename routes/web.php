@@ -200,7 +200,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::get('/requestEstimate', 'MypageController@getRequestEstimate');
     Route::post('/requestEstimateDetail', 'MypageController@getRequestEstimateDetail');
     Route::get('/responseEstimate', 'MypageController@getResponseEstimate');
-    Route::post('/responseEstimateDetail', 'MypageController@getresponseEstimateDetail');
+    Route::post('/responseEstimateDetail', 'MypageController@getResponseEstimateDetail');
     Route::post('/requestOrderDetail', 'MypageController@getRequestOrderDetail');
     Route::post('/responseOrderDetail', 'MypageController@getResponseOrderDetail');
     Route::get('/responseEstimateMulti', 'MypageController@getResponseEstimateMulti');
@@ -216,6 +216,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/products-orders/normal', 'MypageController@saveProductOrderNormal');
     
     Route::post('/requestEstimateDevDetail', 'MypageController@getRequestEstimateDevDetail');
+    Route::post('/responseEstimateDevDetail', 'MypageController@getResponseEstimateDevDetail');
 });
 
 

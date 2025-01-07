@@ -1296,4 +1296,17 @@ class MypageController extends BaseController
                 'html'      => view('mypage.inc-estimate-response', $data )->render()
             ]);
     }
+
+    // 받은 견적서 관리 (견적 내용 상세)
+    public function getResponseEstimateDevDetail(Request $request): JsonResponse {
+        $data = [];
+        $data['lists'] = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+        
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data,
+                'html'      => view('mypage.inc-estimate-response-check', $data )->render()
+            ]);
+    }
 }

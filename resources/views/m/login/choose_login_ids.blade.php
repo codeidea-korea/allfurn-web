@@ -15,12 +15,12 @@ $header_banner = '';
 <div id="content">
     <section class="login_common flex items-center">
         <div class="login_inner">
-            <img class="logo" src="./img/logo.svg" alt="">
+            <img class="logo" src="/img/logo.svg" alt="">
                 @foreach($users as $user)
                 <div class="joined_id_box">
                     <input type="radio" name="joined_id" id="joined_id_@php echo $loop -> index; @endphp" value="@php echo $user->account; @endphp" 
                         @php echo ($loop -> index == 0 ? 'checked' : ''); @endphp>
-                    <label for="joined_id_'+idx+'">@php echo str_replace('@','&#64;',$user->account); @endphp</label>
+                        <label for="joined_id_'+idx+'" onclick="console.log(1);return false;">@php echo $user->account; @endphp</label>
                 </div>
                 @endforeach
             <ul class="info_box">

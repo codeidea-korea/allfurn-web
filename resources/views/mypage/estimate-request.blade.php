@@ -97,11 +97,11 @@
                     <td>{{ $list -> company_type == 'W' ? $list -> response_w_company_name : $list -> response_r_company_name }}</td>
                     <td>
                         @if ($list -> estimate_state == 'N')
-                        <button class="btn outline_primary request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}">견적 요청서 확인</button>
+                        <button class="btn outline_primary request_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적 요청서 확인</button>
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
-                        <button class="btn outline_primary response_estimate_detail" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적서 확인</button>
+                        <button class="btn outline_primary response_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
-                        <button class="btn outline_primary check_order_detail" data-code="{{ $list -> estimate_code }}">주문서 확인</button>
+                        <button class="btn outline_primary check_order_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">주문서 확인</button>
                         @endif
                     </td>
                 </tr>
@@ -132,6 +132,43 @@
             @endif
         </div>
         @endif
+    </div>
+</div>
+
+<!-- 견적요청서 확인 및 작성 -->
+<div class="modal" id="request_confirm_write-modal">
+    <div class="modal_bg" onclick="modalClose('#request_confirm_write-modal')"></div>
+    <div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>견적 요청서 확인 및 작성</h3>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
+
+        <div class="modal_body">
+            <!-- // -->
+        </div>
+
+        <div class="modal_footer">
+            <button type="button" onclick="modalClose('#request_confirm_write-modal')">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 견적서 확인하기 -->
+<div class="modal" id="check_estimate-modal">
+	<div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
+	<div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>받은 견적서</h3>
+            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
+		<div class="modal_body">
+            
+		</div>
+
+        <div class="modal_footer">
+            <button type="button" onclick="modalClose('#check_estimate-modal')">닫기</button>
+        </div>
     </div>
 </div>
 
@@ -882,6 +919,7 @@
     var response_estimate_product_option_price = 0;
     var response_estimate_product_delivery_price = 0;
     var response_estimate_estimate_total_price = 0;
+    var estimate_group_code = '';
 
     const selectedKeywordType = type => {
         document.getElementById('selectedKeywordType').dataset.keywordType = type;
@@ -1007,317 +1045,66 @@
 
         // 견적 요청서 확인하기
         $('.request_estimate_detail').click(function(e){
-            group_code = $(this).data('group_code');
+            estimate_idx = $(this).data('idx');
+            estimate_code = $(this).data('code');
+            estimate_group_code = $(this).data('group_code');
+            response_company_type = $(this).data('response_company_type');
 
-            fetch('/mypage/requestEstimateDetail', {
-                method  : 'POST',
-                headers : {
-                    'Content-Type'  : 'application/json',
-                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            $.ajax({
+                url: '/mypage/requestEstimateDevDetail',
+                type: 'post',
+                data: {
+                    'group_code'   : estimate_group_code
                 },
-                body    : JSON.stringify({
-                    group_code    : group_code
-                })
-            }).then(response => {
-                return response.json();
-            }).then(json => {
-                if (json.result === 'success') {
-                    console.log(json.data[0]);
-
-                    $('.request_estimate_req_time').text(json.data[0].request_time);
-                    $('.request_estimate_req_code').text(json.data[0].estimate_code);
-                    $('.request_estimate_req_company_name').text(json.data[0].request_company_name);
-                    $('.request_estimate_req_business_license_number').text(json.data[0].request_business_license_number);
-                    $('.request_estimate_phone_number').text(json.data[0].request_phone_number);
-
-                    $('.request_estimate_req_address1').text(json.data[0].request_address1);
-                    $('.request_estimate_req_memo').text(json.data[0].request_memo ? json.data[0].request_memo : '');
-
-                    $('.request_estimate_req_business_license_thumbnail').attr('src', json.data[0].business_license);
-
-                    $('.request_estimate_product_thumbnail').attr('src', json.data[0].product_thumbnail);
-                    $('.request_estimate_product_name').text(json.data[0].product_name);
-                    $('.request_estimate_product_number').text(json.data[0].product_number);
-                    $('.request_estimate_product_count').text(json.data[0].product_count);
-                    if(json.data[0].product_option_json) {
-                        $('.request_estimate_product_option').html('');
-                        $('.request_estimate_product_option').append(`<table class="my_table w-full text-left request_estimate_product_option_table">`);
-
-                        product_option_json = JSON.parse(json.data[0].product_option_json);
-                        for(var key in product_option_json) {
-                            $('.request_estimate_product_option_table').append(
-                            `<tr>
-                                <th>` + product_option_json[key]['optionName'] + `</th>
-                                <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
-                            </tr>`);
-                        }
-
-                        $('.request_estimate_product_option').append(`</table>`);
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        estimate_data = res.data;
+                        $('#request_confirm_write-modal .modal_body').empty().append(res.html);
+                        $('.prodCnt').text( res.data.length );
+                        modalOpen('#request_confirm_write-modal');
+                    } else {
+                        alert(res.message);
                     }
-                    $('.request_estimate_product_each_price').text((Number(json.data[0].product_each_price.replace(/[^0-9]/g, '')) > 0) ? json.data[0].product_each_price + '원' : json.data[0].product_each_price_text);
-                    $('.request_estimate_product_address').text(json.data[0].product_address);
+                }, error: function (e) {
 
-
-                    $('.order_prod_list').html('');
-                    for(var i = 0; i < json.data.length; i++) {
-                        var product_option_html = '없음';
-                        if(json.data[i].product_option_json) {
-                            product_option_html = 
-                                '<table class="my_table w-full text-left response_estimate_product_option_table">';
-
-                                product_option_json = JSON.parse(json.data[i].product_option_json);
-                                for(var key in product_option_json) {
-                                    product_option_html +=
-                                    `<tr>
-                                        <th>` + product_option_json[key]['optionName'] + `</th>
-                                        <td>` + Object.keys(product_option_json[key]['optionValue'])[0] + `</td>
-                                    </tr>`;
-                                }
-
-                            product_option_html += 
-                                `</table>`;
-                        }
-
-                        let product_memo = json.data[i].product_memo ? json.data[i].product_memo : ''
-
-                        $('.order_prod_list').append(
-                            `<li>
-                                <div class="img_box">
-                                    <img src="` + json.data[i].product_thumbnail + `" alt="" />
-                                </div>
-                                <div class="right_box">
-                                    <h6>` + json.data[i].product_name + `</h6>
-                                    <table class="table_layout">
-                                        <colgroup>
-                                            <col width="160px">
-                                            <col width="*">
-                                        </colgroup>
-                                        <tbody>
-                                        <tr>
-                                            <th>상품번호</th>
-                                            <td class="txt-gray">` + json.data[i].product_number + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>상품수량</th>
-                                            <td class="txt-primary">` + json.data[i].product_count + `개</td>
-                                        </tr>
-                                        <tr>
-                                            <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                            <td>` + product_option_html + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>견적단가</th>
-                                            <td>` + json.data[i].product_each_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
-                                        </tr>
-                                        <tr>
-                                            <th>견적금액</th>
-                                            <td><b>` + json.data[i].product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</b></td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송지역</th>
-                                            <td>` + json.data[i].address1 + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송방법</th>
-                                            <td>` + json.data[i].product_delivery_info + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송비</th>
-                                            <td class="txt-primary">` + json.data[i].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
-                                        </tr>
-                                        <tr>
-                                            <th>비고</th>
-                                            <td>` + product_memo + `</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </li>`
-                        );
-                    }
-
-                    modalOpen('#request_estimate-modal');
-                } else {
-                    alert(json.message);
                 }
             });
         });
 
         // 견적서 확인하기 (보류 / 주문서 작성)
         $('.response_estimate_detail').click(function(e){
+            estimate_idx = $(this).data('idx');
             estimate_code = $(this).data('code');
+            estimate_group_code = $(this).data('group_code');
             response_company_type = $(this).data('response_company_type');
 
-            fetch('/mypage/responseEstimateDetail', {
-                method  : 'POST',
-                headers : {
-                    'Content-Type'  : 'application/json',
-                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            $.ajax({
+                url: '/mypage/responseEstimateDevDetail',
+                type: 'post',
+                data: {
+                    'group_code'   : estimate_group_code
                 },
-                body    : JSON.stringify({
-                    estimate_code           : estimate_code,
-                    response_company_type   : response_company_type
-                })
-            }).then(response => {
-                return response.json();
-            }).then(json => {
-                if (json.result === 'success') {
-                    console.log(json.data);
-
-                    if (json.data[0].estimate_state == 'R') {
-                        $('.state_R').removeClass('hidden');
-                        $('.state_H').addClass('hidden');
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        estimate_data = res.data;
+                        $('#check_estimate-modal .modal_body').empty().append(res.html);
+                        $('.prodCnt').text( res.data.length );
+                        modalOpen('#check_estimate-modal');
                     } else {
-                        $('.state_R').addClass('hidden');
-                        $('.state_H').removeClass('hidden');
+                        alert(res.message);
                     }
+                }, error: function (e) {
 
-                    $('.order_code').text(json.data[0].estimate_code);
-                    $('.order_group_code').text(json.data[0].estimate_group_code);
-
-                    $('#response_estimate_req_user_idx').val(json.user.idx);
-                    $('.response_estimate_req_company_name').text(json.data[0].request_company_name);
-                    $('.response_estimate_req_business_license_number').text(json.data[0].request_business_license_number);
-                    $('.response_estimate_req_phone_number').text(json.data[0].request_phone_number);
-                    $('.response_estimate_req_address1').text(json.data[0].request_address1);
-
-                    $('.response_estimate_res_time').text(json.data[0].response_time);
-                    $('.response_estimate_res_code').text(json.data[0].estimate_code);
-                    $('.response_estimate_res_company_name').text(json.data[0].response_company_name);
-                    $('.response_estimate_res_business_license_number').text(json.data[0].response_business_license_number);
-                    $('.response_estimate_res_phone_number').text(json.data[0].response_phone_number);
-                    $('.response_estimate_res_address1').text(json.data[0].response_address1);
-                    $('.response_estimate_response_account').text(json.data[0].response_account);
-                    $('.response_estimate_res_memo').text(json.data[0].response_memo ? json.data[0].response_memo : '');
-
-                    response_estimate_product_total_count = 0;
-                    response_estimate_product_total_price = 0;
-                    response_estimate_product_option_price = 0;
-
-                    $('.response_estimate_prod_list').html('');
-                    for(var i = 0; i < json.data.length; i++) {
-                        var product_option_html = '없음';
-                        if(json.data[i].product_option_json) {
-                            product_option_html = 
-                                '<table class="my_table w-full text-left response_estimate_product_option_table">';
-
-                                product_option = JSON.parse(json.data[i].product_option);
-                                product_option_json = JSON.parse(json.data[i].product_option_json);
-                                for(var key in product_option) {
-                                    var optionValue = product_option[key].optionValue;
-
-                                    product_option_html +=
-                                        `<tr>
-                                            <th>`
-                                                + product_option[key].optionName +
-                                                `<input type="hidden" name="product_option_key_` + json.data[i].product_idx + `[]" value="` + product_option[key].optionName + `" readOnly />
-                                            </th>
-                                            <td>
-                                            `+optionValue[key].propertyName+`
-                                            </td>
-                                        </tr>`;
-                                }
-                            product_option_html += 
-                                '</table>';
-                        }
-
-                        let product_memo = json.data[0].product_memo ? json.data[0].product_memo : ''
-
-                        $('.response_estimate_prod_list').append(
-                            `<li>
-                                <div class="img_box">
-                                    <img src="` + json.data[i].product_thumbnail + `" alt="" class="product_thumbnail" />
-                                    <input type="hidden" name="estimate_idx[]" value="` + json.data[i].estimate_idx + `" />
-                                </div>
-                                <div class="right_box">
-                                    <h6 class="product_name">` + json.data[i].name + `</h6>
-                                    <input type="hidden" name="product_idx[]" value="` + json.data[i].product_idx + `" />
-                                    <table class="table_layout">
-                                        <colgroup>
-                                            <col width="160px">
-                                            <col width="*">
-                                        </colgroup>
-                                        <tbody>
-                                        <tr>
-                                            <th>상품번호</th>
-                                            <td class="txt-gray product_number">` + json.data[i].product_number + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>상품수량</th>
-                                            <td class="txt-primary">
-                                                <div class="count_box">
-                                                    <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" name="product_count[]" value="` + json.data[i].product_count + `" readOnly />
-                                                    <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                            <td class="product_option_select">`
-                                                + product_option_html +
-                                            `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>견적단가</th>
-                                            <td class="product_each_price">` 
-                                                + json.data[i].product_each_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원
-                                                <input type="hidden" name="product_each_price[]" value="` + json.data[i].product_each_price + `" readOnly />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>견적금액</th>
-                                            <td>
-                                                <b class="product_total_price">` + json.data[i].product_total_price + `원</b>
-                                                <input type="hidden" name="product_total_price[]" value="` + json.data[i].product_total_price.replace(/[^0-9]/g, '') + `" readOnly />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송지역</th>
-                                            <td class="product_address">` + json.data[i].product_address + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송방법</th>
-                                            <td class="product_delivery_info">` + json.data[i].product_delivery_info + `</td>
-                                        </tr>
-                                        <tr>
-                                            <th>배송비</th>
-                                            <td class="txt-primary product_delivery_price">` + json.data[i].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
-                                        </tr>
-                                        <tr>
-                                            <th>비고</th>
-                                            <td>` + product_memo + `</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </li>`
-                        );
-                        
-                        response_estimate_product_total_count += json.data[i].product_count;
-                        response_estimate_product_total_price += Number(json.data[i].product_total_price.replace(/,/g, ''));
-                        response_estimate_product_option_price += json.data[i].product_option_price;
-                    }
-                    
-                    $('.response_estimate_product_total_count').text(response_estimate_product_total_count + '개');
-                    $('.response_estimate_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-
-                    $('.response_estimate_product_option_price').text(response_estimate_product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('#response_estimate_product_option_price').val(response_estimate_product_option_price);
-
-                    response_estimate_product_delivery_price = json.data[0].product_delivery_price;
-                    $('.response_estimate_product_delivery_price').text(response_estimate_product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-
-                    response_estimate_estimate_total_price = json.data[0].estimate_total_price;
-                    $('.response_estimate_estimate_total_price').text(response_estimate_estimate_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                    $('input[name="response_estimate_estimate_total_price"]').val(response_estimate_estimate_total_price);
-
-                    $('#address1').val(json.data[0].request_address1);
-                    $('#memo').val(json.data[0].request_memo);
-
-                    modalOpen('#response_estimate-modal');
-                } else {
-                    alert(json.message);
                 }
             });
         });
