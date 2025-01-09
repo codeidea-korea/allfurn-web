@@ -101,7 +101,7 @@
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
                         <button class="btn outline_primary btn-h-auto check_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
-                        <button class="btn outline_primary btn-h-auto check_order_detail" data-code="{{ $list -> estimate_code }}" data-state="{{ $list -> estimate_state }}">주문서 확인</button>
+                        <button class="btn outline_primary btn-h-auto check_order_detail" data-code="{{ $list -> estimate_code }}" data-group_code="{{ $list -> estimate_group_code }}" data-state="{{ $list -> estimate_state }}">주문서 확인</button>
                         @endif
                     </td>
                 </tr>
@@ -174,178 +174,20 @@
 </div>
 
 <!-- 주문서 확인하기 -->
-<div id="check_order-modal" class="modal">
+<div class="modal" id="check_order-modal">
     <div class="modal_bg" onclick="modalClose('#check_order-modal')"></div>
-    <div class="modal_inner modal-xl">
-        <button class="close_btn" onclick="modalClose('#check_order-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <h3 class="text-xl font-bold">주문서 확인하기</h3>
+    <div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>주문서</h3>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
 
-            <table class="table_layout mt-5">
-                <colgroup>
-                    <col width="120px">
-                    <col width="330px">
-                    <col width="120px">
-                    <col width="330px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th colspan="4">공급자</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                        <td class="check_order_res_company_name"></td>
-                        <th>사업자번호</th>
-                        <td class="check_order_res_business_license_number"></td>
-                    </tr>
-                    <tr>
-                        <th>전 화 번 호</th>
-                        <td class="check_order_res_phone_number" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                        <td class="check_order_res_address1" colspan="3"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="modal_body">
+            
+        </div>
 
-            <table class="table_layout mt-5">
-                <colgroup>
-                    <col width="120px">
-                    <col width="330px">
-                    <col width="120px">
-                    <col width="330px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th colspan="4">주문자</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th colspan="4">아래와 같이 주문합니다.</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr>
-                        <th>주 문 일 자</th>
-                        <td class="check_order_req_register_time"></td>
-                        <th>주 문 번 호</th>
-                        <td class="check_order_req_code"></td>
-                    </tr>
-                    <tr>
-                        <th>업&nbsp;&nbsp;&nbsp;체&nbsp;&nbsp;&nbsp;명</th>
-                        <td><b class="check_order_req_company_name"></b></td>
-                        <th>사업자번호</th>
-                        <td class="check_order_req_business_license_number"></td>
-                    </tr>
-                    <tr>
-                        <th>업체연락처</th>
-                        <td class="check_order_req_phone_number"></td>
-                        <th>주문자성명</th>
-                        <td class="name"></td>
-                    </tr>
-                    <tr>
-                        <th>주문자연락처</th>
-                        <td class="phone_number" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소</th>
-                        <td class="address1" colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <th>비&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고</th>
-                        <td class="memo" colspan="3"></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <ul class="order_prod_list mt-3 check_order_prod_list">
-                <li>
-                    <div class="img_box">
-                        <img src="/img/prod_thumb3.png" alt="" class="product_thumbnail" />
-                    </div>
-                    <div class="right_box">
-                        <h6 class="product_name"></h6>
-                        <table class="table_layout">
-                            <colgroup>
-                                <col width="160px">
-                                <col width="*">
-                            </colgroup>
-                            <tbody><tr>
-                                <th>상품번호</th>
-                                <td class="txt-gray product_number"></td>
-                            </tr>
-                            <tr>
-                                <th>상품수량</th>
-                                <td class="txt-primary product_count"></td>
-                            </tr>
-                            <tr>
-                                <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                <td>없음</td>
-                            </tr>
-                            <tr>
-                                <th>견적단가</th>
-                                <td class="product_each_price"></td>
-                            </tr>
-                            <tr>
-                                <th>견적금액</th>
-                                <td class="txt-primary"><b class="product_total_price"></b></td>
-                            </tr>
-                            <tr>
-                                <th>배송지역</th>
-                                <td class="response_address1"></td>
-                            </tr>
-                            <tr>
-                                <th>배송방법</th>
-                                <td>착불</td>
-                            </tr>
-                            <tr>
-                                <th>배송비용</th>
-                                <td class="txt-primary product_delivery_price"></td>
-                            </tr>
-                            <tr>
-                                <th>비고</th>
-                                <td class="product_memo"></td>
-                            </tr>
-                        </tbody></table>
-                    </div>
-                </li>
-            </ul>
-
-            <div class="order_price_total mt-10">
-                <h5>총 주문금액</h5>
-                <div class="price">
-                    <p>
-                        <span class="txt-gray fs14">
-                            견적금액 (<span class="check_order_product_total_count"></span>)
-                        </span>
-                        <b><span class="check_order_product_total_price"></span>원</b>
-                    </p>
-                    <p>
-                        <span class="txt-gray fs14">
-                            옵션금액
-                        </span>
-                        <b><span class="check_order_product_option_price"></span>원</b>
-                    </p>
-                    <p>
-                        <span class="txt-gray fs14">배송비</span>
-                        <b><span class="check_order_product_delivery_price"></span>원</b>
-                    </p>
-                </div>
-                <div class="total">
-                    <p>총 주문금액</p>
-                    <b><span class="check_order_estimate_total_price"></span>원</b>
-                </div>
-            </div>
-
-            <div class="btn_box mt-10">
-                <div class="flex gap-5">
-                    <a class="btn btn-primary flex-1" style="cursor: pointer;" onclick="location.reload()">주문서 확인</a>
-                </div>
-            </div>
+        <div class="modal_footer">
+            <button type="button" onclick="modalClose('#check_order-modal')">닫기</button>
         </div>
     </div>
 </div>
@@ -691,129 +533,32 @@
         });
 
         $('.check_order_detail:button').click(function(){
-            fetch('/estimate/checkOrder', {
-                method  : 'PUT',
-                headers : {
-                    'Content-Type'  : 'application/json',
-                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            estimate_idx = $(this).data('idx');
+            estimate_code = $(this).data('code');
+            estimate_group_code = $(this).data('group_code');
+
+            $.ajax({
+                url: '/mypage/estimate/order/detail',
+                type: 'post',
+                data: {
+                    'group_code'   : estimate_group_code
                 },
-                body    : JSON.stringify({
-                    estimate_code       : $(this).data('code'),
-                    estimate_state      : $(this).data('state')
-                })
-            }).then(response => {
-                return response.json();
-            }).then(json => {
-                if (json.result === 'success') {
-                    fetch('/mypage/responseOrderDetail', {
-                        method  : 'POST',
-                        headers : {
-                            'Content-Type'  : 'application/json',
-                            'X-CSRF-TOKEN'  : '{{csrf_token()}}'
-                        },
-                        body    : JSON.stringify({
-                            order_code      : $(this).data('code')
-                        })
-                    }).then(response => {
-                        return response.json();
-                    }).then(json => {
-                        if (json.result === 'success') {
-                            console.log(json.data);
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        estimate_data = res.data;
+                        $('#check_order-modal .modal_body').empty().append(res.html);
+                        $('.prodCnt').text( res.data.length );
+                        modalOpen('#check_order-modal');
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
 
-                            $('.check_order_res_company_name').text(json.data[0].response_company_name);
-                            $('.check_order_res_business_license_number').text(json.data[0].response_business_license_number);
-                            $('.check_order_res_phone_number').text(json.data[0].response_phone_number);
-                            $('.check_order_res_address1').text(json.data[0].response_address1);
-
-                            $('.check_order_req_register_time').text(json.data[0].register_time);
-                            $('.check_order_req_code').text(json.data[0].order_code);
-                            $('.check_order_req_company_name').text(json.data[0].request_company_name);
-                            $('.check_order_req_business_license_number').text(json.data[0].request_business_license_number);
-                            $('.check_order_req_phone_number').text(json.data[0].request_phone_number);
-                            $('.name').text(json.data[0].name);
-                            $('.phone_number').text(json.data[0].phone_number);
-                            $('.address1').text(json.data[0].address1);
-                            $('.memo').text(json.data[0].memo ? json.data[0].memo : '');
-
-                            var response_estimate_product_total_price = 0;
-                            var response_estimate_product_option_price = 0;
-
-                            $('.check_order_prod_list').html('');
-                            for(var i = 0; i < json.data.length; i++) {
-                                let product_memo = json.data[i].product_memo ? json.data[i].product_memo : '';
-
-                                $('.check_order_prod_list').append(
-                                    `<li>
-                                        <div class="img_box">
-                                            <img src="` + json.data[i].product_thumbnail + `" alt="" />
-                                        </div>
-                                        <div class="right_box">
-                                            <h6>` + json.data[i].product_name + `</h6>
-                                            <table class="table_layout">
-                                                <colgroup>
-                                                    <col width="160px">
-                                                    <col width="*">
-                                                </colgroup>
-                                                <tbody>
-                                                <tr>
-                                                    <th>상품번호</th>
-                                                    <td class="txt-gray">` + json.data[i].product_number + `</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>상품수량</th>
-                                                    <td class="txt-primary">` + json.data[i].product_count + `개</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>옵&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;션</th>
-                                                    <td>없음</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>견적단가</th>
-                                                    <td>` + json.data[i].product_each_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>견적금액</th>
-                                                    <td><b>` + json.data[i].product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</b></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>배송지역</th>
-                                                    <td>` + json.data[i].address1 + `</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>배송방법</th>
-                                                    <td>` + json.data[i].product_delivery_info + `</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>배송비</th>
-                                                    <td class="txt-primary">` + json.data[i].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + `원</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>비고</th>
-                                                    <td>` + product_memo + `</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </li>`
-                                );
-
-                                response_estimate_product_total_price += parseInt(json.data[i].product_total_price);
-                                response_estimate_product_option_price += parseInt(json.data[i].product_option_price);
-                            }
-
-                            $('.check_order_product_total_count').text(json.data[0].count + '개');
-                            $('.check_order_product_total_price').text(response_estimate_product_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                            $('.check_order_product_option_price').text(response_estimate_product_option_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                            $('.check_order_product_delivery_price').text(json.data[0].product_delivery_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-                            $('.check_order_estimate_total_price').text(json.data[0].total_price);
-
-                            modalOpen('#check_order-modal');
-                        } else {
-                            alert(json.message);
-                        }
-                    });
-                } else {
-                    alert(json.message);
                 }
             });
         });

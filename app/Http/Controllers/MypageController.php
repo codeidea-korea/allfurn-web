@@ -1309,4 +1309,31 @@ class MypageController extends BaseController
                 'html'      => view('mypage.inc-estimate-response-check', $data )->render()
             ]);
     }
+
+    // 주문서 작성 화면
+    public function getTempOrderDetail(Request $request): JsonResponse {
+        $data = [];
+        $data['lists'] = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+        
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data,
+                'html'      => view('mypage.inc-estimate-order', $data )->render()
+            ]);
+    }
+
+    // 주문 신청된 내역 화면
+    // NOTICE: getTempOrderDetail 와 동일한 요청으로 개발되었으나, 함수 분기 이유는 추후 변경될 경우 화면이 달라 
+    public function getOrderDetail(Request $request): JsonResponse {
+        $data = [];
+        $data['lists'] = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+        
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data,
+                'html'      => view('mypage.inc-estimate-order', $data )->render()
+            ]);
+    }
 }

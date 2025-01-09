@@ -217,6 +217,8 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     
     Route::post('/requestEstimateDevDetail', 'MypageController@getRequestEstimateDevDetail');
     Route::post('/responseEstimateDevDetail', 'MypageController@getResponseEstimateDevDetail');
+    Route::post('/estimate/temp/order/detail', 'MypageController@getTempOrderDetail');
+    Route::post('/estimate/order/detail', 'MypageController@getOrderDetail');
 });
 
 
