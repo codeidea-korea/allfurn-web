@@ -88,11 +88,14 @@
                         </div>
                         <div class="px-4 pb-4 rounded-b-sm flex justify-between gap-2">
                             @if ($list -> estimate_state == 'N')
-                            <a href="/mypage/sendResponseEstimate/{{ $list -> estimate_group_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm request_estimate_detail">견적 요청서 확인</a>
+                            <a href="javascript:void(0);" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm request_estimate_detail"
+                                data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적 요청서 확인</a>
                             @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
-                            <a href="/mypage/checkResponseEstimate/{{ $list -> estimate_group_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_estimate_detail">견적서 확인</a>
+                            <a href="javascript:void(0);" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_estimate_detail"
+                                data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적서 확인</a>
                             @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
-                            <a href="/mypage/checkOrder/{{ $list -> estimate_code }}" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_order_detail">주문서 확인</a>
+                            <a href="javascript:void(0);" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_order_detail"
+                                data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">주문서 확인</a>
                             @endif
                         </div>
                     </li>
@@ -204,6 +207,63 @@
 
 
 
+<!-- 견적요청서 확인 및 작성 -->
+<div class="modal" id="request_confirm_write-modal">
+    <div class="modal_bg" onclick="modalClose('#request_confirm_write-modal')"></div>
+    <div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>견적 요청서 확인 및 작성</h3>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
+
+        <div class="modal_body">
+            <!-- // -->
+        </div>
+
+        <div class="modal_footer">
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
+            <button type="button" onClick="updateResponse();"><span class="prodCnt">1</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
+        </div>
+    </div>
+</div>
+
+<!-- 견적서 확인하기 -->
+<div class="modal" id="check_estimate-modal">
+	<div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
+	<div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>받은 견적서</h3>
+            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
+		<div class="modal_body">
+            
+		</div>
+
+        <div class="modal_footer">
+            <button type="button" onclick="modalClose('#check_estimate-modal')">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 주문서 확인하기 -->
+<div class="modal" id="check_order-modal">
+    <div class="modal_bg" onclick="modalClose('#check_order-modal')"></div>
+    <div class="modal_inner new-modal">
+        <div class="modal_header">
+            <h3>주문서</h3>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+        </div>
+
+        <div class="modal_body">
+            
+        </div>
+
+        <div class="modal_footer">
+            <button type="button" onclick="modalClose('#check_order-modal')">닫기</button>
+        </div>
+    </div>
+</div>
+
 
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
@@ -211,6 +271,10 @@
     <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
     <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
     <script>
+        var estimate_idx = 0;
+        var estimate_code = "";
+        var response_company_type = "";
+
         let params = {
             
         };
@@ -355,9 +419,241 @@
         }
 
 
+    function getToday(afterDay){
+        var date = new Date();
+        date.setTime(new Date().getTime() + 1000*60*60*24* afterDay);
+        var year = date.getFullYear();
+        var month = ("0" + (1 + date.getMonth())).slice(-2);
+        var day = ("0" + date.getDate() + afterDay).slice(-2);
+
+        return year + "-" + month + "-" + day;
+    }
+    const updateResponse = () => {
+
+        let products = [];
+
+        sum_price = 0;
+        $('.fold_area .prod_info').each(function (index) {
+        	product_price = 0;
+            products.push({
+                estimate_idx: estimate_idx,
+                estimate_code: estimate_code,
+                estimate_group_code: estimate_group_code,
+                response_company_type: response_company_type,
+                //
+                product_idx: estimate_data.product_idx,
+                product_count: estimate_data.product_count,
+                name: estimate_data.name,
+                product_total_price: estimate_data.price,
+                response_estimate_estimate_total_price: 0,
+                memo: estimate_data.request_memo,
+
+                address1: estimate_data.request_address1,
+                phone_number: estimate_data.request_phone_number,
+                register_time: estimate_data.request_time,
+                response_estimate_req_user_idx: estimate_data.request_company_idx,
+ 
+                response_estimate_res_company_name: '{{ $user -> company_name }}',
+                response_estimate_res_business_license_number: '{{ $user -> business_license_number }}',
+                response_estimate_res_phone_number: '{{ $user -> phone_number }}',
+                response_estimate_res_address1: estimate_data.product_address || '',
+                response_estimate_account1: "",
+                response_estimate_response_account2: "",
+                response_estimate_res_memo: "", 
+                response_estimate_res_time: getToday(0),
+                expiration_date: getToday(15),
+                response_estimate_product_each_price: estimate_data.product_each_price || 0,
+                response_estimate_product_delivery_info: estimate_data.product_delivery_info || '',
+                response_estimate_product_option_price: estimate_data.product_option_price || 0,
+                response_estimate_product_delivery_price: estimate_data.product_delivery_price || 0,
+                response_estimate_product_total_price: 0,
+                response_estimate_product_memo: estimate_data.product_memo || '',
+            });
+
+
+            $(this).find('input').each(function (idx, item) {
+                let i_name = $(item).attr('name'); // name 속성 가져오기
+                let i_val = '';
+                if(i_name == 'price'){
+					i_val = parseInt($(item).val()); // 값 가져오기	
+					if(isNaN(i_val)){
+						product_price = 0;
+						i_val = 0;
+					}else{
+						product_price = i_val;
+					}
+                    products[index][i_name] = i_val;
+                }else{
+                	i_val = $(item).val(); // 값 가져오기	
+                    products[index][i_name] = i_val;
+                }
+            });
+            
+            products[index]['product_delivery_info_temp'] = $('#delivery_type').text();
+            
+            var delivery_price = 0;
+            if($('#delivery_type').text() == '착불'){
+            	delivery_price = $('#delivery_price').val()
+            	if(delivery_price == ''){
+            		delivery_price = 0;
+            	}
+            }else{
+            	delivery_price = 0
+            }
+            products[index]['product_delivery_price_temp'] = delivery_price;
+            
+            if($('#bank_type').text() != '은행선택'){
+                products[index]['response_estimate_account1'] = $('#bank_type').text();
+                products[index]['response_estimate_response_account2'] = $('#account_number').val();
+            }else {
+                products[index]['response_estimate_account1'] = "";
+                products[index]['response_estimate_response_account2'] = "";
+            }
+            products[index]['request_memo'] = $('#etc_memo').val();
+            sum_price += product_price;
+        });
+        
+        $('.fold_area .prod_info').each(function (index) {
+            products[index]['response_estimate_estimate_total_price'] = sum_price;
+            products[index]['response_estimate_product_total_price'] = sum_price;
+        });
+        
+        $.ajax({
+            url: '/estimate/updateResponse',
+            type: 'post',
+			processData	: false,
+			contentType: 'application/json',
+            data: JSON.stringify(products),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+            },
+            success: function (res) {
+                if (res.success) {
+                    $('#loadingContainer').hide();
+                    alert('견적서 보내기가 완료되었습니다.');
+                    location.reload(); 
+                } else {
+                    $('#loadingContainer').hide();
+                    alert('일시적인 오류로 처리되지 않았습니다.');
+                    return false;
+                }
+            }, error: function (xhr, status, error) {
+                console.error("오류 발생: ", status, error);
+                alert("문제가 발생했습니다. 다시 시도해 주세요.");
+            }
+        });
+        
+        /*$('#loadingContainer').show();
+        fetch('/estimatedev/updateResponse', {
+            method  : 'POST',
+            headers : {
+                'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            },
+            body    : formData
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            
+        });*/
+    }
 
         $(document).ready(function(){
 
+            $('.request_estimate_detail').click(function (){
+                estimate_idx = $(this).data('idx');
+                estimate_code = $(this).data('code');
+                estimate_group_code = $(this).data('group_code');
+                response_company_type = $(this).data('response_company_type');
+
+                $.ajax({
+                    url: '/mypage/requestEstimateDevDetail',
+                    type: 'post',
+                    data: {
+                        'group_code'   : estimate_group_code
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    success: function (res) {
+                        if( res.result === 'success' ) {
+                            console.log( res );
+                            estimate_data = res.data;
+                            $('#request_confirm_write-modal .modal_body').empty().append(res.html);
+                            $('.prodCnt').text( res.data.length );
+                            modalOpen('#request_confirm_write-modal');
+                        } else {
+                            alert(res.message);
+                        }
+                    }, error: function (e) {
+
+                    }
+                });
+            });
+
+            // 견적서 확인하기
+            $('.check_estimate_detail').click(function(){
+                estimate_idx = $(this).data('idx');
+                estimate_code = $(this).data('code');
+                estimate_group_code = $(this).data('group_code');
+                response_company_type = $(this).data('response_company_type');
+
+                $.ajax({
+                    url: '/mypage/responseEstimateDevDetail',
+                    type: 'post',
+                    data: {
+                        'group_code'   : estimate_group_code
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    success: function (res) {
+                        if( res.result === 'success' ) {
+                            console.log( res );
+                            estimate_data = res.data;
+                            $('#check_estimate-modal .modal_body').empty().append(res.html);
+                            $('.prodCnt').text( res.data.length );
+                            modalOpen('#check_estimate-modal');
+                        } else {
+                            alert(res.message);
+                        }
+                    }, error: function (e) {
+
+                    }
+                });
+            });
+
+            $('.check_order_detail').click(function(){
+                estimate_idx = $(this).data('idx');
+                estimate_code = $(this).data('code');
+                estimate_group_code = $(this).data('group_code');
+
+                $.ajax({
+                    url: '/mypage/estimate/order/detail',
+                    type: 'post',
+                    data: {
+                        'group_code'   : estimate_group_code
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                    },
+                    success: function (res) {
+                        if( res.result === 'success' ) {
+                            console.log( res );
+                            estimate_data = res.data;
+                            $('#check_order-modal .modal_body').empty().append(res.html);
+                            $('.prodCnt').text( res.data.length );
+                            modalOpen('#check_order-modal');
+                        } else {
+                            alert(res.message);
+                        }
+                    }, error: function (e) {
+
+                    }
+                });
+            });
         });
     </script>
 @endsection
