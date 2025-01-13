@@ -655,5 +655,11 @@
                 });
             });
         });
+        const dropBtn = (item)=>{ $(item).toggleClass('active'); $(item).parent().toggleClass('active') };
+        const dropItem = (item)=>{
+            $(item).parents('.dropdown_wrap').find('.dropdown_btn').text($(item).text());
+            $(item).parents('.dropdown_wrap').find('.dropdown_btn').removeClass('active');
+            $(item).parents('.dropdown_wrap').removeClass('active');
+        };
     </script>
 @endsection

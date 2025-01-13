@@ -8,7 +8,7 @@
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
             </div>
             <div>
-                <div class="flex gap-2 mt-2">
+                <div class="flex flex-col gap-2 mt-2">
                     <div class="img_box"><img src="/img/prod_thumb3.png" alt=""></div>
                     <div class="flex-1">
                         <div class="txt_desc">

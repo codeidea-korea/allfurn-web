@@ -224,3 +224,36 @@ function linkToPage(url){
     $('#loadingContainer').show();
     location.href = url;
 }
+
+// 수량변경
+const changeValue = (item,status)=>{
+    let num = Number($(item).siblings('input').val())
+    if(status == "minus"){
+        if((num-1)==0){
+            $(item).siblings('input').val(1)    
+        }else{
+            $(item).siblings('input').val(num-1)
+        }
+    }else{
+        $(item).siblings('input').val(num+1)
+    }
+}
+
+
+// 접기 펼치기
+const foldToggle = (item)=>{
+    $(item).parents('.fold_area').toggleClass('active')
+}
+
+// 상품추가
+
+    const prodAdd = (item)=>{
+        var cnt = parseInt( $('.reqCount').first().text() );
+        if(!$(item).prev('input').prop('checked')){
+            $(item).text('취소');
+            $('.reqCount').text( cnt + 1 );
+        }else{
+            $(item).text('추가');
+            $('.reqCount').text( cnt - 1 );
+        }
+    }

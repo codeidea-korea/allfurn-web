@@ -153,7 +153,7 @@
                         </div>
                     </div>
                     <div class="btn_box">
-                        <button class="btn btn-line3" onclick="location.href='/mypage/sendRequestEstimate/{{ $data['detail'] -> idx }}'"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
+                        <button class="btn btn-line3" onclick="openEstimateModal({{ $data['detail'] -> idx }})"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#estimate_black"></use></svg>견적서 받기</button>
                         <button class="btn btn-primary" onClick="openPhoneDialog('tel:{{$data['detail']->companyPhoneNumber}}')"><svg class="w-5 h-5"><use xlink:href="/img/m/icon-defs.svg#phone_white"></use></svg>전화 걸기</button>
                     </div>
                     <div class="quick_btn_box" onClick="sendMessage()">
@@ -267,10 +267,430 @@
         </div>
     </div>
 
+
+
+    
+    <!-- 견적 요청서 모달 -->
+    <!-- new 견적서 -->
+    <div class="modal" id="request_estimate-modal">
+        <input type="hidden" name="request_company_idx" value="{{ $data['company'] -> idx }}" />
+        <input type="hidden" name="request_company_type" value="{{ $data['user'] -> type }}" />
+        <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
+        <div class="modal_inner new-modal">
+            <div class="modal_header">
+                <h3>견적 요청서</h3>
+                <button type="button" class="close_btn" onclick="modalClose('#request_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
+            </div>
+
+            <div class="modal_body">
+                <div class="relative">
+                    <div class="info"><span class="reqCount">1</span>건의 상품을 '{{ $data['detail']->companyName }}' 업체에게 견적을 보낼 수 있습니다.</div>
+                    <div class="p-7">
+                        <!-- 상품정보 -->
+                        <div class="prod_info">
+                            <div class="img_box"><img src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt=""></div>
+                            <div class="info_box">
+                                <div class="prod_name">{{ $data['detail'] -> name }}</div>
+                                <div class="prod_option">
+                                    <div class="name">수량</div>
+                                    <div>
+                                        <div class="count_box2">
+                                            <button type="button" class="minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                            <input type="text" id="requestEstimateProductCount" name="product_count" value="1">
+                                            <button type="button" class="plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                @else
+                                <div class="prod_option">
+                                    <div class="name">단가</div>
+                                    <div class="_requestEstimateTotalPrice">
+                                    @if( $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 )
+                                        {{ $data['detail']->price_text }}
+                                    @else
+                                        {{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}
+                                    @endif
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- 접기/펼치기 -->
+                        <div class="fold_area mt-7">
+                            @if( $data['prdCount'] - 1 > 0 )
+                            <div class="target">
+                                <button type="button" class="title" onclick="foldToggle(this)">
+                                    <span>'{{ $data['detail']->companyName }}' 업체의 다른 {{ number_format( $data['prdCount'] - 1 ) }}개 상품 추가 선택 가능 합니다.</span>
+                                    <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
+                                </button>
+                            </div>
+                            @endif
+                            <div class="py-7" id="orderProductList">
+                                <div>
+                                {{--
+                                <div class="prod_info">
+                                    <div class="img_box">
+                                        <button type="button" class="add_btn" onclick="prodAdd(this)">추가</button>
+                                        <img src="/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="prod_option">
+                                            <div class="name">수량</div>
+                                            <div>
+                                                <div class="count_box2">
+                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                    <input type="text" value="1">
+                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>50,000</div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>업체문의</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="prod_info">
+                                    <div class="img_box">
+                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
+                                        <img src="/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="prod_option">
+                                            <div class="name">수량</div>
+                                            <div>
+                                                <div class="count_box2">
+                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                    <input type="text" value="1">
+                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>50,000</div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>업체문의</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="prod_info">
+                                    <div class="img_box">
+                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
+                                        <img src="/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="dropdown_wrap noline">
+                                            <button type="button" class="dropdown_btn"><p>옵션(사이즈 및 컬러) 선택</p></button>
+                                            <div class="dropdown_list">
+                                                <div class="dropdown_item">옵션명 표기1</div>
+                                                <div class="dropdown_item">옵션명 표기2</div>
+                                                <div class="dropdown_item">옵션명 표기3</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="noline">
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div class="total_price">150,000</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                --}}
+                                </div>
+                                <div class="text-center orderProductList_addlist">
+                                    <button type="button" class="more_prod">상품 더보기</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <!-- 추가문의사항 -->
+                        <dl class="add_textarea mt-7">
+                            <dt>추가 문의사항</dt>
+                            <dd><textarea name="request_memo" id="request_memo" placeholder="추가 요청사항 입력하세요(200자)"></textarea></dd>
+                        </dl>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal_footer">
+                <button type="button"><span class="reqCount">1</span>건 견적서 요청하기(1단계) <img src="/img/icon/arrow-right.svg" alt=""></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 견적요청서 확인 -->
+    <div class="modal" id="request_confirm-modal">
+        <div class="modal_bg" onclick="modalClose('#request_confirm-modal')"></div>
+        <div class="modal_inner new-modal">
+            <div class="modal_header">
+                <h3>견적 요청서 확인</h3>
+                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            </div>
+
+            <div class="modal_body">
+                <div class="relative">
+                    <div class="info"><span class="reqCount">1</span>건의 상품을 '{{ $data['detail']->companyName }}'업체에게 견적을 보낼 수 있습니다.</div>
+                    <div class="p-7">
+                        <!-- 견적 기본정보 -->
+                        <div class="fold_area txt_info active">
+                            <div class="target title" onclick="foldToggle(this)">
+                                <p>견적 기본정보</p>
+                                <img class="arrow" src="./pc/img/icon/arrow-icon.svg" alt="">
+                            </div>
+                            <div>
+                                <div class="txt_desc">
+                                    <div class="name">총 상품수</div>
+                                    <div><b><span class="reqCount">1</span>건</b></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 추가문의사항 -->
+                        <dl class="add_textarea mb-7">
+                            <dt>추가 문의사항</dt>
+                            <dd class="txt reqMemo">견적서 수량은 추가 될 수 있습니다. 수량 추가 시 견적관련 전화 문의 드립니다.</dd>
+                        </dl>
+
+                        <div class="fold_area txt_info">
+                            <div class="target title" onclick="foldToggle(this)">
+                                <p>업체 기본정보</p>
+                                <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
+                            </div>
+                            <div>
+                                <div class="txt_desc">
+                                    <div class="name">업체명</div>
+                                    <div>{{ $data['detail']->companyName }}업체</div>
+                                </div>
+                                <div class="txt_desc">
+                                    <div class="name">전화번호</div>
+                                    <div>{{ $data['detail']->companyPhoneNumber }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- 접기/펼치기 -->
+                        <div class="fold_area mt-7">
+                            <div class="target">
+                                <button class="title" onclick="foldToggle(this)">
+                                    <span>상품 <span class="reqCount">1</span>건 리스트 보기</span>
+                                    <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
+                                </button>
+                            </div>
+                            <div class="py-7" id="orderProductList2">
+                                <!-- div class="prod_info">
+                                    <div class="img_box">
+                                        <input type="checkbox" id="check_4" class="hidden" checked disabled>
+                                        <label for="check_4" class="add_btn">대표</label>
+                                        <img src="./pc/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="prod_option">
+                                            <div class="name">수량</div>
+                                            <div>
+                                                <div class="count_box2">
+                                                    <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
+                                                    <input type="text" value="1">
+                                                    <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>50,000</div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>업체문의</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="prod_info">
+                                    <div class="img_box">
+                                        <input type="checkbox" id="check_5" class="hidden" checked>
+                                        <label for="check_5" class="add_btn" onclick="prodAdd(this)">취소</label>
+                                        <img src="./pc/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="prod_option">
+                                            <div class="name">수량</div>
+                                            <div>
+                                                <div class="count_box2">
+                                                    <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
+                                                    <input type="text" value="1">
+                                                    <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>50,000</div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div>업체문의</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="prod_info">
+                                    <div class="img_box">
+                                        <input type="checkbox" id="check_6" class="hidden" checked>
+                                        <label for="check_6" class="add_btn" onclick="prodAdd(this)">취소</label>
+                                        <img src="./pc/img/prod_thumb3.png" alt="">
+                                    </div>
+                                    <div class="info_box">
+                                        <div class="prod_name">엔젤A</div>
+                                        <div class="dropdown_wrap noline">
+                                            <button class="dropdown_btn"><p>옵션(사이즈 및 컬러) 선택</p></button>
+                                            <div class="dropdown_list">
+                                                <div class="dropdown_item">옵션명 표기1</div>
+                                                <div class="dropdown_item">옵션명 표기2</div>
+                                                <div class="dropdown_item">옵션명 표기3</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="noline">
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                            <div class="option_item">
+                                                <div class="">
+                                                    <p class="option_name">옵션명 표기1</p>
+                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <div class="count_box2">
+                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
+                                                        <input type="text" value="1">
+                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
+                                                    </div>
+                                                    <div class="price">50,000</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prod_option">
+                                            <div class="name">가격</div>
+                                            <div class="total_price">150,000</div>
+                                        </div>
+                                    </div>
+                                </div //-->
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal_footer">
+                <button type="button"><span class="reqCount">1</span>건 견적 요청하기(완료) <img src="/img/icon/arrow-right.svg" alt=""></button>
+            </div>
+        </div>
+    </div>
+
+
+
 <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
 <script>
     var isProc = false;
     var optionTmp = [];
+    var modal_page = 0;
+    var modal_total = {{ $data['prdCount'] - 1 }};
+    let prodData = new FormData();
 
     // thismonth_con01
     const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
@@ -377,6 +797,125 @@
                 isProc = false;
             }
         });
+    }
+    
+    // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
+    function openEstimateModal(idx) {
+        fetch('/estimate/makeEstimateCode', {
+            method  : 'POST',
+            headers : {
+                'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+            },
+            body    : {
+                idx             : idx
+            }
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+
+            throw new Error('Sever Error');
+        }).then(json => {
+            console.log( json );
+            if (json.success) {
+                $('#request_time').text(json.now1);
+                $('input[name="request_time"]').val(json.now2);
+                $('#estimate_group_code').text(json.group_code);
+                $('input[name="estimate_group_code"]').val(json.group_code);
+                $('input[name="request_business_license_number"]').val(json.company.business_license_number);
+                $('input[name="request_phone_number"]').val(json.company.phone_number);
+                $('input[name="request_address1"]').val((json.company.business_address ? json.company.business_address : '') + ' ' + (json.company.business_address_detail ?  json.company.business_address_detail : ''));
+                $('.product_address').text(json.product_address);
+
+                $('input[name="request_business_license_fidx"]').val(json.company.business_license_attachment_idx);
+                if (json.company.blImgUrl != null && json.company.blImgUrl != '') {
+                    $('input[name="is_business_license_img"]').val('1');
+                } else {
+                    $('input[name="is_business_license_img"]').val('0');
+                }
+
+                /*
+                document.getElementById('previewBusinessLicense').style.backgroundImage = "url('" + json.company.blImgUrl + "')";
+                document.getElementById('previewBusinessLicense').style.backgroundSize = 'contain';
+                document.getElementById('previewBusinessLicense').style.backgroundPosition = 'center';
+                document.getElementById('previewBusinessLicense').style.backgroundRepeat = 'no-repeat';
+                document.getElementById('deleteBusinessLicense').classList.remove('hidden');
+                */
+                document.querySelectorAll('.default-add-image').forEach(elem => elem.classList.add('hidden'));
+
+                modal_page = 0;
+                getWholesalerProductList( {{ $data['detail']->company_idx }} );
+
+                $('#request_estimate-modal').find('#request_memo').val('');
+                prodData = new FormData();
+                $('#request_estimate-modal .fold_area').removeClass('active');
+                modalOpen('#request_estimate-modal');
+
+                $('.check_btn').addClass('hidden');
+                $('.request_estimate').removeClass('hidden');
+                $('.order_prod_list').removeClass('hidden');
+                $('.request_estimate_btn').removeClass('hidden');
+            } else {
+                alert(json.message);
+                return false;
+            }
+        }).catch(error => {
+            alert('오류가 발생하였습니다. 잠시후에 다시 시도해주세요.');
+            return false;
+        });
+    }
+    
+    function getWholesalerProductList( company_idx )
+    {
+        if( company_idx == '' ) {
+            return false;
+        }
+
+        modal_page = modal_page + 1;
+
+        $.ajax({
+            url: '/wholesaler/wholesalerProduct',
+            type: 'GET',
+            data: {
+                'idx'   : {{ $data['detail']->idx }},
+                'page'  : modal_page,
+                'limit' : 5,
+                'company_idx' : company_idx
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+            },
+            success: function (res) {
+                console.log( res );
+
+                if( modal_page == 1 ) {
+                    $('#orderProductList > div').first().empty().append(res.html);
+                } else {
+                    $('#orderProductList > div').first().append(res.html);
+                }
+
+                if( modal_page * 5 < modal_total ) {
+                    $('.orderProductList_addlist').show();
+                } else {
+                    $('.orderProductList_addlist').hide();
+                }
+            }, error: function (e) {
+
+            }
+        });
+    }
+
+    // 견적서 모달 닫을때 견적서 리셋
+    function estimateModalReset(){
+        $('input[name="request_memo"]').val('');
+        $('input[name="product_count"]').val('1');
+        if ($('.check_btn').hasClass('hidden')) {
+            $('.check_btn').removeClass('hidden');
+            $('#all_prod').attr('checked', false);
+            $('.request_estimate').addClass('hidden');
+            $('.order_prod_list').addClass('hidden');
+            $('.request_estimate_btn').addClass('hidden');
+        }
     }
 
     $(".filter_dropdown2").click(function(event){
@@ -561,6 +1100,107 @@
     $(document).on('keyup', '#qty_input', function () {
         reCal();
     })
+
+    $(document)
+        .on('click', '#orderProductList .plus', function(e) {
+            e.preventDefault();
+            var price = $(this).data('price');
+            var cnt = parseInt( $(this).prev('input').val() ) + 1;
+
+            console.log( cnt );
+
+            var tot_price = 0;
+            if( cnt > 0 ) {
+                $(this).prev('input').val( cnt );
+                tot_price = price * cnt;
+
+                if( price > 0 ) {
+                    $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                }
+            }
+        })
+        .on('input', '#request_memo', function() {
+            let inputText = $(this).val();
+
+            // 입력된 텍스트가 200자를 초과하면 200자까지만 남기고 나머지를 잘라냄
+            if (inputText.length > 200) {
+                $(this).val(inputText.substring(0, 200));
+            }
+        })
+        .on('click', '.orderProductList_addlist', function() {
+            getWholesalerProductList( {{ $data['detail']->company_idx }} );
+        })
+        .on('click', '#request_estimate-modal .modal_footer button', function(e) {
+            e.preventDefault();
+
+            prodData.append('p_idx[0]', {{ $data['detail']->idx }});
+            prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
+
+            var i = 1;
+            $('#orderProductList input[type="checkbox"]').each(function(index, element) {
+                if( $(this).is(':checked') ) {
+                    prodData.append("p_idx[" + i + "]", $(element).val());
+                    prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
+                    i++;
+                }
+            });
+
+            prodData.append('company_idx', $('input[name=request_company_idx]').val());
+            prodData.append('company_type', $('input[name=request_company_type]').val());
+            prodData.append('p_memo', $('#request_memo').val());
+
+            // prodData 값 확인
+            for (const [key, value] of prodData.entries()) {
+                console.log(key, value);
+            }
+
+            $.ajax({
+                url: '/wholesaler/wholesalerProduct2',
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: prodData,
+                success: function (res) {
+                    modalClose('#request_estimate-modal');
+
+                    $('#orderProductList2').empty().append(res.html);
+
+                    const idx = 'p_idx';
+                    const valCount = prodData.getAll(idx);
+                    $('#orderProductList2 .reqCount').text( valCount.length );
+                    $('#request_confirm-modal .reqMemo').text( prodData.get('p_memo') );
+                    modalOpen('#request_confirm-modal');
+                }, error: function (e) {
+
+                }
+            });
+        })
+        .on('click', '#request_confirm-modal .modal_footer button', function(e) {
+            e.preventDefault();
+
+            // prodData 값 확인
+            for (const [key, value] of prodData.entries()) {
+                console.log(key, value);
+            }
+
+            $.ajax({
+                url: '/estimate/insertRequest',
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: prodData,
+                success: function (res) {
+                    console.log( res );
+                    $('#loadingContainer').hide();
+                    
+                    alert('견적서 요청이 완료되었습니다.');
+                    location.reload();
+                }, error: function (e) {
+
+                }
+            });
+        })
+    ;
 
     // 옵션 삭제
     $(document).on('click', '.ico_opt_remove', function () {

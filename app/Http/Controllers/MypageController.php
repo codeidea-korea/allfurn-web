@@ -1293,7 +1293,7 @@ class MypageController extends BaseController
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data,
-                'html'      => view('mypage.inc-estimate-response', $data )->render()
+                'html'      => view(getDeviceType().'mypage.inc-estimate-response', $data )->render()
             ]);
     }
 
@@ -1306,7 +1306,7 @@ class MypageController extends BaseController
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data,
-                'html'      => view('mypage.inc-estimate-response-check', $data )->render()
+                'html'      => view(getDeviceType().'mypage.inc-estimate-response-check', $data )->render()
             ]);
     }
 
@@ -1319,7 +1319,7 @@ class MypageController extends BaseController
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data,
-                'html'      => view('mypage.inc-estimate-order', $data )->render()
+                'html'      => view(getDeviceType().'mypage.inc-estimate-order', $data )->render()
             ]);
     }
 
@@ -1333,7 +1333,7 @@ class MypageController extends BaseController
             response() -> json([
                 'result'    => 'success',
                 'data'      => $data,
-                'html'      => view('mypage.inc-estimate-order', $data )->render()
+                'html'      => view(getDeviceType().'mypage.inc-estimate-order', $data )->render()
             ]);
     }
 }

@@ -23,7 +23,7 @@
                         </div>
                         <div>
                             <div class="flex flex-col gap-2 mt-2">
-                                <div class="img_box"><img src="/pc/img/prod_thumb3.png" alt=""></div>
+                                <div class="img_box"><img src="{{ $lists[0]->business_license}}" alt=""></div>
                                 <div class="flex-1">
                                     <div class="txt_desc">
                                         <div class="name">업체명</div>
