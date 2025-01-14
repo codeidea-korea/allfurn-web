@@ -9,7 +9,7 @@
             </div>
             <div>
                 <div class="flex flex-col gap-2 mt-2">
-                    <div class="img_box"><img src="/img/prod_thumb3.png" alt=""></div>
+                    <div class="img_box"><img src="{{ $lists[0]->business_license}}" alt=""></div>
                     <div class="flex-1">
                         <div class="txt_desc">
                             <div class="name">업체명</div>
@@ -41,13 +41,27 @@
                 <p>견적 기본정보</p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
             </div>
+            @php
+            $sample_total_price = 0;
+            $count_open_price = 0;
+            $count_close_price = 0;
+
+            for($idx = 0; $idx < count($lists); $idx++) {
+                if($lists[$idx]->product_each_price > 0) {
+                    $count_open_price = $count_open_price + 1;
+                    $sample_total_price = $sample_total_price + (((int)$lists[$idx]->product_total_price) * ((int)$lists[$idx]->product_count));
+                } else {
+                    $count_close_price = $count_close_price + 1;
+                }
+            }
+            @endphp
             <div>
                 <div class="txt_desc">
-                    <div class="name">가격 표기 5건</div>
+                    <div class="name">가격 표기 {{ $count_open_price }}건</div>
                     <div>견적가 <b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
                 </div>
                 <div class="txt_desc">
-                    <div class="name">업체문의 상품 2건</div>
+                    <div class="name">업체문의 상품 {{ $count_close_price }}건</div>
                     <div>업체문의</div>
                 </div>
             </div>

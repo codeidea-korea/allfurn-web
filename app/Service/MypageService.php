@@ -2030,6 +2030,12 @@ class MypageService
                         WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr.namecard_attachment_idx)
                     END)) AS business_license,
 
+                IF(a3.idx IS NOT NULL, CONCAT('".preImgUrl()."', a3.folder, '/', a3.filename), (CASE e.response_company_type 
+                        WHEN 'W' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = wr.business_license_attachment_idx)
+                        WHEN 'R' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = rr.business_license_attachment_idx)
+                        WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr.namecard_attachment_idx)
+                    END)) AS order_business_license,
+
                 DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_time,
 
                 IF(a2.idx IS NOT NULL, CONCAT('".preImgUrl()."', a2.folder, '/', a2.filename), '') AS product_thumbnail,
@@ -2054,6 +2060,7 @@ class MypageService
             LEFT JOIN AF_product p ON e.product_idx = p.idx 
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
             LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
+            LEFT JOIN AF_attachment a3 ON e.response_business_license_attachment_idx = a3.idx 
             WHERE e.estimate_group_code = '".$params['group_code']."'";
 //            WHERE e.idx = ".$params['estimate_idx'];
         $estimate = DB::select($sql);

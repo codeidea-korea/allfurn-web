@@ -222,7 +222,7 @@
 
         <div class="modal_footer">
             <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
-            <button type="button" onClick="updateResponse();"><span class="prodCnt">1</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
+            <button type="button" onClick="updateResponse();">견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
