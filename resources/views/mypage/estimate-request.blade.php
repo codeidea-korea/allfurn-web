@@ -797,6 +797,8 @@
                         $('#request_confirm_write-modal .modal_body').empty().append(res.html);
                         $('.prodCnt').text( res.data.length );
                         modalOpen('#request_confirm_write-modal');
+
+			$('#request_confirm_write-modal').find('input, select, textarea').prop('disabled', true);
                     } else {
                         alert(res.message);
                     }
