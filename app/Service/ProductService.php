@@ -1858,7 +1858,7 @@ class ProductService
     {
         if( !$company_idx ) return 0;
 
-        $cnt = Product::where('company_idx', $company_idx)->count();
+        $cnt = Product::where('company_idx', $company_idx)->where('state', 'S')->count();
 
         return $cnt;
     }
