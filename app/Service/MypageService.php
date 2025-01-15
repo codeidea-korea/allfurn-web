@@ -2031,9 +2031,9 @@ class MypageService
                     END)) AS business_license,
 
                 IF(a3.idx IS NOT NULL, CONCAT('".preImgUrl()."', a3.folder, '/', a3.filename), (CASE e.response_company_type 
-                        WHEN 'W' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = wr.business_license_attachment_idx)
-                        WHEN 'R' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = rr.business_license_attachment_idx)
-                        WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr.namecard_attachment_idx)
+                        WHEN 'W' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = wr2.business_license_attachment_idx)
+                        WHEN 'R' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = rr2.business_license_attachment_idx)
+                        WHEN 'S' || 'N' THEN (SELECT CONCAT('".preImgUrl()."', att.folder, '/', att.filename) FROM AF_attachment att WHERE att.idx = nr2.namecard_attachment_idx)
                     END)) AS order_business_license,
 
                 DATE_FORMAT(e.response_time, '%Y년 %m월 %d일') AS response_time,
@@ -2056,6 +2056,10 @@ class MypageService
             LEFT JOIN AF_wholesale wr ON e.request_company_idx = wr.idx 
             LEFT JOIN AF_retail rr ON e.request_company_idx = rr.idx 
             LEFT JOIN AF_normal nr ON e.request_company_idx = nr.idx 
+            
+            LEFT JOIN AF_wholesale wr2 ON e.response_company_idx = wr2.idx 
+            LEFT JOIN AF_retail rr2 ON e.response_company_idx = rr2.idx 
+            LEFT JOIN AF_normal nr2 ON e.response_company_idx = nr2.idx 
 
             LEFT JOIN AF_product p ON e.product_idx = p.idx 
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
