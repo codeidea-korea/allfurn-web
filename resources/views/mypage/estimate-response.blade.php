@@ -351,6 +351,9 @@
                 products[index]['response_estimate_response_account2'] = "";
             }
             products[index]['request_memo'] = $('#etc_memo').val();
+            products[index]['response_memo'] = $('#response_memo').val();
+            products[index]['response_estimate_res_memo'] = $('#response_memo').val();
+
             sum_price += product_price;
         });
         

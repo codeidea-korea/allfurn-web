@@ -72,7 +72,7 @@
                     <!-- 기타 답변내용 -->
                     <dl class="add_textarea mb-7">
                         <dt>기타 답변내용</dt>
-                        <dd>{{ $lists[0]->request_memo }}</dd>
+                        <dd>{{ $lists[0]->response_memo }}</dd>
                     </dl>
  
                 </div>

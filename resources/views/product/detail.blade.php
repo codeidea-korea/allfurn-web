@@ -1490,6 +1490,26 @@
                     }
                 }
             })
+            .on('click', '#orderProductList .minus', function(e) {
+                e.preventDefault();
+                var price = $(this).data('price');
+                var cnt = parseInt( $(this).next('input').val() ) - 1;
+                if(cnt < 1) {
+                    return;
+                }
+
+                console.log( cnt );
+
+                var tot_price = 0;
+                if( cnt > 0 ) {
+                    $(this).next('input').val( cnt );
+                    tot_price = price * cnt;
+
+                    if( price > 0 ) {
+                        $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                    }
+                }
+            })
             .on('input', '#request_memo', function() {
                 let inputText = $(this).val();
 

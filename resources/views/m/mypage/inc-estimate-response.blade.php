@@ -70,7 +70,7 @@
         <!-- 업체 문의내용 -->
         <dl class="add_textarea mb-7">
             <dt>업체 문의내용</dt>
-            <dd><textarea name="" id="" placeholder="견적서 수량은 추가 될 수 있습니다. 수량 추가 시 견적관련 전화 문의 드립니다."></textarea></dd>
+            <dd><textarea name="" id="" placeholder="견적서 수량은 추가 될 수 있습니다. 수량 추가 시 견적관련 전화 문의 드립니다.">{{ $lists[0]->request_memo }}</textarea></dd>
         </dl>
 
     </div>
@@ -174,7 +174,7 @@
             <!-- 기타 답변내용 -->
             <dl class="add_textarea mb-7">
                 <dt>기타 답변내용</dt>
-                <dd><textarea name="" id="etc_memo" placeholder="요청자님에게 그 외 내용을 입력 하세요"></textarea></dd>
+                <dd><textarea name="response_memo" id="response_memo" placeholder="요청자님에게 그 외 내용을 입력 하세요">{{ $lists[0]->response_memo }}</textarea></dd>
             </dl>
         </div>
 

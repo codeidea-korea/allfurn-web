@@ -1101,6 +1101,40 @@
         reCal();
     })
 
+
+    $(function(){
+        $('.count_box2 .minus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            if (num !== 1) {
+                $(this).siblings('input').val(`${num - 1}`);
+            }
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+            } else {
+                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+            }
+        });
+
+        $('.count_box2 .plus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            $(this).siblings('input').val(`${num + 1}`);
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+            } else {
+                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+            }
+        });
+    });
     $(document)
         .on('click', '#orderProductList .plus', function(e) {
             e.preventDefault();
@@ -1112,6 +1146,26 @@
             var tot_price = 0;
             if( cnt > 0 ) {
                 $(this).prev('input').val( cnt );
+                tot_price = price * cnt;
+
+                if( price > 0 ) {
+                    $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                }
+            }
+        })
+        .on('click', '#orderProductList .minus', function(e) {
+            e.preventDefault();
+            var price = $(this).data('price');
+            var cnt = parseInt( $(this).next('input').val() ) - 1;
+            if(cnt < 1) {
+                return;
+            }
+
+            console.log( cnt );
+
+            var tot_price = 0;
+            if( cnt > 0 ) {
+                $(this).next('input').val( cnt );
                 tot_price = price * cnt;
 
                 if( price > 0 ) {
