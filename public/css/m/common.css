@@ -198,6 +198,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 
 .add_textarea {overflow:hidden; border:1px solid #d9d9d9; border-radius:10px; }
 .add_textarea dt {padding:10px 15px; border-bottom:1px solid #d9d9d9; background-color:#efefef; font-size:16px; color:#696969; } 
+.add_textarea dd:not(:has(>textarea)) {padding:20px 30px; word-break:break-all; }
 .add_textarea dd textarea {resize:none; width:100%; height:100px; padding:20px 15px; font-size:14px; }
 .add_textarea dd textarea::placeholder {color:#a7a7a7; }
 .add_textarea dd.txt {padding:20px 15px; font-size:14px; word-break:break-all; }
