@@ -188,4 +188,30 @@ class EstimateController extends BaseController {
                 'success'   => 'success'
             ]);
     }
+
+    // 주문(=발주)
+    public function holdOrder(Request $request) {
+        $params= [];
+        $params = array_merge($params, $request -> all());
+
+        $this -> estimateService -> holdOrder($params);
+
+        return 
+            response() -> json([
+                'result'   => 'success'
+            ]);
+    }
+
+    // 주문(=발주)
+    public function saveOrder(Request $request) {
+        $params= [];
+        $params = array_merge($params, $request -> all());
+
+        $this -> estimateService -> saveOrder($params);
+
+        return 
+            response() -> json([
+                'result'   => 'success'
+            ]);
+    }
 }

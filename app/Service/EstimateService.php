@@ -256,7 +256,7 @@ class EstimateService {
         $estimate -> product_option_price = $params['response_estimate_product_option_price'];
         $estimate -> product_delivery_price = $params['response_estimate_product_delivery_price'];
         $estimate -> product_total_price = $params['response_estimate_product_total_price'];
-        $estimate -> product_memo = $params['response_estimate_product_memo'];
+        $estimate -> product_memo = (array_key_exists('product_memo', $params) ? $params['product_memo'] : $params['response_estimate_product_memo']);
 
         $estimate -> save();
 
@@ -297,27 +297,29 @@ class EstimateService {
 
     public function insertOrder(array $params) {
         $product_total_count = 0;
+        $list = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> get();
 
-        for($i = 0; $i < count($params['estimate_idx']); $i++) {
-            $estimate = Estimate::find($params['estimate_idx'][$i]);
+        for($i = 0; $i < count($list); $i++) {
+            $estimate = Estimate::find($list[$i]['idx']);
 
             $estimate -> estimate_state = 'O';
-            $estimate -> product_count = $params['product_count'][$i];
-            $estimate -> product_total_price = $params['product_total_price'][$i];
-            $estimate -> estimate_total_price = $params['response_estimate_estimate_total_price'];
-
-            $product_option_key = 'product_option_key_'.$params['product_idx'][$i];
-            $product_option_value = 'product_option_value_'.$params['product_idx'][$i];
+            $estimate -> product_count = $list[$i]['product_count'];
+            $estimate -> product_total_price = $list[$i]['product_total_price'];
+            $estimate -> estimate_total_price = $list[$i]['response_estimate_estimate_total_price'];
             $product_option_price = 0;
 
-            if(isset($params[$product_option_value])) {
-                if(count($params[$product_option_value]) > 0) {
-                    $product_option_arr = array();
-                    Log::info('count($params[$product_option_value]: '.count($params[$product_option_value]));
-                    for($j = 0; $j < count($params[$product_option_value]); $j++) {
-                        $product_option_value_arr = explode(',', $params[$product_option_value][$j]);
+            /*
+            $product_option_key = 'product_option_key_'.$list[$i]['product_idx'][$i];
+            $product_option_value = 'product_option_value_'.$list[$i]['product_idx'][$i];
 
-                        $product_option_arr[$j]['optionName'] = $params[$product_option_key][$j];
+            if(isset($list[$i][$product_option_value])) {
+                if(count($list[$i][$product_option_value]) > 0) {
+                    $product_option_arr = array();
+                    Log::info('count($params[$product_option_value]: '.count($list[$i][$product_option_value]));
+                    for($j = 0; $j < count($list[$i][$product_option_value]); $j++) {
+                        $product_option_value_arr = explode(',', $list[$j][$product_option_value]);
+
+                        $product_option_arr[$j]['optionName'] = $list[$j][$product_option_key];
                         $product_option_arr[$j]['optionValue'][$product_option_value_arr[0]] = $product_option_value_arr[1];
 
                         $product_option_price += $product_option_value_arr[1];
@@ -326,12 +328,13 @@ class EstimateService {
                     $estimate -> product_option_json = json_encode($product_option_arr, JSON_UNESCAPED_UNICODE);
                 }
             }
-            $product_option_price  = $product_option_price * $params['product_count'][$i];
+            */
+            $product_option_price  = $product_option_price * $list[$i]['product_count'];
             $estimate -> product_option_price = $product_option_price;
 
             $estimate -> save();
 
-            $product_total_count += $params['product_count'][$i];
+            $product_total_count += $list[$i]['product_count'];
         }
 
         $check = Order::where('order_group_code', $estimate['estimate_group_code']) -> count();
@@ -341,29 +344,29 @@ class EstimateService {
 
         $order = new Order;
 
-        $order -> user_idx = $params['response_estimate_req_user_idx'];
+        $order -> user_idx = $list[0]['response_estimate_req_user_idx'];
         $order -> order_group_code = $estimate['estimate_group_code'];
         $order -> order_code = $estimate['estimate_code'];
         $order -> product_idx = $estimate['product_idx'];
         $order -> option_json = '[]';
         $order -> count = $product_total_count;
-        $order -> memo = $params['memo'];
-        $order -> price = $params['response_estimate_estimate_total_price'];
+        $order -> memo = $list[0]['memo'];
+        $order -> price = $list[0]['response_estimate_estimate_total_price'];
         $order -> delivery_info = $estimate['product_delivery_info'];
-        $order -> name = $params['name'];
-        $order -> address1 = $params['address1'];
-        $order -> phone_number = $params['phone_number'];
-        $order -> register_time = $params['register_time'];
+        $order -> name = $list[0]['name'];
+        $order -> address1 = $list[0]['address1'];
+        $order -> phone_number = $list[0]['phone_number'];
+        $order -> register_time = $list[0]['register_time'];
 
         $order -> save();
 
         $product = DB::select("SELECT name FROM AF_product WHERE idx = ".$estimate['product_idx']);
-        $productName = count($params['estimate_idx']) > 1 ?  $product[0]->name .'외 ' .count($params['estimate_idx'])-1 .'개' : $product[0]->name;
+        $productName = count($list) > 1 ?  $product[0]->name .'외 ' .count($list)-1 .'개' : $product[0]->name;
 
         // 구매자
         $this -> pushService -> sendPush(
             '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
-            $params['response_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
+            $list[0]['response_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
         );
 
         $sql =
@@ -406,6 +409,26 @@ class EstimateService {
         }
 
         return $order -> idx;
+    }
+
+    public function holdOrder(array $params): array {
+        $item = Order::where('order_group_code', $params['estimate_group_code'])
+            ->update(['order_state' => 'X']);
+
+        return [
+            'result'    => 'success',
+            'message'   => ''
+        ];
+    }
+
+    public function saveOrder(array $params): array {
+        $item = Order::where('order_group_code', $params['estimate_group_code'])
+            ->update(['order_state' => 'R']);
+
+        return [
+            'result'    => 'success',
+            'message'   => ''
+        ];
     }
 
     public function checkOrder(array $params): array {

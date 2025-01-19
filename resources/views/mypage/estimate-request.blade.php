@@ -154,24 +154,6 @@
     </div>
 </div>
 
-<!-- 견적서 확인하기 -->
-<div class="modal" id="check_estimate-modal">
-	<div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
-	<div class="modal_inner new-modal">
-        <div class="modal_header">
-            <h3>받은 견적서</h3>
-            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
-        </div>
-		<div class="modal_body">
-            
-		</div>
-
-        <div class="modal_footer">
-            <button type="button" onclick="modalClose('#check_estimate-modal')">닫기</button>
-        </div>
-    </div>
-</div>
-
 <!-- 견적 요청서 확인하기 -->
 <div id="request_estimate-modal" class="modal">
     <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
@@ -278,6 +260,25 @@
 
 <!-- 견적서 확인하기 (보류 / 주문서 작성) -->
 <form method="PUT" name="isForm" id="isForm" action="/estimate/insertOrder">
+
+    <!-- 견적서 확인하기 -->
+    <div class="modal" id="check_estimate-modal">
+        <div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
+        <div class="modal_inner new-modal">
+            <div class="modal_header">
+                <h3>받은 견적서</h3>
+                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            </div>
+            <div class="modal_body">
+                
+            </div>
+
+            <div class="modal_footer">
+                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+            </div>
+        </div>
+    </div>
+
     <div id="response_estimate-modal" class="modal">
         <div class="modal_bg" onclick="modalClose('#response_estimate-modal')"></div>
         <div class="modal_inner modal-xl">
@@ -691,20 +692,16 @@
 
     const insertOrder = () => {
         if(confirm('이대로 주문하시겠습니까?')) {
-            const formData = new FormData(document.getElementById('isForm'));
-            /*
-            for (const [key, value] of formData.entries()) {
-                console.log(key, value);
-            }
-            return false;
-            */
 
             fetch('/estimate/insertOrder', {
                 method  : 'POST',
                 headers : {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
                 },
-                body    : formData
+                body    : JSON.stringify({
+                    estimate_group_code: estimate_data[0].estimate_group_code
+                })
             }).then(response => {
                 return response.json();
             }).then(json => {
@@ -828,9 +825,9 @@
                 success: function (res) {
                     if( res.result === 'success' ) {
                         console.log( res );
-                        estimate_data = res.data;
+                        estimate_data = res.data.lists;
                         $('#check_estimate-modal .modal_body').empty().append(res.html);
-                        $('.prodCnt').text( res.data.length );
+                        $('.prodCnt').text( res.data.lists.length );
                         modalOpen('#check_estimate-modal');
                     } else {
                         alert(res.message);

@@ -257,24 +257,6 @@
     </div>
 </div>
 
-<!-- 견적서 확인하기 -->
-<div class="modal" id="check_estimate-modal">
-	<div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
-	<div class="modal_inner new-modal">
-        <div class="modal_header">
-            <h3>받은 견적서</h3>
-            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
-        </div>
-		<div class="modal_body">
-            
-		</div>
-
-        <div class="modal_footer">
-            <button type="button" onclick="modalClose('#check_estimate-modal')">닫기</button>
-        </div>
-    </div>
-</div>
-
 <!-- 견적 요청서 확인하기 -->
 <div id="request_estimate-modal" class="modal">
     <div class="modal_bg" onclick="modalClose('#request_estimate-modal')"></div>
@@ -381,6 +363,24 @@
 
 <!-- 견적서 확인하기 (보류 / 주문서 작성) -->
 <form method="PUT" name="isForm" id="isForm" action="/estimate/insertOrder">
+
+    <!-- 견적서 확인하기 -->
+    <div class="modal" id="check_estimate-modal">
+        <div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
+        <div class="modal_inner new-modal">
+            <div class="modal_header">
+                <h3>받은 견적서</h3>
+                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            </div>
+            <div class="modal_body">
+                
+            </div>
+
+            <div class="modal_footer">
+                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+            </div>
+        </div>
+    </div>
     <div id="response_estimate-modal" class="modal">
         <div class="modal_bg" onclick="modalClose('#response_estimate-modal')"></div>
         <div class="modal_inner modal-xl">
@@ -903,9 +903,9 @@
                     success: function (res) {
                         if( res.result === 'success' ) {
                             console.log( res );
-                            estimate_data = res.data;
+                            estimate_data = res.data.lists;
                             $('#check_estimate-modal .modal_body').empty().append(res.html);
-                            $('.prodCnt').text( res.data.length );
+                            $('.prodCnt').text( res.data.lists.length );
                             modalOpen('#check_estimate-modal');
                         } else {
                             alert(res.message);
@@ -1007,5 +1007,52 @@
             $(item).parents('.dropdown_wrap').find('.dropdown_btn').removeClass('active');
             $(item).parents('.dropdown_wrap').removeClass('active');
         };
+        
+    const insertOrder = () => {
+        if(confirm('이대로 주문하시겠습니까?')) {
+
+            fetch('/estimate/insertOrder', {
+                method  : 'POST',
+                headers : {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN'  : '{{csrf_token()}}'
+                },
+                body    : JSON.stringify({
+                    estimate_group_code: estimate_data[0].estimate_group_code
+                })
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                if (json.success) {
+                    modalClose('#request_order-modal');
+
+                    $('.name').text($('#name').val());
+                    $('.phone_number').text($('#phone_number').val());
+                    $('.address1').text($('#address1').val());
+                    $('.total_price').text(response_estimate_estimate_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+
+                    $('.response_order_detail:not(button)').attr('href', '/mypage/order/detail?orderGroupCode=' + $('.order_group_code').first().text() + '&type=P');
+
+                    $('.response_order_prod_list').html('');
+                    for(var i = 0; i < $('input[name="product_count[]"]').length; i++) {
+                        $('.response_order_prod_list').append(
+                            `<div class="p-4 flex items-center">
+                                <img src="` + $('.product_thumbnail').eq(i).attr('src') + `" alt="" class="object-cover w-20 h-20 rounded-md" />
+                                <div class="ml-3">
+                                    <p class="font-medium">` + $('.response_estimate_res_company_name').eq(0).text() + `</p>
+                                    <p class="text-stone-400">` + $('.product_name').eq(i).text() + `</p>
+                                </div>
+                            </div>`
+                        );
+                    }
+
+                    modalOpen('#response_order-modal');
+                } else {
+                    alert('일시적인 오류로 처리되지 않았습니다.');
+                    return false;
+                }
+            });
+        }
+    };
     </script>
 @endsection

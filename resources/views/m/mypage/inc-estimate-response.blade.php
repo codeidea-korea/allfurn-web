@@ -118,11 +118,11 @@
                             </div>
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" class="input-form required"></div>
+                                <div><input type="text" name="product_each_price" class="input-form required" value="{{ $row->product_each_price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
-                                <div><input type="text" name="product_memo" class="input-form"></div>
+                                <div><input type="text" name="product_memo" class="input-form" value="{{ $row->product_memo }}"></div>
                             </div>
                         </div>
                     </div>

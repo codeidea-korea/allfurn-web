@@ -259,7 +259,8 @@
         </div>
 
         <div class="modal_footer">
-            <button type="button" onclick="modalClose('#check_order-modal')">닫기</button>
+            <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
+            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -467,6 +468,7 @@
                 response_estimate_product_option_price: estimate_data.product_option_price || 0,
                 response_estimate_product_delivery_price: estimate_data.product_delivery_price || 0,
                 response_estimate_product_total_price: 0,
+                product_memo:estimate_data.product_memo || '',
                 response_estimate_product_memo: estimate_data.product_memo || '',
             });
 
@@ -645,9 +647,9 @@
                     success: function (res) {
                         if( res.result === 'success' ) {
                             console.log( res );
-                            estimate_data = res.data;
+                            estimate_data = res.data.lists;
                             $('#check_order-modal .modal_body').empty().append(res.html);
-                            $('.prodCnt').text( res.data.length );
+                            $('.prodCnt').text( res.data.lists.length );
                             modalOpen('#check_order-modal');
                         } else {
                             alert(res.message);
@@ -658,6 +660,55 @@
                 });
             });
         });
+        function holdOrder (){
+            modalClose('#check_order-modal');
+            $.ajax({
+                url: '/estimate/order/hold',
+                type: 'post',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('보류 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
+        function saveOrder (){
+            $.ajax({
+                url: '/estimate/order/save',
+                type: 'post',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('저장 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
         const dropBtn = (item)=>{ $(item).toggleClass('active'); $(item).parent().toggleClass('active') };
         const dropItem = (item)=>{
             $(item).parents('.dropdown_wrap').find('.dropdown_btn').text($(item).text());
