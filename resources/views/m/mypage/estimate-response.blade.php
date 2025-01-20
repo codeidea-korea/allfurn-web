@@ -232,7 +232,7 @@
 	<div class="modal_bg" onclick="modalClose('#check_estimate-modal')"></div>
 	<div class="modal_inner new-modal">
         <div class="modal_header">
-            <h3>받은 견적서</h3>
+            <h3>보낸 견적서</h3>
             <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
         </div>
 		<div class="modal_body">
