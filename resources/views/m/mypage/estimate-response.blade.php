@@ -258,7 +258,7 @@
             
         </div>
 
-        <div class="modal_footer">
+        <div class="modal_footer _btnSection">
             <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
             <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
         </div>
@@ -564,6 +564,9 @@
 
         $(document).ready(function(){
 
+		if(new URLSearchParams(location.search).get("status") == 'F') {
+		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		}
             $('.request_estimate_detail').click(function (){
                 estimate_idx = $(this).data('idx');
                 estimate_code = $(this).data('code');
