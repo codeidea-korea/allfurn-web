@@ -702,6 +702,17 @@
         var response_company_type = "";
         var estimate_group_code = '';
 
+var product_option = {};
+var product_option_json = {};
+
+var product_count = 0;
+var response_estimate_product_total_count = 0;
+
+var response_estimate_product_total_price = 0;
+var response_estimate_product_option_price = 0;
+var response_estimate_product_delivery_price = 0;
+var response_estimate_estimate_total_price = 0;
+
         let params = {
             
         };
@@ -849,7 +860,7 @@
 
         $(document).ready(function(){
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
 		}
             
             // 견적 요청서 확인하기
@@ -992,9 +1003,9 @@
                     success: function (res) {
                         if( res.result === 'success' ) {
                             console.log( res );
-                            estimate_data = res.data;
+                            estimate_data = res.data.lists;
                             $('#check_order-modal .modal_body').empty().append(res.html);
-                            $('.prodCnt').text( res.data.length );
+                            $('.prodCnt').text( res.data.lists.length );
                             modalOpen('#check_order-modal');
                         } else {
                             alert(res.message);

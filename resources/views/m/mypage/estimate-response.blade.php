@@ -565,7 +565,7 @@
         $(document).ready(function(){
 
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
 		}
             $('.request_estimate_detail').click(function (){
                 estimate_idx = $(this).data('idx');

@@ -426,7 +426,7 @@ class EstimateService {
             ->update(['order_state' => 'R']);
         
         DB::table('AF_estimate')
-            -> where('order_group_code', $params['order_group_code'])
+            -> where('estimate_group_code', $params['estimate_group_code'])
             -> update(['estimate_state' => 'F']);
 
         return [

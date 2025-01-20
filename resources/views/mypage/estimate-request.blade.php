@@ -741,7 +741,7 @@
 
     $(document).ready(function(){
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
 		}
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
@@ -914,9 +914,9 @@
                 success: function (res) {
                     if( res.result === 'success' ) {
                         console.log( res );
-                        estimate_data = res.data;
+                        estimate_data = res.data.lists;
                         $('#check_order-modal .modal_body').empty().append(res.html);
-                        $('.prodCnt').text( res.data.length );
+                        $('.prodCnt').text( res.data.lists.length );
                         modalOpen('#check_order-modal');
                     } else {
                         alert(res.message);

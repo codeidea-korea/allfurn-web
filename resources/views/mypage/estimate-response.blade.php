@@ -442,7 +442,7 @@
     
 	$(document).ready(function(){
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
 		}
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
