@@ -424,6 +424,10 @@ class EstimateService {
     public function saveOrder(array $params): array {
         $item = Order::where('order_group_code', $params['estimate_group_code'])
             ->update(['order_state' => 'R']);
+        
+        DB::table('AF_estimate')
+            -> where('order_group_code', $params['order_group_code'])
+            -> update(['estimate_state' => 'F']);
 
         return [
             'result'    => 'success',
