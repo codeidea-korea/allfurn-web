@@ -576,8 +576,9 @@
             
         </div>
 
-        <div class="modal_footer">
-            <button type="button" onclick="modalClose('#check_order-modal')">닫기</button>
+        <div class="modal_footer _btnSection">
+            <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
+            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -739,6 +740,9 @@
 
 
     $(document).ready(function(){
+		if(new URLSearchParams(location.search).get("status") == 'F') {
+		    $('._btnSection').html("<button type='button' onclick='modalClose('#check_order-modal')'>닫기</button>");
+		}
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
 
@@ -1019,4 +1023,54 @@
             $('input[name="response_estimate_estimate_total_price"]').val(response_estimate_estimate_total_price);
         });
     });
+	
+        function holdOrder (){
+            modalClose('#check_order-modal');
+            $.ajax({
+                url: '/estimate/order/hold',
+                type: 'post',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('보류 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
+        function saveOrder (){
+            $.ajax({
+                url: '/estimate/order/save',
+                type: 'post',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('저장 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
 </script>
