@@ -110,14 +110,36 @@
                                     <div class="info_box">
                                         <div class="order_num noline">개별주문번호 : {{ $row->estimate_code }}</div>
                                         <div class="prod_name">{{ $row->name }}</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>{{ $row->product_count }}개</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">단가</div>
-                                            <div>{{ $row->product_total_price }}</div>
-                                        </div>
+                                        
+                                        @if(isset($row->product_option) && $row->product_option != '[]')
+                                            <?php $arr = json_decode($row->product_option); $required = false; ?>
+                                            <div class="noline">
+                                                @foreach($arr as $item2)
+                                                <div class="option_item">
+                                                    <div class="">
+                                                        <p class="option_name">{{$item2->optionName}}</p>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <div>{{ $row->product_count }}개</div>
+                                                        <div class="price">50,000</div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="prod_option">
+                                                <div class="name">가격</div>
+                                                <div class="total_price">{{ $row->product_total_price }}</div>
+                                            </div>
+                                        @else
+                                            <div class="prod_option">
+                                                <div class="name">수량</div>
+                                                <div>{{ $row->product_count }}개</div>
+                                            </div>
+                                            <div class="prod_option">
+                                                <div class="name">단가</div>
+                                                <div>{{ $row->product_total_price }}</div>
+                                            </div>
+                                        @endif
                                         <div class="prod_option">
                                             <div class="name estimate">견적가</div>
                                             <div>{{ $row->product_each_price }}</div>
