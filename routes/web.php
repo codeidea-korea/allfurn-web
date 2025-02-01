@@ -345,3 +345,35 @@ Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
     Route::post('/insertRequest', 'EstimateDevController@insertRequest');
     Route::post('/updateResponse', 'EstimateDevController@updateResponse');
 });
+
+
+
+// social test
+Route::get('/signin_new', 'LoginController@social')->name('signIn.social');
+
+
+
+Route::prefix('social')->name('social')->middleware('social.session.check')->group(function(){
+    /**
+     * 네이버 로그인
+     */
+    Route::get('/naver/login', 'SocialController@naverRedirect')->name('.naver.login');
+    Route::get('/naver/callback', 'SocialController@naverCallback')->name('.naver.callback');
+
+
+    /**
+     * 구글 로그인
+     */
+    Route::get('/google/login', 'SocialController@googleRedirect')->name('.google.login');
+    Route::get('/google/callback', 'SocialController@googleCallback')->name('.google.callback');
+
+
+    /**
+     * 카카오 로그인
+     */
+    Route::get('/kakao/login', 'SocialController@kakaoRedirect')->name('.kakao.login');
+    Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
+
+    Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
+
+});

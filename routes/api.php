@@ -20,17 +20,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::prefix('rooms')->group(function() {
-    // NOTICE: rooms 목록 조회
-    Route::get('/', [MessageController::class, 'getRooms']);
-    // NOTICE: room 채팅 내용 조회
-    Route::get('/{idx}', [MessageController::class, 'getRoomByIdx']);
+// Route::prefix('rooms')->group(function() {
+//     // NOTICE: rooms 목록 조회
+//     Route::get('/', [MessageController::class, 'getRooms']);
+//     // NOTICE: room 채팅 내용 조회
+//     Route::get('/{idx}', [MessageController::class, 'getRoomByIdx']);
 
-    // NOTICE: 존재하는 room 에 채팅 발송
-    Route::post('/{idx}/send', [MessageController::class, 'sendMessage']);
+//     // NOTICE: 존재하는 room 에 채팅 발송
+//     Route::post('/{idx}/send', [MessageController::class, 'sendMessage']);
 
-    // NOTICE: room 신고 처리
-    Route::post('/{idx}/report', [MessageController::class, 'reportRoom']);
-    // NOTICE: room 알림 설정 토글 (push 설정 여부)
-    Route::post('/{idx}/config/notification', [MessageController::class, 'toggleNotificationConfig']);
-}
+//     // NOTICE: room 신고 처리
+//     Route::post('/{idx}/report', [MessageController::class, 'reportRoom']);
+//     // NOTICE: room 알림 설정 토글 (push 설정 여부)
+//     Route::post('/{idx}/config/notification', [MessageController::class, 'toggleNotificationConfig']);
+// })

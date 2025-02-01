@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'verified'           => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cors'              => \App\Http\Middleware\Cors::class,
         'mypage'            => MypageNewBadgeCheck::class,
+        'social.session.check' => \App\Http\Middleware\SocialSessionCheck::class,
     ];
 }

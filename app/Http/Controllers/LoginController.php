@@ -49,6 +49,21 @@ class LoginController extends BaseController
         return view(getDeviceType() . 'login.login', ['replaceUrl' => $replaceUrl]);
     }
 
+    public function social(Request $request)
+    {
+        $replaceUrl = $request->input('replaceUrl');
+
+        if (Auth::check()) {
+            if (empty($replaceUrl)) {
+                return redirect('/');
+            } else {
+                return redirect($replaceUrl);
+            }
+        }
+
+        return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
+    }
+
     public function findid()
     {
         if(Auth::check()) {
@@ -125,6 +140,88 @@ class LoginController extends BaseController
                     return redirect('/');
                 }
 //            }
+        }
+    }
+
+
+     /**
+     * 간편 로그인
+     * 네이버, 구글, 카카오, 애플
+     * @return Response()
+     */
+    function socialCheckUser(Request $request)
+    {
+
+
+        $request->validate([
+            'name' => 'required',
+            // 'mobile' => 'required',
+            'mobile' => 'nullable',
+        ]);
+
+        $data['name'] =   $request->input('name');
+        $data['mobile'] = str_replace("-", "", trim($request->input('mobile')));
+        !$data['mobile'] ?  $data['mobile'] = "00000000000" : $data['mobile'];
+        $provider =   $request->input('provider');
+
+        $userInfo = $this->loginService->getSocialUserInfo($data);
+
+        Log::info("#######################################################################");
+        Log::info( $userInfo);
+        Log::info("#######################################################################");
+
+
+
+        if ($provider == "naver") {
+            $social = new SocialController();
+            $social->naverLogout($request);
+        }
+
+
+        if ($provider == "google") {
+            $social = new SocialController();
+            $social->googleLogout($request);
+        }
+
+        if ($provider == "kakao") {
+            $social = new SocialController();
+            $social->kakaoLogout($request);
+        }
+
+
+        if (empty($userInfo)) {
+
+            // $this->$memberService->createUser($data);
+
+            return view(getDeviceType() . 'login.login')
+                ->withInput($request->only(['name', 'mobile']))
+                ->withErrors([
+                    'not_match' => 'The provided credentials do not match our records.',
+                ]);
+        } else if ($userInfo->state == "D") {
+
+            return view(getDeviceType() . 'login.login')
+                ->withInput($request->only(['name', 'mobile']))
+                ->withErrors([
+                    'withdrawal' => 'withdrawal name.',
+                ]);
+        } else if ($userInfo->state != "JS" && $userInfo->state != "UW") {
+
+            return view(getDeviceType() . 'login.login')
+                ->withInput($request->only(['name', 'mobile']))
+                ->withErrors([
+                    'not_approve' => 'use after approve.',
+                ]);
+        } else {
+            $this->loginService->getAuthToken($userInfo->idx);
+            if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
+
+
+                return redirect(getDeviceType() . '/mypage');
+            } else {
+
+                return redirect('/');
+            }
         }
     }
 
