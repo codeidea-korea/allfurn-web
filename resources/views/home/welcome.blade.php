@@ -26,8 +26,8 @@
                             </a>
                             <? } ?> --}}
                         @else
-                            <a href="{{ route('signIn') }}">로그인</a>
-                            <a href="{{ route('signUp') }}">회원가입</a>
+                            <a href="{{ route('signin.social') }}">로그인</a>
+                            <a href="{{ route('signup.new') }}">회원가입</a>
                         @endif
                     </div>
                 </div>

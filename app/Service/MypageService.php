@@ -363,8 +363,10 @@ class MypageService
             ON au.company_idx  = ap.company_idx AND au.parent_idx = 0
             WHERE ap.idx = " .$orders[0]['product_idx'];
         $product = DB::select($sql);
-
-        $productName = count($orders) > 1 ?  $product[0]->name .'외 ' .count($params['estimate_idx'])-1 .'개' : $product[0]->name;
+        
+        $productName = count($orders) > 1 
+        ? $product[0]->name . '외 ' . (count($params['estimate_idx']) - 1) . '개' 
+        : $product[0]->name;
 
         switch($params['status']) {
             case 'R':

@@ -23,6 +23,12 @@ class MemberService
     {
         return User::where('account', $email)->count();
     }
+
+    public function checkPhoneNumber(string $phone_number)
+    {
+        return User::where('phone_number', $phone_number)->count();
+    }
+    
     
     
     public function checkBussinessNumber(string $business_number) {
@@ -34,7 +40,51 @@ class MemberService
         return $whole_cnt+$retail_cnt;
     }
     
-    
+    public function createUserNew(array $params = [])
+    {
+        $user = new User;
+        $user->account = $params['email'];
+        $user->parent_idx = 0;
+        $user->company_idx = $params['companyIdx'];
+        $user->secret = null;
+        
+        $user->name = $params['name'];
+        $user->phone_number = $params['phone_number'];
+        $user->state = 'JS';
+
+        $user->type = 'N';
+        $user->join_date = DB::raw('now()');
+        $user->is_owner = 1;
+        $user->is_delete = 0;
+        $user->register_time = DB::raw('now()');
+        $user->save();
+  
+        Log::info("유저 생성 ::".$user->idx);
+        $params['idx'] = $user->idx;
+        $this->saveAgreement($params);
+
+        // message Room 생성
+        $mr = new MessageRoom;
+        $mr->first_company_type = 'A';
+        $mr->first_company_idx = 1;
+        $mr->second_company_type ='N';
+        $mr->second_company_idx = $params['companyIdx'];
+        $mr->save();
+
+        // CS 메시지 전송
+        $ms = new Message;
+        $ms->room_idx = $mr->idx;
+        $ms->type = 3;
+        $ms->sender_company_type = 'A';
+        $ms->sender_company_idx = 1;
+        $ms->user_idx = NULL;
+        $ms->content = '{"type":"welcome","title":"올펀 가입을 축하드립니다.","text":"더 편리한 서비스 이용을 위해 가이드를 확인해보세요!"}';
+        $ms->is_read = 1;
+        $ms->register_time = DB::raw('NOW()');
+        $ms->save();
+
+        return $user->idx;
+    }
 
     public function createUser(array $params = [])
     {
@@ -79,7 +129,17 @@ class MemberService
 
         return $user->idx;
     }
+    public function createCompanyNew(array $params = [])
+    {
+        $detail = new UserNormal;
+        $detail->name = $params['companyName'] ?? null;
+        $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
+        $detail->phone_number = $params['phone_number'];
+        $detail->register_time = DB::raw('now()');
+        $detail->save();
 
+        return $detail->idx;
+    }
     public function createCompany(array $params = [])
     {
         switch ($params['userType'])

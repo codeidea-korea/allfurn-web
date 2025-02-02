@@ -26,13 +26,14 @@ Route::prefix('home')->group(function() {
     
     Route::get('/slick-slide/items', 'HomeController@getSlickSlideItems');
 });
-Route::get('/signin', 'LoginController@index')->name('signIn');
+// Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
+Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -77,6 +78,10 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
+
+    Route::post('/duplicate/email', 'MemberController@duplicateEmail');
+    Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
+    Route::post('/createUserNew', 'MemberController@createUserNew');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
@@ -341,3 +346,52 @@ Route::prefix('help')->name('help')
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
+
+
+// 임시로 작성
+Route::prefix('productdev')->name('productdev')->group(function() {
+    Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
+});
+
+// 임시로 작성
+Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
+    Route::post('/insertRequest', 'EstimateDevController@insertRequest');
+    Route::post('/updateResponse', 'EstimateDevController@updateResponse');
+});
+
+
+
+// social test
+Route::get('/signin', 'LoginController@social')->name('signin.social');
+Route::get('/signup-new', 'LoginController@signupNew')->name('signup.new');
+
+Route::prefix('social')->name('social')->middleware('social.session.check')->group(function(){
+    /**
+     * 네이버 로그인
+     */
+    Route::get('/naver/login', 'SocialController@naverRedirect')->name('.naver.login');
+    Route::get('/naver/callback', 'SocialController@naverCallback')->name('.naver.callback');
+
+
+    /**
+     * 구글 로그인
+     */
+    Route::get('/google/login', 'SocialController@googleRedirect')->name('.google.login');
+    Route::get('/google/callback', 'SocialController@googleCallback')->name('.google.callback');
+
+
+    /**
+     * 카카오 로그인
+     */
+    Route::get('/kakao/login', 'SocialController@kakaoRedirect')->name('.kakao.login');
+    Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
+
+
+    /**
+     * 소셜 로그인 공통
+     */
+    Route::get('/social', 'SocialController@commonCallback')->name('.social');
+
+    Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
+
+});

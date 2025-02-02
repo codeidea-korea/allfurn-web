@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Session;
 
+use Illuminate\Support\Facades\DB;
+
 class MemberController extends BaseController {
     
     private $memberService;
@@ -56,8 +58,18 @@ class MemberController extends BaseController {
     }
     
     
+    public function duplicateEmail(Request $request): String
+    {
+        Log::info("***** MemberController > duplicateEmail");
+        return $this->memberService->checkEmail($request->check_param);
+    }
+
     
-    
+    public function duplicatePhoneNumber(Request $request): String
+    {
+        Log::info("***** MemberController > duplicatePhoneNumber");
+        return $this->memberService->checkPhoneNumber($request->check_param);
+    }
     
 
     /**
@@ -114,6 +126,66 @@ class MemberController extends BaseController {
             'message' => ''
         ]);
     }
+
+    public function createUserNew(Request $request): JsonResponse {
+        Log::info("***** MemberController > createUserNew");
+    
+        try {
+            // 트랜잭션 시작
+            DB::beginTransaction();
+            
+            $data = $request->all();
+            if ($this->memberService->checkEmail($data['email']) > 0) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 1001,
+                    'message' => 'registed email'
+                ]);
+            }
+            
+            // 이미지 저장
+            $storageName = "name-card-image";
+            // if ($data['userType'] != 'N' && $data['userType'] != 'S') {
+            //     $storageName = 'business-license-image';
+            // }
+            
+            //  $stored = Storage::disk('vultr')->put($storageName, $request->file('file'));
+            
+            // // DB 작업 시작
+            // $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
+            $data['companyIdx'] = $this->memberService->createCompanyNew($data);
+            $userIdx = $this->memberService->createUserNew($data);
+            
+            if ($userIdx === null) {
+                throw new Exception('Failed to create user');
+            }
+            
+            // 모든 작업이 성공적으로 완료되면 커밋
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => ''
+            ]);
+            
+        } catch (Exception $e) {
+            // 에러 발생 시 롤백
+            DB::rollBack();
+            
+            // 업로드된 파일이 있다면 삭제
+            if (isset($stored)) {
+                Storage::disk('vultr')->delete($stored);
+            }
+            
+            Log::error('User creation failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user: ' . $e->getMessage()
+            ]);
+        }
+    }
+
 
     public function terms()
     {

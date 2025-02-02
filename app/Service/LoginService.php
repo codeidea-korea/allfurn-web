@@ -44,6 +44,21 @@ class LoginService
         return $user;
     }
 
+    public function getSocialUserInfo(array $params = [])
+    {
+        $user = DB::table('AF_user', 'u')
+            ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
+            IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
+            IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
+            ->where([
+
+                ['u.phone_number', $params['phone_number']]
+               
+            ])->first();
+
+        return $user;
+    }
+
     public function getAuthToken(string $idx) {
         if ($idx == null) { return null;}
 
