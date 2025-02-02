@@ -306,17 +306,17 @@ $("#google").on('click', function (e) {
 });
 
 function openGoogleLogin() {
-    // $.ajax({
-    //     url: "{{ route('social.google.login') }}",
-    //     method: "GET",
-    //     success: function (data) {
-    //         const popup = window.open(data.url, "Google Login", "width=500,height=600");
-    //         // popup.window.focus();
-    //     },
-    //     error: function () {
-    //         alert('Failed to start google login process.');
-    //     }
-    // });
+    $.ajax({
+        url: "{{ route('social.google.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Google Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start google login process.');
+        }
+    });
 }
 
 //kakao 간편 로그인
@@ -326,17 +326,17 @@ $("#kakao").on('click', function (e) {
 });
 
 function openKakaoLogin() {
-    // $.ajax({
-    //     url: "{{ route('social.kakao.login') }}",
-    //     method: "GET",
-    //     success: function (data) {
-    //         const popup = window.open(data.url, "Kakao Login", "width=500,height=600");
-    //         // popup.window.focus();
-    //     },
-    //     error: function () {
-    //         alert('Failed to start kakao login process.');
-    //     }
-    // });
+    $.ajax({
+        url: "{{ route('social.kakao.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Kakao Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start kakao login process.');
+        }
+    });
 }
 
 

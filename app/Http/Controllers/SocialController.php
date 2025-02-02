@@ -15,38 +15,28 @@ class SocialController extends BaseController
 {
 
 
-    // local test
-    // 네이버
-    private $naver_clientId = 'liyiWY92L31OGJnH5UVi';
-    private $naver_clientSecret = 'PSOlkxVmUk';
-    private $naver_redirectUri = 'http://localhost:8000/social/naver/callback';
+    public function __construct()
+    {
+        $this->naver_clientId = env('NAVER_CLIENT_ID');
+        $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
+        $this->naver_redirectUri = "http://localhost:8000/social/naver/callback";
 
+        
+        $this->google_clientId = env('GOOGLE_CLIENT_ID');
+        $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
+        $this->google_redirectUri = "http://localhost:8000/social/google/callback";
+        $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
-    // 구글
-    private $google_clientId = '';
-    private $google_clientSecret = '';
-    private $google_redirectUri = 'http://localhost:8000/social/google/callback';
-    //AIzaSyDMsa7N3Yz6p_Nurl9dVC8MQvmFd_AwQmc
-    // 카카오
-    private $kakao_clientId = '';
-    private $kakao_clientSecret = '';
-    private $kakao_redirectUri = 'http://localhost:8000/social/kakao/callback';
+        $this->kakao_clientId = env('KAKAO_CLIENT_ID');
+        $this->kakao_redirectUri = "http://localhost:8000/social/kakao/callback";
 
-    // 애플
-    private $apple_clientId = '';
-    private $apple_clientSecret = '';
-    private $apple_redirectUri = 'http://localhost:8000/social/apple/callback';
+        $this->apple_clientId = env('APPLE_CLIENT_ID');
+        $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
+        $this->apple_redirectUri = "http://localhost:8000/social/apple/callback";
 
+        
+    } 
 
-
-
-
-    // private socialService;
-
-    // public function __construct(SocialService $Social_service)
-    // {
-    //     $this->SocialService = $Social_service;
-    // }
 
     /**
      * 소셜 로그인 Naver
@@ -61,24 +51,20 @@ class SocialController extends BaseController
         session(['naver_state' => $state]);
 
         $url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={$this->naver_clientId}&redirect_uri={$this->naver_redirectUri}&state={$state}";
-
+        Log::info( $url);
         return response()->json(['url' => $url]);
     }
 
     function naverCallback(Request $request)
     {
 
-        Log::info("naverCallback");
-
         $state = $request->input('state');
         $code = $request->input('code');
-
 
         // CSRF 검증
         if ($state !== session('naver_state')) {
             return response()->json(['error' => 'Invalid state'], 400);
         }
-
 
         // 네이버 토큰 요청
         $url = "https://nid.naver.com/oauth2.0/token";
@@ -96,12 +82,6 @@ class SocialController extends BaseController
             // GET이 아닌 POST 메소드 사용
             $response = $this->httpPost($url, $params);
 
-            // 응답 로깅
-            Log::info('Naver Token Response:', [
-                'raw_response' => $response,
-                'response_type' => gettype($response)
-            ]);
-
             if (empty($response)) {
                 Log::error('Empty response received from Naver');
                 throw new \Exception('Empty response from Naver OAuth server');
@@ -117,8 +97,6 @@ class SocialController extends BaseController
         }
 
         $accessToken = json_decode($response, true);
-
-        Log::info($accessToken);
 
         if (!isset($accessToken['access_token'])) {
             return view(getDeviceType() . 'signIn.social');
@@ -139,7 +117,6 @@ class SocialController extends BaseController
         if (!isset($jsonData['response'])) {
             return response()->json(['error' => 'Failed to retrieve user info'], 500);
         }
-
 
         return view(getDeviceType() . '/social/naver', ['jsonData' => $jsonData['response']]);
     }

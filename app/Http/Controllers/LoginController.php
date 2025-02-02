@@ -169,8 +169,7 @@ class LoginController extends BaseController
         Log::info("#######################################################################");
         Log::info( $userInfo);
         Log::info("#######################################################################");
-
-
+        
 
         if ($provider == "naver") {
             $social = new SocialController();
