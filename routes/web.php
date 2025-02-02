@@ -26,7 +26,7 @@ Route::prefix('home')->group(function() {
     
     Route::get('/slick-slide/items', 'HomeController@getSlickSlideItems');
 });
-Route::get('/signin', 'LoginController@index')->name('signIn');
+// Route::get('/signin', 'LoginController@index')->name('signIn');
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
@@ -76,6 +76,10 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
+
+    Route::post('/duplicate/email', 'MemberController@duplicateEmail');
+    Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
+    Route::post('/createUserNew', 'MemberController@createUserNew');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
@@ -349,9 +353,8 @@ Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
 
 
 // social test
-Route::get('/signin_new', 'LoginController@social')->name('signIn.social');
-
-
+Route::get('/signin', 'LoginController@social')->name('signin.social');
+Route::get('/signup-new', 'LoginController@signupNew')->name('signup.new');
 
 Route::prefix('social')->name('social')->middleware('social.session.check')->group(function(){
     /**
@@ -373,6 +376,12 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
      */
     Route::get('/kakao/login', 'SocialController@kakaoRedirect')->name('.kakao.login');
     Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
+
+
+    /**
+     * 소셜 로그인 공통
+     */
+    Route::get('/social', 'SocialController@commonCallback')->name('.social');
 
     Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
 

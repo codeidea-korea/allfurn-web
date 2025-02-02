@@ -51,8 +51,9 @@ class LoginController extends BaseController
 
     public function social(Request $request)
     {
+        
         $replaceUrl = $request->input('replaceUrl');
-
+        Log::info("***** LoginController > social :: $replaceUrl");
         if (Auth::check()) {
             if (empty($replaceUrl)) {
                 return redirect('/');
@@ -62,6 +63,12 @@ class LoginController extends BaseController
         }
 
         return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
+    }
+
+    public function signupNew(Request $request)
+    {
+        
+        return view(getDeviceType() . 'login.signup_new');
     }
 
     public function findid()
@@ -154,49 +161,47 @@ class LoginController extends BaseController
 
 
         $request->validate([
-            'name' => 'required',
-            // 'mobile' => 'required',
-            'mobile' => 'nullable',
+            'name' => 'nullable',
+            'phone_number' => 'nullable',
+            'email' => 'nullable',
         ]);
 
-        $data['name'] =   $request->input('name');
-        $data['mobile'] = str_replace("-", "", trim($request->input('mobile')));
-        !$data['mobile'] ?  $data['mobile'] = "00000000000" : $data['mobile'];
-        $provider =   $request->input('provider');
+        $socialUserData = [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone_number' => str_replace("-", "", trim($request->input('phone_number'))),
+            'provider' => $request->input('provider'),
+          
+        ];
 
-        $userInfo = $this->loginService->getSocialUserInfo($data);
+        $userInfo = $this->loginService->getSocialUserInfo($socialUserData);
 
-        Log::info("#######################################################################");
-        Log::info( $userInfo);
-        Log::info("#######################################################################");
-        
-
-        if ($provider == "naver") {
+        if ($socialUserData['provider'] == "naver") {
             $social = new SocialController();
             $social->naverLogout($request);
         }
 
 
-        if ($provider == "google") {
+        if ($socialUserData['provider'] == "google") {
             $social = new SocialController();
             $social->googleLogout($request);
         }
 
-        if ($provider == "kakao") {
+        if ($socialUserData['provider'] == "kakao") {
             $social = new SocialController();
             $social->kakaoLogout($request);
         }
 
+ 
+        if (!$socialUserData['phone_number'] || empty($userInfo) ) {
 
-        if (empty($userInfo)) {
-
-            // $this->$memberService->createUser($data);
-
-            return view(getDeviceType() . 'login.login')
-                ->withInput($request->only(['name', 'mobile']))
-                ->withErrors([
-                    'not_match' => 'The provided credentials do not match our records.',
-                ]);
+            return response()->json([
+                'status' => 'error',
+                'redirect' => route('signup.new'),
+                'script' => 'parent', // 부모 창 제어를 위한 플래그
+                'data'  => $socialUserData,
+                'message' => 'The provided credentials do not match our records.'
+            ]);
         } else if ($userInfo->state == "D") {
 
             return view(getDeviceType() . 'login.login')

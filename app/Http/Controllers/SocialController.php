@@ -51,7 +51,7 @@ class SocialController extends BaseController
         session(['naver_state' => $state]);
 
         $url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={$this->naver_clientId}&redirect_uri={$this->naver_redirectUri}&state={$state}";
-        Log::info( $url);
+      
         return response()->json(['url' => $url]);
     }
 
@@ -105,113 +105,28 @@ class SocialController extends BaseController
 
         //네이버 access_token 쿠키 저장
         setcookie('naver_access_token', $accessToken['access_token'], time() + 3600, '/');
-
+        Log::info($accessToken['access_token']);
         // 네이버 사용자 정보 요청
         $userResponse = $this->httpGet("https://openapi.naver.com/v1/nid/me", [
-            'Authorization: Bearer ' . $accessToken['access_token']
+            'Authorization' => 'Bearer ' . $accessToken['access_token']
         ]);
 
         $jsonData = json_decode($userResponse, true);
+
+        if (isset($jsonData['response']['mobile'])) {
+            $jsonData['response']['phone_number'] = $jsonData['response']['mobile'];
+            unset($jsonData['response']['mobile']);
+        }
+        
 
         // 사용자 정보 요청 실패
         if (!isset($jsonData['response'])) {
             return response()->json(['error' => 'Failed to retrieve user info'], 500);
         }
 
-        return view(getDeviceType() . '/social/naver', ['jsonData' => $jsonData['response']]);
+        return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData['response']]);
     }
 
-    // HTTP POST 요청
-    private function httpPost($url, $data)
-    {
-
-        if(env("APP_NAME") === 'ALLFURN_LOCAL') {
-
-            $client = new \GuzzleHttp\Client([
-                'verify' => false  // 개발환경에서만 사용
-            ]);
-
-            try {
-                $response = $client->request('POST', $url, [
-                    'form_params' => $data,
-                    'headers' => [
-                        'Content-Type' => 'application/x-www-form-urlencoded'
-                    ]
-                ]);
-
-                return $response->getBody()->getContents();
-            } catch (\Exception $e) {
-                Log::error('HTTP Post Error:', [
-                    'message' => $e->getMessage()
-                ]);
-                throw $e;
-            }
-        }else{
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
-
-            $response = curl_exec($ch);
-            curl_close($ch);
-
-            return $response;
-        }
-
-
-
-    }
-
-    // HTTP GET 요청
-    private function httpGet($url, $headers = [])
-    {
-
-
-        if(env("APP_NAME") === 'ALLFURN_LOCAL') {
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 개발환경에서 SSL 검증 비활성화
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);     // 개발환경에서 호스트 검증 비활성화
-
-            // 상세한 에러 확인을 위한 디버깅 추가
-            $response = curl_exec($ch);
-            $error = curl_error($ch);
-            $info = curl_getinfo($ch);
-
-            if ($error) {
-                Log::error('CURL Error:', [
-                    'error' => $error,
-                    'info' => $info,
-                    'url' => $url
-                ]);
-            }
-
-            curl_close($ch);
-
-            return $response;
-        }else{
-
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-            $response = curl_exec($ch);
-            curl_close($ch);
-
-            return $response;
-
-        }
-    }
 
     function naverLogout(Request $request)
     {
@@ -295,44 +210,42 @@ class SocialController extends BaseController
 
         $accessToken = json_decode($response, true);
 
-        //  if (isset($accessToken['access_token'])) {
-        //      $tocken = $accessToken['access_token'];
-        //  }
-
-        $token = $accessToken['access_token'];
-
-
         setcookie('kakao_access_token', $accessToken['access_token'], time() + 3600, '/');
 
-        $userResponse = Http::withHeaders(['Authorization' => "Bearer $token"])->get('https://kapi.kakao.com/v2/user/me');
-        Log::info($userResponse);
+        $userResponse = $this->httpGet(
+            "https://kapi.kakao.com/v2/user/me",
+            [
+                'Authorization' => 'Bearer ' . $accessToken['access_token']
+            ]
+          
+        );
+   
+        $userData =  json_decode($userResponse, true);
 
-        if ($userResponse->ok()) {
-            $userData =  json_decode($userResponse, true);
+        // dd($userData);
+        //  exit;
 
-            // dd($userData['kakao_account']);
-            //  exit;
+        // 사용자 이름과 전화번호
+        $name = $userData['kakao_account']['name'] ?? $userData['kakao_account']['profile']['nickname'];
+        $email = $userData['kakao_account']['email'] ?? '';
+        $phoneNumber = $userData['kakao_account']['phone_number'] ?? '';
 
-            // 사용자 이름과 전화번호
-            $name = $userData['kakao_account']['name'] ?? '';
-            $email = $userData['kakao_account']['email'] ?? '';
-            $phoneNumber = $userData['kakao_account']['phone_number'] ?? '';
-
-            //dd($nickname, $email, $phoneNumber);
-            //exit;
-        } else {
-            return response()->json(['error' => 'Failed to retrieve user info'], 500);
-        }
-
+    
 
         $jsonData = array(
             'name' => $name,
             'email' => $email,
-            'mobile' => preg_replace('/^\+82\s?/', '0', $phoneNumber)
+            'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber)
         );
 
-        Log::info($jsonData);
-        return view(getDeviceType() . '/social/kakao', ['jsonData' => $jsonData]);
+
+        
+        Log::info('Parsed User Data:', $jsonData);
+            
+    
+
+
+        return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData]);
     }
 
     /**
@@ -350,7 +263,7 @@ class SocialController extends BaseController
     {
 
         $code = $request->get('code');
-        Log::info($code);
+       
         if (!$code) {
             return response()->json(['error' => 'Authorization code is missing.']);
         }
@@ -365,6 +278,7 @@ class SocialController extends BaseController
             'code' => $code
         ]);
 
+        Log::info("#####################################################");
         $accessToken = json_decode($response, true);
 
         if (!isset($accessToken['access_token'])) {
@@ -376,28 +290,108 @@ class SocialController extends BaseController
         //구글 access_token 쿠키 저장
         setcookie('google_access_token', $accessToken['access_token'], time() + 3600, '/');
 
-        // 2. 사용자 정보 요청 (People API)
-        $userInfo = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken['access_token'],
-        ])->get('https://people.googleapis.com/v1/people/me', [
-            'personFields' => 'names,emailAddresses,phoneNumbers'
-        ])->json();
+        Log::info($accessToken['access_token']);
 
-        // HTTP 응답 상태 코드 확인
-        Log::info( $userInfo);
-
-
-        $name = $userInfo['names'][0]['displayName'] ?? null;
-        $email = $userInfo['emailAddresses'][0]['value'] ?? null;
-        $phone = $userInfo['phoneNumbers'][0]['value'] ?? null;
-
-
-        $jsonData = array(
-            'name' => $name,
-            'email' => $email,
-            'mobile' => $phone
+        // 구글 사용자 정보 요청
+        $userResponse = $this->httpGet(
+            "https://people.googleapis.com/v1/people/me",
+            [
+                'Authorization' => 'Bearer ' . $accessToken['access_token']
+            ],
+            ['personFields' => 'names,emailAddresses,phoneNumbers']
         );
 
-        return view(getDeviceType() . '/social/google', ['jsonData' => $jsonData]);
+        $userInfo = json_decode($userResponse, true);
+        Log::info('Google User Response:', $userInfo);
+        
+        $jsonData = [
+           'name' => $userInfo['names'][0]['displayName'] ?? null,
+           'email' => $userInfo['emailAddresses'][0]['value'] ?? null, 
+           'phone_number' => $userInfo['phoneNumbers'][0]['value'] ?? null,
+           'provider' => 'google'
+        ];
+        
+        Log::info('Parsed User Data:', $jsonData);
+        
+
+
+        return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData]);
+    }
+
+
+    
+    // HTTP POST 요청
+    private function httpPost($url, $data)
+    {
+
+        if(env("APP_NAME") === 'ALLFURN_LOCAL') {
+
+            $client = new \GuzzleHttp\Client([
+                'verify' => false  // 개발환경에서만 사용
+            ]);
+
+     
+        }else{
+            $client = new \GuzzleHttp\Client([
+                'verify' => true  // 개발환경에서만 사용
+            ]);
+         
+        }
+
+        try {
+            $response = $client->request('POST', $url, [
+                'form_params' => $data,
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded'
+                ]
+            ]);
+
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            Log::error('HTTP Post Error:', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+
+    }
+
+    // HTTP GET 요청
+    private function httpGet($url, $headers = [], $query = [])
+    {
+
+
+        if(env("APP_NAME") === 'ALLFURN_LOCAL') {
+            $client = new \GuzzleHttp\Client([
+                'verify' => false  // 개발환경에서만 사용
+            ]);
+
+        }else{
+            $client = new \GuzzleHttp\Client([
+                'verify' => true  // 개발환경에서만 사용
+            ]);
+        }
+
+        try {
+
+            $options = [
+                'headers' => $headers
+            ];
+    
+            // query 파라미터가 비어있지 않은 경우에만 추가
+            if (!empty($query)) {
+                $options['query'] = $query;
+            }
+            
+            $response = $client->request('GET', $url,$options);
+
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            Log::error('HTTP Post Error:', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+
     }
 }

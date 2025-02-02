@@ -7,40 +7,30 @@
 
     var name = jsonData.name;
     var email = jsonData.email;
-    var mobile = jsonData.mobile;
+    var phone_number = jsonData.phone_number;
+    var provider = jsonData.provider;
 
-        if()
+ 
+      
 
     window.addEventListener('load', function() {
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: "{{ route('social.login') }}" ,
             type: 'POST',
-            data: { 'name':name, 'mobile':mobile, 'provider':'naver' },
-            //dataType: 'json',
+            data: { 'name':name, 'phone_number':phone_number,'email':email, 'provider':provider },
             success: function(response) {
-                    // console.log("addEvent=====================");
-                    // console.log('response:', response);
+                if (response.script === 'parent') {
+                    window.opener.sessionStorage.setItem('socialUserData', JSON.stringify(response.data));
+                    
+                        window.opener.location.href = response.redirect;
+                        window.close();
+              
+                } else {
+                   
                     opener.location.reload();
                     window.close();
-                    // if (response.success == true) {
-                    //     // var accessToken = response.accessToken;
-                    //     $.ajax({
-                    //         url: "/social/naver",
-                    //         type: 'POST',
-                    //     // data: { 'accessToken':accessToken },
-                    //         //dataType: 'json',
-                    //         success: function(response) {
-                    //             if (response.message == '연동해제') {
-                    //                 window.close();
-                    //             }
-                    //         },
-                    //         error: function(error) {
-                    //             console.error('Error:', error);
-                    //             console.log('Error:', error);
-                    //         }
-                    //     });
-                    // }
+                }
                 },
                 error: function(error) {
                     console.error('Error:', error);
