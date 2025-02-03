@@ -119,7 +119,7 @@
                                         </div>
                                         <div class="mt-2">
                                             <div>{{ $row->product_count }}개</div>
-                                            <div class="price">50,000</div>
+                                            <div class="price"><?php echo number_format((int)$row->price, 0); ?></div>
                                         </div>
                                     </div>
                                     @endforeach
@@ -157,11 +157,20 @@
             <div class="txt_info mt-10">
                 <div class="title"><p>결제 및 배송 정보</p></div>
                 <div>
+                    @php
+                    if(!empty($lists[0]->response_account) && strpos($lists[0]->response_account, ' ')) {
+                        $response_account = explode(' ', $lists[0]->response_account);
+                    } else {
+                        $response_account = array();
+                        array_push($response_account, '은행선택');
+                        array_push($response_account, '');
+                    }
+                    @endphp
                     <div class="txt_desc">
                         <div class="name">계좌번호</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">
-                                <button id="bank_type" class="dropdown_btn" onClick="dropBtn(this);"><p>은행선택</p></button>
+                                <button id="bank_type" class="dropdown_btn" onClick="dropBtn(this);"><p>{{$response_account[0]}}</p></button>
                                 <div class="dropdown_list">
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="KEB하나은행">KEB하나은행</div>
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="SC제일은행">SC제일은행</div>
@@ -175,7 +184,7 @@
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="수협">수협</div>
                                 </div>
                             </div>
-                            <input type="text" id="account_number" class="input-form">
+                            <input type="text" id="account_number" class="input-form" value="{{$response_account[1]}}">
                         </div>
                     </div>
                     <div class="txt_desc">

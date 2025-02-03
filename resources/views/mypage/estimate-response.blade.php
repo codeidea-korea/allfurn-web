@@ -276,41 +276,51 @@
 
         sum_price = 0;
         $('.fold_area .prod_info').each(function (index) {
-        	product_price = 0;
+            product_price = 0;
+
+            var response_estimate_product_option_price = 0;
+            var options = $($('div .prod_info')[index]).find('.option_item').find('.price');
+            if(options) {
+                for (let idx = 0; idx < options.length; idx++) {
+                    const option = options[idx];
+                    response_estimate_product_option_price += Number(option.innerText);                    
+                }
+            }
+
             products.push({
                 estimate_idx: estimate_idx,
                 estimate_code: estimate_code,
                 estimate_group_code: estimate_group_code,
                 response_company_type: response_company_type,
                 //
-                product_idx: estimate_data.product_idx,
-                product_count: estimate_data.product_count,
-                name: estimate_data.name,
-                product_total_price: estimate_data.price,
+                product_idx: estimate_data.lists[index].product_idx,
+                product_count: estimate_data.lists[index].product_count,
+                name: estimate_data.lists[index].name,
+                product_total_price: estimate_data.lists[index].price,
                 response_estimate_estimate_total_price: 0,
-                memo: estimate_data.request_memo,
+                memo: estimate_data.lists[index].request_memo,
 
-                address1: estimate_data.request_address1,
-                phone_number: estimate_data.request_phone_number,
-                register_time: estimate_data.request_time,
-                response_estimate_req_user_idx: estimate_data.request_company_idx,
- 
+                address1: estimate_data.lists[index].request_address1,
+                phone_number: estimate_data.lists[index].request_phone_number,
+                register_time: estimate_data.lists[index].request_time,
+                response_estimate_req_user_idx: estimate_data.lists[index].request_company_idx,
+
                 response_estimate_res_company_name: '{{ $user -> company_name }}',
                 response_estimate_res_business_license_number: '{{ $user -> business_license_number }}',
                 response_estimate_res_phone_number: '{{ $user -> phone_number }}',
-                response_estimate_res_address1: estimate_data.product_address || '',
+                response_estimate_res_address1: estimate_data.lists[index].product_address || '',
                 response_estimate_account1: "",
                 response_estimate_response_account2: "",
                 response_estimate_res_memo: "", 
                 response_estimate_res_time: getToday(0),
                 expiration_date: getToday(15),
-                response_estimate_product_each_price: estimate_data.product_each_price || 0,
-                response_estimate_product_delivery_info: estimate_data.product_delivery_info || '',
-                response_estimate_product_option_price: estimate_data.product_option_price || 0,
-                response_estimate_product_delivery_price: estimate_data.product_delivery_price || 0,
-                response_estimate_product_total_price: 0,
-                product_memo:estimate_data.product_memo || '',
-                response_estimate_product_memo: estimate_data.product_memo || '',
+                response_estimate_product_each_price: Number($('input[name=product_each_price]')[index].value),
+                response_estimate_product_delivery_info: $('#delivery_type').text(),
+                response_estimate_product_option_price: response_estimate_product_option_price,
+                response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
+                response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
+                product_memo:estimate_data.lists[index].product_memo || '',
+                response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });
 
 
@@ -318,16 +328,16 @@
                 let i_name = $(item).attr('name'); // name 속성 가져오기
                 let i_val = '';
                 if(i_name == 'price'){
-					i_val = parseInt($(item).val()); // 값 가져오기	
-					if(isNaN(i_val)){
-						product_price = 0;
-						i_val = 0;
-					}else{
-						product_price = i_val;
-					}
+                    i_val = parseInt($(item).val()); // 값 가져오기	
+                    if(isNaN(i_val)){
+                        product_price = 0;
+                        i_val = 0;
+                    }else{
+                        product_price = i_val;
+                    }
                     products[index][i_name] = i_val;
                 }else{
-                	i_val = $(item).val(); // 값 가져오기	
+                    i_val = $(item).val(); // 값 가져오기	
                     products[index][i_name] = i_val;
                 }
             });
@@ -336,12 +346,12 @@
             
             var delivery_price = 0;
             if($('#delivery_type').text() == '착불'){
-            	delivery_price = $('#delivery_price').val()
-            	if(delivery_price == ''){
-            		delivery_price = 0;
-            	}
+                delivery_price = $('#delivery_price').val()
+                if(delivery_price == ''){
+                    delivery_price = 0;
+                }
             }else{
-            	delivery_price = 0
+                delivery_price = 0
             }
             products[index]['product_delivery_price_temp'] = delivery_price;
             
@@ -355,10 +365,13 @@
             products[index]['request_memo'] = $('#etc_memo').val();
             products[index]['response_memo'] = $('#response_memo').val();
             products[index]['response_estimate_res_memo'] = $('#response_memo').val();
-
+            
             sum_price += product_price;
         });
-        
+        sum_price = 0;
+        $('.fold_area .prod_info').each(function (index) {
+            sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
+        });
         $('.fold_area .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
             products[index]['response_estimate_product_total_price'] = sum_price;

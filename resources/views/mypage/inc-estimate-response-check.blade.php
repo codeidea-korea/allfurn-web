@@ -121,7 +121,7 @@
                                                     </div>
                                                     <div class="mt-2">
                                                         <div>{{ $row->product_count }}개</div>
-                                                        <div class="price">50,000</div>
+                                                        <div class="price"><?php echo number_format((int)$row->price, 0); ?></div>
                                                     </div>
                                                 </div>
                                                 @endforeach

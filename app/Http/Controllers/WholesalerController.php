@@ -249,6 +249,7 @@ class WholesalerController extends BaseController
         $data['company_idx']    = $request->company_idx;
 
         $list = $this->productService->getWholesalerProductList($data);
+        $ret['data'] = $list;
         $ret['html'] = view('product.inc-product-company', ['list' => $list])->render();
 
         return response()->json($ret);

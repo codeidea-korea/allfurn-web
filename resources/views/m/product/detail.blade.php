@@ -302,6 +302,39 @@
                                     </div>
                                 </div>
                                 @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                                
+                                <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
+                                    @foreach($arr as $item)
+                                        <div class="dropdown my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                            <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
+                                                <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
+                                                    {{$item->optionName}} 선택
+                                                    @if($item->required == 1)
+                                                        (필수)
+                                                    @else
+                                                        (선택)
+                                                    @endif
+                                                </p>
+                                                <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
+                                            </a>
+                                            <div class="filter_dropdown_wrap w-[560px]" style="display: none;">
+                                                <ul>
+                                                    @foreach($item->optionValue as $sub)
+                                                        <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                                                            <a href="javascript:;" class="flex items-center">
+                                                                {{$sub->propertyName}}
+                                                                @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                                    <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
+                                                                @endif
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    <div class="prod_option opt_result_area ori">
+                                    </div>
                                 @else
                                 <div class="prod_option">
                                     <div class="name">단가</div>
@@ -899,6 +932,7 @@
                 } else {
                     $('.orderProductList_addlist').hide();
                 }
+                initEventListener();
             }, error: function (e) {
 
             }
@@ -1004,33 +1038,37 @@
         }
 
         if (!same) {
-            var htmlText = '<div class="option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
-            if (required) {
-                optionTmp.map(function (item) {
-                    htmlText += '<div class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</div><button class="ico_opt_remove"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
-                })
-            } else {
-                htmlText += '<div class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</div><button class="ico_opt_remove"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
-            }
-            htmlText += '</div>' +
+                var htmlText = '<div class="option_item option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
+                if (required) {
+                    optionTmp.map(function (item) {
+                        $('._requestEstimateOption').text(item['option_name']);
+
+                        htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                    })
+                } else {
+                    $('._requestEstimateOption').text($(this).data('option_name'));
+
+                    htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                }
+                htmlText += '</div>' +
                     '<div class="option_count">' +
-                        '<div>' +
-                            '<button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>' +
-                            '<input type="text" id="qty_input" name="qty_input" value="1" maxlength="3">' +
-                            '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
-                        '</div>' +
-                        '<b>';
-                            @if($data['detail']->is_price_open == 1)
-                                htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
-                            @else
-                                htmlText += '<span>{{$data['detail']->price_text}}</span>';
-                            @endif
-            htmlText += '</b></div></div>';
-            if(required && $('.selection__result.add').length > 0 ) {
-                $('.selection__result.add').first().before(htmlText);
-            } else {
-                $('.opt_result_area').append(htmlText);
-            }
+                    '<div class="count_box2">' +
+                    '<button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>' +
+                    '<input type="text" id="requestEstimateProductCount" style="width: 40px;" name="qty_input" value="1" maxlength="3" data-opt_idx="'+opt_idx+'">' +
+                    '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
+                    '</div>' +
+                    '<p class="price">';
+                @if($data['detail']->is_price_open == 1)
+                    htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
+                @else
+                    htmlText += '<span>{{$data['detail']->price_text}}</span>';
+                @endif
+                    htmlText += '</p></div></div>';
+                if(required && $('.selection__result.add').length > 0 ) {
+                    $('.selection__result.add').first().before(htmlText);
+                } else {
+                    $('.opt_result_area').append(htmlText);
+                }
 
             $('.dropdown').map(function () {
                 $(this).find('.dropdown__title').text($(this).find('.dropdown__title').data('placeholder'));
@@ -1103,6 +1141,8 @@
 
 
     $(function(){
+        initEventListener();
+    });
         $('.count_box2 .minus').off().on('click', function(){
             let num = Number($(this).siblings('input').val());
             if(isNaN(num)) {
@@ -1134,127 +1174,133 @@
                 $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
             }
         });
-    });
-    $(document)
-        .on('click', '#orderProductList .plus', function(e) {
-            e.preventDefault();
-            var price = $(this).data('price');
-            var cnt = parseInt( $(this).prev('input').val() ) + 1;
+    function initEventListener(){
+        $(document).off()
+            .on('click', '#orderProductList .plus', function(e) {
+                e.preventDefault();
+                var price = $(this).data('price');
+                var cnt = parseInt( $(this).prev('input').val() ) + 1;
 
-            console.log( cnt );
+                console.log( cnt );
 
-            var tot_price = 0;
-            if( cnt > 0 ) {
-                $(this).prev('input').val( cnt );
-                tot_price = price * cnt;
+                var tot_price = 0;
+                if( cnt > 0 ) {
+                    $(this).prev('input').val( cnt );
+                    tot_price = price * cnt;
 
-                if( price > 0 ) {
-                    $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                    if( price > 0 ) {
+                        $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                    }
                 }
-            }
-        })
-        .on('click', '#orderProductList .minus', function(e) {
-            e.preventDefault();
-            var price = $(this).data('price');
-            var cnt = parseInt( $(this).next('input').val() ) - 1;
-            if(cnt < 1) {
-                return;
-            }
-
-            console.log( cnt );
-
-            var tot_price = 0;
-            if( cnt > 0 ) {
-                $(this).next('input').val( cnt );
-                tot_price = price * cnt;
-
-                if( price > 0 ) {
-                    $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+            })
+            .on('click', '#orderProductList .minus', function(e) {
+                e.preventDefault();
+                var price = $(this).data('price');
+                var cnt = parseInt( $(this).next('input').val() ) - 1;
+                if(cnt < 1) {
+                    return;
                 }
-            }
-        })
-        .on('input', '#request_memo', function() {
-            let inputText = $(this).val();
 
-            // 입력된 텍스트가 200자를 초과하면 200자까지만 남기고 나머지를 잘라냄
-            if (inputText.length > 200) {
-                $(this).val(inputText.substring(0, 200));
-            }
-        })
-        .on('click', '.orderProductList_addlist', function() {
-            getWholesalerProductList( {{ $data['detail']->company_idx }} );
-        })
-        .on('click', '#request_estimate-modal .modal_footer button', function(e) {
-            e.preventDefault();
+                console.log( cnt );
 
-            prodData.append('p_idx[0]', {{ $data['detail']->idx }});
-            prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
+                var tot_price = 0;
+                if( cnt > 0 ) {
+                    $(this).next('input').val( cnt );
+                    tot_price = price * cnt;
 
-            var i = 1;
-            $('#orderProductList input[type="checkbox"]').each(function(index, element) {
-                if( $(this).is(':checked') ) {
-                    prodData.append("p_idx[" + i + "]", $(element).val());
-                    prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
-                    i++;
+                    if( price > 0 ) {
+                        $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                    }
                 }
-            });
+            })
+            .on('input', '#request_memo', function() {
+                let inputText = $(this).val();
 
-            prodData.append('company_idx', $('input[name=request_company_idx]').val());
-            prodData.append('company_type', $('input[name=request_company_type]').val());
-            prodData.append('p_memo', $('#request_memo').val());
-
-            // prodData 값 확인
-            for (const [key, value] of prodData.entries()) {
-                console.log(key, value);
-            }
-
-            $.ajax({
-                url: '/wholesaler/wholesalerProduct2',
-                type: 'post',
-                processData: false,
-                contentType: false,
-                data: prodData,
-                success: function (res) {
-                    modalClose('#request_estimate-modal');
-
-                    $('#orderProductList2').empty().append(res.html);
-
-                    const idx = 'p_idx';
-                    const valCount = prodData.getAll(idx);
-                    $('#orderProductList2 .reqCount').text( valCount.length );
-                    $('#request_confirm-modal .reqMemo').text( prodData.get('p_memo') );
-                    modalOpen('#request_confirm-modal');
-                }, error: function (e) {
-
+                // 입력된 텍스트가 200자를 초과하면 200자까지만 남기고 나머지를 잘라냄
+                if (inputText.length > 200) {
+                    $(this).val(inputText.substring(0, 200));
                 }
-            });
-        })
-        .on('click', '#request_confirm-modal .modal_footer button', function(e) {
-            e.preventDefault();
+            })
+            .on('click', '.orderProductList_addlist', function() {
+                getWholesalerProductList( {{ $data['detail']->company_idx }} );
+            })
+            .on('click', '#request_estimate-modal .modal_footer button', function(e) {
+                e.preventDefault();
 
-            // prodData 값 확인
-            for (const [key, value] of prodData.entries()) {
-                console.log(key, value);
-            }
+                prodData.append('p_idx[0]', {{ $data['detail']->idx }});
+                prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
 
-            $.ajax({
-                url: '/estimate/insertRequest',
-                type: 'post',
-                processData: false,
-                contentType: false,
-                data: prodData,
-                success: function (res) {
-                    console.log( res );
-                    $('#loadingContainer').hide();
-                    
-                    alert('견적서 요청이 완료되었습니다.');
-                    location.reload();
-                }, error: function (e) {
+                var i = 1;
+                $('#orderProductList input[type="checkbox"]').each(function(index, element) {
+                    if( $(this).is(':checked') ) {
+                        prodData.append("p_idx[" + i + "]", $(element).val());
+                        prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
+                        i++;
+                    }
+                });
 
+                prodData.append('company_idx', $('input[name=request_company_idx]').val());
+                prodData.append('company_type', $('input[name=request_company_type]').val());
+                prodData.append('p_memo', $('#request_memo').val());
+
+                // prodData 값 확인
+                for (const [key, value] of prodData.entries()) {
+                    console.log(key, value);
                 }
-            });
-        })
-    ;
+
+                $.ajax({
+                    url: '/wholesaler/wholesalerProduct2',
+                    type: 'post',
+                    processData: false,
+                    contentType: false,
+                    data: prodData,
+                    success: function (res) {
+                        modalClose('#request_estimate-modal');
+
+                        $('#orderProductList2').empty().append(res.html);
+
+                        const idx = 'p_idx';
+                        const valCount = prodData.getAll(idx);
+                        $('#orderProductList2 .reqCount').text( valCount.length );
+                        $('#request_confirm-modal .reqMemo').text( prodData.get('p_memo') );
+                        modalOpen('#request_confirm-modal');
+                    }, error: function (e) {
+
+                    }
+                });
+            })
+            .on('click', '#request_confirm-modal .modal_footer button', function(e) {
+                e.preventDefault();
+
+                // prodData 값 확인
+                for (const [key, value] of prodData.entries()) {
+                    console.log(key, value);
+                }
+
+                $.ajax({
+                    url: '/estimate/insertRequest',
+                    type: 'post',
+                    processData: false,
+                    contentType: false,
+                    data: prodData,
+                    success: function (res) {
+                        console.log( res );
+                        $('#loadingContainer').hide();
+                        
+                        alert('견적서 요청이 완료되었습니다.');
+                        location.reload();
+                    }, error: function (e) {
+
+                    }
+                });
+            })
+        ;
+    }
+    function openOption(idx, key) {
+        $('._productOption_'+idx+'_'+key).toggle();
+    }
 
     // 옵션 삭제
     $(document).on('click', '.ico_opt_remove', function () {
