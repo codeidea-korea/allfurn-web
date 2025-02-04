@@ -21,7 +21,7 @@
                             @endif</p></button>
                     <div class="dropdown_list _productOption_{{$item->idx}}_{{$inx}}">
                         @foreach($item2->optionValue as $sub)
-                            <div class="dropdown_item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}" onclick="$('.option_item[data-option_key={{$item->idx}}_{{$inx}}][data-option_name={{$sub->propertyName}}]').show(); $(this).parent().hide();">
+                            <div class="dropdown_item" data-option_name="{{$sub->propertyName}}" data-price="{{$item->price + $sub->price}}" onclick="$('.option_item[data-option_key={{$item->idx}}_{{$inx}}][data-option_name={{$sub->propertyName}}]').show(); $(this).parent().hide();">
                                     {{$sub->propertyName}}
                                     @if((int)$sub->price > 0 && $item->is_price_open == 1)
                                         <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
@@ -32,16 +32,16 @@
                 <div class="noline">
                     
                     @foreach($item2->optionValue as $sub)
-                        <div class="option_item" style="display: none;" data-option_key="{{$item->idx}}_{{$inx++}}" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                        <div class="option_item" style="display: none;" data-option_key="{{$item->idx}}_{{$inx++}}" data-option_title="{{$item2->optionName}}" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                             <div class="">
                                 <p class="option_name">{{$sub->propertyName}}</p>
-                                <button onclick="$(this).parent().parent().hide();"><img src="/pc/img/icon/x_icon2.svg" alt=""></button>
+                                <button onclick="$(this).parent().parent().hide();"><img src="/img/icon/x_icon2.svg" alt=""></button>
                             </div>
                             <div class="mt-2">
                                 <div class="count_box2">
-                                    <button class="minus" data-price="{{$item->is_price_open ? $item->price : 0}}"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
+                                    <button class="minus" data-price="{{$item->is_price_open ? $item->price+$sub->price : 0}}"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
                                     <input type="text" id="product_count_sub_{{ $key }}" name="product_count_sub[{{ $key }}]" value="1">
-                                    <button class="plus" data-price="{{$item->is_price_open ? $item->price : 0}}"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
+                                    <button class="plus" data-price="{{$item->is_price_open ? $item->price+$sub->price : 0}}"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                 </div>
                                 <div class="price"><?php echo number_format((int)$item->price, 0); ?></div>
                             </div>

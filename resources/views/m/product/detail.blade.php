@@ -1107,38 +1107,6 @@
         }
     }
 
-    // 수량 변경
-    $(document).on('click', '.option_count .btn_minus', function (e) {
-        e.preventDefault();
-        var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-        var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-        var num = parseInt(stat, 10);
-        num--;
-        if (num <= 0) {
-            alert('더이상 줄일수 없습니다.');
-            num = 1;
-        }
-        $("input[data-opt_idx='"+oidx+"']").val(num);
-        //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-        reCal();
-    });
-
-    // 수량 변경
-    $(document).on('click', '.option_count .btn_plus', function (e) {
-        e.preventDefault();
-        var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-        var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-        var num = parseInt(stat, 10);
-        num++;
-        $("input[data-opt_idx='"+oidx+"']").val(num);
-        //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-        reCal();
-    });
-
-    $(document).on('keyup', '#qty_input', function () {
-        reCal();
-    })
-
 
     $(function(){
         initEventListener();
@@ -1228,6 +1196,13 @@
             })
             .on('click', '#request_estimate-modal .modal_footer button', function(e) {
                 e.preventDefault();
+                
+                @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                if($('.opt_result_area')[1].innerText == '') {
+                    alert('본 상품의 필수 옵션을 선택해주세요.');
+                    return;
+                }
+                @endif
 
                 prodData.append('p_idx[0]', {{ $data['detail']->idx }});
                 prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
@@ -1237,9 +1212,24 @@
                     if( $(this).is(':checked') ) {
                         prodData.append("p_idx[" + i + "]", $(element).val());
                         prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
+
+                        var options = $(element).parent().parent().find('.option_item');
+                        for (let idx = 0; idx < options.length; idx++) {
+                            const option = options[idx];
+                            if(!option.checkVisibility()) {
+                                return;
+                            }
+                            prodData.append("product_option_key[" + i + "]", $(option).data('option_key'));
+                            prodData.append("product_option_value[" + i + "]",  $(option).data('option_title') + ',' + $(option).data('option_name'));
+                        }
+
                         i++;
                     }
                 });
+                    if(isNotChooseOption) {
+                        alert('추가 상품의 필수 옵션을 선택해주세요.');
+                        return;
+                    }
 
                 prodData.append('company_idx', $('input[name=request_company_idx]').val());
                 prodData.append('company_type', $('input[name=request_company_type]').val());
@@ -1296,18 +1286,55 @@
                     }
                 });
             })
+            .on('click', '.ico_opt_remove', function () {
+                var oidx = $(this).data('opt_idx');
+                $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+                //$(this).parents('.option_result').remove();
+                reCal();
+            })
+            
+            // 수량 변경
+            .on('click', '.option_count .btn_minus', function (e) {
+                e.preventDefault();
+                var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
+                var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
+                var num = parseInt(stat, 10);
+                num--;
+                if (num <= 0) {
+                    alert('더이상 줄일수 없습니다.');
+                    num = 1;
+                }
+                $("input[data-opt_idx='"+oidx+"']").val(num);
+                //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
+                reCal();
+            })
+
+            // 수량 변경
+            .on('click', '.option_count .btn_plus', function (e) {
+                e.preventDefault();
+                var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
+                var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
+                var num = parseInt(stat, 10);
+                num++;
+                $("input[data-opt_idx='"+oidx+"']").val(num);
+                //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
+                reCal();
+            })
+            .on('keyup', '#qty_input', function () {
+                reCal();
+            })
+            // 옵션 삭제
+            .on('click', '.ico_opt_remove', function () {
+                var oidx = $(this).data('opt_idx');
+                $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+                //$(this).parents('.option_result').remove();
+                reCal();
+            })
         ;
     }
     function openOption(idx, key) {
         $('._productOption_'+idx+'_'+key).toggle();
     }
 
-    // 옵션 삭제
-    $(document).on('click', '.ico_opt_remove', function () {
-        var oidx = $(this).data('opt_idx');
-        $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
-        //$(this).parents('.option_result').remove();
-        reCal();
-    })
 </script>
 @endsection

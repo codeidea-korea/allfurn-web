@@ -888,7 +888,8 @@ var response_estimate_estimate_total_price = 0;
                             $('.prodCnt').text( res.data.length );
                             modalOpen('#request_confirm_write-modal');
 
-			    $('#request_confirm_write-modal').find('input, select, textarea').prop('disabled', true);
+                            $('.txt_info.mt-10').hide();
+			                $('#request_confirm_write-modal').find('input, select, textarea').prop('disabled', true);
                         } else {
                             alert(res.message);
                         }

@@ -675,6 +675,11 @@ class EstimateService {
             $estimate->product_count = $rows['prd_count'];
             $estimate->product_each_price = $rows['prd_price'];
             $estimate->product_total_price = $rows['prod_each_price'];
+            
+            if(array_key_exists('product_option_json', $rows)) {
+                $estimate -> product_option_json = $rows['product_option_json'];
+            }
+
             $estimate->product_delivery_price = 0;
             $estimate->product_delivery_info = $rows['prod_delivery_info'];
 
