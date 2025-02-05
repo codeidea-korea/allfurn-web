@@ -16,126 +16,145 @@
     </div>
 </div>
 
-<div id="content">
+<div id="content"> 
     <section class="join_common">
         <div class="join_inner">
             <div class="title">
-                <h3>간편회원가입</h3>
-                <!-- <div class="info">
+                <h3>회원가입</h3>
+                <div class="info">
                     <div class="flex items-center gap-1">
                         <img class="w-4" src="./img/member/info_icon.svg" alt="">
                         <p>회원 가입 후 관리자 승인 여부에 따라 서비스 이용이 가능합니다.</p>
                     </div>
-                </div> -->
+                </div>
+            </div>
+
+            <div class="join_social grid grid-cols-2 gap-10 text-center">
+                <button class="py-5 border-b border-primary" style="font-size:22px">간편(SNS) 회원가입</button>
+                <button class="py-5" style="font-size:22px">일반 회원가입</button>
             </div>
 
             <div class="form_tab_content">
-                <!-- 제조/도매일때 -->
-                <div class="form_box ">
-                    <h4>회원 정보를 입력해주세요.</h4>
-                    <!-- <div class="info_box flex items-center gap-1 mt-2.5 mb-8">
-                        <img class="w-4" src="./img/member/info_icon.svg" alt="">
-                        가입 승인 이후 대표 계정에 소속된 직원 계정을 생성하실 수 있습니다.
-                    </div> -->
-                    <div class="mb-8 hidden " id="sns">
+                <div class="form_box">
+                    <div class="mb-4">
                         <dl class="flex">
                             <dt class="necessary">SNS 연결</dt>
-                            <dd class="flex gap-1">
-                                <div class="flex-1">
-                                    <input type="text" class="input-form w-full" placeholder="SNS 연결" id="provider" readonly>
-                                    <label for="" class="error hidden">존재하지않는 SNS 로그인 방식입니다.</label>
-                                </div>
+                            <dd>
+                                <input type="text" class="input-form w-full" value="" readonly id="provider" autocomplete="false">
+                              
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8">
+                    <div class="mb-4">
                         <dl class="flex">
                             <dt class="necessary">이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="name">
-                                <label for="name" class="error"></label>
+                                <input type="text" class="input-form w-full" value="" readonly id="name" autocomplete="false">
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8">
+                    <div class="mb-4">
                         <dl class="flex">
                             <dt class="necessary">휴대폰번호</dt>
-                            <dd class="flex gap-1">
-                                <div class="flex-1">
-                                    <input type="text" class="input-form w-full" placeholder="휴대폰번호" id="phone_number"  oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                                    <label for="phone_number" class="error"></label>
-                                </div>
-                                <button class="btn btn-black-line" onclick="duplicateCheck('phone_number')" >중복체크</button>
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-8">
-                        <dl class="flex">
-                            <dt class="necessary">이메일</dt>
-                            <dd class="flex gap-1">
-                                <div class="flex-1">
-                                    <input type="email" class="input-form w-full " placeholder="이메일을 입력해주세요." id="email">
-                                    <label for="email" class="error"></label>
-                                </div>
-                                <button class="btn btn-black-line" onclick="duplicateCheck('email')">중복체크</button>
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-8">
-                        <dl class="flex">
-                            <dt class="necessary">명함 또는 사업자 등록증</dt>
                             <dd>
-                                <div class="file-form vertical">
-                                    <input type="file" id="certificate" onchange="fileUpload(this)" accept="image/*">
-                                    <label for="certificate" class="error hidden">명함 또는 사업자 등록증을 첨부해주세요.</label>
+                                <input type="text" maxlength="13"  class="input-form w-full" value=""  id="phone_number" autocomplete="false" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt class="necessary">이메일(아이디)</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full" value="" readonly id="email" autocomplete="false">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt class="necessary">명함 첨부</dt>
+                            <dd>
+                                <div class="file-form horizontal">
+                                    <input type="file" onchange="fileUpload(this)" id="file" name="file" accept="image/*">
+                                    <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
                                     <div class="text">
-                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="" >
-                                        <p class="mt-1">이미지 추가</p>
+                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                        <p class="mt-1">명함 이미지 추가</p>
                                     </div>
                                 </div>
-
                                 <div class="info_box mt-2.5">
-                                    ・권장 형식: jpg, jpeg, png
+                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
+                                    ・jpg, png만 지원 합니다.
                                 </div>
                             </dd>
                         </dl>
                     </div>
-
                 </div>
-
-            </div>
-            <div class="form_bottom">
-                {{-- <div class="form_box">
-                    <div class="agree_wrap mb-8">
-                        <h3>올펀 약관에 동의해주세요.</h3>
-                        <div class="agree_box">
-                            <div class="agree_item all">
-                                <p><input type="checkbox" class="check-form" name="all_check" id="all"><label for="all">필수 약관 전체 동의</label></p>
-                            </div>
-                            <div class="agree_item">
-                                <p><input type="checkbox" class="check-form" id="agree_1"><label for="agree_1">서비스 이용 약관 동의 (필수)</label></p>
-                                <button onclick="modalOpen('#agree01-modal')">상세보기</button>
-                            </div>
-                            <div class="agree_item">
-                                <p><input type="checkbox" class="check-form" id="agree_2"><label for="agree_2">개인정보 활용 동의 (필수)</label></p>
-                                <button onclick="modalOpen('#agree02-modal')">상세보기</button>
-                            </div>
-                            <div class="agree_item">
-                                <p><input type="checkbox" class="check-form" id="agree_3"><label for="agree_3">마케팅 정보 활용 동의 (선택)</label></p>
-                                <button onclick="modalOpen('#agree03-modal')">상세보기</button>
-                            </div>
-                            <div class="agree_item">
-                                <p><input type="checkbox" class="check-form" id="agree_4"><label for="agree_4">광고성 이용 동의 (선택)</label></p>
-                                <button onclick="modalOpen('#agree04-modal')">상세보기</button>
-                            </div>
-                        </div>
+                <div class="form_box hidden">
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>이름</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name">
+                            </dd>
+                        </dl>
                     </div>
-                </div> --}}
-                <div class="btn_box">
-                    <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>휴대폰번호</dt>
+                            <dd>
+                                <input type="text" maxlength="13" class="input-form w-full" placeholder="휴대폰번호를 입력해주세요." id="normal_phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>이메일(아이디)</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full" placeholder="이메일(아이디)을 입력해주세요." id="normal_email">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>비밀번호</dt>
+                            <dd>
+                                <input type="password" class="input-form w-full" placeholder="비밀번호를 입력해주세요." id="normal_password">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>비밀번호 확인</dt>
+                            <dd>
+                                <input type="password" class="input-form w-full" placeholder="비밀번호 확인을 입력해주세요." id="normal_password_chk">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>명함 첨부</dt>
+                            <dd>
+                                <div class="file-form horizontal">
+                                    <input type="file" onchange="fileUpload(this)" id="normal_file" name="normal_file" accept="image/*">
+                                    <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
+                                    <div class="text">
+                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                        <p class="mt-1">명함 이미지 추가</p>
+                                    </div>
+                                </div>
+                                <div class="info_box mt-2.5">
+                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
+                                    ・jpg, png만 지원 합니다.
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
 
+            <div class="btn_box">
+                <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+            </div>
         </div>
     </section>
 
@@ -191,14 +210,19 @@ let duplicate_check = {
     phone_number : false
 }
 
+let signupType = 'normal';
+let userData = null;
+let sns = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
     
     if (socialUserData) {
-        const userData = JSON.parse(socialUserData);
-        console.log(userData)
-        $("#sns").removeClass('hidden')
+        signupType = 'social';
+        userData = JSON.parse(socialUserData);
+     
+        $("#sns").removeClass('hidden') 
 
         // 폼에 데이터 자동 입력
         if (document.getElementById('name')) {
@@ -212,9 +236,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (document.getElementById('provider')) {
             document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
+            sns = userData.provider;
         }
 
-        sessionStorage.removeItem('socialUserData');
+        // sessionStorage.removeItem('socialUserData'); 
+    }else{
+        signupType = 'normal';
+        // $(".join_social").children().eq(1).trigger('click');
     }
 });
  
@@ -229,31 +257,20 @@ function setReadonly(key,value) {
 }
 
 
-
-$("input[type=email]").blur(function(){
-  var email = $(this).val();
-  if( email == '' || email == 'undefined') return;
-  if(! email_check(email) ) {
-  	$(this).val('');
-    $(this).focus();
-    return false;
-  }
-});
-
 function snsNaming(provider) {
     let snsName = '';
     switch (provider) {
         case 'naver':
-            snsName = '네이버';
+            snsName = '네이버 연동';
             break;
         case 'kakao':
-            snsName = '카카오';
+            snsName = '카카오 연동';
             break;
         case 'google':
-            snsName = '구글';
+            snsName = '구글 연동';
             break;
         case 'apple':
-            snsName = '애플';
+            snsName = '애플 연동';
             break;
         default:
             snsName = '';
@@ -264,33 +281,26 @@ function snsNaming(provider) {
 
 
 // 사용중 이메일, 사용중 휴대전화번호 체크
-function duplicateCheck(type ) {
+function duplicateCheck(type ,param) {
     
-    let param = $(`#${type}`).val();
+
+    let result = '';
 
     if(type === 'email' && !email_check(param)){
-        $(`#${type}`).addClass('input-error');
-        $('label[for="email"]').removeClass('hidden');
-        $('label[for="email"]').text('이메일 형식이 올바르지 않습니다.');
-        return false;
+        return '이메일 형식이 올바르지 않습니다.';
 
     }
 
     if(type === 'phone_number' && !phone_check(param)){
-        $(`#${type}`).addClass('input-error');
-        $('label[for="phone_number"]').removeClass('hidden');
-        $('label[for="phone_number"]').text('휴대폰번호 형식이 올바르지 않습니다.');
-        return false;
+
+      
+        return '휴대폰번호 형식이 올바르지 않습니다.';
 
     }else{
         param = param.replace(/-/g, '');
     }
 
-    $(`#${type}`).removeClass('input-error');
-    $(`label[for="${type}"]`).addClass('hidden');
-    $(`label[for="${type}"]`).text('');
-     let ment ; 
-        $.ajax({
+     $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: `/member/duplicate/${type}`,
             data: {
@@ -298,69 +308,26 @@ function duplicateCheck(type ) {
             },
             type: 'POST',
             dataType: 'json',
-            success: function(result) {
-                if (result == 0) {
-                    
-                    $(`#${type}`).removeClass('input-error');
-                    $(`label[for="${type}"]`).addClass('hidden');
-                    $(`label[for="${type}"]`).text('');
-                    $(`#${type}`).closest('dd').find('button').attr('disabled', true);
+            async:false,
+            success: function(data) {
 
-                    if(type === 'email'){
-                        ment = '사용 가능한 이메일 입니다.'
-                        duplicate_check.email = true;
-                    }else if(type === 'phone_number'){
-                        ment = '사용 가능한 휴대전화번호 입니다.'
-                        duplicate_check.phone_number = true;
-                    }
-
-
-                } else {
-                    if(type === 'email'){
-                        ment = '이미 사용중인 이메일 입니다.\n다시 확인해주세요.'
-                    }else if(type === 'phone_number'){
-                        ment = '이미 사용중인 휴대전화번호 입니다.\n다시 확인해주세요.'
-                    }
-                    $(`#${type}`).addClass('input-error');
-                    $(`label[for="${type}"]`).removeClass('hidden');
-                    $(`label[for="${type}"]`).text(ment);
-                    $(`#${type}`).focus();
-                }
-                $(`#${type}_dupcheck_ment`).text(ment);
-                modalOpen(`#modal-${type}--duplicated`);
+                data === 0 ? result = '' : result = '이미 사용중인 ' + (type === 'email' ? '이메일' : '휴대전화번호') + ' 입니다.';
+      
+            },error:function(){
+                
             }
         });
- 
-            
-}
-
-
-// 이미지 변경
-const fileUpload = (input) => {
-    if (input.files && input.files[0]) {
-
-        if($(".text").next("img").length > 0){
-            $(".text").next("img").remove();
-        }
-        var reader = new FileReader();
-        let img = input.nextElementSibling.querySelector('img')
-        if(!img){
-            img = document.createElement('img')
-        }
-        input.nextElementSibling.nextElementSibling.classList.add('hidden')
-
-        reader.onload = function(e) {
-            img.src = e.target.result 
-            input.parentNode.append(img)
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+    return result
 }
 
 
 
 
 function normalizeNaverEmail(email) {
+    if(email == '' || email == 'undefined' || email  == null){
+        $("#email").prop('readonly', false);    
+       return '';
+    }
     return email.replace('jr.naver.com', 'naver.com');
 }
 
@@ -377,198 +344,355 @@ function phone_check( phone ) {
     return (phone != '' && phone != 'undefined' && regex.test(phone)); 
 }
 
-// 탭변경
-// $('.join_type button').on('click', function() {
-//     $('.form_bottom').removeClass('hidden')
 
-//     let inN = $(this).data('num')
-//     $('.join_type button').removeClass('on')
-//     $(this).addClass('on');
-//     $('.form_tab_content > .form_box').eq(inN).removeClass('hidden').siblings().addClass('hidden')
-// })
 
 function signup(){
-    
-    if(validate()){
-        let formData = new FormData();
-        
-        // 데이터 추가
-        formData.append('name', $('#name').val());
-        formData.append('email', $('#email').val());
-        formData.append('phone_number', $('#phone_number').val());
-        formData.append('provider', $('#provider').val());
+    if(signupType === 'social'){
 
-        formData.append('agreementServicePolicy',  0);
-        formData.append('agreementPrivacy', 0);
-        formData.append('agreementMarketing', 0);
-        formData.append('agreementAd',  0);
+        if(validate()){
+            let formData = new FormData();
             
-        // 파일 추가
-        let fileInput = $('input[type=file]')[0];
-        if(fileInput.files[0]) {
-            formData.append('file', fileInput.files[0]);
-        }
+            // 데이터 추가
+            formData.append('name', $('#name').val());
+            formData.append('email', $('#email').val());
+            formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
+            formData.append('provider', $('#provider').val());
 
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: "/member/createUserNew",
-            type: 'POST',
-            data:formData,
-            contentType: false,
-            processData: false,
-            cache: false,
-            success: function(response) {
-                if (result.success) {
-                location.replace('/signup/success');
-                isProc = false;
+            formData.append('agreementServicePolicy',  0);
+            formData.append('agreementPrivacy', 0);
+            formData.append('agreementMarketing', 0);
+            formData.append('agreementAd',  0);
                 
-            } else {
-                switch (result.code) {
-                    case 1001:
-                        openModal('#modal-email--duplicated');
-                        isProc = false;
-                        break;
-                    default:
-                        alert(result.message);
-                        isProc = false;
-                        break;
-                }
+            // 파일 추가
+            let fileInput = $('#file')[0];
+            if(fileInput.files[0]) {
+                formData.append('file', fileInput.files[0]);
             }
-            },
-            error: function(error) {
-                console.error('Error:', error);
-                console.log('Error:', error);
-            }
-        }); 
-    }
 
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "/member/createUserNew",
+                type: 'POST',
+                data:formData,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function(response) {
+                    if (response.success) {
+                    
+                        alert("가입되었습니다.");
+    
+
+                        $.ajax({
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url: "/social/login" ,
+                            type: 'POST',
+                            data: { 'name':$('#name').val(), 'phone_number':$('#phone_number').val().replace(/-/g, ''),'email':$('#email').val(), 'provider':sns ,'id':userData.id},
+                            success: function(response) {
+                                    sessionStorage.removeItem('socialUserData'); 
+                                    location.href="/signin"; 
+                                },
+                                error: function(error) {
+                                    console.error('Error:', error);
+                                    console.log('Error:', error);
+                                }
+                        }); 
+
+                    
+                } else {
+                    switch (result.code) {
+                        case 1001:
+                            openModal('#modal-validation');
+                            isProc = false;
+                            break;
+                        default:
+                            alert(result.message);
+                            isProc = false;
+                            break;
+                    }
+                }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    console.log('Error:', error);
+                }
+            }); 
+        }
+    }else{
+        normalSignUp();
+    }
 }
 
-function validate(){
-    let name = $('#name').val();
-    let email = $('#email').val();
-    let phone_number = $('#phone_number').val();
-    let provider = $('#provider').val();
-    let file = $('input[type=file]')[0].files[0];
+function normalSignUp(){
+    
+    if(validate('normal_')){
+
+
+        let formData = new FormData();
+            
+            // 데이터 추가
+            formData.append('name', $('#normal_name').val());
+            formData.append('email', $('#normal_email').val());
+            formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
+            formData.append('password', $('#normal_password').val());
+            formData.append('agreementServicePolicy',  0);
+            formData.append('agreementPrivacy', 0);
+            formData.append('agreementMarketing', 0);
+            formData.append('agreementAd',  0);
+                
+            // 파일 추가
+            let fileInput = $('#file')[0];
+            if(fileInput.files[0]) {
+                formData.append('file', fileInput.files[0]);
+            }
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "/member/createUserNew",
+                type: 'POST',
+                data:formData,
+                contentType: false,
+                processData: false,
+                cache: false,
+                success: function(response) {
+                    if (response.success) {
+                    
+                        alert("가입되었습니다.");
     
 
-    if( name == '' || name == 'undefined'){
-        $('#name').addClass('input-error');
-        $('label[for="name"]').removeClass('hidden');
-        $('label[for="name"]').text('이름을 입력해주세요.');
-        $('#name').focus();
-        return false;
-    }else{
-        $('#name').removeClass('input-error');
-        $('label[for="name"]').addClass('hidden');
-        $('label[for="name"]').text('');
+                        $.ajax({
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url: "/check-user" ,
+                            type: 'POST',
+                            data: { 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
+                            success: function(response) {
+                            
+                                    location.href="/signin"; 
+                                },
+                                error: function(error) {
+                                    console.error('Error:', error);
+                                    console.log('Error:', error);
+                                }
+                        }); 
+
+                    
+                } else {
+                    switch (result.code) {
+                        case 1001:
+                            openModal('#modal-validation');
+                            isProc = false;
+                            break;
+                        default:
+                            alert(result.message);
+                            isProc = false;
+                            break;
+                    }
+                }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    console.log('Error:', error);
+                }
+            }); 
+
+    }
+}
+
+function validate(type = ''){
+
+    
+    let name = $(`#${type}name`).val();
+    let email = $(`#${type}email`).val();
+    let phone_number = $(`#${type}phone_number`).val();
+    let provider = $(`#${type}provider`).val();
+    let file =  $(`#${type}file`)[0].files[0];
+    let password = $(`#${type}password`).val();
+    let password_ck = $(`#${type}password_chk`).val();
+    if(!type){
+        if( provider == '' || provider == 'undefined'){
+            $('#provider').addClass('input-error');
+            $("#validation-ment").html('SNS 연결 정보가 없습니다.<br>다시 확인해주세요.');
+            modalOpen('#modal-validation'); 
+            $('#provider').focus();
+            return false;
+        }else{
+            $('#provider').removeClass('input-error');
+        }
     }
 
-    if( email == '' || email == 'undefined'){
-        $('#email').addClass('input-error');
-        $('label[for="email"]').removeClass('hidden');
-        $('label[for="email"]').text('이메일을 입력해주세요.');
-        $('#email').focus();
+    if( name == '' || name == 'undefined'){
+     
+        $(`#${type}name`).addClass('input-error');
+        $('#validation-ment').html('이름을 입력해주세요.');
+        modalOpen('#modal-validation'); 
+        $(`#${type}name`).focus();
         return false;
+        
     }else{
-        $('#email').removeClass('input-error');
-        $('label[for="email"]').addClass('hidden');
-        $('label[for="email"]').text('');
+      $(`#${type}name`).removeClass('input-error');
     }
 
     if( phone_number == '' || phone_number == 'undefined'){
-        $('#phone_number').addClass('input-error');
-        $('label[for="phone_number"]').removeClass('hidden');
-        $('label[for="phone_number"]').text('휴대폰번호를 입력해주세요.');
-        $('#phone_number').focus();
+        $(`#${type}phone_number`).addClass('input-error');
+        $('#validation-ment').html('휴대전화번호를 입력해주세요.');
+        modalOpen('#modal-validation'); 
+        $(`#${type}phone_number`).focus();
         return false;
     }else{
-        $('#phone_number').removeClass('input-error');
-        $('label[for="phone_number"]').addClass('hidden');
-        $('label[for="phone_number"]').text('');
+        $(`#${type}phone_number`).removeClass('input-error');
+
     }
 
-    if( !duplicate_check.phone_number ){
-        $('#phone_number').addClass('input-error');
-        $('label[for="phone_number"]').removeClass('hidden');
-        $('label[for="phone_number"]').text('휴대전화번호 중복체크를 해주세요.');
-        $('#phone_number').focus();
+    if( email == '' || email == 'undefined'){
+        $(`#${type}email`).addClass('input-error');
+        $('#validation-ment').html('이메일을 입력해주세요.');
+        modalOpen('#modal-validation'); 
+       $(`#${type}email`).focus();
+        return false;
+    }else{
+        $(`#${type}email`).removeClass('input-error');
+
+    }
+
+    if(type === 'normal_'){
+        if(password == '' || password == 'undefined'){
+            $(`#${type}password`).addClass('input-error');
+            $('#validation-ment').html('비밀번호를 입력해주세요.');
+            modalOpen('#modal-validation'); 
+            $(`#${type}password`).focus();
+            return false;
+        }else{
+            $(`#${type}password`).removeClass('input-error');
+        }
+
+        if(password_ck == '' || password_ck == 'undefined'){
+            $(`#${type}password_confirm`).addClass('input-error');
+            $('#validation-ment').html('비밀번호 확인을 입력해주세요.');
+            modalOpen('#modal-validation'); 
+            $(`#${type}password_confirm`).focus();
+            return false;
+        }else{
+            $(`#${type}password_confirm`).removeClass('input-error');
+        }
+
+        if(password !== password_ck){
+            $(`#${type}password`).addClass('input-error');
+            $(`#${type}password_confirm`).addClass('input-error');
+            $('#validation-ment').html('비밀번호가 일치하지 않습니다.');
+            modalOpen('#modal-validation'); 
+            $(`#${type}password`).focus();
+            return false;
+        }else{
+
+            $(`#${type}password`).removeClass('input-error');
+            $(`#${type}password_confirm`).removeClass('input-error');
+        }
+    }
+    let phoneResult = duplicateCheck('phone_number',phone_number);
+    if( phoneResult !='' ){
+        $(`#${type}phone_number`).addClass('input-error');
+        $(`#validation-ment`).html(phoneResult);
+        modalOpen('#modal-validation'); 
+        $(`#${type}phone_number`).focus();
         return false;
     }else{  
-        $('#phone_number').removeClass('input-error');
-        $('label[for="phone_number"]').addClass('hidden');
-        $('label[for="phone_number"]').text('');
-    }
+        $(`#${type}phone_number`).removeClass('input-error');
 
-    if( !duplicate_check.email ){
-        $('#email').addClass('input-error');
-        $('label[for="email"]').removeClass('hidden');
-        $('label[for="email"]').text('이메일 중복체크를 해주세요.');
-        $('#email').focus();
+    }
+    let emailResult =  duplicateCheck('email',email);
+
+    if( emailResult !=''){
+        $(`#${type}email`).addClass('input-error');
+        $('#validation-ment').html(emailResult);
+        modalOpen('#modal-validation'); 
+        $(`#${type}email`).focus();
         return false;
-    }else{
-        $('#email').removeClass('input-error');
-        $('label[for="email"]').addClass('hidden');
-        $('label[for="email"]').text('');
+    }else if(!email_check(email)){
+        $(`#${type}email`).addClass('input-error');
+        $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
+        modalOpen('#modal-validation'); 
+        $(`#${type}email`).focus();
+        return false;
+    }   
+    else{
+        $(`#${type}email`).removeClass('input-error');
+
     }
 
     if( !file ){
-        $('input[type=file]').addClass('input-error');
-        $('label[for="certificate"]').removeClass('hidden');
-        $('label[for="certificate"]').text('명함 또는 사업자 등록증을 첨부해주세요.');
-        $('input[type=file]').focus();
+        $(`#${type}file`).addClass('input-error');
+        $('#validation-ment').html('명함 이미지를 첨부해주세요.');
+        modalOpen('#modal-validation'); 
+        $(`#${type}file`).focus();
         return false;   
     }else{
-        $('input[type=file]').removeClass('input-error');
-        $('label[for="certificate"]').addClass('hidden');
-        $('label[for="certificate"]').text('');
+        $(`#${type}file`).removeClass('input-error');
     }
 
   
 
     return true;
 }
+
+// 이미지 변경
+const fileUpload = (input) => {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            let img = input.parentNode.querySelector('img');
+            if(!img){
+                img = document.createElement('img')
+            }
+            input.nextElementSibling.classList.add('!hidden')
+
+            reader.onload = function(e) {
+                img.src = e.target.result
+                input.parentNode.append(img)
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+// 탭변경
+$('.join_social button').on('click',function(){
+    let liN = $(this).index();
+    $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+    $('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
+
+    if($(".join_social").children().eq(1).hasClass('border-b border-primary')){
+        signupType = 'normal';
+    }else{
+        signupType = 'social';
+    }
+
+    console.log(signupType)
+})
+
+    
+$("input[type=email]").blur(function(){
+  var email = $(this).val();
+  if( email == '' || email == 'undefined') return;
+  if(! email_check(email) ) {
+  	$(this).val('');
+    $(this).focus();
+    return false;
+  }
+});
+
 </script>
 
-<div class="modal" id="modal-email--duplicated">
-    <div class="modal_bg" onclick="modalClose('#modal-email--duplicated')"></div>
+<div class="modal" id="modal-validation">
+    <div class="modal_bg" onclick="modalClose('#modal-validation')"></div>
     <div class="modal_inner modal-sm">
-        <button type="button" class="close_btn" onclick="modalClose('#modal-email--duplicated')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <button type="button" class="close_btn" onclick="modalClose('#modal-validation')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
         <div class="modal_body agree_modal_body">
-            <p class="text-center py-4"><b id='email_dupcheck_ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
+            <p class="text-center py-4"><b id='validation-ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
             <div class="flex gap-2 justify-center">
-                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-email--duplicated');">확인</button>
+                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation');">확인</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal" id="modal-phone_number--duplicated">
-    <div class="modal_bg" onclick="modalClose('#modal-phone_number--duplicated')"></div>
-    <div class="modal_inner modal-sm">
-        <button type="button" class="close_btn" onclick="modalClose('#modal-phone_number--duplicated')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <p class="text-center py-4"><b id='phone_number_dupcheck_ment'>이미 사용중인 휴대전화번호 입니다.<br>다시 확인해주세요.</b></p>
-            <div class="flex gap-2 justify-center">
-                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-phone_number--duplicated');">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal" id="smscode_time_over">
-    <div class="modal_bg" onclick="modalClose('#smscode_time_over')"></div>
-    <div class="modal_inner modal-sm">
-        <button class="close_btn" onclick="modalClose('#smscode_time_over')" type="button"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body agree_modal_body">
-            <p class="text-center py-4"><b>유효시간이 만료되었습니다.<br>인증코드를 재발송해주세요.</b></p>
-            <div class="flex gap-2 justify-center">
-                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#smscode_time_over')" type="button">확인</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 @endsection

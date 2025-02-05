@@ -48,6 +48,9 @@ class MemberService
         $user->company_idx = $params['companyIdx'];
         $user->secret = null;
         
+        if (isset($params['password'])) {
+            $user->secret = DB::raw("CONCAT('*', UPPER(SHA1(UNHEX(SHA1('".hash('sha256', $params['password'])."')))))");
+        }
         $user->name = $params['name'];
         $user->phone_number = $params['phone_number'];
         $user->state = 'JS';

@@ -361,8 +361,12 @@ Route::prefix('estimatedev')->name('estimatetdev')->group(function() {
 
 
 
-// social test
-Route::get('/signin', 'LoginController@social')->name('signin.social');
+// social login route
+// 올바른 방법
+Route::get('/signin', 'LoginController@social')
+    ->name('signin.social');
+
+
 Route::get('/signup-new', 'LoginController@signupNew')->name('signup.new');
 
 Route::prefix('social')->name('social')->middleware('social.session.check')->group(function(){

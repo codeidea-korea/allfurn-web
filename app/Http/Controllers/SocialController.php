@@ -105,7 +105,7 @@ class SocialController extends BaseController
 
         //네이버 access_token 쿠키 저장
         setcookie('naver_access_token', $accessToken['access_token'], time() + 3600, '/');
-        Log::info($accessToken['access_token']);
+     
         // 네이버 사용자 정보 요청
         $userResponse = $this->httpGet("https://openapi.naver.com/v1/nid/me", [
             'Authorization' => 'Bearer ' . $accessToken['access_token']
@@ -117,12 +117,15 @@ class SocialController extends BaseController
             $jsonData['response']['phone_number'] = $jsonData['response']['mobile'];
             unset($jsonData['response']['mobile']);
         }
-        
+
 
         // 사용자 정보 요청 실패
         if (!isset($jsonData['response'])) {
             return response()->json(['error' => 'Failed to retrieve user info'], 500);
         }
+
+        $jsonData['response']['provider'] = 'naver';
+
 
         return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData['response']]);
     }
@@ -222,6 +225,7 @@ class SocialController extends BaseController
    
         $userData =  json_decode($userResponse, true);
 
+
         // dd($userData);
         //  exit;
 
@@ -235,7 +239,9 @@ class SocialController extends BaseController
         $jsonData = array(
             'name' => $name,
             'email' => $email,
-            'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber)
+            'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber),
+            'provider' => 'kakao',
+            'id' => $userData['id']
         );
 
 
@@ -302,13 +308,24 @@ class SocialController extends BaseController
         );
 
         $userInfo = json_decode($userResponse, true);
+      
         Log::info('Google User Response:', $userInfo);
+        $id = '';
+        if (isset($userInfo['resourceName'])) {
+            // 'people/' 이후의 숫자 추출
+            $matches = [];
+            if (preg_match('/people\/(\d+)/', $userInfo['resourceName'], $matches)) {
+                $id =  $matches[1];
+            }
+        }
         
+
         $jsonData = [
            'name' => $userInfo['names'][0]['displayName'] ?? null,
            'email' => $userInfo['emailAddresses'][0]['value'] ?? null, 
            'phone_number' => $userInfo['phoneNumbers'][0]['value'] ?? null,
-           'provider' => 'google'
+           'provider' => 'google',
+           'id' => $id
         ];
         
         Log::info('Parsed User Data:', $jsonData);
