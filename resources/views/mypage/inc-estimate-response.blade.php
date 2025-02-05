@@ -141,7 +141,7 @@
 
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->product_each_price }}"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->product_total_price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>

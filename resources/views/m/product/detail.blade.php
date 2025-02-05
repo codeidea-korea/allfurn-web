@@ -1096,7 +1096,8 @@
             total_qty += parseInt($(this).parents('.option_result').find('#qty_input').val());
             $(this).find('.selection__price span').text(resultPrice.toLocaleString());
             price += resultPrice;
-        })
+        });
+        
         if (price > 0) {
             $('.product_price').text(price.toLocaleString()+'원');
             $('.product_price').data('total_price', price);
@@ -1146,6 +1147,7 @@
         $(document).off()
             .on('click', '#orderProductList .plus', function(e) {
                 e.preventDefault();
+
                 var price = $(this).data('price');
                 var cnt = parseInt( $(this).prev('input').val() ) + 1;
 
@@ -1154,7 +1156,16 @@
                 var tot_price = 0;
                 if( cnt > 0 ) {
                     $(this).prev('input').val( cnt );
-                    tot_price = price * cnt;
+                    
+                    const options = $(this).parent().parent().parent().parent().find('.option_item');
+                    tot_price = $(options[0]).data('itemPrice');
+                    for (let index = 0; index < options.length; index++) {
+                        const option = options[index];
+                        var eachPrice = $(option).data('price');
+                        var eachCount = $(option).find('input').val();
+
+                        tot_price += eachPrice * eachCount;
+                    }
 
                     if( price > 0 ) {
                         $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
@@ -1175,7 +1186,16 @@
                 var tot_price = 0;
                 if( cnt > 0 ) {
                     $(this).next('input').val( cnt );
-                    tot_price = price * cnt;
+                    
+                    const options = $(this).parent().parent().parent().parent().find('.option_item');
+                    tot_price = $(options[0]).data('itemPrice');
+                    for (let index = 0; index < options.length; index++) {
+                        const option = options[index];
+                        var eachPrice = $(option).data('price');
+                        var eachCount = $(option).find('input').val();
+
+                        tot_price += eachPrice * eachCount;
+                    }
 
                     if( price > 0 ) {
                         $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
@@ -1211,7 +1231,7 @@
                 $('#orderProductList input[type="checkbox"]').each(function(index, element) {
                     if( $(this).is(':checked') ) {
                         prodData.append("p_idx[" + i + "]", $(element).val());
-                        prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
+                        prodData.append("p_cnt[" + i + "]", $(element).parent().parent().find('input[type=text]').val());
 
                         var options = $(element).parent().parent().find('.option_item');
                         for (let idx = 0; idx < options.length; idx++) {
@@ -1334,6 +1354,33 @@
     }
     function openOption(idx, key) {
         $('._productOption_'+idx+'_'+key).toggle();
+    }
+    function chooseOption(option){
+        if(!option) {
+            return;
+        }
+
+        const priceText = isNaN(Number(option.itemPrice)) ? option.itemPrice : Number(option.price).toLocaleString();
+
+        const tmpHtml = '<div class="option_item" data-option_key="'+option.index+'_'+option.key+'" data-option_title="'+option.name
+                            +'" data-option_name="'+option.propertyName+'" data-price="'+option.price+'" data-item-price="'+option.itemPrice+'">'
+                        +'    <div class="">'
+                        +'        <p class="option_name">'+option.propertyName+'</p>'
+                        +'        <button onclick="$(this).parent().parent().remove();"><img src="/img/icon/x_icon2.svg" alt=""></button>'
+                        +'    </div>'
+                        +'    <div class="mt-2">'
+                        +'        <div class="count_box2">'
+                        +'            <button class="minus" data-price="'+option.price+'"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>'
+                        +'            <input type="text" id="product_count_sub_'+option.index+'" name="product_count_sub['+option.index+']" value="1">'
+                        +'            <button class="plus" data-price="'+option.price+'"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>'
+                        +'        </div>'
+                        +'        <div class="price">'+priceText+'</div>'
+                        +'    </div>'
+                        +'</div>';
+
+        $('._productChooseOptions_'+option.index).append(tmpHtml);
+
+        initEventListener();
     }
 
 </script>
