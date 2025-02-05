@@ -868,12 +868,12 @@
                     optionTmp.map(function (item) {
                         $('._requestEstimateOption').text(item['option_name']);
 
-                        htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                        htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                     })
                 } else {
                     $('._requestEstimateOption').text($(this).data('option_name'));
 
-                    htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                    htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                 }
                 htmlText += '</div>' +
                     '<div class="option_count">' +
@@ -939,46 +939,6 @@
                 $('._requestEstimateTotalPrice2').text(price.toLocaleString()+'원');
             }
         }
-
-        // 수량 변경
-        $(document).on('click', '.option_count .btn_minus', function (e) {
-            e.preventDefault();
-            var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-            var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-            var num = parseInt(stat, 10);
-            num--;
-            if (num <= 0) {
-                alert('더이상 줄일수 없습니다.');
-                num = 1;
-            }
-            $("input[data-opt_idx='"+oidx+"']").val(num);
-            //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-            reCal();
-        });
-
-        // 수량 변경
-        $(document).on('click', '.option_count .btn_plus', function (e) {
-            e.preventDefault();
-            var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-            var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-            var num = parseInt(stat, 10);
-            num++;
-            $("input[data-opt_idx='"+oidx+"']").val(num);
-            //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-            reCal();
-        });
-
-        $(document).on('keyup', 'input[name=qty_input]', function () {
-            reCal();
-        })
-
-        // 옵션 삭제
-        $(document).on('click', '.ico_opt_remove', function () {
-            var oidx = $(this).data('opt_idx');
-            $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
-            //$(this).parents('.option_result').remove();
-            reCal();
-        })
 
 
         const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
@@ -1560,18 +1520,42 @@
                 })
                 .on('click', '#request_estimate-modal .modal_footer button', function(e) {
                     e.preventDefault();
+                
+                    @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
+                    if($('.opt_result_area')[1].innerText == '') {
+                        alert('본 상품의 필수 옵션을 선택해주세요.');
+                        return;
+                    }
+                    @endif
 
                     prodData.append('p_idx[0]', {{ $data['detail']->idx }});
                     prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
 
                     var i = 1;
+                    var isNotChooseOption = false;
                     $('#orderProductList input[type="checkbox"]').each(function(index, element) {
                         if( $(this).is(':checked') ) {
                             prodData.append("p_idx[" + i + "]", $(element).val());
                             prodData.append("p_cnt[" + i + "]", $('#product_count_sub_'+index).val());
+
+                            var options = $(element).parent().parent().find('.option_item');
+                            for (let idx = 0; idx < options.length; idx++) {
+                                const option = options[idx];
+                                if(!option.checkVisibility()) {
+                                    isNotChooseOption = true;
+                                    return;
+                                }
+                                prodData.append("product_option_key[" + i + "]", $(option).data('option_key'));
+                                prodData.append("product_option_value[" + i + "]",  $(option).data('option_title') + ',' + $(option).data('option_name'));
+                            }
+
                             i++;
                         }
                     });
+                    if(isNotChooseOption) {
+                        alert('추가 상품의 필수 옵션을 선택해주세요.');
+                        return;
+                    }
 
                     prodData.append('company_idx', $('input[name=request_company_idx]').val());
                     prodData.append('company_type', $('input[name=request_company_type]').val());
@@ -1627,6 +1611,48 @@
 
                         }
                     });
+                })
+                .on('click', '.ico_opt_remove', function () {
+                    var oidx = $(this).data('opt_idx');
+                    $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+                    //$(this).parents('.option_result').remove();
+                    reCal();
+                })
+                // 수량 변경
+                .on('click', '.option_count .btn_minus', function (e) {
+                    e.preventDefault();
+                    var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
+                    var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
+                    var num = parseInt(stat, 10);
+                    num--;
+                    if (num <= 0) {
+                        alert('더이상 줄일수 없습니다.');
+                        num = 1;
+                    }
+                    $("input[data-opt_idx='"+oidx+"']").val(num);
+                    //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
+                    reCal();
+                })
+                // 수량 변경
+                .on('click', '.option_count .btn_plus', function (e) {
+                    e.preventDefault();
+                    var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
+                    var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
+                    var num = parseInt(stat, 10);
+                    num++;
+                    $("input[data-opt_idx='"+oidx+"']").val(num);
+                    //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
+                    reCal();
+                })
+                .on('keyup', 'input[name=qty_input]', function () {
+                    reCal();
+                })
+                // 옵션 삭제
+                .on('click', '.ico_opt_remove', function () {
+                    var oidx = $(this).data('opt_idx');
+                    $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
+                    //$(this).parents('.option_result').remove();
+                    reCal();
                 })
             ;
         }
