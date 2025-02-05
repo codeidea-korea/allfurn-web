@@ -116,7 +116,7 @@
                                     </p>
                                 </div>
                                 <div class="modal__buttons">
-                                    <a href="{{route('signIn')}}" class="modal__button"><span>확인</span></a>
+                                    <a href="{{route('signin.social')}}" class="modal__button"><span>확인</span></a>
                                 </div>
                             </div>
                         </div>

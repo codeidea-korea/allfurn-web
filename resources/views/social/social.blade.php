@@ -9,7 +9,10 @@
     var email = jsonData.email;
     var phone_number = jsonData.phone_number;
     var provider = jsonData.provider;
+    var id = jsonData.id;
 
+    
+  
  
       
 
@@ -18,7 +21,7 @@
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: "{{ route('social.login') }}" ,
             type: 'POST',
-            data: { 'name':name, 'phone_number':phone_number,'email':email, 'provider':provider },
+            data: { 'name':name, 'phone_number':phone_number,'email':email, 'provider':provider, 'id':id},
             success: function(response) {
                 if (response.script === 'parent') {
                     window.opener.sessionStorage.setItem('socialUserData', JSON.stringify(response.data));

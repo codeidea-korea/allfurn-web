@@ -164,6 +164,7 @@ class LoginController extends BaseController
             'name' => 'nullable',
             'phone_number' => 'nullable',
             'email' => 'nullable',
+            'id' => 'required',
         ]);
 
         $socialUserData = [
@@ -171,26 +172,27 @@ class LoginController extends BaseController
             'email' => $request->input('email'),
             'phone_number' => str_replace("-", "", trim($request->input('phone_number'))),
             'provider' => $request->input('provider'),
-          
+            'id' => $request->input('id'),
         ];
 
         $userInfo = $this->loginService->getSocialUserInfo($socialUserData);
 
-        if ($socialUserData['provider'] == "naver") {
-            $social = new SocialController();
-            $social->naverLogout($request);
-        }
+        // if ($socialUserData['provider'] == "naver") {
+        //     $social = new SocialController();
+        //     $social->naverLogout($request);
+        // }
 
 
-        if ($socialUserData['provider'] == "google") {
-            $social = new SocialController();
-            $social->googleLogout($request);
-        }
+        // if ($socialUserData['provider'] == "google") {
+        //     $social = new SocialController();
+        //     $social->googleLogout($request);
+        // }
 
-        if ($socialUserData['provider'] == "kakao") {
-            $social = new SocialController();
-            $social->kakaoLogout($request);
-        }
+        // if ($socialUserData['provider'] == "kakao") {
+        //     $social = new SocialController();
+        //     $social->kakaoLogout($request);
+        // }
+
 
  
         if (!$socialUserData['phone_number'] || empty($userInfo) ) {
