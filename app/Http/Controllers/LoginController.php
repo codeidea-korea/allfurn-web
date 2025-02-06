@@ -61,7 +61,10 @@ class LoginController extends BaseController
                 return redirect($replaceUrl);
             }
         }
-
+        Log::info(getDeviceType());
+        if(getDeviceType() === 'm.'){
+            return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
+        }
         return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
     }
 
