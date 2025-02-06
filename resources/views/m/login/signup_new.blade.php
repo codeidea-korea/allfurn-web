@@ -14,7 +14,7 @@ $header_banner = '';
 <style>
     .error{
         display: flex;
-    }
+    } 
     .hidden{
         display: none!important;
     }
@@ -23,7 +23,7 @@ $header_banner = '';
 <div class="join_header sticky top-0 bg-white flex items-center">
     <div class="inner">
         <h3>회원가입</h3>
-        <a class="close_btn" href="./login.php"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></a>
+        <a class="close_btn" href="/signin"><svg><use xlink:href="./img/icon-defs.svg#x"></use></svg></a>
     </div>
 </div>
 
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // sessionStorage.removeItem('socialUserData'); 
     }else{
         signupType = 'normal';
-        // $(".join_social").children().eq(1).trigger('click');
+        $(".join_social").children().eq(1).trigger('click');
     }
 });
  
@@ -470,6 +470,7 @@ function validate(type = ''){
     let phone_number = $(`#${type}phone_number`).val();
     let provider = $(`#${type}provider`).val();
     let file =  $(`#${type}file`)[0].files[0];
+    console.log(type)   
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
     if(!type){
@@ -604,6 +605,11 @@ function validate(type = ''){
         $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
 
         $('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
+        if($(".join_social").children().eq(1).hasClass('border-b border-primary')){
+            signupType = 'normal';
+        }else{
+            signupType = 'social';
+        }
     })
 
 
@@ -622,14 +628,10 @@ const fileUpload = (input) => {
             input.parentNode.append(img)
         };
         reader.readAsDataURL(input.files[0]);
-    }
+    } 
 }
 
-// 주소 탭 변경
-const addressChange = (e) => {
-    let liN = $(e).parent().index()
-    $(e).parent().parent().next('.add_tab').find('> div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
-}
+
 </script>
 
 <div class="modal" id="modal-validation">
