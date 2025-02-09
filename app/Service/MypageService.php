@@ -2023,6 +2023,7 @@ class MypageService
                 p.*,
 
                 e.idx AS estimate_idx,
+                e.product_option_json AS product_option_json,
 
                 DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
 

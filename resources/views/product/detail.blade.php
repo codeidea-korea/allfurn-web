@@ -348,6 +348,7 @@
                                     @endforeach
                                     <div class="opt_result_area ori">
                                     </div>
+                                    <p class="product_price" data-total_price="1000">0원</p>
                                 @else
                                 <div class="prod_option">
                                     <div class="name">단가</div>
@@ -921,7 +922,9 @@
                 total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val());
                 $(this).find('.selection__price span').text(resultPrice.toLocaleString());
                 price += resultPrice;
-            })
+            });
+            price = price / 2;
+            price = price + instancePrice;
             $('._requestEstimateCount').text(total_qty + '개');
             if (price > 0) {
                 $('.product_price').text(price.toLocaleString()+'원');
@@ -1490,8 +1493,8 @@
                         }
 
                         if( price > 0 ) {
-                            $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
                             $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                            $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
                         }
                     }
                 })
@@ -1544,6 +1547,22 @@
                         alert('본 상품의 필수 옵션을 선택해주세요.');
                         return;
                     }
+                    const productOption = [];
+                    // option
+                    $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                        productOption.push({
+                            optionName: $(ele).find('.selection__text').data('name'),
+                            optionValue: [{
+                                propertyName: $(ele).find('.selection__text').data('option_name'),
+                                idx: Number($(ele).find('.ico_opt_remove').data('opt_idx')),
+                                count: Number($(ele).find('.count_box2 > input').val()),
+                                price: $(ele).find('.selection__text').data('price')
+                            }],
+                            // 현재 의미가 없음
+                            required: "0"
+                        });
+                    });
+                    prodData.append("p_product_option[" + 0 + "]",  JSON.stringify(productOption));
                     @endif
 
                     prodData.append('p_idx[0]', {{ $data['detail']->idx }});
@@ -1552,20 +1571,29 @@
                     var i = 1;
                     var isNotChooseOption = false;
                     $('#orderProductList input[type="checkbox"]').each(function(index, element) {
+                        const sproductOption = [];
                         if( $(this).is(':checked') ) {
-                            prodData.append("p_idx[" + i + "]", $(element).val());
-                            prodData.append("p_cnt[" + i + "]", $(element).parent().parent().find('input[type=text]').val());
-
-                            var options = $(element).parent().parent().find('.option_item');
-                            for (let idx = 0; idx < options.length; idx++) {
-                                const option = options[idx];
-                                if(!option.checkVisibility()) {
-                                    isNotChooseOption = true;
-                                    return;
-                                }
-                                prodData.append("product_option_key[" + i + "]", $(option).data('option_key'));
-                                prodData.append("product_option_value[" + i + "]",  $(option).data('option_title') + ',' + $(option).data('option_name'));
+                            const soptions = $(element).parent().parent().find('.info_box > .noline .option_item');
+                            for (let jdx = 0; jdx < soptions.length; jdx++) {
+                                const soption = soptions[jdx];
+                                sproductOption.push({
+                                    optionName: $(soption).data('option_title'),
+                                    optionValue: [{
+                                        propertyName: $(soption).data('option_name'),
+                                        idx: Number($(soption).data('option_key').split('_')[0]),
+                                        count: Number($(soption).find('.mt-2 > .count_box2 > input').val()),
+                                        price: $(soption).data('price')
+                                    }],
+                                    // 현재 의미가 없음
+                                    required: "0"
+                                });
                             }
+                            if(sproductOption.length > 0) {
+                                prodData.append("p_product_option[" + i + "]",  JSON.stringify(sproductOption));
+                            }
+
+                            prodData.append("p_idx[" + i + "]", $(element).val() );
+                            prodData.append("p_cnt[" + i + "]", $(element).parent().parent().find('input[type=text]').val());
 
                             i++;
                         }

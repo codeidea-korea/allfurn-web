@@ -140,24 +140,33 @@
                                     <div class="order_num noline">개별주문번호 : {{ $row->estimate_code }}</div>
                                     <div class="prod_name">{{ $row->name }}</div>
                                     
-                                    @if(isset($row->product_option) && $row->product_option != '[]')
-                                        <?php $arr = json_decode($row->product_option); $required = false; ?>
+                                    @if(isset($row->product_option_json) && $row->product_option_json != '[]')
+                                        <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
                                         <div class="noline">
-                                            @foreach($arr as $item2)
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">{{$item2->optionName}}</p>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div>{{ $row->product_count }}개</div>
-                                                    <div class="price"><?php echo number_format((int)$row->price, 0); ?></div>
-                                                </div>
-                                            </div>
+                                            @foreach($arr as $item2)                                                
+                                                @foreach($item2->optionValue as $sub)
+                                                    <div class="option_item">
+                                                        <div class="">
+                                                            <p class="option_name">{{$item2->optionName}}</p>
+                                                        </div>
+                                                        <div class="mt-2">
+                                                            <div>{{ $sub->count }}개</div>
+                                                            <? $_each_price += ((int)$sub->price * $sub->count); ?>
+                                                            <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
                                             @endforeach
                                         </div>
                                         <div class="prod_option">
                                             <div class="name">가격</div>
-                                            <div class="total_price">{{ $row->product_total_price }}</div>
+                                            <div class="total_price">
+                                                @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                    {{ $row->price_text }}
+                                                @else
+                                                    {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
+                                                @endif
+                                            </div>
                                         </div>
                                     @else
                                         <div class="prod_option">

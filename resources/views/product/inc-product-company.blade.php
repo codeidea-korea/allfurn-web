@@ -8,10 +8,10 @@
 
         @if(isset($item->product_option) && $item->product_option != '[]')
             <?php $arr = json_decode($item->product_option); $required = false; $inx = 0; ?>
-            @foreach($arr as $item2)
             
             <div class="info_box">
                 <div class="prod_name">{{$item->name}}</div>
+                @foreach($arr as $item2)
                 <div class="dropdown_wrap noline">
                     <button class="dropdown_btn" onclick="openOption({{$item->idx}}, {{$inx}})"><p>{{$item2->optionName}} 선택
                             @if($item2->required == 1)
@@ -29,6 +29,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endforeach
                 <div class="noline _productChooseOptions_{{$item->idx}}">
                 </div>
                 <div class="prod_option">
@@ -36,7 +37,6 @@
                     <div class="sub_tot_price"></div>
                 </div>
             </div>
-            @endforeach
         @else
         <div class="info_box">
             <div class="prod_name">{{$item->name}}</div>

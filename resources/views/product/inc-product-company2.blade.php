@@ -9,27 +9,36 @@
     </div>
 
     @if(isset($item->product_option) && $item->product_option != '[]')
-        <?php $arr = json_decode($item->product_option); $required = false; $inx = 0; ?>
+        <?php $arr = json_decode($item->product_option); $required = false; $_each_price = 0; ?>
         
         <div class="info_box">
             <div class="prod_name">{{$item->name}}</div>
             
-            <div class="noline _productChooseOptions_{{$item->idx}}">
-                @foreach($arr as $item2)
+            <div class="noline">
+                @foreach($arr as $item2)                                                
                     @foreach($item2->optionValue as $sub)
                         <div class="option_item">
                             <div class="">
-                                <p class="option_name">{{$sub->propertyName}}</p>
+                                <p class="option_name">{{$item2->optionName}}</p>
                             </div>
                             <div class="mt-2">
-                                <div class="count_box2">
-                                {{$item->p_cnt}}
-                                </div>
-                                <div class="price">{{$sub->price}}</div>
+                                <div>{{ $sub->count }}개</div>
+                                <? $_each_price += ((int)$sub->price * $sub->count); ?>
+                                <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
                             </div>
                         </div>
                     @endforeach
                 @endforeach
+            </div>
+            <div class="prod_option">
+                <div class="name">가격</div>
+                <div class="total_price">
+                    @if( $item->is_price_open == 0 || $item->price_text == '수량마다 상이' || $item->price_text == '업체 문의' ? 1 : 0 )
+                        {{ $item->price_text }}
+                    @else
+                        {{$item->is_price_open ? number_format($item->price + $_each_price, 0).'원': $item->price_text}}
+                    @endif
+                </div>
             </div>
         </div>
     @else

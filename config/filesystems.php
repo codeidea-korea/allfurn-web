@@ -61,6 +61,7 @@ return [
             'region' => env('VULTR_REGION'),
             'bucket' => env('VULTR_BUCKET'),
             'endpoint' => env('VULTR_ENDPOINT'),
+            'suppress_php_deprecation_warning' => true,
         ],
         's3' => [
             'driver' => 's3',
@@ -70,6 +71,7 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
+            'suppress_php_deprecation_warning' => true,
         ],
 
     ],

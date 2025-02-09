@@ -614,6 +614,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket text-white"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>
             </div>
             <h2 class="text-2xl font-medium text-center mt-2">주문이 완료되었습니다.</h2>
+
+            <!--
             <div class="mt-10">
                 <h3 class="text-xl font-medium">주문 정보</h3>
             </div>
@@ -657,6 +659,7 @@
                 </div>
                 <div class="response_order_prod_list"></div>
             </div>
+            -->
             <div class="flex items-center justify-center gap-3 mt-5">
                 <a href="/" class="btn w-1/3 btn-primary-line">쇼핑 계속하기</a>
                 <a href="/mypage/purchase" class="btn w-1/3 btn-primary">주문 현황 보러가기</a>

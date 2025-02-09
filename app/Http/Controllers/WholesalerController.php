@@ -265,10 +265,20 @@ class WholesalerController extends BaseController
                 for( $i = 0; $i < count( $request['p_idx'] ); $i++ ) {
                     if( $row['idx'] == $request['p_idx'][$i] ) {
                         $list[$k]->p_cnt = $request['p_cnt'][$i];
+
+                        if(isset($request['p_product_option']) 
+                            && is_array($request['p_product_option']) 
+                            && array_key_exists($i, $request['p_product_option'])) {
+                            //
+                            $list[$k]->product_option = $request['p_product_option'][$i];
+                            $list[$k]->product_option_json = $request['p_product_option'][$i];
+                        }
                     }
                 }
             }
         }
+        
+        $ret['list'] = $list;
         $ret['html'] = view('product.inc-product-company2', ['list' => $list])->render();
 
         //print_r( $list );

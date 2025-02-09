@@ -80,18 +80,13 @@ class EstimateController extends BaseController {
             $list['prod'][$key]['prd_idx'] = $row['idx'];
 
             $list['prod'][$key]['prd_count'] = 1;
+
             for( $i = 0; $i < count( $data_req['p_idx'] ); $i++ ) {
                 if( $row['idx'] == $data_req['p_idx'][$i] ) {
                     $list['prod'][$key]['prd_count'] = $data_req['p_cnt'][$i];
 
-                    if(array_key_exists('product_option_key', $data_req) && array_key_exists($i, $data_req['product_option_key'])) {
-                        $product_option_arr = array();
-                        $product_option_value = explode(',', $data_req['product_option_value'][$i]);
-    
-                        $product_option_arr[$i]['optionName'] = $data_req['product_option_key'][$i];
-                        $product_option_arr[$i]['optionValue'][$product_option_value[0]] = $product_option_value[1];
-        
-                        $list['prod'][$key]['product_option_json'] = json_encode($product_option_arr, JSON_UNESCAPED_UNICODE);
+                    if(isset($data_req['p_product_option']) && array_key_exists($i, $data_req['p_product_option'])) {
+                        $list['prod'][$key]['product_option_json'] = $data_req['p_product_option'][$i];
                     }
                 }
             }
