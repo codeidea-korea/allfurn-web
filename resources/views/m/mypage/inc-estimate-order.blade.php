@@ -19,13 +19,45 @@
                             <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
+                        @foreach( $lists AS $key => $row )
+                            @if(isset($row->product_option_json) && $row->product_option_json != '[]')
+                                <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
+                                @foreach($arr as $item2)                                                
+                                    @foreach($item2->optionValue as $sub)
+                                    <? 
+                                    if(! property_exists($sub, 'price')) {
+                                        continue;
+                                    }
+                                    $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
+                                    ?>
+                                    @endforeach
+                                @endforeach
+                                <?
+                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
+                                    $lists[0]->is_price_open = 0;
+                                    $lists[0]->price_text = $row->price_text;
+                                } else{
+                                    $lists[0]->product_total_price += $row->price + $_each_price;
+                                }
+                                ?>
+                            @else
+                                <?
+                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
+                                    $lists[0]->is_price_open = 0;
+                                    $lists[0]->price_text = $row->price_text;
+                                } else {
+                                    $lists[0]->product_total_price += $row->product_count * ($row->product_total_price ? 0 : $row->product_total_price);
+                                }
+                                ?>
+                            @endif
+                        @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $lists[0]->product_total_price }}</div>
+                                <div>{{ $lists[0]->is_price_open == 0 ? $lists[0]->price_text : number_format($lists[0]->product_total_price, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>
-                                <div>{{ $lists[0]->product_delivery_price }}</div>
+                                <div>{{ number_format($lists[0]->product_delivery_price, 0) }}</div>
                             </div>
                             <!--
                             <div class="txt_desc">
@@ -145,6 +177,11 @@
                                         <div class="noline">
                                             @foreach($arr as $item2)                                                
                                                 @foreach($item2->optionValue as $sub)
+                                                    <? 
+                                                    if(! property_exists($sub, 'price')) {
+                                                        continue;
+                                                    }
+                                                    ?>
                                                     <div class="option_item">
                                                         <div class="">
                                                             <p class="option_name">{{$item2->optionName}}</p>

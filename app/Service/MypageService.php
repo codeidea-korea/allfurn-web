@@ -2023,7 +2023,7 @@ class MypageService
                 p.*,
 
                 e.idx AS estimate_idx,
-                e.product_option_json AS product_option_json,
+                COALESCE(e.product_option_json, p.product_option) AS product_option_json,
 
                 DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
 
@@ -2072,6 +2072,38 @@ class MypageService
 //            WHERE e.idx = ".$params['estimate_idx'];
         $estimate = DB::select($sql);
 
+        foreach( $estimate AS $ekey => $erow ) {
+            if(isset($erow->product_option_json) && $erow->product_option_json != '[]') {
+                $arr = (array)json_decode($erow->product_option_json);
+                $arr2 = (array)json_decode($erow->product_option);
+                $responseArr = [];
+
+                for($i = 0; $i < count($arr); $i++) {
+                    if(! array_key_exists($i, $arr)) {
+                        continue;
+                    }
+                    $item = (array)($arr[$i]);
+                    $item2 = (array)($arr2[$i]);
+
+                    for($j = 0; $j < count($item['optionValue']); $j++) {
+                        $sub = (array)($item['optionValue'][$j]);
+                        $sub2 = (array)($item2['optionValue'][$j]);
+                        if(! array_key_exists('count', $sub)) {
+                            $sub = array_merge( $sub, array( 'count' => '1' ) );
+                        }
+                        if(! array_key_exists('price', $sub)) {
+                            $sub = array_merge( $sub, array( 'price' => $sub2['price'] ) );
+                        }
+                        $item['optionValue'][$j] = (object) $sub;
+                    }
+                    array_push($responseArr, (object) $item);
+                }
+                if(count($responseArr) < 1) {
+                    continue;
+                }
+                $erow->product_option_json = json_encode($responseArr);
+            }
+        }
         return $estimate;
     }
 

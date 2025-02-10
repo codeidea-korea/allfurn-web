@@ -1315,7 +1315,7 @@
             
             .on('click', '.dropdown li', function () {
                 var required = false;
-                var requiredCnt = $('.dropdown.required').length;
+                var requiredCnt = $('.dropdown.required').length / 2;
                 var idx = $(this).parents('.dropdown').index();
                 var same = false;
 
