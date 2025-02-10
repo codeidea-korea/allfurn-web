@@ -305,7 +305,7 @@
                                 
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                        <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
@@ -317,7 +317,7 @@
                                                 </p>
                                                 <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
                                             </a>
-                                            <div class="filter_dropdown_wrap w-[560px]" style="display: none;">
+                                            <div class="filter_dropdown_wrap w-full" style="display: none;">
                                                 <ul>
                                                     @foreach($item->optionValue as $sub)
                                                         <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
@@ -1103,8 +1103,8 @@
                     }
 
                     if( price > 0 ) {
-                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
                         $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
                     }
                 }
             })
@@ -1373,17 +1373,17 @@
                 }
 
                 if (!same) {
-                        var htmlText = '<div class="option_item option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
+                        var htmlText = '<div class="option_item w-full option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
                         if (required) {
                             optionTmp.map(function (item) {
                                 $('._requestEstimateOption').text(item['option_name']);
 
-                                htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                                htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                             })
                         } else {
                             $('._requestEstimateOption').text($(this).data('option_name'));
 
-                            htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
+                            htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
                         }
                         htmlText += '</div>' +
                             '<div class="option_count">' +
