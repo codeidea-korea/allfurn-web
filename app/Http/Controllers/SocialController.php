@@ -19,20 +19,37 @@ class SocialController extends BaseController
     {
         $this->naver_clientId = env('NAVER_CLIENT_ID');
         $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
-        $this->naver_redirectUri = "http://localhost:8000/social/naver/callback";
+        $this->naver_redirectUri = "https://devallfurn-web.codeidea.io/social/naver/callback";
 
         
         $this->google_clientId = env('GOOGLE_CLIENT_ID');
         $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
-        $this->google_redirectUri = "http://localhost:8000/social/google/callback";
+        $this->google_redirectUri = "https://devallfurn-web.codeidea.io/social/google/callback";
         $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
         $this->kakao_clientId = env('KAKAO_CLIENT_ID');
-        $this->kakao_redirectUri = "http://localhost:8000/social/kakao/callback";
+        $this->kakao_redirectUri = "https://devallfurn-web.codeidea.io/social/kakao/callback";
 
         $this->apple_clientId = env('APPLE_CLIENT_ID');
         $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
-        $this->apple_redirectUri = "http://localhost:8000/social/apple/callback";
+        $this->apple_redirectUri = "https://devallfurn-web.codeidea.io/social/apple/callback";
+
+        // $this->naver_clientId = env('NAVER_CLIENT_ID');
+        // $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
+        // $this->naver_redirectUri = "http://localhost:8000/social/naver/callback";
+
+        
+        // $this->google_clientId = env('GOOGLE_CLIENT_ID');
+        // $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
+        // $this->google_redirectUri = "http://localhost:8000/social/google/callback";
+        // $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
+
+        // $this->kakao_clientId = env('KAKAO_CLIENT_ID');
+        // $this->kakao_redirectUri = "http://localhost:8000/social/kakao/callback";
+
+        // $this->apple_clientId = env('APPLE_CLIENT_ID');
+        // $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
+        // $this->apple_redirectUri = "http://localhost:8000/social/apple/callback";
 
         
     } 
@@ -99,7 +116,7 @@ class SocialController extends BaseController
         $accessToken = json_decode($response, true);
 
         if (!isset($accessToken['access_token'])) {
-            return view(getDeviceType() . 'signIn.social');
+            return view(getDeviceType() . 'login.login_social');
             // return response()->json(['error' => 'Failed to retrieve access token'], 500);
         }
 
@@ -118,7 +135,7 @@ class SocialController extends BaseController
             unset($jsonData['response']['mobile']);
         }
 
-
+ 
         // 사용자 정보 요청 실패
         if (!isset($jsonData['response'])) {
             return response()->json(['error' => 'Failed to retrieve user info'], 500);
@@ -258,13 +275,27 @@ class SocialController extends BaseController
      * 구글 로그인
      */
     public function googleRedirect(): JsonResponse
-    {
+    {   
+
+        
 
         $url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id={$this->google_clientId}&redirect_uri={$this->google_redirectUri}&scope={$this->google_scope}";
 
         return response()->json(['url' => $url]);
     }
 
+    public function commonCallback(Request $request){
+
+        $jsonData = [
+            'name' => $request->name,
+            'email' => $request->email, 
+            'phone_number' => $request->phone_number,
+            'provider' => 'google',
+            'id' => $request->id
+         ];
+ 
+        return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData]);
+    }
     public function googleCallback(Request $request)
     {
 
