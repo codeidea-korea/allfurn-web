@@ -995,7 +995,7 @@
                 resultPrice += parseInt($(this).data('price'));
             })
             resultPrice = resultPrice * $(this).parents('.option_result').find('input[name=qty_input]').val();
-            total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val();
+            total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val());
             $(this).find('.selection__price span').text(resultPrice.toLocaleString());
             price += resultPrice;
         });
