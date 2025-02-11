@@ -994,8 +994,8 @@
             $(this).find('.selection__text').map(function () {
                 resultPrice += parseInt($(this).data('price'));
             })
-            resultPrice = resultPrice * $(this).parents('.option_result').find('#qty_input').val();
-            total_qty += parseInt($(this).parents('.option_result').find('#qty_input').val());
+            resultPrice = resultPrice * $(this).parents('.option_result').find('input[name=qty_input]').val();
+            total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val();
             $(this).find('.selection__price span').text(resultPrice.toLocaleString());
             price += resultPrice;
         });
@@ -1009,6 +1009,13 @@
             var total = parseInt('{{str_replace(',', '', $data['detail']->price)}}') * total_qty;
             $('.product_price').text(total.toLocaleString()+'원');
             $('.product_price').data('total_price', total);
+        }
+        if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+            $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+            $('._requestEstimateTotalPrice2').text("{{ $data['detail']->price_text }}");
+        } else {
+            $('._requestEstimateTotalPrice').text($('.product_price').text());
+            $('._requestEstimateTotalPrice2').text(price.toLocaleString()+'원');
         }
     }
 
