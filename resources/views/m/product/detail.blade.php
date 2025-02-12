@@ -990,7 +990,7 @@
         var instancePrice = {{$data['detail']->price}}; // 단위가 
         var total_qty = 0;
         $('.ori .selection__result').map(function () {
-            var resultPrice = instancePrice;
+            var resultPrice = 0;
             $(this).find('.selection__text').map(function () {
                 resultPrice += parseInt($(this).data('price'));
             })
@@ -1001,7 +1001,7 @@
         });
         price = price / 2;
         price = price + instancePrice;
-        
+        $('._requestEstimateCount').text(total_qty + '개');
         if (price > 0) {
             $('.product_price').text(price.toLocaleString()+'원');
             $('.product_price').data('total_price', price);

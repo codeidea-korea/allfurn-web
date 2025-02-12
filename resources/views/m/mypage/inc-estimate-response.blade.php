@@ -67,6 +67,7 @@
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
                     } else{
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
                         $lists[0]->product_total_price += $row->price + $_each_price;
                     }
                 } else {
@@ -74,7 +75,8 @@
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
                     } else {
-                        $lists[0]->product_total_price += $row->product_count * ($row->product_total_price ? 0 : $row->product_total_price);
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                        $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
                     }
                 }
             }
@@ -174,7 +176,7 @@
 
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->product_total_price }}"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
