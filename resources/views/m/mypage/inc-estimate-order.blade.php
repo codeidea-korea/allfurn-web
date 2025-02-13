@@ -192,8 +192,8 @@
                                                         </div>
                                                         <div class="mt-2">
                                                             <div>{{ $sub->count }}개</div>
-                                                            <? $_each_price += ((int)$sub->price * $sub->count); ?>
-                                                            <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                            <? $_each_price += $sub->each_price; ?>
+                                                            <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
                                                         </div>
                                                     </div>
                                                 @endforeach

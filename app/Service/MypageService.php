@@ -2079,21 +2079,35 @@ class MypageService
                 $responseArr = [];
 
                 for($i = 0; $i < count($arr); $i++) {
-                    if(! array_key_exists($i, $arr)) {
+                    if(!isset($arr) || !is_array($arr) || !array_key_exists($i, $arr)) {
                         continue;
                     }
                     $item = (array)($arr[$i]);
-                    $item2 = (array)($arr2[$i]);
+                    if(! array_key_exists($i, $arr2)) {
+                        $item2 = (array)($arr[$i]);
+                    } else {
+                        $item2 = (array)($arr2[$i]);
+                    }
+                    $item['optionValue'] = (array)$item['optionValue'];
 
                     for($j = 0; $j < count($item['optionValue']); $j++) {
+                        if(!isset($item['optionValue']) || !is_array($item['optionValue']) 
+                            || !array_key_exists($j, $item['optionValue'])) {
+                            continue;
+                        }
                         $sub = (array)($item['optionValue'][$j]);
                         $sub2 = (array)($item2['optionValue'][$j]);
                         if(! array_key_exists('count', $sub)) {
-                            $sub = array_merge( $sub, array( 'count' => '1' ) );
+                            $sub = array_merge( $sub, array( 'count' => 1 ) );
+                        } else {
+                            $sub['count'] = is_numeric($sub['count']) ? $sub['count'] : intval($sub['count']);
                         }
                         if(! array_key_exists('price', $sub)) {
-                            $sub = array_merge( $sub, array( 'price' => $sub2['price'] ) );
+                            $sub = array_merge( $sub, array( 'price' => is_numeric($sub2['price']) ? $sub2['price'] : 0 ) );
+                        } else {
+                            $sub['price'] = is_numeric($sub['price']) ? $sub['price'] : intval($sub['price']);
                         }
+                        $sub['each_price'] = $sub['count'] * $sub['price'];
                         $item['optionValue'][$j] = (object) $sub;
                     }
                     array_push($responseArr, (object) $item);

@@ -136,17 +136,23 @@
                             
                             @if(isset($row->product_option_json) && $row->product_option_json != '[]')
                                 <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
+
                                 <div class="noline">
-                                    @foreach($arr as $item2)                                                
+                                    @foreach($arr as $item2)
                                         @foreach($item2->optionValue as $sub)
+                                            @php
+                                            if(! property_exists($sub, 'price')) {
+                                                continue;
+                                            }
+                                            @endphp
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">{{$item2->optionName}}</p>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <div>{{ $sub->count }}개</div>
-                                                    <? $_each_price += ((int)$sub->price * $sub->count); ?>
-                                                    <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                    <div>{{ ($sub->count) . '' }}개</div>
+                                                    <? $_each_price += $sub->each_price; ?>
+                                                    <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
                                                 </div>
                                             </div>
                                         @endforeach
