@@ -107,7 +107,7 @@
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                        <div><b>{{ number_format( $lists[0]->product_total_price ) }}</b></div>
                     </div>
                 </div>
             </div>

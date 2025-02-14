@@ -45,12 +45,10 @@
                                         <div class="name">주소</div>
                                         <div>{{ $lists[0]->request_address1.' '.$lists[0]->request_address2 }}</div>
                                     </div>
-                                    <!--
                                     <div class="txt_desc">
                                         <div class="name">배송</div>
-                                        <div>착불(100,000)</div>
+                                        <div>{{ $lists[0]->delivery_info }} ({{ number_format( $lists[0]->product_delivery_price ) }})</div>
                                     </div>
-                                    -->
                                 </div>
                             </div>
                         </div>

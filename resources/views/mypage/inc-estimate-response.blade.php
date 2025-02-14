@@ -83,7 +83,7 @@
             <div>
                 <div class="txt_desc">
                     <div class="name">가격 표기 {{ $count_open_price }}건</div>
-                    <div>견적가 <b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                    <div>견적가 <b>{{ number_format( $lists[0]->product_total_price ) }}</b></div>
                 </div>
                 <div class="txt_desc">
                     <div class="name">업체문의 상품 {{ $count_close_price }}건</div>
@@ -106,7 +106,7 @@
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                        <div><b>{{ number_format( $lists[0]->product_total_price ) }}</b></div>
                     </div>
                 </div>
             </div>
