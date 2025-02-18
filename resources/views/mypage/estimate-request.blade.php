@@ -141,7 +141,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>견적서 요청서 확인</h3>
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -267,14 +267,18 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>받은 견적서</h3>
-                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
             <div class="modal_body">
                 
             </div>
 
             <div class="modal_footer">
+            <!--
                 <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+             -->
+            <button class="close_btn" type="button" onclick="checkOrder()">견적 확인</button>
+             <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/pc/img/icon/arrow-right.svg" alt=""></button>
             </div>
         </div>
     </div>
@@ -488,7 +492,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>주문서</h3>
-                <button class="close_btn" onclick="modalClose('#request_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#request_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
 
             <div class="modal_body">
@@ -571,7 +575,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -1027,6 +1031,31 @@
         });
     });
 	
+        function checkOrder (){
+            modalClose('#check_estimate-modal');
+            $.ajax({
+                url: '/estimate/checkOrder',
+                type: 'put',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('확인 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
         function holdOrder (){
             modalClose('#check_order-modal');
             $.ajax({

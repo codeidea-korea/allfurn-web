@@ -150,27 +150,6 @@
                     </tbody>
                 </table>
 
-                <div class="mt-10 search_company_div hidden">
-                    <p class="mt-1">업체 선택</p>
-                    <button type="button" class="setting_input h-[40px] w-full flex items-center gap-3" onclick="searchCompanyStart()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-5 h-5 text-stone-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                        <p class="w-full h-full font-normal text-stone-400 flex items-center">견적서를 보내실 업체를 선택해주세요.</p>
-                    </button>
-                </div>
-                <div class="pt-5 search_company_div hidden">
-                    <p class="mb-1">선택된 업체</p>
-                    <div class="flex flex-wrap gap-3 checked_company">
-                        <!--
-                        <div class="h-[30px] px-3 flex items-center gap-1 bg-stone-100 rounded-full">
-                            <sapn class="text-stone-400">올펀가구</sapn>
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5 text-stone-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                            </button>
-                        </div>
-                        -->
-                    </div>
-                </div>
-
                 <div class="custom_input">
                     <div class="flex justify-end mt-8 checkAll">
                         <div class="flex items-center">
@@ -250,6 +229,28 @@
                         @endforeach
                     </ul>
                 </div>
+
+                <div class="mt-10 search_company_div hidden">
+                    <p class="mb-2">업체 선택</p>
+                    <button type="button" class="setting_input h-[40px] w-full flex items-center gap-3" onclick="searchCompanyStart()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-5 h-5 text-stone-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <p class="w-full h-full font-normal text-stone-400 flex items-center">견적서를 보내실 업체를 선택해주세요.</p>
+                    </button>
+                </div>
+                <div class="pt-5 search_company_div hidden">
+                    <p class="mb-2">선택된 업체</p>
+                    <div class="flex flex-wrap gap-3 checked_company">
+                        <!--
+                        <div class="h-[30px] px-3 flex items-center gap-1 bg-stone-100 rounded-full">
+                            <sapn class="text-stone-400">올펀가구</sapn>
+                            <button>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5 text-stone-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        </div>
+                        -->
+                    </div>
+                </div>
+
                 <div class="btn_box mt-10 prev">
                     <a href="javascript: ;" class="btn btn-primary w-full" onclick="goNext()">상품선택 완료</a>
                 </div>

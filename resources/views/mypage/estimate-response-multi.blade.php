@@ -117,27 +117,6 @@
             </tbody>
         </table>
 
-        <div class="flex items-center mt-16 search_company_div hidden">
-            <p class="w-24">업체 선택</p>
-            <button type="button" class="setting_input h-[48px] w-72 flex items-center gap-3" onclick="searchCompanyStart()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-5 h-5 text-stone-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <p class="w-full h-full font-normal text-stone-400 flex items-center">견적서를 보내실 업체를 선택해주세요.</p>
-            </button>
-        </div>
-        <div class="flex pt-5 search_company_div hidden">
-            <p class="w-24">선택된 업체</p>
-            <div class="flex flex-wrap gap-3 checked_company">
-                <!--
-                <div class="h-[30px] px-3 flex items-center gap-1 bg-stone-100 rounded-full">
-                    <sapn class="text-stone-400">올펀가구</sapn>
-                    <button>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5 text-stone-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                </div>
-                -->
-            </div>
-        </div>
-
         <div class="custom_input">
             <div class="flex justify-end mt-16 checkAll">
                 <div class="flex items-center">
@@ -219,6 +198,27 @@
                 </li>
                 @endforeach
             </ul>
+        </div>
+
+        <div class="flex items-center mt-16 search_company_div hidden">
+            <p class="shrink-0 w-24">업체 선택</p>
+            <button type="button" class="setting_input h-[48px] w-72 flex items-center gap-3" onclick="searchCompanyStart()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search w-5 h-5 text-stone-400"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <p class="w-full h-full font-normal text-stone-400 flex items-center">견적서를 보내실 업체를 선택해주세요.</p>
+            </button>
+        </div>
+        <div class="flex pt-5 search_company_div hidden">
+            <p class="shrink-0 w-24">선택된 업체</p>
+            <div class="flex flex-wrap gap-3 checked_company">
+                <!--
+                <div class="h-[30px] px-3 flex items-center gap-1 bg-stone-100 rounded-full">
+                    <sapn class="text-stone-400">올펀가구</sapn>
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5 text-stone-400"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+                -->
+            </div>
         </div>
     </form>
     

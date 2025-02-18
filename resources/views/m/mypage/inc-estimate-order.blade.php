@@ -6,7 +6,7 @@
 	<div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#order_form-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#order_form-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
 		<div class="modal_body">
