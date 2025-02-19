@@ -436,12 +436,12 @@ class EstimateService {
     }
 
     public function checkOrder(array $params): array {
-        $sql = "SELECT * FROM AF_estimate WHERE estimate_code = '".$params['estimate_code']."'";
+        $sql = "SELECT * FROM AF_estimate WHERE estimate_group_code = '".$params['estimate_group_code']."'";
         $estimate = DB::select($sql);
 
         if($estimate[0] -> estimate_state !== 'F') {
             DB::table('AF_estimate')
-                -> where('estimate_code', $params['estimate_code'])
+                -> where('estimate_group_code', $params['estimate_group_code'])
                 -> update(['estimate_state' => 'F']);
 
             $sql =

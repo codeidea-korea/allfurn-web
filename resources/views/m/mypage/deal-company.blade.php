@@ -3,7 +3,7 @@
 @php
     $only_quick = '';
     $header_depth = 'mypage';
-    $top_title = '판매 현황';
+    $top_title = '요청받은 견적서 현황';
     $header_banner = '';
 @endphp
 

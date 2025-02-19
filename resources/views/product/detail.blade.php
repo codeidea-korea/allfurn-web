@@ -512,11 +512,11 @@
                         </div>
 
 
-                        <!-- 추가문의사항 -->
+                        <!-- 추가문의사항
                         <dl class="add_textarea mt-7">
                             <dt>추가 문의사항</dt>
                             <dd><textarea name="request_memo" id="request_memo" placeholder="추가 요청사항 입력하세요(200자)"></textarea></dd>
-                        </dl>
+                        </dl> -->
 
                     </div>
                 </div>
@@ -535,7 +535,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>견적 요청서 확인</h3>
-                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
             </div>
 
             <div class="modal_body">
@@ -556,10 +556,15 @@
                             </div>
                         </div>
 
-                        <!-- 추가문의사항 -->
+                        <!-- 추가문의사항
                         <dl class="add_textarea mb-7">
                             <dt>추가 문의사항</dt>
                             <dd class="txt reqMemo">견적서 수량은 추가 될 수 있습니다. 수량 추가 시 견적관련 전화 문의 드립니다.</dd>
+                        </dl>
+                         -->
+                        <dl class="add_textarea mt-7">
+                            <dt>추가 문의사항</dt>
+                            <dd class="txt reqMemo"><textarea name="request_memo" id="request_memo" placeholder="추가 요청사항 입력하세요(200자)"></textarea></dd>
                         </dl>
 
                         <div class="fold_area txt_info">
@@ -1626,7 +1631,7 @@
                             const idx = 'p_idx';
                             const valCount = prodData.getAll(idx);
                             $('#orderProductList2 .reqCount').text( valCount.length );
-                            $('#request_confirm-modal .reqMemo').text( prodData.get('p_memo') );
+                            $('#request_confirm-modal .reqMemo > textarea').val( prodData.get('p_memo') );
                             modalOpen('#request_confirm-modal');
                         }, error: function (e) {
 
@@ -1640,6 +1645,7 @@
                     for (const [key, value] of prodData.entries()) {
                         console.log(key, value);
                     }
+                    prodData.set('p_memo', $('#request_memo').val());
 
                     $.ajax({
                         url: '/estimate/insertRequest',
