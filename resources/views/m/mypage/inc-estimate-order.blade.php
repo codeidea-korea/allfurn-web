@@ -86,7 +86,7 @@
                     <!-- 견적 기본정보 -->
                     <div class="fold_area txt_info active">
                         <div class="target title" onclick="foldToggle(this)">
-                            <p>공급업체 기본정보</p>
+                            <p>주문업체 기본정보</p>
                             <div class="flex items-center gap-2">
                                 <span>(주문번호 : {{ $lists[0]->estimate_group_code }})</span>
                                 <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">

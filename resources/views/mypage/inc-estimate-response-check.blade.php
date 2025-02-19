@@ -27,15 +27,15 @@
                                 <div class="flex-1">
                                     <div class="txt_desc">
                                         <div class="name">업체명</div>
-                                        <div>{{ $lists[0]->request_company_name }}</div>
+                                        <div>{{ $lists[0]->response_company_name }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">사업자번호</div>
-                                        <div>{{ $lists[0]->request_business_license_number }}</div>
+                                        <div>{{ $lists[0]->response_business_license_number }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">전화번호</div>
-                                        <div>{{ $lists[0]->request_phone_number }}</div>
+                                        <div>{{ $lists[0]->response_phone_number }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">주요판매처</div>
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">주소</div>
-                                        <div>{{ $lists[0]->request_address1.' '.$lists[0]->request_address2 }}</div>
+                                        <div>{{ $lists[0]->response_address1.' '.$lists[0]->response_address2 }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">배송</div>

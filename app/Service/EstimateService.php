@@ -415,6 +415,10 @@ class EstimateService {
         $item = Order::where('order_group_code', $params['estimate_group_code'])
             ->update(['order_state' => 'X']);
 
+        DB::table('AF_estimate')
+            -> where('estimate_group_code', $params['estimate_group_code'])
+            -> update(['estimate_state' => 'F']);
+
         return [
             'result'    => 'success',
             'message'   => ''

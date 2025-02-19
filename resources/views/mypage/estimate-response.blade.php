@@ -92,7 +92,13 @@
                     <td>{{ $response['count'] - $loop -> index - (($offset - 1) * $limit) }}</td>
                     <td>{{ $list -> estimate_code }}</td>
                     <td>{{ $list -> response_time ? $list -> response_time : '('.$list -> request_time.')' }}</td>
-                    <td>{{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}</td>
+                    <td>
+                        @if ($list -> estimate_state == 'F' && $list -> order_state == 'X')
+                            주문 보류
+                        @else
+                            {{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}
+                        @endif
+                    </td>
                     <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt >= 1 ? '외 '.$list -> cnt.'개' : ''}}</td>
                     <td>{{ $list -> request_company_name }}</td>
                     <td>
@@ -454,9 +460,6 @@
 
     
 	$(document).ready(function(){
-		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
-		}
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
 
@@ -571,6 +574,14 @@
                 success: function (res) {
                     if( res.result === 'success' ) {
                         console.log( res );
+                        
+                        if(res.data.lists[0].order_state != 'X') {
+                            $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
+                        } else {
+                            $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
+                                + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "
+                                + "<img src=\"./pc/img/icon/arrow-right.svg\" alt=\"\"></button>");
+                        }
                         estimate_data = res.data.lists;
                         $('#check_order-modal .modal_body').empty().append(res.html);
                         $('.prodCnt').text( res.data.lists.length );

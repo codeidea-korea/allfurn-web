@@ -76,7 +76,13 @@
                     <li class="bg-white shadow-sm">
                         <div class="p-4 rounded-t-sm border-b">
                             <div class="flex items-center">
-                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">{{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}</span>
+                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">
+                                    @if ($list -> estimate_state == 'F' && $list -> order_state == 'X')
+                                        주문 보류
+                                    @else
+                                        {{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}
+                                    @endif
+                                </span>
                                 <span class="ml-2">{{ $list -> estimate_code }}</span>
                                 <span class="ml-auto text-stone-400">{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</span>
                             </div>
@@ -867,10 +873,6 @@ var response_estimate_estimate_total_price = 0;
 
 
         $(document).ready(function(){
-		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
-		}
-            
             // 견적 요청서 확인하기
             $('.request_estimate_detail').click(function(e){
                 estimate_idx = $(this).data('idx');
@@ -1012,6 +1014,13 @@ var response_estimate_estimate_total_price = 0;
                     success: function (res) {
                         if( res.result === 'success' ) {
                             console.log( res );
+                            if(res.data.lists[0].order_state != 'X') {
+                                $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
+                            } else {
+                                $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
+                                    + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "
+                                    + "<img src=\"./pc/img/icon/arrow-right.svg\" alt=\"\"></button>");
+                            }
                             estimate_data = res.data.lists;
                             $('#check_order-modal .modal_body').empty().append(res.html);
                             $('.prodCnt').text( res.data.lists.length );
