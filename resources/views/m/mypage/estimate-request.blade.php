@@ -614,11 +614,11 @@
 <div id="response_order-modal" class="modal">
     <div class="modal_bg" onclick="modalClose('#response_order-modal')"></div>
     <div class="modal_inner modal-md">
-        <div class="p-10 com_setting">
+        <div class="p-5 com_setting">
             <div class="w-12 h-12 rounded-full flex items-center justify-center  mx-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket text-white"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>
             </div>
-            <h2 class="text-2xl font-medium text-center mt-2">주문이 완료되었습니다.</h2>
+            <h2 class="text-2xl font-medium text-center mt-2 break-keep">주문이 완료되었습니다.</h2>
 
             <!--
             <div class="mt-10">
@@ -665,9 +665,9 @@
                 <div class="response_order_prod_list"></div>
             </div>
             -->
-            <div class="flex items-center justify-center gap-3 mt-5">
-                <a href="/" class="btn w-1/3 btn-primary-line">쇼핑 계속하기</a>
-                <a href="/mypage/purchase" class="btn w-1/3 btn-primary">주문 현황 보러가기</a>
+            <div class="flex items-center justify-center gap-3 mt-5 break-keep text-center">
+                <a href="/" class="btn px-2 btn-primary-line">쇼핑 계속하기</a>
+                <a href="/mypage/purchase" class="btn px-2 btn-primary">주문 현황 보러가기</a>
             </div>
         </div>
     </div>

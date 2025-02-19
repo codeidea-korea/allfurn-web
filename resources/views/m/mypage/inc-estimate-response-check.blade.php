@@ -101,8 +101,8 @@
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
-                                        <!--input type="checkbox" id="check_7" class="hidden" checked disabled>
-                                        <label for="check_7" class="add_btn">대표</label //-->
+                                        <input type="checkbox" id="check_7" class="hidden" >
+                                        <label for="check_7" class="add_btn">추가</label>
                                         <img src="{{ $row->product_thumbnail }}" alt="">
                                     </div>
                                     <div class="info_box">

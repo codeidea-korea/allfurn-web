@@ -356,7 +356,7 @@
                             @if( $data['prdCount'] - 1 > 0 )
                             <div class="target">
                                 <button type="button" class="title" onclick="foldToggle(this)">
-                                    <span>'{{ $data['detail']->companyName }}' 업체의 다른 {{ number_format( $data['prdCount'] - 1 ) }}개 상품 추가 선택 가능 합니다.</span>
+                                    <b>'{{ $data['detail']->companyName }}' 업체의 다른 {{ number_format( $data['prdCount'] - 1 ) }}개 상품 추가 선택 가능 합니다.</b>
                                     <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                                 </button>
                             </div>
