@@ -1994,6 +1994,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
+                o.order_state as order_state,
                 (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
@@ -2004,6 +2005,7 @@ class MypageService
             LEFT JOIN AF_wholesale w ON e.response_company_idx = w.idx 
             LEFT JOIN AF_retail r ON e.response_company_idx = r.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
+            LEFT JOIN AF_order o ON o.order_group_code = e.estimate_group_code
             WHERE 1 = 1 {$where}
             GROUP BY e.estimate_group_code 
             ORDER BY e.idx DESC";
@@ -2021,6 +2023,7 @@ class MypageService
             "SELECT 
                 e.*,
                 p.*,
+                o.order_state as order_state,
 
                 e.idx AS estimate_idx,
                 COALESCE(e.product_option_json, p.product_option) AS product_option_json,
@@ -2068,6 +2071,7 @@ class MypageService
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
             LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
             LEFT JOIN AF_attachment a3 ON e.response_business_license_attachment_idx = a3.idx 
+            LEFT JOIN AF_order o ON o.order_group_code = e.estimate_group_code
             WHERE e.estimate_group_code = '".$params['group_code']."'";
 //            WHERE e.idx = ".$params['estimate_idx'];
         $estimate = DB::select($sql);
@@ -2079,21 +2083,35 @@ class MypageService
                 $responseArr = [];
 
                 for($i = 0; $i < count($arr); $i++) {
-                    if(! array_key_exists($i, $arr)) {
+                    if(!isset($arr) || !is_array($arr) || !array_key_exists($i, $arr)) {
                         continue;
                     }
                     $item = (array)($arr[$i]);
-                    $item2 = (array)($arr2[$i]);
+                    if(! array_key_exists($i, $arr2)) {
+                        $item2 = (array)($arr[$i]);
+                    } else {
+                        $item2 = (array)($arr2[$i]);
+                    }
+                    $item['optionValue'] = (array)$item['optionValue'];
 
                     for($j = 0; $j < count($item['optionValue']); $j++) {
+                        if(!isset($item['optionValue']) || !is_array($item['optionValue']) 
+                            || !array_key_exists($j, $item['optionValue'])) {
+                            continue;
+                        }
                         $sub = (array)($item['optionValue'][$j]);
                         $sub2 = (array)($item2['optionValue'][$j]);
                         if(! array_key_exists('count', $sub)) {
-                            $sub = array_merge( $sub, array( 'count' => '1' ) );
+                            $sub = array_merge( $sub, array( 'count' => 1 ) );
+                        } else {
+                            $sub['count'] = is_numeric($sub['count']) ? $sub['count'] : intval($sub['count']);
                         }
                         if(! array_key_exists('price', $sub)) {
-                            $sub = array_merge( $sub, array( 'price' => $sub2['price'] ) );
+                            $sub = array_merge( $sub, array( 'price' => is_numeric($sub2['price']) ? $sub2['price'] : 0 ) );
+                        } else {
+                            $sub['price'] = is_numeric($sub['price']) ? $sub['price'] : intval($sub['price']);
                         }
+                        $sub['each_price'] = $sub['count'] * $sub['price'];
                         $item['optionValue'][$j] = (object) $sub;
                     }
                     array_push($responseArr, (object) $item);
@@ -2165,6 +2183,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
+                o.order_state as order_state,
                 (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
@@ -2177,6 +2196,7 @@ class MypageService
             LEFT JOIN AF_retail r ON e.request_company_idx = r.idx 
             LEFT JOIN AF_normal n ON e.request_company_idx = n.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
+            LEFT JOIN AF_order o ON o.order_group_code = e.estimate_group_code
             WHERE 1 = 1 {$where}
             GROUP BY e.estimate_group_code
             ORDER BY e.idx DESC";

@@ -5,7 +5,7 @@
 	<div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>받은 견적서</h3>
-            <button class="close_btn" onclick="modalClose('#receive_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#receive_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 		<div class="modal_body">
   -->
@@ -27,15 +27,15 @@
                                 <div class="flex-1">
                                     <div class="txt_desc">
                                         <div class="name">업체명</div>
-                                        <div>{{ $lists[0]->request_company_name }}</div>
+                                        <div>{{ $lists[0]->response_company_name }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">사업자번호</div>
-                                        <div>{{ $lists[0]->request_business_license_number }}</div>
+                                        <div>{{ $lists[0]->response_business_license_number }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">전화번호</div>
-                                        <div>{{ $lists[0]->request_phone_number }}</div>
+                                        <div>{{ $lists[0]->response_phone_number }}</div>
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">주요판매처</div>
@@ -43,14 +43,12 @@
                                     </div>
                                     <div class="txt_desc">
                                         <div class="name">주소</div>
-                                        <div>{{ $lists[0]->request_address1.' '.$lists[0]->request_address2 }}</div>
+                                        <div>{{ $lists[0]->response_address1.' '.$lists[0]->response_address2 }}</div>
                                     </div>
-                                    <!--
                                     <div class="txt_desc">
                                         <div class="name">배송</div>
-                                        <div>착불(100,000)</div>
+                                        <div>{{ $lists[0]->delivery_info }} ({{ number_format( $lists[0]->product_delivery_price ) }})</div>
                                     </div>
-                                    -->
                                 </div>
                             </div>
                         </div>
@@ -103,8 +101,8 @@
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
-                                        <!--input type="checkbox" id="check_7" class="hidden" checked disabled>
-                                        <label for="check_7" class="add_btn">대표</label //-->
+                                        <input type="checkbox" id="check_7" class="hidden" >
+                                        <label for="check_7" class="add_btn">추가</label>
                                         <img src="{{ $row->product_thumbnail }}" alt="">
                                     </div>
                                     <div class="info_box">
@@ -116,14 +114,19 @@
                                             <div class="noline">
                                                 @foreach($arr as $item2)                                                
                                                     @foreach($item2->optionValue as $sub)
+                                                        @php
+                                                        if(! property_exists($sub, 'price')) {
+                                                            continue;
+                                                        }
+                                                        @endphp
                                                         <div class="option_item">
                                                             <div class="">
                                                                 <p class="option_name">{{$item2->optionName}}</p>
                                                             </div>
                                                             <div class="mt-2">
-                                                                <div>{{ $sub->count }}개</div>
-                                                                <? $_each_price += ((int)$sub->price * $sub->count); ?>
-                                                                <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                                <div>{{ ($sub->count) . '' }}개</div>
+                                                                <? $_each_price += $sub->each_price; ?>
+                                                                <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
                                                             </div>
                                                         </div>
                                                     @endforeach

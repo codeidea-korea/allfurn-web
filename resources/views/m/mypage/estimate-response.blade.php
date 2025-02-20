@@ -77,7 +77,13 @@
                     <li class="bg-white shadow-sm">
                         <div class="p-4 rounded-t-sm border-b">
                             <div class="flex items-center">
-                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">{{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}</span>
+                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">
+                                    @if ($list -> estimate_state == 'F' && $list -> order_state == 'X')
+                                        주문 보류
+                                    @else
+                                        {{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}
+                                    @endif
+                                </span>
                                 <span class="ml-2">{{ $list -> estimate_code }}</span>
                                 <span class="ml-auto text-stone-400">{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</span>
                             </div>
@@ -213,7 +219,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>견적 요청서 확인 및 작성</h3>
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -233,7 +239,7 @@
 	<div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>보낸 견적서</h3>
-            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 		<div class="modal_body">
             
@@ -251,7 +257,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">

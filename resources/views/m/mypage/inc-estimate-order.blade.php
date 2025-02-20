@@ -6,7 +6,7 @@
 	<div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#order_form-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#order_form-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
 		<div class="modal_body">
@@ -37,8 +37,8 @@
                                     $lists[0]->is_price_open = 0;
                                     $lists[0]->price_text = $row->price_text;
                                 } else{
-				    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
-				    $row->price = $row->price == null || !is_numeric($row->price) ? 0 : $row->price;
+                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                                    $row->price = $row->price == null || !is_numeric($row->price) ? 0 : $row->price;
 					
                                     $lists[0]->product_total_price += $row->price + $_each_price;
                                 }
@@ -49,7 +49,8 @@
                                     $lists[0]->is_price_open = 0;
                                     $lists[0]->price_text = $row->price_text;
                                 } else {
-                                    $lists[0]->product_total_price += $row->product_count * ($row->product_total_price ? 0 : $row->product_total_price);
+                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                                    $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
                                 }
                                 ?>
                             @endif
@@ -85,7 +86,7 @@
                     <!-- 견적 기본정보 -->
                     <div class="fold_area txt_info active">
                         <div class="target title" onclick="foldToggle(this)">
-                            <p>공급업체 기본정보</p>
+                            <p>주문업체 기본정보</p>
                             <div class="flex items-center gap-2">
                                 <span>(주문번호 : {{ $lists[0]->estimate_group_code }})</span>
                                 <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
@@ -191,8 +192,8 @@
                                                         </div>
                                                         <div class="mt-2">
                                                             <div>{{ $sub->count }}개</div>
-                                                            <? $_each_price += ((int)$sub->price * $sub->count); ?>
-                                                            <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                            <? $_each_price += $sub->each_price; ?>
+                                                            <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
                                                         </div>
                                                     </div>
                                                 @endforeach
