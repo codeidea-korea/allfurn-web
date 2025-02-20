@@ -368,7 +368,7 @@
 </div>
 
 <!-- 견적서 확인하기 (보류 / 주문서 작성) -->
-<form method="PUT" name="isForm" id="isForm" action="/estimate/insertOrder">
+<form method="PUT" name="isForm" id="isForm">
 
     <!-- 견적서 확인하기 -->
     <div class="modal" id="check_estimate-modal">
@@ -376,7 +376,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>받은 견적서</h3>
-                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
+                <button type="button" class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
             <div class="modal_body">
                 

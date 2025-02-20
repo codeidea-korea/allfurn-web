@@ -1994,7 +1994,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
-                o.order_state as order_state,
+                '' as order_state,
                 (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
@@ -2013,6 +2013,13 @@ class MypageService
 
         $request['count'] = count($estimate);
         $request['list'] = DB::select($sql." LIMIT {$offset}, {$limit}");
+        
+        foreach ($request['list'] as $key => $value) {
+            $order = DB::select(" SELECT * FROM AF_order WHERE order_group_code = '$value->estimate_group_code'");
+            if(isset($order) && is_array($order)) {
+                $value->order_state = $order[0]->order_state;
+            }
+        }
         $request['pagination'] = paginate($params['offset'], $params['limit'], $request['count']);
 
         return $request;
@@ -2183,7 +2190,7 @@ class MypageService
         $sql =
             "SELECT 
                 *,
-                o.order_state as order_state,
+                '' as order_state,
                 (COUNT(e.estimate_group_code) - 1) AS cnt,
                 e.idx AS estimate_idx,
                 DATE_FORMAT(e.request_time, '%Y.%m.%d') AS request_time,
@@ -2196,7 +2203,6 @@ class MypageService
             LEFT JOIN AF_retail r ON e.request_company_idx = r.idx 
             LEFT JOIN AF_normal n ON e.request_company_idx = n.idx 
             LEFT JOIN AF_product p ON e.product_idx = p.idx
-            LEFT JOIN AF_order o ON o.order_group_code = e.estimate_group_code
             WHERE 1 = 1 {$where}
             GROUP BY e.estimate_group_code
             ORDER BY e.idx DESC";
@@ -2204,6 +2210,13 @@ class MypageService
         Log::info('sql 12345 -> '.$sql);
         $request['count'] = count($estimate);
         $request['list'] = DB::select($sql." LIMIT {$offset}, {$limit}");
+        
+        foreach ($request['list'] as $key => $value) {
+            $order = DB::select(" SELECT * FROM AF_order WHERE order_group_code = '$value->estimate_group_code'");
+            if(isset($order) && is_array($order)) {
+                $value->order_state = $order[0]->order_state;
+            }
+        }
         $request['pagination'] = paginate($params['offset'], $params['limit'], $request['count']);
 
         return $request;
