@@ -281,10 +281,10 @@
 
             <div class="modal_footer">
             <!--
-                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
              -->
-            <button class="close_btn" type="button" onclick="checkOrder()">견적 확인</button>
-             <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+            <button class="close_btn" type="button" onclick="checkOrder()">주문 보류</button>
+             <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/img/icon/arrow-right.svg" alt=""></button>
             </div>
         </div>
     </div>
@@ -590,7 +590,7 @@
 
         <div class="modal_footer _btnSection">
             <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
-            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
+            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -929,7 +929,7 @@
                         } else {
                             $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
                                 + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "
-                                + "<img src=\"./pc/img/icon/arrow-right.svg\" alt=\"\"></button>");
+                                + "<img src=\"./img/icon/arrow-right.svg\" alt=\"\"></button>");
                         }
                         estimate_data = res.data.lists;
                         $('#check_order-modal .modal_body').empty().append(res.html);

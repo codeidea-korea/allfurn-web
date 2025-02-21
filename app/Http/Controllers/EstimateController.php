@@ -80,7 +80,6 @@ class EstimateController extends BaseController {
             $list['prod'][$key]['prd_idx'] = $row['idx'];
 
             $list['prod'][$key]['prd_count'] = 1;
-
             for( $i = 0; $i < count( $data_req['p_idx'] ); $i++ ) {
                 if( $row['idx'] == $data_req['p_idx'][$i] ) {
                     $list['prod'][$key]['prd_count'] = $data_req['p_cnt'][$i];
@@ -90,7 +89,7 @@ class EstimateController extends BaseController {
                     }
                 }
             }
-
+            
             $list['prod'][$key]['prd_price'] = $row['price'];
 
             $list['prod'][$key]['prod_each_price'] = $list['prod'][$key]['prd_count'] * $row['price'];
@@ -114,6 +113,7 @@ class EstimateController extends BaseController {
 
         if(is_array($data)) {
             for($i = 0; $i < count($data); $i++) {
+                $data[$i]['is_sended'] = $i > 0;
                 $estimateIdx = $this -> estimateService -> updateResponse($data[$i]);
             }
         } else {

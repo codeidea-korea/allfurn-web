@@ -16,7 +16,7 @@
                     <div class="fold_area txt_info active">
                         <div class="target title" onclick="foldToggle(this)">
                             <p>결제정보</p>
-                            <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
+                            <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
                         @foreach( $lists AS $key => $row )
@@ -89,7 +89,7 @@
                             <p>주문업체 기본정보</p>
                             <div class="flex items-center gap-2">
                                 <span>(주문번호 : {{ $lists[0]->estimate_group_code }})</span>
-                                <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                             </div>
                         </div>
                         <div>
@@ -124,7 +124,7 @@
                     <div class="fold_area txt_info active">
                         <div class="target title" onclick="foldToggle(this)">
                             <p>수급업체 기본정보</p>
-                            <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
+                            <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
                             <div class="flex gap-2 mt-2">
@@ -160,7 +160,7 @@
                         <div class="target">
                             <button class="title" onclick="foldToggle(this)">
                                 <span>주문 상품 {{ count( $lists ) }}건 리스트 보기</span>
-                                <img class="arrow" src="/pc/img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                             </button>
                         </div>
                         <div class="py-7">
@@ -221,7 +221,7 @@
                                     @endif
                                     <div class="prod_option">
                                         <div class="name estimate">견적가</div>
-                                        <div>{{ $row->product_each_price }}</div>
+                                        <div class="name estimate">{{ $row->product_each_price }}</div>
                                     </div>
                                     <div class="prod_option">
                                         <div class="name note">비고</div>

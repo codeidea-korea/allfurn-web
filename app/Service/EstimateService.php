@@ -265,7 +265,7 @@ class EstimateService {
             WHERE type = '".$estimate['request_company_type']."' AND company_idx = ".$estimate['request_company_idx']." AND parent_idx = 0";
         $user = DB::select($sql);
 
-        if(count($user) > 0) {
+        if(count($user) > 0 && $params['is_sended'] === false) {
             $this -> pushService -> sendPush(
                 '견적서 도착 알림', '('.$params['response_estimate_res_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
                 $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
@@ -683,7 +683,7 @@ class EstimateService {
             if(array_key_exists('product_option_json', $rows)) {
                 $estimate -> product_option_json = $rows['product_option_json'];
             }
-
+            
             $estimate->product_delivery_price = 0;
             $estimate->product_delivery_info = $rows['prod_delivery_info'];
 

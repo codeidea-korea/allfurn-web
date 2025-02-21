@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="fold_area txt_info active">
+        <div class="fold_area txt_info">
             <div class="target title" onclick="foldToggle(this)">
                 <p>견적 기본정보</p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">

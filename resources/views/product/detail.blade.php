@@ -546,7 +546,7 @@
                         <div class="fold_area txt_info active">
                             <div class="target title" onclick="foldToggle(this)">
                                 <p>견적 기본정보</p>
-                                <img class="arrow" src="./pc/img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="./img/icon/arrow-icon.svg" alt="">
                             </div>
                             <div>
                                 <div class="txt_desc">
@@ -674,7 +674,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -688,7 +688,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -702,7 +702,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -1097,6 +1097,7 @@
                     $('#request_estimate-modal').find('#request_memo').val('');
                     prodData = new FormData();
                     $('#request_estimate-modal .fold_area').removeClass('active');
+                    $('.reqCount').text(1);
                     modalOpen('#request_estimate-modal');
 
                     $('.check_btn').addClass('hidden');
