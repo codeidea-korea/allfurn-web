@@ -210,7 +210,7 @@
                         <div class="name">계좌번호</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">
-                                <button id="bank_type" class="dropdown_btn" onClick="dropBtn(this);"><p>{{$response_account[0]}}</p></button>
+                                <button id="bank_type" class="dropdown_btn whitespace-nowrap !pr-6" onClick="dropBtn(this);"><p>{{$response_account[0]}}</p></button>
                                 <div class="dropdown_list">
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="KEB하나은행">KEB하나은행</div>
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="SC제일은행">SC제일은행</div>
