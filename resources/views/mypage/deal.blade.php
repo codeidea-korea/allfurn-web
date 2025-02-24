@@ -1,5 +1,5 @@
 <div class="w-full">
-    <h3 class="text-xl font-bold">판매 현황</h3>
+    <h3 class="text-xl font-bold">요청받은 견적서 현황</h3>
 
     <div class="st_box w-full flex items-center gap-2.5 px-5 mt-5">
         <a href="/mypage/responseEstimate?status=N" class="flex gap-5 justify-center items-center flex-1">

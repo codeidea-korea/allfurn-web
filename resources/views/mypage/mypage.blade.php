@@ -86,14 +86,14 @@ if( !empty( $point ) ) {
                     @if(auth() -> user() -> type === 'W')
                     <li class="{{ $pageType === 'deal' ? 'active' : '' }}">
                         <a href="/mypage/deal" class="flex p-4 justify-between">
-                            <p>판매 현황</p>
+                            <p>요청받은 견적서 현황</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
                     </li>
                     @endif
                 <li class="{{ $pageType === 'purchase' ? 'active' : ''}}">
                     <a href="/mypage/purchase" class="flex p-4 justify-between border_b">
-                        <p>구매 현황</p>
+                        <p>요청한 견적서 현황</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>

@@ -265,7 +265,7 @@ class EstimateService {
             WHERE type = '".$estimate['request_company_type']."' AND company_idx = ".$estimate['request_company_idx']." AND parent_idx = 0";
         $user = DB::select($sql);
 
-        if(count($user) > 0) {
+        if(count($user) > 0 && $params['is_sended'] === false) {
             $this -> pushService -> sendPush(
                 '견적서 도착 알림', '('.$params['response_estimate_res_company_name'].')님에게서 요청하신 견적서가 도착했습니다.',
                 $user[0] -> idx, $type = 5, env('APP_URL').'/mypage/requestEstimate'
@@ -366,7 +366,7 @@ class EstimateService {
         // 구매자
         $this -> pushService -> sendPush(
             '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
-            $list[0]['response_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
+            $list[0]['request_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
         );
 
         $sql =
@@ -415,6 +415,10 @@ class EstimateService {
         $item = Order::where('order_group_code', $params['estimate_group_code'])
             ->update(['order_state' => 'X']);
 
+        DB::table('AF_estimate')
+            -> where('estimate_group_code', $params['estimate_group_code'])
+            -> update(['estimate_state' => 'F']);
+
         return [
             'result'    => 'success',
             'message'   => ''
@@ -436,12 +440,12 @@ class EstimateService {
     }
 
     public function checkOrder(array $params): array {
-        $sql = "SELECT * FROM AF_estimate WHERE estimate_code = '".$params['estimate_code']."'";
+        $sql = "SELECT * FROM AF_estimate WHERE estimate_group_code = '".$params['estimate_group_code']."'";
         $estimate = DB::select($sql);
 
         if($estimate[0] -> estimate_state !== 'F') {
             DB::table('AF_estimate')
-                -> where('estimate_code', $params['estimate_code'])
+                -> where('estimate_group_code', $params['estimate_group_code'])
                 -> update(['estimate_state' => 'F']);
 
             $sql =
@@ -679,7 +683,7 @@ class EstimateService {
             if(array_key_exists('product_option_json', $rows)) {
                 $estimate -> product_option_json = $rows['product_option_json'];
             }
-
+            
             $estimate->product_delivery_price = 0;
             $estimate->product_delivery_info = $rows['prod_delivery_info'];
 

@@ -77,7 +77,13 @@
                     <li class="bg-white shadow-sm">
                         <div class="p-4 rounded-t-sm border-b">
                             <div class="flex items-center">
-                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">{{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}</span>
+                                <span class="bg-primaryop p-1 text-xs text-primary rounded-sm font-medium">
+                                    @if ($list -> estimate_state == 'F' && $list -> order_state == 'X')
+                                        주문 보류
+                                    @else
+                                        {{ config('constants.ESTIMATE.STATUS.RES')[$list -> estimate_state] }}
+                                    @endif
+                                </span>
                                 <span class="ml-2">{{ $list -> estimate_code }}</span>
                                 <span class="ml-auto text-stone-400">{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</span>
                             </div>
@@ -213,7 +219,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>견적 요청서 확인 및 작성</h3>
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -233,7 +239,7 @@
 	<div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>보낸 견적서</h3>
-            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 		<div class="modal_body">
             
@@ -251,7 +257,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -260,7 +266,7 @@
 
         <div class="modal_footer _btnSection">
             <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
-            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
+            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -434,6 +440,7 @@
         let products = [];
 
         sum_price = 0;
+        let is_not_all_set = false;
         $('.fold_area .prod_info').each(function (index) {
         	product_price = 0;
 
@@ -447,7 +454,7 @@
             }
 
             products.push({
-                estimate_idx: estimate_idx,
+                estimate_idx: $('div .prod_info').find('input[name=idx]')[index].value,
                 estimate_code: estimate_code,
                 estimate_group_code: estimate_group_code,
                 response_company_type: response_company_type,
@@ -494,6 +501,9 @@
 					}else{
 						product_price = i_val;
 					}
+                    if(i_val < 1) {
+                        is_not_all_set = true;
+                    }
                     products[index][i_name] = i_val;
                 }else{
                 	i_val = $(item).val(); // 값 가져오기	
@@ -527,6 +537,10 @@
             
             sum_price += product_price;
         });
+        if(is_not_all_set) {
+            alert('견적가가 0원인 상품이 있어 견적서를 완료할 수 없습니다.');
+            return;
+        }
         sum_price = 0;
         $('.fold_area .prod_info').each(function (index) {
             sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
@@ -578,7 +592,7 @@
         $(document).ready(function(){
 
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">확인</button>");
 		}
             $('.request_estimate_detail').click(function (){
                 estimate_idx = $(this).data('idx');
@@ -663,6 +677,14 @@
                     success: function (res) {
                         if( res.result === 'success' ) {
                             console.log( res );
+                        
+                            if(res.data.lists[0].order_state != 'X') {
+                                $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">확인</button>");
+                            } else {
+                                $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
+                                    + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "
+                                    + "<img src=\"./img/icon/arrow-right.svg\" alt=\"\"></button>");
+                            }
                             estimate_data = res.data.lists;
                             $('#check_order-modal .modal_body').empty().append(res.html);
                             $('.prodCnt').text( res.data.lists.length );

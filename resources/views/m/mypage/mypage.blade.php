@@ -148,7 +148,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 <div class="state_box">
                     @if(Auth::user()['type'] == 'W')
                         <a href="/mypage/deal" class="tit flex items-center">
-                            <p>판매 현황</p>
+                            <p>요청받은 견적서 현황</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </a>
                         <ul>
@@ -159,7 +159,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         </ul>
                     @endif
                     <a href="/mypage/purchase" class="tit flex items-center">
-                        <p>구매 현황</p>
+                        <p>요청한 견적서 현황</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                     <ul>

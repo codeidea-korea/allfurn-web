@@ -92,7 +92,13 @@
                     <td>{{ $request['count'] - $loop -> index - (($offset - 1) * $limit) }}</td>
                     <td>{{ $list -> estimate_code }}</td>
                     <td>{{ $list -> request_time ? $list -> request_time : '('.$list -> response_time.')' }}</td>
-                    <td>{{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}</td>
+                    <td>
+                        @if ($list -> estimate_state == 'F' && $list -> order_state == 'X')
+                            주문 보류
+                        @else
+                            {{ config('constants.ESTIMATE.STATUS.REQ')[$list -> estimate_state] }}
+                        @endif
+                    </td>
                     <td><a href="/product/detail/{{ $list -> product_idx }}" class="text-sky-500 underline" onclick="">{{ $list -> name }}</a>{{ $list -> cnt >= 1 ? ' 외 '.$list -> cnt.'개' : ''}}</td>
                     <td>{{ $list -> company_type == 'W' ? $list -> response_w_company_name : $list -> response_r_company_name }}</td>
                     <td>
@@ -141,7 +147,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>견적서 요청서 확인</h3>
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -259,7 +265,7 @@
 </div>
 
 <!-- 견적서 확인하기 (보류 / 주문서 작성) -->
-<form method="PUT" name="isForm" id="isForm" action="/estimate/insertOrder">
+<form method="PUT" name="isForm" id="isForm">
 
     <!-- 견적서 확인하기 -->
     <div class="modal" id="check_estimate-modal">
@@ -267,14 +273,18 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>받은 견적서</h3>
-                <button class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+                <button type="button" class="close_btn" onclick="modalClose('#check_estimate-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
             <div class="modal_body">
                 
             </div>
 
             <div class="modal_footer">
-                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/pc/img/icon/arrow-right.svg" alt=""></button>
+            <!--
+                <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
+             -->
+            <button class="close_btn" type="button" onclick="checkOrder()">주문 보류</button>
+             <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/img/icon/arrow-right.svg" alt=""></button>
             </div>
         </div>
     </div>
@@ -488,7 +498,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>주문서</h3>
-                <button class="close_btn" onclick="modalClose('#request_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#request_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
 
             <div class="modal_body">
@@ -571,7 +581,7 @@
     <div class="modal_inner new-modal">
         <div class="modal_header">
             <h3>주문서</h3>
-            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/pc/img/icon/x_icon.svg" alt=""></button>
+            <button class="close_btn" onclick="modalClose('#check_order-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
         </div>
 
         <div class="modal_body">
@@ -580,7 +590,7 @@
 
         <div class="modal_footer _btnSection">
             <button class="close_btn" type="button" onclick="holdOrder()">주문 보류</button>
-            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./pc/img/icon/arrow-right.svg" alt=""></button>
+            <button type="button" type="button" onclick="saveOrder()"><span class="prodCnt">00</span>건 주문 확인 <img src="./img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
 </div>
@@ -742,9 +752,6 @@
 
 
     $(document).ready(function(){
-		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
-		}
         $('.filter_dropdown').click(function(e){
             $(this).toggleClass('active');
 
@@ -917,6 +924,13 @@
                 success: function (res) {
                     if( res.result === 'success' ) {
                         console.log( res );
+                        if(res.data.lists[0].order_state != 'X') {
+                            $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">확인</button>");
+                        } else {
+                            $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
+                                + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "
+                                + "<img src=\"./img/icon/arrow-right.svg\" alt=\"\"></button>");
+                        }
                         estimate_data = res.data.lists;
                         $('#check_order-modal .modal_body').empty().append(res.html);
                         $('.prodCnt').text( res.data.lists.length );
@@ -1027,6 +1041,31 @@
         });
     });
 	
+        function checkOrder (){
+            modalClose('#check_estimate-modal');
+            $.ajax({
+                url: '/estimate/checkOrder',
+                type: 'put',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('확인 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
         function holdOrder (){
             modalClose('#check_order-modal');
             $.ajax({

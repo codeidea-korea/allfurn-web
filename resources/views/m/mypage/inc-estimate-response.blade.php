@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="fold_area txt_info active">
+        <div class="fold_area txt_info">
             <div class="target title" onclick="foldToggle(this)">
                 <p>견적 기본정보</p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
@@ -67,6 +67,7 @@
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
                     } else{
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
                         $lists[0]->product_total_price += $row->price + $_each_price;
                     }
                 } else {
@@ -74,7 +75,8 @@
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
                     } else {
-                        $lists[0]->product_total_price += $row->product_count * ($row->product_total_price ? 0 : $row->product_total_price);
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                        $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
                     }
                 }
             }
@@ -82,7 +84,7 @@
             <div>
                 <div class="txt_desc">
                     <div class="name">가격 표기 {{ $count_open_price }}건</div>
-                    <div>견적가 <b>{{ number_format( $lists[0]->product_total_price ) }}</b></div>
+                    <div>견적가 <b>{{  $lists[0]->product_total_price }}</b></div>
                 </div>
                 <div class="txt_desc">
                     <div class="name">업체문의 상품 {{ $count_close_price }}건</div>
@@ -105,13 +107,13 @@
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                        <div><b>{{ $lists[0]->product_total_price }}</b></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="p-7">
+        <div class="p-3">
             <!-- 접기/펼치기 -->
             <div class="fold_area active mt-7">
                 <div class="target">
@@ -138,14 +140,19 @@
                                 <div class="noline">
                                     @foreach($arr as $item2)                                                
                                         @foreach($item2->optionValue as $sub)
+                                            @php
+                                            if(! property_exists($sub, 'price')) {
+                                                continue;
+                                            }
+                                            @endphp
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">{{$item2->optionName}}</p>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <div>{{ $sub->count }}개</div>
-                                                    <? $_each_price += ((int)$sub->price * $sub->count); ?>
-                                                    <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
+                                                    <div>{{ ($sub->count) . '' }}개</div>
+                                                    <? $_each_price += $sub->each_price; ?>
+                                                    <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -174,7 +181,7 @@
 
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->product_total_price }}"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
@@ -199,11 +206,11 @@
                         array_push($response_account, '');
                     }
                     @endphp
-                    <div class="txt_desc">
+                    <div class="txt_desc flex-col !items-start gap-1">
                         <div class="name">계좌번호</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">
-                                <button id="bank_type" class="dropdown_btn" onClick="dropBtn(this);"><p>{{$response_account[0]}}</p></button>
+                                <button id="bank_type" class="dropdown_btn whitespace-nowrap !pr-6" onClick="dropBtn(this);"><p>{{$response_account[0]}}</p></button>
                                 <div class="dropdown_list">
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="KEB하나은행">KEB하나은행</div>
                                     <div class="dropdown_item" onClick="dropItem(this);" data-val="SC제일은행">SC제일은행</div>
@@ -220,7 +227,7 @@
                             <input type="text" id="account_number" class="input-form" value="{{$response_account[1]}}">
                         </div>
                     </div>
-                    <div class="txt_desc">
+                    <div class="txt_desc flex-col !items-start gap-1">
                         <div class="name">배송비</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">

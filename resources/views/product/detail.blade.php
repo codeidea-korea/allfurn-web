@@ -369,7 +369,7 @@
                             @if( $data['prdCount'] - 1 > 0 )
                             <div class="target">
                                 <button type="button" class="title" onclick="foldToggle(this)">
-                                    <span>'{{ $data['detail']->companyName }}' 업체의 다른 {{ number_format( $data['prdCount'] - 1 ) }}개 상품 추가 선택 가능 합니다.</span>
+                                    <b>'{{ $data['detail']->companyName }}' 업체의 다른 {{ number_format( $data['prdCount'] - 1 ) }}개 상품 추가 선택 가능 합니다.</b>
                                     <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                                 </button>
                             </div>
@@ -512,11 +512,11 @@
                         </div>
 
 
-                        <!-- 추가문의사항 -->
+                        <!-- 추가문의사항
                         <dl class="add_textarea mt-7">
                             <dt>추가 문의사항</dt>
                             <dd><textarea name="request_memo" id="request_memo" placeholder="추가 요청사항 입력하세요(200자)"></textarea></dd>
-                        </dl>
+                        </dl> -->
 
                     </div>
                 </div>
@@ -535,7 +535,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>견적 요청서 확인</h3>
-                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./pc/img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
             </div>
 
             <div class="modal_body">
@@ -546,7 +546,7 @@
                         <div class="fold_area txt_info active">
                             <div class="target title" onclick="foldToggle(this)">
                                 <p>견적 기본정보</p>
-                                <img class="arrow" src="./pc/img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="./img/icon/arrow-icon.svg" alt="">
                             </div>
                             <div>
                                 <div class="txt_desc">
@@ -556,10 +556,15 @@
                             </div>
                         </div>
 
-                        <!-- 추가문의사항 -->
+                        <!-- 추가문의사항
                         <dl class="add_textarea mb-7">
                             <dt>추가 문의사항</dt>
                             <dd class="txt reqMemo">견적서 수량은 추가 될 수 있습니다. 수량 추가 시 견적관련 전화 문의 드립니다.</dd>
+                        </dl>
+                         -->
+                        <dl class="add_textarea mt-7">
+                            <dt>추가 문의사항</dt>
+                            <dd class="txt reqMemo"><textarea name="request_memo" id="request_memo" placeholder="추가 요청사항 입력하세요(200자)"></textarea></dd>
                         </dl>
 
                         <div class="fold_area txt_info">
@@ -669,7 +674,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -683,7 +688,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -697,7 +702,7 @@
                                             <div class="option_item">
                                                 <div class="">
                                                     <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./pc/img/icon/x_icon2.svg" alt=""></button>
+                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div class="count_box2">
@@ -1092,6 +1097,7 @@
                     $('#request_estimate-modal').find('#request_memo').val('');
                     prodData = new FormData();
                     $('#request_estimate-modal .fold_area').removeClass('active');
+                    $('.reqCount').text(1);
                     modalOpen('#request_estimate-modal');
 
                     $('.check_btn').addClass('hidden');
@@ -1626,7 +1632,7 @@
                             const idx = 'p_idx';
                             const valCount = prodData.getAll(idx);
                             $('#orderProductList2 .reqCount').text( valCount.length );
-                            $('#request_confirm-modal .reqMemo').text( prodData.get('p_memo') );
+                            $('#request_confirm-modal .reqMemo > textarea').val( prodData.get('p_memo') );
                             modalOpen('#request_confirm-modal');
                         }, error: function (e) {
 
@@ -1640,6 +1646,7 @@
                     for (const [key, value] of prodData.entries()) {
                         console.log(key, value);
                     }
+                    prodData.set('p_memo', $('#request_memo').val());
 
                     $.ajax({
                         url: '/estimate/insertRequest',
