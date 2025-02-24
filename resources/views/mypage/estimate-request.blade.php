@@ -925,7 +925,7 @@
                     if( res.result === 'success' ) {
                         console.log( res );
                         if(res.data.lists[0].order_state != 'X') {
-                            $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
+                            $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">확인</button>");
                         } else {
                             $('._btnSection').html("<button class=\"close_btn\" type=\"button\" onclick=\"holdOrder()\">주문 보류</button>"
                                 + "<button type=\"button\" onclick=\"saveOrder()\"><span class=\"prodCnt\">00</span>건 주문 확인 "

@@ -454,7 +454,7 @@
             }
 
             products.push({
-                estimate_idx: estimate_idx,
+                estimate_idx: $('div .prod_info').find('input[name=idx]')[index].value,
                 estimate_code: estimate_code,
                 estimate_group_code: estimate_group_code,
                 response_company_type: response_company_type,
@@ -592,7 +592,7 @@
         $(document).ready(function(){
 
 		if(new URLSearchParams(location.search).get("status") == 'F') {
-		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">닫기</button>");
+		    $('._btnSection').html("<button type='button' onclick=\"modalClose('#check_order-modal')\">확인</button>");
 		}
             $('.request_estimate_detail').click(function (){
                 estimate_idx = $(this).data('idx');
