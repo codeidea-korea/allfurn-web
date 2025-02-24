@@ -113,7 +113,7 @@
             </div>
         </div>
 
-        <div class="p-7">
+        <div class="p-3">
             <!-- 접기/펼치기 -->
             <div class="fold_area active mt-7">
                 <div class="target">
@@ -206,7 +206,7 @@
                         array_push($response_account, '');
                     }
                     @endphp
-                    <div class="txt_desc">
+                    <div class="txt_desc flex-col !items-start gap-1">
                         <div class="name">계좌번호</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">
@@ -227,7 +227,7 @@
                             <input type="text" id="account_number" class="input-form" value="{{$response_account[1]}}">
                         </div>
                     </div>
-                    <div class="txt_desc">
+                    <div class="txt_desc flex-col !items-start gap-1">
                         <div class="name">배송비</div>
                         <div class="flex items-center gap-3">
                             <div class="dropdown_wrap">
