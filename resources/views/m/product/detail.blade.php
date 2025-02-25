@@ -333,7 +333,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    <div class="prod_option opt_result_area ori">
+                                    <div class="prod_option opt_result_area flex-wrap ori">
                                     </div>
                                     <p class="product_price" data-total_price="1000">0원</p>
                                 @else
