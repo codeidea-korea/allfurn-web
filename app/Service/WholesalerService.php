@@ -643,6 +643,7 @@ class WholesalerService {
             ->leftJoin('AF_product_ad', function($query) {
                 $query->on('AF_product_ad.product_idx', 'AF_product.idx')
                 ->where('AF_product_ad.state', 'G')
+                ->where('AF_product_ad.is_open', '1')
                 ->where('AF_product_ad.start_date', '<', DB::raw('now()'))
                 ->where('AF_product_ad.end_date', '>', DB::raw('now()'));
             })
