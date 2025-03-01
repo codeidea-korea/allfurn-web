@@ -35,6 +35,7 @@
                     <a class="notification_status_btn" data-company-idx="{{ $company->idx }}" href="javascript:toggleAlarmModal('{{ $company->company_type }}', {{ $company->idx }});">알림켜기</a>
                 @endif
                 <a href="javascript:reportModal({{ $company->idx }}, '{{ $company->company_type }}');">신고하기</a>
+                <a href="javascript:removeRoom({{ $room_idx }});" class="text-primary">삭제하기</a>
             </div>
         </div>
     </div>

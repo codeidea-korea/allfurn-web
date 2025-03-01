@@ -69,6 +69,10 @@ class MessageService
                     ->where('second_company_type', '=', $params['user_type'])
                         ->where('second_company_idx', '=', $params['user_company_idx']);
                 });
+            })->where(function($query2) use($params) {
+                $query2
+                ->where('first_company_type', '!=', 'second_company_type')
+                    ->where('first_company_idx', '!=', 'second_company_idx');
             })
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
@@ -90,6 +94,10 @@ class MessageService
                     ->where('second_company_type', '=', $user->type)
                         ->where('second_company_idx', '=', $user->company_idx);
                 });
+            })->where(function($query2) use($params) {
+                $query2
+                ->where('first_company_type', '!=', 'second_company_type')
+                    ->where('first_company_idx', '!=', 'second_company_idx');
             })
             ->join('AF_message', 'AF_message.room_idx', 'AF_message_room.idx');
             $roomQuery = $roomQuery->select("AF_message_room.idx"
@@ -1199,5 +1207,21 @@ class MessageService
         // ->where('second_company_idx', 1823) // INFO: 테스트를 위해서 조건을 추가.
         ->distinct()
         ->get();
+    }
+
+    /**
+     * 룸룸 삭제
+     * @param $idx
+     * @return array
+     */
+    public function removeRoom($idx): array
+    {
+        // 메시지 삭제 제공
+        MessageRoom::where('idx', $idx)->delete();
+
+        return [
+            'result' => 'success',
+            'message' => ''
+        ];
     }
 }

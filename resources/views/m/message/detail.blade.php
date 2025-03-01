@@ -52,6 +52,7 @@ $header_banner = '';
                                 <a class="notification_status_btn" data-company-idx="{{ $company->idx }}" href="javascript:toggleAlarmModal('{{ $company->company_type }}', {{ $company->idx }});">알림켜기</a>
                             @endif
                             <a href="javascript:reportModal({{ $company->idx }}, '{{ $company->company_type }}');">신고하기</a>
+                            <a href="javascript:removeRoom({{ $room_idx }});" class="text-primary">삭제하기</a>
                         </div>
                     </div>
                 </div>
@@ -550,6 +551,27 @@ $header_banner = '';
                 if (json.result === 'success') {
                     alert('신고되었습니다.');
                     modalClose('#declaration_modal');
+                }
+            }).catch(error => {
+            })
+        }
+        
+        const removeRoom = idx => {
+            fetch('/message/rooms/' + idx, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Sever Error');
+            }).then(json => {
+                if (json.result === 'success') {
+                    alert('삭제되었습니다.');
+                    location.reload();
                 }
             }).catch(error => {
             })

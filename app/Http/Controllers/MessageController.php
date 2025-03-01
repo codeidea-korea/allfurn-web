@@ -180,6 +180,7 @@ class MessageController extends BaseController
     {
         return response()->json($this->messageService->deleteKeyword($idx));
     }
+    
 
     /**
      * 나의 검색어 조회
@@ -292,5 +293,15 @@ class MessageController extends BaseController
             'result' => 'success',
             'message' => ''
         ]);
+    }
+
+    /**
+     * 룸 삭제
+     * @param $idx
+     * @return JsonResponse
+     */
+    public function removeRoom($idx): JsonResponse
+    {
+        return response()->json($this->messageService->removeRoom($idx));
     }
 }

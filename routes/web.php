@@ -251,6 +251,7 @@ Route::prefix('message')->name('message')
     Route::post('/report', 'MessageController@report');
     Route::post('/send/message', 'MessageController@sendRoomMessage');
     Route::get('/rooms', 'MessageController@getRooms');
+    Route::delete('/rooms/{idx}', 'MessageController@removeRoom');
     // Route::get('/unread','MessageController@sendToUnreadRecipients');
     Route::get('/read','MessageController@readRoomAlarmCount');
 });
