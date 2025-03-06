@@ -16,7 +16,7 @@
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
-                    <div class="accordion-body hidden p-5 bg-stone-50">
+                    <div class="accordion-body p-5 bg-stone-50" @if($noticeIdx == $row->idx) style="display: block;" @else hidden @endif>
                             {!! $row->content !!} 
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
-                    <div class="accordion-body hidden p-5 bg-stone-50" @if($noticeIdx == $row->idx) style="display: block;"  @endif>
+                    <div class="accordion-body p-5 bg-stone-50" @if($noticeIdx == $row->idx) style="display: block;" @else hidden  @endif>
                             {!! $row->content !!} 
                     </div>
                 </div>
