@@ -93,9 +93,6 @@
                                 $link = '/community/detail/'.$item->web_link;
                             } 
                             break;
-                        case 4:
-                            $link = '/help/notice/';
-                            break;
                         default: //공지사항
                             $link = $item->web_link;
                             break;
