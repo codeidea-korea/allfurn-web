@@ -30,8 +30,6 @@ Route::prefix('home')->group(function() {
 Route::post('/check-user', 'LoginController@checkUser')->name('checkUser');
 Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
-Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
-
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 
@@ -45,6 +43,9 @@ Route::prefix('signup')->group(function() {
     Route::post('/update-password', 'LoginController@updatePassword');
 
     Route::get('/success', 'LoginController@signupcomplete');
+	
+	// js추가
+    Route::get('/login/pending', 'LoginController@signupPending')->name('login.pending');
 });
 Route::get('/allimtalk/templates', 'LoginController@getTemplates');
 Route::post('/allimtalk/send', 'LoginController@asend');
@@ -78,8 +79,7 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/getAddressBook', 'MemberController@getAddressBook');
     Route::post('/modifyAddressBook', 'MemberController@modifyAddressBook');
     Route::delete('/addressBook/{addressIdx}', 'MemberController@removeAddressBook');
-
-    Route::post('/duplicate/email', 'MemberController@duplicateEmail');
+	Route::post('/duplicate/email', 'MemberController@duplicateEmail');
     Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
     Route::post('/createUserNew', 'MemberController@createUserNew');
 });
@@ -227,6 +227,8 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/responseEstimateDevDetail', 'MypageController@getResponseEstimateDevDetail');
     Route::post('/estimate/temp/order/detail', 'MypageController@getTempOrderDetail');
     Route::post('/estimate/order/detail', 'MypageController@getOrderDetail');
+	// 회원구분 업데이트 라우트 추가
+    Route::post('/update-member-type', 'MypageController@updateMemberType')->name('.update-member-type');
 });
 
 
@@ -349,7 +351,6 @@ Route::prefix('help')->name('help')
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
 
-
 // 임시로 작성
 Route::prefix('productdev')->name('productdev')->group(function() {
     Route::get('/detail/{productIdx}', 'ProductDevController@detail')->name('.detail');
@@ -370,6 +371,8 @@ Route::get('/signin', 'LoginController@social')
 
 
 Route::get('/signup-new', 'LoginController@signupNew')->name('signup.new');
+
+
 
 Route::prefix('social')->name('social')->middleware('social.session.check')->group(function(){
     /**

@@ -99,7 +99,7 @@ class MypageController extends BaseController
         $data['dealStatus'] = config('constants.ORDER.STATUS.S');
 	    $data = array_merge($this -> mypageService -> getOrderList($params), $data); 
 
-        if($this -> user == null) { $this -> getLoginUser(); }
+//        if($this -> user == null) { $this -> getLoginUser(); }
         $data['user'] = $this -> getLoginUser();
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 	    $data['xtoken'] = $xtoken;
@@ -567,21 +567,25 @@ class MypageController extends BaseController
      */
     public function normalAccount(): View
     {
-        if (Auth::user()['type'] === 'N') {
-            $data['user'] = $this->getLoginUser();
-            $data['pageType'] = 'normal-account';
-            $nameCardImage = $this->mypageService->getUserNameCard();
-            $data['nameCardImage'] = $nameCardImage ?? '';
-
-            $data['point']  = $this->mypageService->getPointList();
-            $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
-            $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
-            $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
-            $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
-            return view('mypage.mypage', $data);
-        } else {
-            return redirect()->route('signOut');
-        }
+		$data['user'] = $this->getLoginUser();
+		$user_type = Auth::user()['type'];
+		
+		if ($user_type === 'N') {
+			$data['pageType'] = 'normal-account';
+			$nameCardImage = $this->mypageService->getUserNameCard();
+			$data['nameCardImage'] = $nameCardImage ?? '';
+			$data['point'] = $this->mypageService->getPointList();
+		} else {
+			// 로그아웃 시키지 않고 다른 계정 타입에 맞는 처리
+			$data['pageType'] = 'normal-account'; // 또는 적절한 다른 페이지 타입
+		}
+		
+		$data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+		$data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+		$data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+		$data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+		
+		return view(getDeviceType().'mypage.mypage', $data);
     }
 
     /**
@@ -1153,7 +1157,7 @@ class MypageController extends BaseController
 
     // 모바일 > 받은 '견적 요청서 확인' 생성 (견적서 보내는 쪽)
     public function getSendResponseEstimate($idx): Response {
-        $params['group_code'] = $idx;
+        $params['estimate_idx'] = $idx;
 
         $data['user'] = $this -> getLoginUser();
         $data['request'] = $this -> mypageService -> getRequestEstimateDetail($params);
@@ -1336,4 +1340,25 @@ class MypageController extends BaseController
                 'html'      => view(getDeviceType().'mypage.inc-estimate-order', $data )->render()
             ]);
     }
+	
+	
+	/* 마이페이지 회원구분 수정 */
+	public function updateMemberType(Request $request)
+	{
+		$request->validate([
+			'member_type' => 'required|in:R,W',
+		]);
+
+		$user = Auth::user();
+		
+		// 데이터베이스에 회원구분 업데이트
+		// 실제 컬럼명은 데이터베이스 스키마에 따라 다를 수 있습니다
+		$user->type = $request->member_type;
+		$user->save();
+		
+		return response()->json([
+			'success' => true,
+			'message' => '회원구분이 성공적으로 저장되었습니다.'
+		]);
+	}
 }

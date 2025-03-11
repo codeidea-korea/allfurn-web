@@ -64,7 +64,6 @@ class EstimateService {
         } else {
             $company = CompanyNormal::selectRaw("AF_normal.*, '' as blImgUrl")
                 ->where('idx', Auth::user()['company_idx'])
-                ->whereIn('type', ['S', 'N'])
                 ->first();
         }
 
