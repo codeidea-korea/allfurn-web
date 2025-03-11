@@ -241,11 +241,7 @@
             if (json['ad_keyword'].length > 0) {
                 adKeywordPart += '<div class="flex flex-wrap items-center gap-1">';
                 for(i=0; i<json['ad_keyword'].length; i++) {
-                    if ( json["ad_keyword"][i]["web_link"].indexOf('notice') > 0 ) {
-                        adKeywordPart += '<a href="/help/notice/" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">' + json['ad_keyword'][i]['keyword_name'] + '</a>';
-                    } else {
-                        adKeywordPart += '<a href="'+json["ad_keyword"][i]["web_link"]+'" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">' + json['ad_keyword'][i]['keyword_name'] + '</a>';
-                    }
+                    adKeywordPart += '<a href="'+json["ad_keyword"][i]["web_link"]+'" class="flex items-center px-2 h-[28px] text-stone-800 border border-stone-400 rounded-full">' + json['ad_keyword'][i]['keyword_name'] + '</a>';
                 }
                 adKeywordPart += '</div>';
                 document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
@@ -278,7 +274,8 @@
                             bannerPart += json['banner'][i]['web_link'];
                             break;
                         case 4:
-                            bannerPart += '/help/notice/';
+//                            bannerPart += '/help/notice/';
+                            bannerPart += json['banner'][i]['web_link'];
                             break;
                     }
                     bannerPart += '">' +
@@ -405,12 +402,7 @@
             success		: function(result) {
                 let htmlText = ''; 
                 result.speaker.forEach(function (e, idx) {
-                    let speaker_link;
-                    if (e.web_link == "4"){
-                        speaker_link = '/help/notice/';
-                    }else{
-                        speaker_link = e.web_link;
-                    }
+                    let speaker_link = e.web_link;
                     htmlText += `<li class="swiper-slide"><a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>${e.speaker_text}<svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a></li>`;
                 })
                 $('.header_banner_slide .swiper-wrapper').html(htmlText);

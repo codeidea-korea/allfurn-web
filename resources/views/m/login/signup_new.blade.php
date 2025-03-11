@@ -84,7 +84,6 @@ $header_banner = '';
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
                                     ・jpg, png만 지원 합니다.
                                 </div>
                             </dd>
@@ -110,9 +109,9 @@ $header_banner = '';
                     </div>
                     <div class="mb-3">
                         <dl>
-                            <dt>이메일(아이디)</dt>
+                            <dt>아이디</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이메일(아이디)을 입력해주세요." id="normal_email">
+                                <input type="text" class="input-form w-full" placeholder="아이디를 입력해주세요." id="normal_email">
 
                             </dd>
                         </dl>
@@ -146,7 +145,6 @@ $header_banner = '';
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
                                     ・jpg, png만 지원 합니다.
                                 </div>
                             </dd>
@@ -178,35 +176,80 @@ let signupType = 'normal';
 let userData = null;
 let sns = null;
 
+document.getElementById('file').addEventListener('change', function (event) {
+    alert('파일 선택됨:', event.target.files);
+});
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
     
-    if (socialUserData) {
-        signupType = 'social';
-        userData = JSON.parse(socialUserData);
-     
-        $("#sns").removeClass('hidden') 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    
+    // socialUserData 파라미터 가져오기
+    const encodedData = urlParams.get('socialUserData');
+    if(encodedData){
+        
+        try {
+            // base64 디코딩 후 JSON 파싱
+            const decodedString = atob(encodedData);
+            let userData = JSON.parse(decodedString);
+            
+            signupType = 'social';
+        
+            $("#sns").removeClass('hidden') 
 
-        // 폼에 데이터 자동 입력
-        if (document.getElementById('name')) {
-            document.getElementById('name').value = userData.name || '';
+            // 폼에 데이터 자동 입력
+            if (document.getElementById('name')) {
+                document.getElementById('name').value = userData.name || '';
+            }
+            if (document.getElementById('email')) {
+                setReadonly('email',normalizeNaverEmail(userData.email)) || '';
+            }
+            if (document.getElementById('phone_number')) {
+                setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
+            }
+            if (document.getElementById('provider')) {
+                document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
+                sns = userData.provider;
+            }
+           
+        } catch (error) {
+            signupType = 'normal';
+            $(".join_social").children().eq(1).trigger('click');
         }
-        if (document.getElementById('email')) {
-            setReadonly('email',normalizeNaverEmail(userData.email)) || '';
-        }
-        if (document.getElementById('phone_number')) {
-           setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
-        }
-        if (document.getElementById('provider')) {
-            document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
-            sns = userData.provider;
-        }
-
-        // sessionStorage.removeItem('socialUserData'); 
     }else{
-        signupType = 'normal';
-        $(".join_social").children().eq(1).trigger('click');
+    
+    
+        if (socialUserData) {
+            signupType = 'social';
+            userData = JSON.parse(socialUserData);
+        
+            $("#sns").removeClass('hidden') 
+
+            // 폼에 데이터 자동 입력
+            if (document.getElementById('name')) {
+                document.getElementById('name').value = userData.name || '';
+            }
+            if (document.getElementById('email')) {
+                setReadonly('email',normalizeNaverEmail(userData.email)) || '';
+            }
+            if (document.getElementById('phone_number')) {
+                setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
+            }
+            if (document.getElementById('provider')) {
+                document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
+                sns = userData.provider;
+            }
+
+            // sessionStorage.removeItem('socialUserData'); 
+        }else{
+            signupType = 'normal';
+            $(".join_social").children().eq(1).trigger('click');
+        }
     }
 });
  
@@ -250,10 +293,10 @@ function duplicateCheck(type ,param) {
 
     let result = '';
 
-    if(type === 'email' && !email_check(param)){
-        return '이메일 형식이 올바르지 않습니다.';
+    // if(type === 'email' && !email_check(param)){
+    //     return '이메일 형식이 올바르지 않습니다.';
 
-    }
+    // }
 
     if(type === 'phone_number' && !phone_check(param)){
 
@@ -470,7 +513,7 @@ function validate(type = ''){
     let phone_number = $(`#${type}phone_number`).val();
     let provider = $(`#${type}provider`).val();
     let file =  $(`#${type}file`)[0].files[0];
-    console.log(type)   
+
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
     if(!type){
@@ -572,13 +615,16 @@ function validate(type = ''){
         modalOpen('#modal-validation'); 
         $(`#${type}email`).focus();
         return false;
-    }else if(!email_check(email)){
-        $(`#${type}email`).addClass('input-error');
-        $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
-        modalOpen('#modal-validation'); 
-        $(`#${type}email`).focus();
-        return false;
-    }   
+    }
+    
+    
+    // else if(!email_check(email)){
+    //     $(`#${type}email`).addClass('input-error');
+    //     $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
+    //     modalOpen('#modal-validation'); 
+    //     $(`#${type}email`).focus();
+    //     return false;
+    // }   
     else{
         $(`#${type}email`).removeClass('input-error');
 
@@ -631,7 +677,9 @@ const fileUpload = (input) => {
     } 
 }
 
-
+$(document).on('change', 'input[type="file"]', function() {
+    fileUpload(this);
+});
 </script>
 
 <div class="modal" id="modal-validation">

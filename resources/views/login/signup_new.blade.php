@@ -82,7 +82,6 @@
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
                                     ・jpg, png만 지원 합니다.
                                 </div>
                             </dd>
@@ -108,9 +107,9 @@
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt>이메일(아이디)</dt>
+                            <dt>아이디</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이메일(아이디)을 입력해주세요." id="normal_email">
+                                <input type="text" class="input-form w-full" placeholder="아이디를 입력해주세요." id="normal_email">
                             </dd>
                         </dl>
                     </div>
@@ -143,7 +142,6 @@
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・000x000으로 자동 리사이즈 됩니다.<br/>
                                     ・jpg, png만 지원 합니다.
                                 </div>
                             </dd>
@@ -239,10 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
             sns = userData.provider;
         }
 
-        // sessionStorage.removeItem('socialUserData'); 
+         sessionStorage.removeItem('socialUserData'); 
     }else{
         signupType = 'normal';
-        // $(".join_social").children().eq(1).trigger('click');
+         $(".join_social").children().eq(1).trigger('click');
     }
 });
  
@@ -286,10 +284,10 @@ function duplicateCheck(type ,param) {
 
     let result = '';
 
-    if(type === 'email' && !email_check(param)){
-        return '이메일 형식이 올바르지 않습니다.';
+    // if(type === 'email' && !email_check(param)){
+    //     return '이메일 형식이 올바르지 않습니다.';
 
-    }
+    // }
 
     if(type === 'phone_number' && !phone_check(param)){
 
@@ -500,7 +498,7 @@ function normalSignUp(){
 
 function validate(type = ''){
 
-    
+
     let name = $(`#${type}name`).val();
     let email = $(`#${type}email`).val();
     let phone_number = $(`#${type}phone_number`).val();
@@ -607,13 +605,14 @@ function validate(type = ''){
         modalOpen('#modal-validation'); 
         $(`#${type}email`).focus();
         return false;
-    }else if(!email_check(email)){
-        $(`#${type}email`).addClass('input-error');
-        $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
-        modalOpen('#modal-validation'); 
-        $(`#${type}email`).focus();
-        return false;
-    }   
+    } 
+    // else if(!email_check(email)){
+    //     $(`#${type}email`).addClass('input-error');
+    //     $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
+    //     modalOpen('#modal-validation'); 
+    //     $(`#${type}email`).focus();
+    //     return false;
+    // }   
     else{
         $(`#${type}email`).removeClass('input-error');
 

@@ -165,12 +165,7 @@ const getSearchData = () => {
         var adKeywordPart = "";
         if (json['ad_keyword'].length > 0) {
             for(i=0; i<json['ad_keyword'].length; i++) {
-                if ( json["ad_keyword"][i]["web_link"].indexOf('notice') > 0 ) {
-                    console.log('json["ad_keyword"][i]["web_link"]', json["ad_keyword"][i]["web_link"]);
-                    adKeywordPart += '<div class="hashtag"><a href="/help/notice/">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
-                } else {
-                    adKeywordPart += '<div class="hashtag"><a href="'+json["ad_keyword"][i]["web_link"]+'">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
-                }
+                adKeywordPart += '<div class="hashtag"><a href="'+json["ad_keyword"][i]["web_link"]+'">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
             }
             document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
         } else {
@@ -202,7 +197,8 @@ const getSearchData = () => {
                         bannerPart += json['banner'][i]['web_link'];
                         break;
                     case 4:
-                        bannerPart += '/help/notice/';
+//                        bannerPart += '/help/notice/';
+                        bannerPart += json['banner'][i]['web_link'];
                         break;
                 }
                 bannerPart += '">' +
@@ -396,12 +392,7 @@ function getSpeakerLoud() {
         success		: function(result) {
             let htmlText = ''; 
             result.speaker.forEach(function (e, idx) {
-                let speaker_link;
-                if (e.web_link == "4"){
-                    speaker_link = '/help/notice/';
-                }else{
-                    speaker_link = e.web_link;
-                }
+                let speaker_link = e.web_link;
                 htmlText += `<li class="swiper-slide"><a href="${speaker_link}" class="flex items-center"><svg><use xlink:href="/img/icon-defs.svg#Notice"></use></svg>${e.speaker_text}<svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a></li>`;
             })
             $('.header_banner_slide .swiper-wrapper').html(htmlText);

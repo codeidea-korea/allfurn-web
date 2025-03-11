@@ -118,7 +118,7 @@
                                         $link = $mid->web_link;
                                         break;
                                     default: //공지사항
-                                        $link = '/help/notice/';
+                                    $link = $mid->web_link;
                                         break;
                                 }
                             @endphp

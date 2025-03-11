@@ -40,9 +40,11 @@
                                         $link = '/community/detail/'.$item->web_link;
                                     } 
                                     break;
+                                    /*
                                 case 4:
                                     $link = '/help/notice/';
                                     break;
+                                    */
                                 default: //공지사항
                                     // if ( strpos($item->web_link, 'help/notice') !== false ) {
                                     //     $link = $item->web_link;
@@ -172,7 +174,8 @@
                                                 $link = $item->web_link;
                                                 break;
                                             default: //공지사항
-                                                $link = '/help/notice/';
+//                                                $link = '/help/notice/';
+                                                $link = $item->web_link;
                                                 break;
                                         }
                                     ?>
@@ -225,7 +228,8 @@
                                                                     $link = '/community/detail/'.$item->web_link;
                                                                     break;
                                                                 default: //공지사항
-                                                                    $link = '/help/notice/'.$item->web_link;
+//                                                                    $link = '/help/notice/'.$item->web_link;
+                                                                    $link = $item->web_link;
                                                                     break;
                                                             }
                                                         ?>

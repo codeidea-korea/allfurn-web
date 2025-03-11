@@ -333,7 +333,7 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    <div class="prod_option opt_result_area ori">
+                                    <div class="prod_option opt_result_area flex-wrap ori">
                                     </div>
                                     <p class="product_price" data-total_price="1000">0원</p>
                                 @else
@@ -790,7 +790,12 @@
     //문의하기
     function sendMessage() {
         idx='';
-        type=''
+        type='';
+        
+        @if($data['detail']->company_idx == Auth::user()['company_idx'])
+        alert('본인 업체에 문의하기는 할 수 없습니다.');
+        return;
+        @endif
         if ($(location).attr('href').includes('/product/detail')) {
             idx = $(location).attr('pathname').split('/')[3];
             type = 'product';

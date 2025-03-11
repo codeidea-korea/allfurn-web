@@ -251,6 +251,7 @@ Route::prefix('message')->name('message')
     Route::post('/report', 'MessageController@report');
     Route::post('/send/message', 'MessageController@sendRoomMessage');
     Route::get('/rooms', 'MessageController@getRooms');
+    Route::delete('/rooms/{idx}', 'MessageController@removeRoom');
     // Route::get('/unread','MessageController@sendToUnreadRecipients');
     Route::get('/read','MessageController@readRoomAlarmCount');
 });
@@ -337,6 +338,7 @@ Route::prefix('help')->name('help')
     Route::get('/notice', 'HelpController@notice')->name('.notice');
     Route::get('/notice/{idx}', 'HelpController@notice')->name('.notice');
     Route::get('/guide', 'HelpController@guide')->name('.guide');
+    Route::get('/guide/{idx}', 'HelpController@guide')->name('.guide');
     Route::get('/inquiry', 'HelpController@inquiry');
     Route::get('/inquiry/detail/{idx}', 'HelpController@inquiryDetail');
     Route::get('/inquiry/form/{idx?}', 'HelpController@inquiryForm');

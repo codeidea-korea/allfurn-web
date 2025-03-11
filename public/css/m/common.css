@@ -189,6 +189,10 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .prod_info .info_box .option_item .option_name + button img {width:20px; }
 .prod_info .info_box .option_item .price {font-size:14px;}
 
+.dropdown {z-index:20; }
+.dropdown + .dropdown {z-index:19; }
+.dropdown + .dropdown + .dropdown{z-index:18; }
+
 .count_box2 {display:inline-flex; border:1px solid #DADDE0; border-radius:3px; }
 .count_box2 input {width:20px; text-align:center; font-size:12px; }
 .count_box2 button {padding:5px; border-radius:3px; background-color:#fff; }
@@ -206,7 +210,7 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .fold_area .target {cursor:pointer; }
 .fold_area .target .arrow {width:20px; transform:rotate(180deg); }
 .fold_area.active .target .arrow {transform:rotate(0); }
-.fold_area > div:not(.target) {display:none; }
+.fold_area > div:not(.target) {/*display:none;*/ }
 .fold_area.active > div:not(.target) {display:block; }
 
 .fold_area .target .title {display:flex; align-items:center; justify-content:space-between; width:100%; padding:15px 10px; border:1px solid #d9d9d9; font-size:14spx; color:#000; background-color:#efefef; border-radius:10px; }

@@ -132,12 +132,7 @@
             var adKeywordPart = "";
             if (json['ad_keyword'].length > 0) {
                 for(i=0; i<json['ad_keyword'].length; i++) {
-                    if ( json["ad_keyword"][i]["web_link"].indexOf('notice') > 0 ) {
-                        console.log('json["ad_keyword"][i]["web_link"]', json["ad_keyword"][i]["web_link"]);                        
-                        adKeywordPart += '<div class="hashtag"><a href="/help/notice/">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';
-                    } else {
-                        adKeywordPart += '<div class="hashtag"><a href="'+json["ad_keyword"][i]["web_link"]+'">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';    
-                    }
+                    adKeywordPart += '<div class="hashtag"><a href="'+json["ad_keyword"][i]["web_link"]+'">' + json['ad_keyword'][i]['keyword_name'] + '</a></div>';  
                 }
                 document.querySelector('.hashtag-list').innerHTML = adKeywordPart;
             } else {
@@ -169,7 +164,8 @@
                             bannerPart += json['banner'][i]['web_link'];
                             break;
                         case 4:
-                            bannerPart += '/help/notice/';
+//                            bannerPart += '/help/notice/';
+                            bannerPart += json['banner'][i]['web_link'];
                             break;
                     }
                     bannerPart += '">' +

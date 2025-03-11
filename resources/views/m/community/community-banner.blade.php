@@ -5,11 +5,11 @@
                 @foreach ($banners as $banner)
                     @if($banner->banner_type === 'img')
                         <li class="swiper-slide" style="background-image:url({{ $banner->appBigImgUrl }})">
-                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}"></a>
+                            <a href="{{ $banner->web_link }}"></a>
                         </li>
                     @else
                         <li class="swiper-slide" style="background-color:{{$banner->bg_color}};">
-                            <a href="{{ strpos($banner->web_link, 'help/notice') !== false ? '/help/notice/' : $banner->web_link }}">
+                            <a href="{{ $banner->web_link }}">
                                 <div class="txt_box" style="color:{{ $banner->font_color }};">
                                     <p>{{ $banner->subtext1 }}<br/>{{ $banner->subtext2 }}</p>
                                     <span>{{ $banner->content }}</span>

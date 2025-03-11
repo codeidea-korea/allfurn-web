@@ -27,7 +27,7 @@
                             case 3: //커뮤니티
                                 $link = '/community/detail/'.$item->web_link;
                                 break;
-                            case 4: //커뮤니티
+                            case 4: //공지사항항
                                 $link = $item->web_link;
                                 break;
                             case 5: //커뮤니티
@@ -89,9 +89,11 @@
                                     $link = '/community/detail/'.$item->web_link;
                                 } 
                                 break;
+                                /*
                             case 4:
                                 $link = '/help/notice/';
                                 break;
+                                */
                             default: //공지사항
                                 $link = $item->web_link;
                                 break;

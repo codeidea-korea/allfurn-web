@@ -34,7 +34,7 @@
                                     $link = $banner->web_link;
                                     break;
                                 default: //공지사항
-                                    $link = '/help/notice/';
+                                $link = $banner->web_link;
                                     break;
                             }
                         ?>

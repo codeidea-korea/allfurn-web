@@ -723,6 +723,27 @@
             }).catch(error => {
             })
         }
+        
+        const removeRoom = idx => {
+            fetch('/message/rooms/' + idx, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{csrf_token()}}'
+                },
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Sever Error');
+            }).then(json => {
+                if (json.result === 'success') {
+                    alert('삭제되었습니다.');
+                    location.reload();
+                }
+            }).catch(error => {
+            })
+        }
 
         {{-- 검색어 영역 엔터 시 검색어 찾기 --}}
         document.getElementById('keyword').addEventListener('keyup', e => {
