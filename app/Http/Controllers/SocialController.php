@@ -24,19 +24,19 @@ class SocialController extends BaseController
 		
         $this->naver_clientId = env('NAVER_CLIENT_ID');
         $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
-        $this->naver_redirectUri = "https://devallfurn-web.codeidea.io/social/naver/callback";
+        $this->naver_redirectUri = env('APP_URL') . "/social/naver/callback";
 
         $this->google_clientId = env('GOOGLE_CLIENT_ID');
         $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
-        $this->google_redirectUri = "https://devallfurn-web.codeidea.io/social/google/callback";
+        $this->google_redirectUri = env('APP_URL') . "/social/google/callback";
         $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
         $this->kakao_clientId = env('KAKAO_CLIENT_ID');
-        $this->kakao_redirectUri = "https://devallfurn-web.codeidea.io/social/kakao/callback";
+        $this->kakao_redirectUri = env('APP_URL') . "/social/kakao/callback";
 
         $this->apple_clientId = env('APPLE_CLIENT_ID');
         $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
-        $this->apple_redirectUri = "https://devallfurn-web.codeidea.io/social/apple/callback";
+        $this->apple_redirectUri = env('APP_URL') . "/social/apple/callback";
 
         
     } 
