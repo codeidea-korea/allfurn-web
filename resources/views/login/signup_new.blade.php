@@ -107,9 +107,9 @@
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt>이메일(아이디)</dt>
+                            <dt>아이디</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이메일(아이디)을 입력해주세요." id="normal_email">
+                                <input type="text" class="input-form w-full" placeholder="아이디을 입력해주세요." id="normal_email">
                             </dd>
                         </dl>
                     </div>
@@ -307,10 +307,11 @@ function duplicateCheck(type ,param) {
 
     let result = '';
 
+    /*
     if(type === 'email' && !email_check(param)){
         return '이메일 형식이 올바르지 않습니다.';
-
     }
+        */
 
     if(type === 'phone_number' && !phone_check(param)){
 
@@ -585,7 +586,7 @@ function validate(type = ''){
 
     if( email == '' || email == 'undefined'){
         $(`#${type}email`).addClass('input-error');
-        $('#validation-ment').html('이메일을 입력해주세요.');
+        $('#validation-ment').html('아이디를 입력해주세요.');
         modalOpen('#modal-validation'); 
        $(`#${type}email`).focus();
         return false;
@@ -641,19 +642,14 @@ function validate(type = ''){
     }
     let emailResult =  duplicateCheck('email',email);
 
+
     if( emailResult !=''){
         $(`#${type}email`).addClass('input-error');
         $('#validation-ment').html(emailResult);
         modalOpen('#modal-validation'); 
         $(`#${type}email`).focus();
         return false;
-    }else if(!email_check(email)){
-        $(`#${type}email`).addClass('input-error');
-        $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
-        modalOpen('#modal-validation'); 
-        $(`#${type}email`).focus();
-        return false;
-    }   
+    }
     else{
         $(`#${type}email`).removeClass('input-error');
 
