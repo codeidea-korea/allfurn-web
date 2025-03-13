@@ -9,51 +9,37 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\JsonResponse;
 use phpseclib3\Crypt\RC2;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\User;
+use App\Service\MemberService;
 
 class SocialController extends BaseController
 {
 
 
-    public function __construct()
+    protected $memberService;
+
+	public function __construct(MemberService $memberService)
     {
+		$this->memberService = $memberService;
+		
         $this->naver_clientId = env('NAVER_CLIENT_ID');
         $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
-        $this->naver_redirectUri = "https://devallfurn-web.codeidea.io/social/naver/callback";
+        $this->naver_redirectUri = env('APP_URL') . "/social/naver/callback";
 
-        
         $this->google_clientId = env('GOOGLE_CLIENT_ID');
         $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
-        $this->google_redirectUri = "https://devallfurn-web.codeidea.io/social/google/callback";
+        $this->google_redirectUri = env('APP_URL') . "/social/google/callback";
         $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
         $this->kakao_clientId = env('KAKAO_CLIENT_ID');
-        $this->kakao_redirectUri = "https://devallfurn-web.codeidea.io/social/kakao/callback";
+        $this->kakao_redirectUri = env('APP_URL') . "/social/kakao/callback";
 
         $this->apple_clientId = env('APPLE_CLIENT_ID');
         $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
-        $this->apple_redirectUri = "https://devallfurn-web.codeidea.io/social/apple/callback";
-
-        // $this->naver_clientId = env('NAVER_CLIENT_ID');
-        // $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
-        // $this->naver_redirectUri = "http://localhost:8000/social/naver/callback";
-
-        
-        // $this->google_clientId = env('GOOGLE_CLIENT_ID');
-        // $this->google_clientSecret = env('GOOGLE_CLIENT_SECRET');
-        // $this->google_redirectUri = "http://localhost:8000/social/google/callback";
-        // $this->google_scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
-
-        // $this->kakao_clientId = env('KAKAO_CLIENT_ID');
-        // $this->kakao_redirectUri = "http://localhost:8000/social/kakao/callback";
-
-        // $this->apple_clientId = env('APPLE_CLIENT_ID');
-        // $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
-        // $this->apple_redirectUri = "http://localhost:8000/social/apple/callback";
+        $this->apple_redirectUri = env('APP_URL') . "/social/apple/callback";
 
         
     } 
-
 
     /**
      * 소셜 로그인 Naver
@@ -66,6 +52,7 @@ class SocialController extends BaseController
 
         $state = bin2hex(random_bytes(16));
         session(['naver_state' => $state]);
+     
 
         $url = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={$this->naver_clientId}&redirect_uri={$this->naver_redirectUri}&state={$state}";
       
@@ -143,6 +130,26 @@ class SocialController extends BaseController
 
         $jsonData['response']['provider'] = 'naver';
 
+		
+		//js추가
+	    $phoneNumber = preg_replace('/^\+82\s?/', '0', $jsonData['response']['phone_number'] ?? '') ?? 'none';
+		$user = User::where('account', $jsonData['response']['email'] ?? '')
+//			->orWhere('phone_number', $jsonData['response']['phone_number'] ?? '')
+			->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phoneNumber)."'")
+			->first();
+		
+		// 사용자가 존재하고 승인 대기 상태인 경우
+		if ($user && $user->state === 'JW') {
+			// 세션에 사용자 이름 저장
+			$request->session()->put('pending_user_name', $user->name);
+			
+			$pendingUrl = route('login.pending');
+			
+			return response()->view('login.social_redirect', [
+				'redirect_url' => $pendingUrl
+			]);
+		}
+	
 
         return view(getDeviceType() . '/social/social', ['jsonData' => $jsonData['response']]);
     }
@@ -199,19 +206,19 @@ class SocialController extends BaseController
     // 카카오 로그인
     public function kakaoRedirect(): JsonResponse
     {
-
         // Log::info("kakao redirect");
         $state = bin2hex(random_bytes(16));
         session(['kakao_state' => $state]);
         //  카카오 로그인 URL
         $url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={$this->kakao_clientId}&redirect_uri={$this->kakao_redirectUri}&state={$state}";
-
+		
         return response()->json(['url' => $url]);
     }
-
+ 
     public function kakaoCallback(Request $request)
     {
 
+        Log::info("kakao callback");
         $code = $request->get('code');
 
         if (!$code) {
@@ -229,7 +236,7 @@ class SocialController extends BaseController
 
 
         $accessToken = json_decode($response, true);
-
+        // Log::info(  $accessToken);
         setcookie('kakao_access_token', $accessToken['access_token'], time() + 3600, '/');
 
         $userResponse = $this->httpGet(
@@ -253,6 +260,7 @@ class SocialController extends BaseController
 
     
 
+	    $phoneNumber = preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? 'none';
         $jsonData = array(
             'name' => $name,
             'email' => $email,
@@ -260,6 +268,24 @@ class SocialController extends BaseController
             'provider' => 'kakao',
             'id' => $userData['id']
         );
+		
+		// 회원 상태 확인 - 여기서는 jsonData 배열 구조를 직접 사용
+		$user = User::where('account', $email ?? '')
+			->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phoneNumber)."'")
+//			->orWhere('phone_number', preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? '')
+			->first();
+		
+		// 사용자가 존재하고 승인 대기 상태인 경우
+		if ($user && $user->state === 'JW') {
+			// 세션에 사용자 이름 저장
+			$request->session()->put('pending_user_name', $user->name);
+			
+			$pendingUrl = route('login.pending');
+			
+			return response()->view('login.social_redirect', [
+				'redirect_url' => $pendingUrl
+			]);
+		}
 
 
         
@@ -285,7 +311,7 @@ class SocialController extends BaseController
     }
 
     public function commonCallback(Request $request){
-
+        
         $jsonData = [
             'name' => $request->name,
             'email' => $request->email, 

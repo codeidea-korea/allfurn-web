@@ -73,6 +73,20 @@ class LoginController extends BaseController
         
         return view(getDeviceType() . 'login.signup_new');
     }
+	// js추가
+	
+
+	public function signupPending(Request $request)
+	{
+		$user_name = $request->session()->get('pending_user_name', '고객');
+		return view(getDeviceType() . 'login.pending_approval', ['user_name' => $user_name]);
+	}
+
+	public function pendingApproval()
+	{
+		return view(getDeviceType() . 'login.pending_approval');
+	}
+
 
     public function findid()
     {
@@ -115,13 +129,13 @@ class LoginController extends BaseController
         $userInfo = $this->loginService->getUserInfo($data);
 
         if (empty($userInfo)) {
-            return view(getDeviceType() . 'login.login')
+            return view(getDeviceType() . 'login.login_social')
                 ->withInput($request->only('account'))
                 ->withErrors([
                     'not_match' => 'The provided credentials do not match our records.',
                 ]);
         } else if ( $userInfo->state == "D") {
-            return view(getDeviceType() . 'login.login')
+            return view(getDeviceType() . 'login.login_social')
                 ->withInput($request->only('account'))
                 ->withErrors([
                     'withdrawal' => 'withdrawal account.',
@@ -195,11 +209,14 @@ class LoginController extends BaseController
         //     $social = new SocialController();
         //     $social->kakaoLogout($request);
         // }
-
-
- 
+        Log::info("#####################################");
+        Log::info($socialUserData);
+        Log::info("#####################################");
+      
+        
         if (!$socialUserData['phone_number'] || empty($userInfo) ) {
 
+            Log::info("기존 회원 아님");
             return response()->json([
                 'status' => 'error',
                 'redirect' => route('signup.new'),
@@ -228,7 +245,9 @@ class LoginController extends BaseController
 
                 return redirect(getDeviceType() . '/mypage');
             } else {
-
+                Log::info("#####################################");
+                Log::info(Auth::check());
+                Log::info("#####################################");
                 return redirect('/');
             }
         }

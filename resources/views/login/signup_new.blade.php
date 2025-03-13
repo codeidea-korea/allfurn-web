@@ -30,9 +30,9 @@
             </div>
 
             <div class="join_social grid grid-cols-2 gap-10 text-center">
-                <button class="py-5 border-b border-primary" style="font-size:22px">간편(SNS) 회원가입</button>
-                <button class="py-5" style="font-size:22px">일반 회원가입</button>
-            </div>
+				<button class="py-5" style="font-size:22px">간편(SNS) 회원가입</button>
+				<button class="py-5 border-b border-primary" style="font-size:22px">일반 회원가입</button>
+			</div>
 
             <div class="form_tab_content">
                 <div class="form_box">
@@ -107,9 +107,9 @@
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt>아이디</dt>
+                            <dt>이메일(아이디)</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="아이디를 입력해주세요." id="normal_email">
+                                <input type="text" class="input-form w-full" placeholder="이메일(아이디)을 입력해주세요." id="normal_email">
                             </dd>
                         </dl>
                     </div>
@@ -215,7 +215,7 @@ let sns = null;
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
-    
+   
     if (socialUserData) {
         signupType = 'social';
         userData = JSON.parse(socialUserData);
@@ -237,11 +237,34 @@ document.addEventListener('DOMContentLoaded', function() {
             sns = userData.provider;
         }
 
-         sessionStorage.removeItem('socialUserData'); 
+        // sessionStorage.removeItem('socialUserData'); 
     }else{
         signupType = 'normal';
-         $(".join_social").children().eq(1).trigger('click');
+        // $(".join_social").children().eq(1).trigger('click');
     }
+	
+	if (!socialUserData) {
+		
+		// 일반 회원가입 탭 활성화
+		$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+		$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
+		signupType = 'normal';
+		
+		// 소셜 데이터가 있으면 소셜 탭으로 전환
+		const socialUserData = sessionStorage.getItem('socialUserData');
+		if (socialUserData) {
+			// 소셜 로그인 처리 코드...
+			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
+			signupType = 'social';
+		}
+	}else{
+		// 소셜 로그인 처리 코드...
+			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
+			signupType = 'social';
+	}
+
 });
  
 function setReadonly(key,value) {
@@ -284,10 +307,10 @@ function duplicateCheck(type ,param) {
 
     let result = '';
 
-    // if(type === 'email' && !email_check(param)){
-    //     return '이메일 형식이 올바르지 않습니다.';
+    if(type === 'email' && !email_check(param)){
+        return '이메일 형식이 올바르지 않습니다.';
 
-    // }
+    }
 
     if(type === 'phone_number' && !phone_check(param)){
 
@@ -380,7 +403,15 @@ function signup(){
                     
                         alert("가입되었습니다.");
     
+						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
+						if (response.redirect) {
+							window.location.href = response.redirect;
+							return; // 이후 코드 실행 방지
+						}
 
+						// 아래 Ajax 호출 대신 직접 이동
+						window.location.href = "/signup/login/pending";
+		
                         $.ajax({
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             url: "/social/login" ,
@@ -457,12 +488,23 @@ function normalSignUp(){
                     
                         alert("가입되었습니다.");
     
+						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
+						if (response.redirect) {
+							window.location.href = response.redirect;
+							return; // 이후 코드 실행 방지
+						}
+
+						// 아래 Ajax 호출 대신 직접 이동
+						window.location.href = "/signup/login/pending";
+		
+                       
 
                         $.ajax({
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "/check-user" ,
+	                        url: "/social/login" ,
+
                             type: 'POST',
-                            data: { 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
+                            data: { 'name':$('#normal_name').val(), 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
                             success: function(response) {
                             
                                     location.href="/signin"; 
@@ -498,7 +540,7 @@ function normalSignUp(){
 
 function validate(type = ''){
 
-
+    
     let name = $(`#${type}name`).val();
     let email = $(`#${type}email`).val();
     let phone_number = $(`#${type}phone_number`).val();
@@ -605,14 +647,13 @@ function validate(type = ''){
         modalOpen('#modal-validation'); 
         $(`#${type}email`).focus();
         return false;
-    } 
-    // else if(!email_check(email)){
-    //     $(`#${type}email`).addClass('input-error');
-    //     $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
-    //     modalOpen('#modal-validation'); 
-    //     $(`#${type}email`).focus();
-    //     return false;
-    // }   
+    }else if(!email_check(email)){
+        $(`#${type}email`).addClass('input-error');
+        $('#validation-ment').html('이메일 형식이 올바르지 않습니다.');
+        modalOpen('#modal-validation'); 
+        $(`#${type}email`).focus();
+        return false;
+    }   
     else{
         $(`#${type}email`).removeClass('input-error');
 
@@ -654,6 +695,13 @@ const fileUpload = (input) => {
 // 탭변경
 $('.join_social button').on('click',function(){
     let liN = $(this).index();
+	
+	if(liN === 0) {
+        // 아무 동작도 하지 않거나 경고 메시지 표시
+        // 예: alert("현재 SNS 회원가입 기능은 사용할 수 없습니다.");
+        return false;
+    }
+	
     $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
     $('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
 

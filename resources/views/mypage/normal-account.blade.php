@@ -1,171 +1,130 @@
-<div class="my__section account-managemenet">
-    <div class="content">
-        <div class="section">
-            <div class="section__head">
-                <div class="section__head__group">
-                    <h3 class="section__title">계정 관리</h3>
+<div class="w-full">
+    <h3 class="text-xl font-bold">계정 관리</h3>
+    <div class="com_setting mt-5">
+        <p>대표</p>
+        @php 
+        // print_r($user);
+        @endphp
+        <div class="info">
+            <div class="flex items-center gap-1">
+                <img src="/img/member/info_icon.svg" alt="" class="w-4" />
+                <p>대표 계정 정보는 고객센터에 문의하여 변경 요청해주세요.</p>
+            </div>
+        </div>
+        <div class="px-28 border-t-2 border-t-stone-600 flex flex-col items-center justify-center border-b py-10 gap-6">
+            <div class="flex gap-4 w-full">
+				<div class="essential w-[190px] shrink-0 mt-2">회원구분</div>
+				<div class="font-medium w-full flex items-center gap-2">
+					<div id="member_type_options" class="flex items-center gap-4 w-full">
+						<div class="flex items-center gap-2">
+							<input type="radio" id="type_store" name="member_type" class="radio-form" value="R" 
+								{{ $user->type == 'R' ? 'checked' : '' }}
+								{{ $user->type && $user->type != 'N' ? 'disabled' : '' }}>
+							<label for="type_store">매장/판매</label>
+						</div>
+						<div class="flex items-center gap-2">
+							<input type="radio" id="type_wholesale" name="member_type" class="radio-form" value="W" 
+								{{ $user->type == 'W' ? 'checked' : '' }}
+								{{ $user->type && $user->type != 'N' ? 'disabled' : '' }}>
+							<label for="type_wholesale">제조/도매</label>
+						</div>
+					</div>
+					<button id="member_type_save_btn" class="border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100 {{ $user->type && $user->type != 'N' ? 'bg-gray-200 opacity-50' : '' }}" 
+						onclick="saveMemberType()" 
+						{{ $user->type && $user->type != 'N' ? 'disabled' : '' }}>
+						{{ $user->type && $user->type != 'N' ? '수정됨' : '저장' }}
+					</button>
+				</div>
+			</div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">이메일 (아이디)</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="{{ $user->account }}" disabled="">
                 </div>
             </div>
-            <div class="section__content">
-                <div class="content__item01">
-                    <div class="content__head">
-                        <h4>일반</h4>
-                        <div class="notice-wrap display-flex">
-                            <i class="ico__info"><span class="a11y">공지</span></i>
-                            <p>정회원 승격 시, 대표 계정으로 전환됩니다.</p>
-                        </div>
-                    </div>
-
-                    <div class="content__body">
-                        <ul class="body__auth-wrap">
-                            <li class="auth__item">
-                                <div class="item__head">
-                                    <span class="head__text" for="input-list01">회원 구분</span>
-                                </div>
-                                <div class="item__body">
-                                    <div class="input__guid">
-                                        <input type="text" placeholder="" value="일반" class="input-guid__input" id="input-list0"
-                                               disabled>
-                                        <button type="button" class="input-guid__button" onclick="openModal('#alert-modal')" {{ $user->state == 'UW' ? 'disabled' : '' }}>
-                                            정회원 승격 요청
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="auth__item">
-                                <div class="item__head">
-                                    <span class="head__text" for="input-list02">이메일(아이디)</span>
-                                </div>
-                                <div class="item__body">
-                                    <input type="text" placeholder="" value="{{ $user->account }}" class="input textfield__input textfield__input--gray" id="input-list02" disabled>
-                                </div>
-                            </li>
-                            <li class="auth__item">
-                                <div class="item__head">
-                                    <span class="head__text" for="input-list03">가입자명</span>
-                                </div>
-
-                                <div class="item__body download">
-                                    <input type="text" placeholder="" value="{{ $user->name }}" class="input textfield__input textfield__input--gray" id="input-list03" disabled>
-                                    @if ($user->namecard_attachment_idx)
-                                    <button type="button" class="ico__gallery28--gray" onclick="downloadNameCard('{{ $user->namecard_attachment_idx }}')"><span class="a11y">다운로드</span></button>
-                                    @endif
-                                </div>
-
-                            </li>
-
-                            <li class="auth__item" id="visiblePhoneWrap">
-                                <div class="item__head">
-                                    <label class="head__text">휴대폰 번호</label>
-                                </div>
-                                <div>
-                                    <div class="input__guid">
-                                        <input type="text" placeholder="휴대폰 번호를 입력해주세요." value="{{ $user->phone_number }}" class="input-guid__input" id="disabledPhoneNumber" disabled>
-                                        <button type="button" class="input-guid__button" onclick="updatePhone()">수정</button>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="auth__item hidden" id="updatePhoneWrap">
-                                <div class="item__head">
-                                    <label class="head__text">휴대폰 번호</label>
-                                </div>
-                                <div class="item__body">
-                                    <div class="input__guid">
-                                        <input type="text" placeholder="휴대폰 번호를 입력해주세요." value="{{ $user->phone_number }}"
-                                               class="input-guid__input" id="phone_number" name="phone_number" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                        <button type="button" class="input-guid__button" data-is-retry="" id="sendAuthCode" onclick="sendPhoneAuthCode()">인증번호 전송</button>
-                                    </div>
-                                    <div class="input__guid input__guid--time" style="margin-top: 10px;">
-                                        <input type="text" placeholder="인증 번호를 입력해주세요." id="authcode" name="authcode" class="input-guid__input">
-                                        <div class="time-wrap" id="timeWrap">
-                                            <p id="count">5:00</p>
-                                        </div>
-                                        <button type="button" class="input-guid__button" id="authBtn" onclick="toAuthentic()">인증하기</button>
-                                    </div>
-                                    <div class="attchment-wrap hidden" id="successAuthentic">
-                                        <i class="ico__check--blue"></i>
-                                        <p class="attchment__text">인증되었습니다.</p>
-                                    </div>
-                                    <div class="attchment-wrap hidden" id="failAuthentic">
-                                        <i class="ico__check--blue"></i>
-                                        <p class="attchment__text fail">인증번호가 일치하지 않습니다. 다시 확인해주세요.</p>
-                                    </div>
-                                    <div class="body__button-group">
-                                        <button type="button" class="button button--blank-gray" onclick="cancelAuthPhone()">취소</button>
-                                        <button type="button" class="button button--blank" id="completeBtn" disabled onclick="updatePhoneNumber()">완료</button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">사업자 등록 번호</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="" disabled="">
+                    <button onclick="modalOpen('#view_business_modal')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+                    </button>
                 </div>
-
-                <div class="password-wrap">
-                    <div class="content__button--group">
-                        <button type="button" class="button button--blank"
-                                onclick="location.href='/mypage/withdrawal'">회원 탈퇴</button>
-                        <button type="button" class="button button--solid password__button">비밀번호 변경</button>
-                    </div>
-                    <div class="content__body password__container">
-                        <ul class="body__auth-wrap">
-                            <li class="auth__item">
-                                <div class="item__head">
-                                    <label class="head__text required">새 비밀번호</label>
-                                </div>
-                                <div class="item__body">
-                                    <input type="password" placeholder="비밀번호를 입력해주세요."
-                                           class="input textfield__input textfield__input--gray" id="password" name="password" required >
-                                    <div class="notice-wrap">
-                                        <p>· 영문 및 숫자 혼합하여 8자리 이상 입력해주세요</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="auth__item">
-                                <div class="item__head">
-                                    <label class="head__text required">새 비밀번호 확인</label>
-                                </div>
-                                <div class="item__body">
-                                    <input type="password" placeholder="비밀번호를 다시 입력해주세요."
-                                           class="input textfield__input textfield__input--gray" id="confirm_password" name="confirm_password" required >
-                                    <div class="body__button-group">
-                                        <button type="button" class="button button--blank-gray password__cancel">취소</button>
-                                        <button type="button" class="button button--blank" id="confirmPasswordBtn" onclick="changePassword();" disabled>완료</button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">업체명</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="" disabled="">
+                </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">대표자명</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="{{ $user->user_nm }}" disabled="">
+                </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">휴대폰 번호</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="{{ $user->phone_number }}" disabled="">
+                    <button class="border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100" onclick="modalOpen('#edit_phone_number')">수정</button>
+                </div>
+            </div>
+            <div class="flex gap-4 w-full">
+                <div class="essential w-[190px] shrink-0 mt-2">사업자 번호</div>
+                <div class="font-medium w-full flex items-center gap-2">
+                    <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="{{ $user->business_license_number }}" disabled="">
+                    <button class="border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100" onclick="modalOpen('#edit_business_number')">수정</button>
                 </div>
             </div>
         </div>
     </div>
-    <div id="alert-modal" class="alert-modal">
-        <div class="alert-modal__container">
-            <div class="alert-modal__top">
-                <p>
-                    정회원 승격 요청 시, 사업자 등록증 첨부가<br>
-                    필요합니다. 일반 회원 가입 시 입력한 정보는<br>
-                    수정 불가합니다. 정회원 승격 후에도<br>
-                    일반 회원으로 활동한 정보는 유지됩니다.
-                </p>
-            </div>
-            <div class="alert-modal__bottom">
-                <div class="button-group">
-                    <button type="button" class="button button--solid-gray" onclick="closeModal('#alert-modal')">
-                        취소
-                    </button>
-                    <button type="button" class="button button--solid" onclick="location.href='/mypage/request/regular'">
-                        확인
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="btn_bot mt-4">
+        <button class="btn btn-line2 px-4" onclick="">회원 탈퇴</button>
+        <button class="btn btn-primary px-4" onclick="">비밀번호 변경</button>
     </div>
 </div>
 
-
 <script>
+
+	function saveMemberType() {
+    const selectedType = document.querySelector('input[name="member_type"]:checked');
+    
+    if (!selectedType) {
+        alert('회원구분을 선택해주세요.');
+        return;
+    }
+    
+    // 서버에 데이터 전송
+    fetch('/mypage/update-member-type', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{csrf_token()}}'
+        },
+        body: JSON.stringify({
+            member_type: selectedType.value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // 성공 메시지 표시
+            alert(data.message);
+            
+            // company-account 페이지로 이동
+            window.location.href = '/mypage/company-account';
+        } else {
+            alert(data.message || '저장 중 오류가 발생했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('저장 중 오류가 발생했습니다.');
+    });
+}
+
+
     let time_proc_interval = '';
     let time = 299;
 
