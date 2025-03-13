@@ -132,8 +132,10 @@ class SocialController extends BaseController
 
 		
 		//js추가
+	    $phoneNumber = preg_replace('/^\+82\s?/', '0', $jsonData['response']['phone_number'] ?? '') ?? 'none';
 		$user = User::where('account', $jsonData['response']['email'] ?? '')
-			->orWhere('phone_number', $jsonData['response']['phone_number'] ?? '')
+//			->orWhere('phone_number', $jsonData['response']['phone_number'] ?? '')
+			->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phoneNumber)."'")
 			->first();
 		
 		// 사용자가 존재하고 승인 대기 상태인 경우
@@ -258,6 +260,7 @@ class SocialController extends BaseController
 
     
 
+	    $phoneNumber = preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? 'none';
         $jsonData = array(
             'name' => $name,
             'email' => $email,
@@ -268,7 +271,8 @@ class SocialController extends BaseController
 		
 		// 회원 상태 확인 - 여기서는 jsonData 배열 구조를 직접 사용
 		$user = User::where('account', $email ?? '')
-			->orWhere('phone_number', preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? '')
+			->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phoneNumber)."'")
+//			->orWhere('phone_number', preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? '')
 			->first();
 		
 		// 사용자가 존재하고 승인 대기 상태인 경우
