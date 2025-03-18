@@ -389,6 +389,15 @@ function signup(){
                     
                         alert("가입되었습니다.");
     
+                        // 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                            return; // 이후 코드 실행 방지
+                        }
+
+                        // 아래 Ajax 호출 대신 직접 이동
+                        window.location.href = "/signup/login/pending";
+    
 
                         $.ajax({
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -466,12 +475,24 @@ function normalSignUp(){
                     
                         alert("가입되었습니다.");
     
+    
+						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
+						if (response.redirect) {
+							window.location.href = response.redirect;
+							return; // 이후 코드 실행 방지
+						}
+
+						// 아래 Ajax 호출 대신 직접 이동
+						window.location.href = "/signup/login/pending";
+		
+                       
 
                         $.ajax({
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "/check-user" ,
+	                        url: "/social/login" ,
+
                             type: 'POST',
-                            data: { 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
+                            data: { 'name':$('#normal_name').val(), 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
                             success: function(response) {
                             
                                     location.href="/signin"; 
@@ -481,7 +502,6 @@ function normalSignUp(){
                                     console.log('Error:', error);
                                 }
                         }); 
-
                     
                 } else {
                     switch (result.code) {

@@ -53,7 +53,7 @@ class MemberService
         }
         $user->name = $params['name'];
         $user->phone_number = $params['phone_number'];
-        $user->state = 'JS';
+        $user->state = 'JW';
 
         $user->type = 'N';
         $user->join_date = DB::raw('now()');
