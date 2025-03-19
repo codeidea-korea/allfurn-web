@@ -188,12 +188,12 @@ class LoginController extends BaseController
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone_number' => str_replace("-", "", trim($request->input('phone_number'))),
-            'provider' => $request->input('provider'),
+            'provider' => $request->input('provider', 'google|naver|kakao'),
             'id' => $request->input('id'),
         ];
 
         $userInfo = $this->loginService->getSocialUserInfo($socialUserData);
-
+        
         // if ($socialUserData['provider'] == "naver") {
         //     $social = new SocialController();
         //     $social->naverLogout($request);
@@ -239,10 +239,13 @@ class LoginController extends BaseController
                     'not_approve' => 'use after approve.',
                 ]);
         } else {
+            $count = $this->loginService->countSocialUserInfo($socialUserData);
+            if($count > 1) {
+                // 이메일 or 전화번호 기준 가입 회원이 n명일 경우 목록 화면으로 보낸다.
+                return redirect('/signin/choose-ids?cellphone=' . $userInfo->phone_number);
+            }
             $this->loginService->getAuthToken($userInfo->idx);
             if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
-
-
                 return redirect(getDeviceType() . '/mypage');
             } else {
                 Log::info("#####################################");
