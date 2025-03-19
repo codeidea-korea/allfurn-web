@@ -383,6 +383,8 @@ $("#naver").on('click', function (e) {
 function openNaverLogin() {
     // let naverLoginUrl = `{{ route('social.naver.login') }}`;
     // document.location = naverLoginUrl;
+    snsAppLogin('naver');
+    /*
     $.ajax({
         url: "{{ route('social.naver.login') }}",
         method: "GET",
@@ -393,6 +395,7 @@ function openNaverLogin() {
             alert('Failed to start Naver login process.');
         }
     });
+    */
 }
 
 //google 간편 로그인
@@ -402,28 +405,26 @@ $("#google").on('click', function (e) {
 });
 
 function openGoogleLogin() {
-    var jsonStr = '{ "type" : "sns", "snsType" : "google"}'; // 'X-CSRF-TOKEN': '{{csrf_token()}}'
-
-    if(isMobile.Android()) {
-    
-    window.AppWebview.postMessage(jsonStr);
-    } else if (isMobile.iOS()) {
-    window.webkit.messageHandlers.AppWebview.postMessage(jsonStr);
-    }
-   
+    snsAppLogin('google');
 }
-
-
-    // $.ajax({
-    //     url: "{{ route('social.google.login') }}",
-    //     method: "GET",
-    //     success: function (data) {
-    //         window.open(data.url, '_system');
-    //     },
-    //     error: function () {
-    //         alert('Failed to start google login process.');
-    //     }
-    // });
+function snsAppLogin(type) {
+    const payload = JSON.stringify({
+        type: "sns",
+        snsType: type
+    });
+    
+    if(isMobile.any() && !window.AppWebview && !(window.webkit && window.webkit.messageHandlers 
+        && window.webkit.messageHandlers.AppWebview)) {
+            
+        alert('인앱에서만 SNS 로그인이 가능합니다.');
+        return;
+    }
+    if(isMobile.Android()) {
+        window.AppWebview.postMessage(payload);
+    } else if (isMobile.iOS()) {
+        window.webkit.messageHandlers.AppWebview.postMessage(payload);
+    }
+}
 
 //kakao 간편 로그인
 $("#kakao").on('click', function (e) {
@@ -432,6 +433,8 @@ $("#kakao").on('click', function (e) {
 });
 
 function openKakaoLogin() {
+    snsAppLogin('kakao');
+    /*
     $.ajax({
         url: "{{ route('social.kakao.login') }}",
         method: "GET",
@@ -443,6 +446,7 @@ function openKakaoLogin() {
             alert('Failed to start kakao login process.');
         }
     });
+    */
 }
 
 </script>

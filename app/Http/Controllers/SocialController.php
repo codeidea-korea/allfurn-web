@@ -316,7 +316,7 @@ class SocialController extends BaseController
             'name' => $request->name,
             'email' => $request->email, 
             'phone_number' => $request->phone_number,
-            'provider' => 'google',
+            'provider' => 'google|naver|kakao',
             'id' => $request->id
          ];
  
