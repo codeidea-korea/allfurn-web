@@ -11,11 +11,6 @@
     var provider = jsonData.provider;
     var id = jsonData.id;
 
-    
-  
- 
-      
-
     window.addEventListener('load', function() {
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -40,6 +35,8 @@
                     console.log('Error:', error);
 
                     alert('['+name+'] 님 로그인에 실패하였습니다. 잠시 후 다시 시도해주세요.');
+//                    opener.location.reload();
+//                    window.close();
                 }
             });
        });

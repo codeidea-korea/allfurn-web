@@ -32,11 +32,13 @@ Route::get('/findid', 'LoginController@findid')->name('findid');
 Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
+Route::get('/signin/choose-emails', 'LoginController@chooseLoginEmails')->name('chooseLoginEmails');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
     Route::post('/sendAuthCode', 'LoginController@sendAuthCode');
     Route::post('/signinAuthCode', 'LoginController@signinAuthCode');
+    Route::post('/signinByEmail', 'LoginController@signinByEmail');
     
     Route::post('/confirmAuthCode', 'LoginController@confirmAuthCode');
     
@@ -395,7 +397,8 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
     Route::get('/kakao/login', 'SocialController@kakaoRedirect')->name('.kakao.login');
     Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
 
-
+    Route::get('/apple/callback', 'SocialController@appleCallback')->name('.apple.callback');
+    
     /**
      * 소셜 로그인 공통
      */
