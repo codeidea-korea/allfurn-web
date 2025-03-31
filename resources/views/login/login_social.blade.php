@@ -63,9 +63,9 @@
                         <script type="text/javascript">
                             $('#appleid-signin').click(async () => {
                                 AppleID.auth.init({
-                                    clientId : 'allfurn.sns.login',
+                                    clientId : 'allfurn.live.sns.login',
                                     scope : 'name email',
-                                    redirectURI : 'https://devallfurn-web.codeidea.io/social/apple/callback',
+                                    redirectURI : 'https://all-furn.com/social/apple/callback',
                                     state : '1',
                                     nonce : '2',
                                     usePopup : true

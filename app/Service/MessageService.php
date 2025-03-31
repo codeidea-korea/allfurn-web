@@ -119,6 +119,96 @@ class MessageService
         return $roomQuery;
     }
 
+    /**
+     * 업체 정보 가져오기
+     * @param array $params
+     * @return Model|Builder|object
+     */
+    public function getMyCompany() {
+        $user = Auth::user();
+        
+        if ($user->type === 'W') {
+            
+            $company = DB::table('AF_wholesale AS company')
+                ->leftJoin('AF_attachment AS attach', 'attach.idx', 'company.profile_image_attachment_idx')
+                ->leftJoin('AF_user_push_set AS push', function($query) {
+                    $query->on('push.company_idx', 'company.idx')->where('push.company_type', 'W');
+                })
+                ->where('company.idx', $user->company_idx)
+                ->select('company.*'
+                    , DB::raw('"W" AS company_type')
+                    , DB::raw('CONCAT("'.preImgUrl().'",attach.folder,"/",attach.filename) AS profile_image')
+                    , DB::raw('IF(push.idx,"Y","N") AS is_alarm')
+                )->first();
+                
+                
+        } else if ($user->type === 'R') {
+            
+            $company = DB::table('AF_retail AS company')
+                ->leftJoin('AF_attachment AS attach', 'attach.idx', 'company.profile_image_attachment_idx')
+                ->leftJoin('AF_user_push_set AS push', function($query) {
+                    $query->on('push.company_idx', 'company.idx')->where('push.company_type', 'R');
+                })
+                ->where('company.idx', $user->company_idx)
+                ->select('company.*'
+                    , DB::raw('"R" AS company_type')
+                    , DB::raw('CONCAT("'.preImgUrl().'",attach.folder,"/",attach.filename) AS profile_image')
+                    , DB::raw('IF(push.idx,"Y","N") AS is_alarm')
+                    , DB::raw('(SELECT GROUP_CONCAT(DISTINCT ac2.name)
+                        FROM AF_category ac
+                            INNER JOIN AF_product ap ON ac.idx = ap.category_idx
+                            INNER JOIN AF_category ac2 ON ac2.idx = ac.parent_idx
+                        WHERE ap.company_type = "R" AND ap.company_idx = company.idx
+                    ) AS category_names')
+                    , DB::raw('(SELECT GROUP_CONCAT(sido)
+                        FROM AF_location al
+                        WHERE al.company_type = "R" AND al.company_idx = company.idx
+                    ) AS locations')
+                )->first();
+                
+        } else if ($user->type === 'S' || $user->type === 'N') {
+            
+            $company = DB::table('AF_normal AS company')
+                ->leftJoin('AF_attachment AS attach', 'attach.idx', 'company.namecard_attachment_idx')
+                ->leftJoin('AF_user_push_set AS push', function($query) use ($user) {
+                    $query->on('push.company_idx', 'company.idx')->where('push.company_type', $user->type);
+                })
+                ->where('company.idx', $user->company_idx)
+                ->select('company.idx'
+                    , DB::raw('company.name as company_name')
+                    , DB::raw('company.phone_number as phone_number')
+                    , DB::raw('"'.$user->type.'" AS company_type')
+                    , DB::raw('CONCAT("'.preImgUrl().'",attach.folder,"/",attach.filename) AS profile_image')
+                    , DB::raw('IF(push.idx,"Y","N") AS is_alarm')
+                )->first();
+        } else {
+
+            $company_idx = 1;
+            $company_name = '올펀';
+            $company_type = 'A';
+	    
+            if($user->company_idx > 1 && $revers == 'N') {
+                $company_idx = $user->company_idx;
+                $company_name = $user->account;
+                $company_type = 'U';
+            }
+            $is_alarm = DB::table('AF_user_push_set AS push')
+                ->where('push.company_idx', 1)
+                ->where('push.company_type', "A")
+                ->where('user_idx', $user->idx)
+                ->count() > 0 ? 'Y' : 'N';
+            
+            $company = (object)[
+                'idx' => $company_idx,
+                'room_idx' => $room->idx,
+                'profile_image' => config('constants.ALLFURN.PROFILE_IMAGE'),
+                'company_name' => $company_name,
+                'company_type' => $company_type,
+                'is_alarm' => $is_alarm,
+            ];
+        }
+        return $company;
+    }
 
     /**
      * 업체 정보 가져오기

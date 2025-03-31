@@ -339,9 +339,9 @@ Route::prefix('help')->name('help')
 	->group(function() {
     Route::get('/', 'HelpController@index');
     Route::get('/faq', 'HelpController@faq')->name('.faq');
-    Route::get('/notice', 'HelpController@notice')->name('.notice');
+    Route::get('/notice', 'HelpController@notice')->name('.notices');
     Route::get('/notice/{idx}', 'HelpController@notice')->name('.notice');
-    Route::get('/guide', 'HelpController@guide')->name('.guide');
+    Route::get('/guide', 'HelpController@guide')->name('.guides');
     Route::get('/guide/{idx}', 'HelpController@guide')->name('.guide');
     Route::get('/inquiry', 'HelpController@inquiry');
     Route::get('/inquiry/detail/{idx}', 'HelpController@inquiryDetail');

@@ -22,7 +22,7 @@ class HelpController extends BaseController
 
     public function index(): RedirectResponse
     {
-        return redirect()->route('help.guide');
+        return redirect()->route('help.guides');
     }
 
     /**

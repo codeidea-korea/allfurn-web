@@ -51,7 +51,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full"  value="" readonly id="name" autocomplete="false">
+                                <input type="text" class="input-form w-full"  value="" id="name" autocomplete="false">
                             </dd>
                         </dl>
                     </div>
@@ -210,7 +210,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 setReadonly('email',normalizeNaverEmail(userData.email)) || '';
             }
             if (document.getElementById('phone_number')) {
-                setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
+                $(`#phone_number`).val(userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '') || '');
+//                setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
             }
             if (document.getElementById('provider')) {
                 document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
@@ -238,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setReadonly('email',normalizeNaverEmail(userData.email)) || '';
             }
             if (document.getElementById('phone_number')) {
-                setReadonly('phone_number' , userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '')) || '';
+                $(`#phone_number`).val(userData.phone_number.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '') || '');
             }
             if (document.getElementById('provider')) {
                 document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
