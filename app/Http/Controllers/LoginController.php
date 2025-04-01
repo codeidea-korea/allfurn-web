@@ -187,7 +187,7 @@ class LoginController extends BaseController
         $phone_number = preg_replace('/[-]/', '', $phone_number);
 
         $socialUserData = [
-            'name' => $request->input('name'),
+            'name' => urldecode($request->input('name')),
             'email' => $request->input('email'),
             'phone_number' => $phone_number,
             'provider' => $request->input('provider', 'google|naver|kakao'),
@@ -247,11 +247,19 @@ class LoginController extends BaseController
             $count = $this->loginService->countSocialUserInfo($socialUserData);
             if($count > 1) {
                 // 이메일 or 전화번호 기준 가입 회원이 n명일 경우 목록 화면으로 보낸다.
-                return response()->json([
-                    'status' => 'success',
-                    'redirect' => '/signin/choose-emails?email=' . $request->input('email'),
-                    'script' => 'parent', // 부모 창 제어를 위한 플래그
-                ]);
+                if($socialUserData['provider'] == 'kakao' || $socialUserData['provider'] == 'naver') {
+                    return response()->json([
+                        'status' => 'success',
+                        'redirect' => '/signin/choose-ids?cellphone=' . $phone_number, 
+                        'script' => 'parent', // 부모 창 제어를 위한 플래그
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'success',
+                        'redirect' => '/signin/choose-emails?email=' . $request->input('email'),
+                        'script' => 'parent', // 부모 창 제어를 위한 플래그
+                    ]);
+                }
             }
             $this->loginService->getAuthToken($userInfo->idx);
             if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
