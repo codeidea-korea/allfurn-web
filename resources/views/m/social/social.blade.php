@@ -18,6 +18,9 @@
             type: 'POST',
             data: { 'name':name, 'phone_number':phone_number,'email':email, 'provider':provider, 'id':id},
             success: function(response) {
+                if(response.alert) {
+                    alert(response.alert);
+                }
 
                 if (response.script === 'parent') {
 

@@ -549,6 +549,22 @@ function openKakaoLogin() {
 <script>modalOpen('#login_withdrawal')</script>
 @enderror
 
+@error('empty-phone')
+<div class="modal" id="login_empty_phone">
+    <div class="modal_bg" onclick="modalClose('#login_empty_phone')"></div>
+    <div class="modal_inner modal-sm">
+        <button class="close_btn" onclick="modalClose('#login_empty_phone')" type="button"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>SNS 계정에 전화번호 등록을 해주세요.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#login_empty_phone')" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>modalOpen('#login_empty_phone')</script>
+@enderror
+
 <div class="modal" id="smscode_time_over">
     <div class="modal_bg" onclick="modalClose('#smscode_time_over')"></div>
     <div class="modal_inner modal-sm">
