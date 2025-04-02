@@ -222,7 +222,7 @@ class LoginController extends BaseController
                 return response()->json([
                     'status' => 'error',
                     'redirect' => '/signin',
-                    'alert' => 'SNS 전화번호를 입력 해주세요.',
+                    'alert' => 'SNS에서 전화번호를 입력 해주세요.',
                     'script' => 'parent', // 부모 창 제어를 위한 플래그
                     'data'  => $socialUserData,
                     'message' => 'The provided credentials do not match our records.'
