@@ -11,7 +11,7 @@ $header_banner = '';
 
 @section('content')
 
-<input type="hidden" id="cellphone" value="@php echo $cellphone; @endphp">
+<input type="hidden" id="email" value="@php echo $email; @endphp">
 <div id="content">
     <section class="login_common flex items-center">
         <div class="login_inner">
@@ -21,7 +21,7 @@ $header_banner = '';
                 <div class="joined_id_item">
                     <input type="radio" name="joined_id" id="joined_id_@php echo $loop -> index; @endphp" value="@php echo $user->account; @endphp" 
                         @php echo ($loop -> index == 0 ? 'checked' : ''); @endphp>
-                        <label for="joined_id_@php echo $loop -> index; @endphp">@php echo $user->account; @endphp</label>
+                        <label for="joined_id_'+idx+'" onclick="console.log(1);return false;">@php echo $user->account; @endphp</label>
                 </div>
                 @endforeach
             </div>
@@ -57,12 +57,12 @@ function signin() {
     }
 
     var data = new Object() ;
-    data.phonenumber = $('#cellphone').val().replace(/-/g, '');
+    data.email = $('#email').val();
     data.joinedid = joined_id;
     data.code = 'SE';
 
     $.ajax({
-        url				: '/signup/signinAuthCode',
+        url				: '/signup/signinByEmail',
         contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
         data			: data,
         type			: 'POST',

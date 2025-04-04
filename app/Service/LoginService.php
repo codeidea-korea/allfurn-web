@@ -48,16 +48,27 @@ class LoginService
     {
 	    $params['phone_number'] = preg_replace('/^\+82\s?/', '0', $params['phone_number']) ?? 'none';
 
-        $user = DB::table('AF_user', 'u')
-            ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
-            IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
-            IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
-            ->where('u.state', 'JS')
-            ->where(function($query) use($params) {
-                $query->where('account', $params['email'] ?? '')
-                    ->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
-            })
-            ->first();
+        if($params['provider'] == 'kakao' || $params['provider'] == 'naver') {
+            $user = DB::table('AF_user', 'u')
+                ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
+                IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
+                IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
+                ->where('u.state', 'JS')
+                ->where(function($query) use($params) {
+                    $query->whereNotNull('phone_number')->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
+                })
+                ->first();
+        } else {
+            $user = DB::table('AF_user', 'u')
+                ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
+                IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
+                IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
+                ->where('u.state', 'JS')
+                ->where(function($query) use($params) {
+                    $query->where('account', $params['email'] ?? '');
+                })
+                ->first();
+        }
 
         return $user;
     }
@@ -66,18 +77,113 @@ class LoginService
     {
 	    $params['phone_number'] = preg_replace('/^\+82\s?/', '0', $params['phone_number']) ?? 'none';
 
-        $countUsers = DB::table('AF_user', 'u')
-            ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
-            IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
-            IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
-            ->where('u.state', 'JS')
+        if($params['provider'] == 'kakao' || $params['provider'] == 'naver') {
+            $countUsers = DB::table('AF_user', 'u')
+                ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
+                IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
+                IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
+                ->where('u.state', 'JS')
+                ->where(function($query) use($params) {
+                    $query->whereNotNull('phone_number')->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
+                })
+                ->count();
+        } else {
+            $countUsers = DB::table('AF_user', 'u')
+                ->select(DB::raw("u.idx, u.account, u.name, u.type, u.state, u.is_owner,
+                IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
+                IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
+                ->where('u.state', 'JS')
+                ->where(function($query) use($params) {
+                    $query->where('account', $params['email'] ?? '');
+                })
+                ->count();
+        }
+
+        return $countUsers;
+    }
+
+    public function updateSocialUserInfo(array $params = [])
+    {
+        $updateThat = [];
+        if($params['provider'] == 'google') {
+            $updateThat = ['google_id'=> $params['id']];
+        } else if($params['provider'] == 'apple') {
+            $updateThat = ['apple_id'=> $params['id']];
+        } else if($params['provider'] == 'naver') {
+            $updateThat = ['naver_id'=> $params['id']];
+        } else if($params['provider'] == 'kakao') {
+            $updateThat = ['kakao_id'=> $params['id']];
+        }
+
+        DB::table('AF_user')
             ->where(function($query) use($params) {
                 $query->where('account', $params['email'] ?? '')
                     ->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
             })
-            ->count();
+            ->where('state', 'JS')
+            ->update($updateThat);
+            
+		$userCount = DB::table('AF_sns_interface')
+            ->where([
+                'provider' => $params['provider'],
+                'social_id' => $params['id']
+            ])->count();
+        if($userCount > 0) {
+            $snsInterface = DB::table('AF_sns_interface')
+                ->where([
+                    'provider' => $params['provider'],
+                    'social_id' => $params['id']
+                ])->first();
+            $mpgCount = DB::table('AF_sns_user_mpg')
+                ->where([
+                    'provider_idx' => $snsInterface->idx,
+                    'used' => 'Y'
+                ])->count();
 
-        return $countUsers;
+            if($mpgCount < 1) {
+                $user = DB::table('AF_user')
+                    ->where(function($query) use($params) {
+                        $query->where('account', $params['email'] ?? '')
+                            ->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
+                    })
+                    ->where('state', 'JS')
+                    ->first();
+
+                DB::table("AF_sns_user_mpg")->insert([
+                    'provider_idx' => $snsInterface->idx,
+                    'user_idx' => $user->idx,
+                    'used' => 'Y',
+                    'created_at' => Carbon::now(),
+                ]);
+            }
+        } else {
+            DB::table("AF_sns_interface")->insert([
+                'provider' => $request->social, 
+                'social_id' => $request->id, 
+                'name' => $request->name ?? '', 
+                'email' => $request->email ?? '', 
+                'phone_number' => $request->phone_number, 
+                'created_at' => Carbon::now(),
+            ]);
+            $snsInterface = DB::table('AF_sns_interface')
+                ->where([
+                    'provider' => $params['provider'],
+                    'social_id' => $params['id']
+                ])->first();
+            $user = DB::table('AF_user')
+                ->where(function($query) use($params) {
+                    $query->where('account', $params['email'] ?? '')
+                        ->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
+                })
+                ->where('state', 'JS')
+                ->first();
+            DB::table("AF_sns_user_mpg")->insert([
+                'provider_idx' => $snsInterface->idx,
+                'user_idx' => $user->idx,
+                'used' => 'Y',
+                'created_at' => Carbon::now(),
+            ]);
+        }
     }
 
     public function getAuthToken(string $idx) {
@@ -171,6 +277,14 @@ class LoginService
     public function getUsersByPhoneNumber(string $phone_number) {
         $user = User::select("*")
             ->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phone_number)."'")
+            ->where('state', '=', 'JS')
+            ->get();
+        return $user;
+    }
+    
+    public function getUsersByEmail(string $email) {
+        $user = User::select("*")
+            ->where('account', '=', $email)
             ->where('state', '=', 'JS')
             ->get();
         return $user;

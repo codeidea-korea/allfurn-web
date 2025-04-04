@@ -11,11 +11,6 @@
     var provider = jsonData.provider;
     var id = jsonData.id;
 
-    
-  
- 
-      
-
     window.addEventListener('load', function() {
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -23,16 +18,22 @@
             type: 'POST',
             data: { 'name':name, 'phone_number':phone_number,'email':email, 'provider':provider, 'id':id},
             success: function(response) {
+                if(response.alert) {
+                    alert(response.alert);
+                }
+
                 if (response.script === 'parent') {
-                    window.opener.sessionStorage.setItem('socialUserData', JSON.stringify(response.data));
-                    
-                        window.opener.location.href = response.redirect;
-                        window.close();
+
+                    if(response.data) {
+                        window.sessionStorage.setItem('socialUserData', JSON.stringify(response.data));
+                    }
+                        window.location.href = response.redirect;
+//                        window.close();
               
                 } else {
                    
-                    opener.location.reload();
-                    window.close();
+                    location.href = '/signin';
+//                    window.close();
                 }
                 },
                 error: function(error) {

@@ -21,12 +21,12 @@ class MemberService
 {
     public function checkEmail(string $email)
     {
-        return User::where('account', $email)->count();
+        return User::where('account', $email)->where('state', '!=', 'D')->count();
     }
 
     public function checkPhoneNumber(string $phone_number)
     {
-        return User::where('phone_number', $phone_number)->count();
+        return User::where('phone_number', $phone_number)->where('state', '!=', 'D')->count();
     }
     
     
@@ -135,7 +135,7 @@ class MemberService
     public function createCompanyNew(array $params = [])
     {
         $detail = new UserNormal;
-        $detail->name = $params['companyName'] ?? null;
+        $detail->name = $params['name'] ?? null;
         $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
         $detail->phone_number = $params['phone_number'];
         $detail->register_time = DB::raw('now()');

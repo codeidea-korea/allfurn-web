@@ -175,8 +175,6 @@ class LoginController extends BaseController
      */
     function socialCheckUser(Request $request)
     {
-
-
         $request->validate([
             'name' => 'nullable',
             'phone_number' => 'nullable',
@@ -184,14 +182,18 @@ class LoginController extends BaseController
             'id' => 'required',
         ]);
 
+//        $phone_number = str_replace("-", "", trim($request->input('phone_number')));
+        $phone_number = preg_replace('/(\+82)|^(82)\s?/', '0', trim($request->input('phone_number')));
+        $phone_number = preg_replace('/[-]/', '', $phone_number);
+
         $socialUserData = [
-            'name' => $request->input('name'),
+            'name' => urldecode($request->input('name')),
             'email' => $request->input('email'),
-            'phone_number' => str_replace("-", "", trim($request->input('phone_number'))),
+            'phone_number' => $phone_number,
             'provider' => $request->input('provider', 'google|naver|kakao'),
             'id' => $request->input('id'),
         ];
-
+        
         $userInfo = $this->loginService->getSocialUserInfo($socialUserData);
         
         // if ($socialUserData['provider'] == "naver") {
@@ -212,9 +214,23 @@ class LoginController extends BaseController
         Log::info("#####################################");
         Log::info($socialUserData);
         Log::info("#####################################");
-      
+
+        if($socialUserData['provider'] == 'kakao' || $socialUserData['provider'] == 'naver') {
+            if (empty($phone_number) || $phone_number == '') {
+    
+                Log::info("전화번호가 없음음");
+                return response()->json([
+                    'status' => 'error',
+                    'redirect' => '/signin',
+                    'alert' => 'SNS에서 전화번호를 입력 해주세요.',
+                    'script' => 'parent', // 부모 창 제어를 위한 플래그
+                    'data'  => $socialUserData,
+                    'message' => 'The provided credentials do not match our records.'
+                ]);
+            }
+        }
         
-        if (!$socialUserData['phone_number'] || empty($userInfo) ) {
+        if (empty($userInfo) ) {
 
             Log::info("기존 회원 아님");
             return response()->json([
@@ -227,31 +243,55 @@ class LoginController extends BaseController
         } else if ($userInfo->state == "D") {
 
             return view(getDeviceType() . 'login.login')
-                ->withInput($request->only(['name', 'mobile']))
-                ->withErrors([
-                    'withdrawal' => 'withdrawal name.',
-                ]);
+            ->withInput($request->only(['name', 'mobile']))
+            ->withErrors([
+                'withdrawal' => 'withdrawal name.',
+            ]);
         } else if ($userInfo->state != "JS" && $userInfo->state != "UW") {
 
             return view(getDeviceType() . 'login.login')
-                ->withInput($request->only(['name', 'mobile']))
-                ->withErrors([
-                    'not_approve' => 'use after approve.',
-                ]);
+            ->withInput($request->only(['name', 'mobile']))
+            ->withErrors([
+                'not_approve' => 'use after approve.',
+            ]);
         } else {
+            // update all
+            $this->loginService->updateSocialUserInfo($socialUserData);
+
             $count = $this->loginService->countSocialUserInfo($socialUserData);
             if($count > 1) {
                 // 이메일 or 전화번호 기준 가입 회원이 n명일 경우 목록 화면으로 보낸다.
-                return redirect('/signin/choose-ids?cellphone=' . $userInfo->phone_number);
+                if($socialUserData['provider'] == 'kakao' || $socialUserData['provider'] == 'naver') {
+                    return response()->json([
+                        'status' => 'success',
+                        'redirect' => '/signin/choose-ids?cellphone=' . $phone_number, 
+                        'script' => 'parent', // 부모 창 제어를 위한 플래그
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'success',
+                        'redirect' => '/signin/choose-emails?email=' . $request->input('email'),
+                        'script' => 'parent', // 부모 창 제어를 위한 플래그
+                    ]);
+                }
             }
             $this->loginService->getAuthToken($userInfo->idx);
             if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
-                return redirect(getDeviceType() . '/mypage');
+                return response()->json([
+                    'status' => 'success',
+                    'redirect' => '/mypage',
+                    'script' => 'parent', // 부모 창 제어를 위한 플래그
+                ]);
             } else {
                 Log::info("#####################################");
                 Log::info(Auth::check());
                 Log::info("#####################################");
-                return redirect('/');
+
+                return response()->json([
+                    'status' => 'success',
+                    'redirect' => '/',
+                    'script' => 'parent', // 부모 창 제어를 위한 플래그
+                ]);
             }
         }
     }
@@ -384,6 +424,43 @@ class LoginController extends BaseController
     }
 
     /**
+     * 이메일로 로그인 처리
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function signinByEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'joinedid' => 'required',
+            'code' => 'required',
+        ]);
+        Log::info("***** LoginController > signinByEmail :: $request->input('email')");
+
+        $user = User::where('account', '=', $request->input('joinedid'))
+            ->where('state', '=', 'JS')
+            ->first();
+
+        if(empty($user)) {
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '해당 번호로 가입된 회원 없음'
+            ]);
+        }
+        if($user->state != "JS") {
+            return response()->json([
+                'result' => 'fail',
+                'code' => 102,
+                'message' => '가입 승인이 되면 로그인이 가능합니다.'
+            ]);
+        }
+        $this->loginService->getAuthToken($user->idx);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * 액세스 토큰으로 로그인 처리
      * @param Request $request
      * @return Redirect ReWrite uri
@@ -397,11 +474,13 @@ class LoginController extends BaseController
     }
 
     public function signOut() {
-        PushToken::where('user_idx', Auth::user()['idx'])->update(['expired' => 1]);
-
-        Session::flush();
-        Auth::logout();
-
+        try {
+            PushToken::where('user_idx', Auth::user()['idx'])->update(['expired' => 1]);
+    
+            Session::flush();
+            Auth::logout();
+        } catch (\Throwable $e) {
+        }
         return Redirect('/signin');
     }
     
@@ -488,7 +567,7 @@ class LoginController extends BaseController
         }
         $cellphone = $request->input('cellphone');
         if(empty($cellphone)) {
-            return redirect('/login');
+            return redirect('/signin');
         }
         $users = $this->loginService->getUsersByPhoneNumber($cellphone);
         if(count($users) == 1) {
@@ -499,6 +578,28 @@ class LoginController extends BaseController
         return view(getDeviceType() . 'login.choose_login_ids', [
             'users' => $users,
             'cellphone'  => $cellphone
+        ]);
+    }
+
+    // 이메일로 로그인 시 아이디 목록 조회
+    public function chooseLoginEmails(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect('/');
+        }
+        $email = $request->input('email');
+        if(empty($email)) {
+            return redirect('/signin');
+        }
+        $users = $this->loginService->getUsersByEmail($email);
+        if(count($users) == 1) {
+            $this->loginService->getAuthToken($users[0]->idx);
+            return redirect('/');
+        }
+
+        return view(getDeviceType() . 'login.choose_login_emails', [
+            'users' => $users,
+            'email'  => $email
         ]);
     }
 }

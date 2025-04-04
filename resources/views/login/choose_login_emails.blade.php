@@ -1,36 +1,28 @@
-@extends('layouts.app_m')
-
-@php
-
-$header_depth = 'login';
-$only_quick = 'yes';
-$top_title = '';
-$header_banner = '';
-
-@endphp
+@extends('layouts.app')
 
 @section('content')
 
-<input type="hidden" id="cellphone" value="@php echo $cellphone; @endphp">
+<input type="hidden" id="email" value="@php echo $email; @endphp">
+
 <div id="content">
     <section class="login_common flex items-center">
         <div class="login_inner">
             <img class="logo" src="/img/logo.svg" alt="">
+            
             <div class="joined_id_box">
                 @foreach($users as $user)
                 <div class="joined_id_item">
                     <input type="radio" name="joined_id" id="joined_id_@php echo $loop -> index; @endphp" value="@php echo $user->account; @endphp" 
                         @php echo ($loop -> index == 0 ? 'checked' : ''); @endphp>
-                        <label for="joined_id_@php echo $loop -> index; @endphp">@php echo $user->account; @endphp</label>
+                    <label for="joined_id_@php echo $loop -> index; @endphp">@php echo $user->account; @endphp</label>
                 </div>
                 @endforeach
             </div>
+
             <ul class="info_box">
                 <li>서비스 이용 및 회원가입 문의는 '서비스 이용문의(cs@all-furn.com)' 또는 031-813-5588로 문의 해주세요.</li>
             </ul>
             <button type="button" class="btn w-full btn-primary mt-2.5" onclick="signin()">선택한 아이디로 로그인</button>
-            
-            <a href="/signup" class="btn w-full mt-2.5 btn-line2">올펀 가입하기</a>
             <div class="link_box flex items-center justify-center">
                 <a href="/findid">아이디 찾기</a>
                 <a href="/findpw">비밀번호 재설정</a>
@@ -41,6 +33,7 @@ $header_banner = '';
 </div>
 
 <script src="/js/jquery-1.12.4.js?20240329113305"></script>
+
 <script>
     $('.tab_layout li').on('click',function(){
         let liN = $(this).index();
@@ -57,12 +50,12 @@ function signin() {
     }
 
     var data = new Object() ;
-    data.phonenumber = $('#cellphone').val().replace(/-/g, '');
+    data.email = $('#email').val();
     data.joinedid = joined_id;
     data.code = 'SE';
 
     $.ajax({
-        url				: '/signup/signinAuthCode',
+        url				: '/signup/signinByEmail',
         contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
         data			: data,
         type			: 'POST',
