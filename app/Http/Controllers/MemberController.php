@@ -153,6 +153,8 @@ class MemberController extends BaseController {
             
             // // DB 작업 시작
             // $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
+            $stored = Storage::disk('vultr')->put($storageName, $request->file('file'));
+            $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
             $data['companyIdx'] = $this->memberService->createCompanyNew($data);
             $userIdx = $this->memberService->createUserNew($data);
             

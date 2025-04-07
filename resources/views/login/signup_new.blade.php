@@ -473,7 +473,7 @@ function normalSignUp(){
             formData.append('agreementAd',  0);
                 
             // 파일 추가
-            let fileInput = $('#file')[0];
+            let fileInput = $('#normal_file')[0];
             if(fileInput.files[0]) {
                 formData.append('file', fileInput.files[0]);
             }
