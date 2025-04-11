@@ -36,6 +36,30 @@
 
             <div class="form_tab_content">
                 <div class="form_box">
+		    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>회원구분</dt>
+                            <dd>
+                                <div class="dropdown_wrap">
+                                    <button class="dropdown_btn labelUserType"><p>임직원</p></button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item" data-key="userType" data-value="N">임직원</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="R">매장/판매</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="W">제조/도매</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="S">기타 가구 관련 업종</div>
+                                    </div>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>사업자번호</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full" name="business_code" placeholder="사업자번호를 입력해주세요.">
+                            </dd>
+                        </dl>
+                    </div>
                     <div class="mb-4">
                         <dl class="flex">
                             <dt class="necessary">SNS 연결</dt>
@@ -89,6 +113,30 @@
                     </div>
                 </div>
                 <div class="form_box hidden">
+		    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>회원구분</dt>
+                            <dd>
+                                <div class="dropdown_wrap">
+                                    <button class="dropdown_btn labelUserType"><p>임직원</p></button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item" data-key="userType" data-value="N">임직원</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="R">매장/판매</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="W">제조/도매</div>
+                                        <div class="dropdown_item" data-key="userType" data-value="S">기타 가구 관련 업종</div>
+                                    </div>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>사업자번호</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full" name="business_code" placeholder="사업자번호를 입력해주세요.">
+                            </dd>
+                        </dl>
+                    </div>
                     <div class="mb-4">
                         <dl class="flex">
                             <dt>이름</dt>
@@ -212,6 +260,8 @@ let signupType = 'normal';
 let userData = null;
 let sns = null;
 
+var userType = 'N';
+
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
@@ -267,6 +317,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			signupType = 'social';
 	}
 
+	
+	$('[data-key=userType]').off().on('click', function(){ 
+		userType = $(this).data('value'); 
+		$('.labelUserType').html($(this).text()); 
+	});
 });
  
 function setReadonly(key,value) {
@@ -375,12 +430,16 @@ function signup(){
 
         if(validate()){
             let formData = new FormData();
+		
+	    const business_code = $('.form_box:visible').find('input[name=business_code]').val();
             
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#name').val());
             formData.append('email', $('#email').val());
             formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
             formData.append('provider', $('#provider').val());
+            formData.append('business_code', business_code.replace(/-/g, ''));
 
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
@@ -462,11 +521,15 @@ function normalSignUp(){
 
         let formData = new FormData();
             
+	    const business_code = $('.form_box:visible').find('input[name=business_code]').val();
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#normal_name').val());
             formData.append('email', $('#normal_email').val());
             formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
             formData.append('password', $('#normal_password').val());
+            formData.append('business_code', business_code.replace(/-/g, ''));
+	    
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
             formData.append('agreementMarketing', 0);
@@ -551,6 +614,7 @@ function validate(type = ''){
     let file =  $(`#${type}file`)[0].files[0];
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
+    const business_code = $('.form_box:visible').find('input[name=business_code]').val();
     if(!type){
         if( provider == '' || provider == 'undefined'){
             $('#provider').addClass('input-error');
@@ -666,6 +730,34 @@ function validate(type = ''){
     }else{
         $(`#${type}file`).removeClass('input-error');
     }
+	
+	if(business_code.replaceAll('-','').length != 10){
+		$('.form_box:visible').find('input[name=business_code]').addClass('input-error');
+	        $('#validation-ment').html('잘못된 사업자 등록번호입니다.');
+	        modalOpen('#modal-validation'); 
+	        $('.form_box:visible').find('input[name=business_code]').focus();
+	    return false;
+	}
+	$.ajax({
+	    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+	    url: '/member/checkUsingBusinessNumber',
+	    data: {
+		'business_number': business_code.replaceAll('-','')
+	    },
+	    type: 'POST',
+	    dataType: 'json',
+	    async: false,
+	    success: function(result) {
+		if (result == 0) {
+		} else {
+			$('.form_box:visible').find('input[name=business_code]').addClass('input-error');
+		        $('#validation-ment').html('중복된 사업자 등록번호입니다.');
+		        modalOpen('#modal-validation'); 
+		        $('.form_box:visible').find('input[name=business_code]').focus();
+			return false;
+		}
+	    }
+	});
 
   
 
