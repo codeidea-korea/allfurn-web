@@ -55,7 +55,7 @@ class MemberService
         $user->phone_number = $params['phone_number'];
         $user->state = 'JW';
 
-        $user->type = 'N';
+        $user->type = $params['user_type'];
         $user->join_date = DB::raw('now()');
         $user->is_owner = 1;
         $user->is_delete = 0;
@@ -134,12 +134,53 @@ class MemberService
     }
     public function createCompanyNew(array $params = [])
     {
-        $detail = new UserNormal;
-        $detail->name = $params['name'] ?? null;
-        $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
-        $detail->phone_number = $params['phone_number'];
-        $detail->register_time = DB::raw('now()');
-        $detail->save();
+        switch ($params['userType'])
+        {
+            case "N":
+            case "S":
+                    $detail = new UserNormal;
+                    $detail->name = $params['name'] ?? null;
+                    $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
+                    $detail->phone_number = $params['phone_number'];
+                    $detail->register_time = DB::raw('now()');
+                    $detail->save();
+
+                    return $detail->idx;
+                break;
+                
+            case "R":
+                $detail = new CompanyRetail;
+                $detail->business_license_number = $params['business_code'];
+                $detail->business_license_attachment_idx = $params['attachmentIdx'];
+                $detail->business_email = $params['email'];
+                $detail->company_name = $params['name'] ?? null;
+                $detail->owner_name = $params['name'];
+                $detail->phone_number = $params['phone_number'];
+                $detail->is_domestic = 1;
+                $detail->business_address = '';
+                $detail->business_address_detail = '';
+                $detail->register_time = DB::raw('now()');
+                $detail->save();
+
+                return $detail->idx;
+                break;
+            case "W":
+                $detail = new CompanyWholesale;
+                $detail->business_license_number = $params['business_code'];
+                $detail->business_license_attachment_idx = $params['attachmentIdx'];
+                $detail->business_email = $params['email'];
+                $detail->company_name = $params['companyName'];
+                $detail->owner_name = $params['name'];
+                $detail->phone_number = $params['phone_number'];
+                $detail->is_domestic = 1;
+                $detail->business_address = '';
+                $detail->business_address_detail = '';
+                $detail->register_time = DB::raw('now()');
+                $detail->save();
+
+                return $detail->idx;
+                break;
+        }
 
         return $detail->idx;
     }
