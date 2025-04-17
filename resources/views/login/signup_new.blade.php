@@ -429,6 +429,8 @@ function signup(){
     if(signupType === 'social'){
 
         if(validate()){
+	    $('#loadingContainer').show();
+		
             let formData = new FormData();
 		
 	    const business_code = $('.form_box:visible').find('input[name=business_code]').val();
@@ -463,7 +465,7 @@ function signup(){
                 success: function(response) {
                     if (response.success) {
                     
-                        alert("가입되었습니다.");
+                        alert("가입 요청되었습니다.");
     
 						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
 						if (response.redirect) {
@@ -474,23 +476,10 @@ function signup(){
 						// 아래 Ajax 호출 대신 직접 이동
 						window.location.href = "/signup/login/pending";
 		
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "/social/login" ,
-                            type: 'POST',
-                            data: { 'name':$('#name').val(), 'phone_number':$('#phone_number').val().replace(/-/g, ''),'email':$('#email').val(), 'provider':sns ,'id':userData.id},
-                            success: function(response) {
-                                    sessionStorage.removeItem('socialUserData'); 
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
 
                     
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -504,6 +493,7 @@ function signup(){
                 }
                 },
                 error: function(error) {
+			$('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
@@ -517,7 +507,7 @@ function signup(){
 function normalSignUp(){
     
     if(validate('normal_')){
-
+	$('#loadingContainer').show();
 
         let formData = new FormData();
             
@@ -552,7 +542,7 @@ function normalSignUp(){
                 success: function(response) {
                     if (response.success) {
                     
-                        alert("가입되었습니다.");
+                        alert("가입 요청되었습니다.");
     
 						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
 						if (response.redirect) {
@@ -563,26 +553,10 @@ function normalSignUp(){
 						// 아래 Ajax 호출 대신 직접 이동
 						window.location.href = "/signup/login/pending";
 		
-                       
-
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-	                        url: "/social/login" ,
-
-                            type: 'POST',
-                            data: { 'name':$('#normal_name').val(), 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
-                            success: function(response) {
-                            
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
-
+                
                     
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -596,6 +570,7 @@ function normalSignUp(){
                 }
                 },
                 error: function(error) {
+		    $('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
