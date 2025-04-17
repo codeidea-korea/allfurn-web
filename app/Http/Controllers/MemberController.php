@@ -189,6 +189,39 @@ class MemberController extends BaseController {
     }
 
 
+    public function updateUser(Request $request): JsonResponse {
+        Log::info("***** MemberController > updateUser");
+    
+        try {
+
+            // 트랜잭션 시작
+            $data = [];
+            $data = array_merge($data, $request->all());
+
+            $this->memberService->modifyUser($data);
+            
+            return response()->json([
+                'success' => true,
+                'message' => ''
+            ]);
+            
+        } catch (Exception $e) {
+            // 에러 발생 시 롤백
+            
+            // 업로드된 파일이 있다면 삭제
+            if (isset($stored)) {
+                Storage::disk('vultr')->delete($stored);
+            }
+            
+            Log::error('User creation failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     public function terms()
     {
         return view('login.terms');

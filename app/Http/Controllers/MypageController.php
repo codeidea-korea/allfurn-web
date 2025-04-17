@@ -759,7 +759,7 @@ class MypageController extends BaseController
         $data['user'] = $this -> getLoginUser();
         $user_type = Auth::user()['type'];
         Log::debug("----- user : $user_type");
-        
+        /*
         if ( $user_type === 'N' || $user_type === 'S' ) {
             $data['pageType'] = 'normal-account';
             
@@ -769,6 +769,14 @@ class MypageController extends BaseController
             $data['company'] = $this -> mypageService -> getCompanyAccount();
             $data['members'] = $this -> mypageService -> getCompanyMembers();
         }
+            */
+
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+	    $data['xtoken'] = $xtoken;
+        
+        $data['pageType'] = 'company-account-new';
+        $data['company'] = $this -> mypageService -> getCompanyAccount();
+        $data['members'] = $this -> mypageService -> getCompanyMembers();
 
         $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
         $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();

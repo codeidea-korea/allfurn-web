@@ -84,6 +84,7 @@ Route::prefix('/member')->name('member')->group(function() {
 	Route::post('/duplicate/email', 'MemberController@duplicateEmail');
     Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
     Route::post('/createUserNew', 'MemberController@createUserNew');
+    Route::post('/update', 'MemberController@updateUser');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
