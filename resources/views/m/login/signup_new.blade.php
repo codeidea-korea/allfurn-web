@@ -59,7 +59,7 @@ $header_banner = '';
                         <dl>
                             <dt>사업자번호</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" name="business_code" placeholder="사업자번호를 입력해주세요.">
+                                <input type="text" class="input-form w-full" maxlength="10" name="business_code" onkeyup="isInOnlyNumeric(this)" placeholder="사업자번호를 입력해주세요.">
                             </dd>
                         </dl>
                     </div>
@@ -75,7 +75,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full"  value="" id="name" autocomplete="false">
+                                <input type="text" class="input-form w-full" maxlength="30" value="" id="name" autocomplete="false" onkeyup="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -135,7 +135,7 @@ $header_banner = '';
                         <dl>
                             <dt>사업자번호</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" name="business_code" placeholder="사업자번호를 입력해주세요.">
+                                <input type="text" class="input-form w-full" maxlength="10" name="business_code" onkeyup="isInOnlyNumeric(this)" placeholder="사업자번호를 입력해주세요.">
                             </dd>
                         </dl>
                     </div>
@@ -143,7 +143,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name">
+                                <input type="text" class="input-form w-full" maxlength="30" placeholder="이름을 입력해주세요." id="normal_name" onkeyup="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -796,6 +796,23 @@ const fileUpload = (input) => {
 $(document).on('change', 'input[type="file"]', function() {
     fileUpload(this);
 });
+function isInOnlyAlphabetAndKorean(ele) {
+    const regx = new RegExp('^[a-zA-Z가-힣]*$');
+    if(regx.test(ele.value)){
+        return;
+    }
+    alert('영문자 또는 한글만 입력 가능합니다.');
+    ele.value = "";
+}
+function isInOnlyNumeric(ele) {
+    const regx = new RegExp('^[0-9]*$');
+    if(regx.test(ele.value)){
+        return;
+    }
+    alert('숫자만 입력 가능합니다.');
+    ele.value = "";
+}
+
 </script>
 
 <div class="modal" id="modal-validation">
