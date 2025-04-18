@@ -58,6 +58,7 @@ class MemberService
         $user->type = $params['user_type'];
         $user->join_date = DB::raw('now()');
         $user->is_owner = 1;
+        $user->is_undefined_type = 1; // NOTICE: 회원 구분이 신규 회원 가입에 의해 정의되지 않고 등록된 회원인지 구분
         $user->is_delete = 0;
         $user->register_time = DB::raw('now()');
         $user->save();
