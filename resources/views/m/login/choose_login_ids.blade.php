@@ -21,7 +21,7 @@ $header_banner = '';
                 <div class="joined_id_item">
                     <input type="radio" name="joined_id" id="joined_id_@php echo $loop -> index; @endphp" value="@php echo $user->account; @endphp" 
                         @php echo ($loop -> index == 0 ? 'checked' : ''); @endphp>
-                        <label for="joined_id_@php echo $loop -> index; @endphp">@php echo $user->account; @endphp</label>
+                        <label for="joined_id_@php echo $loop -> index; @endphp">@php echo str_replace('@', ' &#64; ', $user->account); @endphp</label>
                 </div>
                 @endforeach
             </div>

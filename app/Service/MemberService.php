@@ -55,9 +55,10 @@ class MemberService
         $user->phone_number = $params['phone_number'];
         $user->state = 'JW';
 
-        $user->type = 'N';
+        $user->type = $params['user_type'];
         $user->join_date = DB::raw('now()');
         $user->is_owner = 1;
+        $user->is_undefined_type = 1; // NOTICE: 회원 구분이 신규 회원 가입에 의해 정의되지 않고 등록된 회원인지 구분
         $user->is_delete = 0;
         $user->register_time = DB::raw('now()');
         $user->save();
@@ -98,7 +99,7 @@ class MemberService
         $user->phone_number = $params['phone'];
         $user->phone_country_number = $params['phone_country_number'];
         $user->state = 'JW';
-        $user->type = $params['userType'];
+        $user->type = $params['user_type'];
         $user->join_date = DB::raw('now()');
         $user->register_time = DB::raw('now()');
         $user->parent_idx = 0;
@@ -114,7 +115,7 @@ class MemberService
         $mr = new MessageRoom;
         $mr->first_company_type = 'A';
         $mr->first_company_idx = 1;
-        $mr->second_company_type = $params['userType'];
+        $mr->second_company_type = $params['user_type'];
         $mr->second_company_idx = $params['companyIdx'];
         $mr->save();
 
@@ -134,14 +135,106 @@ class MemberService
     }
     public function createCompanyNew(array $params = [])
     {
-        $detail = new UserNormal;
-        $detail->name = $params['name'] ?? null;
-        $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
-        $detail->phone_number = $params['phone_number'];
-        $detail->register_time = DB::raw('now()');
-        $detail->save();
+        switch ($params['user_type'])
+        {
+            case "N":
+            case "S":
+                    $detail = new UserNormal;
+                    $detail->name = $params['name'] ?? null;
+                    $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
+                    $detail->phone_number = $params['phone_number'];
+                    $detail->register_time = DB::raw('now()');
+                    $detail->save();
+
+                    return $detail->idx;
+                break;
+                
+            case "R":
+                $detail = new CompanyRetail;
+                $detail->business_license_number = $params['business_code'];
+                $detail->business_license_attachment_idx = $params['attachmentIdx'];
+                $detail->business_email = $params['email'];
+                $detail->company_name = $params['name'] ?? null;
+                $detail->owner_name = array_key_exists('owner_name', $params) ? $params['owner_name'] : $params['name'];
+                $detail->phone_number = $params['phone_number'];
+                $detail->is_domestic = 1;
+                $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
+                $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
+                $detail->register_time = DB::raw('now()');
+                $detail->save();
+
+                return $detail->idx;
+                break;
+            case "W":
+                $detail = new CompanyWholesale;
+                $detail->business_license_number = $params['business_code'];
+                $detail->business_license_attachment_idx = $params['attachmentIdx'];
+                $detail->business_email = $params['email'];
+                $detail->company_name = $params['companyName'];
+                $detail->owner_name = $params['name'];
+                $detail->phone_number = $params['phone_number'];
+                $detail->is_domestic = 1;
+                $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
+                $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
+                $detail->register_time = DB::raw('now()');
+                $detail->save();
+
+                return $detail->idx;
+                break;
+        }
 
         return $detail->idx;
+    }
+    public function modifyCompany(array $params = [])
+    {
+        switch ($params['user_type'])
+        {
+            case "N":
+            case "S":
+                $updated = [
+                    'name' => $params['name'] ?? null,
+                    'phone_number' => $params['phone_number'] ?? null,
+                ];
+                if(array_key_exists('attachmentIdx', $params)) {
+                    $updated['namecard_attachment_idx'] = $params['attachmentIdx'];
+                }
+                UserNormal::where('idx', $params['company_idx'])
+                    ->update($updated);
+                break;
+                
+            case "R":
+                $updated = [
+                    'business_license_number' => $params['business_code'],
+                    'business_email' => $params['email'] ?? null,
+                    'company_name' => $params['company_name'] ?? null,
+                    'owner_name' => $params['owner_name'] ?? null,
+                    'phone_number' => $params['phone_number'] ?? null,
+                    'business_address' => $params['business_address'] ?? null,
+                    'business_address_detail' => $params['business_address_detail'] ?? null,
+                ];
+                if(array_key_exists('attachmentIdx', $params)) {
+                    $updated['business_license_attachment_idx'] = $params['attachmentIdx'];
+                }
+                CompanyRetail::where('idx', $params['company_idx'])
+                    ->update($updated);
+                break;
+            case "W":
+                $updated = [
+                    'business_license_number' => $params['business_code'],
+                    'business_email' => $params['email'] ?? null,
+                    'company_name' => $params['company_name'] ?? null,
+                    'owner_name' => $params['owner_name'] ?? null,
+                    'phone_number' => $params['phone_number'] ?? null,
+                    'business_address' => $params['business_address'] ?? null,
+                    'business_address_detail' => $params['business_address_detail'] ?? null,
+                ];
+                if(array_key_exists('attachmentIdx', $params)) {
+                    $updated['business_license_attachment_idx'] = $params['attachmentIdx'];
+                }
+                CompanyWholesale::where('idx', $params['company_idx'])
+                    ->update($updated);
+                break;
+        }
     }
     public function createCompany(array $params = [])
     {
@@ -238,9 +331,70 @@ class MemberService
         );
     }
 
-    public function modifyUser(array $params = [])
+    public function modifyUser(array $params)
     {
+        $userInfo = User::where('account', $params['user_email'])->where('state', '=', 'JS')->first();
+        $params['email'] = $params['user_email'];
 
+        if(array_key_exists('company_file', $params)) {
+            $storageName = "name-card-image";
+            $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
+            $params['attachmentIdx'] = $this->saveAttachment($stored);
+        }
+        if($userInfo->type != $params['company_type'] && in_array($params['company_type'], ['W','R','N'])) {
+            // 회사 정보 수정
+            $params['company_idx'] = $userInfo->company_idx;
+            $params['user_type'] = $userInfo->type;
+            $this->modifyCompany($params);
+        }
+        
+        // type 이 다른 경우
+        if($userInfo->type != $params['company_type']) {
+            $params['user_type'] = $params['company_type'];
+            $company_idx = $this->createCompanyNew($params);
+
+            // 채팅 데이터 이관
+            MessageRoom::where('first_company_type', $userInfo->type)
+                ->where('first_company_idx', '=', $userInfo->company_idx)
+                ->update([
+                    'first_company_type' => $params['company_type'],
+                    'first_company_idx' => $company_idx
+                ]);
+            MessageRoom::where('second_company_type', $userInfo->type)
+                ->where('second_company_idx', '=', $userInfo->company_idx)
+                ->update([
+                    'second_company_type' => $params['company_type'],
+                    'second_company_idx' => $company_idx
+                ]);
+            // 종전 사업 구분 만료처리
+            if(in_array($params['company_type'], ['S', 'N'])) {
+                $expiredCompany = UserNormal::where('idx', $userInfo->company_idx);
+            }
+            if($params['company_type'] == 'W') {
+                $expiredCompany = CompanyWholesale::where('idx', $userInfo->company_idx);
+            }
+            if($params['company_type'] == 'R') {
+                $expiredCompany = CompanyRetail::where('idx', $userInfo->company_idx);
+            }
+            $expiredCompany->update([
+                'is_delete' => 1
+            ]);
+
+            // 회원 구분 변경, 회원 미승인 상태로 교체
+            User::where('account', $params['user_email'])
+                ->where('state', '=', 'JS')
+                ->update([
+                    'type' => $params['company_type'],
+                    'state' => 'JW'
+                ]);
+        }
+        // 회원 정보 수정
+        User::where('account', $params['user_email'])
+            ->where('state', '=', 'JS')
+            ->update([
+                'name' => $params['user_name'],
+                'phone_number' => $params['user_phone']
+            ]);
     }
 
     public function getAddressBook(int $userIdx)

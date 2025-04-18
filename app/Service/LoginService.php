@@ -54,9 +54,8 @@ class LoginService
                 IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
                 IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
                 ->where('u.state', 'JS')
-                ->where(function($query) use($params) {
-                    $query->whereNotNull('phone_number')->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
-                })
+                ->whereNotNull('u.phone_number')
+                ->whereRaw("REPLACE(u.phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'")
                 ->first();
         } else {
             $user = DB::table('AF_user', 'u')
@@ -64,9 +63,7 @@ class LoginService
                 IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
                 IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
                 ->where('u.state', 'JS')
-                ->where(function($query) use($params) {
-                    $query->where('account', $params['email'] ?? '');
-                })
+                ->where('u.account', $params['email'] ?? '')
                 ->first();
         }
 
@@ -83,9 +80,8 @@ class LoginService
                 IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
                 IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
                 ->where('u.state', 'JS')
-                ->where(function($query) use($params) {
-                    $query->whereNotNull('phone_number')->whereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'");
-                })
+                ->whereNotNull('u.phone_number')
+                ->whereRaw("REPLACE(u.phone_number, '-', '') = '".str_replace('-', '', $params['phone_number'])."'")
                 ->count();
         } else {
             $countUsers = DB::table('AF_user', 'u')
@@ -93,9 +89,7 @@ class LoginService
                 IF((select count(*) from AF_user_agreement ag where ag.user_idx = u.idx and ag.is_agree = 1) < 2, 1, 0) AS isNeedAgreement,
                 IF((select count(*) from AF_user_access ac where ac.user_idx = u.idx) < 1, 1, 0) AS isFirst"))
                 ->where('u.state', 'JS')
-                ->where(function($query) use($params) {
-                    $query->where('account', $params['email'] ?? '');
-                })
+                ->where('u.account', $params['email'] ?? '')
                 ->count();
         }
 
