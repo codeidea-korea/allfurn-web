@@ -175,7 +175,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <span class="text-base main_color font-bold">{{number_format( $tPoint )}}</span>
                         <span class="font-bold">P</span>
                     </div>
-                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="modalOpen('#points_details')">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
+                    <a class="fs14 flex items-center txt-gray fs12 mt-3" href="javascript: ;"  onclick="callBackDefindedUserType(() => {modalOpen('#points_details')});">포인트 내역 <svg class="w-4 h-4 opacity-60"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></a>
                 </div>
             </div>
             <ul class="my_menu_list mt-5">
@@ -218,7 +218,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li class="bottom_type together">
-                    <a id="kakaotalk-sharing-btn" href="javascript:shareMessage()">
+                    <a id="kakaotalk-sharing-btn" href="javascript:callBackDefindedUserType(() => {shareMessage();});">
                         <b>함께 올펀을 사용해보세요!</b>
                         <span class="flex items-center">
                             올펀 알려주기
