@@ -4,10 +4,10 @@
         function gotoLink(url) {
             if(hasNotDefinedUserType) {
                 alert('회원 구분을 선택해주세요.');
-                location.href = location.href.replace(location.pathname, '') + '/mypage/company-account';
+                location.href = '/mypage/company-account';
                 return;
             }
-            location.href = location.href.replace(location.pathname, '') + url;
+            location.href = url;
         }
     </script>
     <div class="header_top">
