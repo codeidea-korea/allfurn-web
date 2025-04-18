@@ -755,6 +755,7 @@ class MypageController extends BaseController
      * @return View
      */
     public function companyAccount(): View {
+	$data = [];
         
         $data['user'] = $this -> getLoginUser();
         $user_type = Auth::user()['type'];
