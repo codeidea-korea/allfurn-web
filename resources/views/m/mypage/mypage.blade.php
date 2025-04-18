@@ -147,26 +147,26 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 @endif
                 <div class="state_box">
                     @if(Auth::user()['type'] == 'W')
-                        <a href="/mypage/deal" class="tit flex items-center">
+                        <a href="javascript:gotoLink('/mypage/deal');" class="tit flex items-center">
                             <p>요청받은 견적서 현황</p>
                             <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                         </a>
                         <ul>
-                            <li><a href="/mypage/responseEstimate?status=N">요청받은 견적<b class="txt-primary">{{ $info[0] -> count_res_n }}</b></a></li>
-                            <li><a href="/mypage/responseEstimate?status=R">보낸 견적 <b>{{ $info[0] -> count_res_r }}</b></a></li>
-                            <li><a href="/mypage/responseEstimate?status=O">주문서 수<b class="txt-primary">{{ $info[0] -> count_res_o }}</b></a></li>
-                            <li><a href="/mypage/responseEstimate?status=F">확인/완료<b>{{ $info[0] -> count_res_f }}</b></a></li>
+                            <li><a href="javascript:gotoLink('/mypage/responseEstimate?status=N');">요청받은 견적<b class="txt-primary">{{ $info[0] -> count_res_n }}</b></a></li>
+                            <li><a href="javascript:gotoLink('/mypage/responseEstimate?status=R');">보낸 견적 <b>{{ $info[0] -> count_res_r }}</b></a></li>
+                            <li><a href="javascript:gotoLink('/mypage/responseEstimate?status=O');">주문서 수<b class="txt-primary">{{ $info[0] -> count_res_o }}</b></a></li>
+                            <li><a href="javascript:gotoLink('/mypage/responseEstimate?status=F');">확인/완료<b>{{ $info[0] -> count_res_f }}</b></a></li>
                         </ul>
                     @endif
-                    <a href="/mypage/purchase" class="tit flex items-center">
+                    <a href="javascript:gotoLink('/mypage/purchase');" class="tit flex items-center">
                         <p>요청한 견적서 현황</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                     <ul>
-                        <li><a href="/mypage/requestEstimate?status=N">요청한 견적<b>{{ $info[0] -> count_req_n }}</b></a></li>
-                        <li><a href="/mypage/requestEstimate?status=R">받은 견적<b class="txt-primary">{{ $info[0] -> count_req_r }}</b></a></li>
-                        <li><a href="/mypage/requestEstimate?status=O">주문서 수<b class="txt-primary">{{ $info[0] -> count_req_o }}</b></a></li>
-                        <li><a href="/mypage/requestEstimate?status=F">확인/완료<b>{{ $info[0] -> count_req_f }}</b></a></li>
+                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=N');">요청한 견적<b>{{ $info[0] -> count_req_n }}</b></a></li>
+                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=R);">받은 견적<b class="txt-primary">{{ $info[0] -> count_req_r }}</b></a></li>
+                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=O');">주문서 수<b class="txt-primary">{{ $info[0] -> count_req_o }}</b></a></li>
+                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=F');">확인/완료<b>{{ $info[0] -> count_req_f }}</b></a></li>
                     </ul>
                 </div>
                 <div class="my_point_area flex items-center justify-between">
@@ -182,7 +182,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                 <li class="bottom_type">
                 </li>
                 <li>
-                    <a href="/mypage/interest" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/interest');" class="flex p-4 justify-between">
                         <p>좋아요 상품</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $likeProductCount }}개</p>
@@ -191,7 +191,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="/mypage/like" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/like');" class="flex p-4 justify-between">
                         <p>좋아요 업체</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $likeCompanyCount }}개</p>
@@ -200,7 +200,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="/mypage/recent" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/recent');" class="flex p-4 justify-between">
                         <p>최근 본 상품</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $recentlyViewedProductCount }}개</p>
@@ -209,7 +209,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="/message" class="flex p-4 justify-between bottom_type">
+                    <a href="javascript:gotoLink('/message');" class="flex p-4 justify-between bottom_type">
                         <p>문의 내역</p>
                         <div class="flex items-center">
                             <p class="text-sm main_color">{{ $inquiryCount }}건</p>
@@ -227,19 +227,19 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="/mypage/company" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/company');" class="flex p-4 justify-between">
                         <p>홈페이지 관리</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
                 <li>
-                    <a href="/mypage/product?order=DESC" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/product?order=DESC');" class="flex p-4 justify-between">
                         <p>상품 등록 관리</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
                 <li>
-                    <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>
                         <div class="flex items-center">
                             <!-- 신규알람 건수 추가 -->
