@@ -49,7 +49,7 @@
                         <dl class="flex">
                             <dt class="necessary">이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" value="" id="name" maxlength="30" autocomplete="false" onkeyup="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" class="input-form w-full" value="" id="name" maxlength="30" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -93,7 +93,7 @@
                         <dl class="flex">
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name" maxlength="30" onkeyup="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>

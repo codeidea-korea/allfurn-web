@@ -569,6 +569,8 @@ class MypageController extends BaseController
     {
 		$data['user'] = $this->getLoginUser();
 		$user_type = Auth::user()['type'];
+
+        return $this->companyAccount();
 		
 		if ($user_type === 'N') {
 			$data['pageType'] = 'normal-account';

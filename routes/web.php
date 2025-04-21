@@ -190,7 +190,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/account/authentic', 'MypageController@compareAuthCode');
     Route::post('/account/send/auth/email', 'MypageController@sendAuthEmail');
     Route::post('/account/send/auth/phone', 'MypageController@sendAuthPhone');
-    Route::get('/company-account', 'MypageController@companyAccount');
+    Route::get('/company-account', 'MypageController@companyAccount')->name('.companyAaccount');
     Route::put('/company-account', 'MypageController@updateCompanyAccount');
     Route::put('/company-account/password', 'MypageController@changePassword');
     Route::delete('/company-account/{idx}', 'MypageController@deleteCompanyMember');

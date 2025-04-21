@@ -51,7 +51,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" maxlength="30" value="" id="name" autocomplete="false" onkeyup="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" class="input-form w-full" maxlength="30" value="" id="name" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -95,7 +95,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" maxlength="30" placeholder="이름을 입력해주세요." id="normal_name" onkeyup="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" class="input-form w-full" maxlength="30" placeholder="이름을 입력해주세요." id="normal_name" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
