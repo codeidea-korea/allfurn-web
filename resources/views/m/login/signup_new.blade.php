@@ -181,7 +181,7 @@ document.getElementById('file').addEventListener('change', function (event) {
 });
 
 
-var userType = 'N';
+var userType = 'S';
 
 
 document.addEventListener('DOMContentLoaded', function() {

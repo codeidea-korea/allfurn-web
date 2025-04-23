@@ -58,6 +58,16 @@ if( !empty( $point ) ) {
                     </div>
                 {{-- </a> --}}
             </div>
+            @elseif($user -> type === 'N')
+            <div class="profile flex gap-4 items-center">
+                <img src="/img/mypage/n_profile.png" alt="" />
+                {{-- <a href="javascript: ;"> --}}
+                    <div class="flex items-center">
+                        <p class="profile_id">{{ $user -> company_name }}</p>
+                        {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
+                    </div>
+                {{-- </a> --}}
+            </div>
             @else
             <div class="profile flex gap-4 items-center">
                 <img src="/img/mypage/r_profile.png" alt="" />

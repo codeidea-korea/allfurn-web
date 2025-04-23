@@ -1446,15 +1446,10 @@ class MypageService
                 ->where('company.idx', Auth::user()['company_idx']);
         } else {
             return DB::table('AF_normal AS company')
-                ->join('AF_attachment AS attachment', 'attachment.idx', 'company.namecard_attachment_idx')
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'company.namecard_attachment_idx')
                 ->where('company.idx', Auth::user()['company_idx'])
                 ->select('company.*', 
-                DB::raw('"" as business_license_number'), 
-                DB::raw('"" as owner_name'), 
                 DB::raw('name as company_name'), 
-                DB::raw('"" as business_address '), 
-                DB::raw('"" as business_address_detail'), 
-                DB::raw('1 as is_domestic'), 
                 DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS license_image'))->first();
         }
         return $company->leftJoin('AF_attachment', 'AF_attachment.idx', '=', DB::raw('SUBSTRING_INDEX(company.business_license_attachment_idx, ",", 1)'))
@@ -1530,7 +1525,10 @@ class MypageService
         if ($idx) {
             $user = User::find($idx);
         } else {
-            $user = User::where('parent_idx', Auth::user()['idx'])->get();
+            $user = User::where('parent_idx', Auth::user()['idx'])
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
+                ->select('AF_user.*', DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
+                ->get();
         }
         return $user;
     }

@@ -31,7 +31,7 @@
                             <p>
                                 <input type="radio" class="radio-form" id="member_type_1" name="member_type" value="0" onchange="memberChange(this, 'S')" 
                                 {{ $user -> type === 'S' ? 'checked' : '' }}>
-                                <label for="member_type_1">임직원</label>
+                                <label for="member_type_1">일반</label>
                             </p>
                             <p>
                                 <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="1" onchange="memberChange(this, 'R')" 
@@ -84,7 +84,7 @@
                                 <label for="card" class="flex items-center justify-center border border-stone-500 rounded-md h-[40px] w-[120px] shrink-0 hover:bg-stone-100">파일찾기</label>
                             </div>
                             <div class="file-form horizontal">
-                                <img src="{{ $company -> license_image }}" onerror="this.src='/img/logo.svg';" alt="">
+                                <img src="{{ $user -> image }}" onerror="this.src='/img/logo.svg';" alt="">
                             </div>
                         </div>
                     </div>
@@ -102,28 +102,35 @@
                         <div class="essential w-[190px] shrink-0 mt-2">사업자등록번호</div>
                         <div class="font-medium w-full flex items-center gap-2">
                             <input type="text" class="setting_input h-[40px] w-full font-normal  business_code" placeholder="사업자등록번호"
-                                value="@php if($user->type == 'S'){ echo $company -> business_license_number; } @endphp" disabled>
+                                value="@php if($user->type == 'S'){ echo $company -> business_license_number; } @endphp">
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 w-full">
                         <div class="essential w-[190px] shrink-0 mt-2">대표자명</div>
                         <div class="font-medium w-full flex items-center gap-2">
                             <input type="text" class="setting_input h-[40px] w-full font-normal  owner_name" placeholder="대표자명"
-                                value="@php if($user->type == 'S'){ echo $company -> owner_name; } @endphp" disabled>
+                                value="@php if($user->type == 'S'){ echo $company -> owner_name; } @endphp">
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 w-full">
                         <div class="essential w-[190px] shrink-0 mt-2">업체명</div>
                         <div class="font-medium w-full flex items-center gap-2">
                             <input type="text" class="setting_input h-[40px] w-full font-normal  company_name" placeholder="업체명"
-                                value="@php if($user->type == 'S'){ echo $company -> company_name; } @endphp" disabled>
+                                value="@php if($user->type == 'S'){ echo $company -> company_name; } @endphp">
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 w-full">
                         <div class="essential w-[190px] shrink-0 mt-2">회사주소</div>
                         <div class="font-medium w-full flex items-center gap-2">
                             <input type="text" class="setting_input h-[40px] w-full font-normal  business_address" placeholder="회사주소"
-                                value="@php if($user->type == 'S'){ echo $company -> business_address . ' ' . $company -> business_address_detail; } @endphp" disabled>
+                                value="@php if($user->type == 'S'){ echo $company -> business_address; } @endphp">
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 w-full">
+                        <div class="essential w-[190px] shrink-0 mt-2">회사상세세주소</div>
+                        <div class="font-medium w-full flex items-center gap-2">
+                            <input type="text" class="setting_input h-[40px] w-full font-normal  business_address_detail" placeholder="주소"
+                                value="@php if($user->type == 'S'){ echo $company -> business_address_detail; } @endphp">
                         </div>
                     </div>
                 </div>
@@ -139,7 +146,7 @@
                         <div class="font-medium w-full flex items-center gap-2">
                             <input type="text" class="setting_input h-[40px] w-full font-normal  business_code" placeholder="사업자등록번호"
                                 value="@php if($user->type != 'S'){ echo $company -> business_license_number; } @endphp">
-                            <button type="button" class="flex items-center justify-center border border-stone-500 rounded-md h-[40px] w-[120px] shrink-0 hover:bg-stone-100">중복체크</button>
+                            <button type="button" onclick="checkCompanyNumber(0);" class="flex items-center justify-center border border-stone-500 rounded-md h-[40px] w-[120px] shrink-0 hover:bg-stone-100">중복체크</button>
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 w-full">
@@ -274,7 +281,11 @@
         
 var company_type = '{{ auth() -> user()['type'] }}';
 // 회원구분 change
-const memberChange = (item, type)=>{
+const memberChange = (item, type, silent)=>{
+    if('{{ auth() -> user()['type'] }}' != 'S' && !silent) {
+        alert('일반 회원이 아닌 경우, 회원 구분 변경 시 관리자 문의 부탁드립니다.');
+        return false;
+    }
     if($(item).prop('checked')){
         if($(item).val() == "1"){
             $('.com_set').addClass('hidden')
@@ -287,14 +298,14 @@ const memberChange = (item, type)=>{
     company_type = type;
 }
 if(company_type == 'S') {
-    memberChange($('#member_type_1')[0], 'S');
+    memberChange($('#member_type_1')[0], 'S', 1);
 } else {
     if(company_type == 'R') {
-        memberChange($('#member_type_2')[0], 'R');
+        memberChange($('#member_type_2')[0], 'R', 1);
     } else if(company_type == 'W') {
-        memberChange($('#member_type_3')[0], 'W');
+        memberChange($('#member_type_3')[0], 'W', 1);
     } else if(company_type == 'N') {
-        memberChange($('#member_type_4')[0], 'N');
+        memberChange($('#member_type_4')[0], 'N', 1);
     }
 }
 
@@ -331,11 +342,15 @@ const fileUpload = (input) => {
         reader.onload = function(e) {
             img.src = e.target.result
             input.parentNode.parentNode.querySelector('.file-form').append(img)
-            if(input.id === 'business') {
-                storedCompanyFile = getThumbFile(img, 500, 500, 500);
-            } else {
-                storedFile = getThumbFile(img, 500, 500, 500);
-            }
+            var image = new Image;
+            image.onload = function() {
+                if(input.id === 'business') {
+                    storedCompanyFile = getThumbFile(image, 500, this.width, this.height);
+                } else {
+                    storedFile = getThumbFile(image, 500, this.width, this.height);
+                }
+            };
+            image.src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
@@ -377,14 +392,59 @@ const fileUpload = (input) => {
             });
         });
 
+    const checkCompanyNumber = (isOpenOkVal) => {
+        const targetCompanySection = $('._company_section:visible');
+        const originBusinessCode = '{{ $company -> business_license_number }}';
+        const businessCode = targetCompanySection.find('.business_code').val();
+
+        if(originBusinessCode == businessCode) {
+            return true;
+        }
+        
+        if(businessCode.replaceAll('-','').length != 10){
+            alert('잘못된 사업자 등록번호입니다.');
+            return false;
+        }
+        let dupplicated = true;
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: '/member/checkUsingBusinessNumber',
+            data: {
+                'business_number': businessCode.replaceAll('-','')
+            },
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            success: function(result) {
+                if (result == 0) {
+                    if(!isOpenOkVal) {
+                        alert('사용가능한 사업자번호 입니다.');
+                    }
+                    dupplicated = false;
+                } else {
+                    alert('중복된 사업자 등록번호입니다.');
+                }
+            }
+        });
+        return !dupplicated;
+    };
 
     var storedFile = null;
     var storedCompanyFile = null;
     const updateUserInfo = () => {
         $('#loadingContainer').show();
 
+        if(company_type != '{{ auth() -> user()['type'] }}' && '{{ auth() -> user()['type'] }}' != 'S') {
+            alert('일반 회원이 아닌 경우, 회원 구분 변경 시 관리자 문의 부탁드립니다.');
+            $('#loadingContainer').hide();
+            return false;
+        }
+        if(company_type != 'S' && !checkCompanyNumber(1)) {
+            $('#loadingContainer').hide();
+            return;
+        }
+
         var form = new FormData();
-        form.append("attachmentIdx", $('#attachmentIdx').val());
         form.append("company_type", company_type);
         form.append("user_email", $('#user_email').val());
         form.append("user_name", $('#user_name').val());
@@ -394,7 +454,7 @@ const fileUpload = (input) => {
             form.append("user_file", storedFile);
         }
         const targetCompanySection = $('._company_section:visible');        
-        form.append("email", $('#email').val());
+        form.append("email", $('#user_email').val());
         form.append("business_code", targetCompanySection.find('.business_code').val());
         form.append("company_name", targetCompanySection.find('.company_name').val());
         form.append("owner_name", targetCompanySection.find('.owner_name').val());
@@ -413,9 +473,16 @@ const fileUpload = (input) => {
             contentType     : false,
             data			: form,
             type			: 'POST',
+            async: false,
             success: function (result) {
                 $('#loadingContainer').hide();
-                alert('정보를 수정하였습니다.');
+                if(company_type != '{{ auth() -> user()['type'] }}') {
+                    alert('회원 구분이 변경되어 로그아웃 처리 됩니다. 변경된 회원으로 관리자 재승인 심사 이후 다시 로그인 부탁 드립니다.');
+                    location.href = '/signout';
+                } else {
+                    alert('정보를 수정하였습니다.');
+                    location.reload();
+                }
             }, error: function (e) {
                 $('#loadingContainer').hide();
             }

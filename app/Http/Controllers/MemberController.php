@@ -198,6 +198,16 @@ class MemberController extends BaseController {
             $data = [];
             $data = array_merge($data, $request->all());
 
+            if(array_key_exists('company_file', $data)) {
+                $storageName = "name-card-image";
+                $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
+                $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
+            }
+            if(array_key_exists('user_file', $data)) {
+                $storageName = "user-image";
+                $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
+                $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
+            }
             $this->memberService->modifyUser($data);
             
             return response()->json([

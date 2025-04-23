@@ -212,7 +212,7 @@ let signupType = 'normal';
 let userData = null;
 let sns = null;
 
-var userType = 'N';
+var userType = 'S';
 
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
