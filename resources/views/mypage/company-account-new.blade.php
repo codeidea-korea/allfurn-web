@@ -403,6 +403,7 @@ const fileUpload = (input) => {
         const businessCode = targetCompanySection.find('.business_code').val();
 
         if(originBusinessCode == businessCode) {
+            alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
             return true;
         }
         
