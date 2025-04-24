@@ -392,6 +392,7 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
+                'is_undefined_type' => 0
 //                'state' => 'JW'
             ];
             if(array_key_exists('userAttachmentIdx', $params)) {
@@ -404,7 +405,8 @@ class MemberService
         // 회원 정보 수정
         $updated = [
             'name' => $params['user_name'],
-            'phone_number' => $params['user_phone']
+            'phone_number' => $params['user_phone'],
+            'is_undefined_type' => 0
         ];
         if(array_key_exists('userAttachmentIdx', $params)) {
             $updated['attachment_idx'] = $params['userAttachmentIdx'];
