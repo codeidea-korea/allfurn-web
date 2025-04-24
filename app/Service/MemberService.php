@@ -52,6 +52,7 @@ class MemberService
             $user->secret = DB::raw("CONCAT('*', UPPER(SHA1(UNHEX(SHA1('".hash('sha256', $params['password'])."')))))");
         }
         $user->name = $params['name'];
+        $user->attachment_idx = array_key_exists('attachmentIdx', $params) ? $params['attachmentIdx'] : 0;
         $user->phone_number = $params['phone_number'];
         $user->state = 'JW';
 
