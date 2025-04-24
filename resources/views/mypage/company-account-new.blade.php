@@ -483,7 +483,7 @@ const fileUpload = (input) => {
             success: function (result) {
                 $('#loadingContainer').hide();
                 if(company_type != '{{ auth() -> user()['type'] }}') {
-                    alert('회원 구분이 변경되어 로그아웃 처리 됩니다. 변경된 회원으로 관리자 재승인 심사 이후 다시 로그인 부탁 드립니다.');
+                    alert('회원 구분이 변경되어 로그아웃 처리 됩니다. 다시 로그인하여 주세요.');
                     location.href = '/signout';
                 } else {
                     alert('정보를 수정하였습니다.');
