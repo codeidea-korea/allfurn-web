@@ -392,13 +392,13 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
-                'state' => 'JW'
+//                'state' => 'JW'
             ];
             if(array_key_exists('userAttachmentIdx', $params)) {
                 $updated['attachment_idx'] = $params['userAttachmentIdx'];
             }
             User::where('account', $params['user_email'])
-                ->where('state', '=', 'JS')
+//                ->where('state', '=', 'JS')
                 ->update($updated);
         }
         // 회원 정보 수정
@@ -410,7 +410,7 @@ class MemberService
             $updated['attachment_idx'] = $params['userAttachmentIdx'];
         }
         User::where('account', $params['user_email'])
-            ->where('state', '=', 'JS')
+//            ->where('state', '=', 'JS')
             ->update($updated);
     }
 
