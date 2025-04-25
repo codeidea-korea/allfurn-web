@@ -6,6 +6,17 @@
     $top_title = '계정 관리';
     $header_banner = '';
 @endphp
+@php
+    $tPoint = 0;
+    if( !empty( $point ) ) {
+        foreach( $point AS $p ) {
+            if( $p->type == 'A' )
+                $tPoint = $tPoint + $p->score;
+            else
+                $tPoint = $tPoint - $p->score;
+        }
+    }
+@endphp
 
 @section('content')
     @include('layouts.header_m')
@@ -191,6 +202,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 p-3">
+            <button class="btn btn-primary-line mt-5 px-5" id="completeAddressBtn" onClick="updateUserInfo();">변경저장</button>
         </div>
     </div>
 
@@ -394,11 +408,13 @@ const fileUpload = (input) => {
 
     const checkCompanyNumber = (isOpenOkVal) => {
         const targetCompanySection = $('._company_section:visible');
-        const originBusinessCode = '{{ $company -> business_license_number }}';
         const businessCode = targetCompanySection.find('.business_code').val();
+        const originBusinessCode = '{{ $company -> business_license_number }}';
 
         if(originBusinessCode == businessCode) {
-            alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
+            if(!isOpenOkVal) {
+                alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
+            }
             return true;
         }
         
@@ -423,7 +439,9 @@ const fileUpload = (input) => {
                     }
                     dupplicated = false;
                 } else {
-                    alert('중복된 사업자 등록번호입니다.');
+                    if(!isOpenOkVal) {
+                        alert('중복된 사업자 등록번호입니다.');
+                    }
                 }
             }
         });

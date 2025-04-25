@@ -53,7 +53,7 @@ if( !empty( $point ) ) {
                 <img src="/img/mypage/s_profile.png" alt="" />
                 {{-- <a href="javascript: ;"> --}}
                     <div class="flex items-center">
-                        <p class="profile_id">{{ $user -> company_name }}</p>
+                        <p class="profile_id">{{ $user -> company_name ?? $user -> name }}</p>
                         {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                     </div>
                 {{-- </a> --}}
@@ -63,7 +63,7 @@ if( !empty( $point ) ) {
                 <img src="/img/mypage/n_profile.png" alt="" />
                 {{-- <a href="javascript: ;"> --}}
                     <div class="flex items-center">
-                        <p class="profile_id">{{ $user -> company_name }}</p>
+                        <p class="profile_id">{{ $user -> company_name ?? $user -> name }}</p>
                         {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                     </div>
                 {{-- </a> --}}

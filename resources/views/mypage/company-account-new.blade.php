@@ -403,7 +403,9 @@ const fileUpload = (input) => {
         const businessCode = targetCompanySection.find('.business_code').val();
 
         if(originBusinessCode == businessCode) {
-            alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
+            if(!isOpenOkVal) {
+                alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
+            }
             return true;
         }
         
@@ -428,7 +430,9 @@ const fileUpload = (input) => {
                     }
                     dupplicated = false;
                 } else {
-                    alert('중복된 사업자 등록번호입니다.');
+                    if(!isOpenOkVal) {
+                        alert('중복된 사업자 등록번호입니다.');
+                    }
                 }
             }
         });
