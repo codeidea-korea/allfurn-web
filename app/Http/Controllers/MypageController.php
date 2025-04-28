@@ -967,7 +967,8 @@ class MypageController extends BaseController
             $user = User::where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_normal', 'AF_user.company_idx', 'AF_normal.idx')
                 ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
-                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', DB::raw("'' as company_name"), DB::raw("'' as business_license_number"), 
+                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', 
+                    DB::raw("AF_normal.name as company_name"), DB::raw("AF_normal.business_license_number as business_license_number"), 
                     DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
                 ->first();
         }

@@ -236,6 +236,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         </span>
                     </a>
                 </li>
+                @if($user -> type === 'W')
                 <li>
                     <a href="javascript:gotoLink('/mypage/company');" class="flex p-4 justify-between">
                         <p>홈페이지 관리</p>
@@ -248,6 +249,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
+                @endif
                 <li>
                     <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>

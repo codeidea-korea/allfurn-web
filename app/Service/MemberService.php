@@ -141,7 +141,7 @@ class MemberService
             case "N":
             case "S":
                     $detail = new UserNormal;
-                    $detail->name = $params['name'] ?? null;
+                    $detail->name = array_key_exists('company_name', $params) ? $params['company_name'] : $params['name'];
                     $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
                     $detail->phone_number = array_key_exists('user_phone', $params) ? $params['user_phone'] : $params['phone_number'];
                     $detail->register_time = DB::raw('now()');
@@ -200,6 +200,10 @@ class MemberService
                 $updated = [
                     'name' => $params['company_name'] ?? null,
                     'phone_number' => $params['phone_number'] ?? null,
+                    'business_license_number' => $params['business_code'] ?? null,
+                    'owner_name' => $params['owner_name'] ?? null,
+                    'business_address' => $params['business_address'] ?? null,
+                    'business_address_detail' => $params['business_address_detail'] ?? null,
                 ];
                 if(array_key_exists('attachmentIdx', $params)) {
                     $updated['namecard_attachment_idx'] = $params['attachmentIdx'];
