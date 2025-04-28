@@ -204,7 +204,7 @@
             </div>
         </div>
         <div class="flex items-center justify-end gap-2 p-3">
-            <button class="btn btn-primary-line mt-5 px-5" id="completeAddressBtn" onClick="updateUserInfo();">변경저장</button>
+            <button class="btn btn-primary-line mt-5 px-5" id="completeAddressBtn" onClick="updateUserInfo();">정보수정</button>
         </div>
     </div>
 
