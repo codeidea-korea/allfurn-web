@@ -198,7 +198,7 @@ class MemberService
             case "N":
             case "S":
                 $updated = [
-                    'name' => $params['name'] ?? null,
+                    'name' => $params['company_name'] ?? null,
                     'phone_number' => $params['phone_number'] ?? null,
                 ];
                 if(array_key_exists('attachmentIdx', $params)) {
