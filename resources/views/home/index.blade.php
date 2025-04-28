@@ -6,9 +6,9 @@
 
 <div class="modal" id="main-event">
     <div class="modal_bg" onclick="modalClose('#main-event')"></div>
-    <div class="modal_inner">
+    <div class="modal_inner" style="width:550px; ">
         <button class="close_btn" onclick="modalClose('#main-event')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Close"></use></svg></button>
-        <div class="modal_body intro_popup">
+        <div class="modal_body intro_popup" style="max-height:100vh;">
             <div class="popup_slide">
                 <ul class="swiper-wrapper">
                     @foreach($data['popup'] as $item)
@@ -27,7 +27,7 @@
                             case 3: //커뮤니티
                                 $link = '/community/detail/'.$item->web_link;
                                 break;
-                            case 4: //공지사항항
+                            case 4: //커뮤니티
                                 $link = $item->web_link;
                                 break;
                             case 5: //커뮤니티
@@ -89,11 +89,9 @@
                                     $link = '/community/detail/'.$item->web_link;
                                 } 
                                 break;
-                                /*
                             case 4:
                                 $link = '/help/notice/';
                                 break;
-                                */
                             default: //공지사항
                                 $link = $item->web_link;
                                 break;
