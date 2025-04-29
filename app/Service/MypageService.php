@@ -928,7 +928,7 @@ class MypageService
                       )),']') FROM AF_location
                         WHERE company_type = '".Auth::user()['type']."'
                         AND company_idx = '".Auth::user()['company_idx']."'
-                        AND is_delete = 0
+                        AND u.is_delete = 0
                     ) AS locations")
             )
             ->first();

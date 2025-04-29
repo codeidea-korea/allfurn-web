@@ -145,6 +145,7 @@ class MemberService
                     $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
                     $detail->phone_number = array_key_exists('user_phone', $params) ? $params['user_phone'] : $params['phone_number'];
                     $detail->register_time = DB::raw('now()');
+                    $detail->business_license_number = array_key_exists('business_code', $params) ? $params['business_code'] : '';
                     $detail->owner_name = array_key_exists('owner_name', $params) ? $params['owner_name'] : $params['name'];
                     $detail->is_domestic = 0;
                     $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
