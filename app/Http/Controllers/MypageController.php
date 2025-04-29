@@ -581,6 +581,9 @@ class MypageController extends BaseController
 			// 로그아웃 시키지 않고 다른 계정 타입에 맞는 처리
 			$data['pageType'] = 'normal-account'; // 또는 적절한 다른 페이지 타입
 		}
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+	    $data['xtoken'] = $xtoken;
 		
 		$data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
 		$data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
@@ -774,8 +777,12 @@ class MypageController extends BaseController
         }
             */
 
+        $nameCardImage = $this->mypageService->getUserNameCard();
+        $data['nameCardImage'] = $nameCardImage ?? '';
+        $data['point'] = $this->mypageService->getPointList();
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
         $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
-	    $data['xtoken'] = $xtoken;
+        $data['xtoken'] = $xtoken;
         
         $data['pageType'] = 'company-account-new';
         $data['company'] = $this -> mypageService -> getCompanyAccount();
@@ -786,7 +793,11 @@ class MypageController extends BaseController
         $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
         $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
 
-        return view(getDeviceType().'mypage.mypage', $data);
+        if(getDeviceType() == 'm.') {
+            return view(getDeviceType().'mypage.company-account-new', $data);
+        } else {
+            return view('mypage.mypage', $data);
+        }
     }
 
 
@@ -956,7 +967,8 @@ class MypageController extends BaseController
             $user = User::where('AF_user.idx', Auth::user()['idx'])
                 ->join('AF_normal', 'AF_user.company_idx', 'AF_normal.idx')
                 ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
-                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', DB::raw("'' as company_name"), DB::raw("'' as business_license_number"), 
+                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', 
+                    DB::raw("AF_normal.name as company_name"), DB::raw("AF_normal.business_license_number as business_license_number"), 
                     DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
                 ->first();
         }

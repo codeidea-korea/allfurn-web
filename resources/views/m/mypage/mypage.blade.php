@@ -129,7 +129,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <img src="/img/mypage/s_profile.png" alt="" />
                     {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
-                            <p class="profile_id">{{ $user -> company_name }}</p>
+                            <p class="profile_id">{{ $user -> company_name ?? $user -> name }}</p>
                             {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
                     {{-- </a> --}}
@@ -139,7 +139,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     <img src="/img/mypage/n_profile.png" alt="" />
                     {{-- <a href="javascript: ;"> --}}
                         <div class="flex items-center">
-                            <p class="profile_id">{{ $user -> company_name }}</p>
+                            <p class="profile_id">{{ $user -> company_name == null || $user -> company_name == '' ? $user -> name : $user -> company_name }}</p>
                             {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                         </div>
                     {{-- </a> --}}
@@ -236,6 +236,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         </span>
                     </a>
                 </li>
+                @if($user -> type === 'W')
                 <li>
                     <a href="javascript:gotoLink('/mypage/company');" class="flex p-4 justify-between">
                         <p>홈페이지 관리</p>
@@ -248,6 +249,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
+                @endif
                 <li>
                     <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>

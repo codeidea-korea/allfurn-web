@@ -6,6 +6,17 @@
     $top_title = '계정 관리';
     $header_banner = '';
 @endphp
+@php
+    $tPoint = 0;
+    if( !empty( $point ) ) {
+        foreach( $point AS $p ) {
+            if( $p->type == 'A' )
+                $tPoint = $tPoint + $p->score;
+            else
+                $tPoint = $tPoint - $p->score;
+        }
+    }
+@endphp
 
 @section('content')
     @include('layouts.header_m')
@@ -191,6 +202,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 p-3">
+            <button class="btn btn-primary-line mt-5 px-5" id="completeAddressBtn" onClick="updateUserInfo();">정보수정</button>
         </div>
     </div>
 
@@ -394,10 +408,13 @@ const fileUpload = (input) => {
 
     const checkCompanyNumber = (isOpenOkVal) => {
         const targetCompanySection = $('._company_section:visible');
-        const originBusinessCode = '{{ $company -> business_license_number }}';
         const businessCode = targetCompanySection.find('.business_code').val();
+        const originBusinessCode = '{{ $company -> business_license_number }}';
 
         if(originBusinessCode == businessCode) {
+            if(!isOpenOkVal) {
+                alert('사업자 번호가 변경되지 않았으므로 검증할 필요가 없습니다.');
+            }
             return true;
         }
         
@@ -422,7 +439,9 @@ const fileUpload = (input) => {
                     }
                     dupplicated = false;
                 } else {
-                    alert('중복된 사업자 등록번호입니다.');
+                    if(!isOpenOkVal) {
+                        alert('중복된 사업자 등록번호입니다.');
+                    }
                 }
             }
         });
@@ -477,7 +496,7 @@ const fileUpload = (input) => {
             success: function (result) {
                 $('#loadingContainer').hide();
                 if(company_type != '{{ auth() -> user()['type'] }}') {
-                    alert('회원 구분이 변경되어 로그아웃 처리 됩니다. 변경된 회원으로 관리자 재승인 심사 이후 다시 로그인 부탁 드립니다.');
+                    alert('회원 구분이 변경되어 로그아웃 처리 됩니다. 다시 로그인하여 주세요.');
                     location.href = '/signout';
                 } else {
                     alert('정보를 수정하였습니다.');

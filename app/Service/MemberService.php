@@ -52,6 +52,7 @@ class MemberService
             $user->secret = DB::raw("CONCAT('*', UPPER(SHA1(UNHEX(SHA1('".hash('sha256', $params['password'])."')))))");
         }
         $user->name = $params['name'];
+        $user->attachment_idx = array_key_exists('attachmentIdx', $params) ? $params['attachmentIdx'] : 0;
         $user->phone_number = $params['phone_number'];
         $user->state = 'JW';
 
@@ -140,10 +141,11 @@ class MemberService
             case "N":
             case "S":
                     $detail = new UserNormal;
-                    $detail->name = $params['name'] ?? null;
+                    $detail->name = array_key_exists('company_name', $params) ? $params['company_name'] : $params['name'];
                     $detail->namecard_attachment_idx = $params['attachmentIdx'] ?? null;
                     $detail->phone_number = array_key_exists('user_phone', $params) ? $params['user_phone'] : $params['phone_number'];
                     $detail->register_time = DB::raw('now()');
+                    $detail->business_license_number = array_key_exists('business_code', $params) ? $params['business_code'] : '';
                     $detail->owner_name = array_key_exists('owner_name', $params) ? $params['owner_name'] : $params['name'];
                     $detail->is_domestic = 0;
                     $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
@@ -197,8 +199,12 @@ class MemberService
             case "N":
             case "S":
                 $updated = [
-                    'name' => $params['name'] ?? null,
+                    'name' => $params['company_name'] ?? null,
                     'phone_number' => $params['phone_number'] ?? null,
+                    'business_license_number' => $params['business_code'] ?? null,
+                    'owner_name' => $params['owner_name'] ?? null,
+                    'business_address' => $params['business_address'] ?? null,
+                    'business_address_detail' => $params['business_address_detail'] ?? null,
                 ];
                 if(array_key_exists('attachmentIdx', $params)) {
                     $updated['namecard_attachment_idx'] = $params['attachmentIdx'];
@@ -391,25 +397,27 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
-                'state' => 'JW'
+                'is_undefined_type' => 0
+//                'state' => 'JW'
             ];
             if(array_key_exists('userAttachmentIdx', $params)) {
                 $updated['attachment_idx'] = $params['userAttachmentIdx'];
             }
             User::where('account', $params['user_email'])
-                ->where('state', '=', 'JS')
+//                ->where('state', '=', 'JS')
                 ->update($updated);
         }
         // 회원 정보 수정
         $updated = [
             'name' => $params['user_name'],
-            'phone_number' => $params['user_phone']
+            'phone_number' => $params['user_phone'],
+            'is_undefined_type' => 0
         ];
         if(array_key_exists('userAttachmentIdx', $params)) {
             $updated['attachment_idx'] = $params['userAttachmentIdx'];
         }
         User::where('account', $params['user_email'])
-            ->where('state', '=', 'JS')
+//            ->where('state', '=', 'JS')
             ->update($updated);
     }
 
