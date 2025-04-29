@@ -389,8 +389,9 @@ class MessageService
     public function getRoomsInfo($messageRooms, $keyword=''): array
     {
         $rooms = [];
+        $table = null;
         foreach($messageRooms as $messageRoom) {
-            $table = null;
+            unset($table);
             $params = [
                 'room' => $messageRoom,
                 'keyword' => $keyword,
@@ -439,6 +440,9 @@ class MessageService
                             , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS profile_image'))
                         ->first();
                     
+                    if (!(isset($company) && !empty($company))) {
+                        continue;
+                    }
                     $company_name = $company->name;
                     
                 } else {
@@ -450,6 +454,9 @@ class MessageService
                             , DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS profile_image'))
                         ->first();
                     
+                    if (!(isset($company) && !empty($company))) {
+                        continue;
+                    }
                     $company_name = $company->company_name;
                     
                 }

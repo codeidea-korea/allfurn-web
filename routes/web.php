@@ -84,6 +84,7 @@ Route::prefix('/member')->name('member')->group(function() {
 	Route::post('/duplicate/email', 'MemberController@duplicateEmail');
     Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
     Route::post('/createUserNew', 'MemberController@createUserNew');
+    Route::post('/update', 'MemberController@updateUser');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 
@@ -189,7 +190,7 @@ Route::prefix('mypage')->name('mypage')->middleware(['auth','mypage'])->group(fu
     Route::post('/account/authentic', 'MypageController@compareAuthCode');
     Route::post('/account/send/auth/email', 'MypageController@sendAuthEmail');
     Route::post('/account/send/auth/phone', 'MypageController@sendAuthPhone');
-    Route::get('/company-account', 'MypageController@companyAccount');
+    Route::get('/company-account', 'MypageController@companyAccount')->name('.companyAaccount');
     Route::put('/company-account', 'MypageController@updateCompanyAccount');
     Route::put('/company-account/password', 'MypageController@changePassword');
     Route::delete('/company-account/{idx}', 'MypageController@deleteCompanyMember');

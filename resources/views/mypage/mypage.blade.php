@@ -53,7 +53,17 @@ if( !empty( $point ) ) {
                 <img src="/img/mypage/s_profile.png" alt="" />
                 {{-- <a href="javascript: ;"> --}}
                     <div class="flex items-center">
-                        <p class="profile_id">{{ $user -> company_name }}</p>
+                        <p class="profile_id">{{ $user -> company_name ?? $user -> name }}</p>
+                        {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
+                    </div>
+                {{-- </a> --}}
+            </div>
+            @elseif($user -> type === 'N')
+            <div class="profile flex gap-4 items-center">
+                <img src="/img/mypage/n_profile.png" alt="" />
+                {{-- <a href="javascript: ;"> --}}
+                    <div class="flex items-center">
+                        <p class="profile_id">{{ $user -> company_name == null || $user -> company_name == '' ? $user -> name : $user -> company_name }}</p>
                         {{-- <svg class="w-8 h-8"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg> --}}
                     </div>
                 {{-- </a> --}}
@@ -85,20 +95,20 @@ if( !empty( $point ) ) {
             <ul class="my_menu_list mt-5">
                     @if(auth() -> user() -> type === 'W')
                     <li class="{{ $pageType === 'deal' ? 'active' : '' }}">
-                        <a href="/mypage/deal" class="flex p-4 justify-between">
+                        <a href="javascript:gotoLink('/mypage/deal');" class="flex p-4 justify-between">
                             <p>요청받은 견적서 현황</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
                     </li>
                     @endif
                 <li class="{{ $pageType === 'purchase' ? 'active' : ''}}">
-                    <a href="/mypage/purchase" class="flex p-4 justify-between border_b">
+                    <a href="javascript:gotoLink('/mypage/purchase');" class="flex p-4 justify-between border_b">
                         <p>요청한 견적서 현황</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
                 <li class="{{ $pageType === 'interest' ? 'active' : ''}}">
-                    <a href="/mypage/interest" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/interest');" class="flex p-4 justify-between">
                         <p>좋아요 상품</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $likeProductCount }}개</p>
@@ -107,7 +117,7 @@ if( !empty( $point ) ) {
                     </a>
                 </li>
                 <li class="{{ $pageType === 'like' ? 'active' : ''}}">
-                    <a href="/mypage/like" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/like');" class="flex p-4 justify-between">
                         <p>좋아요 업체</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $likeCompanyCount }}개</p>
@@ -116,7 +126,7 @@ if( !empty( $point ) ) {
                     </a>
                 </li>
                 <li class="{{ $pageType === 'recent' ? 'active' : ''}}">
-                    <a href="/mypage/recent" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/recent');" class="flex p-4 justify-between">
                         <p>최근 본 상품</p>
                         <div class="flex items-center">
                             <p class="text-sm">{{ $recentlyViewedProductCount }}개</p>
@@ -125,7 +135,7 @@ if( !empty( $point ) ) {
                     </a>
                 </li>
                 <li>
-                    <a href="/message" class="flex p-4 justify-between border_b">
+                    <a href="javascript:gotoLink('/message');" class="flex p-4 justify-between border_b">
                         <p>문의 내역</p>
                         <div class="flex items-center">
                             <p class="text-sm main_color">{{ $inquiryCount }}건</p>
@@ -135,20 +145,20 @@ if( !empty( $point ) ) {
                 </li>
                 @if($user -> type === 'W')
                 <li class="{{ $pageType === 'company' ? 'active' : ''}}">
-                    <a href="/mypage/company" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/company');" class="flex p-4 justify-between">
                         <p>홈페이지 관리</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
                 <li class="{{ $pageType === 'product' ? 'active' : ''}}">
-                    <a href="/mypage/product?order=DESC" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/product?order=DESC');" class="flex p-4 justify-between">
                         <p>상품 등록 관리</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
                 @endif
                 <li class="{{ $pageType === 'estimate' ? 'active' : ''}}">
-                    <a href="/mypage/estimateInfo" class="flex p-4 justify-between">
+                    <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
                         <p>견적서 관리 /<br/> <span class="main_color">견적서 보내기</span></p>
                         
                         <div class="flex items-center">

@@ -1,4 +1,15 @@
 <header>
+    <script>
+        var hasNotDefinedUserType = {{ Auth::user()['is_undefined_type'] }} === 1;
+        function gotoLink(url) {
+            if(hasNotDefinedUserType) {
+                alert('회원 구분을 선택해주세요.');
+                location.href = '/mypage/company-account';
+                return;
+            }
+            location.href = url;
+        }
+    </script>
     <div class="header_top">
         <div class="inner">
             <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
@@ -57,15 +68,15 @@
 
             {{-- <button class="search_btn" onclick="modalOpen('#search-modal')"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 상품및 도매 업체를 검색해주세요</button> --}}
             <ul class="right_link flex items-center">
-                <li><a href="/message">올톡@if (unCheckedAllTalkCount() > 0) <span class="talk_num">{{ unCheckedAllTalkCount() }}</span> @endif</a></li>
+                <li><a href="javascript:gotoLink('/message');">올톡@if (unCheckedAllTalkCount() > 0) <span class="talk_num">{{ unCheckedAllTalkCount() }}</span> @endif</a></li>
                 @if(Auth::user()['type'] == 'W')
-                    <li><a href="/mypage/deal">마이올펀</a></li>
+                    <li><a href="javascript:gotoLink('/mypage/deal');">마이올펀</a></li>
                 @elseif(Auth::user()['type'] == 'R')
-                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                    <li><a href="javascript:gotoLink('/mypage/purchase');">마이올펀</a></li>
                 @elseif(Auth::user()['type'] == 'S')
-                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                    <li><a href="javascript:gotoLink('/mypage/purchase');">마이올펀</a></li>
                 @else
-                    <li><a href="/mypage/purchase">마이올펀</a></li>
+                    <li><a href="javascript:gotoLink('/mypage/purchase');">마이올펀</a></li>
                 @endif
                 <li><a href="/like/product">좋아요</a></li>
                 <li><a class="alarm_btn" href="/alarm"><span style="display: none;"></span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>

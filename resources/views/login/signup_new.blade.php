@@ -49,7 +49,7 @@
                         <dl class="flex">
                             <dt class="necessary">이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" value="" id="name" autocomplete="false">
+                                <input type="text" class="input-form w-full" value="" id="name" maxlength="30" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -93,7 +93,7 @@
                         <dl class="flex">
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name">
+                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -212,6 +212,8 @@ let signupType = 'normal';
 let userData = null;
 let sns = null;
 
+var userType = 'S';
+
 document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
@@ -266,7 +268,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
 			signupType = 'social';
 	}
-
 });
  
 function setReadonly(key,value) {
@@ -374,9 +375,12 @@ function signup(){
     if(signupType === 'social'){
 
         if(validate()){
+	    $('#loadingContainer').show();
+		
             let formData = new FormData();
-            
+		
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#name').val());
             formData.append('email', $('#email').val());
             formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
@@ -404,7 +408,7 @@ function signup(){
                 success: function(response) {
                     if (response.success) {
                     
-                        alert("가입되었습니다.");
+                        alert("가입 요청되었습니다.");
     
 						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
 						if (response.redirect) {
@@ -415,23 +419,10 @@ function signup(){
 						// 아래 Ajax 호출 대신 직접 이동
 						window.location.href = "/signup/login/pending";
 		
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "/social/login" ,
-                            type: 'POST',
-                            data: { 'name':$('#name').val(), 'phone_number':$('#phone_number').val().replace(/-/g, ''),'email':$('#email').val(), 'provider':sns ,'id':userData.id},
-                            success: function(response) {
-                                    sessionStorage.removeItem('socialUserData'); 
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
 
                     
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -445,6 +436,7 @@ function signup(){
                 }
                 },
                 error: function(error) {
+			$('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
@@ -458,22 +450,24 @@ function signup(){
 function normalSignUp(){
     
     if(validate('normal_')){
-
+	$('#loadingContainer').show();
 
         let formData = new FormData();
             
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#normal_name').val());
             formData.append('email', $('#normal_email').val());
             formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
             formData.append('password', $('#normal_password').val());
+	    
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
             formData.append('agreementMarketing', 0);
             formData.append('agreementAd',  0);
                 
             // 파일 추가
-            let fileInput = $('#file')[0];
+            let fileInput = $('#normal_file')[0];
             if(fileInput.files[0]) {
                 formData.append('file', fileInput.files[0]);
             }
@@ -489,7 +483,7 @@ function normalSignUp(){
                 success: function(response) {
                     if (response.success) {
                     
-                        alert("가입되었습니다.");
+                        alert("가입 요청되었습니다.");
     
 						// 리다이렉트 정보가 있으면 이동 (서버에서 전달한 경우)
 						if (response.redirect) {
@@ -500,26 +494,10 @@ function normalSignUp(){
 						// 아래 Ajax 호출 대신 직접 이동
 						window.location.href = "/signup/login/pending";
 		
-                       
-
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-	                        url: "/social/login" ,
-
-                            type: 'POST',
-                            data: { 'name':$('#normal_name').val(), 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
-                            success: function(response) {
-                            
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
-
+                
                     
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -533,6 +511,7 @@ function normalSignUp(){
                 }
                 },
                 error: function(error) {
+		    $('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
@@ -666,7 +645,7 @@ function validate(type = ''){
     }else{
         $(`#${type}file`).removeClass('input-error');
     }
-
+	
   
 
     return true;
@@ -722,6 +701,15 @@ $("input[type=email]").blur(function(){
     return false;
   }
 });
+
+function isInOnlyAlphabetAndKorean(ele) {
+    const regx = new RegExp('^[a-zA-Z가-힣]*$');
+    if(regx.test(ele.value)){
+        return;
+    }
+    alert('영문자 또는 한글만 입력 가능합니다.');
+    ele.value = "";
+}
 
 </script>
 

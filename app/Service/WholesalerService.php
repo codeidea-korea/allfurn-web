@@ -415,7 +415,7 @@ class WholesalerService {
             LEFT JOIN AF_order as ao
             ON ao.product_idx = ap.idx
             LEFT JOIN AF_banner_ad aba 
-            ON aba.company_idx = AF_wholesale.idx AND is_delete = 0 AND is_open = 1
+            ON aba.company_idx = AF_wholesale.idx AND aba.is_delete = 0 AND is_open = 1
             LEFT JOIN AF_category ac
             ON ac.idx = ap.category_idx
             LEFT JOIN AF_category ac2

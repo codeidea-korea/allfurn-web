@@ -51,7 +51,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full"  value="" id="name" autocomplete="false">
+                                <input type="text" class="input-form w-full" maxlength="30" value="" id="name" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -95,7 +95,7 @@ $header_banner = '';
                         <dl>
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name">
+                                <input type="text" class="input-form w-full" maxlength="30" placeholder="이름을 입력해주세요." id="normal_name" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -180,6 +180,8 @@ document.getElementById('file').addEventListener('change', function (event) {
     alert('파일 선택됨:', event.target.files);
 });
 
+
+var userType = 'S';
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -358,9 +360,12 @@ function signup(){
     if(signupType === 'social'){
 
         if(validate()){
+	    $('#loadingContainer').show();
+		
             let formData = new FormData();
             
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#name').val());
             formData.append('email', $('#email').val());
             formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
@@ -399,24 +404,9 @@ function signup(){
                         // 아래 Ajax 호출 대신 직접 이동
                         window.location.href = "/signup/login/pending";
     
-
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "/social/login" ,
-                            type: 'POST',
-                            data: { 'name':$('#name').val(), 'phone_number':$('#phone_number').val().replace(/-/g, ''),'email':$('#email').val(), 'provider':sns ,'id':userData.id},
-                            success: function(response) {
-                                    sessionStorage.removeItem('socialUserData'); 
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
-
                     
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -430,6 +420,7 @@ function signup(){
                 }
                 },
                 error: function(error) {
+		    $('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
@@ -444,21 +435,23 @@ function normalSignUp(){
     
     if(validate('normal_')){
 
-
+	$('#loadingContainer').show();
         let formData = new FormData();
-            
+	    
             // 데이터 추가
+            formData.append('user_type', userType);
             formData.append('name', $('#normal_name').val());
             formData.append('email', $('#normal_email').val());
             formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
             formData.append('password', $('#normal_password').val());
+	    
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
             formData.append('agreementMarketing', 0);
             formData.append('agreementAd',  0);
                 
             // 파일 추가
-            let fileInput = $('#file')[0];
+            let fileInput = $('#normal_file')[0];
             if(fileInput.files[0]) {
                 formData.append('file', fileInput.files[0]);
             }
@@ -486,25 +479,8 @@ function normalSignUp(){
 						// 아래 Ajax 호출 대신 직접 이동
 						window.location.href = "/signup/login/pending";
 		
-                       
-
-                        $.ajax({
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-	                        url: "/social/login" ,
-
-                            type: 'POST',
-                            data: { 'name':$('#normal_name').val(), 'account':$('#normal_email').val(), 'secret':$('#normal_password').val()},
-                            success: function(response) {
-                            
-                                    location.href="/signin"; 
-                                },
-                                error: function(error) {
-                                    console.error('Error:', error);
-                                    console.log('Error:', error);
-                                }
-                        }); 
-                    
                 } else {
+		    $('#loadingContainer').hide();
                     switch (result.code) {
                         case 1001:
                             openModal('#modal-validation');
@@ -518,6 +494,7 @@ function normalSignUp(){
                 }
                 },
                 error: function(error) {
+		    $('#loadingContainer').hide();
                     console.error('Error:', error);
                     console.log('Error:', error);
                 }
@@ -537,6 +514,7 @@ function validate(type = ''){
 
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
+	
     if(!type){
         if( provider == '' || provider == 'undefined'){
             $('#provider').addClass('input-error');
@@ -660,9 +638,8 @@ function validate(type = ''){
     }else{
         $(`#${type}file`).removeClass('input-error');
     }
-
-  
-
+	
+	
     return true;
 }
 
@@ -701,6 +678,15 @@ const fileUpload = (input) => {
 $(document).on('change', 'input[type="file"]', function() {
     fileUpload(this);
 });
+function isInOnlyAlphabetAndKorean(ele) {
+    const regx = new RegExp('^[a-zA-Z가-힣]*$');
+    if(regx.test(ele.value)){
+        return;
+    }
+    alert('영문자 또는 한글만 입력 가능합니다.');
+    ele.value = "";
+}
+
 </script>
 
 <div class="modal" id="modal-validation">
