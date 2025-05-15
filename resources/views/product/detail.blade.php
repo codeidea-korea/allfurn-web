@@ -1055,6 +1055,10 @@
 
         // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
         function openEstimateModal(idx) {
+            if('{{Auth::user()-> type}}' === 'S') {
+                alert('견적서 받기는 제조/도매, 판매 회원만 가능합니다.');
+                return;
+            }
             fetch('/estimate/makeEstimateCode', {
                 method  : 'POST',
                 headers : {

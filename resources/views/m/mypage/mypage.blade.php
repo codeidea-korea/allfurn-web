@@ -243,15 +243,15 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
+                @endif
                 <li>
-                    <a href="javascript:gotoLink('/mypage/product?order=DESC');" class="flex p-4 justify-between">
+                    <a href="{{ $user -> type === 'W' ? "javascript:gotoLink('/mypage/product?order=DESC');" : "javascript:alert('상품 관리는 제조/도매 회원만 가능합니다.');" }}" class="flex p-4 justify-between">
                         <p>상품 등록 관리</p>
                         <svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg>
                     </a>
                 </li>
-                @endif
                 <li>
-                    <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
+                    <a href="{{ $user -> type === 'W' || $user -> type === 'R' ? "javascript:gotoLink('/mypage/estimateInfo');" : "javascript:alert('견적서 관리는 제조/도매, 판매 회원만 가능합니다.');" }}" class="flex p-4 justify-between">
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>
                         <div class="flex items-center">
                             <!-- 신규알람 건수 추가 -->

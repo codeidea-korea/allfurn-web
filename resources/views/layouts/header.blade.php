@@ -3,9 +3,9 @@
         var hasNotDefinedUserType = {{ Auth::user()['is_undefined_type'] }} === 1;
         function gotoLink(url) {
             if(hasNotDefinedUserType) {
-                alert('회원 구분을 선택해주세요.');
-                location.href = '/mypage/company-account';
-                return;
+//                alert('회원 구분을 선택해주세요.');
+//                location.href = '/mypage/company-account';
+//                return;
             }
             location.href = url;
         }

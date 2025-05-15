@@ -150,15 +150,15 @@ if( !empty( $point ) ) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
+                @endif
                 <li class="{{ $pageType === 'product' ? 'active' : ''}}">
-                    <a href="javascript:gotoLink('/mypage/product?order=DESC');" class="flex p-4 justify-between">
+                    <a href="{{ $user -> type === 'W' ? "javascript:gotoLink('/mypage/product?order=DESC');" : "javascript:alert('상품 관리는 제조/도매 회원만 가능합니다.');" }}" class="flex p-4 justify-between">
                         <p>상품 등록 관리</p>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right w-6 h-6"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </li>
-                @endif
                 <li class="{{ $pageType === 'estimate' ? 'active' : ''}}">
-                    <a href="javascript:gotoLink('/mypage/estimateInfo');" class="flex p-4 justify-between">
+                    <a href="{{ $user -> type === 'W' || $user -> type === 'R' ? "javascript:gotoLink('/mypage/estimateInfo');" : "javascript:alert('견적서 관리는 제조/도매, 판매 회원만 가능합니다.');" }}" class="flex p-4 justify-between">
                         <p>견적서 관리 /<br/> <span class="main_color">견적서 보내기</span></p>
                         
                         <div class="flex items-center">
