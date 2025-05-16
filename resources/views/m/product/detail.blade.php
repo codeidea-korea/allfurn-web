@@ -846,6 +846,10 @@
     
     // '견적서 요청일시, 견적서 요청번호' 생성 및 '견적서 요청 모달' 열기
     function openEstimateModal(idx) {
+        if('{{Auth::user()-> type}}' === 'S') {
+            requiredUserGrade(['R','W','N']);
+            return;
+        }
         fetch('/estimate/makeEstimateCode', {
             method  : 'POST',
             headers : {

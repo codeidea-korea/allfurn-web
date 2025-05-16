@@ -51,9 +51,9 @@
                 </ul>
                 <div class="pager"></div>
             </div>
-            <div class="btn_bot">
-                <button class="btn btn-line3 noTodaybtn" onclick="popupClose()">오늘하루 그만보기</button>
-                <button class="btn btn-primary" onclick="modalClose('#main-event')">닫기</button>
+            <div class="btn_bot justify-between !py-4">
+                <button class="!w-auto !flex-grow-0 px-4 noTodaybtn" onclick="popupClose()">오늘 하루 보지 않기</button>
+                <button class="!w-auto !flex-grow-0 px-4" onclick="modalClose('#main-event')">닫기</button>
             </div>
         </div>
     </div>
@@ -92,6 +92,9 @@
                             } else {
                                 $link = '/community/detail/'.$item->web_link;
                             } 
+                            break;
+                        case 4:
+                            $link = '/help/notice/';
                             break;
                         default: //공지사항
                             $link = $item->web_link;
@@ -136,7 +139,7 @@
                         <a href="/family">
                             <span>가구 관련 협력업체</span>
                          </a>
-                    </li> 
+                    </li>   
                     <li class="swiper-slide">
                          <a href="/wholesaler?list">
                             <img src="/img/main/shop_icon.png" alt="">
