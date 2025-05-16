@@ -510,24 +510,29 @@ const fileUpload = (input) => {
 
         
     // 특정 권한 저장을 요구하는 화면 출력
-    const targetGradeTypes = localStorage.getItem('loadRequiredUserGrade');
+    var targetGradeTypes = localStorage.getItem('loadRequiredUserGrade');
     if(targetGradeTypes && targetGradeTypes !== '') {
+        targetGradeTypes = JSON.parse(targetGradeTypes);
         loadRequiredUserGrade();
     }
     function loadRequiredUserGrade() {
-        const targetGradeType = targetGradeTypes.split(',')[0];
+        const targetGradeType = targetGradeTypes[0];
         if(targetGradeType == 'S') {
             memberChange($('#member_type_1')[0], 'S', 1);
+            $('#member_type_1').click();
         } else {
             if(targetGradeType == 'R') {
                 memberChange($('#member_type_2')[0], 'R', 1);
+                $('#member_type_2').click();
             } else if(targetGradeType == 'W') {
                 memberChange($('#member_type_3')[0], 'W', 1);
+                $('#member_type_3').click();
             } else if(targetGradeType == 'N') {
                 memberChange($('#member_type_4')[0], 'N', 1);
+                $('#member_type_4').click();
             }
         }
-        const tmpMsg = grades.map(g => gradeNames.filter(n => n.grade === g)[0].name).join(', ')
+        const tmpMsg = targetGradeTypes.map(g => gradeNames.filter(n => n.grade === g)[0].name).join(', ')
         alert('특정 화면의 기능 사용을 위해 ' + tmpMsg + ' 회원으로 신청(저장)을 하셔야 합니다. 회원 승급 이후 사용 가능합니다.');
             
         localStorage.removeItem('loadRequiredUserGrade');
