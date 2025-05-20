@@ -21,8 +21,10 @@
             if(grades.indexOf(userGrade) < 0) {
                 const tmpMsg = grades.map(g => gradeNames.filter(n => n.grade === g)[0].name).join(', ')
                 alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
-                localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
-                location.href = '/mypage/normal-account';
+                if(userGrade === 'S'){
+                    localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
+                    location.href = '/mypage/normal-account';
+                }
             }
         }
     </script>
