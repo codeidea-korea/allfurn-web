@@ -251,7 +251,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                 </li>
                 <li>
-                    <a href="{{ $user -> type === 'W' || $user -> type === 'R' ? "javascript:gotoLink('/mypage/estimateInfo');" : "javascript:requiredUserGrade(['R','W','N']);" }}" class="flex p-4 justify-between">
+                    <a href="{{ $user -> type === 'W' || $user -> type === 'R' || $user -> type === 'N' ? "javascript:gotoLink('/mypage/estimateInfo');" : "javascript:requiredUserGrade(['R','W','N']);" }}" class="flex p-4 justify-between">
                         <p>견적서 관리 / <br/><span class="main_color">견적서 보내기</span></p>
                         <div class="flex items-center">
                             <!-- 신규알람 건수 추가 -->
