@@ -46,9 +46,9 @@
                 </ul>
                 <div class="pager"></div>
             </div>
-            <div class="btn_bot">
-                <button class="btn btn-line3 noTodaybtn" onclick="popupClose()">오늘하루 그만보기</button>
-                <button class="btn btn-primary" onclick="modalClose('#main-event')">닫기</button>
+            <div class="btn_bot justify-between !py-4">
+                <button class="!w-auto !flex-grow-0 px-4 noTodaybtn" onclick="popupClose()">오늘 하루 보지 않기</button>
+                <button class="!w-auto !flex-grow-0 px-4" onclick="modalClose('#main-event')">닫기</button>
             </div>
         </div>
     </div>

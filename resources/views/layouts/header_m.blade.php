@@ -2,19 +2,37 @@
     var hasNotDefinedUserType = {{ Auth::user()['is_undefined_type'] }} === 1;
     function gotoLink(url) {
         if(hasNotDefinedUserType) {
-            alert('회원 구분을 선택해주세요.');
-            location.href = '/mypage/company-account';
-            return;
+//            alert('회원 구분을 선택해주세요.');
+//            location.href = '/mypage/company-account';
+//            return;
         }
         location.href = url;
     }
     function callBackDefindedUserType(fn) {
         if(hasNotDefinedUserType) {
-            alert('회원 구분을 선택해주세요.');
-            location.href = '/mypage/company-account';
-            return;
+//            alert('회원 구분을 선택해주세요.');
+//            location.href = '/mypage/company-account';
+//            return;
         }
         fn();
+    }
+    const gradeNames = [
+        { "grade": 'S', "name": '일반' },
+        { "grade": 'N', "name": '기타가구 관련업종' },
+        { "grade": 'R', "name": '판매/매장' },
+        { "grade": 'W', "name": '제조/도매' },
+    ];
+    // 특정 권한을 강제하는 화면 이동 처리
+    function requiredUserGrade(grades) {
+        const userGrade = '{{Auth::user()-> type}}';
+        if(grades.indexOf(userGrade) < 0) {
+            const tmpMsg = grades.map(g => gradeNames.filter(n => n.grade === g)[0].name).join(', ')
+            alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
+            if(userGrade === 'S'){
+                localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
+                location.href = '/mypage/normal-account';
+            }
+        }
     }
 </script>
 <header class="{{ $only_quick=='yes'?'hidden':'' }}">
