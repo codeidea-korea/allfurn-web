@@ -6,7 +6,7 @@
         {{-- 아무것도 표시 안함 --}}
     @else
         <div id="prod_regist_btn" class="">
-            <a href="/product/registration">상품<br>등록</a>
+            <a href="{{ $user -> type === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
         </div>
     @endif
     

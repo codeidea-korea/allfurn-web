@@ -54,6 +54,10 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 </head>
 <body>
+@php 
+$isMobile = true;
+@endphp
+
 @yield('content')
 @include('layouts.modal')
 @include('layouts.footer_m')

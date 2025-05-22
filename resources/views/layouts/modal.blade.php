@@ -947,6 +947,410 @@
 @endif
 
 
+<div class="modal" id="pop_info_1-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_1-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#pop_info_1-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>해당 기능은 회원 등업이 필요합니다.<br/> 이용을 원하실 경우, 업체 정보를 입력해 주시기 바랍니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#pop_info_1-modal')">취소</button>
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#pop_info_1-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="pop_info_2-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_2-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#pop_info_2-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b>회원 등업 신청이 완료되었습니다.<br/> 관리자의 승인 후 해당 기능을 이용하실 수 있습니다.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#pop_info_2-modal')">취소</button>
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#pop_info_2-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if(isset($isMobile)) 
+<div class="modal" id="pop_info_3-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_3-modal')"></div>
+    <div class="modal_inner">
+        <button class="close_btn" onclick="modalClose('#pop_info_3-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body">
+            <div class="form_box p-5">
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">사업자 등록 번호</dt>
+                        <dd class="flex gap-1">
+                            <div class="flex-1">
+                                <input type="text" class="input-form w-full" placeholder="사업자 등록 번호를 입력해주세요.">
+                                <!-- <label for="w_businesscode" class="error">사업자번호를 정확히 입력해주세요</label> -->
+                            </div>
+                            <button class="btn btn-black-line">중복체크</button>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">업체명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="업체명을 입력해주세요.">
+                            <!-- <label for="" class="error">업체명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">대표자명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="대표자를 입력해주세요.">
+                            <!-- <label for="" class="error">대표자명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">회사주소</dt>
+                        <dd>
+                           
+                            <div class="add_tab">
+                                <!-- 국내 -->
+                                <div class="flex gap-1">
+                                    <input type="text" class="input-form w-full" placeholder="주소를 검색해주세요">
+                                    <button class="btn btn-black-line">주소 검색</button>
+                                </div>
+                                <!-- 해외 -->
+                                <div class="dropdown_wrap hidden">
+                                    <button class="dropdown_btn">지역</button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item">아시아</div>
+                                        <div class="dropdown_item">아프리카</div>
+                                        <div class="dropdown_item">북아메리카</div>
+                                        <div class="dropdown_item">남아메리카</div>
+                                        <div class="dropdown_item">유럽</div>
+                                        <div class="dropdown_item">오세아니아</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <input type="text" class="input-form w-full" placeholder="상세주소를 검색해주세요">
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">명함 또는 사업자등록증</dt>
+                        <dd>
+                            <div class="file-form horizontal">
+                                <input type="file" onchange="fileUpload(this)">
+                                <label for="" class="error">명함 또는 사업자등록증을 첨부해주세요.</label>
+                                <div class="text">
+                                    <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                    <p class="mt-1">이미지 추가</p>
+                                </div>
+                            </div>
+                            <div class="info_box mt-2.5">
+                                ・권장 형식: jpg, jpeg, png
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                
+              
+            </div>    
+
+            <div class="flex gap-2 justify-center p-5">
+                <button class="btn w-full btn-primary" onclick="modalClose('#pop_info_3-modal')">승인요청</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="pop_info_4-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_4-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body">
+            <div class="form_box p-5">
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">사업자 등록 번호</dt>
+                        <dd class="flex gap-1">
+                            <div class="flex-1">
+                                <input type="text" class="input-form w-full" placeholder="사업자 등록 번호를 입력해주세요.">
+                                <!-- <label for="w_businesscode" class="error">사업자번호를 정확히 입력해주세요</label> -->
+                            </div>
+                            <button class="btn btn-black-line">중복체크</button>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">업체명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="업체명을 입력해주세요.">
+                            <!-- <label for="" class="error">업체명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">대표자명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="대표자를 입력해주세요.">
+                            <!-- <label for="" class="error">대표자명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">회사주소</dt>
+                        <dd>
+                           
+                            <div class="add_tab">
+                                <!-- 국내 -->
+                                <div class="flex gap-1">
+                                    <input type="text" class="input-form w-full" placeholder="주소를 검색해주세요">
+                                    <button class="btn btn-black-line">주소 검색</button>
+                                </div>
+                                <!-- 해외 -->
+                                <div class="dropdown_wrap hidden">
+                                    <button class="dropdown_btn">지역</button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item">아시아</div>
+                                        <div class="dropdown_item">아프리카</div>
+                                        <div class="dropdown_item">북아메리카</div>
+                                        <div class="dropdown_item">남아메리카</div>
+                                        <div class="dropdown_item">유럽</div>
+                                        <div class="dropdown_item">오세아니아</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <input type="text" class="input-form w-full" placeholder="상세주소를 검색해주세요">
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-3">
+                    <dl>
+                        <dt class="necessary">사업자등록증</dt>
+                        <dd>
+                            <div class="file-form horizontal">
+                                <input type="file" onchange="fileUpload(this)">
+                                <label for="" class="error">사업자등록증을 첨부해주세요.</label>
+                                <div class="text">
+                                    <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                    <p class="mt-1">이미지 추가</p>
+                                </div>
+                            </div>
+                            <div class="info_box mt-2.5">
+                                ・권장 형식: jpg, jpeg, png
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                
+              
+            </div>    
+
+            <div class="flex gap-2 justify-center p-5">
+                <button class="btn w-full btn-primary" onclick="modalClose('#pop_info_3-modal')">승인요청</button>
+            </div>
+        </div>
+    </div>
+</div>
+@else
+<div class="modal" id="pop_info_3-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_3-modal')"></div>
+    <div class="modal_inner modal-lg">
+        <button class="close_btn" onclick="modalClose('#pop_info_3-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body">
+            <div class="form_box p-10">
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">사업자 등록 번호</dt>
+                        <dd class="flex gap-1">
+                            <div class="flex-1">
+                                <input type="text" class="input-form w-full" placeholder="사업자 등록 번호를 입력해주세요.">
+                                <!-- <label for="w_businesscode" class="error">사업자번호를 정확히 입력해주세요</label> -->
+                            </div>
+                            <button class="btn btn-black-line" disabled>중복체크</button>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">업체명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="업체명을 입력해주세요.">
+                            <!-- <label for="" class="error">업체명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">대표자명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="대표자를 입력해주세요.">
+                            <!-- <label for="" class="error">대표자명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">회사 주소</dt>
+                        <dd>
+                            <div class="add_tab">
+                                <!-- 국내 -->
+                                <div class="flex gap-1">
+                                    <input type="text" class="input-form w-full" placeholder="주소를 검색해주세요">
+                                    <button class="btn btn-black-line">주소 검색</button>
+                                </div>
+                                <!-- 해외 -->
+                                <div class="dropdown_wrap hidden">
+                                    <button class="dropdown_btn">지역</button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item">아시아</div>
+                                        <div class="dropdown_item">아프리카</div>
+                                        <div class="dropdown_item">북아메리카</div>
+                                        <div class="dropdown_item">남아메리카</div>
+                                        <div class="dropdown_item">유럽</div>
+                                        <div class="dropdown_item">오세아니아</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <input type="text" class="input-form w-full" placeholder="상세주소를 검색해주세요">
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">명함 또는 사업자 등록증</dt>
+                        <dd>
+                            <div class="file-form horizontal">
+                                <input type="file" onchange="fileUpload(this)">
+                                <label for="" class="error">명함 또는 사업자등록증을 첨부해주세요.</label>
+                                <div class="text">
+                                    <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                    <p class="mt-1">이미지 추가</p>
+                                </div>
+                            </div>
+                            <div class="info_box mt-2.5">
+                                ・권장 형식: jpg, jpeg, png
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+
+            </div>
+            <div class="flex gap-2 justify-center pb-10">
+                <button class="btn w-1/3 btn-primary" onclick="modalClose('#pop_info_3-modal')">승인요청</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="pop_info_4-modal">
+    <div class="modal_bg" onclick="modalClose('#pop_info_4-modal')"></div>
+    <div class="modal_inner modal-xl">
+        <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body">
+            <div class="form_box p-10">
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">사업자 등록 번호</dt>
+                        <dd class="flex gap-1">
+                            <div class="flex-1">
+                                <input type="text" class="input-form w-full" placeholder="사업자 등록 번호를 입력해주세요.">
+                                <!-- <label for="w_businesscode" class="error">사업자번호를 정확히 입력해주세요</label> -->
+                            </div>
+                            <button class="btn btn-black-line" disabled>중복체크</button>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">업체명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="업체명을 입력해주세요.">
+                            <!-- <label for="" class="error">업체명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">대표자명</dt>
+                        <dd>
+                            <input type="text" class="input-form w-full" placeholder="대표자를 입력해주세요.">
+                            <!-- <label for="" class="error">대표자명을 정확히 입력해주세요</label> -->
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">회사 주소</dt>
+                        <dd>
+                            <div class="add_tab">
+                                <!-- 국내 -->
+                                <div class="flex gap-1">
+                                    <input type="text" class="input-form w-full" placeholder="주소를 검색해주세요">
+                                    <button class="btn btn-black-line">주소 검색</button>
+                                </div>
+                                <!-- 해외 -->
+                                <div class="dropdown_wrap hidden">
+                                    <button class="dropdown_btn">지역</button>
+                                    <div class="dropdown_list">
+                                        <div class="dropdown_item">아시아</div>
+                                        <div class="dropdown_item">아프리카</div>
+                                        <div class="dropdown_item">북아메리카</div>
+                                        <div class="dropdown_item">남아메리카</div>
+                                        <div class="dropdown_item">유럽</div>
+                                        <div class="dropdown_item">오세아니아</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 w-full">
+                                <input type="text" class="input-form w-full" placeholder="상세주소를 검색해주세요">
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="mb-8">
+                    <dl class="flex">
+                        <dt class="necessary">사업자등록증</dt>
+                        <dd>
+                            <div class="file-form horizontal">
+                                <input type="file" onchange="fileUpload(this)">
+                                <label for="" class="error">사업자등록증을 첨부해주세요.</label>
+                                <div class="text">
+                                    <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                    <p class="mt-1">이미지 추가</p>
+                                </div>
+                            </div>
+                            <div class="info_box mt-2.5">
+                                ・권장 형식: jpg, jpeg, png
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+
+            </div>
+            <div class="flex gap-2 justify-center pb-10">
+                <button class="btn w-1/3 btn-primary" onclick="modalClose('#pop_info_4-modal')">승인요청</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
 
 <!-- 모달 들어가는곳 : E -->
 
