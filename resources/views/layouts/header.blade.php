@@ -23,6 +23,12 @@
                 // alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
                 modalOpen('#pop_info_1-modal');
 
+                if(grades.indexOf('R') > -1) {
+                    $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByRetail);
+                } else if(grades.indexOf('W') > -1) {
+                    $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByWholesaler);
+                }
+
                 if(userGrade === 'S'){
 //                    localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
 //                    location.href = '/mypage/normal-account';
