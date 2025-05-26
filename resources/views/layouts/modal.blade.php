@@ -1315,7 +1315,7 @@
 
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url             : '/member/update',
+                url             : '/member/update-wait',
                 enctype         : 'multipart/form-data',
                 processData     : false,
                 contentType     : false,

@@ -421,6 +421,31 @@ class MemberService
             ->update($updated);
     }
 
+    
+
+    public function updateUserWait(array $params)
+    {
+        $updated = [
+            'upgrade_status' => '1',
+            'upgrade_json' => json_encode($params)
+        ];
+        User::where('idx', Auth::user()->idx)
+            ->update($updated);
+    }
+
+    public function updateUserByWait(int $userIdx)
+    {
+        $user = User::where('idx', $userIdx)->first();
+
+        if(empty($user)) {
+            return;
+        }
+
+        $param = json_decode($user->upgrade_json);
+        $this->modifyUser($param);
+    }
+
+
     public function getAddressBook(int $userIdx)
     {
         return UserAddress::where('user_idx', $userIdx)
