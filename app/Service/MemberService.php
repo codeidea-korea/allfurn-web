@@ -433,7 +433,7 @@ class MemberService
             ->update($updated);
     }
 
-    public function updateUserByWait(int $userIdx)
+    public function updateUserByWait(int $userIdx, $grade)
     {
         $user = User::where('idx', $userIdx)->first();
 
@@ -442,6 +442,9 @@ class MemberService
         }
 
         $param = json_decode($user->upgrade_json);
+        if($grade != null && isset($grade)) {
+            $param['user_type'] = $grade;
+        }
         $this->modifyUser($param);
     }
 

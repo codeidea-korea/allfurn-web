@@ -275,9 +275,9 @@ class MemberController extends BaseController {
         }
     }
 
-    public function updateUserByWait(int $userIdx): JsonResponse {
+    public function updateUserByWait(Request $request, int $userIdx): JsonResponse {
         
-        $this->memberService->updateUserByWait($userIdx);
+        $this->memberService->updateUserByWait($userIdx, $request->input('fixedgrade'));
 
         return response()->json([
             'success' => true,
