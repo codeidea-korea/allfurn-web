@@ -3,186 +3,137 @@
 <div class="w-full">
     <h3 class="text-xl font-bold">계정관리</h3>
 
-    <!-- 제조 / 매장 -->
-    <div class="com_setting mt-5">
-        <p class="font-bold">대표</p>
-        <div class="info">
-            <div class="flex items-center gap-1">
-                <img class="w-4" src="/img/member/info_icon.svg" alt="">
-                <p> 대표 계정 정보는 고객센터에 문의하여 변경 요청해주세요.</p>
-            </div>
-        </div>
-
-        <div class="px-28 border-t-2 border-t-stone-600 flex flex-col items-center justify-center border-b py-10 gap-6">
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">회원구분</div>
-                <div class="font-medium w-full flex items-center gap-5">
-                    <p>
-                        <input type="radio" class="radio-form" id="member_type_1" name="member_type" value="0" onchange="memberChange(this, 'S')" 
-                        {{ $user -> type === 'S' ? 'checked' : '' }}>
-                        <label for="member_type_1">일반</label>
-                    </p>
-                    <p>
-                        <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="1" onchange="memberChange(this, 'R')" 
-                        {{ $user -> type === 'R' ? 'checked' : '' }}>
-                        <label for="member_type_2">매장/판매</label>
-                    </p>
-                    <p>
-                        <input type="radio" class="radio-form" id="member_type_3" name="member_type" value="1" onchange="memberChange(this, 'W')" 
-                        {{ $user -> type === 'W' ? 'checked' : '' }}>
-                        <label for="member_type_3">제조/도매</label>
-                    </p>
-                    <p>
-                        <input type="radio" class="radio-form" id="member_type_4" name="member_type" value="1" onchange="memberChange(this, 'N')" 
-                        {{ $user -> type === 'N' ? 'checked' : '' }}>
-                        <label for="member_type_4">기타가구 관련업종</label>
-                    </p>
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">이메일 (아이디)</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal" id="user_email" value="{{ $user -> account }}" disabled>
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">가입자명</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal" id="user_name" value="{{ $user -> name }}" disabled>
-                </div>
-            </div>
-            <!--
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">직위</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal" value="{{ $user -> account }}">
-                </div>
-            </div>
-            -->
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">휴대폰번호</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal" id="user_phone" value="{{ $user -> phone_number }}">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">명함</div>
-                <div class="font-medium w-full flex flex-col gap-2">
-                    <div class="flex gap-1">
-                        <input type="file" class="input-form input-file w-full" id="card" onchange="fileUpload(this)">
-                        <label for="card" class="flex items-center justify-center border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100">파일찾기</label>
-                    </div>
-                    <div class="file-form horizontal">
-                        <img src="{{ $user -> image }}" onerror="this.src='/img/logo.svg';" alt="">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- 임직원 -->
-    <div class="com_set mt-5 _company_section">
-        <p class="font-bold pb-4">소속기업정보</p>
-
-        <div class="px-28 border-t-2 border-t-stone-600 flex flex-col items-center justify-center border-b py-10 gap-6">
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">사업자등록번호</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_code" placeholder="사업자등록번호" 
-                        value="@php if($user->type == 'S'){ echo $company -> business_license_number; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">대표자명</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  company_name" placeholder="대표자명"
-                        value="@php if($user->type == 'S'){ echo $company -> owner_name; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">업체명</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  owner_name" placeholder="업체명"
-                        value="@php if($user->type == 'S'){ echo $company -> company_name; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">회사주소</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_address" placeholder="회사주소"
-                        value="@php if($user->type == 'S'){ echo $company -> business_address; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">회사상세세주소</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_address_detail" placeholder="주소"
-                        value="@php if($user->type == 'S'){ echo $company -> business_address_detail; } @endphp">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 매장/판매 제조/도매 기타가구관련업종 -->
-    <div class="com_set2 hidden mt-5 _company_section">
-        <p class="font-bold pb-4">기업정보</p>
-
-        <div class="px-28 border-t-2 border-t-stone-600 flex flex-col items-center justify-center border-b py-10 gap-6">
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">사업자등록번호</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_code" placeholder="사업자등록번호"
-                        value="@php if($user->type != 'S'){ echo $company -> business_license_number; } @endphp">
-                    <button type="button" onclick="checkCompanyNumber(0);" class="flex items-center justify-center border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100">중복체크</button>
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">업체명</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  company_name" placeholder="업체명"
-                        value="@php if($user->type != 'S'){ echo $company -> company_name; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">대표자명</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  owner_name" placeholder="대표자명"
-                        value="@php if($user->type != 'S'){ echo $company -> owner_name; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">회사주소</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_address" placeholder="주소"
-                        value="@php if($user->type != 'S'){ echo $company -> business_address; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">회사상세세주소</div>
-                <div class="font-medium w-full flex items-center gap-2">
-                    <input type="text" class="setting_input h-[48px] w-full font-normal  business_address_detail" placeholder="주소"
-                        value="@php if($user->type != 'S'){ echo $company -> business_address_detail; } @endphp">
-                </div>
-            </div>
-            <div class="flex gap-4 w-full">
-                <div class="essential w-[190px] shrink-0 mt-2">사업자등록증</div>
-                <div class="font-medium w-full flex flex-col gap-2">
-                    <div class="flex gap-1">
-                        <input type="file" class="input-form input-file w-full" id="business" onchange="fileUpload(this)">
-                        <label for="business" class="flex items-center justify-center border border-stone-500 rounded-md h-[48px] w-[120px] shrink-0 hover:bg-stone-100">파일찾기</label>
-                    </div>
-                    <div class="file-form vertical">
-                        <img src="{{ $company -> license_image }}" onerror="this.src='/img/logo.svg';" alt="">
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="my_tab mt-3 flex w-full text-center">
+        <button class="flex-1 py-2 border-b-2 border-slate-300">회원정보</button>
+        <button class="flex-1 py-2 border-b-2 border-primary">회사정보</button>
     </div>
 
     
-    <div class="flex items-center justify-center gap-3">
-        <button class="btn w-1/4 btn-primary mt-5" type="button" onclick="updateUserInfo()">정보수정</button>
+    <div class="tab_content">
+        <!-- 회원정보 -->
+        <div>
+            <div class="flex flex-col items-center justify-center gap-5 px-28 py-10 border-b border-stone-600">
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">회원명</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="" id="user_name" value="{{ $user -> name }}">
+                    </div>
+                </div>
+                <!--
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">회원구분</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="">
+                    </div>
+                </div>
+                -->
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">이메일(아이디)</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="" id="user_email" value="{{ $user -> account }}" disabled>
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">휴대폰번호</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal" placeholder="" id="user_phone" value="{{ $user -> phone_number }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">명함</div>
+                    <div class="font-medium w-full flex flex-center gap-2">
+                        <div class="file-form horizontal">
+                            <input type="file" id="card" onchange="fileUpload(this)">
+                            <label for="card" class="error">명함 이미지를 첨부해주세요.</label>
+                        </div>
+                        <div class="text">
+                            <img class="mx-auto" src="{{ $user -> image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
+                            <p class="mt-1">명함 이미지 추가</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button class="btn btn-primary-line mt-5 px-5" type="button" onclick="updateUserInfo()">변경저장</button>
+            </div>
+
+        </div>
+
+        <!-- 회사정보 -->
+        <div class="active">
+            <div class="flex flex-col items-center justify-center gap-5 px-28 py-10 border-b border-stone-600 _company_section">
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">서비스구분</div>
+                    <div class="flex gap-5 py-2">
+                        <p>
+                            <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="1" disabled {{ $user -> type === 'R' ? 'checked' : '' }}>
+                            <label for="member_type_2">매장/판매</label>
+                        </p>
+                        <p>
+                            <input type="radio" class="radio-form" id="member_type_3" name="member_type" value="1" disabled {{ $user -> type === 'W' ? 'checked' : '' }}>
+                            <label for="member_type_3">제조/도매</label>
+                        </p>
+                    </div>
+                </div>    
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">사업자번호</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal  business_code" placeholder="사업자등록번호" 
+                            value="{{ $company -> business_license_number }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">업체명</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal  owner_name" placeholder="업체명"
+                            value="{{ $company -> company_name }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">대표자명</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal  company_name" placeholder="대표자명"
+                            value="{{ $company -> owner_name }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">사업자 주소</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal  business_address" placeholder="회사주소"
+                            value="{{ $company -> business_address }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">사업자 상세주소</div>
+                    <div class="font-medium w-full flex items-center gap-2">
+                        <input type="text" class="setting_input h-[48px] w-full font-normal  business_address_detail" placeholder="주소"
+                            value="{{ $company -> business_address_detail }}">
+                    </div>
+                </div>
+                <div class="flex gap-4 w-full">
+                    <div class="essential w-[190px] shrink-0 mt-2">사업자등록증</div>
+                    <div class="font-medium w-full flex flex-center gap-2">
+                        <div class="file-form vertical">
+                            <input type="file" id="business" onchange="fileUpload(this)">
+                            <label for="business" class="error">사업자등록증 이미지를 첨부해주세요.</label>
+                        </div>
+                        <div class="text">
+                            <img src="{{ $company -> license_image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
+                            <p class="mt-1">명함 이미지 추가</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            
+
+            <div class="flex items-center justify-end">
+                <button class="btn btn-primary-line mt-5 px-5" type="button" onclick="updateUserInfo()">변경저장</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -395,6 +346,14 @@ const fileUpload = (input) => {
                 $('.filter_dropdown svg').removeClass('active');
             }
         });
+
+        
+        // 탭버튼
+        $('.my_tab button').on('click',function(){
+            let num = $(this).index();
+            $(this).addClass('border-primary').removeClass('border-slate-300').siblings().removeClass('border-primary').addClass('border-slate-300');
+            $('.tab_content > div').eq(num).addClass('active').siblings().removeClass('active')
+        })
     });
 
     const checkCompanyNumber = (isOpenOkVal) => {
