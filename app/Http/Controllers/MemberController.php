@@ -195,6 +195,7 @@ class MemberController extends BaseController {
         try {
 
             // 트랜잭션 시작
+            DB::beginTransaction();
             $data = [];
             $data = array_merge($data, $request->all());
 
@@ -209,6 +210,7 @@ class MemberController extends BaseController {
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
             $this->memberService->modifyUser($data);
+            DB::commit();
             
             return response()->json([
                 'success' => true,
@@ -251,7 +253,9 @@ class MemberController extends BaseController {
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
+            DB::beginTransaction();
             $this->memberService->updateUserWait($data);
+            DB::commit();
             
             return response()->json([
                 'success' => true,
@@ -275,9 +279,11 @@ class MemberController extends BaseController {
         }
     }
 
-    public function updateUserByWait(Request $request, int $userIdx): JsonResponse {
+    public function updateUserByWait(string $grade, int $userIdx): JsonResponse {
         
-        $this->memberService->updateUserByWait($userIdx, $request->input('fixedgrade'));
+        DB::beginTransaction();
+        $this->memberService->updateUserByWait($userIdx, $grade);
+        DB::commit();
 
         return response()->json([
             'success' => true,

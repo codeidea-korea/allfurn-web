@@ -426,14 +426,15 @@ class MemberService
     public function updateUserWait(array $params)
     {
         $updated = [
-            'upgrade_status' => '1',
+            'upgrade_status' => 1,
             'upgrade_json' => json_encode($params)
         ];
+
         User::where('idx', Auth::user()->idx)
             ->update($updated);
     }
 
-    public function updateUserByWait(int $userIdx, $grade)
+    public function updateUserByWait(int $userIdx, string $grade)
     {
         $user = User::where('idx', $userIdx)->first();
 
@@ -441,11 +442,17 @@ class MemberService
             return;
         }
 
-        $param = json_decode($user->upgrade_json);
-        if($grade != null && isset($grade)) {
+        $param = json_decode($user->upgrade_json,true);
+        if($grade != null && isset($grade) && ($grade == 'W' || $grade == 'R')) {
             $param['user_type'] = $grade;
         }
         $this->modifyUser($param);
+
+        $updated = [
+            'upgrade_status' => 2
+        ];
+        User::where('idx', $userIdx)
+            ->update($updated);
     }
 
 
