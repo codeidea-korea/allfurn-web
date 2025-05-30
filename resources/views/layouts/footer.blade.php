@@ -1,21 +1,23 @@
-@if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+@if(Auth::check())
     @if(request()->is(['product/detail/*', 'product/registration', 'magazine/*/detail/*', 
-                        'magazine/detail/*','community','community/*', 'message/*', 'help/*',
-                        'signin', 'signup','findid', 'findpw'
-                    ]))
-        {{-- 아무것도 표시 안함 --}}
-    @else
-        <div id="prod_regist_btn" class="">
-            <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
-        </div>
-    @endif
-    
-    @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-                    
-        <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
-            <a href="javascript:shareCatalog({{Auth::user()['company_idx']}},4);">카탈로그<br>보내기</a>
-        </div>
-        @include('layouts.includes.send-catalog')
+                            'magazine/detail/*','community','community/*', 'message/*', 'help/*',
+                            'signin', 'signup','findid', 'findpw'
+                        ]))
+            {{-- 아무것도 표시 안함 --}}
+        @else
+            <div id="prod_regist_btn" class="">
+                <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
+            </div>
+        @endif
+    @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+        
+        @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
+                        
+            <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
+                <a href="javascript:shareCatalog({{Auth::user()['company_idx']}},4);">카탈로그<br>보내기</a>
+            </div>
+            @include('layouts.includes.send-catalog')
+        @endif
     @endif
 @endif
     

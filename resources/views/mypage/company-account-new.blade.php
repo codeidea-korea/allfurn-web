@@ -66,12 +66,20 @@
                     <div class="essential w-[190px] shrink-0 mt-2">서비스구분</div>
                     <div class="flex gap-5 py-2">
                         <p>
-                            <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="1" disabled {{ $user -> type === 'R' ? 'checked' : '' }}>
-                            <label for="member_type_2">매장/판매</label>
+                            <input type="radio" class="radio-form" id="member_type_1" name="member_type" value="S" disabled {{ $user -> type === 'S' ? 'checked' : '' }}>
+                            <label for="member_type_1">일반</label>
                         </p>
                         <p>
-                            <input type="radio" class="radio-form" id="member_type_3" name="member_type" value="1" disabled {{ $user -> type === 'W' ? 'checked' : '' }}>
-                            <label for="member_type_3">제조/도매</label>
+                            <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="N" disabled {{ $user -> type === 'N' ? 'checked' : '' }}>
+                            <label for="member_type_2">기타 가구 관련업종</label>
+                        </p>
+                        <p>
+                            <input type="radio" class="radio-form" id="member_type_3" name="member_type" value="R" disabled {{ $user -> type === 'R' ? 'checked' : '' }}>
+                            <label for="member_type_3">매장/판매</label>
+                        </p>
+                        <p>
+                            <input type="radio" class="radio-form" id="member_type_4" name="member_type" value="W" disabled {{ $user -> type === 'W' ? 'checked' : '' }}>
+                            <label for="member_type_4">제조/도매</label>
                         </p>
                     </div>
                 </div>    
@@ -355,7 +363,7 @@ const fileUpload = (input) => {
     });
 
     const checkCompanyNumber = (isOpenOkVal) => {
-        const targetCompanySection = $('._company_section:visible');
+        const targetCompanySection = $('._company_section');
         const originBusinessCode = '{{ $company -> business_license_number }}';
         const businessCode = targetCompanySection.find('.business_code').val();
 
@@ -406,9 +414,11 @@ const fileUpload = (input) => {
             $('#loadingContainer').hide();
             return false;
         }
-        if(company_type != 'S' && !checkCompanyNumber(1)) {
-            $('#loadingContainer').hide();
-            return;
+        if($('._company_section').length > 0) {
+            if(company_type != 'S' && !checkCompanyNumber(1)) {
+                $('#loadingContainer').hide();
+                return;
+            }
         }
 
         var form = new FormData();
@@ -420,7 +430,7 @@ const fileUpload = (input) => {
         if(storedFile) {
             form.append("user_file", storedFile);
         }
-        const targetCompanySection = $('._company_section:visible');        
+        const targetCompanySection = $('._company_section');        
         form.append("email", $('#user_email').val());
         form.append("business_code", targetCompanySection.find('.business_code').val());
         form.append("company_name", targetCompanySection.find('.company_name').val());

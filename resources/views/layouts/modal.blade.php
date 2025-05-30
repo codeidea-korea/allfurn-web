@@ -978,6 +978,12 @@
 
 
     @if(isset($isMobile)) 
+    <div class="modal" id="pop_info_kakao-modal" style="z-index: 10001;">
+        <div class="modal_bg" onclick="modalClose('#pop_info_kakao-modal')"></div>
+        <div class="modal_inner modal-md" id="pop_info_kakao_address">
+        </div>
+    </div>
+
     <div class="modal" id="pop_info_4-modal">
         <div class="modal_bg" onclick="modalClose('#pop_info_4-modal')"></div>
         <div class="modal_inner modal-md">
@@ -1027,7 +1033,7 @@
                                 <div class="add_tab">
                                     <!-- 국내 -->
                                     <div class="flex gap-1">
-                                        <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCode()" placeholder="주소를 검색해주세요">
+                                        <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCodeMobile()" placeholder="주소를 검색해주세요">
                                         <button class="btn btn-black-line">주소 검색</button>
                                     </div>
                                     <!-- 해외 -->
@@ -1288,8 +1294,9 @@
 
             $('#loadingContainer').show();
 
-            if(_convert_company_type != 'S' && !convertCompany.checkCompanyNumber(1) && !convertCompany.verifyForm()) {
+            if(!convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
                 $('#loadingContainer').hide();
+                modalOpen('#pop_info_4-modal');
                 return;
             }
 
@@ -1347,7 +1354,30 @@
                         targetCompanySection.find('.business_address').val(addr);
                         targetCompanySection.find('.business_address_detail').focus();
                     }
-                }).open();
+                })
+                .open();
+            });
+        },
+        execPostCodeMobile(t) {
+            daum.postcode.load(function() {
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        var addr = '';
+
+                        if (data.userSelectedType === 'R') {
+                            addr = data.roadAddress;
+                        } else {
+                            addr = data.jibunAddress;
+                        }
+                        const targetCompanySection = $('._convert_company_section:visible');
+                        targetCompanySection.find('.business_address').val(addr);
+                        targetCompanySection.find('.business_address_detail').focus();
+                        modalClose('#pop_info_kakao-modal');
+                    }
+                })
+                .embed($('#pop_info_kakao_address')[0]);
+
+                modalOpen('#pop_info_kakao-modal');
             });
         },
         openPopupByWholesaler(){
