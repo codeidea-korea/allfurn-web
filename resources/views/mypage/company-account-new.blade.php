@@ -41,7 +41,7 @@
                 </div>
                 <div class="flex gap-4 w-full">
                     <div class="essential w-[190px] shrink-0 mt-2">명함</div>
-                    <div class="font-medium w-full flex flex-center gap-2">
+                    <div class="font-medium w-full flex flex-col flex-center gap-2">
                         <div class="file-form horizontal">
                             <input type="file" id="card" onchange="fileUpload(this)">
                             <label for="card" class="error">명함 이미지를 첨부해주세요.</label>
@@ -113,7 +113,7 @@
                 </div>
                 <div class="flex gap-4 w-full">
                     <div class="essential w-[190px] shrink-0 mt-2">사업자등록증</div>
-                    <div class="font-medium w-full flex flex-center gap-2">
+                    <div class="font-medium w-full flex flex-col flex-center gap-2">
                         <div class="file-form vertical">
                             <input type="file" id="business" onchange="fileUpload(this)">
                             <label for="business" class="error">사업자등록증 이미지를 첨부해주세요.</label>

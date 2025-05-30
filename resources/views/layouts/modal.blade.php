@@ -1211,6 +1211,8 @@
                     img = document.createElement('img')
                 }
 
+                input.nextElementSibling.nextElementSibling.classList.add('!hidden')
+
                 reader.onload = function(e) {
                     img.src = e.target.result
                     input.parentNode.parentNode.querySelector('.file-form').append(img)
