@@ -48,7 +48,6 @@
                         </div>
                         <div class="text">
                             <img class="mx-auto" src="{{ $user -> image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
-                            <p class="mt-1">명함 이미지 추가</p>
                         </div>
                     </div>
                 </div>
@@ -120,7 +119,6 @@
                         </div>
                         <div class="text">
                             <img src="{{ $company -> license_image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
-                            <p class="mt-1">명함 이미지 추가</p>
                         </div>
                     </div>
                 </div>
