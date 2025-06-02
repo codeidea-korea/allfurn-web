@@ -66,8 +66,6 @@
                                 <div class="file-form horizontal">
                                     <input type="file" id="card" onchange="fileUpload(this)">
                                     <label for="card" class="error">명함 이미지를 첨부해주세요.</label>
-                                </div>
-                                <div class="text">
                                     <img class="mx-auto" src="{{ $user -> image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
                                 </div>
                             </div>
@@ -86,7 +84,7 @@
 
                         <div class="flex flex-col gap-2 w-full">
                             <div class="essential shrink-0 mt-2">서비스구분</div>
-                            <div class="flex gap-5 py-2">
+                            <div class="flex gap-5 flex-wrap py-2">
                                 <p>
                                     <input type="radio" class="radio-form" id="member_type_1" name="member_type" value="S" disabled {{ $user -> type === 'S' ? 'checked' : '' }}>
                                     <label for="member_type_1">일반</label>
@@ -146,10 +144,7 @@
                                 <div class="file-form vertical">
                                     <input type="file" id="business" onchange="fileUpload(this)">
                                     <label for="business" class="error">사업자등록증 이미지를 첨부해주세요.</label>
-                                </div>
-                                <div class="text">
                                     <img class="mx-auto" src="{{ $company -> license_image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
-                                    <p class="mt-1">명함 이미지 추가</p>
                                 </div>
                             </div>
                         </div>
