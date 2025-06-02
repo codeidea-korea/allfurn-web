@@ -444,12 +444,15 @@ class MemberService
 
         $param = json_decode($user->upgrade_json,true);
         if($grade != null && isset($grade) && ($grade == 'W' || $grade == 'R')) {
+            $param['prev_company_type'] = $param['company_type'];
             $param['user_type'] = $grade;
+            $param['company_type'] = $grade;
         }
         $this->modifyUser($param);
 
         $updated = [
-            'upgrade_status' => 2
+            'upgrade_status' => 2,
+            'upgrade_json' => json_encode($param)
         ];
         User::where('idx', $userIdx)
             ->update($updated);

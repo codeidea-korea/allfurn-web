@@ -34,6 +34,7 @@ Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('s
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 Route::get('/signin/choose-emails', 'LoginController@chooseLoginEmails')->name('chooseLoginEmails');
 Route::post('/user/update-grade/{grade}/{idx}', 'MemberController@updateUserByWait');
+//Route::get('/user/update-grade22/{grade}/{idx}', 'MemberController@updateUserByWait');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
