@@ -33,6 +33,8 @@ Route::get('/findpw', 'LoginController@findpw')->name('findpw');
 Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('signinByAccessToken');
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 Route::get('/signin/choose-emails', 'LoginController@chooseLoginEmails')->name('chooseLoginEmails');
+Route::post('/user/update-grade/{grade}/{idx}', 'MemberController@updateUserByWait');
+//Route::get('/user/update-grade22/{grade}/{idx}', 'MemberController@updateUserByWait');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -85,6 +87,7 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
     Route::post('/createUserNew', 'MemberController@createUserNew');
     Route::post('/update', 'MemberController@updateUser');
+    Route::post('/update-wait', 'MemberController@updateUserWait');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 

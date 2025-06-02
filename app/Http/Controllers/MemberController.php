@@ -195,6 +195,7 @@ class MemberController extends BaseController {
         try {
 
             // 트랜잭션 시작
+            DB::beginTransaction();
             $data = [];
             $data = array_merge($data, $request->all());
 
@@ -209,6 +210,7 @@ class MemberController extends BaseController {
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
             $this->memberService->modifyUser($data);
+            DB::commit();
             
             return response()->json([
                 'success' => true,
@@ -230,6 +232,63 @@ class MemberController extends BaseController {
                 'message' => 'Failed to create user: ' . $e->getMessage()
             ]);
         }
+    }
+
+    public function updateUserWait(Request $request): JsonResponse {
+        Log::info("***** MemberController > updateUserWait");
+    
+        try {
+
+            // 트랜잭션 시작
+            $data = [];
+            $data = array_merge($data, $request->all());
+
+            if(array_key_exists('company_file', $data)) {
+                $storageName = "name-card-image";
+                $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
+                $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
+            }
+            if(array_key_exists('user_file', $data)) {
+                $storageName = "user-image";
+                $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
+                $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
+            }
+            DB::beginTransaction();
+            $this->memberService->updateUserWait($data);
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => ''
+            ]);
+            
+        } catch (Exception $e) {
+            // 에러 발생 시 롤백
+            
+            // 업로드된 파일이 있다면 삭제
+            if (isset($stored)) {
+                Storage::disk('vultr')->delete($stored);
+            }
+            
+            Log::error('User creation failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateUserByWait(string $grade, int $userIdx): JsonResponse {
+        
+        DB::beginTransaction();
+        $this->memberService->updateUserByWait($userIdx, $grade);
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => ''
+        ]);
     }
 
     public function terms()

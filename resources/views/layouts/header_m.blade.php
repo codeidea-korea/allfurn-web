@@ -27,10 +27,17 @@
         const userGrade = '{{Auth::user()-> type}}';
         if(grades.indexOf(userGrade) < 0) {
             const tmpMsg = grades.map(g => gradeNames.filter(n => n.grade === g)[0].name).join(', ')
-            alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
+            // alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
+            modalOpen('#pop_info_1-modal');
+
+            if(grades.indexOf('R') > -1) {
+                $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByRetail);
+            } else if(grades.indexOf('W') > -1) {
+                $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByWholesaler);
+            }
             if(userGrade === 'S'){
-                localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
-                location.href = '/mypage/normal-account';
+//                localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');
+//                location.href = '/mypage/normal-account';
             }
         }
     }
@@ -110,9 +117,8 @@
 </div>
 
 <div class="right_quick_box">
-@if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
     <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
-        <a href="/product/registration">상품<br/>등록</a>
+        <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br/>등록</a>
     </div>
     @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
         <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
@@ -120,7 +126,6 @@
         </div>
         @include('layouts.includes.send-catalog')
     @endif
-@endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
     <div style=" display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">

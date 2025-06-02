@@ -2,7 +2,7 @@
     <div class="inner">
         <div class="main_tit mb-8 flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <h3>BEST 신상품</h3>
+                <h3 class="text-primary">HOT 신상품</h3>
                 <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="/img/icon-defs.svg#zoom"></use></svg>확대보기</button>
             </div>
             <div class="flex items-center gap-7">

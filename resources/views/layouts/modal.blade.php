@@ -947,6 +947,468 @@
 @endif
 
 
+@if(auth()->check())
+    <div class="modal" id="pop_info_1-modal">
+        <div class="modal_bg" onclick="modalClose('#pop_info_1-modal')"></div>
+        <div class="modal_inner modal-md">
+            <button class="close_btn" onclick="modalClose('#pop_info_1-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>해당 기능은 회원 등업이 필요합니다.<br/> 이용을 원하실 경우, 업체 정보를 입력해 주시기 바랍니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#pop_info_1-modal')">취소</button>
+                    <button class="btn w-full btn-primary mt-5" id="pop_info_1-open-modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="pop_info_2-modal">
+        <div class="modal_bg" onclick="modalClose('#pop_info_2-modal')"></div>
+        <div class="modal_inner modal-md">
+            <button class="close_btn" onclick="modalClose('#pop_info_2-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body agree_modal_body">
+                <p class="text-center py-4"><b>회원 등업 신청이 완료되었습니다.<br/> 관리자의 승인 후 해당 기능을 이용하실 수 있습니다.</b></p>
+                <div class="flex gap-2 justify-center">
+                    <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#pop_info_2-modal')">취소</button>
+                    <button class="btn w-full btn-primary mt-5" onclick="modalClose('#pop_info_2-modal')">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if(isset($isMobile)) 
+    <div class="modal" id="pop_info_kakao-modal" style="z-index: 10001;">
+        <div class="modal_bg" onclick="modalClose('#pop_info_kakao-modal')"></div>
+        <div class="modal_inner modal-md" id="pop_info_kakao_address">
+        </div>
+    </div>
+
+    <div class="modal" id="pop_info_4-modal">
+        <div class="modal_bg" onclick="modalClose('#pop_info_4-modal')"></div>
+        <div class="modal_inner modal-md">
+            <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body  _convert_company_section">
+                <div class="form_box p-5">
+                    <input type="hidden" id="pop_info_4-member_type" value="0">
+                    <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
+                    <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
+                    <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
+
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary">사업자 등록 번호</dt>
+                            <dd class="flex gap-1">
+                                <div class="flex-1">
+                                    <input type="text" class="input-form w-full  business_code" onkeyup="$(this).parent().find('label').hide();" placeholder="사업자 등록 번호를 입력해주세요.">
+                                    <label for="" class="error _focus_business_code" style="display: none;">사업자번호를 정확히 입력해주세요</label>
+                                </div>
+                                <button class="btn btn-black-line" type="button" onclick="convertCompany.checkCompanyNumber(0);">중복체크</button>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary">업체명</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full  company_name" onkeyup="$(this).parent().find('label').hide();" placeholder="업체명을 입력해주세요.">
+                                <label for="" class="error _focus_company_name" style="display: none;">업체명을 정확히 입력해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary">대표자명</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full  owner_name" onkeyup="$(this).parent().find('label').hide();" placeholder="대표자를 입력해주세요.">
+                                <label for="" class="error _focus_owner_name" style="display: none;">대표자명을 정확히 입력해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary">회사주소</dt>
+                            <dd>
+                            
+                                <div class="add_tab">
+                                    <!-- 국내 -->
+                                    <div class="flex gap-1">
+                                        <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCodeMobile()" placeholder="주소를 검색해주세요">
+                                        <button class="btn btn-black-line">주소 검색</button>
+                                    </div>
+                                    <!-- 해외 -->
+                                    <div class="dropdown_wrap hidden">
+                                        <button class="dropdown_btn">지역</button>
+                                        <div class="dropdown_list">
+                                            <div class="dropdown_item">아시아</div>
+                                            <div class="dropdown_item">아프리카</div>
+                                            <div class="dropdown_item">북아메리카</div>
+                                            <div class="dropdown_item">남아메리카</div>
+                                            <div class="dropdown_item">유럽</div>
+                                            <div class="dropdown_item">오세아니아</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 w-full">
+                                    <input type="text" class="input-form w-full  business_address_detail" placeholder="상세주소를 검색해주세요">
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
+                            <dd>
+                                <div class="file-form horizontal">
+                                    <input type="file" id="pop_info_4-business" onchange="convertCompany.fileUpload(this)">
+                                    <label for="pop_info_4-business" class="error  __error_profile_business_attachement">사업자등록증을 첨부해주세요.</label>
+                                    <div class="text">
+                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                        <p class="mt-1">이미지 추가</p>
+                                    </div>
+                                </div>
+                                <div class="info_box mt-2.5">
+                                    ・권장 형식: jpg, jpeg, png
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>    
+
+                <div class="flex gap-2 justify-center p-5">
+                    <button class="btn w-full btn-primary" type="button" onClick="convertCompany.updateUserInfo();">승인요청</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
+    <div class="modal" id="pop_info_4-modal">
+        <div class="modal_bg" onclick="modalClose('#pop_info_4-modal')"></div>
+        <div class="modal_inner modal-xl">
+            <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+            <div class="modal_body  _convert_company_section">
+                <div class="form_box p-10">
+                    <input type="hidden" id="pop_info_4-member_type" value="0">
+                    <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
+                    <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
+                    <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
+
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary">사업자 등록 번호</dt>
+                            <dd class="flex gap-1">
+                                <div class="flex-1">
+                                    <input type="text" class="input-form w-full  business_code" onkeyup="$(this).parent().find('label').hide();" placeholder="사업자 등록 번호를 입력해주세요.">
+                                    <label for="" class="error _focus_business_code" style="display: none;">사업자번호를 정확히 입력해주세요</label>
+                                </div>
+                                <button class="btn btn-black-line" type="button" onclick="convertCompany.checkCompanyNumber(0);">중복체크</button>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary">업체명</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full  company_name" onkeyup="$(this).parent().find('label').hide();" placeholder="업체명을 입력해주세요.">
+                                <label for="" class="error _focus_company_name" style="display: none;">업체명을 정확히 입력해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary">대표자명</dt>
+                            <dd>
+                                <input type="text" class="input-form w-full  owner_name" onkeyup="$(this).parent().find('label').hide();" placeholder="대표자를 입력해주세요.">
+                                <label for="" class="error _focus_owner_name" style="display: none;">대표자명을 정확히 입력해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary">회사 주소</dt>
+                            <dd>
+                                <div class="add_tab">
+                                    <!-- 국내 -->
+                                    <div class="flex gap-1">
+                                        <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCode()" placeholder="주소를 검색해주세요">
+                                        <button class="btn btn-black-line">주소 검색</button>
+                                    </div>
+                                    <!-- 해외 -->
+                                    <div class="dropdown_wrap hidden">
+                                        <button class="dropdown_btn">지역</button>
+                                        <div class="dropdown_list">
+                                            <div class="dropdown_item">아시아</div>
+                                            <div class="dropdown_item">아프리카</div>
+                                            <div class="dropdown_item">북아메리카</div>
+                                            <div class="dropdown_item">남아메리카</div>
+                                            <div class="dropdown_item">유럽</div>
+                                            <div class="dropdown_item">오세아니아</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 w-full">
+                                    <input type="text" class="input-form w-full  business_address_detail" placeholder="상세주소를 검색해주세요">
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
+                            <dd>
+                                <div class="file-form horizontal">
+                                    <input type="file" id="pop_info_4-business" onchange="convertCompany.fileUpload(this)">
+                                    <label for="pop_info_4-business" class="error  __error_profile_business_attachement">사업자등록증을 첨부해주세요.</label>
+                                    <div class="text">
+                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
+                                        <p class="mt-1">이미지 추가</p>
+                                    </div>
+                                </div>
+                                <div class="info_box mt-2.5">
+                                    ・권장 형식: jpg, jpeg, png
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+
+                </div>
+                <div class="flex gap-2 justify-center pb-10">
+                    <button class="btn w-1/3 btn-primary" type="button" onClick="convertCompany.updateUserInfo();">승인요청</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+
+    <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+
+    var _convert_company_type = '{{ auth() -> user()['type'] }}';
+
+    const convertCompany = {
+        getThumbFile(_IMG, maxWidth, width, height) {
+            var canvas = document.createElement("canvas");
+            if(width < maxWidth) {
+        //        return _IMG;
+            }
+            canvas.width = width; // (maxWidth);
+            canvas.height = height; // ((maxWidth / (width*1.0))*height);
+            canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
+
+            var dataURL = canvas.toDataURL("image/png");
+            var byteString = atob(dataURL.split(',')[1]);
+            var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            var tmpThumbFile = new Blob([ab], {type: mimeString});
+
+            return tmpThumbFile;
+        },
+        fileUpload(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                let img = input.parentNode.parentNode.querySelector('.file-form').querySelector('img');
+                if(!img){
+                    img = document.createElement('img')
+                }
+
+                input.nextElementSibling.nextElementSibling.classList.add('!hidden')
+
+                reader.onload = function(e) {
+                    img.src = e.target.result
+                    input.parentNode.parentNode.querySelector('.file-form').append(img)
+                    var image = new Image;
+                    image.onload = function() {
+                        if(input.id === 'pop_info_4-business') {
+                            $('.__error_profile_business_attachement').hide();
+                            convertCompany.storedCompanyFile = convertCompany.getThumbFile(image, 500, this.width, this.height);
+                        } else {
+                            convertCompany.storedFile = convertCompany.getThumbFile(image, 500, this.width, this.height);
+                        }
+                    };
+                    image.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        },
+        checkCompanyNumber(isOpenOkVal) {
+            const targetCompanySection = $('._convert_company_section:visible');
+            const businessCode = targetCompanySection.find('.business_code').val();
+            
+            if(businessCode.replaceAll('-','').length != 10){
+                alert('잘못된 사업자 등록번호입니다.');
+                return false;
+            }
+            let dupplicated = true;
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: '/member/checkUsingBusinessNumber',
+                data: {
+                    'business_number': businessCode.replaceAll('-','')
+                },
+                type: 'POST',
+                dataType: 'json',
+                async: false,
+                success: function(result) {
+                    if (result == 0) {
+                        if(!isOpenOkVal) {
+                            alert('사용가능한 사업자번호 입니다.');
+                        }
+                        dupplicated = false;
+                    } else {
+                        if(!isOpenOkVal) {
+                            alert('중복된 사업자 등록번호입니다.');
+                        }
+                    }
+                }
+            });
+            return !dupplicated;
+        },
+        verifyForm(){
+            const targetCompanySection = $('._convert_company_section:visible');
+            const businessCode = targetCompanySection.find('.business_code').val();
+            const companyName = targetCompanySection.find('.company_name').val();
+            const ownerName = targetCompanySection.find('.owner_name').val();
+
+            if(!businessCode || businessCode.trim() == '') {
+                targetCompanySection.find('._focus_business_code').show();
+                return false;
+            }
+            if(!companyName || companyName.trim() == '') {
+                targetCompanySection.find('._focus_company_name').show();
+                return false;
+            }
+            if(!ownerName || ownerName.trim() == '') {
+                targetCompanySection.find('._focus_owner_name').show();
+                return false;
+            }
+            return true;
+        },
+        updateUserInfo() {
+            modalClose('#pop_info_4-modal');
+
+            $('#loadingContainer').show();
+
+            if(!convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
+                $('#loadingContainer').hide();
+                modalOpen('#pop_info_4-modal');
+                return;
+            }
+
+            var form = new FormData();
+                    
+            form.append("company_type", _convert_company_type);
+            form.append("user_email", $('#pop_info_4-user_email').val());
+            form.append("user_name", $('#pop_info_4-user_name').val());
+            form.append("user_phone", $('#pop_info_4-user_phone').val());
+
+            if(convertCompany.storedFile) {
+                form.append("user_file", convertCompany.storedFile);
+            }
+            const targetCompanySection = $('._convert_company_section:visible');        
+            form.append("email", $('#pop_info_4-user_email').val());
+            form.append("business_code", targetCompanySection.find('.business_code').val());
+            form.append("company_name", targetCompanySection.find('.company_name').val());
+            form.append("owner_name", targetCompanySection.find('.owner_name').val());
+            form.append("business_address", targetCompanySection.find('.business_address').val());
+            form.append("business_address_detail", targetCompanySection.find('.business_address_detail').val());
+
+            if(convertCompany.storedCompanyFile) {
+                form.append("company_file", convertCompany.storedCompanyFile);
+            }
+
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url             : '/member/update-wait',
+                enctype         : 'multipart/form-data',
+                processData     : false,
+                contentType     : false,
+                data			: form,
+                type			: 'POST',
+                async: false,
+                success: function (result) {
+                    $('#loadingContainer').hide();
+                    modalOpen('#pop_info_2-modal');
+                }, error: function (e) {
+                    $('#loadingContainer').hide();
+                }
+            });
+        },
+        execPostCode(t) {
+            daum.postcode.load(function() {
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        var addr = '';
+
+                        if (data.userSelectedType === 'R') {
+                            addr = data.roadAddress;
+                        } else {
+                            addr = data.jibunAddress;
+                        }
+                        const targetCompanySection = $('._convert_company_section:visible');
+                        targetCompanySection.find('.business_address').val(addr);
+                        targetCompanySection.find('.business_address_detail').focus();
+                    }
+                })
+                .open();
+            });
+        },
+        execPostCodeMobile(t) {
+            daum.postcode.load(function() {
+                new daum.Postcode({
+                    oncomplete: function(data) {
+                        var addr = '';
+
+                        if (data.userSelectedType === 'R') {
+                            addr = data.roadAddress;
+                        } else {
+                            addr = data.jibunAddress;
+                        }
+                        const targetCompanySection = $('._convert_company_section:visible');
+                        targetCompanySection.find('.business_address').val(addr);
+                        targetCompanySection.find('.business_address_detail').focus();
+                        modalClose('#pop_info_kakao-modal');
+                    }
+                })
+                .embed($('#pop_info_kakao_address')[0]);
+
+                modalOpen('#pop_info_kakao-modal');
+            });
+        },
+        openPopupByWholesaler(){
+            const userGrade = '{{Auth::user()-> type}}';
+            if(['W'].indexOf(userGrade) > -1) {
+                // 이미 권한이 충분합니다.
+                return false;
+            }
+            $('.__label_profile_business_attachement').text('사업자등록증');
+            $('.__error_profile_business_attachement').text('사업자등록증을 첨부해주세요.');
+            _convert_company_type = 'W';
+            
+            modalClose('#pop_info_1-modal');
+            modalOpen('#pop_info_4-modal');
+        },
+        openPopupByRetail(){
+            const userGrade = '{{Auth::user()-> type}}';
+            if(['R'].indexOf(userGrade) > -1) {
+                // 이미 권한이 충분합니다.
+                return false;
+            }
+            $('.__label_profile_business_attachement').text('명함 또는 사업자등록증');
+            $('.__error_profile_business_attachement').text('명함 또는 사업자등록증을 첨부해주세요.');
+            _convert_company_type = 'R';
+            
+            modalClose('#pop_info_1-modal');
+            modalOpen('#pop_info_4-modal');
+        },
+    };
+    </script>
+@endif
 
 <!-- 모달 들어가는곳 : E -->
 
