@@ -45,8 +45,6 @@
                         <div class="file-form horizontal">
                             <input type="file" id="card" onchange="fileUpload(this)">
                             <label for="card" class="error">명함 이미지를 첨부해주세요.</label>
-                        </div>
-                        <div class="text">
                             <img class="mx-auto" src="{{ $user -> image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
                         </div>
                     </div>
@@ -124,8 +122,6 @@
                         <div class="file-form vertical">
                             <input type="file" id="business" onchange="fileUpload(this)">
                             <label for="business" class="error">사업자등록증 이미지를 첨부해주세요.</label>
-                        </div>
-                        <div class="text">
                             <img src="{{ $company -> license_image }}" onerror="this.src='/img/member/img_icon.svg';" alt="">
                         </div>
                     </div>

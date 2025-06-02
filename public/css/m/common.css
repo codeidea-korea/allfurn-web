@@ -41,15 +41,15 @@ textarea:focus {outline:0 none; }
 .input-file::file-selector-button {display:none; }
 
 .file-form {overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; border:1px dashed #bdbdbd; border-radius:5px; cursor:pointer; text-align:center; font-size:14px; font-weight:500; color:#bdbdbd; }
-.file-form input {position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; }
+.file-form input {z-index:3; position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; }
 .file-form.vertical {width:180px; height:240px; }
 .file-form.horizontal {width:230px; height:130px; }
 .file-form.full {overflow:hidden; width:100%; height:280px; border:0 none; background: #F5F5F5; }
 .file-form .text {display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; }
 .file-form .text img {width:28px; height:auto; }
 .file-form.img_auto img {width:auto; height:auto; max-height:90%;}
-.file-form img {width:100%; height:100%; }
-.file-form .error {position:absolute; left:0; top:0; display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; word-break:keep-all; background-color:#fff; }
+.file-form img {z-index:2; position:relative; width:100%; height:100%; }
+.file-form .error {z-index:1; position:absolute; left:0; top:0; display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; word-break:keep-all; background-color:#fff; }
 
 .radio-form {display:none; }
 .radio-form + label {position:relative; display:flex; align-items:center; gap:5px; cursor:pointer; }
