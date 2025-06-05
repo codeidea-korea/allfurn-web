@@ -451,7 +451,7 @@ class MemberService
         $this->modifyUser($param);
 
         $updated = [
-            'upgrade_status' => 2,
+            'upgrade_status' => 3,
             'upgrade_json' => json_encode($param)
         ];
         User::where('idx', $userIdx)

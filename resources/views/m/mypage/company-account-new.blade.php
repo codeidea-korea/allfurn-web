@@ -86,20 +86,16 @@
                             <div class="essential shrink-0 mt-2">서비스구분</div>
                             <div class="flex gap-5 flex-wrap py-2">
                                 <p>
-                                    <input type="radio" class="radio-form" id="member_type_1" name="member_type" value="S" disabled {{ $user -> type === 'S' ? 'checked' : '' }}>
-                                    <label for="member_type_1">일반</label>
-                                </p>
-                                <p>
-                                    <input type="radio" class="radio-form" id="member_type_2" name="member_type" value="N" disabled {{ $user -> type === 'N' ? 'checked' : '' }}>
-                                    <label for="member_type_2">기타 가구 관련업종</label>
-                                </p>
-                                <p>
-                                    <input type="radio" class="radio-form" id="member_type_3" name="member_type" value="R" disabled {{ $user -> type === 'R' ? 'checked' : '' }}>
-                                    <label for="member_type_3">매장/판매</label>
-                                </p>
-                                <p>
-                                    <input type="radio" class="radio-form" id="member_type_4" name="member_type" value="W" disabled {{ $user -> type === 'W' ? 'checked' : '' }}>
-                                    <label for="member_type_4">제조/도매</label>
+                                    @if ($user -> type === 'S')
+                                    일반
+                                    @elseif ($user -> type === 'N')
+                                    기타 가구 관련업종
+                                    @elseif ($user -> type === 'R')
+                                    매장/판매
+                                    @elseif ($user -> type === 'W')
+                                    제조/도매
+                                    @endif
+                                    <input type="hidden" id="member_type_1" name="member_type" value="{{ $user -> type }}">
                                 </p>
                             </div>
                         </div>

@@ -88,6 +88,8 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/createUserNew', 'MemberController@createUserNew');
     Route::post('/update', 'MemberController@updateUser');
     Route::post('/update-wait', 'MemberController@updateUserWait');
+    
+    Route::get('/company/own', 'MypageController@getCompanyAjax');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 

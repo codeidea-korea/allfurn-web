@@ -800,7 +800,6 @@ class MypageController extends BaseController
         }
     }
 
-
     /**
      * 업체 계정 정보 수정
      * @param Request $request
@@ -1390,4 +1389,39 @@ class MypageController extends BaseController
 			'message' => '회원구분이 성공적으로 저장되었습니다.'
 		]);
 	}
+
+
+    /**
+     * 계정 구분 변경을 위한 데이터 조회
+     * @return JsonResponse
+     */
+    public function getCompanyAjax(): JsonResponse {
+    	$data = [];
+        
+        $data['user'] = $this -> getLoginUser();
+        $user_type = Auth::user()['type'];
+
+        $nameCardImage = $this->mypageService->getUserNameCard();
+        $data['nameCardImage'] = $nameCardImage ?? '';
+        $data['point'] = $this->mypageService->getPointList();
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+        $data['xtoken'] = $xtoken;
+        
+        $data['pageType'] = 'company-account-new';
+        $data['company'] = $this -> mypageService -> getCompanyAccount();
+        $data['members'] = $this -> mypageService -> getCompanyMembers();
+
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
+    }
+
 }
