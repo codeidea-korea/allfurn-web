@@ -33,9 +33,22 @@ class MemberService
     
     public function checkBussinessNumber(string $business_number) {
         
-        $whole_cnt = CompanyWholesale::where('business_license_number', $business_number)->count();
-        
-        $retail_cnt = CompanyRetail::where('business_license_number', $business_number)->count();
+        $whole_cnt = 0;
+        $retail_cnt = 0;
+
+        $wholesale = CompanyWholesale::where('business_license_number', $business_number);
+        $retail = CompanyRetail::where('business_license_number', $business_number);
+
+        $where = [];
+        if (Auth::check()) {
+            if(Auth::user()['type'] == 'W') {
+                $wholesale = $wholesale->where('idx', '!=', Auth::user()['company_idx']);
+            } else if(Auth::user()['type'] == 'R') {
+                $retail = $retail->where('idx', '!=', Auth::user()['company_idx']);
+            }
+        }
+        $whole_cnt = $wholesale->count();
+        $retail_cnt = $retail->count();
         
         return $whole_cnt+$retail_cnt;
     }
