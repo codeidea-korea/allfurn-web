@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Storage;
 
 class MemberService
 {
+    private $pushService;
+    
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
+
     public function checkEmail(string $email)
     {
         return User::where('account', $email)->where('state', '!=', 'D')->count();
@@ -469,6 +476,14 @@ class MemberService
         ];
         User::where('idx', $userIdx)
             ->update($updated);
+
+        
+        $templateCode = 'UA_3328';
+        $title = '서비스 변경 승인 알림';
+        $replaceParams = rawurlencode("{\"고객명\":\"" . $user->name . "\"}");
+        $receiver = $user->phone_number;
+        $reservate = '';
+        $this->pushService->sendKakaoAlimtalk($templateCode, $title, json_decode($replaceParams, true), $receiver, $reservate)
     }
 
 
