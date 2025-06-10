@@ -1422,6 +1422,7 @@
                     const userType = response.data.user.type;
                     const user = response.data.user;
 
+                    $('._convert_company_section').find('#pop_info_4-business').parent().find('img').remove();
                     if(['W', 'R'].indexOf(userType) > -1) {
                         const company = response.data.company;
 
