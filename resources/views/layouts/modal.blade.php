@@ -1422,9 +1422,6 @@
                     const userType = response.data.user.type;
                     const user = response.data.user;
 
-                    $('._convert_company_section').find('#pop_info_4-business').parent()
-                        .append('<img class="mx-auto" src="'+user.image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
-
                     if(['W', 'R'].indexOf(userType) > -1) {
                         const company = response.data.company;
 
@@ -1436,6 +1433,9 @@
                         $('._convert_company_section').find('#pop_info_4-business').parent().find('div').addClass('!hidden');
                         $('._convert_company_section').find('#pop_info_4-business').parent()
                             .append('<img class="mx-auto" src="'+company.license_image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
+                    } else {
+                        $('._convert_company_section').find('#pop_info_4-business').parent()
+                            .append('<img class="mx-auto" src="'+user.image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
                     }
                 },
                 error: function(error) {
