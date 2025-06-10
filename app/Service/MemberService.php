@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Storage;
 
 class MemberService
 {
+    private $pushService;
+    
+    public function __construct(PushService $pushService)
+    {
+        $this->pushService = $pushService;
+    }
+
     public function checkEmail(string $email)
     {
         return User::where('account', $email)->where('state', '!=', 'D')->count();
@@ -33,9 +40,22 @@ class MemberService
     
     public function checkBussinessNumber(string $business_number) {
         
-        $whole_cnt = CompanyWholesale::where('business_license_number', $business_number)->count();
-        
-        $retail_cnt = CompanyRetail::where('business_license_number', $business_number)->count();
+        $whole_cnt = 0;
+        $retail_cnt = 0;
+
+        $wholesale = CompanyWholesale::where('business_license_number', $business_number);
+        $retail = CompanyRetail::where('business_license_number', $business_number);
+
+        $where = [];
+        if (Auth::check()) {
+            if(Auth::user()['type'] == 'W') {
+                $wholesale = $wholesale->where('idx', '!=', Auth::user()['company_idx']);
+            } else if(Auth::user()['type'] == 'R') {
+                $retail = $retail->where('idx', '!=', Auth::user()['company_idx']);
+            }
+        }
+        $whole_cnt = $wholesale->count();
+        $retail_cnt = $retail->count();
         
         return $whole_cnt+$retail_cnt;
     }
@@ -451,11 +471,22 @@ class MemberService
         $this->modifyUser($param);
 
         $updated = [
-            'upgrade_status' => 2,
+            'upgrade_status' => 3,
             'upgrade_json' => json_encode($param)
         ];
         User::where('idx', $userIdx)
             ->update($updated);
+
+        
+        $templateCode = 'UA_3328';
+        $title = '서비스 변경 승인 알림';
+        $replaceParams = 
+                [ 
+                    '고객명' => $user->name,
+                ];
+        $receiver = $user->phone_number;
+        $reservate = '';
+        $this->pushService->sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver, $reservate);
     }
 
 

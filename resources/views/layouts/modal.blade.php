@@ -1034,7 +1034,7 @@
                                     <!-- 국내 -->
                                     <div class="flex gap-1">
                                         <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCodeMobile()" placeholder="주소를 검색해주세요">
-                                        <button class="btn btn-black-line">주소 검색</button>
+                                        <button class="btn btn-black-line" type="button" onclick="convertCompany.execPostCodeMobile()">주소 검색</button>
                                     </div>
                                     <!-- 해외 -->
                                     <div class="dropdown_wrap hidden">
@@ -1131,7 +1131,7 @@
                                     <!-- 국내 -->
                                     <div class="flex gap-1">
                                         <input type="text" class="input-form w-full  business_address" onclick="convertCompany.execPostCode()" placeholder="주소를 검색해주세요">
-                                        <button class="btn btn-black-line">주소 검색</button>
+                                        <button class="btn btn-black-line" type="button" onclick="convertCompany.execPostCode()">주소 검색</button>
                                     </div>
                                     <!-- 해외 -->
                                     <div class="dropdown_wrap hidden">
@@ -1295,6 +1295,9 @@
             $('#loadingContainer').show();
 
             if(!convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
+                if(!convertCompany.checkCompanyNumber(1)) {
+                    alert('중복된 사업자 등록번호입니다.');
+                }
                 $('#loadingContainer').hide();
                 modalOpen('#pop_info_4-modal');
                 return;
@@ -1389,7 +1392,7 @@
             $('.__label_profile_business_attachement').text('사업자등록증');
             $('.__error_profile_business_attachement').text('사업자등록증을 첨부해주세요.');
             _convert_company_type = 'W';
-            
+            convertCompany.loadPopup();
             modalClose('#pop_info_1-modal');
             modalOpen('#pop_info_4-modal');
         },
@@ -1402,9 +1405,45 @@
             $('.__label_profile_business_attachement').text('명함 또는 사업자등록증');
             $('.__error_profile_business_attachement').text('명함 또는 사업자등록증을 첨부해주세요.');
             _convert_company_type = 'R';
+            convertCompany.loadPopup();
             
             modalClose('#pop_info_1-modal');
             modalOpen('#pop_info_4-modal');
+        },
+        loadPopup(){
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "/member/company/own",
+                type: 'GET',
+                data: {},
+                dataType: 'json',
+                success: function(response) {
+
+                    const userType = response.data.user.type;
+                    const user = response.data.user;
+
+                    $('._convert_company_section').find('#pop_info_4-business').parent().find('img').remove();
+                    if(['W', 'R'].indexOf(userType) > -1) {
+                        const company = response.data.company;
+
+                        $('._convert_company_section').find('.business_code').val(company.business_license_number);
+                        $('._convert_company_section').find('.company_name').val(company.company_name);
+                        $('._convert_company_section').find('.owner_name').val(company.owner_name);
+                        $('._convert_company_section').find('.business_address').val(company.business_address);
+                        $('._convert_company_section').find('.business_address_detail').val(company.business_address_detail);
+                        $('._convert_company_section').find('#pop_info_4-business').parent().find('div').addClass('!hidden');
+                        $('._convert_company_section').find('#pop_info_4-business').parent()
+                            .append('<img class="mx-auto" src="'+company.license_image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
+                    } else {
+                        $('._convert_company_section').find('#pop_info_4-business').parent()
+                            .append('<img class="mx-auto" src="'+user.image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    console.log('Error:', error);
+                }
+            });
         },
     };
     </script>

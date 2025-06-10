@@ -202,10 +202,11 @@ class PushService
             $button2['linkIos'] = $alimtalkTemplate->buttons[1]->linkIos;
             $button2['linkAnd'] = $alimtalkTemplate->buttons[1]->linkAnd;
 
-            $button_1 = rawurlencode('{"button":['. json_encode($button) . ',' .json_encode($button2) . ']}');
+            $button_1 = rawurlencode('{"button":['. json_encode($button, JSON_UNESCAPED_UNICODE) . ',' .json_encode($button2, JSON_UNESCAPED_UNICODE) . ']}');
         } else {
-            $button_1 = rawurlencode('{"button":['. json_encode($button) . ']}');
+            $button_1 = rawurlencode('{"button":['. json_encode($button, JSON_UNESCAPED_UNICODE) . ']}');
         }
+
         $failover = 'Y';
         $fsubject_1 = rawurlencode($title);
         $fmessage_1 = rawurlencode($alimtalkTemplate->templtContent);
