@@ -1295,6 +1295,9 @@
             $('#loadingContainer').show();
 
             if(!convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
+                if(!convertCompany.checkCompanyNumber(1)) {
+                    alert('중복된 사업자 등록번호입니다.');
+                }
                 $('#loadingContainer').hide();
                 modalOpen('#pop_info_4-modal');
                 return;
@@ -1417,8 +1420,14 @@
                 success: function(response) {
 
                     const userType = response.data.user.type;
+                    const user = response.data.user;
+
+                    $('._convert_company_section').find('#pop_info_4-business').parent()
+                        .append('<img class="mx-auto" src="'+user.image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
+
                     if(['W', 'R'].indexOf(userType) > -1) {
                         const company = response.data.company;
+
                         $('._convert_company_section').find('.business_code').val(company.business_license_number);
                         $('._convert_company_section').find('.company_name').val(company.company_name);
                         $('._convert_company_section').find('.owner_name').val(company.owner_name);

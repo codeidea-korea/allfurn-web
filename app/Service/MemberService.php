@@ -480,10 +480,13 @@ class MemberService
         
         $templateCode = 'UA_3328';
         $title = '서비스 변경 승인 알림';
-        $replaceParams = rawurlencode("{\"고객명\":\"" . $user->name . "\"}");
+        $replaceParams = 
+                [ 
+                    '고객명' => $user->name,
+                ];
         $receiver = $user->phone_number;
         $reservate = '';
-        $this->pushService->sendKakaoAlimtalk($templateCode, $title, json_decode($replaceParams, true), $receiver, $reservate)
+        $this->pushService->sendKakaoAlimtalk($templateCode, $title, $replaceParams, $receiver, $reservate);
     }
 
 
