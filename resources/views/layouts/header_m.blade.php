@@ -122,9 +122,11 @@
     </div>
     @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
         <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
-            <a href="javascript:shareCatalog({{Auth::user()['company_idx']}},4);">카탈로그<br>보내기</a>
+            <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
         </div>
-        @include('layouts.includes.send-catalog')
+        @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+            @include('layouts.includes.send-catalog')
+        @endif
     @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
