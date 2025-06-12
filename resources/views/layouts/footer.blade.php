@@ -9,16 +9,14 @@
                 <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
             </div>
         @endif
-    @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
-        
         @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-                        
             <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
-                <a href="javascript:shareCatalog({{Auth::user()['company_idx']}},4);">카탈로그<br>보내기</a>
+                <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
             </div>
-            @include('layouts.includes.send-catalog')
+            @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+                @include('layouts.includes.send-catalog')
+            @endif
         @endif
-    @endif
 @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
