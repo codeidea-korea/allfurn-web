@@ -618,7 +618,9 @@ function validate(type = ''){
             modalOpen('#modal-validation'); 
             $(`#${type}phone_number`).focus();
     	    $('#modal-validation').find('.modal_body').find('button').off().on('click', function(){
-                modalClose('#modal-validation'); isCheckedDuplicatePhoneNumber = true;
+                modalClose('#modal-validation'); 
+                isCheckedDuplicatePhoneNumber = true; 
+                signup();
             });
             return false;
         }else{  
