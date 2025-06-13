@@ -293,7 +293,9 @@ function snsNaming(provider) {
 // 사용중 이메일, 사용중 휴대전화번호 체크
 function duplicateCheck(type ,param) {
     
-
+    $('#modal-validation').find('.modal_body').find('button').off().on('click', function(){
+        modalClose('#modal-validation');
+    });
     let result = '';
 
     // if(type === 'email' && !email_check(param)){
@@ -595,17 +597,35 @@ function validate(type = ''){
             $(`#${type}password_confirm`).removeClass('input-error');
         }
     }
+	/*
     let phoneResult = duplicateCheck('phone_number',phone_number);
     if( phoneResult !='' ){
         $(`#${type}phone_number`).addClass('input-error');
-        $(`#validation-ment`).html(phoneResult);
+        $(`#validation-ment`).html(phoneResult + '<br>추가로 회원가입을 진행하시겠습니까?');
         modalOpen('#modal-validation'); 
         $(`#${type}phone_number`).focus();
         return false;
     }else{  
         $(`#${type}phone_number`).removeClass('input-error');
-
     }
+	*/
+    if(checkedPhoneNumber != phone_number || !isCheckedDuplicatePhoneNumber) {
+        let phoneResult = duplicateCheck('phone_number',phone_number);
+        checkedPhoneNumber = phone_number; 
+        if( phoneResult !='' ){
+            $(`#${type}phone_number`).addClass('input-error');
+            $(`#validation-ment`).html(phoneResult + '<br>추가로 회원가입을 진행하시겠습니까?');
+            modalOpen('#modal-validation'); 
+            $(`#${type}phone_number`).focus();
+    	    $('#modal-validation').find('.modal_body').find('button').off().on('click', function(){
+                modalClose('#modal-validation'); isCheckedDuplicatePhoneNumber = true;
+            });
+            return false;
+        }else{  
+            $(`#${type}phone_number`).removeClass('input-error');
+        }
+    }
+	
     let emailResult =  duplicateCheck('email',email);
 
     if( emailResult !=''){
@@ -642,6 +662,8 @@ function validate(type = ''){
 	
     return true;
 }
+var isCheckedDuplicatePhoneNumber = false;
+var checkedPhoneNumber = '';
 
      // 탭변경
      $('.join_social button').on('click',function(){
