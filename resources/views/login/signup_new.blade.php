@@ -307,8 +307,8 @@ function snsNaming(provider) {
 // 사용중 이메일, 사용중 휴대전화번호 체크
 function duplicateCheck(type ,param) {
 
-    $('#modal-validation').find('.modal_body').find('button').off().on('click', function(){//
-        modalClose('#modal-validation');
+    $('#modal-validation-alert').find('.modal_body').find('button').off().on('click', function(){//
+        modalClose('#modal-validation-alert');
     });
 
     let result = '';
@@ -643,11 +643,11 @@ function validate(type = ''){
         checkedPhoneNumber = phone_number; 
         if( phoneResult !='' ){
             $(`#${type}phone_number`).addClass('input-error');
-            $(`#validation-ment`).html(phoneResult + '<br>추가로 회원가입을 진행하시겠습니까?');
-            modalOpen('#modal-validation'); 
+            $(`#validation-ment2`).html(phoneResult + '<br>추가로 회원가입을 진행하시겠습니까?');
+            modalOpen('#modal-validation-alert'); 
             $(`#${type}phone_number`).focus();
-    	    $('#modal-validation').find('.modal_body').find('button').off().on('click', function(){
-                modalClose('#modal-validation'); 
+    	    $($('#modal-validation-alert').find('.modal_body').find('button')[0]).off().on('click', function(){
+                modalClose('#modal-validation-alert'); 
                 isCheckedDuplicatePhoneNumber = true; 
                 signup();
             });
@@ -732,6 +732,20 @@ function isInOnlyAlphabetAndKorean(ele) {
             <p class="text-center py-4"><b id='validation-ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
             <div class="flex gap-2 justify-center">
                 <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation');">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-validation-alert">
+    <div class="modal_bg" onclick="modalClose('#modal-validation-alert')"></div>
+    <div class="modal_inner modal-sm">
+        <button type="button" class="close_btn" onclick="modalClose('#modal-validation-alert')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b id='validation-ment2'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">확인</button>
+                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">취소</button>
             </div>
         </div>
     </div>
