@@ -733,7 +733,7 @@ function isInOnlyAlphabetAndKorean(ele) {
             <p class="text-center py-4"><b id='validation-ment2'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
             <div class="flex gap-2 justify-center">
                 <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">확인</button>
-                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">취소</button>
+                <button type="button" class="btn btn-black-line w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">취소</button>
             </div>
         </div>
     </div>
