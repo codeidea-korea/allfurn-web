@@ -31,7 +31,7 @@ $header_banner = '';
     <section class="join_common" style="padding-top:0; ">
 
         <div class="join_social grid grid-cols-2 gap-4 text-center mb-5">
-            <button class="py-2 fs16 font-medium border-b border-primary">간편(SNS) 회원가입</button>
+            <button class="py-2 fs16 font-medium border-b border-primary">SNS 회원가입</button>
             <button class="py-2 fs16 font-medium">일반 회원가입</button>
         </div>
 
@@ -39,58 +39,12 @@ $header_banner = '';
 
             <div class="form_tab_content">
                 <div class="form_box">
-                    <div class="mb-3">
-                        <dl>
-                            <dt>SNS 연결</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" value="" readonly id="provider" autocomplete="false">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-3">
-                        <dl>
-                            <dt>이름</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" maxlength="30" value="" id="name" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-3">
-                        <dl>
-                            <dt>휴대폰번호</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" value=""  id="phone_number" autocomplete="false" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-3">
-                        <dl>
-                            <dt>이메일(아이디)</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full"  value="" readonly id="email" autocomplete="false">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-3">
-                        <dl>
-                            <dt>명함 첨부</dt>
-                            <dd>
-                                <div class="file-form horizontal">
-                                    <input type="file" onchange="fileUpload(this)" id="file" name="file" accept="image/*">
-                                    <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
-                                    <div class="text">
-                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                        <p class="mt-1">명함 이미지 추가</p>
-                                    </div>
-                                </div>
-                                <div class="info_box mt-2.5">
-                                    ・jpg, png만 지원 합니다.
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
+                    <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
+                    <a href="javascript:;" id="kakao" class="btn mb-2 text-white" style="background-color:#FAC813;">카카오 회원인증</a>
+                    <a href="javascript:openNormalLogin();" class="btn btn-primary">회원가입</a>
                 </div>
                 <div class="form_box hidden">
+                                <input type="hidden" value="" id="provider">
                     <div class="mb-3">
                         <dl>
                             <dt>이름</dt>
@@ -188,6 +142,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
     
+	// naver 간편 로그인
+	$("#naver").on('click', function (e) {
+	     e.preventDefault();
+	     openNaverLogin();
+	});
+	//google 간편 로그인
+	$("#google").on('click', function (e) {
+	     e.preventDefault();
+	     openGoogleLogin();
+	});
+	
+	//kakao 간편 로그인
+	$("#kakao").on('click', function (e) {
+	     e.preventDefault();
+	     openKakaoLogin();
+	});
+	
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     
@@ -255,6 +226,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+ function openNormalLogin(){
+    // 일반 회원가입 탭 활성화
+    signupType = 'normal';
+    $(".join_social").children().eq(1).trigger('click');
+ }
  
 function setReadonly(key,value) {
    
