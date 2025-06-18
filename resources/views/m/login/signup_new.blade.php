@@ -104,11 +104,11 @@ $header_banner = '';
                             </dd>
                         </dl>
                     </div>
-                </div>
-            </div>
 
-            <div class="btn_box">
-                <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    <div class="btn_box">
+                        <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -120,6 +120,18 @@ $header_banner = '';
 </div>
 
 <script>
+
+var isMobile = {
+    Android: function () {
+        return navigator.userAgent.match(/Chrome/) == null ? false : true;
+    },
+    iOS: function () {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+    },
+    any: function () {
+        return (isMobile.Android() || isMobile.iOS());
+    }
+};
 
 let duplicate_check = {
     email : false,
@@ -242,6 +254,60 @@ function setReadonly(key,value) {
   
 }
 
+function openNaverLogin() {
+    // let naverLoginUrl = `{{ route('social.naver.login') }}`;
+    // document.location = naverLoginUrl;
+    snsAppLogin('naver');
+    /*
+    $.ajax({
+        url: "{{ route('social.naver.login') }}",
+        method: "GET",
+        success: function (data) {
+             document.location = data.url;
+        },
+        error: function () {
+            alert('Failed to start Naver login process.');
+        }
+    });
+    */
+}
+function openGoogleLogin() {
+    snsAppLogin('google');
+}
+function openKakaoLogin() {
+    snsAppLogin('kakao');
+    /*
+    $.ajax({
+        url: "{{ route('social.kakao.login') }}",
+        method: "GET",
+        success: function (data) {
+               document.location = data.url;
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start kakao login process.');
+        }
+    });
+    */
+}
+function snsAppLogin(type) {
+    const payload = JSON.stringify({
+        type: "sns",
+        snsType: type
+    });
+    
+    if(isMobile.any() && !window.AppWebview && !(window.webkit && window.webkit.messageHandlers 
+        && window.webkit.messageHandlers.AppWebview)) {
+            
+        alert('인앱에서만 SNS 로그인이 가능합니다.');
+        return;
+    }
+    if(isMobile.Android()) {
+        window.AppWebview.postMessage(payload);
+    } else if (isMobile.iOS()) {
+        window.webkit.messageHandlers.AppWebview.postMessage(payload);
+    }
+}
 
 function snsNaming(provider) {
     let snsName = '';

@@ -35,17 +35,19 @@
 			</div>
 
             <div class="form_tab_content">
-                <div class="py-10">
-                    <div class="grid grid-cols-2 gap-10">
-                        <div>
-                            <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
-                            <a href="javascript:;" id="kakao" class="btn mb-2 text-white" style="background-color:#FAC813;">카카오 회원인증</a>
+                <div class="form_box">
+                    <div class="py-10">
+                        <div class="grid grid-cols-2 gap-10">
+                            <div>
+                                <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
+                                <a href="javascript:;" id="kakao" class="btn mb-2 text-white" style="background-color:#FAC813;">카카오 회원인증</a>
+                            </div>
+                            <a href="javascript:openNormalLogin();" class="btn btn-primary">회원가입</a>
                         </div>
-                        <a href="javascript:openNormalLogin();" class="btn btn-primary">회원가입</a>
                     </div>
                 </div>
                 <div class="form_box hidden">
-		    <input type="hidden" name="provider" id="provider">
+		            <input type="hidden" name="provider" id="provider">
                     <div class="mb-4">
                         <dl class="flex">
                             <dt>이름</dt>
@@ -104,11 +106,11 @@
                             </dd>
                         </dl>
                     </div>
-                </div>
-            </div>
 
-            <div class="btn_box">
-                <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    <div class="btn_box">
+                        <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -690,12 +692,6 @@ const fileUpload = (input) => {
 // 탭변경
 $('.join_social button').on('click',function(){
     let liN = $(this).index();
-	
-	if(liN === 0) {
-        // 아무 동작도 하지 않거나 경고 메시지 표시
-        // 예: alert("현재 SNS 회원가입 기능은 사용할 수 없습니다.");
-        return false;
-    }
 	
     $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
     $('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
