@@ -50,7 +50,7 @@
                         <dl class="flex">
                             <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
@@ -58,7 +58,7 @@
                         <dl class="flex">
                             <dt>휴대폰번호</dt>
                             <dd>
-                                <input type="text" maxlength="13" class="input-form w-full" placeholder="휴대폰번호를 입력해주세요." id="normal_phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                <input type="text" maxlength="13" class="input-form w-full" placeholder="휴대폰번호를 입력해주세요." id="phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                             </dd>
                         </dl>
                     </div>
@@ -66,7 +66,7 @@
                         <dl class="flex">
                             <dt>아이디</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" placeholder="아이디을 입력해주세요." id="normal_email">
+                                <input type="text" class="input-form w-full" placeholder="아이디을 입력해주세요." id="email">
                             </dd>
                         </dl>
                     </div>
@@ -74,7 +74,7 @@
                         <dl class="flex">
                             <dt>비밀번호</dt>
                             <dd>
-                                <input type="password" class="input-form w-full" placeholder="비밀번호를 입력해주세요." id="normal_password">
+                                <input type="password" class="input-form w-full" placeholder="비밀번호를 입력해주세요." id="password">
                             </dd>
                         </dl>
                     </div>
@@ -82,7 +82,7 @@
                         <dl class="flex">
                             <dt>비밀번호 확인</dt>
                             <dd>
-                                <input type="password" class="input-form w-full" placeholder="비밀번호 확인을 입력해주세요." id="normal_password_chk">
+                                <input type="password" class="input-form w-full" placeholder="비밀번호 확인을 입력해주세요." id="password_chk">
                             </dd>
                         </dl>
                     </div>
@@ -91,7 +91,7 @@
                             <dt>명함 첨부</dt>
                             <dd>
                                 <div class="file-form horizontal">
-                                    <input type="file" onchange="fileUpload(this)" id="normal_file" name="normal_file" accept="image/*">
+                                    <input type="file" onchange="fileUpload(this)" id="file" name="file" accept="image/*">
                                     <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
                                     <div class="text">
                                         <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
@@ -459,17 +459,17 @@ function signup(){
 
 function normalSignUp(){
     
-    if(validate('normal_')){
+    if(validate()){
 	$('#loadingContainer').show();
 
         let formData = new FormData();
             
             // 데이터 추가
             formData.append('user_type', userType);
-            formData.append('name', $('#normal_name').val());
-            formData.append('email', $('#normal_email').val());
-            formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
-            formData.append('password', $('#normal_password').val());
+            formData.append('name', $('#name').val());
+            formData.append('email', $('#email').val());
+            formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
+            formData.append('password', $('#password').val());
 	    
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
@@ -477,7 +477,7 @@ function normalSignUp(){
             formData.append('agreementAd',  0);
                 
             // 파일 추가
-            let fileInput = $('#normal_file')[0];
+            let fileInput = $('#file')[0];
             if(fileInput.files[0]) {
                 formData.append('file', fileInput.files[0]);
             }
@@ -586,7 +586,7 @@ function validate(type = ''){
 
     }
 
-    if(type === 'normal_'){
+    if(type === ''){
         if(password == '' || password == 'undefined'){
             $(`#${type}password`).addClass('input-error');
             $('#validation-ment').html('비밀번호를 입력해주세요.');
