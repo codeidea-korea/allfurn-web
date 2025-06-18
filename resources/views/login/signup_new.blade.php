@@ -30,65 +30,22 @@
             </div>
 
             <div class="join_social grid grid-cols-2 gap-10 text-center">
-				<button class="py-5" style="font-size:22px">간편(SNS) 회원가입</button>
+				<button class="py-5" style="font-size:22px">SNS 회원가입</button>
 				<button class="py-5 border-b border-primary" style="font-size:22px">일반 회원가입</button>
 			</div>
 
             <div class="form_tab_content">
-                <div class="form_box">
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt class="necessary">SNS 연결</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" value="" readonly id="provider" autocomplete="false">
-                              
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt class="necessary">이름</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" value="" id="name" maxlength="30" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt class="necessary">휴대폰번호</dt>
-                            <dd>
-                                <input type="text" maxlength="13"  class="input-form w-full" value=""  id="phone_number" autocomplete="false" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt class="necessary">이메일(아이디)</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" value="" readonly id="email" autocomplete="false">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt class="necessary">명함 첨부</dt>
-                            <dd>
-                                <div class="file-form horizontal">
-                                    <input type="file" onchange="fileUpload(this)" id="file" name="file" accept="image/*">
-                                    <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
-                                    <div class="text">
-                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                        <p class="mt-1">명함 이미지 추가</p>
-                                    </div>
-                                </div>
-                                <div class="info_box mt-2.5">
-                                    ・jpg, png만 지원 합니다.
-                                </div>
-                            </dd>
-                        </dl>
+                <div class="py-10">
+                    <div class="grid grid-cols-2 gap-10">
+                        <div>
+                            <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
+                            <a href="javascript:;" id="kakao" class="btn mb-2 text-white" style="background-color:#FAC813;">카카오 회원인증</a>
+                        </div>
+                        <a href="javascript:openNormalLogin();" class="btn btn-primary">회원가입</a>
                     </div>
                 </div>
                 <div class="form_box hidden">
+		    <input type="hidden" name="provider" id="provider">
                     <div class="mb-4">
                         <dl class="flex">
                             <dt>이름</dt>
@@ -218,6 +175,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
    
+	// naver 간편 로그인
+	$("#naver").on('click', function (e) {
+	     e.preventDefault();
+	     openNaverLogin();
+	});
+	//google 간편 로그인
+	$("#google").on('click', function (e) {
+	     e.preventDefault();
+	     openGoogleLogin();
+	});
+	
+	//kakao 간편 로그인
+	$("#kakao").on('click', function (e) {
+	     e.preventDefault();
+	     openKakaoLogin();
+	});
     if (socialUserData) {
         signupType = 'social';
         userData = JSON.parse(socialUserData);
@@ -248,28 +221,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 	
 	if (!socialUserData) {
-		
-		// 일반 회원가입 탭 활성화
-		$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-		$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
-		signupType = 'normal';
-		
-		// 소셜 데이터가 있으면 소셜 탭으로 전환
-		const socialUserData = sessionStorage.getItem('socialUserData');
-		if (socialUserData) {
-			// 소셜 로그인 처리 코드...
-			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
-			signupType = 'social';
-		}
+		openNormalLogin();
 	}else{
 		// 소셜 로그인 처리 코드...
-			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
-			signupType = 'social';
+		$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+		$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
+		signupType = 'social';
 	}
 });
- 
+ function openNormalLogin(){
+	// 일반 회원가입 탭 활성화
+	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
+	signupType = 'normal';
+ }
 function setReadonly(key,value) {
    
     if(value){
@@ -280,6 +245,48 @@ function setReadonly(key,value) {
   
 }
 
+function openNaverLogin() {
+    $.ajax({
+        url: "{{ route('social.naver.login') }}",
+        method: "GET",
+        success: function (data) {
+        
+            const popup = window.open(data.url, "Naver Login", "width=500,height=600");
+            popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start Naver login process.');
+        }
+    });
+}
+
+function openGoogleLogin() {
+    $.ajax({
+        url: "{{ route('social.google.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Google Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start google login process.');
+        }
+    });
+}
+
+function openKakaoLogin() {
+    $.ajax({
+        url: "{{ route('social.kakao.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Kakao Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start kakao login process.');
+        }
+    });
+}
 
 function snsNaming(provider) {
     let snsName = '';
