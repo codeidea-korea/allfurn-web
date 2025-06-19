@@ -202,10 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
                 sns = userData.provider;
             }
+	    openNormalLogin();
            
         } catch (error) {
             signupType = 'normal';
-            $(".join_social").children().eq(1).trigger('click');
+            // $(".join_social").children().eq(1).trigger('click');
         }
     }else{
     
@@ -230,18 +231,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
                 sns = userData.provider;
             }
+	    openNormalLogin()
 
             // sessionStorage.removeItem('socialUserData'); 
         }else{
             signupType = 'normal';
-            $(".join_social").children().eq(1).trigger('click');
+            // $(".join_social").children().eq(1).trigger('click');
         }
     }
 });
  function openNormalLogin(){
     // 일반 회원가입 탭 활성화
     signupType = 'normal';
-    $(".join_social").children().eq(1).trigger('click');
+//    $(".join_social").children().eq(1).trigger('click');
+	let liN = 0; // $(this).index();
+	$(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+	
+	$('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
+	if($(".join_social").children().eq(1).hasClass('border-b border-primary')){
+	    signupType = 'normal';
+	}else{
+	    signupType = 'social';
+	}
  }
  
 function setReadonly(key,value) {
@@ -710,6 +721,7 @@ var isCheckedDuplicatePhoneNumber = false;
 var checkedPhoneNumber = '';
 
      // 탭변경
+	/*
      $('.join_social button').on('click',function(){
         let liN = $(this).index();
         $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
@@ -721,6 +733,7 @@ var checkedPhoneNumber = '';
             signupType = 'social';
         }
     })
+    */
 
 
 // 이미지 변경
