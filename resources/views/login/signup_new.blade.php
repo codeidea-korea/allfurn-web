@@ -223,11 +223,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 	
 	if (!socialUserData) {
-		openNormalLogin();
+		// openNormalLogin();
 	}else{
 		// 소셜 로그인 처리 코드...
-		$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-		$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
+		// $(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+		// $('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
 		signupType = 'social';
 	}
 });
@@ -688,8 +688,8 @@ const fileUpload = (input) => {
             reader.readAsDataURL(input.files[0]);
         }
     }
-
 // 탭변경
+	/*
 $('.join_social button').on('click',function(){
     let liN = $(this).index();
 	
@@ -704,6 +704,7 @@ $('.join_social button').on('click',function(){
 
     console.log(signupType)
 })
+*/
 
     
 $("input[type=email]").blur(function(){
