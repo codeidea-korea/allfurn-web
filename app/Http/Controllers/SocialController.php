@@ -20,7 +20,7 @@ class SocialController extends BaseController
 	public function __construct(MemberService $memberService)
     {
 		$this->memberService = $memberService;
-		
+
         $this->naver_clientId = env('NAVER_CLIENT_ID');
         $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
         $this->naver_redirectUri = env('APP_URL') . "/social/naver/callback";
@@ -36,6 +36,17 @@ class SocialController extends BaseController
         $this->apple_clientId = env('APPLE_CLIENT_ID');
         $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
         $this->apple_redirectUri = env('APP_URL') . "/social/apple/callback";
+		
+        $envType = env('ENV_TYPE');
+        if($envType == 'DEV') {
+            
+            $this->naver_clientId = env('DEV_NAVER_CLIENT_ID');
+            $this->naver_clientSecret = env('DEV_NAVER_CLIENT_SECRET');
+            $this->naver_redirectUri = env('DEV_APP_URL') . "/social/naver/callback";
+
+            $this->kakao_clientId = env('DEV_KAKAO_CLIENT_ID');
+            $this->kakao_redirectUri = env('DEV_APP_URL') . "/social/kakao/callback";
+        }
     } 
 
     /**

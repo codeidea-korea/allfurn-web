@@ -30,8 +30,8 @@
             </div>
 
             <div class="join_social grid grid-cols-2 gap-10 text-center">
-				<button class="py-5" style="font-size:22px">SNS 회원가입</button>
-				<button class="py-5 border-b border-primary" style="font-size:22px">일반 회원가입</button>
+				<button class="py-5 border-b border-primary" style="font-size:22px">SNS 회원가입</button>
+				<button class="py-5" style="font-size:22px">일반 회원가입</button>
 			</div>
 
             <div class="form_tab_content">
