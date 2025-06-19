@@ -35,8 +35,8 @@
 			</div>
 
             <div class="form_tab_content">
-                <div class="form_box">
-                    <div class="py-10">
+                <div class="form_box !w-full">
+                    <div class="pb-10">
                         <div class="grid grid-cols-2 gap-10">
                             <div>
                                 <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
