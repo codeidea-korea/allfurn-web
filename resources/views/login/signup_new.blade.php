@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
             sns = userData.provider;
         }
+	openNormalLogin();
 
         // sessionStorage.removeItem('socialUserData'); 
     }else{
@@ -229,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		// $(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
 		// $('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
 		signupType = 'social';
+		openNormalLogin();
 	}
 });
  function openNormalLogin(){
