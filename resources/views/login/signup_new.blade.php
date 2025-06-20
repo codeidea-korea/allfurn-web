@@ -30,48 +30,67 @@
             </div>
 
             <div class="join_social grid grid-cols-2 gap-10 text-center">
-				<button class="py-5" style="font-size:22px">간편(SNS) 회원가입</button>
-				<button class="py-5 border-b border-primary" style="font-size:22px">일반 회원가입</button>
+				<button class="py-5 border-b border-primary" style="font-size:22px">SNS 회원가입</button>
+				<button class="py-5" style="font-size:22px">일반 회원가입</button>
 			</div>
 
             <div class="form_tab_content">
-                <div class="form_box">
+                <div class="form_box !w-full">
+                    <div class="pb-10">
+                        <div class="grid grid-cols-2 gap-10">
+                            <div>
+                                <a href="javascript:;" id="naver" class="btn mb-2 text-white" style="background-color:#6dc66e;">네이버 회원인증</a>
+                                <a href="javascript:;" id="kakao" class="btn mb-2 text-white" style="background-color:#FAC813;">카카오 회원인증</a>
+                            </div>
+                            <a href="javascript:openNormalLogin();" class="btn btn-primary">회원가입</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form_box hidden">
+		            <input type="hidden" name="provider" id="provider">
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt class="necessary">SNS 연결</dt>
+                            <dt>이름</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" value="" readonly id="provider" autocomplete="false">
-                              
+                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
                             </dd>
                         </dl>
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt class="necessary">이름</dt>
+                            <dt>휴대폰번호</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" value="" id="name" maxlength="30" autocomplete="false" onfocusout="isInOnlyAlphabetAndKorean(this)">
+                                <input type="text" maxlength="13" class="input-form w-full" placeholder="휴대폰번호를 입력해주세요." id="phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
                             </dd>
                         </dl>
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt class="necessary">휴대폰번호</dt>
+                            <dt>아이디</dt>
                             <dd>
-                                <input type="text" maxlength="13"  class="input-form w-full" value=""  id="phone_number" autocomplete="false" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
+                                <input type="text" class="input-form w-full" placeholder="아이디을 입력해주세요." id="email">
                             </dd>
                         </dl>
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt class="necessary">이메일(아이디)</dt>
+                            <dt>비밀번호</dt>
                             <dd>
-                                <input type="text" class="input-form w-full" value="" readonly id="email" autocomplete="false">
+                                <input type="password" class="input-form w-full" placeholder="비밀번호를 입력해주세요." id="password">
                             </dd>
                         </dl>
                     </div>
                     <div class="mb-4">
                         <dl class="flex">
-                            <dt class="necessary">명함 첨부</dt>
+                            <dt>비밀번호 확인</dt>
+                            <dd>
+                                <input type="password" class="input-form w-full" placeholder="비밀번호 확인을 입력해주세요." id="password_chk">
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="mb-4">
+                        <dl class="flex">
+                            <dt>명함 첨부</dt>
                             <dd>
                                 <div class="file-form horizontal">
                                     <input type="file" onchange="fileUpload(this)" id="file" name="file" accept="image/*">
@@ -87,71 +106,11 @@
                             </dd>
                         </dl>
                     </div>
-                </div>
-                <div class="form_box hidden">
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>이름</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" placeholder="이름을 입력해주세요." id="normal_name" maxlength="30" onfocusout="isInOnlyAlphabetAndKorean(this)">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>휴대폰번호</dt>
-                            <dd>
-                                <input type="text" maxlength="13" class="input-form w-full" placeholder="휴대폰번호를 입력해주세요." id="normal_phone_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3').replace(/\-{1,2}$/g, '');">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>아이디</dt>
-                            <dd>
-                                <input type="text" class="input-form w-full" placeholder="아이디을 입력해주세요." id="normal_email">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>비밀번호</dt>
-                            <dd>
-                                <input type="password" class="input-form w-full" placeholder="비밀번호를 입력해주세요." id="normal_password">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>비밀번호 확인</dt>
-                            <dd>
-                                <input type="password" class="input-form w-full" placeholder="비밀번호 확인을 입력해주세요." id="normal_password_chk">
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="mb-4">
-                        <dl class="flex">
-                            <dt>명함 첨부</dt>
-                            <dd>
-                                <div class="file-form horizontal">
-                                    <input type="file" onchange="fileUpload(this)" id="normal_file" name="normal_file" accept="image/*">
-                                    <!-- <label for="" class="error">명함 이미지를 첨부해주세요.</label> -->
-                                    <div class="text">
-                                        <img class="mx-auto" src="./img/member/img_icon.svg" alt="">
-                                        <p class="mt-1">명함 이미지 추가</p>
-                                    </div>
-                                </div>
-                                <div class="info_box mt-2.5">
-                                    ・jpg, png만 지원 합니다.
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
 
-            <div class="btn_box">
-                <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    <div class="btn_box">
+                        <button class="btn w-[300px] btn-primary" onclick="signup()">가입 완료</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -218,6 +177,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // sessionStorage에서 데이터 가져오기
     const socialUserData = sessionStorage.getItem('socialUserData');
    
+	// naver 간편 로그인
+	$("#naver").on('click', function (e) {
+	     e.preventDefault();
+	     openNaverLogin();
+	});
+	//google 간편 로그인
+	$("#google").on('click', function (e) {
+	     e.preventDefault();
+	     openGoogleLogin();
+	});
+	
+	//kakao 간편 로그인
+	$("#kakao").on('click', function (e) {
+	     e.preventDefault();
+	     openKakaoLogin();
+	});
     if (socialUserData) {
         signupType = 'social';
         userData = JSON.parse(socialUserData);
@@ -240,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
             sns = userData.provider;
         }
+	openNormalLogin();
 
         // sessionStorage.removeItem('socialUserData'); 
     }else{
@@ -248,28 +224,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 	
 	if (!socialUserData) {
-		
-		// 일반 회원가입 탭 활성화
-		$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-		$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
-		signupType = 'normal';
-		
-		// 소셜 데이터가 있으면 소셜 탭으로 전환
-		const socialUserData = sessionStorage.getItem('socialUserData');
-		if (socialUserData) {
-			// 소셜 로그인 처리 코드...
-			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
-			signupType = 'social';
-		}
+		// openNormalLogin();
 	}else{
 		// 소셜 로그인 처리 코드...
-			$(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-			$('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
-			signupType = 'social';
+		// $(".join_social").children().eq(0).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+		// $('.form_tab_content > div').eq(0).removeClass('hidden').siblings().addClass('hidden');
+		signupType = 'social';
+		openNormalLogin();
 	}
 });
- 
+ function openNormalLogin(){
+	// 일반 회원가입 탭 활성화
+	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
+	signupType = 'normal';
+ }
 function setReadonly(key,value) {
    
     if(value){
@@ -280,6 +249,48 @@ function setReadonly(key,value) {
   
 }
 
+function openNaverLogin() {
+    $.ajax({
+        url: "{{ route('social.naver.login') }}",
+        method: "GET",
+        success: function (data) {
+        
+            const popup = window.open(data.url, "Naver Login", "width=500,height=600");
+            popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start Naver login process.');
+        }
+    });
+}
+
+function openGoogleLogin() {
+    $.ajax({
+        url: "{{ route('social.google.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Google Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start google login process.');
+        }
+    });
+}
+
+function openKakaoLogin() {
+    $.ajax({
+        url: "{{ route('social.kakao.login') }}",
+        method: "GET",
+        success: function (data) {
+            const popup = window.open(data.url, "Kakao Login", "width=500,height=600");
+            // popup.window.focus();
+        },
+        error: function () {
+            alert('Failed to start kakao login process.');
+        }
+    });
+}
 
 function snsNaming(provider) {
     let snsName = '';
@@ -306,7 +317,10 @@ function snsNaming(provider) {
 
 // 사용중 이메일, 사용중 휴대전화번호 체크
 function duplicateCheck(type ,param) {
-    
+
+    $('#modal-validation-alert').find('.modal_body').find('button').off().on('click', function(){//
+        modalClose('#modal-validation-alert');
+    });
 
     let result = '';
 
@@ -449,17 +463,17 @@ function signup(){
 
 function normalSignUp(){
     
-    if(validate('normal_')){
+    if(validate()){
 	$('#loadingContainer').show();
 
         let formData = new FormData();
             
             // 데이터 추가
             formData.append('user_type', userType);
-            formData.append('name', $('#normal_name').val());
-            formData.append('email', $('#normal_email').val());
-            formData.append('phone_number', $('#normal_phone_number').val().replace(/-/g, ''));
-            formData.append('password', $('#normal_password').val());
+            formData.append('name', $('#name').val());
+            formData.append('email', $('#email').val());
+            formData.append('phone_number', $('#phone_number').val().replace(/-/g, ''));
+            formData.append('password', $('#password').val());
 	    
             formData.append('agreementServicePolicy',  0);
             formData.append('agreementPrivacy', 0);
@@ -467,7 +481,7 @@ function normalSignUp(){
             formData.append('agreementAd',  0);
                 
             // 파일 추가
-            let fileInput = $('#normal_file')[0];
+            let fileInput = $('#file')[0];
             if(fileInput.files[0]) {
                 formData.append('file', fileInput.files[0]);
             }
@@ -530,7 +544,7 @@ function validate(type = ''){
     let file =  $(`#${type}file`)[0].files[0];
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
-    if(!type){
+    if(signupType != 'normal'){
         if( provider == '' || provider == 'undefined'){
             $('#provider').addClass('input-error');
             $("#validation-ment").html('SNS 연결 정보가 없습니다.<br>다시 확인해주세요.');
@@ -576,7 +590,7 @@ function validate(type = ''){
 
     }
 
-    if(type === 'normal_'){
+    if(type === ''){
         if(password == '' || password == 'undefined'){
             $(`#${type}password`).addClass('input-error');
             $('#validation-ment').html('비밀번호를 입력해주세요.');
@@ -610,17 +624,6 @@ function validate(type = ''){
             $(`#${type}password_confirm`).removeClass('input-error');
         }
     }
-    let phoneResult = duplicateCheck('phone_number',phone_number);
-    if( phoneResult !='' ){
-        $(`#${type}phone_number`).addClass('input-error');
-        $(`#validation-ment`).html(phoneResult);
-        modalOpen('#modal-validation'); 
-        $(`#${type}phone_number`).focus();
-        return false;
-    }else{  
-        $(`#${type}phone_number`).removeClass('input-error');
-
-    }
     let emailResult =  duplicateCheck('email',email);
 
 
@@ -645,11 +648,30 @@ function validate(type = ''){
     }else{
         $(`#${type}file`).removeClass('input-error');
     }
-	
-  
+
+    if(checkedPhoneNumber != phone_number || !isCheckedDuplicatePhoneNumber) {
+        let phoneResult = duplicateCheck('phone_number',phone_number);
+        checkedPhoneNumber = phone_number; 
+        if( phoneResult !='' ){
+            $(`#${type}phone_number`).addClass('input-error');
+            $(`#validation-ment2`).html(phoneResult + '<br>추가로 회원가입을 진행하시겠습니까?');
+            modalOpen('#modal-validation-alert'); 
+            $(`#${type}phone_number`).focus();
+    	    $($('#modal-validation-alert').find('.modal_body').find('button')[0]).off().on('click', function(){
+                modalClose('#modal-validation-alert'); 
+                isCheckedDuplicatePhoneNumber = true; 
+                signup();
+            });
+            return false;
+        }else{  
+            $(`#${type}phone_number`).removeClass('input-error');
+        }
+    }
 
     return true;
 }
+var isCheckedDuplicatePhoneNumber = false;
+var checkedPhoneNumber = '';
 
 // 이미지 변경
 const fileUpload = (input) => {
@@ -668,16 +690,10 @@ const fileUpload = (input) => {
             reader.readAsDataURL(input.files[0]);
         }
     }
-
 // 탭변경
+	/*
 $('.join_social button').on('click',function(){
     let liN = $(this).index();
-	
-	if(liN === 0) {
-        // 아무 동작도 하지 않거나 경고 메시지 표시
-        // 예: alert("현재 SNS 회원가입 기능은 사용할 수 없습니다.");
-        return false;
-    }
 	
     $(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
     $('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
@@ -690,6 +706,7 @@ $('.join_social button').on('click',function(){
 
     console.log(signupType)
 })
+*/
 
     
 $("input[type=email]").blur(function(){
@@ -721,6 +738,20 @@ function isInOnlyAlphabetAndKorean(ele) {
             <p class="text-center py-4"><b id='validation-ment'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
             <div class="flex gap-2 justify-center">
                 <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation');">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal-validation-alert">
+    <div class="modal_bg" onclick="modalClose('#modal-validation-alert')"></div>
+    <div class="modal_inner modal-sm">
+        <button type="button" class="close_btn" onclick="modalClose('#modal-validation-alert')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body agree_modal_body">
+            <p class="text-center py-4"><b id='validation-ment2'>이미 사용중인 이메일 입니다.<br>다시 확인해주세요.</b></p>
+            <div class="flex gap-2 justify-center">
+                <button type="button" class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">확인</button>
+                <button type="button" class="btn btn-black-line w-1/2 mt-5" onclick="modalClose('#modal-validation-alert');">취소</button>
             </div>
         </div>
     </div>

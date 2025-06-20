@@ -20,7 +20,7 @@ class SocialController extends BaseController
 	public function __construct(MemberService $memberService)
     {
 		$this->memberService = $memberService;
-		
+
         $this->naver_clientId = env('NAVER_CLIENT_ID');
         $this->naver_clientSecret = env('NAVER_CLIENT_SECRET');
         $this->naver_redirectUri = env('APP_URL') . "/social/naver/callback";
@@ -36,6 +36,17 @@ class SocialController extends BaseController
         $this->apple_clientId = env('APPLE_CLIENT_ID');
         $this->apple_clientSecret = env('APPLE_CLIENT_SECRET');
         $this->apple_redirectUri = env('APP_URL') . "/social/apple/callback";
+		
+        $envType = env('ENV_TYPE');
+        if($envType == 'DEV') {
+            
+            $this->naver_clientId = env('DEV_NAVER_CLIENT_ID');
+            $this->naver_clientSecret = env('DEV_NAVER_CLIENT_SECRET');
+            $this->naver_redirectUri = env('DEV_APP_URL') . "/social/naver/callback";
+
+            $this->kakao_clientId = env('DEV_KAKAO_CLIENT_ID');
+            $this->kakao_redirectUri = env('DEV_APP_URL') . "/social/kakao/callback";
+        }
     } 
 
     /**
@@ -212,36 +223,60 @@ class SocialController extends BaseController
         // Log::info(  $accessToken);
         setcookie('kakao_access_token', $accessToken['access_token'], time() + 3600, '/');
 
-        $userResponse = $this->httpGet(
+        $userResponse = $this->httpPostWithHeader(
             "https://kapi.kakao.com/v2/user/me",
             [
-                'Authorization' => 'Bearer ' . $accessToken['access_token']
-            ]
-          
+                'Authorization' => 'Bearer ' . $accessToken['access_token'],
+                'Content-Type' => 'application/x-www-form-urlencoded;charset=utf-8',
+                'timeout' => 5,
+                'connect_timeout' => 10,
+            ],
+            []
         );
         $userData =  json_decode($userResponse, true);
 
         // 사용자 이름과 전화번호
         $name = $userData['kakao_account']['name'] ?? $userData['kakao_account']['profile']['nickname'];
+        $has_email = $userData['kakao_account']['has_email'];
+        $has_phone_number = $userData['kakao_account']['has_phone_number'];
         $email = $userData['kakao_account']['email'] ?? '';
         $phoneNumber = $userData['kakao_account']['phone_number'] ?? '';
 
-	    $phoneNumber = preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? 'none';
-        $jsonData = array(
-            'name' => $name,
-            'email' => $email,
-            'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber),
-            'provider' => 'kakao',
-            'id' => $userData['id']
-        );
+        if($has_email) {
+            // 사용자 동의 시 email 제공 가능한 경우
+            $jsonData = array(
+                'name' => $name,
+                'email' => $email,
+                'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber),
+                'provider' => 'kakao',
+                'id' => $userData['id']
+            );
 		
-		// 회원 상태 확인 - 여기서는 jsonData 배열 구조를 직접 사용
-		$user = User::where('account', $email ?? '')
-			->orWhereRaw("REPLACE(phone_number, '-', '') = '".str_replace('-', '', $phoneNumber)."'")
-//			->orWhere('phone_number', preg_replace('/^\+82\s?/', '0', $phoneNumber) ?? '')
-			->first();
-        $this->saveSnsHistory($jsonData);
+            // 회원 상태 확인 - 여기서는 jsonData 배열 구조를 직접 사용
+            $user = User::where(function($query) use($jsonData) {
+                    $query->where('account', $jsonData['email'])
+                        ->orWhereRaw("REPLACE(phone_number, '-', '') = REPLACE('".$jsonData['phone_number']."', '-', '')");
+                })
+                ->where('state', 'JS')
+                ->first();
+            $this->saveSnsHistory($jsonData);
+
+        } else if($has_phone_number) {
+            // 사용자 동의 시 phone_number 제공 가능한 경우
+            $jsonData = array(
+                'name' => $name,
+                'email' => $email,
+                'phone_number' => preg_replace('/^\+82\s?/', '0', $phoneNumber),
+                'provider' => 'kakao',
+                'id' => $userData['id']
+            );
 		
+            // 회원 상태 확인 - 여기서는 jsonData 배열 구조를 직접 사용
+            $user = User::where("REPLACE(phone_number, '-', '') = REPLACE('".$jsonData['phone_number']."', '-', '')")
+                ->where('state', 'JS')
+                ->first();
+            $this->saveSnsHistory($jsonData);
+        }
 		// 사용자가 존재하고 승인 대기 상태인 경우
 		if ($user && $user->state === 'JW') {
 			// 세션에 사용자 이름 저장
@@ -396,11 +431,41 @@ class SocialController extends BaseController
             $response = $client->request('POST', $url, [
                 'form_params' => $data,
                 'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded'
+                    'Content-Type' => 'application/x-www-form-urlencoded;charset=utf-8'
                 ],
                 'timeout' => 5,
                 'connect_timeout' => 10,
             ]);
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            Log::error('HTTP Post Error:', [
+                'message' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+
+    // HTTP POST option 요청
+    private function httpPostWithHeader($url, $headers = [], $query = [])
+    {
+        if(env("APP_NAME") === 'ALLFURN_LOCAL') {
+            $client = new \GuzzleHttp\Client([
+                'verify' => false  // 개발환경에서만 사용
+            ]);
+        }else{
+            $client = new \GuzzleHttp\Client([
+                'verify' => true  // 개발환경에서만 사용
+            ]);
+        }
+        try {
+            $options = [
+                'headers' => $headers
+            ];
+            // query 파라미터가 비어있지 않은 경우에만 추가
+            if (!empty($query)) {
+                $options['query'] = $query;
+            }
+            $response = $client->request('POST', $url, $options);
             return $response->getBody()->getContents();
         } catch (\Exception $e) {
             Log::error('HTTP Post Error:', [
