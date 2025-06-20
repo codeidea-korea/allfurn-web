@@ -570,7 +570,7 @@ function validate(type = ''){
     let password = $(`#${type}password`).val();
     let password_ck = $(`#${type}password_chk`).val();
 	
-    if(!type){
+    if(signupType != 'normal'){
         if( provider == '' || provider == 'undefined'){
             $('#provider').addClass('input-error');
             $("#validation-ment").html('SNS 연결 정보가 없습니다.<br>다시 확인해주세요.');
