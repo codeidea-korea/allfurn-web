@@ -242,17 +242,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
  function openNormalLogin(){
     // 일반 회원가입 탭 활성화
-    signupType = 'normal';
-//    $(".join_social").children().eq(1).trigger('click');
-	let liN = 0; // $(this).index();
-	$(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-	
-	$('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
-	if($(".join_social").children().eq(1).hasClass('border-b border-primary')){
-	    signupType = 'normal';
-	}else{
-	    signupType = 'social';
-	}
+	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
+	signupType = 'normal';
  }
  
 function setReadonly(key,value) {
