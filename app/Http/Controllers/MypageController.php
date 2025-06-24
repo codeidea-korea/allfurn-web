@@ -974,6 +974,43 @@ class MypageController extends BaseController
         return $user;
     }
 
+    public function getLoginUserByIdx($userIdx)
+    {
+	$tmpUser = User::where('AF_user.idx', $userIdx)->first();
+	    
+        if ($tmpUser->type === 'W') { // 도매
+            $user = User::where('AF_user.idx', $tmpUser->idx)
+                ->join('AF_wholesale','AF_user.company_idx', 'AF_wholesale.idx')
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
+                ->select('AF_user.*', 'AF_wholesale.company_name', 'AF_wholesale.business_license_number', 'AF_wholesale.inquiry_count', 'AF_wholesale.access_count'
+                    , DB::raw("(SELECT CASE WHEN COUNT(*) >= 100000000 THEN CONCAT(COUNT(*)/100000000,'억')
+                           WHEN COUNT(*) >= 10000000 THEN CONCAT(COUNT(*)/10000000,'천만')
+                           WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
+                           WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
+                           ELSE COUNT(*) END cnt FROM AF_company_like
+                           WHERE company_idx = '".$tmpUser->company_idx."' AND company_type = '".$tmpUser->type."'
+                    ) AS like_count"), 
+                     DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
+                ->first();
+        } else if ($tmpUser->type === 'R') { // 소매
+            $user = User::where('AF_user.idx', $tmpUser->idx)
+                ->join('AF_retail', 'AF_user.company_idx', 'AF_retail.idx')
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
+                ->select('AF_user.*', 'AF_retail.company_name', 'AF_retail.business_license_number', 
+                    DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
+                ->first();
+        } else { // 일반
+            $user = User::where('AF_user.idx', $tmpUser->idx)
+                ->join('AF_normal', 'AF_user.company_idx', 'AF_normal.idx')
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
+                ->select('AF_user.*', 'AF_normal.namecard_attachment_idx', 
+                    DB::raw("AF_normal.name as company_name"), DB::raw("AF_normal.business_license_number as business_license_number"), 
+                    DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
+                ->first();
+        }
+        return $user;
+    }
+
     /**
      * 대표 상품 추가/삭제
      * @param int $idx
@@ -1424,4 +1461,36 @@ class MypageController extends BaseController
             ]);
     }
 
+    /**
+     * 계정 구분 변경을 위한 데이터 조회
+     * @return JsonResponse
+     */
+    public function getCompanyAjaxByIdx($userIdx): JsonResponse {
+    	$data = [];
+        
+        $data['user'] = $this -> getLoginUserByIdx($userIdx);
+        $user_type = $data['user']->type;
+
+        $nameCardImage = $this->mypageService->getUserNameCard();
+        $data['nameCardImage'] = $nameCardImage ?? '';
+        $data['point'] = $this->mypageService->getPointList();
+        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $xtoken = $this->loginService->getFcmToken($userIdx);
+        $data['xtoken'] = $xtoken;
+        
+        $data['pageType'] = 'company-account-new';
+        $data['company'] = $this -> mypageService -> getCompanyAccount();
+        $data['members'] = $this -> mypageService -> getCompanyMembers();
+
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+
+        return
+            response() -> json([
+                'result'    => 'success',
+                'data'      => $data
+            ]);
+    }
 }
