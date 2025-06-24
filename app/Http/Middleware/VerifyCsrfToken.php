@@ -22,7 +22,9 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        // '/post'
-
+        '/member/company/csrf_token',
+        '/member/company/{userIdx}',
+        '/member/update-wait',
+        '/member/checkUsingBusinessNumber'
     ];
 }

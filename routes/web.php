@@ -76,6 +76,15 @@ Route::prefix('/family')->name('family')->group(function() {
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
 
+Route::get('/member/company/csrf_token', function(){
+    return 'loadToken(' . json_encode(response()->json([
+        'success' => true,
+        'token' => csrf_token()
+    ])) . ')';
+});
+Route::get('/member/company/{userIdx}', 'MypageController@getCompanyAjaxByIdx');
+Route::post('/member/update-wait', 'MemberController@updateUserWait');
+
 Route::prefix('/member')->name('member')->group(function() {
     Route::post('/createUser', 'MemberController@createUser');
     Route::post('/checkUsingEmail', 'MemberController@checkUsingEmail');
@@ -87,10 +96,8 @@ Route::prefix('/member')->name('member')->group(function() {
     Route::post('/duplicate/phone_number', 'MemberController@duplicatePhoneNumber');
     Route::post('/createUserNew', 'MemberController@createUserNew');
     Route::post('/update', 'MemberController@updateUser');
-    Route::post('/update-wait', 'MemberController@updateUserWait');
     
     Route::get('/company/own', 'MypageController@getCompanyAjax');
-    Route::get('/company/{userIdx}', 'MypageController@getCompanyAjaxByIdx');
 });
 Route::post('/member/fcm-token', 'LoginController@updateFcmToken')->name('updateFcmToken');
 

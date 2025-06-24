@@ -1601,7 +1601,7 @@ class MypageService
     {
         if ($idx) {
 //            $user = User::find($idx);          
-            $user = User::where('idx', $idx)
+            $user = User::where('AF_user.idx', $idx)
                 ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
                 ->select('AF_user.*', DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
                 ->get();
