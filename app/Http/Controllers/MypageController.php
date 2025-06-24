@@ -1471,21 +1471,21 @@ class MypageController extends BaseController
         $data['user'] = $this -> getLoginUserByIdx($userIdx);
         $user_type = $data['user']->type;
 
-        $nameCardImage = $this->mypageService->getUserNameCard();
+        $nameCardImage = $this->mypageService->getUserNameCardByIdx($data['user']->company_idx);
         $data['nameCardImage'] = $nameCardImage ?? '';
-        $data['point'] = $this->mypageService->getPointList();
-        $data['info'] = $this -> mypageService -> getEstimateInfo();
+        $data['point'] = $this->mypageService->getPointListByIdx($data['user']->idx);
+        $data['info'] = $this -> mypageService -> getEstimateInfoByIdx($data['user']->idx);
         $xtoken = $this->loginService->getFcmToken($userIdx);
         $data['xtoken'] = $xtoken;
         
         $data['pageType'] = 'company-account-new';
-        $data['company'] = $this -> mypageService -> getCompanyAccount();
-        $data['members'] = $this -> mypageService -> getCompanyMembers();
+        $data['company'] = $this -> mypageService -> getCompanyAccountByUser($data['user']);
+        $data['members'] = $this -> mypageService -> getCompanyMembers($data['user']->idx);
 
-        $data['likeProductCount'] = $this->mypageService->getTotalLikeProduct();
-        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompany();
-        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProduct();
-        $data['inquiryCount'] = $this->mypageService->getTotalInquiry();
+        $data['likeProductCount'] = $this->mypageService->getTotalLikeProductByIdx($data['user']->idx);
+        $data['likeCompanyCount'] = $this->mypageService->getTotalLikeCompanyByIdx($data['user']->idx);
+        $data['recentlyViewedProductCount'] = $this->mypageService->getTotalRecentlyViewedProductByIdx($data['user']->idx);
+        $data['inquiryCount'] = $this->mypageService->getTotalInquiryByIdx($data['user']->company_idx);
 
         return
             response() -> json([
