@@ -449,8 +449,9 @@ class MemberService
             'upgrade_status' => 1,
             'upgrade_json' => json_encode($params)
         ];
+        $userIdx = array_key_exists('userIdx', $params) ? $params['userIdx'] : Auth::user()->idx;
 
-        User::where('idx', Auth::user()->idx)
+        User::where('idx', $userIdx)
             ->update($updated);
     }
 
