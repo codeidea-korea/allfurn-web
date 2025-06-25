@@ -236,12 +236,12 @@ class MemberController extends BaseController {
 
     public function updateUserWait(Request $request): JsonResponse {
         Log::info("***** MemberController > updateUserWait");
-    
         try {
 
             // 트랜잭션 시작
             $data = [];
             $data = array_merge($data, $request->all());
+        Log::info("***** data > " . json_encode($data));
 
             if(array_key_exists('company_file', $data)) {
                 $storageName = "name-card-image";

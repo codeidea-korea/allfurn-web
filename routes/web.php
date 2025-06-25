@@ -76,12 +76,6 @@ Route::prefix('/family')->name('family')->group(function() {
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
 
-Route::get('/member/company/csrf_token', function(){
-    return 'loadToken(' . json_encode(response()->json([
-        'success' => true,
-        'token' => csrf_token()
-    ])) . ')';
-});
 Route::get('/member/company/{userIdx}', 'MypageController@getCompanyAjaxByIdx');
 Route::post('/member/update-wait', 'MemberController@updateUserWait');
 
