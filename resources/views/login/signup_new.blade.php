@@ -101,7 +101,9 @@
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・jpg, png만 지원 합니다.
+                                    <span>・jpg, png만 지원 합니다.</span>
+                                    <br>
+                                    <span style="font-size: bold; color: #ff0000;">・명함과 관련 없는 이미지를 첨부하신 경우, 회원가입이 승인되지 않습니다</span>
                                 </div>
                             </dd>
                         </dl>
