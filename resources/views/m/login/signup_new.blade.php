@@ -99,7 +99,9 @@ $header_banner = '';
                                     </div>
                                 </div>
                                 <div class="info_box mt-2.5">
-                                    ・jpg, png만 지원 합니다.
+                                    <span>・jpg, png만 지원 합니다.</span>
+                                    <br>
+                                    <span style="font-size: bold; color: #ff0000;">・명함과 관련 없는 이미지를 첨부하신 경우, 회원가입이 승인되지 않습니다</span>
                                 </div>
                             </dd>
                         </dl>
@@ -242,17 +244,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
  function openNormalLogin(){
     // 일반 회원가입 탭 활성화
-    signupType = 'normal';
-//    $(".join_social").children().eq(1).trigger('click');
-	let liN = 0; // $(this).index();
-	$(this).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
-	
-	$('.form_tab_content > div').eq(liN).removeClass('hidden').siblings().addClass('hidden')
-	if($(".join_social").children().eq(1).hasClass('border-b border-primary')){
-	    signupType = 'normal';
-	}else{
-	    signupType = 'social';
-	}
+	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
+	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
+	signupType = 'normal';
  }
  
 function setReadonly(key,value) {

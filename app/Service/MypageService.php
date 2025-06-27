@@ -565,6 +565,13 @@ class MypageService
             ->count();
     }
 
+    public function getTotalLikeProductByIdx($userIdx) {
+        return ProductInterest::where('AF_product_interest.user_idx', $userIdx)
+            ->join('AF_product', 'AF_product.idx', 'AF_product_interest.product_idx')
+            ->get()
+            ->count();
+    }
+
     /**
      * 관심 상품 목록 가져오기
      * @param array $params
@@ -733,6 +740,12 @@ class MypageService
         ->count();
     }
 
+    public function getTotalLikeCompanyByIdx($userIdx) {
+        return DB::table('AF_company_like')
+        ->where('user_idx', $userIdx)
+        ->count();
+    }
+
     /**
      * 좋아요 업체 목록 가져오기
      * @param array $params
@@ -804,6 +817,17 @@ class MypageService
             ->count();
     }
 
+    public function getTotalRecentlyViewedProductByIdx($userIdx) {
+        return ProductRecent::where('AF_recently_product.user_idx', $userIdx)
+            -> join('AF_product', function($query) {
+                $query -> on('AF_product.idx', 'AF_recently_product.product_idx');
+            })
+            ->select('AF_product.idx')
+            ->distinct()
+            ->get()
+            ->count();
+    }
+
     /**
      * 최근 본 상품 목록 가져오기
      * @param array $params
@@ -862,6 +886,19 @@ class MypageService
             })
             ->where('AF_message.is_read', 0)
             ->where('amr.second_company_idx',  Auth::user() -> company_idx)
+            ->get()
+            ->count();
+    }
+
+    public function getTotalInquiryByIdx($companyIdx) {
+        return DB::table('AF_message')
+            ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
+            ->where(function($query) {
+                $query->whereJsonContains('content->type', 'inquiry')
+                      ->orWhereJsonContains('content->text', '상품 문의드립니다.');
+            })
+            ->where('AF_message.is_read', 0)
+            ->where('amr.second_company_idx',  $companyIdx)
             ->get()
             ->count();
     }
@@ -1457,6 +1494,30 @@ class MypageService
     }
 
     /**
+     * 업체 계정 상세 정보 가져오기
+     * @return mixed
+     */
+    public function getCompanyAccountByUser($user)
+    {
+        if ($user->type === 'W') {
+            $company = DB::table('AF_wholesale AS company')
+                ->where('company.idx', $user->company_idx);
+        } else if ($user->type === 'R') {
+            $company = DB::table('AF_retail AS company')
+                ->where('company.idx', $user->company_idx);
+        } else {
+            return DB::table('AF_normal AS company')
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'company.namecard_attachment_idx')
+                ->where('company.idx', $user->company_idx)
+                ->select('company.*', 
+                DB::raw('name as company_name'), 
+                DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS license_image'))->first();
+        }
+        return $company->leftJoin('AF_attachment', 'AF_attachment.idx', '=', DB::raw('SUBSTRING_INDEX(company.business_license_attachment_idx, ",", 1)'))
+            ->select('company.*', DB::raw('CONCAT("'.preImgUrl().'",AF_attachment.folder,"/",AF_attachment.filename) AS license_image'))->first();
+    }
+
+    /**
      * 일반 유저 명함 이미지 가져오기
      */
     public function getUserNameCard()
@@ -1464,6 +1525,22 @@ class MypageService
         $image = DB::table('AF_normal AS normal')
             ->join('AF_attachment AS attachment', 'attachment.idx', 'normal.namecard_attachment_idx')
             ->where('normal.idx', Auth::user()['company_idx'])
+            ->select(DB::raw('CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename) AS image'))
+            ->first();
+        if ($image) {
+            return $image->image;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * 일반 유저 명함 이미지 가져오기
+     */
+    public function getUserNameCardByIdx($companyIdx)
+    {
+        $image = DB::table('AF_normal AS normal')
+            ->join('AF_attachment AS attachment', 'attachment.idx', 'normal.namecard_attachment_idx')
+            ->where('normal.idx', $companyIdx)
             ->select(DB::raw('CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename) AS image'))
             ->first();
         if ($image) {
@@ -1523,7 +1600,11 @@ class MypageService
     public function getCompanyMembers(int $idx = null)
     {
         if ($idx) {
-            $user = User::find($idx);
+//            $user = User::find($idx);          
+            $user = User::where('AF_user.idx', $idx)
+                ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
+                ->select('AF_user.*', DB::raw(' COALESCE(CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename), "/img/logo.svg") AS image'))
+                ->get();
         } else {
             $user = User::where('parent_idx', Auth::user()['idx'])
                 ->leftJoin('AF_attachment AS attachment', 'attachment.idx', 'AF_user.attachment_idx')
@@ -1941,6 +2022,40 @@ class MypageService
         return $estimate;
     }
 
+    public function getEstimateInfoByIdx($userIdx) {
+        $user = User::find($userIdx);
+        $sql =
+            "SELECT 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'N') 
+                AS count_res_n,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'R') 
+                AS count_res_r,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND estimate_state = 'O') 
+                AS count_res_o,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user['company_idx']." and response_company_type = '".$user['type']."' AND (estimate_state = 'H' OR estimate_state = 'F')) 
+                AS count_res_f,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'N')
+                AS count_req_n,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'R') 
+                AS count_req_r,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND estimate_state = 'O')
+                AS count_req_o,
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE request_company_idx = ".$user['company_idx']." AND (estimate_state = 'H' OR estimate_state = 'F')) 
+                AS count_req_f
+            FROM DUAL";
+
+        $estimate = DB::select($sql);
+        return $estimate;
+    }
+    
     public function getRequestEstimate(array $params) {
         $offset = isset($params['offset']) && $params['offset'] > 1 ? ($params['offset'] - 1) * $params['limit'] : 0;
         $limit = $params['limit'];
@@ -2462,6 +2577,20 @@ class MypageService
     {
         $pointList = DB::table('AF_point')
             ->where('user_idx', Auth::user()->idx)
+            ->where('is_delete', 0)
+            ->orderBy('register_time', 'DESC')
+            ->get();
+
+        return $pointList;
+    }
+
+    /**
+     * 회원 포인트 목록
+     */
+    public function getPointListByIdx($userIdx)
+    {
+        $pointList = DB::table('AF_point')
+            ->where('user_idx', $userIdx)
             ->where('is_delete', 0)
             ->orderBy('register_time', 'DESC')
             ->get();
