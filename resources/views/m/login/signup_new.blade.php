@@ -243,17 +243,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('provider').value = snsNaming(userData.provider) || '' ;
                 sns = userData.provider;
             }
-	    openNormalLogin()
+	        openNormalLogin()
 
             // sessionStorage.removeItem('socialUserData'); 
         }else{
             signupType = 'normal';
+            $(".join_social").children().eq(0).show();
+            $(".join_social").children().eq(1).hide();
             // $(".join_social").children().eq(1).trigger('click');
         }
     }
 });
  function openNormalLogin(){
     // 일반 회원가입 탭 활성화
+    $(".join_social").children().eq(0).hide();
+    $(".join_social").children().eq(1).show();
 	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
 	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
 	signupType = 'normal';
