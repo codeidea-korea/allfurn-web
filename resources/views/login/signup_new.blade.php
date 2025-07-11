@@ -29,10 +29,10 @@
                 </div>
             </div>
 
-            <div class="join_social grid grid-cols-2 gap-10 text-center">
+            <div class="join_social grid gap-10 text-center">
                 <!-- hidden 클래스 추가 시 버튼 가려짐 - join_social 에  grid-cols-2 클래스 삭제 -->
-				<button class="py-5 border-b border-primary" style="font-size:22px">간편 회원가입</button>
-				<button class="py-5" style="font-size:22px">일반 회원가입</button>
+				<button class="py-5 border-b border-primary hidden" style="font-size:22px">간편 회원가입</button>
+				<button class="py-5 hidden" style="font-size:22px">일반 회원가입</button>
 			</div>
 
             <div class="form_tab_content">
@@ -233,8 +233,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // sessionStorage.removeItem('socialUserData'); 
     }else{
         signupType = 'normal';
-        $(".join_social").children().eq(0).show();
-        $(".join_social").children().eq(1).hide();
+    $(".join_social").children().eq(1).addClass('hidden');
+    $(".join_social").children().eq(0).removeClass('hidden');
         // $(".join_social").children().eq(1).trigger('click');
     }
 	
@@ -250,8 +250,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
  function openNormalLogin(){
 	// 일반 회원가입 탭 활성화
-    $(".join_social").children().eq(0).hide();
-    $(".join_social").children().eq(1).show();
+    $(".join_social").children().eq(0).addClass('hidden');
+    $(".join_social").children().eq(1).removeClass('hidden');
 	$(".join_social").children().eq(1).addClass('border-b border-primary').siblings().removeClass('border-b border-primary');
 	$('.form_tab_content > div').eq(1).removeClass('hidden').siblings().addClass('hidden');
 	signupType = 'normal';
