@@ -39,7 +39,9 @@ $header_banner = '';
 
             <div class="form_tab_content">
                 <div class="form_box">
-                    <div class="mb-2 font-medium text-lg">간편회원가입</div>
+                    <a href="javascript:openNormalLogin();" class="btn !h-14 btn-primary">회원가입</a>
+
+                    <div class="mt-8 mb-2 font-medium text-lg text-center">간편회원가입</div>
                     <a href="javascript:;" id="naver" class="btn !h-14 mb-2 text-white" style="background-color:#6dc66e; color:#0f0d0d;">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg">
                             <path d="M13.5608 10.7042L6.14667 0H0V20H6.43833V9.29667L13.8533 20H20V0H13.5608V10.7042Z" fill="#0F0D0D"/>
@@ -52,8 +54,6 @@ $header_banner = '';
                         </svg>
                         카카오로 회원가입
                     </a>
-                    <div class="mt-5 mb-2 font-medium text-lg">일반회원가입</div>
-                    <a href="javascript:openNormalLogin();" class="btn !h-14 btn-primary">회원가입</a>
                 </div>
                 <div class="form_box hidden">
                                 <input type="hidden" value="" id="provider">
