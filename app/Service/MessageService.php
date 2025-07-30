@@ -1263,7 +1263,9 @@ class MessageService
 
     public function getUnreadRecipientsList()
     {
-        return DB::select('
+        DB::beginTransaction();
+
+        $targets = DB::select('
             SELECT 
                 usr.phone_number,
                 CASE sender_company_type 
@@ -1286,10 +1288,12 @@ class MessageService
                 WHERE (is_read = 0 or is_read is null)
                 AND (
                     (register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE))
+                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
+                    AND pushed < 2)
                     OR 
                     (register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE))
+                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
+                    AND pushed < 3)
                 )
                 GROUP BY sender_company_type,sender_company_idx) msg
             JOIN ALLFURN.AF_message_room room on msg.last_room_idx = room.idx
@@ -1306,6 +1310,15 @@ class MessageService
                 )
             GROUP BY usr.idx
             ');
+
+        $message = Message::where('pushed', 1)
+            ->update(['pushed' => 2]);
+        $message = Message::where('pushed', 2)
+            ->update(['pushed' => 3]);
+
+        DB::commit();
+
+        return $targets;
     }
 
     /**

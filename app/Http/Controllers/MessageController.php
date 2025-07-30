@@ -264,7 +264,7 @@ class MessageController extends BaseController
         $list = $this->messageService->getUnreadRecipientsList();
         
         $result = [];
-        foreach($list->toArray() as $key => $value) {
+        foreach($list as $key => $value) {
         
             $receiver = $value['phone_number'];
             unset($value["receive_company_idx"]);
