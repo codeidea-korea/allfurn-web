@@ -1276,8 +1276,7 @@ class MessageService
                     WHEN "S" || "N" THEN (SELECT name FROM AF_normal    WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
                     room.first_company_idx, room.second_company_idx))
                 END 
-                AS 회사명,
-                "'.env("APP_URL").'/message" AS 올톡링크
+                AS 회사명
             FROM (SELECT 
                     max(room_idx) AS last_room_idx, 
                     sender_company_type,
@@ -1311,10 +1310,14 @@ class MessageService
             GROUP BY usr.idx
             ');
 
-        $message = Message::where('pushed', 1)
-            ->update(['pushed' => 2]);
-        $message = Message::where('pushed', 2)
+        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
+                    AND pushed < 3)')
             ->update(['pushed' => 3]);
+        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
+                    AND pushed < 2)')
+            ->update(['pushed' => 2]);
 
         DB::commit();
 

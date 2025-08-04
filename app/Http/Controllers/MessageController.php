@@ -264,18 +264,16 @@ class MessageController extends BaseController
         $list = $this->messageService->getUnreadRecipientsList();
         
         $result = [];
-        foreach($list as $key => $value) {
+        for($idx = 0; $idx < count($list); $idx = $idx + 1) {
         
-            $receiver = $value['phone_number'];
-            unset($value["receive_company_idx"]);
-            unset($value["receive_company_type"]);
-            unset($value["phone_number"]);
-            unset($value["올톡링크"]);
+            $receiver = $list[$idx]->phone_number;
 
+            $sreq = [];
+            $sreq['회사명'] = $list[$idx]->회사명;
             $result[] = $receiver;
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'TT_3925', '[상품 문의 미확인 알림]', $value, $receiver, null));
+                'TT_3925', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
         }
 
         return $result;
