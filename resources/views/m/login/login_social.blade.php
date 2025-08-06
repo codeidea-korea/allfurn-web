@@ -16,6 +16,10 @@ $header_banner = '';
 <script>
 if('{{ $replaceUrl ?? "" }}' != '') {
     location.href = '{{ $replaceUrl ?? "" }}';
+} else {
+    setTimeout(() => {
+        $('#content').show();
+    }, 100);
 }
 </script>
 @else
@@ -77,7 +81,7 @@ if('{{ $replaceUrl ?? "" }}' != '') {
 
 @endif
 
-<div id="content">
+<div id="content" style="display:none;">
     <section class="login_common flex items-center justify-center">
         <div class="login_inner">
             <img class="logo" src="./img/logo.svg" alt="">
