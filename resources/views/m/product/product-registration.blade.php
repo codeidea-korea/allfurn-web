@@ -29,7 +29,7 @@
                     </dd>
                 </dl>
                 <dl class="mb-3">
-                    <dt>상품 이미지</dt>
+                    <dt class="necessary">상품 이미지</dt>
                     <dd>
                         <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
                             <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center product-img__gallery">
@@ -78,14 +78,14 @@
                         <div class="info">
                             <div class="flex items-start gap-1">
                                 <img class="w-3 mt-1 shrink-0" src="/img/member/info_icon.svg" alt="">
-                                <p>상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="txt-primary">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>
+                                <p>상품 속성은 기입하지 않으셔도 됩니다. <span class="txt-primary">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해 주세요.</span></p>
                             </div>
                         </div>
                     </dd>
                 </dl>
             </div>
             <div class="bot_btn">
-                <button class="btn btn-primary w-full" onclick="goStep('step2', 'n')">다음 (1/6)</button>
+                <button class="btn btn-primary w-full" onclick="goStep('step2', 'n')">다음 (1/4)</button>
             </div>
         </div>
 
@@ -107,6 +107,7 @@
                             <button class="is_price_open w-1/2 active" data-val="1">노출</button>
                             <button class="is_price_open w-1/2" data-val="0">미노출</button>
                         </div>
+                        <!--
                         <div class="btn_select_cont mt-2">
                             <div class='div_ptxt1'></div>
                             <div class='div_ptxt0'>
@@ -125,105 +126,22 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                     </dd>
                 </dl>
             </div>
-            <div class="divided"></div>
-            <div class="inner">
-                <dl class="mb-3">
-                    <dt>신상품 설정</dt>
-                    <dd>
-                        <div class="flex gap-2 btn_select">
-                            <button class="is_new_product w-1/2 active" data-val="1">설정</button>
-                            <button class="is_new_product w-1/2" data-val="0">미설정</button>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-            <div class="divided"></div>
-            <div class="inner">
-                <dl class="mb-3">
-                    <dt class="necessary">결제 방식</dt>
-                    <dd>
-                        <div class="dropdown_wrap">
-                            <button class="dropdown_btn payment">직접입력</button>
-                            <div class="dropdown_list">
-                                <div class="dropdown_item" onClick="paymentShow('payment_method')">직접입력</div>
-                                <div class="dropdown_item" onClick="paymentHide('payment_method')">계좌이체</div>
-                                <div class="dropdown_item" onClick="paymentHide('payment_method')">업체 협의</div>
-                                <div class="dropdown_item" onClick="paymentHide('payment_method')">세금 계산서 발행</div>
-                            </div>
-                        </div>
-                        <div class="payment_method mt-2">
-                            <input type="text" name="payment_text" id="payment_text" class="input-form w-full" placeholder="결제 방식을 입력해주세요.">
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-            
+            <input type="hidden" class="is_new_product" value="0">
+
             <div class="bot_btn">
                 <button class="btn btn-primary-line w-1/3" onclick="goStep('step1', 'p')">이전</button>
-                <button class="btn btn-primary w-2/3" onclick="goStep('step3', 'n')">다음 (2/6)</button>
+                <button class="btn btn-primary w-2/3" onclick="goStep('step3', 'n')">다음 (2/4)</button>
             </div>
         </div>
+
+        <input type="hidden" name="product_code">
+        <input type="hidden" name="notice_info" id="form-list09">
 
         <div class="step3">
-            <div class="top_info flex itmes-center justify-between">
-                <h6>상품 기본 정보</h6>
-            </div>
-            <div class="inner">
-                <dl class="mb-3 mt-3">
-                    <dt>상품 코드</dt>
-                    <dd>
-                        <input type="text" name="product_code" maxlength="10" class="input-form w-full" placeholder="상품 코드를 입력해주세요.">
-                    </dd>
-                </dl>
-            </div>
-            <div class="divided"></div>
-            <div class="inner">
-                <dl class="mb-3 mt-3">
-                    <dt class="necessary">배송 방법</dt>
-                    <dd>
-                        <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onclick="modalOpen('#prod_shipping-modal')">
-                            <svg class="w-6 h-6 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus_white"></use></svg>
-                            배송 방법 추가
-                        </button>
-                        <div class="shipping-wrap__add mt-3 hidden">
-                            <span class="plus_del text-primary text-sm">추가된 배송 방법</span>
-                            <div class="mt-3 shipping_method_list"></div>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-            <div class="divided"></div>
-            <div class="inner">
-                <dl class="mb-3 mt-3">
-                    <dt>상품 추가 공지</dt>
-                    <dd>
-                        <textarea class="textarea_type" name="notice_info" id="form-list09" placeholder="상품 추가 공지사항을 입력해주세요."></textarea>
-                    </dd>
-                </dl>
-            </div>
-            <div class="divided"></div>
-            <div class="inner">
-                <dl class="mb-3 mt-3">
-                    <dt>인증 정보</dt>
-                    <dd>
-                        <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onclick="modalOpen('#prod_certifi-modal')">인증 정보 선택</button>
-                        <div class="mt-3 wrap__selected auth-wrap__selected hidden">
-                            <span class="plus_del text-primary text-sm">선택된 인증 정보</span>
-                            <div class="mt-1" id="auth_info"></div>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
-            <div class="bot_btn">
-                <button class="btn btn-primary-line w-1/3" onclick="goStep('step2', 'p')">이전</button>
-                <button class="btn btn-primary w-2/3" onclick="goStep('step4', 'n')">다음 (3/6)</button>
-            </div>
-        </div>
-
-        <div class="step4">
             <div class="top_info flex itmes-center justify-between">
                 <h6>상품 기본 정보</h6>
             </div>
@@ -237,12 +155,12 @@
             </div>
 
             <div class="bot_btn">
-                <button class="btn btn-primary-line w-1/3" onclick="goStep('step3', 'p')">이전</button>
-                <button class="btn btn-primary w-2/3" onclick="goStep('step5', 'n')">다음 (4/6)</button>
+                <button class="btn btn-primary-line w-1/3" onclick="goStep('step2', 'p')">이전</button>
+                <button class="btn btn-primary w-2/3" onclick="goStep('step4', 'n')">다음 (3/4)</button>
             </div>
         </div>
 
-        <div class="step5">
+        <div class="step4">
             <div class="top_info flex itmes-center justify-between">
                 <h6>상품 주문 옵션</h6>
             </div>
@@ -273,87 +191,26 @@
                     주문 옵션 추가
                 </button>
             </div>
-            <div class="bot_btn mt-2">
-                <button class="btn btn-primary-line w-1/3" onclick="goStep('step4', 'p')">이전</button>
-                <button class="btn btn-primary w-2/3" onclick="goStep('step6', 'n')">다음 (5/6)</button>
-            </div>
-        </div>
 
-        <div class="step6">
-            <div class="top_info flex itmes-center justify-between">
-                <h6>상품 주문 정보</h6>
-            </div>
-            <div class="inner">
-                <dl class="mb-3 mt-3">
-                    <dt>결제 안내</dt>
-                    <dd>
-                        <div class="flex gap-2 btn_select">
-                            <button class="order-info01 w-1/2" data-val="1">설정</button>
-                            <button class="order-info01 w-1/2 active" data-val="0">설정 안함</button>
-                        </div>
-                        <div class="btn_select_cont mt-2">
-                            <div>
-                                <textarea name="pay_notice" id="pay_notice" class="textarea_type" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                            <div></div>
-                        </div>
-                    </dd>
-                </dl>
-                <dl class="mb-3">
-                    <dt>배송 안내</dt>
-                    <dd>
-                        <div class="flex gap-2 btn_select">
-                            <button class="order-info02 w-1/2" data-val="1">설정</button>
-                            <button class="order-info02 w-1/2 active" data-val="0">설정 안함</button>
-                        </div>
-                        <div class="btn_select_cont mt-2">
-                            <div>
-                                <textarea name="delivery_notice" id="delivery_notice" class="textarea_type" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                            <div></div>
-                        </div>
-                    </dd>
-                </dl>
-                <dl class="mb-3 mt-3">
-                    <dt>교환/반품/취소 안내</dt>
-                    <dd>
-                        <div class="flex gap-2 btn_select">
-                            <button class="order-info03 w-1/2" data-val="1">설정</button>
-                            <button class="order-info03 w-1/2 active" data-val="0">설정 안함</button>
-                        </div>
-                        <div class="btn_select_cont mt-2">
-                            <div>
-                                <textarea name="return_notice" id="return_notice" class="textarea_type" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                            <div></div>
-                        </div>
-                    </dd>
-                </dl>
-                <dl class="mb-3 mt-3">
-                    <dt>주문 정보 직접 입력 안내</dt>
-                    <dd>
-                        <div class="flex gap-2 btn_select">
-                            <button class="order-info04 w-1/2" data-val="1">설정</button>
-                            <button class="order-info04 w-1/2 active" data-val="0">설정 안함</button>
-                        </div>
-                        <div class="btn_select_cont mt-2">
-                            <div>
-                                <input type="text" id="order_title" class="input-form w-full mb-2" placeholder="항목 제목">
-                                <textarea name="order_content" id="order_content" class="textarea_type" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                            <div></div>
-                        </div>
-                    </dd>
-                </dl>
-            </div>
+                <input type="hidden" name="pay_notice" id="pay_notice"></textarea>
+                <input type="hidden" name="delivery_notice" id="delivery_notice"></textarea>
+                <input type="hidden" name="return_notice" id="return_notice"></textarea>
+                <input type="hidden" id="order_title">
+                <input type="hidden" name="order_content" id="order_content"></textarea>
+
+            <input type="hidden" class="order-info01" value="2">
+            <input type="hidden" class="order-info02" value="2">
+            <input type="hidden" class="order-info03" value="2">
+            <input type="hidden" class="order-info04" value="2">
+
             <div class="bot_btn">
                 @if(Route::current()->getName() == 'product.create')
-                    <button class="btn btn-primary-line w-1/4" onclick="goStep('step5', 'p')">이전</button>
+                    <button class="btn btn-primary-line w-1/4" onclick="goStep('step3', 'p')">이전</button>
                     <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="btn btn-primary-line w-1/4" onclick="saveProduct(1);">임시등록</button>
                     <button class="btn btn-primary w-1/4" onclick="saveProduct(0);">등록신청</button>
                 @elseif(Route::current()->getName() == 'product.modify')
-                    <button class="btn btn-primary-line w-1/4" onclick="goStep('step5', 'p')">이전</button>
+                    <button class="btn btn-primary-line w-1/4" onclick="goStep('step3', 'p')">이전</button>
                     <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
                     <button class="btn btn-primary w-1/4" style="margin-left:90px;" id="modifyBtn" onclick="saveProduct(2)" data-idx={{$productIdx}}>수정완료</button>
                 @endif 
@@ -993,11 +850,13 @@ const goStep = (item, pn)=>{
                 return;
             }
         }else if (item == "step4"){
+            /*
             if ($('.shipping_method').length < 1) {
                 alert('배송방법을 선택해주세요.');
                 $('.shipping-wrap__add').focus();
                 return;
             }
+            */
         }else if (item == "step5"){
             if (editer.html.get() == '') {
                 alert('상품 상세 내용을 입력해주세요.');
@@ -1043,9 +902,10 @@ function saveProduct(regType) {
     form.append('price', $('#product-price').val());
     form.append('is_price_open', $('button.is_price_open.active').data('val'));
     form.append('price_text', $('.price_text').text());
-    form.append('is_new_product', $('button.is_new_product.active').data('val'));
+    form.append('is_new_product', $('.is_new_product').val());
 
     var pay_type = '';
+    /*
     if ($('.payment').text() == "직접입력"){
         pay_type = '4';
     }else if ($('.payment').text() == "계좌이체"){
@@ -1055,11 +915,13 @@ function saveProduct(regType) {
     }else if ($('.payment').text() == "세금 계산서 발행"){
         pay_type = '3';
     }
+    */
+    pay_type = '2';
     form.append('pay_type', pay_type);
     if (pay_type == '4') {
         form.append('pay_type_text', $('input[name="payment_text"]').val());
     }
-    form.append('product_code',$('input[name="product_code"]').val());
+    form.append('product_code', '');
 
     var shipping = "";
     $('.shipping-wrap__add span.add__name').each(function (i, el) {
@@ -1069,13 +931,13 @@ function saveProduct(regType) {
     form.append('notice_info',$('#form-list09').val());
     form.append('auth_info',$('#auth_info').text());
     form.append('product_detail', editer.html.get());
-    form.append('is_pay_notice', $('button.order-info01.active').data('val'));
+    form.append('is_pay_notice', $('.order-info01').val());
     form.append('pay_notice', $('#pay_notice').val());
-    form.append('is_delivery_notice', $('button.order-info02.active').data('val'));
+    form.append('is_delivery_notice', $('.order-info02').val());
     form.append('delivery_notice', $('#delivery_notice').val());
-    form.append('is_return_notice', $('button.order-info03.active').data('val'));
+    form.append('is_return_notice', $('.order-info03').val());
     form.append('return_notice', $('#return_notice').val());
-    form.append('is_order_notice', $('button.order-info04.active').data('val'));
+    form.append('is_order_notice', $('.order-info04').val());
     form.append('order_title', $('#order_title').val());
     form.append('order_content', $('#order_content').val());
 
@@ -1365,13 +1227,7 @@ function loadProduct() {
                 }
 
                 // 신상품 설정
-                if (result['is_new_product'] == 1) {
-                    $('button.is_new_product[data-val=1]').addClass('active');
-                    $('button.is_new_product[data-val=0]').removeClass('active');
-                } else {
-                    $('button.is_new_product[data-val=1]').removeClass('active');
-                    $('button.is_new_product[data-val=0]').addClass('active');
-                }
+                $('.is_new_product').val(result['is_new_product']);
 
                 // 결제 방식
                 $('.payment_method').addClass('hidden');
@@ -1446,30 +1302,26 @@ function loadProduct() {
                 if (result['is_pay_notice'] == "1") {
                     $('#pay_notice').val(result['pay_notice']);
                     $('#pay_notice').parent().addClass('active');
-                    $('button.order-info01[data-val=1]').addClass('active');
-                    $('button.order-info01[data-val=0]').removeClass('active');
+                    $('.order-info01').val(1);
                 }
 
                 if (result['is_delivery_notice'] == "1") {
                     $('#delivery_notice').val(result['delivery_notice']);
                     $('#delivery_notice').parent().addClass('active');
-                    $('button.order-info02[data-val=1]').addClass('active');
-                    $('button.order-info02[data-val=0]').removeClass('active');
+                    $('.order-info02').val(1);
                 }
 
                 if (result['is_return_notice'] == "1") {
                     $('#return_notice').val(result['return_notice']);
                     $('#return_notice').parent().addClass('active');
-                    $('button.order-info03[data-val=1]').addClass('active');
-                    $('button.order-info03[data-val=0]').removeClass('active');
+                    $('.order-info03').val(1);
                 } 
 
                 if (result['is_order_notice'] == "1") {
                     $('#order_title').val(result['order_title']);
                     $('#order_content').val(result['order_content']);
                     $('#order_content').parent().addClass('active');
-                    $('button.order-info04[data-val=1]').addClass('active');
-                    $('button.order-info04[data-val=0]').removeClass('active');
+                    $('.order-info04').val(1);
                 }
 
                 // 미리보기쪽.. 일단 보류
