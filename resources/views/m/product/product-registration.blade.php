@@ -186,7 +186,7 @@
                     <button onclick="sortOption();">옵션 순서 변경</button>
                 </div>
                 <div id="optsArea" class="option_item mb-2"></div>
-                <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onClick="addOrderOption();">
+                <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onClick="addOrderOption(_tmp+1);">
                     <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus_white"></use></svg>
                     주문 옵션 추가
                 </button>
@@ -639,10 +639,10 @@ $('#prod_certifi-modal .btn-primary').click(function () {
 })
 
 //### 옵션 추가
-function addOrderOption() {
+function addOrderOption(tmp) {
     // 옵션 최대 6개
     oIdx = parseInt( oIdx + 1 );
-    _tmp = parseInt( _tmp + 1 );
+    _tmp = parseInt( tmp );
     if (oIdx > 6) {
         oIdx = parseInt( oIdx - 1 );
         openModal('#alert-modal10');
@@ -662,17 +662,21 @@ function addOrderOption() {
             '               <dt class="necessary">옵션명</dt>' +
             '               <dd><input type="text" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" class="input-form w-full cls-opt-nm" placeholder="예시) 색상"></dd>' +
             '           </dl>' +
-            '       </div>' + 
-            '       <div class="option_box item__input-wrap">' + 
-            '           <dl class="mb-3">' + 
-            '               <dt class="necessary">옵션값</dt>' + 
-            '               <dd><input type="text" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" class="input-form w-full" placeholder="예시) 화이트"></dd>' + 
-            '               <dd><input type="text" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');" class="input-form w-full mt-2" placeholder="예시) 100,000원"></dd>' + 
-            '           </dl>' + 
-            '           <button class="flex items-center justify-center gap-1 w-full h-11 rounded option_add input__add-btn"><svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가</button>' + 
-            '       </div>' + 
-            '   </div>' + 
-            '</div>';
+            '       </div>';
+
+        for (let inx = 0; inx < _tmp; inx++) {
+            const element = '       <div class="option_box item__input-wrap">' + 
+                            '           <dl class="mb-3">' + 
+                            '               <dt class="necessary">옵션값</dt>' + 
+                            '               <dd><input type="text" id="option-property_0'+ parseInt( oIdx ) +'-' + (inx + 1) + '" name="option-property_name" class="input-form w-full" placeholder="예시) 화이트"></dd>' + 
+                            '               <dd><input type="text" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');" class="input-form w-full mt-2" placeholder="예시) 100,000원"></dd>' + 
+                            '           </dl>' + 
+                            '           <button class="flex items-center justify-center gap-1 w-full h-11 rounded option_add input__add-btn"><svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가</button>' + 
+                            '       </div>';
+            titleHtml += element;
+        }
+        titleHtml += '   </div>' +'</div>';
+
         $('#optsArea').append(titleHtml);
     }
 }
@@ -1248,14 +1252,16 @@ function loadProduct() {
 
                 // 배송 방법
                 var delivery = '';
-                result['delivery_info'].split(',').forEach(str => {
-                    delivery += '' + 
-                        '<div class="shipping_method px-4 py-2 mb-2 bg-stone-100 inline-flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + '</span>' +
-                        '   <button class="ico_delivery"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>' +
-                        '</div>';
-                })
-                $('.shipping-wrap__add .shipping_method_list').append(delivery);
-                $('.shipping-wrap__add').removeClass('hidden');
+                if(result && result['delivery_info']) {
+                    result['delivery_info'].split(',').forEach(str => {
+                        delivery += '' + 
+                            '<div class="shipping_method px-4 py-2 mb-2 bg-stone-100 inline-flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + '</span>' +
+                            '   <button class="ico_delivery"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>' +
+                            '</div>';
+                    })
+                    $('.shipping-wrap__add .shipping_method_list').append(delivery);
+                    $('.shipping-wrap__add').removeClass('hidden');
+                }
 
                 // 상품 추가 공지
                 $('#form-list09').val(result['notice_info']);
@@ -1263,16 +1269,18 @@ function loadProduct() {
                 // 인증 정보
                 $('#auth_info').text(result['auth_info']);
                 $('.auth-wrap__selected').removeClass('hidden');
-                if(result['auth_info']) {
-                    result['auth_info'].split(', ').forEach(str => {
-                        if (authList.indexOf(str) == -1) {
-                            $('#prod_certifi-modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
-                            $('#auth_info_text').val(str);
-                            $('#auth_info_text').css('display', 'block');
-                        } else {
-                            $('#prod_certifi-modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
-                        }
-                    });
+                if(result && result['auth_info']) {
+                    if(result['auth_info']) {
+                        result['auth_info'].split(', ').forEach(str => {
+                            if (authList.indexOf(str) == -1) {
+                                $('#prod_certifi-modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                                $('#auth_info_text').val(str);
+                                $('#auth_info_text').css('display', 'block');
+                            } else {
+                                $('#prod_certifi-modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                            }
+                        });
+                    }
                 }
 
                 // 상세 내용 작성
@@ -1282,17 +1290,17 @@ function loadProduct() {
                 var obj = $.parseJSON(result['product_option']);
                 console.log(obj);
                 obj.forEach(function (item, i) {
-                    addOrderOption();
+                    addOrderOption(item.optionValue.length);
                     //$('button.option-required_0' + (i + 1) + '[data-val=' + item.required + ']').prop('checked', true);
                     $('input#option-name_0' + (i + 1)).val(item.optionName);
                     // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
                     item.optionValue.forEach(function (value, y) {
                         if (y > 0) {
-                            $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
+                            //$('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
                             //console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
                         }
                         $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
-                        $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
+                        $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().parent().find('dd > input[name="option-price"]').val(value.price);
                     })
                 });
 
@@ -1349,7 +1357,7 @@ function getUrlVars(){
 $(function() {
     init_editor();
     //### 옵션 순서 변경
-    $("#sortable").sortable();
+//    $("#sortable").sortable();
     // $("#sortable").disableSelection();
 
     if ($(location).attr('href').includes('modify')) {

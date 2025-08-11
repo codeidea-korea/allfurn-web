@@ -274,7 +274,7 @@
                     <div class="flex items-center justify-between">
                         <h3 class="font-medium text-lg">상품 주문 옵션</h3>
                         <div class="flex items-center gap-2 font-medium">
-                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption();">주문 옵션 추가</button>
+                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption(_tmp+1);">주문 옵션 추가</button>
                             <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="sortOption();">옵션 순서 변경</button>
                         </div>
                     </div>
@@ -776,10 +776,10 @@
     }
 
     //### 옵션 추가
-    function addOrderOption() {
+    function addOrderOption(tmp) {
         // 옵션 최대 6개
         oIdx = parseInt( oIdx + 1 );
-        _tmp = parseInt( _tmp + 1 );
+        _tmp = parseInt( tmp );
         if (oIdx > 6) {
             oIdx = parseInt( oIdx - 1 );
             openModal('#alert-modal10');
@@ -800,24 +800,28 @@
                 '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-2" value="0">' +
                 '               <label for="repuired-option0'+ parseInt( oIdx ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
                 '           </div>' +
-                '       </div>' +
+                '       </div>' + 
                 '       <div class="flex items-center mt-3 ">' +
                 '           <p class="essential w-[130px] shrink-0">옵션명</p>' +
                 '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
-                '       </div>' +
-                '       <div class="flex items-center mt-3 item__input-wrap">' +
-                '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
-                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" placeholder="예시)색상">' +
-                '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
-                '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
-                '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">원</p>' +
-                '           </div>' +
-                '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
-                '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
-                '           </button>' +
-                '       </div>' +
-                '   </div>' +
-                '</div>'
+                '       </div>';
+
+            for (let inx = 0; inx < _tmp; inx++) {
+                const element = 
+                                '       <div class="flex items-center mt-3 item__input-wrap">' +
+                                '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
+                                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-'+ (inx + 1) +'" name="option-property_name" placeholder="예시)색상">' +
+                                '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
+                                '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
+                                '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">원</p>' +
+                                '           </div>' +
+                                '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
+                                '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
+                                '           </button>' +
+                                '       </div>';
+                titleHtml += element;
+            }
+            titleHtml += '   </div>' +'</div>';
 
             $('#optsArea').append(titleHtml);
         }
@@ -1247,7 +1251,7 @@
                 alert('상품 이미지를 등록해주세요.');
                 $('#form-list02').focus();
                 return;
-            } else if ($('.w-full .text-primary.active').length == 0) {
+            } else if ($('#categoryIdx').data('category_idx') < 1) {
                 alert('상품 카테고리를 등록해주세요.');
                 $('.category__list-item.step1').focus();
                 return;
@@ -1302,7 +1306,7 @@
             $('#property .select-group__result div').map(function () {
                 property += $(this).data('sub_idx') + ",";
             })
-            form.append("category_idx", $('.w-full .text-primary span').data('category_idx'));
+            form.append("category_idx", $('#categoryIdx').data('category_idx'));
             form.append("property", property.slice(0, -1));
             form.append('price', $('#product-price').val());
             form.append('is_price_open',$('input[name="price_exposure"]:checked').val());
@@ -1530,19 +1534,21 @@
 
                     // 배송 방법
                     var delivery = '';
-                    result['delivery_info'].split(',').forEach(str => {
-                        delivery += '' + 
-                            '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
-                            '   <button class="ico_delete">' +
-                            '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
-                            '           <path d="M18 6 6 18"></path>' +
-                            '           <path d="m6 6 12 12"></path>' +
-                            '       </svg>' +
-                            '   </button>' +
-                            '</div>';
-                    })
-                    $('.shipping-wrap__add .shipping_method_list').append(delivery);
-                    $('.shipping-wrap__add').removeClass('hidden');
+                    if(result && result['delivery_info']) {
+                        result['delivery_info'].split(',').forEach(str => {
+                            delivery += '' + 
+                                '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
+                                '   <button class="ico_delete">' +
+                                '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
+                                '           <path d="M18 6 6 18"></path>' +
+                                '           <path d="m6 6 12 12"></path>' +
+                                '       </svg>' +
+                                '   </button>' +
+                                '</div>';
+                        })
+                        $('.shipping-wrap__add .shipping_method_list').append(delivery);
+                        $('.shipping-wrap__add').removeClass('hidden');
+                    }
 
                     // 상품 추가 공지
                     $('#form-list09').val(result['notice_info']);
@@ -1550,16 +1556,18 @@
                     // 인증 정보
                     $('#auth_info').text(result['auth_info']);
                     $('.auth-wrap__selected').removeClass('hidden');
-                    if(result['auth_info']) {
-                        result['auth_info'].split(', ').forEach(str => {
-                            if (authList.indexOf(str) == -1) {
-                                $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
-                                $('#auth_info_text').val(str);
-                                $('#auth_info_text').css('display', 'block');
-                            } else {
-                                $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
-                            }
-                        });
+                    if(result && result['auth_info']) {
+                        if(result['auth_info']) {
+                            result['auth_info'].split(', ').forEach(str => {
+                                if (authList.indexOf(str) == -1) {
+                                    $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                                    $('#auth_info_text').val(str);
+                                    $('#auth_info_text').css('display', 'block');
+                                } else {
+                                    $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                                }
+                            });
+                        }
                     }
 
                     // 결제정보
@@ -1572,14 +1580,14 @@
                     // 주문 옵션 추가
                     var obj = $.parseJSON(result['product_option']);
                     obj.forEach(function (item, i) {
-                        addOrderOption();
+                        addOrderOption(item.optionValue.length);
                         $('input[name="option-required_0' + (i + 1) + '"][value=' + item.required + ']').prop('checked', true);
                         $('input#option-name_0' + (i + 1)).val(item.optionName);
                         // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
                         item.optionValue.forEach(function (value, y) {
                             if (y > 0) {
-                                $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
-                                console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
+                                //$('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('.input__add-btn').trigger('click');
+                                console.log(  $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('.input__add-btn') )
                             }
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
@@ -1690,10 +1698,11 @@
             $('.product_reg').data('loadtype', 0);
             loadProduct();
         }
-
-        $('#sortable').sortable({
-            revert:true,
-        });
     });
+    // 상품등록 > 카테고리 선택
+    const prodCate = (item)=>{
+        $(item).parent('li').toggleClass('on').siblings().removeClass('on')
+    }
+
     </script>
 @endsection
