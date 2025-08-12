@@ -130,7 +130,7 @@
                     </dd>
                 </dl>
             </div>
-            <input type="hidden" class="is_new_product" value="0">
+            <input type="hidden" class="is_new_product" value="1">
 
             <div class="bot_btn">
                 <button class="btn btn-primary-line w-1/3" onclick="goStep('step1', 'p')">이전</button>
@@ -1231,7 +1231,7 @@ function loadProduct() {
                 }
 
                 // 신상품 설정
-                $('.is_new_product').val(result['is_new_product']);
+                $('.is_new_product').val(1);
 
                 // 결제 방식
                 $('.payment_method').addClass('hidden');
