@@ -354,7 +354,7 @@
                                     <div class="name">단가</div>
                                     <div class="_requestEstimateTotalPrice">
                                     @if( $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 )
-                                        {{ $data['detail']->price_text }}
+                                        업체 문의
                                     @else
                                         {{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}
                                     @endif
@@ -1382,8 +1382,8 @@
         const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
         var optionPrice = 0;
         if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
-            $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
-            $('._requestEstimateTotalPrice2').text("{{ $data['detail']->price_text }}");
+            $('._requestEstimateTotalPrice').text("업체 문의");
+            $('._requestEstimateTotalPrice2').text("업체 문의");
         } else {
             const count = Number($('#requestEstimateProductCount').val()+'');
             $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
@@ -1464,7 +1464,7 @@
                 const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
                 if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
-                    $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+                    $('._requestEstimateTotalPrice').text("업체 문의");
                 } else {
                     $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
                 }
@@ -1479,7 +1479,7 @@
                 const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
                 if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
-                    $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
+                    $('._requestEstimateTotalPrice').text("업체 문의");
                 } else {
                     $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
                 }
