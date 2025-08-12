@@ -30,7 +30,6 @@ $header_banner = '';
             </ul>
             <button type="button" class="btn w-full btn-primary mt-2.5" onclick="signin()">선택한 아이디로 로그인</button>
             
-            <a href="/signup" class="btn w-full mt-2.5 btn-line2">올펀 가입하기</a>
             <div class="link_box flex items-center justify-center">
                 <a href="/findid">아이디 찾기</a>
                 <a href="/findpw">비밀번호 재설정</a>
