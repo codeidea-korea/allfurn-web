@@ -151,7 +151,7 @@
                     </dl>
                 </div>
 
-                <input type="hidden" name="is_new_product" id="is_new_product_01" value="{{ isset($data) ? ($data->is_new_product == 1 ? '1' : '') : '1'}}">
+                <input type="hidden" name="is_new_product" id="is_new_product_01" value="1">
                 <input type="hidden" name="payment" id="payment02" value="{{ isset($data) ? ( $data->pay_type == '2' ? '2' : '1' ) : '2' }}">
                 <input type="hidden" name="payment_text" id="payment_text" value="{{  isset($data) ? $data->pay_type_text : '' }}">
                 <input type="hidden" name="product_code" value="{{isset($product_number) ? $product_number : ''}}">
