@@ -57,7 +57,7 @@
                         @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $lists[0]->is_price_open == 0 ? $lists[0]->price_text : number_format($lists[0]->product_total_price, 0) }}</div>
+                                <div>{{ $lists[0]->is_price_open == 0 ? '업체 문의' : number_format($lists[0]->product_total_price, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>

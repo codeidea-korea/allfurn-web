@@ -136,7 +136,7 @@
                                                 <div class="name">가격</div>
                                                 <div class="total_price">
                                                     @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
-                                                        {{ $row->price_text }}
+                                                        업체 문의
                                                     @else
                                                         {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
                                                     @endif
