@@ -21,7 +21,7 @@
                     <h3 class="font-medium text-lg">상품 기본 정보</h3>
                     {{-- @if(sizeof($productList)>0)
                         <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="getProductList(1);">
-                            기본 정보 불러오기
+                            기본 정보 불러오기F
                         </button>
                     @endif
                     button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button>--}}
@@ -153,7 +153,7 @@
 
                 <input type="hidden" name="is_new_product" id="is_new_product_01" value="1">
                 <input type="hidden" name="payment" id="payment02" value="{{ isset($data) ? ( $data->pay_type == '2' ? '2' : '1' ) : '2' }}">
-                <input type="hidden" name="payment_text" id="payment_text" value="{{  isset($data) ? $data->pay_type_text : '' }}">
+                <input type="hidden" name="payment_text" id="payment_text" value="{{  isset($data) ? $data->pay_type_text : '업체 문의' }}">
                 <input type="hidden" name="product_code" value="{{isset($product_number) ? $product_number : ''}}">
                 <input type="hidden" name="notice_info" id="form-list09" value="{{isset($data) ? $data->notice_info : ''}}">
 
