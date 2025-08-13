@@ -1310,12 +1310,12 @@
             form.append("property", property.slice(0, -1));
             form.append('price', $('#product-price').val());
             form.append('is_price_open',$('input[name="price_exposure"]:checked').val());
-            form.append('is_new_product', $('input[name="is_new_product"]:checked').val());
-            form.append('price_text', $('.select-group__dropdown .dropdown__title').text());
-            form.append('pay_type',$('input[name="payment"]:checked').val());
+            form.append('is_new_product', $('input[name="is_new_product"]').val());
+            form.append('price_text', '업체 문의');
+            form.append('pay_type',$('input[name="payment"]').val());
 
-            if ($('input[name="payment"]:checked').val() == 4) {
-                form.append('pay_type_text', $('input[name="payment_text"]').val());
+            if ($('input[name="payment"]').val() == 4) {
+                form.append('pay_type_text', '업체 문의');
             }
 
             form.append('product_code',$('input[name="product_code"]').val());
