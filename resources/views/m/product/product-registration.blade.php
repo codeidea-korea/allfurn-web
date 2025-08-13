@@ -923,7 +923,7 @@ function saveProduct(regType) {
     pay_type = '2';
     form.append('pay_type', pay_type);
     if (pay_type == '4') {
-        form.append('pay_type_text', $('input[name="payment_text"]').val());
+        form.append('pay_type_text', '업체 문의');
     }
     form.append('product_code', '');
 
@@ -1246,6 +1246,7 @@ function loadProduct() {
                     $('input[name="payment_text"]').val(result['pay_type_text']);
                     $('.payment_method').removeClass('hidden');
                 }
+                    $('.payment').text('업체 문의');
 
                 // 상품 코드
                 $('input[name="product_code"]').val(result['product_code']);
