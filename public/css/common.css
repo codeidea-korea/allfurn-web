@@ -669,3 +669,21 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .custom_input2 input[type="checkbox"]:checked + label::before{
     background: url(/img/check_on.svg) center/contain no-repeat;
 }
+
+
+/* 상품카테 모달 */
+.prod_cate_body {padding:22px 17px; }
+.prod_cate_body h4 {font-size:20px; font-weight:500; }
+.prod_cate_body .prod_category {overflow-y:auto; max-height:420px; margin:20px 0; }
+.prod_cate_body .prod_category > li > button {display:flex; align-items:center; justify-content:space-between; width:100%; padding:10px 0; border-bottom:1px solid #eeeeee; }
+.prod_cate_body .prod_category .prod_category_list {display:none; padding:10px 20px; background-color:#f4f4f4; }
+.prod_cate_body .prod_category .prod_category_list > li {display:flex; align-items:center; flex-direction: row-reverse; justify-content:left; gap:5px; }
+.prod_cate_body .prod_category .prod_category_list > li label {padding:5px 0; cursor:pointer; }
+.prod_cate_body .prod_category > li.on button svg {transform:rotate(180deg)}
+.prod_cate_body .prod_category > li.on .prod_category_list {display:block;}
+
+.check-form2 {position:relative; width:0; height:0; }
+.check-form2:after {content:''; position:absolute; left:6px; top:calc(50% - 5px); width:6px; height:10px; border-bottom:2px solid transparent; border-right:2px solid transparent; transform:rotate(45deg)}
+.check-form2 + label {font-weight:300; }
+.check-form2:checked:after {border-bottom:2px solid var(--main_color); border-right:2px solid var(--main_color);  }
+.check-form2:checked + label {font-weight:500; }

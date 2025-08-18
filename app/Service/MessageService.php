@@ -1263,47 +1263,65 @@ class MessageService
 
     public function getUnreadRecipientsList()
     {
-        // DATE_FORMAT(created_at, '%Y-%m-%d')
-        if(QPushSend::whereRaw("DATE_FORMAT(created_at, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')")->count() > 0) {
-            return [];
-        }
-        $queue = new QPushSend;
-        $queue->request_type = 1;
-        $queue->save();
+        DB::beginTransaction();
 
-        return Message::select(
-            /*
-            DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                amr.second_company_idx, amr.first_company_idx) as receive_company_idx'),
-            DB::raw('if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                amr.second_company_type, amr.first_company_type) as receive_company_type'),
-                */
-            DB::raw('CASE if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.second_company_type, amr.first_company_type) 
-                    WHEN "W" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "W" AND company_idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.second_company_idx, amr.first_company_idx) AND parent_idx = 0)
-                    WHEN "R" THEN (SELECT REGEXP_REPLACE(phone_number, "[^0-9]", "") FROM AF_user WHERE type = "R" AND company_idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.second_company_idx, amr.first_company_idx) AND parent_idx = 0)
-                    WHEN "S" || "N" THEN (SELECT phone_number FROM AF_normal    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.second_company_idx, amr.first_company_idx))
-                END AS phone_number'),
-            DB::raw('CASE sender_company_type 
-                    WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.first_company_idx, amr.second_company_idx))
-                    WHEN "R" THEN (SELECT company_name FROM AF_retail    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.first_company_idx, amr.second_company_idx))
-                    WHEN "S" || "N" THEN (SELECT name FROM AF_normal    WHERE idx = if(sender_company_idx = amr.first_company_idx && sender_company_type = amr.first_company_type, 
-                    amr.first_company_idx, amr.second_company_idx))
+        $targets = DB::select('
+            SELECT 
+                usr.phone_number,
+                CASE sender_company_type 
+                    WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
+                    room.first_company_idx, room.second_company_idx))
+                    WHEN "R" THEN (SELECT company_name FROM AF_retail    WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
+                    room.first_company_idx, room.second_company_idx))
+                    WHEN "S" || "N" THEN (SELECT name FROM AF_normal    WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
+                    room.first_company_idx, room.second_company_idx))
                 END 
-                AS 회사명'),
-            DB::raw("'" . env("APP_URL")."/message' AS 올톡링크")
-        )
-        ->join('AF_message_room as amr', 'AF_message.room_idx', 'amr.idx')
-        ->where('AF_message.is_read', 0)
-        ->whereRaw('DATE(AF_message.register_time) = (CURDATE() - INTERVAL 1 DAY)')
-        // ->where('second_company_idx', 1823) // INFO: 테스트를 위해서 조건을 추가.
-        ->distinct()
-        ->get();
+                AS 회사명
+            FROM (SELECT 
+                    max(room_idx) AS last_room_idx, 
+                    sender_company_type,
+                    sender_company_idx, 
+                    count(idx) AS count_unread,
+                    max(register_time) AS last_unread_time
+                FROM ALLFURN.AF_message 
+                WHERE (is_read = 0 or is_read is null)
+                AND (
+                    (register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
+                    AND pushed < 2)
+                    OR 
+                    (register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
+                    AND pushed < 3)
+                )
+                GROUP BY sender_company_type,sender_company_idx) msg
+            JOIN ALLFURN.AF_message_room room on msg.last_room_idx = room.idx
+            JOIN (SELECT 
+                    idx, 
+                    company_idx, 
+                    type,
+                    phone_number
+                FROM ALLFURN.AF_user 
+                WHERE is_delete = 0 
+                AND state = "JS") usr on (
+                    (room.first_company_idx = usr.company_idx AND room.first_company_type = usr.type)
+                    OR (room.second_company_idx = usr.company_idx AND room.second_company_type = usr.type)
+                )
+            GROUP BY usr.idx
+            ');
+
+        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
+                    AND pushed < 3)')
+            ->update(['pushed' => 3]);
+        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
+                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
+                    AND pushed < 2)')
+            ->update(['pushed' => 2]);
+
+        DB::commit();
+
+        return $targets;
     }
 
     /**

@@ -21,7 +21,7 @@
                     <h3 class="font-medium text-lg">상품 기본 정보</h3>
                     {{-- @if(sizeof($productList)>0)
                         <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="getProductList(1);">
-                            기본 정보 불러오기
+                            기본 정보 불러오기F
                         </button>
                     @endif
                     button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button>--}}
@@ -36,7 +36,7 @@
                 </div>
                 <div class="mb-5 pb-5 border-b">
                     <dl class="flex">
-                        <dt class="w-[190px] shrink-0 mt-2">상품 이미지</dt>
+                        <dt class="essential w-[190px] shrink-0 mt-2">상품 이미지</dt>
                         <dd class="font-medium w-full">
                             <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap ui-sortable">
                                 <div class="border border-dashed w-[200px] h-[200px] rounded-md relative flex items-center justify-center product-img__gallery">
@@ -63,13 +63,12 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">카테고리</dt>
                         <dd class="w-full">
-                            <div class="setting_category">
-                                <div class="category_list border rounded-md">
-                                    {{-- 카테고리 목록이 출력될 영역 --}}
-                                </div>
-                            </div>
+                            <button class="btn btn-line4 nohover flex items-center justify-between !w-full px-3 font-normal" onclick="modalOpen('#prod_category-modal')">
+                                카테고리 선택
+                                <svg class="w-6 h-6 stroke-stone-400 -rotate-90"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
+                            </button>
                             <div class="text-primary mt-3">
-                                선택한 카테고리 : <span id="categoryIdx">-</span>
+                                <span>선택한 카테고리 : </span><span id="categoryIdx"></span>
                             </div>
                         </dd>
                     </dl>
@@ -78,14 +77,14 @@
                     <dl class="flex">
                         <dt class="w-[190px] shrink-0 mt-2">상품 속성</dt>
                         <dd id="property" class="font-medium w-full">
-                            {{-- 상품속성들이 출력될 영역 --}}
                             <div id="property_info">
                                 <div class="info">
                                     <div class="">
-                                        <p>· 상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="text-priamry">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>
+                                        <p>· 상품 속성은 기입하지 않으셔도 됩니다. 속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해 주세요.</p>
                                     </div>
                                 </div>
                             </div>
+                            {{-- 상품속성들이 출력될 영역 --}}
                         </dd>
                     </dl>
                 </div>
@@ -118,6 +117,7 @@
                                 </div>
 
                                 <!-- 미노출일 때 출력 -->
+                                 <!-- 
                                 <div class="select-group__dropdown">
                                     <div class="mt-5">
                                         <a href="javascript:;" class="h-[48px] px-3 border rounded-sm inline-block filter_border filter_dropdown w-[410px] flex justify-between items-center">
@@ -144,12 +144,20 @@
                                         </div>
                                     </div>
                                 </div>
+                                 -->
 
                             </div>
                         </dd>
                     </dl>
                 </div>
 
+                <input type="hidden" name="is_new_product" id="is_new_product_01" value="1">
+                <input type="hidden" name="payment" id="payment02" value="{{ isset($data) ? ( $data->pay_type == '2' ? '2' : '1' ) : '2' }}">
+                <input type="hidden" name="payment_text" id="payment_text" value="{{  isset($data) ? $data->pay_type_text : '업체 문의' }}">
+                <input type="hidden" name="product_code" value="{{isset($product_number) ? $product_number : ''}}">
+                <input type="hidden" name="notice_info" id="form-list09" value="{{isset($data) ? $data->notice_info : ''}}">
+
+                <!--
                 <div class="mb-5 pb-5 border-b">
                     <dl class="flex">
                         <dt class="w-[190px] shrink-0 mt-2">신상품 설정</dt>
@@ -248,6 +256,7 @@
                         </dd>
                     </dl>
                 </div>
+                    -->
 
                 <div class="mb-5 pb-5">
                     <dl class="flex">
@@ -265,7 +274,7 @@
                     <div class="flex items-center justify-between">
                         <h3 class="font-medium text-lg">상품 주문 옵션</h3>
                         <div class="flex items-center gap-2 font-medium">
-                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption();">주문 옵션 추가</button>
+                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption(_tmp+1);">주문 옵션 추가</button>
                             <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="sortOption();">옵션 순서 변경</button>
                         </div>
                     </div>
@@ -288,104 +297,18 @@
                 <div id="optsArea">
                 </div>
 
-                <div class="border-b-2 border-stone-900 mt-10 pb-5 mb-5">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-medium text-lg">상품 주문 정보</h3>
-                        <div class="flex items-center gap-2 font-medium hidden">
-                            {{-- 주문정보 불러오기 일단 보류 --}}
-                            {{-- <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#certification_information_modal')">주문 정보 불러오기</button> --}}
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" name="order-info01" id="price_exposure21" value="0">
+                <input type="hidden" name="order-info02" id="price_exposure24" value="2">
+                <input type="hidden" name="order-info03" id="price_exposure26" value="2">
+                <input type="hidden" name="order-info04" id="price_exposure28" value="2">
 
-                <div class="flex gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0 mt-3">결제 안내</p>
-                    <div class="w-full">
-                        <div class="radio_btn flex items-center">
-                            <div>
-                                <input type="radio" name="order-info01" id="price_exposure20" value="1">
-                                <label for="price_exposure20" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                            </div>
-                            <div style="margin-left:-1px;">
-                                <input type="radio" name="order-info01" id="price_exposure21" value="0" checked>
-                                <label for="price_exposure21" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
-                            </div>
-                        </div>
-                        <!-- hidden -->
-                        <div class="guide_area guide_pay_notice mt-3 hidden">
-                            <div class=" setting_input h-[100px] py-3  w-full">
-                                <textarea name="pay_notice" id="pay_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" id="order_title">
+                <input type="hidden" name="order_content" id="order_content">
+                <input type="hidden" name="return_notice" id="return_notice">
+                <input type="hidden" name="delivery_notice" id="delivery_notice">
+                <input type="hidden" name="order-info01" id="price_exposure21" value="0">
+                <input type="hidden" name="pay_notice" id="pay_notice">
 
-                <div class="flex gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0 mt-3">배송 안내</p>
-                    <div class="w-full">
-                        <div class="radio_btn flex items-center">
-                            <div>
-                                <input type="radio" name="order-info02" id="price_exposure23" value="1">
-                                <label for="price_exposure23" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                            </div>
-                            <div style="margin-left:-1px;">
-                                <input type="radio" name="order-info02" id="price_exposure24" value="2" checked>
-                                <label for="price_exposure24" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
-                            </div>
-                        </div>
-                        <div class="guide_area guide_delivery_notice mt-3 hidden">
-                            <div class=" setting_input h-[100px] py-3  w-full">
-                                <textarea name="delivery_notice" id="delivery_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0 mt-3">교환/반품/취소 안내</p>
-                    <div class="w-full">
-                        <div class="radio_btn flex items-center">
-                            <div>
-                                <input type="radio" name="order-info03" id="price_exposure25" value="1">
-                                <label for="price_exposure25" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                            </div>
-                            <div style="margin-left:-1px;">
-                                <input type="radio" name="order-info03" id="price_exposure26" value="2" checked>
-                                <label for="price_exposure26" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
-                            </div>
-                        </div>
-                        <div class="guide_area guide_return_notice mt-3 hidden">
-                            <div class=" setting_input h-[100px] py-3  w-full">
-                                <textarea name="return_notice" id="return_notice" class="w-full h-full" placeholder="안내 상세 내용 입력"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-3 border-b pb-5 mb-5">
-                    <p class="w-[190px] shrink-0 mt-3">주문 정보 직접 입력</p>
-                    <div class="w-full">
-                        <div class="radio_btn flex items-center">
-                            <div>
-                                <input type="radio" name="order-info04" id="price_exposure27" value="1">
-                                <label for="price_exposure27" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                            </div>
-                            <div style="margin-left:-1px;">
-                                <input type="radio" name="order-info04" id="price_exposure28" value="2" checked>
-                                <label for="price_exposure28" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>
-                            </div>
-                        </div>
-                        <div class="guide_area guide_order_notice mt-3 hidden">
-                            <div class="font-medium w-full">
-                                <input type="text" class="setting_input h-[48px] w-full" id="order_title" placeholder="항목 상세">
-                            </div>
-                            <div class=" setting_input h-[100px] py-3 mt-3 w-full ">
-                                <textarea name="order_content" id="order_content" class="w-full h-full" placeholder="항목 상세 내용"></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -485,13 +408,13 @@
                                 $('.w-full .text-primary span').text( result.name );
 
                                 var infoText = '';
-                                infoText += '<div id="property_info">' +
+                                infoText = '<div id="property_info">' +
                                     '   <div class="info">' +
                                     '       <div class="">' +
                                     '           <p>· 상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="text-priamry">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>'
                                 '       </div>' +
                                 '   </div>' +
-                                '</div>';
+                                '</div>' + infoText;
 
                                 $('#property').empty();
                                 $('#property').append(infoText);
@@ -688,7 +611,7 @@
                             '   </div>' +
                             '</div>';
                     });
-                    $('#property #property_info').before(htmlText);
+                    $('#property #property_info').after(htmlText);
                 } else {
                     var subHtmlText = '';
                     result.forEach(function (e, idx) {
@@ -853,10 +776,10 @@
     }
 
     //### 옵션 추가
-    function addOrderOption() {
+    function addOrderOption(tmp) {
         // 옵션 최대 6개
         oIdx = parseInt( oIdx + 1 );
-        _tmp = parseInt( _tmp + 1 );
+        _tmp = parseInt( tmp );
         if (oIdx > 6) {
             oIdx = parseInt( oIdx - 1 );
             openModal('#alert-modal10');
@@ -877,24 +800,28 @@
                 '               <input type="radio" name="option-required_0'+ parseInt( oIdx ) +'" id="repuired-option0'+ parseInt( oIdx ) +'-2" value="0">' +
                 '               <label for="repuired-option0'+ parseInt( oIdx ) +'-2" class="w-[140px] h-[48px] flex items-center justify-center">설정안함</label>' +
                 '           </div>' +
-                '       </div>' +
+                '       </div>' + 
                 '       <div class="flex items-center mt-3 ">' +
                 '           <p class="essential w-[130px] shrink-0">옵션명</p>' +
                 '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
-                '       </div>' +
-                '       <div class="flex items-center mt-3 item__input-wrap">' +
-                '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
-                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-1" name="option-property_name" placeholder="예시)색상">' +
-                '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
-                '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
-                '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">원</p>' +
-                '           </div>' +
-                '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
-                '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
-                '           </button>' +
-                '       </div>' +
-                '   </div>' +
-                '</div>'
+                '       </div>';
+
+            for (let inx = 0; inx < _tmp; inx++) {
+                const element = 
+                                '       <div class="flex items-center mt-3 item__input-wrap">' +
+                                '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
+                                '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-property_0'+ parseInt( oIdx ) +'-'+ (inx + 1) +'" name="option-property_name" placeholder="예시)색상">' +
+                                '           <div class="setting_input w-[223px] h-[48px] relative overflow-hidden ml-2">' +
+                                '               <input type="text" class="text-right w-full h-full pr-10" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');">' +
+                                '               <p class="flex flex-wrap items-center justify-center absolute w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500">원</p>' +
+                                '           </div>' +
+                                '           <button class="flex flex-wrap items-center justify-center w-[48px] h-[48px] top-0 right-0 bg-stone-100 text-center text-stone-500 rounded-md border ml-2 input__add-btn">' +
+                                '              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-800"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>' +
+                                '           </button>' +
+                                '       </div>';
+                titleHtml += element;
+            }
+            titleHtml += '   </div>' +'</div>';
 
             $('#optsArea').append(titleHtml);
         }
@@ -1324,7 +1251,7 @@
                 alert('상품 이미지를 등록해주세요.');
                 $('#form-list02').focus();
                 return;
-            } else if ($('.w-full .text-primary.active').length == 0) {
+            } else if ($('#categoryIdx').data('category_idx') < 1) {
                 alert('상품 카테고리를 등록해주세요.');
                 $('.category__list-item.step1').focus();
                 return;
@@ -1333,13 +1260,17 @@
                 $('#product-price').focus();
                 return;
             } else if ($('[name="payment"]:checked').length == 0) {
+                /*
                 alert('결제방식을 선택해주세요.');
                 $('#payment01').focus();
                 return;
+                */
             } else if ($('.shipping_method').length < 1) {
+                /*
                 alert('배송방법을 선택해주세요.');
                 $('.shipping-wrap__add').focus();
                 return;
+                */
             } else if (editer.html.get() == '') {
                 alert('상품 상세 내용을 입력해주세요.');
                 editer.events.focus();
@@ -1375,16 +1306,16 @@
             $('#property .select-group__result div').map(function () {
                 property += $(this).data('sub_idx') + ",";
             })
-            form.append("category_idx", $('.w-full .text-primary span').data('category_idx'));
+            form.append("category_idx", $('#categoryIdx').data('category_idx'));
             form.append("property", property.slice(0, -1));
             form.append('price', $('#product-price').val());
             form.append('is_price_open',$('input[name="price_exposure"]:checked').val());
-            form.append('is_new_product', $('input[name="is_new_product"]:checked').val());
-            form.append('price_text', $('.select-group__dropdown .dropdown__title').text());
-            form.append('pay_type',$('input[name="payment"]:checked').val());
+            form.append('is_new_product', $('input[name="is_new_product"]').val());
+            form.append('price_text', '업체 문의');
+            form.append('pay_type',$('input[name="payment"]').val());
 
-            if ($('input[name="payment"]:checked').val() == 4) {
-                form.append('pay_type_text', $('input[name="payment_text"]').val());
+            if ($('input[name="payment"]').val() == 4) {
+                form.append('pay_type_text', '업체 문의');
             }
 
             form.append('product_code',$('input[name="product_code"]').val());
@@ -1603,19 +1534,21 @@
 
                     // 배송 방법
                     var delivery = '';
-                    result['delivery_info'].split(',').forEach(str => {
-                        delivery += '' + 
-                            '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
-                            '   <button class="ico_delete">' +
-                            '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
-                            '           <path d="M18 6 6 18"></path>' +
-                            '           <path d="m6 6 12 12"></path>' +
-                            '       </svg>' +
-                            '   </button>' +
-                            '</div>';
-                    })
-                    $('.shipping-wrap__add .shipping_method_list').append(delivery);
-                    $('.shipping-wrap__add').removeClass('hidden');
+                    if(result && result['delivery_info']) {
+                        result['delivery_info'].split(',').forEach(str => {
+                            delivery += '' + 
+                                '<div class="shipping_method px-4 py-2 bg-stone-100 flex items-center gap-1 text-sm rounded-full"><span class="add__name">' + $.trim(str) + ' </span>' +
+                                '   <button class="ico_delete">' +
+                                '       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-stone-500">' +
+                                '           <path d="M18 6 6 18"></path>' +
+                                '           <path d="m6 6 12 12"></path>' +
+                                '       </svg>' +
+                                '   </button>' +
+                                '</div>';
+                        })
+                        $('.shipping-wrap__add .shipping_method_list').append(delivery);
+                        $('.shipping-wrap__add').removeClass('hidden');
+                    }
 
                     // 상품 추가 공지
                     $('#form-list09').val(result['notice_info']);
@@ -1623,16 +1556,18 @@
                     // 인증 정보
                     $('#auth_info').text(result['auth_info']);
                     $('.auth-wrap__selected').removeClass('hidden');
-                    if(result['auth_info']) {
-                        result['auth_info'].split(', ').forEach(str => {
-                            if (authList.indexOf(str) == -1) {
-                                $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
-                                $('#auth_info_text').val(str);
-                                $('#auth_info_text').css('display', 'block');
-                            } else {
-                                $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
-                            }
-                        });
+                    if(result && result['auth_info']) {
+                        if(result['auth_info']) {
+                            result['auth_info'].split(', ').forEach(str => {
+                                if (authList.indexOf(str) == -1) {
+                                    $('#certification_information_modal .filter_list input[data-auth="기타 인증"]').attr('checked', true);
+                                    $('#auth_info_text').val(str);
+                                    $('#auth_info_text').css('display', 'block');
+                                } else {
+                                    $('#certification_information_modal .filter_list input[data-auth="' + str + '"]').attr('checked', true);
+                                }
+                            });
+                        }
                     }
 
                     // 결제정보
@@ -1645,14 +1580,14 @@
                     // 주문 옵션 추가
                     var obj = $.parseJSON(result['product_option']);
                     obj.forEach(function (item, i) {
-                        addOrderOption();
+                        addOrderOption(item.optionValue.length);
                         $('input[name="option-required_0' + (i + 1) + '"][value=' + item.required + ']').prop('checked', true);
                         $('input#option-name_0' + (i + 1)).val(item.optionName);
                         // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
                         item.optionValue.forEach(function (value, y) {
                             if (y > 0) {
-                                $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
-                                console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
+                                //$('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('.input__add-btn').trigger('click');
+                                console.log(  $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('.input__add-btn') )
                             }
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
                             $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().find('input[name="option-price"]').val(value.price);
@@ -1718,6 +1653,31 @@
         }
         return vars;
     }
+    //### 카테고리 선택완료
+    function setCategory(){
+        var _this = $('input:radio[name=prod_category]:checked');
+        var _idx  = _this.val();
+        var _p_idx= _this.data('p_idx');
+
+        // 카테고리 설정
+        if( typeof _idx != 'undefined' && _idx != '' ) {
+            var _text = _this.closest('ul').prev('button').find('span').text();
+            var _sub = $("label[for='" + _this.attr('id') + "'").text();
+
+            $('#categoryIdx').data('category_idx', _idx);
+            $('#categoryIdx').text(_text + ' > ' + _sub);
+
+            getProperty(null);
+            $('.propertyList').show();
+            $('.checkedProperties').html('');
+
+            // $('#property').empty();
+            // $('#property').append(infoText);
+            // getProperty(null);
+        }
+
+        modalClose('#prod_category-modal');
+    }
 
     $(document).ready(function(){
         init_editor();
@@ -1738,10 +1698,11 @@
             $('.product_reg').data('loadtype', 0);
             loadProduct();
         }
-
-        $('#sortable').sortable({
-            revert:true,
-        });
     });
+    // 상품등록 > 카테고리 선택
+    const prodCate = (item)=>{
+        $(item).parent('li').toggleClass('on').siblings().removeClass('on')
+    }
+
     </script>
 @endsection

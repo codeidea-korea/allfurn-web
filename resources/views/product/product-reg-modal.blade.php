@@ -1246,3 +1246,55 @@
         </div>
     </div>
 </div>
+
+
+<!-- 상품등록 > 카테고리 선택 -->
+<div class="modal" id="prod_category-modal">
+    <div class="modal_bg" onclick="modalClose('#prod_category-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#prod_category-modal')"><svg class="w-11 h-11"><use xlink:href="/img/m/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body prod_cate_body">
+            <h4>카테고리 선택</h4>
+            <ul class="prod_category">
+                @if( isset($categoryList) != '' )
+                @foreach( $categoryList as $c => $category )
+                <li>
+                    <button cidx="{{$category->idx}}" onclick="prodCate(this)"><span>{{$category->name}}</span><svg class="w-6 h-6 stroke-stone-400 "><use xlink:href="/img/m/icon-defs.svg#drop_b_arrow"></use></svg></button>
+                    <ul class='prod_category_list'>
+                        @if( !empty( $category->property ) )
+                        @foreach( $category->property AS $p => $property )
+                        <li>
+                            <input type="radio" data-p_idx="{{$category->idx}}" class="check-form2" value="{{$property['idx']}}" name="prod_category" id="prod_category_{{$c}}_{{$p}}">
+                            <label for="prod_category_{{$c}}_{{$p}}">{{$property['name']}}</label>
+                        </li>
+                        @endforeach
+                        @endif
+                    </ul>
+                </li>
+                @endforeach
+                @endif
+            </ul>
+            <div class="btn_bot">
+                <button class="btn btn-primary w-full" onclick="setCategory();">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 상품등록 > 속성 -->
+<div class="modal" id="prod_property-modal">
+    <div class="modal_bg" onclick="modalClose('#prod_property-modal')"></div>
+    <div class="modal_inner modal-md">
+        <button class="close_btn" onclick="modalClose('#prod_property-modal')"><svg class="w-11 h-11"><use xlink:href="/img/m/icon-defs.svg#Close"></use></svg></button>
+        <div class="modal_body h_fix btnok filter_body prod_property_body">
+            <h4>속성</h4>
+            <ul class="prod_property_tab"></ul>
+            <div class="prod_property_cont">
+            </div>
+            <div class="btn_bot">
+                <button class="btn btn-line3 refresh_btn" onclick="resetProperty(this)"><svg><use xlink:href="/img/m/icon-defs.svg#refresh"></use></svg>초기화</button>
+                <button class="btn btn-primary confirm_prod_property">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>

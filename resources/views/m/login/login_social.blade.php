@@ -77,7 +77,7 @@ if('{{ $replaceUrl ?? "" }}' != '') {
 
 @endif
 
-<div id="content">
+<div id="content" @if ( (!empty(Auth::user()) && !empty(Auth::user()['account']) && ($replaceUrl ?? '') != '') ) style="display:none;" @endif>
     <section class="login_common flex items-center justify-center">
         <div class="login_inner">
             <img class="logo" src="./img/logo.svg" alt="">
