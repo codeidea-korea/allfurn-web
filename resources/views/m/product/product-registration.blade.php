@@ -107,6 +107,7 @@
                             <button class="is_price_open w-1/2 active" data-val="1">노출</button>
                             <button class="is_price_open w-1/2" data-val="0">미노출</button>
                         </div>
+                        <input type="hidden" class="price_text" name="price_text" value="업체 문의">
                         <!--
                         <div class="btn_select_cont mt-2">
                             <div class='div_ptxt1'></div>
