@@ -1315,8 +1315,8 @@
 
             form.append("name", $('#form-list01').val());
 
-            for (var i = 0; i < storedFiles.length; i++) {
-                form.append('files[]', storedFiles[i]);
+            for (var i = 0; i < stored600Files.length; i++) {
+                form.append('files[]', stored600Files[i]);
             }
             for (var i = 0; i < stored100Files.length; i++) {
                 form.append('files100[]', stored100Files[i]);
