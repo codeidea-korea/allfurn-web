@@ -905,7 +905,7 @@ function saveProduct(regType) {
     form.append("category_idx", $('#categoryIdx').data('category_idx'));
     form.append('price', $('#product-price').val());
     form.append('is_price_open', $('button.is_price_open.active').data('val'));
-    form.append('price_text', $('.price_text').text());
+    form.append('price_text', $('.price_text').val());
     form.append('is_new_product', $('.is_new_product').val());
 
     var pay_type = '';
