@@ -589,7 +589,7 @@
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url				: '/product/getCategoryProperty',
             data			: {
-                'category_idx' : $('.w-full .text-primary.active span').data('category_idx'),
+                'category_idx' : $('#categoryIdx').data('category_idx'),
                 'parent_idx' : parentIdx
             },
             type			: 'POST',
@@ -628,6 +628,32 @@
                     })
                     modalOpen('#product_attributes_modal');
                 }
+            }
+        });
+    }
+    //### 속성 가져오기2
+    function getSubProperty(parentIdx=null, title=null, ord=null) {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url				: '/product/getCategoryProperty',
+            data			: {
+                'category_idx' : $('input:radio[name=prod_category]:checked').val(),
+                'parent_idx' : parentIdx
+            },
+            type			: 'POST',
+            dataType		: 'json',
+            success		: function(result) {
+                var _active = "";
+                if( ord == 0 ) { _active = 'active'; } else { _active = ''; }
+                var subHtmlText = '<div class="sub_property_area ' + _active + ' property_idx_' + parentIdx + '" data-title="' + title + '"><ul class="filter_list !mt-0 !mb-0">';
+                result.forEach(function (e, idx) {
+                    subHtmlText += '<li>' +
+                        '<input type="checkbox" class="check-form" id="property-check_' + e.idx + '" data-sub_property="' + e.idx + '" data-sub_name="' + e.property_name + '">' +
+                        '<label for="property-check_' + e.idx + '">' + e.property_name + '</label>' +
+                        '</li>';
+                })
+                subHtmlText += '</ul></div>';
+                $('#prod_property-modal .prod_property_cont').append(subHtmlText);
             }
         });
     }
@@ -1289,8 +1315,8 @@
 
             form.append("name", $('#form-list01').val());
 
-            for (var i = 0; i < storedFiles.length; i++) {
-                form.append('files[]', storedFiles[i]);
+            for (var i = 0; i < stored600Files.length; i++) {
+                form.append('files[]', stored600Files[i]);
             }
             for (var i = 0; i < stored100Files.length; i++) {
                 form.append('files100[]', stored100Files[i]);

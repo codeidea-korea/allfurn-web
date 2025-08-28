@@ -107,6 +107,7 @@
                             <button class="is_price_open w-1/2 active" data-val="1">노출</button>
                             <button class="is_price_open w-1/2" data-val="0">미노출</button>
                         </div>
+                        <input type="hidden" class="price_text" name="price_text" value="업체 문의">
                         <!--
                         <div class="btn_select_cont mt-2">
                             <div class='div_ptxt1'></div>
@@ -878,10 +879,9 @@ function saveProduct(regType) {
     var form = new FormData();
     form.append("reg_type", regType);
     form.append("name", $('#form-list01').val());
-    for (var i = 0; i < storedFiles.length; i++) {
-        form.append('files[]', storedFiles[i]);
+    for (var i = 0; i < stored600Files.length; i++) {
+        form.append('files[]', stored600Files[i]);
     }
-    /*
     for (var i = 0; i < stored100Files.length; i++) {
         form.append('files100[]', stored100Files[i]);
     }
@@ -890,7 +890,7 @@ function saveProduct(regType) {
     }
     for (var i = 0; i < stored600Files.length; i++) {
         form.append('files600[]', stored600Files[i]);
-    }*/
+    }
 
     var property = '';
     $('#prod_property-modal .sub_property_area').each(function(o){
@@ -905,7 +905,7 @@ function saveProduct(regType) {
     form.append("category_idx", $('#categoryIdx').data('category_idx'));
     form.append('price', $('#product-price').val());
     form.append('is_price_open', $('button.is_price_open.active').data('val'));
-    form.append('price_text', $('.price_text').text());
+    form.append('price_text', $('.price_text').val());
     form.append('is_new_product', $('.is_new_product').val());
 
     var pay_type = '';
