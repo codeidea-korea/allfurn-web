@@ -376,6 +376,7 @@
 
         isLoading = true;
         if(needEmpty) currentPage = 0;
+        $('#loadingContainer').show();
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -407,6 +408,7 @@
                 }
 
                 isLastPage = currentPage === result.list.last_page;
+                $('#loadingContainer').hide();
             },
             complete : function () {
                 displaySelectedCategories();
@@ -414,6 +416,7 @@
                 displaySelectedOrders();
                 toggleFilterBox();
                 isLoading = false;
+                $('#loadingContainer').hide();
             }
         })
     }
