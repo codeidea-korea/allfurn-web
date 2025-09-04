@@ -1281,6 +1281,7 @@ class MessageService
                     max(room_idx) AS last_room_idx, 
                     sender_company_type,
                     sender_company_idx, 
+					user_idx,
                     count(idx) AS count_unread,
                     max(register_time) AS last_unread_time
                 FROM ALLFURN.AF_message 
@@ -1294,7 +1295,7 @@ class MessageService
                     AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
                     AND pushed < 3)
                 )
-                GROUP BY sender_company_type,sender_company_idx) msg
+                GROUP BY sender_company_type,sender_company_idx, user_idx) msg
             JOIN ALLFURN.AF_message_room room on msg.last_room_idx = room.idx
             JOIN (SELECT 
                     idx, 
@@ -1307,6 +1308,7 @@ class MessageService
                     (room.first_company_idx = usr.company_idx AND room.first_company_type = usr.type)
                     OR (room.second_company_idx = usr.company_idx AND room.second_company_type = usr.type)
                 )
+			AND usr.idx = msg.user_idx
             GROUP BY usr.idx
             ');
 
