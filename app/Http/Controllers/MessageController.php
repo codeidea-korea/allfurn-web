@@ -264,9 +264,16 @@ class MessageController extends BaseController
         $list = $this->messageService->getUnreadRecipientsList();
         
         $result = [];
+        $sendPhoneNumbers = [];
         for($idx = 0; $idx < count($list); $idx = $idx + 1) {
         
             $receiver = $list[$idx]->phone_number;
+            $receiverCheck = str_replace("-", "", $receiver);
+            if(in_array($receiverCheck, $sendPhoneNumbers)) {
+                // 이미 확인 요청을 보낸 핸드폰에 재요청을 하지 않습니다.
+                continue;
+            }
+            array_push($sendPhoneNumbers, $receiverCheck);
 
             $sreq = [];
             $sreq['회사명'] = $list[$idx]->회사명;
