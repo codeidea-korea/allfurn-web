@@ -189,3 +189,19 @@ $('.file_input').on('change', function() {
         };
     }
 });
+
+
+const originFn = $.ajax;
+$.ajax = (url, options) => {
+    const beforeSendFn = options.beforeSend;
+    options.beforeSend = (a,b) => {
+        $('#loadingContainer').show();
+        beforeSendFn();
+    };
+    const successFn = options.success;
+    options.success = (a,b,c) => {
+        $('#loadingContainer').hide();
+        successFn(a,b,c);
+    };
+    originFn(url, options);
+};
