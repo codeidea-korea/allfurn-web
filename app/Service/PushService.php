@@ -296,6 +296,7 @@ class PushService
             return;
         }
 
+        /*
         $scope = 'https://www.googleapis.com/auth/firebase.messaging';
 
         $client = new Google_Client();
@@ -361,5 +362,6 @@ class PushService
         $sendLog->send_date = date('Y-m-d H:i:s');
         $sendLog->response = (curl_errno($ch) > 0 ? curl_error($ch) : $result);
         $sendLog->save();
+        */
     }
 }
