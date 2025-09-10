@@ -36,8 +36,8 @@
         </div>
         <div class="foo__util">
             <a href="/home/welcome">서비스 소개</a><span class="bar"></span>
-            <a onclick="openModal('#reg-agrmnt_service')" style="cursor: pointer;">이용 약관</a><span class="bar"></span>
-            <a onclick="openModal('#reg-agrmnt_privacy-info')" style="cursor: pointer;">개인정보 처리 방침</a>
+            <span onclick="openModal('#reg-agrmnt_service')" style="cursor: pointer;">이용 약관</span><span class="bar"></span>
+            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="cursor: pointer;">개인정보 처리 방침</span>
         </div>
 
         <div id="reg-agrmnt_service" class="modal">

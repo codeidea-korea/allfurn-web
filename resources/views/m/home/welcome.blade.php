@@ -19,9 +19,7 @@
     <meta name="twitter:title" content="" />
     <title>All FURN  | Home</title>
 
-    <script defer src="/js/plugin.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
-    <script src="/js/jquery-1.12.4.js?20240424125855"></script>
 </head>
 
 <style>
@@ -46,42 +44,44 @@
     const accessToken = localStorage.getItem('accessToken');
     if(accessToken && accessToken.length > 1) {
         const callTime = new Date().getTime();
-        $.ajax({
-    //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
-            url: '/tokenpass-signin',
-            data: {
-                'accessToken': accessToken
+
+        fetch('/tokenpass-signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                const pendingTime = new Date().getTime() - callTime;
+            body: JSON.stringify({
+                'accessToken': accessToken
+            })
+        }).then(result => {
+            return result.json();
+        }).then(result => {
+            const pendingTime = new Date().getTime() - callTime;
+            
+            if (result.success) {
+                location.href = '/';
                 
-                if (result.success) {
-                    location.href = '/';
-                    
-                    if(pendingTime > 1400) {
-                        $('body').removeClass('splash');
-                    } else {
-                        setTimeout(() => {
-                            $('body').removeClass('splash');
-                        }, (1400 - pendingTime));
-                    }
+                if(pendingTime > 1400) {
+                    document.querySelector('body').classList.remove('splash');
                 } else {
-                    if(pendingTime > 1400) {
-                        $('body').removeClass('splash');
-                    } else {
-                        setTimeout(() => {
-                            $('body').removeClass('splash');
-                        }, (1400 - pendingTime));
-                    }
-                    alert(result.msg);
+                    setTimeout(() => {
+                        document.querySelector('body').classList.remove('splash');
+                    }, (1400 - pendingTime));
                 }
+            } else {
+                if(pendingTime > 1400) {
+                    document.querySelector('body').classList.remove('splash');
+                } else {
+                    setTimeout(() => {
+                        document.querySelector('body').classList.remove('splash');
+                    }, (1400 - pendingTime));
+                }
+                alert(result.msg);
             }
-        });
+        })
     } else {
         setTimeout(() => {
-            $('body').removeClass('splash');
+            document.querySelector('body').classList.remove('splash');
         }, 1400);
     }
     </script>
@@ -115,7 +115,7 @@
             </div>
             <div class="intro intro01">
                 <div class="inner">
-                    <div class="image"><img src="/ver.1/images/home/allfurn_intro001.jpg" /></div>
+                    <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro001.jpg" /></div>
                     <div class="intro__content">
                         <h2>
                             지금 <b>주목받는 가구 신상품</b>과
@@ -128,7 +128,7 @@
             </div>
             <div class="intro intro02">
                 <div class="inner">
-                    <div class="image"><img src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
+                    <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
                     <div class="intro__content">
                         <h2>
                             생산 / 도매사장님만의 <b>[제품과 회사]를 소개</b>해보세요~! 매출은 UP! 거래처정보도 UP!
@@ -140,7 +140,7 @@
             </div>
             <div class="intro intro03">
                 <div class="inner">
-                    <div class="image"><img src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
+                    <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
                     <div class="intro__content">
                         <h2>
                             소매사장님 매장에 맞는
@@ -154,7 +154,7 @@
             </div>
             <div class="intro intro04">
                 <div class="inner">
-                    <div class="image"><img src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
+                    <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
                     <div class="intro__content">
                         <h2>
                             가구인들의 일상부터 비즈니스 이야기까지
@@ -190,8 +190,8 @@
         </div>
         <div class="foo__util">
             <a href="#">서비스 소개</a><span class="bar"></span>
-            <a onclick="openModal('#reg-agrmnt_service')">이용 약관</a><span class="bar"></span>
-            <a onclick="openModal('#reg-agrmnt_privacy-info')" style="font-weight: 800">개인정보 처리 방침</a>
+            <span onclick="openModal('#reg-agrmnt_service')">이용 약관</span><span class="bar"></span>
+            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="font-weight: 800">개인정보 처리 방침</span>
         </div>
     </footer>
 
