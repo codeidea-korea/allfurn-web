@@ -362,6 +362,7 @@
         var stored100Files = [];
         var stored400Files = [];
         var stored600Files = [];
+        var stored1000Files = [];
         
         var subCategoryIdx = null;
         var deleteImage = [];
@@ -489,6 +490,15 @@
                                 };
                                 image600.src = e.target.result;
 
+                                var image1000 = new Image;
+                                image1000.width = 1000;
+                                image1000.height = 1000;
+                                image1000.onload = function() {
+                                    const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                                    stored1000Files.push(i1000);
+                                };
+                                image1000.src = e.target.result;
+
 
                                 $('.desc__product-img-wrap').append(
                                     '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
@@ -539,6 +549,7 @@
                         stored100Files.splice(i, 1);
                         stored400Files.splice(i, 1);
                         stored600Files.splice(i, 1);
+                        stored1000Files.splice(i, 1);
                         storedFiles.splice(i, 1);
                         break;
                     }
@@ -1326,6 +1337,9 @@
             }
             for (var i = 0; i < stored600Files.length; i++) {
                 form.append('files600[]', stored600Files[i]);
+            }
+            for (var i = 0; i < stored1000Files.length; i++) {
+                form.append('files1000[]', stored1000Files[i]);
             }
 
             var property = '';
