@@ -192,6 +192,9 @@ $('.tab_layout li').on('click',function(){
     $('.tab_content > div').eq(liN).addClass('active').siblings().removeClass('active')
 })
 
+for(var idx=0; idx < 10; idx++) {
+	window.history.pushState(null, null, null);
+}
 $( document ).ready( function() {
     $('input').keyup( function() {
         var id = $( '#LGI-01_loginId' ).val();
