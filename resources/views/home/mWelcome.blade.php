@@ -19,7 +19,7 @@
     <meta name="twitter:title" content="" />
     <title>All FURN  | Home</title>
 
-    <link rel="stylesheet" href="/ver.1/css/ui.css?22122804">
+    <link rel="stylesheet" href="/ver.1/css/ui.css?22122805" media="print" onload="this.media='all'">
 </head>
 
 <style>
@@ -56,7 +56,9 @@
             <div class="inner__full">
                 <div class="intro intro__top">
                     <div class="inner">
-                        <div class="image"></div>
+                        <div class="image">
+                            <img loading="lazy" decoding="async" fetchpriority=high alt="인트로 이미지1" src="/img/mo_allfurn_intro.png">
+                        </div>
                         <div class="intro__content">
                             <strong class="intro__content-top">세상의 모든 가구 생산공급자 및 판매자, <br>가구관련 종사업종의 모든 분들의 정보가
                                 있는</strong>
@@ -72,7 +74,7 @@
                 </div>
                 <div class="intro intro01">
                     <div class="inner">
-                        <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro001.jpg" fetchpriority="hight" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro001.jpg" fetchpriority="hight" /></div>
                         <div class="intro__content">
                             <h2>
                                 지금 <b>주목받는 가구 신상품</b>과
@@ -85,7 +87,7 @@
                 </div>
                 <div class="intro intro02">
                     <div class="inner">
-                        <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 생산 / 도매사장님만의 <b>[제품과 회사]를 소개</b>해보세요~! 매출은 UP! 거래처정보도 UP!
@@ -97,7 +99,7 @@
                 </div>
                 <div class="intro intro03">
                     <div class="inner">
-                        <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 소매사장님 매장에 맞는
@@ -111,7 +113,7 @@
                 </div>
                 <div class="intro intro04">
                     <div class="inner">
-                        <div class="image"><img alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 가구인들의 일상부터 비즈니스 이야기까지

@@ -109,7 +109,7 @@
                                     @foreach( $data['event'] AS $event )
                                     <li class="prod_item">
                                         <div class="img_box">
-                                            <a href="/product/detail/{{$event->idx}}"><img src="{{$event->imgUrl}}" alt=""></a>
+                                            <a href="/product/detail/{{$event->idx}}"><img loading="lazy" decoding="async" src="{{$event->imgUrl}}" alt=""></a>
                                             <button class="zzim_btn prd_{{ $event->idx }} {{ ($event->isInterest == 1) ? 'active' : '' }}" pidx="{{ $event->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                         </div>
                                         <div class="txt_box">
@@ -138,7 +138,7 @@
                                 <li class="prod_item">
                                     <div class="img_box">
                                         <a href="/product/detail/{{$item->idx}}">
-                                            <img class="card__img" src="{{$item->imgUrl}}" alt="{{$item->name}}">
+                                            <img loading="lazy" decoding="async" class="card__img" src="{{$item->imgUrl}}" alt="{{$item->name}}">
                                         </a>
                                         <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>

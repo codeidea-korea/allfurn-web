@@ -16,7 +16,7 @@
                     @foreach($data['productAd'] as $item)
                         <li class="swiper-slide prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{ $item->idx }}"><img src="{{ $item->imgUrl }}" alt="" style="width:285px;"></a>
+                                <a href="/product/detail/{{ $item->idx }}"><img loading="lazy" decoding="async" src="{{ $item->imgUrl }}" alt="" style="width:285px;"></a>
                                 <button class="zzim_btn"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
@@ -47,7 +47,7 @@
                     @foreach($data['productAd'] as $item)
                         <li class="swiper-slide">
                             <div class="img_box">
-                                <img src="{{ $item->imgUrl }}" alt="">
+                                <img loading="lazy" decoding="async" src="{{ $item->imgUrl }}" alt="">
                                 <button class="zzim_btn"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
