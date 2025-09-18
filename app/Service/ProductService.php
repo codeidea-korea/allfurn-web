@@ -313,10 +313,8 @@ class ProductService
                 ->first();
 
             $data['recommend'] = Product::select('AF_product.*',
-                DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder, "/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder, "/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder, "/", at1000.filename) as thumb1000ImgUrl,
+                DB::raw(
+                    $this->generateMappingThumbnailQuery('at') . ',
             (SELECT count(*)cnt FROM AF_product_ad WHERE idx = AF_product.idx AND state = "G" AND start_date < now() AND end_date > now()) as isAd'))
                 ->where([
                     'AF_product.company_type' => $data['detail']->company_type,
@@ -623,10 +621,7 @@ class ProductService
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                                 (SELECT COUNT(DISTINCT pi.idx) cnt FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 NULL as reg_time'
                                 ))
@@ -673,10 +668,7 @@ class ProductService
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                                 (SELECT COUNT(DISTINCT pi.idx) cnt FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 AF_product.register_time as reg_time'
             ))
@@ -727,10 +719,7 @@ class ProductService
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))
             ->join('AF_product', function ($query) {
@@ -774,10 +763,7 @@ class ProductService
                 (CASE WHEN AF_product.company_type = "W" THEN (select SUBSTRING_INDEX(aw.business_address, " ", 1) from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select SUBSTRING_INDEX(ar.business_address, " ", 1) from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as location,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))
             ->leftjoin('AF_attachment as at', function($query) {
@@ -849,10 +835,7 @@ class ProductService
     public function getWholesalerAddedProductList($params) {
         $list = Product::select(
             'AF_product.*'
-        , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at100.folder,"/", at100.filename) as thumb100ImgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at600.folder,"/", at600.filename) as thumb600ImgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at1000.folder,"/", at1000.filename) as thumb1000ImgUrl')
+        , DB::raw($this->generateMappingThumbnailQuery('at'))
         , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew')
         , DB::raw('(SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest')
         // , DB::raw('(SELECT COUNT(*) cnt FROM AF_order WHERE product_idx = AF_product.idx ) as orderCnt')
@@ -908,10 +891,7 @@ class ProductService
     public function getWholesalerAddedProductListByCatalog($params) {
         $list = Product::select(
             'AF_product.*'
-        , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at100.folder,"/", at100.filename) as thumb100ImgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at600.folder,"/", at600.filename) as thumb600ImgUrl')
-        , DB::raw('CONCAT("'.preImgUrl().'",at1000.folder,"/", at1000.filename) as thumb1000ImgUrl')
+        , DB::raw($this->generateMappingThumbnailQuery('at'))
         , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew')
 //        , DB::raw('(SELECT COUNT(*) cnt FROM AF_product_interest WHERE product_idx = AF_product.idx AND user_idx = '.Auth::user()->idx.') as isInterest')
         // , DB::raw('(SELECT COUNT(*) cnt FROM AF_order WHERE product_idx = AF_product.idx ) as orderCnt')
@@ -1045,10 +1025,7 @@ class ProductService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                                 (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 0 as orderCnt,
                                 1 as isAd,
@@ -1115,10 +1092,7 @@ class ProductService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                                 (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                                 (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = AF_product.idx) as orderCnt,
                                 0 as isAd,
@@ -1218,10 +1192,7 @@ class ProductService
             DB::raw('(CASE WHEN aprod.company_type = "W" THEN aw.company_name
                     WHEN aprod.company_type = "R" THEN ar.company_name
                     ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = aprod.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                 (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = aprod.idx) as orderCnt
             '))
@@ -1381,10 +1352,7 @@ class ProductService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl
+                    '. $this->generateMappingThumbnailQuery('at') . '
                                 '))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
@@ -1448,10 +1416,7 @@ class ProductService
         $keyword_limit = $ret->keyword;
 
         $data['product_4'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx',
-        DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-            CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-            CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-            CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+        DB::raw($this->generateMappingThumbnailQuery('at') . ',
             (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
                     WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
                     ELSE "" END) as companyName'
@@ -1490,10 +1455,7 @@ class ProductService
         }
         
         $data['product_6'] = ProductAd::select('AF_product_ad.*', 'ap.name', 'ap.idx as idx', 'ap.company_idx',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+            DB::raw($this->generateMappingThumbnailQuery('at') . ',
                 (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
                     WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
                     ELSE "" END) as companyName'
@@ -1612,10 +1574,7 @@ class ProductService
                 ap.idx as idx, 
                 ap.company_idx, 
                 ac.name as category_name, 
-                CONCAT('".preImgUrl()."', at.folder,'/', at.filename) as imgUrl,
-                CONCAT('".preImgUrl()."', at100.folder,'/', at100.filename) as thumb100ImgUrl,
-                CONCAT('".preImgUrl()."', at600.folder,'/', at600.filename) as thumb600ImgUrl,
-                CONCAT('".preImgUrl()."', at1000.folder,'/', at1000.filename) as thumb1000ImgUrl,
+                    ". $this->generateMappingThumbnailQuery('at') . ",
                 (
                     CASE 
                         WHEN ap.company_type = 'W' 
@@ -1720,10 +1679,7 @@ class ProductService
                 'AF_banner_ad.web_link',
                 'ap.idx as product_idx',
                 'aw.company_name',
-                DB::raw('CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                DB::raw($this->generateMappingThumbnailQuery('at') . ',
                 CONCAT("'.preImgUrl().'", at2.folder,"/", at2.filename) as mainImgUrl,
                 (SELECT COUNT(pi.idx) cnt FROM AF_product_interest as pi WHERE pi.product_idx = ap.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                 CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl,
@@ -1785,10 +1741,7 @@ class ProductService
             'AF_product_ad.content',
             'ap.name',
             'ap.price',
-            DB::raw('CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+            DB::raw($this->generateMappingThumbnailQuery('at') . ',
             (CASE WHEN ap.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = ap.company_idx)
                   WHEN ap.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = ap.company_idx)
                   ELSE "" END) as companyName,
@@ -1959,10 +1912,7 @@ class ProductService
                 ac2.idx AS category_idx,
                 ac2.name AS category_name,
                 aw.company_name, 
-		        CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
                 (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
             FROM
@@ -2005,10 +1955,7 @@ class ProductService
                 ac2.idx AS category_idx,
                 ac2.name AS category_name,
                 aw.company_name, 
-		        CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
+                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT COUNT(*) FROM AF_order WHERE product_idx=ap.idx ) AS ordCnt,
                 (SELECT count(*)cnt FROM AF_product_interest WHERE idx = ap.idx AND user_idx = '.Auth::user()->idx.') as isInterest
             FROM
@@ -2046,10 +1993,7 @@ class ProductService
             DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
                 WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at100.folder,"/", at100.filename) as thumb100ImgUrl,
-                CONCAT("'.preImgUrl().'", at600.folder,"/", at600.filename) as thumb600ImgUrl,
-                CONCAT("'.preImgUrl().'", at1000.folder,"/", at1000.filename) as thumb1000ImgUrl,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl '
+                    '. $this->generateMappingThumbnailQuery('at')
             ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_banner_ad.web_attachment_idx, ",", 1)'));
@@ -2146,10 +2090,7 @@ class ProductService
 
         $list = Product::select(
             'AF_product.*'
-            , DB::raw('CONCAT("'.preImgUrl().'",at.folder,"/", at.filename) as imgUrl')
-            , DB::raw('CONCAT("'.preImgUrl().'",at100.folder,"/", at100.filename) as thumb100ImgUrl')
-            , DB::raw('CONCAT("'.preImgUrl().'",at600.folder,"/", at600.filename) as thumb600ImgUrl')
-            , DB::raw('CONCAT("'.preImgUrl().'",at1000.folder,"/", at1000.filename) as thumb1000ImgUrl')
+            , DB::raw($this->generateMappingThumbnailQuery('at'))
             , DB::raw('IF(AF_product.access_date > DATE_ADD( NOW(), interval -1 month), 1, 0) as isNew'))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
@@ -2215,5 +2156,19 @@ class ProductService
         $list-> orderby('update_time', 'desc');
 
         return $list->get();
-    }    
+    }
+
+    private function generateMappingThumbnailQuery($attachment_alias){
+        if(getDeviceType() === 'm.'){
+            return //"CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
+                    "CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
+                    CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename) as imgUrl,
+                    CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
+        } else {
+            return "CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
+                    CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
+                    CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename) as thumb600ImgUrl,
+                    CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
+        }
+    }
 }
