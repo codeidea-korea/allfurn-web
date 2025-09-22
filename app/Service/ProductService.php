@@ -2171,4 +2171,28 @@ class ProductService
                     CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
         }
     }
+	
+    /**
+     * 상품 매핑 썸네일 이미지 일괄 등록
+     * @param $param
+     * @return JsonResponse
+     */
+    public function saveBulkProductImage($param)
+    {
+        if(isset($param['thumb_idx']) && isset($param['thumb100_idx']) && isset($param['thumb400_idx']) && isset($param['thumb600_idx']) && isset($param['thumb1000_idx'])) {
+
+            ThumbnailMpg::where('main_attach_idx', param['file_idx'])->delete();
+            
+            $thumbnail = new ThumbnailMpg;
+            $thumbnail->main_attach_idx = $param['file_idx'];
+            $thumbnail->size_100_attach_idx = $param['thumb100_idx'][$idx];
+            $thumbnail->size_200_attach_idx = $param['thumb200_idx'][$idx];
+            $thumbnail->size_400_attach_idx = $param['thumb400_idx'][$idx];
+            $thumbnail->size_600_attach_idx = $param['thumb600_idx'][$idx];
+            $thumbnail->size_1000_attach_idx = $param['thumb1000_idx'][$idx];
+            $thumbnail->save();
+
+            Product::where('idx', $param['prod_idx'])->update(['category_idx' => $param['attachmentIdx']);
+        }
+    }
 }
