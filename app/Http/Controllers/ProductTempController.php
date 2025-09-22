@@ -147,7 +147,7 @@ class ProductTempController extends BaseController
             }
         }
 
-        $this->productService->saveBulkProductImage($data, $request->input('file_idx'));
+        $this->productService->saveBulkProductImage($data);
 
         return response()->json([
             'success' => true : false,
@@ -249,6 +249,7 @@ class ProductTempController extends BaseController
                                 // submit
                                 const form = new FormData();
                                 form.append('file_idx', f.idx);
+                                form.append('prod_idx', f.prod_idx);
                                 form.append('files100[]', stored100Files[i]);
                                 form.append('files200[]', stored200Files[i]);
                                 form.append('files400[]', stored400Files[i]);
@@ -276,7 +277,7 @@ class ProductTempController extends BaseController
                 ";
             
             for($i; $i < $cnt; $i++) {
-                echo "<script>fileUrls.push({idx:".$imgs[$i]->attachment_idx.",url:'".$imgs[$i]->img_url."'});</script>";
+                echo "<script>fileUrls.push({idx:".$imgs[$i]->attachment_idx.", prod_idx: ".$imgs[$i]->idx." ,url:'".$imgs[$i]->img_url."'});</script>";
             }
     }
     
