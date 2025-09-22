@@ -79,7 +79,7 @@ Route::prefix('/family')->name('family')->group(function() {
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
 
-Route::get('/member/company/{userIdx}', 'MypageController@getCompanyAjaxByIdx');
+Route::get('/member/company/{userIdx<\d+>}', 'MypageController@getCompanyAjaxByIdx');
 Route::post('/member/update-wait', 'MemberController@updateUserWait');
 
 Route::prefix('/member')->name('member')->group(function() {

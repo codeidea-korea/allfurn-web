@@ -150,7 +150,7 @@ class ProductTempController extends BaseController
         $this->productService->saveBulkProductImage($data);
 
         return response()->json([
-            'success' => true : false,
+            'success' => true,
         ]);
     }
 
@@ -162,18 +162,53 @@ class ProductTempController extends BaseController
     public function uploadview(Request $request)
     {
         $imgs = DB::select("
-            select prod.idx,
-                prod.attachment_idx,
-                CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) img_url, 
-                mpg_at.size_100_attach_idx, 
-                mpg_at.size_200_attach_idx, 
-                mpg_at.size_600_attach_idx, 
-                mpg_at.size_1000_attach_idx 
-            from AF_product prod 
-            join AF_attachment at on SUBSTRING_INDEX(prod.attachment_idx, ",", 1) = at.idx 
-            left join AF_mapping_thumb_attachment mpg_at on mpg_at.main_attach_idx = at.idx 
-            where prod.attachment_idx is not null
-            and prod.deleted_at is null
+            select 
+                t.idx,
+                group_concat(t.attachment_idx) attachment_idx,
+                CONCAT('\"', group_concat(t.img_url separator '\",\"'), '\"') img_urls,
+                group_concat(t.size_100_attach_idx) size_100_attach_idx,
+            --    group_concat(t.size_200_attach_idx) size_200_attach_idx,
+                group_concat(t.size_400_attach_idx) size_400_attach_idx,
+                group_concat(t.size_600_attach_idx) size_600_attach_idx,
+                group_concat(t.size_1000_attach_idx) size_1000_attach_idx
+            from
+            (
+                select 
+                    s.idx,
+                    s.attachment_idx,
+                    CONCAT('".preImgUrl()."', at.folder, '/', at.filename) img_url, 
+                    mpg_at.size_100_attach_idx, 
+                --  mpg_at.size_200_attach_idx, 
+                    mpg_at.size_400_attach_idx, 
+                    mpg_at.size_600_attach_idx, 
+                    mpg_at.size_1000_attach_idx 
+                from
+                (
+                    select 
+                        p.idx,
+                        substring_index(substring_index(p.attachment_idx, ',', n.r), ',' , -1) as attachment_idx
+                    from (
+                        select 
+                            prod.idx,
+                            prod.attachment_idx
+                        from AF_product prod 
+                        where prod.attachment_idx is not null
+                        and prod.deleted_at is null
+                    ) as p join (
+                        select 1 as r union all
+                        select 2 union all
+                        select 3 union all
+                        select 4 union all
+                        select 5 union all
+                        select 6 union all
+                        select 7 union all
+                        select 8
+                    ) as n on char_length(p.attachment_idx) - char_length(replace(p.attachment_idx, ',', '')) >= n.r - 1
+                ) as s
+                join AF_attachment at on s.attachment_idx = at.idx 
+                left join AF_mapping_thumb_attachment mpg_at on mpg_at.main_attach_idx = at.idx 
+            ) as t
+            group by t.idx
             ");
             
             $cnt = count($imgs);
@@ -188,7 +223,7 @@ class ProductTempController extends BaseController
                     var stored600Files = [];
                     var stored1000Files = [];
                     const fileUrls = [];
-                    fileUrls.push();
+                    var fileUrl;
             
                     function clearStored(){
                         storedIdx = [];
@@ -198,9 +233,8 @@ class ProductTempController extends BaseController
                         stored600Files = [];
                         stored1000Files = [];
                     }
-                    function saveImage(f) {
-                        clearStored();
-                        var readImg = FileReader.readAsDataURL(f.url);
+                    function saveImage(url) {
+                        var readImg = FileReader.readAsDataURL(url);
                         readImg.onload = (function(file) {
                             return function(e) {
                                 var image = new Image;
@@ -245,39 +279,51 @@ class ProductTempController extends BaseController
                                     stored1000Files.push(i1000);
                                 };
                                 image1000.src = e.target.result;
-            
-                                // submit
-                                const form = new FormData();
-                                form.append('file_idx', f.idx);
-                                form.append('prod_idx', f.prod_idx);
-                                form.append('files100[]', stored100Files[i]);
-                                form.append('files200[]', stored200Files[i]);
-                                form.append('files400[]', stored400Files[i]);
-                                form.append('files600[]', stored600Files[i]);
-                                form.append('files1000[]', stored1000Files[i]);
-            
-                                $.ajax({
-                                    url             : '/product-temp/bulk/thumbnail',
-                                    enctype         : 'multipart/form-data',
-                                    processData     : false,
-                                    contentType     : false,
-                                    data			: form,
-                                    type			: 'POST',
-                                    success: function (result) {
-                                        saveImage(fileUrls.pop());
-                                    }, error: function (e) {
-                                        saveImage(fileUrls.pop());
-                                    }
-                                });
+
+                                storedIdx.push(url);
+                                if(storedIdx.length < fileUrl.url.length) {
+                                    saveImage(fileUrl.url[storedIdx.length]);
+                                } else {
+                                    saveFiles();
+                                }
                             };
-                        })(f.url);
-                        readImg.readAsDataURL(f.url);
+                        })(url);
+                        readImg.readAsDataURL(url);
+                    }
+                    function saveFiles(){
+                        // submit
+                        const form = new FormData();
+                        form.append('file_idx', fileUrl.idx);
+                        form.append('prod_idx', fileUrl.prod_idx);
+                        form.append('files100[]', stored100Files[i]);
+                        form.append('files200[]', stored200Files[i]);
+                        form.append('files400[]', stored400Files[i]);
+                        form.append('files600[]', stored600Files[i]);
+                        form.append('files1000[]', stored1000Files[i]);
+    
+                        $.ajax({
+                            url             : '/product-temp/bulk/thumbnail',
+                            enctype         : 'multipart/form-data',
+                            processData     : false,
+                            contentType     : false,
+                            data			: form,
+                            type			: 'POST',
+                            success: function (result) {
+                                clearStored();
+                                fileUrl = fileUrls.pop();
+                                saveImage(fileUrl.url[storedIdx.length]);
+                            }, error: function (e) {
+                                clearStored();
+                                fileUrl = fileUrls.pop();
+                                saveImage(fileUrl.url[storedIdx.length]);
+                            }
+                        });
                     }
                 </script>
                 ";
             
-            for($i; $i < $cnt; $i++) {
-                echo "<script>fileUrls.push({idx:".$imgs[$i]->attachment_idx.", prod_idx: ".$imgs[$i]->idx." ,url:'".$imgs[$i]->img_url."'});</script>";
+            for($i = 0; $i < $cnt; $i++) {
+                echo "<script>fileUrls.push({idx:[".$imgs[$i]->attachment_idx."], prod_idx: ".$imgs[$i]->idx." ,url:[".$imgs[$i]->img_url."]});</script>";
             }
     }
     
