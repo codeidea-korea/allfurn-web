@@ -54,6 +54,7 @@ Route::prefix('signup')->group(function() {
 Route::get('/allimtalk/templates', 'LoginController@getTemplates');
 Route::post('/allimtalk/send', 'LoginController@asend');
 Route::post('/product-temp/bulk/thumbnail', 'ProductTempController@saveBulkProductImage');
+Route::get('/product-temp/bulk/thumbnail', 'ProductTempController@uploadview');
 
 
 Route::get('/json/wholesaler/{wholesalerIdx}', 'CatalogController@wholesalerInfoJson');
