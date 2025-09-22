@@ -153,5 +153,132 @@ class ProductTempController extends BaseController
             'success' => true : false,
         ]);
     }
+
+    /**
+     * 상품 매핑 썸네일 이미지 일괄 등록 화면
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function uploadview(Request $request)
+    {
+        $imgs = DB::select("
+            select prod.idx,
+                prod.attachment_idx,
+                CONCAT("'.preImgUrl().'", at.folder, "/", at.filename) img_url, 
+                mpg_at.size_100_attach_idx, 
+                mpg_at.size_200_attach_idx, 
+                mpg_at.size_600_attach_idx, 
+                mpg_at.size_1000_attach_idx 
+            from AF_product prod 
+            join AF_attachment at on SUBSTRING_INDEX(prod.attachment_idx, ",", 1) = at.idx 
+            left join AF_mapping_thumb_attachment mpg_at on mpg_at.main_attach_idx = at.idx 
+            where prod.attachment_idx is not null
+            and prod.deleted_at is null
+            ");
+            
+            $cnt = count($imgs);
+            echo '<script src="/js/jquery-1.12.4.js"></script>';
+            echo "
+                <script>
+                    
+                    var storedIdx = [];
+                    var storedFiles = [];
+                    var stored100Files = [];
+                    var stored400Files = [];
+                    var stored600Files = [];
+                    var stored1000Files = [];
+                    const fileUrls = [];
+                    fileUrls.push();
+            
+                    function clearStored(){
+                        storedIdx = [];
+                        storedFiles = [];
+                        stored100Files = [];
+                        stored400Files = [];
+                        stored600Files = [];
+                        stored1000Files = [];
+                    }
+                    function saveImage(f) {
+                        clearStored();
+                        var readImg = FileReader.readAsDataURL(f.url);
+                        readImg.onload = (function(file) {
+                            return function(e) {
+                                var image = new Image;
+                                image.onload = function() {
+                                    file = getThumbFile(image, 500, this.width, this.height);
+                                    storedFiles.push(file);
+                                };
+                                image.src = e.target.result;
+            
+                                var image100 = new Image;
+                                image100.width = 100;
+                                image100.height = 100;
+                                image100.onload = function() {
+                                    const i100 = getThumbFile(image100, 100, this.width, this.height);
+                                    stored100Files.push(i100);
+                                };
+                                image100.src = e.target.result;
+            
+                                var image400 = new Image;
+                                image400.width = 400;
+                                image400.height = 400;
+                                image400.onload = function() {
+                                    const i400 = getThumbFile(image400, 400, this.width, this.height);
+                                    stored400Files.push(i400);
+                                };
+                                image400.src = e.target.result;
+            
+                                var image600 = new Image;
+                                image600.width = 600;
+                                image600.height = 600;
+                                image600.onload = function() {
+                                    const i600 = getThumbFile(image600, 600, this.width, this.height);
+                                    stored600Files.push(i600);
+                                };
+                                image600.src = e.target.result;
+            
+                                var image1000 = new Image;
+                                image1000.width = 1000;
+                                image1000.height = 1000;
+                                image1000.onload = function() {
+                                    const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                                    stored1000Files.push(i1000);
+                                };
+                                image1000.src = e.target.result;
+            
+                                // submit
+                                const form = new FormData();
+                                form.append('file_idx', f.idx);
+                                form.append('files100[]', stored100Files[i]);
+                                form.append('files200[]', stored200Files[i]);
+                                form.append('files400[]', stored400Files[i]);
+                                form.append('files600[]', stored600Files[i]);
+                                form.append('files1000[]', stored1000Files[i]);
+            
+                                $.ajax({
+                                    url             : '/product-temp/bulk/thumbnail',
+                                    enctype         : 'multipart/form-data',
+                                    processData     : false,
+                                    contentType     : false,
+                                    data			: form,
+                                    type			: 'POST',
+                                    success: function (result) {
+                                        saveImage(fileUrls.pop());
+                                    }, error: function (e) {
+                                        saveImage(fileUrls.pop());
+                                    }
+                                });
+                            };
+                        })(f.url);
+                        readImg.readAsDataURL(f.url);
+                    }
+                </script>
+                ";
+            
+            for($i; $i < $cnt; $i++) {
+                echo "<script>fileUrls.push({idx:".$imgs[$i]->attachment_idx.",url:'".$imgs[$i]->img_url."'});</script>";
+            }
+    }
+    
 }
 ?>
