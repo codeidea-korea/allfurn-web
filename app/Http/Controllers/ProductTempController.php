@@ -219,82 +219,114 @@ class ProductTempController extends BaseController
                     var storedIdx = [];
                     var storedFiles = [];
                     var stored100Files = [];
+                    var stored200Files = [];
                     var stored400Files = [];
                     var stored600Files = [];
                     var stored1000Files = [];
                     const fileUrls = [];
                     var fileUrl;
             
+                    function getThumbFile(_IMG, maxWidth, width, height){
+                        var canvas = document.createElement('canvas');
+                        canvas.width = width; // (maxWidth);
+                        canvas.height = height; // ((maxWidth / (width*1.0))*height);
+                        canvas.getContext('2d').drawImage(_IMG, 0, 0, width, height);
+                        var dataURL = canvas.toDataURL('image/png');
+                        var byteString = atob(dataURL.split(',')[1]);
+                        var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+                        var ab = new ArrayBuffer(byteString.length);
+                        var ia = new Uint8Array(ab);
+                        for (var i = 0; i < byteString.length; i++) {
+                            ia[i] = byteString.charCodeAt(i);
+                        }
+                        var tmpThumbFile = new Blob([ab], {type: mimeString});
+                        return tmpThumbFile;
+                    }
                     function clearStored(){
                         storedIdx = [];
                         storedFiles = [];
                         stored100Files = [];
+                        stored200Files = [];
                         stored400Files = [];
                         stored600Files = [];
                         stored1000Files = [];
                     }
                     function saveImage(url) {
-                        var readImg = FileReader.readAsDataURL(url);
-                        readImg.onload = (function(file) {
-                            return function(e) {
-                                var image = new Image;
-                                image.onload = function() {
-                                    file = getThumbFile(image, 500, this.width, this.height);
-                                    storedFiles.push(file);
-                                };
-                                image.src = e.target.result;
-            
-                                var image100 = new Image;
-                                image100.width = 100;
-                                image100.height = 100;
-                                image100.onload = function() {
-                                    const i100 = getThumbFile(image100, 100, this.width, this.height);
-                                    stored100Files.push(i100);
-                                };
-                                image100.src = e.target.result;
-            
-                                var image400 = new Image;
-                                image400.width = 400;
-                                image400.height = 400;
-                                image400.onload = function() {
-                                    const i400 = getThumbFile(image400, 400, this.width, this.height);
-                                    stored400Files.push(i400);
-                                };
-                                image400.src = e.target.result;
-            
-                                var image600 = new Image;
-                                image600.width = 600;
-                                image600.height = 600;
-                                image600.onload = function() {
-                                    const i600 = getThumbFile(image600, 600, this.width, this.height);
-                                    stored600Files.push(i600);
-                                };
-                                image600.src = e.target.result;
-            
-                                var image1000 = new Image;
-                                image1000.width = 1000;
-                                image1000.height = 1000;
-                                image1000.onload = function() {
-                                    const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
-                                    stored1000Files.push(i1000);
-                                };
-                                image1000.src = e.target.result;
+                        fetch(url)
+                            .then(response => response.blob())
+                            .then(imageBlob => {
+                                console.log(imageBlob);
+                                const objectURL = URL.createObjectURL(imageBlob);
+                                imgElement.onload = () => {
+                                    storedFiles.push(imageBlob);
+                
+                                    var image100 = new Image;
+                                    image100.width = 100;
+                                    image100.height = 100;
+                                    image100.onload = function() {
+                                        const i100 = getThumbFile(image100, 100, this.width, this.height);
+                                        stored100Files.push(i100);
+                                    };
+                                    image100.src = objectURL;
+                
+                                    var image200 = new Image;
+                                    image200.width = 200;
+                                    image200.height = 200;
+                                    image200.onload = function() {
+                                        const i200 = getThumbFile(image200, 200, this.width, this.height);
+                                        stored200Files.push(i200);
+                                    };
+                                    image200.src = objectURL;
+                
+                                    var image400 = new Image;
+                                    image400.width = 400;
+                                    image400.height = 400;
+                                    image400.onload = function() {
+                                        const i400 = getThumbFile(image400, 400, this.width, this.height);
+                                        stored400Files.push(i400);
+                                    };
+                                    image400.src = objectURL;
+                
+                                    var image600 = new Image;
+                                    image600.width = 600;
+                                    image600.height = 600;
+                                    image600.onload = function() {
+                                        const i600 = getThumbFile(image600, 600, this.width, this.height);
+                                        stored600Files.push(i600);
+                                    };
+                                    image600.src = objectURL;
+                
+                                    var image1000 = new Image;
+                                    image1000.width = 1000;
+                                    image1000.height = 1000;
+                                    image1000.onload = function() {
+                                        const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                                        stored1000Files.push(i1000);
+                                    };
+                                    image1000.src = objectURL;
 
-                                storedIdx.push(url);
-                                if(storedIdx.length < fileUrl.url.length) {
-                                    saveImage(fileUrl.url[storedIdx.length]);
-                                } else {
-                                    saveFiles();
-                                }
-                            };
-                        })(url);
-                        readImg.readAsDataURL(url);
+                                    storedIdx.push(objectURL);
+
+                                    if(storedIdx.length < fileUrl.url.length) {
+                                        saveImage(fileUrl.url[storedIdx.length]);
+                                    } else {
+                                        saveFiles();
+                                    }
+                                };
+                            })
+                            .catch(error => {
+                                console.error('Error converting to blob:', error);
+                            });
                     }
                     function saveFiles(){
+                        for(let idx = 0; idx < storedIdx.length; idx++){
+                            URL.revokeObjectURL(storedIdx[idx]);
+                        }
                         // submit
                         const form = new FormData();
                         form.append('file_idx', fileUrl.idx);
                         form.append('prod_idx', fileUrl.prod_idx);
+                        form.append('storedFiles[]', storedFiles[i]);
                         form.append('files100[]', stored100Files[i]);
                         form.append('files200[]', stored200Files[i]);
                         form.append('files400[]', stored400Files[i]);
@@ -323,7 +355,7 @@ class ProductTempController extends BaseController
                 ";
             
             for($i = 0; $i < $cnt; $i++) {
-                echo "<script>fileUrls.push({idx:[".$imgs[$i]->attachment_idx."], prod_idx: ".$imgs[$i]->idx." ,url:[".$imgs[$i]->img_url."]});</script>";
+                echo "<script>fileUrls.push({idx:[".$imgs[$i]->attachment_idx."], prod_idx: ".$imgs[$i]->idx." ,url:[".$imgs[$i]->img_urls."]});</script>";
             }
     }
     
