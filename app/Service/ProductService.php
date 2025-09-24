@@ -2162,13 +2162,19 @@ class ProductService
         if(getDeviceType() === 'm.'){
             return //"CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
                     "CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
-                    CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename) as imgUrl,
+                    (CASE WHEN ".$attachment_alias."600.folder IS NULL 
+                        THEN CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename)
+                        ELSE CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename)
+                    END) as imgUrl,
                     CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
         } else {
-            return "CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
-                    CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
+            return //"CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
+                    "CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
                     CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename) as thumb600ImgUrl,
-                    CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
+                    (CASE WHEN ".$attachment_alias."1000.folder IS NULL 
+                        THEN CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename)
+                        ELSE CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename)
+                    END) as imgUrl ";
         }
     }
 	
@@ -2181,19 +2187,22 @@ class ProductService
     {
         if(isset($param['thumb_idx']) && isset($param['thumb100_idx']) && isset($param['thumb400_idx']) 
             && isset($param['thumb600_idx']) && isset($param['thumb1000_idx'])) {
-
-            ThumbnailMpg::where('main_attach_idx', $param['file_idx'])->delete();
             
-            $thumbnail = new ThumbnailMpg;
-            $thumbnail->main_attach_idx = $param['file_idx'];
-            $thumbnail->size_100_attach_idx = $param['thumb100_idx'][$idx];
-            $thumbnail->size_200_attach_idx = $param['thumb200_idx'][$idx];
-            $thumbnail->size_400_attach_idx = $param['thumb400_idx'][$idx];
-            $thumbnail->size_600_attach_idx = $param['thumb600_idx'][$idx];
-            $thumbnail->size_1000_attach_idx = $param['thumb1000_idx'][$idx];
-            $thumbnail->save();
+            for($idx = 0; $idx < count($param['thumb100_idx']); $idx++) {
+                ThumbnailMpg::where('main_attach_idx', $param['file_idx'])->delete();
+                $thumbnail = new ThumbnailMpg;
+                $thumbnail->main_attach_idx = $param['file_idx'];
+                $thumbnail->size_100_attach_idx = $param['thumb100_idx'][$idx];
+                $thumbnail->size_200_attach_idx = $param['thumb200_idx'][$idx];
+                $thumbnail->size_400_attach_idx = $param['thumb400_idx'][$idx];
+                $thumbnail->size_600_attach_idx = $param['thumb600_idx'][$idx];
+                $thumbnail->size_1000_attach_idx = $param['thumb1000_idx'][$idx];
+                $thumbnail->save();
+            }
 
-            Product::where('idx', $param['prod_idx'])->update(['category_idx' => $param['attachmentIdx']]);
+            if(array_key_exists('attachmentIdx', $param)) {
+                Product::where('idx', $param['prod_idx'])->update(['attachment_idx' => $param['attachmentIdx']]);
+            }
         }
     }
 }
