@@ -332,6 +332,12 @@ class ProductService
                 ->leftjoin('AF_attachment as at100', function($query) {
                     $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
                 })
+                ->leftjoin('AF_attachment as at200', function($query) {
+                    $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at400', function($query) {
+                    $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+                })
                 ->leftjoin('AF_attachment as at600', function($query) {
                     $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
                 })
@@ -644,6 +650,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -680,6 +692,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -735,6 +753,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -774,6 +798,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -851,6 +881,12 @@ class ProductService
         ->leftjoin('AF_attachment as at100', function($query) {
             $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
         })
+        ->leftjoin('AF_attachment as at200', function($query) {
+            $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+        })
+        ->leftjoin('AF_attachment as at400', function($query) {
+            $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+        })
         ->leftjoin('AF_attachment as at600', function($query) {
             $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
         })
@@ -906,6 +942,12 @@ class ProductService
         })
         ->leftjoin('AF_attachment as at100', function($query) {
             $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+        })
+        ->leftjoin('AF_attachment as at200', function($query) {
+            $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+        })
+        ->leftjoin('AF_attachment as at400', function($query) {
+            $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
         })
         ->leftjoin('AF_attachment as at600', function($query) {
             $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -1050,6 +1092,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -1109,6 +1157,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -1204,6 +1258,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -1363,6 +1423,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -1433,6 +1499,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -1472,6 +1544,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -1615,6 +1693,8 @@ class ProductService
 		        left join AF_attachment as at on at.idx = SUBSTRING_INDEX(ap.attachment_idx, ',', 1) 
                 left join AF_mapping_thumb_attachment as mpg_at on mpg_at.main_attach_idx = at.idx
 		        left join AF_attachment as at100 on at100.idx = mpg_at.size_100_attach_idx
+		        left join AF_attachment as at200 on at200.idx = mpg_at.size_200_attach_idx
+		        left join AF_attachment as at400 on at400.idx = mpg_at.size_400_attach_idx
 		        left join AF_attachment as at600 on at600.idx = mpg_at.size_600_attach_idx
 		        left join AF_attachment as at1000 on at1000.idx = mpg_at.size_1000_attach_idx
 		        left join AF_category as ac on ac.idx = ap.category_idx 
@@ -1697,6 +1777,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -1766,6 +1852,12 @@ class ProductService
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
             })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
             })
@@ -1833,6 +1925,8 @@ class ProductService
                left join AF_attachment AS at ON at.idx in (ap.attachment_idx)
                left join AF_mapping_thumb_attachment AS mpg_at ON mpg_at.main_attach_idx = at.idx
                left join AF_attachment AS at100 ON at100.idx = mpg_at.size_100_attach_idx
+               left join AF_attachment AS at200 ON at200.idx = mpg_at.size_200_attach_idx
+               left join AF_attachment AS at400 ON at400.idx = mpg_at.size_400_attach_idx
                left join AF_attachment AS at600 ON at600.idx = mpg_at.size_600_attach_idx
                left join AF_attachment AS at1000 ON at1000.idx = mpg_at.size_1000_attach_idx
             WHERE
@@ -1923,6 +2017,8 @@ class ProductService
                 LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
                left join AF_mapping_thumb_attachment AS mpg_at ON mpg_at.main_attach_idx = at.idx
                left join AF_attachment AS at100 ON at100.idx = mpg_at.size_100_attach_idx
+               left join AF_attachment AS at200 ON at200.idx = mpg_at.size_200_attach_idx
+               left join AF_attachment AS at400 ON at400.idx = mpg_at.size_400_attach_idx
                left join AF_attachment AS at600 ON at600.idx = mpg_at.size_600_attach_idx
                left join AF_attachment AS at1000 ON at1000.idx = mpg_at.size_1000_attach_idx
             WHERE ap.state IN ("S", "O")
@@ -1966,6 +2062,8 @@ class ProductService
                 LEFT JOIN AF_attachment AS at on at.idx=SUBSTRING_INDEX(ap.attachment_idx, ",", 1)
                left join AF_mapping_thumb_attachment AS mpg_at ON mpg_at.main_attach_idx = at.idx
                left join AF_attachment AS at100 ON at100.idx = mpg_at.size_100_attach_idx
+               left join AF_attachment AS at200 ON at200.idx = mpg_at.size_200_attach_idx
+               left join AF_attachment AS at400 ON at400.idx = mpg_at.size_400_attach_idx
                left join AF_attachment AS at600 ON at600.idx = mpg_at.size_600_attach_idx
                left join AF_attachment AS at1000 ON at1000.idx = mpg_at.size_1000_attach_idx
             WHERE ap.state IN ("S", "O")
@@ -2003,6 +2101,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
@@ -2100,6 +2204,12 @@ class ProductService
             })
             ->leftjoin('AF_attachment as at100', function($query) {
                 $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at200', function($query) {
+                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
             })
             ->leftjoin('AF_attachment as at600', function($query) {
                 $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
