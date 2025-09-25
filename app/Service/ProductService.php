@@ -826,7 +826,7 @@ class ProductService
             });
         }
 
-        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(20);
+        return $new_product->orderBy($params['orderedElement'], 'desc')->paginate(10);
     }
 
 
@@ -2162,8 +2162,8 @@ class ProductService
         if(getDeviceType() === 'm.'){
             return //"CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
                     "CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
-                    (CASE WHEN ".$attachment_alias."600.folder IS NULL 
-                        THEN CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename)
+                    (CASE WHEN ".$attachment_alias."400.folder IS not NULL 
+                        THEN CONCAT('".preImgUrl()."', ".$attachment_alias."400.folder,'/', ".$attachment_alias."400.filename)
                         ELSE CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename)
                     END) as imgUrl,
                     CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename) as thumb1000ImgUrl ";
@@ -2171,7 +2171,7 @@ class ProductService
             return //"CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename) as imgUrl,
                     "CONCAT('".preImgUrl()."', ".$attachment_alias."100.folder,'/', ".$attachment_alias."100.filename) as thumb100ImgUrl,
                     CONCAT('".preImgUrl()."', ".$attachment_alias."600.folder,'/', ".$attachment_alias."600.filename) as thumb600ImgUrl,
-                    (CASE WHEN ".$attachment_alias."1000.folder IS NULL 
+                    (CASE WHEN ".$attachment_alias."1000.folder IS not NULL 
                         THEN CONCAT('".preImgUrl()."', ".$attachment_alias."1000.folder,'/', ".$attachment_alias."1000.filename)
                         ELSE CONCAT('".preImgUrl()."', $attachment_alias.folder,'/', $attachment_alias.filename)
                     END) as imgUrl ";
