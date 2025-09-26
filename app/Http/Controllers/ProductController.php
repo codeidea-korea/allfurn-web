@@ -198,6 +198,23 @@ class ProductController extends BaseController
             }
         }
 
+        if (isset($data['files1000'])) {
+            $attachmentIdx = 0;
+            foreach ($data['files1000'] as $file) {
+                if (is_file($file)) {
+                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $attachmentIdx = $this->productService->saveAttachment($stored);
+                }
+
+                if (isset($data['thumb1000_idx'])) {
+                    array_push($data['thumb1000_idx'], $attachmentIdx);
+                } else {
+                    $data['thumb1000_idx'] = array();
+                    array_push($data['thumb1000_idx'], $attachmentIdx);
+                }
+            }
+        }
+
         if ($request->input('reg_type') == '2') {
             $prductIdx = $this->productService->modify($data);
         } else {

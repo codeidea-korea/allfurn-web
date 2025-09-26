@@ -19,11 +19,7 @@
     <meta name="twitter:title" content="" />
     <title>All FURN  | Home</title>
 
-    <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
-    <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
-    <script defer src="/js/plugin.js" type="text/javascript" async></script>
-    <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
-    <script src="/js/jquery-1.12.4.js?20240424125855" async></script>
+    <link rel="stylesheet" href="/ver.1/css/ui.css?22122805" media="print" onload="this.media='all'">
 </head>
 
 <style>
@@ -60,7 +56,9 @@
             <div class="inner__full">
                 <div class="intro intro__top">
                     <div class="inner">
-                        <div class="image"></div>
+                        <div class="image">
+                            <img loading="lazy" decoding="async" fetchpriority=high alt="인트로 이미지1" src="/img/mo_allfurn_intro.png">
+                        </div>
                         <div class="intro__content">
                             <strong class="intro__content-top">세상의 모든 가구 생산공급자 및 판매자, <br>가구관련 종사업종의 모든 분들의 정보가
                                 있는</strong>
@@ -76,7 +74,7 @@
                 </div>
                 <div class="intro intro01">
                     <div class="inner">
-                        <div class="image"><img src="/ver.1/images/home/allfurn_intro001.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro001.jpg" fetchpriority="hight" /></div>
                         <div class="intro__content">
                             <h2>
                                 지금 <b>주목받는 가구 신상품</b>과
@@ -89,7 +87,7 @@
                 </div>
                 <div class="intro intro02">
                     <div class="inner">
-                        <div class="image"><img src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro002.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 생산 / 도매사장님만의 <b>[제품과 회사]를 소개</b>해보세요~! 매출은 UP! 거래처정보도 UP!
@@ -101,7 +99,7 @@
                 </div>
                 <div class="intro intro03">
                     <div class="inner">
-                        <div class="image"><img src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro003.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 소매사장님 매장에 맞는
@@ -115,7 +113,7 @@
                 </div>
                 <div class="intro intro04">
                     <div class="inner">
-                        <div class="image"><img src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
+                        <div class="image"><img loading="lazy" decoding="async" alt="인트로 이미지" src="/ver.1/images/home/allfurn_intro004.jpg" /></div>
                         <div class="intro__content">
                             <h2>
                                 가구인들의 일상부터 비즈니스 이야기까지
@@ -229,50 +227,52 @@ function checkMobile(){
         const accessToken = localStorage.getItem('accessToken');
         if(accessToken && accessToken.length > 1) {
             const callTime = new Date().getTime();
-            $.ajax({
-        //        headers: {'X-CSRF-TOKEN': "{{csrf_token()}}"},
-                url: '/tokenpass-signin',
-                data: {
-                    'accessToken': accessToken
+            
+            fetch('/tokenpass-signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                type: 'POST',
-                dataType: 'json',
-                success: function(result) {
-                    const pendingTime = new Date().getTime() - callTime;
+                body: JSON.stringify({
+                    'accessToken': accessToken
+                })
+            }).then(result => {
+                return result.json();
+            }).then(result => {
+                const pendingTime = new Date().getTime() - callTime;
 
-                    if (result.success) {                    
-                        if(pendingTime > 1100) {
-                            location.href = '/';
-    //                        $('.splash').removeClass('splash');
-                        } else {
-                            setTimeout(() => {
-                            location.href = '/';
-    //                            $('.splash').removeClass('splash');
-                            }, (1100 - pendingTime));
-                        }
+                if (result.success) {                    
+                    if(pendingTime > 1100) {
+                        location.href = '/';
+//                        $('.splash').removeClass('splash');
                     } else {
-                        if(pendingTime > 1400) {
-                            location.href = '/signin';
-                            $('.splash').removeClass('splash');
-                        } else {
-                            setTimeout(() => {
-                                location.href = '/signin';
-                                $('.splash').removeClass('splash');
-                            }, (1400 - pendingTime));
-                        }
-    //                    alert(result.msg);
+                        setTimeout(() => {
+                        location.href = '/';
+//                            $('.splash').removeClass('splash');
+                        }, (1100 - pendingTime));
                     }
+                } else {
+                    if(pendingTime > 1400) {
+                        location.href = '/signin';
+                        document.querySelector('.splash').classList.remove('splash');
+                    } else {
+                        setTimeout(() => {
+                            location.href = '/signin';
+                            document.querySelector('.splash').classList.remove('splash');
+                        }, (1400 - pendingTime));
+                    }
+//                    alert(result.msg);
                 }
-            });
+            })
         } else {
             setTimeout(() => {
-                $('.splash').removeClass('splash');
+                document.querySelector('.splash').classList.remove('splash');
                 location.href = '/signin';
             }, 1400);
         }
     } else {
         // 인앱이 아님.
-        $('.allfurn-introduction').removeClass('splash');
+        document.querySelector('.allfurn-introduction').classList.remove('splash');
         @if(!isset($isweb) || $isweb != 'Y')
         location.replace('/?isweb=Y');
         @endif

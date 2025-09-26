@@ -257,3 +257,22 @@ const foldToggle = (item)=>{
             $('.reqCount').text( cnt - 1 );
         }
     }
+
+$(document).ready(function(){
+    
+    const originFn = $.ajax;
+    $.ajax = (options) => {
+        const beforeSendFn = (options && options.beforeSend) || function(a,b){};
+        options.beforeSend = (a,b) => {
+            $('#loadingContainer').show();
+            beforeSendFn(a,b);
+        };
+        const successFn =  (options && options.success) || function(a,b,c){};
+        options.success = (a,b,c) => {
+            $('#loadingContainer').hide();
+            successFn(a,b,c);
+        };
+        originFn(options);
+    };
+
+});

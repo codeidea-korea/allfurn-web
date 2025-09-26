@@ -23,20 +23,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>All FURN  | Home</title>
-    <link rel="stylesheet" href="/css/font.css?{{ date('Ymdhis') }}">
+    <link rel="stylesheet" href="/css/font.css">
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" /> --}}
-    <link rel="stylesheet" href="/css/swiper-bundle.min.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="/css/common.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="/css/style.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="/css/rubin.css?{{ date('Ymdhis') }}">
-    <link rel="stylesheet" href="/css/output.css?{{ date('Ymdhis') }}">
+    <link rel="stylesheet" href="/css/swiper-bundle.min.css">
+    <link rel="stylesheet" href="/css/common.css?{{ date('Ymd') }}">
+    <link rel="stylesheet" href="/css/style.css?{{ date('Ymd') }}">
+    <link rel="stylesheet" href="/css/rubin.css">
+    <link rel="stylesheet" href="/css/output.css">
     <!-- flatpickr(datepicker) -->
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" /> --}}
-    <link rel="stylesheet" href="/css/flatpickr.min.css?{{ date('Ymdhis') }}">
+    <link rel="stylesheet" href="/css/flatpickr.min.css">
 
-    <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
-    <script src="/js/jquery-ui-1.13.1.js?{{ date('Ymdhis') }}"></script>
-    <script defer src="/js/pci.js?{{ date('Ymdhis') }}"></script>
+    <script src="/js/jquery-1.12.4.js"></script>
+    <script src="/js/jquery-ui-1.13.1.js"></script>
+    <script defer src="/js/pci.js"></script>
     <script defer src="https://cdn.tailwindcss.com"></script>
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
     <script src="/js/swiper-bundle.min.js?{{ date('Ymd') }}"></script>
@@ -44,8 +44,8 @@
     <!-- flatpickr(datepicker) -->
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script> --}}
-    <script defer src="/js/flatpickr_ko.js?{{ date('Ymdhis') }}"></script>
-    <script defer src="/js/flatpickr.js?{{ date('Ymdhis') }}"></script>
+    <script defer src="/js/flatpickr_ko.js"></script>
+    <script defer src="/js/flatpickr.js"></script>
     
 
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>

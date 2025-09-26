@@ -53,6 +53,9 @@ Route::prefix('signup')->group(function() {
 });
 Route::get('/allimtalk/templates', 'LoginController@getTemplates');
 Route::post('/allimtalk/send', 'LoginController@asend');
+Route::post('/product-temp/bulk/thumbnail', 'ProductTempController@saveBulkProductImage');
+Route::get('/product-temp/bulk/thumbnail', 'ProductTempController@uploadview');
+
 
 Route::get('/json/wholesaler/{wholesalerIdx}', 'CatalogController@wholesalerInfoJson');
 Route::get('/catalog/{wholesalerIdx}/product/detail/{productIdx}', 'CatalogController@productDetail')->name('.wholesaler.catalogProduct');
@@ -76,7 +79,7 @@ Route::prefix('/family')->name('family')->group(function() {
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
 
-Route::get('/member/company/{userIdx}', 'MypageController@getCompanyAjaxByIdx');
+Route::get('/member/company/{userIdx<\d+>}', 'MypageController@getCompanyAjaxByIdx');
 Route::post('/member/update-wait', 'MemberController@updateUserWait');
 
 Route::prefix('/member')->name('member')->group(function() {

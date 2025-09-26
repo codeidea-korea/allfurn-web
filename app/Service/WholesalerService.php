@@ -632,7 +632,7 @@ class WholesalerService {
                 if ($banner->web_link_type == "1" && $banner->web_link != ""){
                     $web_link = explode('/', $banner->web_link);
                     if ($web_link != ""){
-                        array_push($arr_product_idx, $web_link[3]);
+                        array_push($arr_product_idx, $web_link[count($web_link) - 1]);
                     }
                 }
             }
@@ -825,7 +825,7 @@ class WholesalerService {
                 if ($banner->web_link_type == "1" && $banner->web_link != ""){
                     $web_link = explode('/', $banner->web_link);
                     if ($web_link != ""){
-                        array_push($arr_product_idx, $web_link[3]);
+                        array_push($arr_product_idx, $web_link[count($web_link) - 1]);
                     }
                 }
             }

@@ -112,7 +112,7 @@
                                 @foreach( $product->productList AS $key => $url )
                                         <?php if( $key > 2 ) continue; ?>
                                     <div class="img_box">
-                                        <a href="/product/detail/{{ $url->productIdx }}"><img src="{{$url->imgUrl}}" alt=""></a>
+                                        <a href="/product/detail/{{ $url->productIdx }}"><img loading="lazy" decoding="async" src="{{$url->imgUrl}}" alt=""></a>
                                         <button class="zzim_btn prd_{{ $url->productIdx }} {{ $url->isInterest == 1 ? 'active' : '' }}" pidx="{{ $url->productIdx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
                                 @endforeach
