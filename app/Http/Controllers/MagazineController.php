@@ -28,7 +28,7 @@ class MagazineController extends BaseController
         $params['limit'] = 5;
 
         $data['banners'] = $this->magazineService->banners();
-        $data = array_merge($data, $this->communityService->getArticleList($params));
+        $data = array_merge($data, $this->communityService->getArticleList2($params));
 
         //가구 소식
         $params['board_name'] = '가구 소식';
@@ -40,7 +40,7 @@ class MagazineController extends BaseController
             $params['limit'] = 3;
         }
 
-        $furnitureNewsList = $this->communityService->getArticleList($params);
+        $furnitureNewsList = $this->communityService->getArticleList2($params);
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
 
         //매거진
