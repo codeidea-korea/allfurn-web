@@ -779,58 +779,65 @@ class ProductService
     //TODO: 인기순(좋아요+올톡문의+전화문의+견적서문의) 필터적용한 조회기능으로 변경 / 현재까지 개발된 인기순 = 좋아요+올톡문의
     public function getNewAddedProductList($params) {
         $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.register_time', 'AF_product.is_price_open', 'AF_product.price_text',
-            'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx', 'AF_product.access_count',
-            DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
-            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                ELSE "" END) as companyName,
-                (CASE WHEN AF_product.company_type = "W" THEN (select SUBSTRING_INDEX(aw.business_address, " ", 1) from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                WHEN AF_product.company_type = "R" THEN (select SUBSTRING_INDEX(ar.business_address, " ", 1) from AF_retail as ar where ar.idx = AF_product.company_idx)
-                ELSE "" END) as location,
-                    '. $this->generateMappingThumbnailQuery('at') . ',
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
-            })
-            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
-                $query->on('mpg_at.main_attach_idx', 'at.idx');
-            })
-            ->leftjoin('AF_attachment as at100', function($query) {
-                $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at200', function($query) {
-                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at400', function($query) {
-                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at600', function($query) {
-                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at1000', function($query) {
-                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
-            })
-            ->leftjoin('AF_category as ac', function($query) {
-                $query->on('ac.idx', '=', 'AF_product.category_idx');
-            })
-            ->leftjoin('AF_category as ac2', function($query) {
-                $query->on('ac2.idx', '=', 'ac.parent_idx');
-            })
-            ->leftjoin(
-                DB::raw('(SELECT product_idx, COUNT(*) AS interest 
-                    FROM AF_product_interest
-                    GROUP BY product_idx) AS api'), function($query) {
-                        $query->on('AF_product.idx', '=', 'api.product_idx');
-            })
-            ->leftjoin('AF_wholesale as aw', function($query){
-                $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
-            })
-            -> leftJoin('AF_retail as ar', function($query) {
-                $query -> on('ar.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
-            })
-            ->where('AF_product.is_new_product', 1)
-            ->whereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
+		    'ac2.idx AS categoryIdx', 'ac2.name AS categoryName', 'AF_product.category_idx', 'AF_product.access_count',
+		    DB::raw('(interest + AF_product.inquiry_count) AS popularity'),
+		    DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+		        WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+		        ELSE "" END) as companyName,
+		        (CASE WHEN AF_product.company_type = "W" THEN (select SUBSTRING_INDEX(aw.business_address, " ", 1) from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+		        WHEN AF_product.company_type = "R" THEN (select SUBSTRING_INDEX(ar.business_address, " ", 1) from AF_retail as ar where ar.idx = AF_product.company_idx)
+		        ELSE "" END) as location,
+		            '. $this->generateMappingThumbnailQuery('at') . ',
+		        (CASE WHEN mpg_interest.product_idx is not null THEN 1 ELSE 0 END) as isInterest'
+		    ))
+		    ->leftjoin('AF_attachment as at', function($query) {
+		        $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+		    })
+		    ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+		        $query->on('mpg_at.main_attach_idx', 'at.idx');
+		    })
+		    ->leftjoin('AF_attachment as at100', function($query) {
+		        $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+		    })
+		    ->leftjoin('AF_attachment as at200', function($query) {
+		        $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+		    })
+		    ->leftjoin('AF_attachment as at400', function($query) {
+		        $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+		    })
+		    ->leftjoin('AF_attachment as at600', function($query) {
+		        $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+		    })
+		    ->leftjoin('AF_attachment as at1000', function($query) {
+		        $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
+		    })
+		    ->leftjoin('AF_category as ac', function($query) {
+		        $query->on('ac.idx', '=', 'AF_product.category_idx');
+		    })
+		    ->leftjoin('AF_category as ac2', function($query) {
+		        $query->on('ac2.idx', '=', 'ac.parent_idx');
+		    })
+		    ->leftjoin(
+		        DB::raw('(SELECT product_idx, user_idx 
+		            FROM AF_product_interest
+		            WHERE user_idx = '.Auth::user()->idx.'
+		            GROUP BY product_idx, user_idx) AS mpg_interest'), function($query) {
+		                $query->on('AF_product.idx', '=', 'mpg_interest.product_idx');
+		    })
+		    ->leftjoin(
+		        DB::raw('(SELECT product_idx, COUNT(*) AS interest 
+		            FROM AF_product_interest
+		            GROUP BY product_idx) AS api'), function($query) {
+		                $query->on('AF_product.idx', '=', 'api.product_idx');
+		    })
+		    ->leftjoin('AF_wholesale as aw', function($query){
+		        $query->on('aw.idx', 'AF_product.company_idx')-> where('AF_product.company_type', 'W');
+		    })
+		    -> leftJoin('AF_retail as ar', function($query) {
+		        $query -> on('ar.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
+		    })
+		    ->where('AF_product.is_new_product', 1)
+		    ->whereIn('AF_product.state', ['S', 'O'])->whereNull('AF_product.deleted_at');
             
         if($params['categories'] != "") {
             $new_product->whereIN('ac2.idx', explode(",", $params['categories']));
