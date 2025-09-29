@@ -60,7 +60,7 @@ class MagazineController extends BaseController
         $params['offset'] = $request->offset ?  $request->offset : 1;
         $params['limit'] = 10;
 
-        $data = $this->communityService->getArticleList($params);
+        $data = $this->communityService->getArticleList2($params);
         if($request->ajax()) {            
             $data['html'] = view('magazine.inc-dailyNews-common', $data)->render();
             return response()->json($data);
@@ -73,7 +73,7 @@ class MagazineController extends BaseController
 
         $params['board_name'] = '가구 소식';
 
-        $data = $this->communityService->getArticleList($params);
+        $data = $this->communityService->getArticleList2($params);
         return view(getDeviceType().'magazine.furnitureNews', $data);
     }
 
