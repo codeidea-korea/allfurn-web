@@ -28,7 +28,7 @@ class MagazineController extends BaseController
         $params['limit'] = 5;
 
         $data['banners'] = $this->magazineService->banners();
-        $data = array_merge($data, $this->communityService->getArticleList($params));
+        $data = array_merge($data, $this->communityService->getArticleList2($params));
 
         //가구 소식
         $params['board_name'] = '가구 소식';
@@ -40,7 +40,7 @@ class MagazineController extends BaseController
             $params['limit'] = 3;
         }
 
-        $furnitureNewsList = $this->communityService->getArticleList($params);
+        $furnitureNewsList = $this->communityService->getArticleList2($params);
         $data['furnitureNewsList'] = $furnitureNewsList['articles'];
 
         //매거진
@@ -60,7 +60,7 @@ class MagazineController extends BaseController
         $params['offset'] = $request->offset ?  $request->offset : 1;
         $params['limit'] = 10;
 
-        $data = $this->communityService->getArticleList($params);
+        $data = $this->communityService->getArticleList2($params);
         if($request->ajax()) {            
             $data['html'] = view('magazine.inc-dailyNews-common', $data)->render();
             return response()->json($data);
@@ -73,7 +73,7 @@ class MagazineController extends BaseController
 
         $params['board_name'] = '가구 소식';
 
-        $data = $this->communityService->getArticleList($params);
+        $data = $this->communityService->getArticleList2($params);
         return view(getDeviceType().'magazine.furnitureNews', $data);
     }
 
