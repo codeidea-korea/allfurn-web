@@ -69,6 +69,39 @@ class CommunityService {
         return $data;
     }
 
+    
+    /**
+     * 게시글 리스트 가져오기
+     * @param array $params
+     * @return array
+     */
+    public function getArticleList2(array $params=[]): array {
+        // 게시판 선택 시
+        if (!empty($params['board_name']) && $params['board_name'] !== '전체') {
+            $data['board_name'] = $params['board_name'];
+            // 구독 여부 체크
+            $board = Board::where('name', $data['board_name'])->first();
+            if ($board->is_business) {
+                $data['is_subscribed'] = $this->checkSubscribedBoard($data['board_name']);
+            }
+        }
+        // 키워드 검색일 때
+        if (!empty($params['keyword'])) {
+            $this->getStoreSearchKeyWord($params['keyword'], $params['board_name']);
+            $data['keyword'] = $params['keyword'];
+        }
+        // 게시글 리스트 가져오기
+        $articles = $this->getArticlesDB2($params); // TODO
+        $data['articleTotalCount'] = $articles['count'];
+        $data['articles'] = $articles['list'];
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $data['pagination'] = paginate($params['offset'], $params['limit'], $data['articleTotalCount']);
+            $data['last_page'] = $data['articleTotalCount'] > 0 ? ceil($data['articleTotalCount'] / $params['limit']) : 1;
+        }
+
+        return $data;
+    }
 
 
     /**
@@ -154,6 +187,93 @@ class CommunityService {
                            WHEN COUNT(*) >= 10000 THEN CONCAT(COUNT(*)/10000, '만')
                            WHEN COUNT(*) >= 1000 THEN CONCAT(COUNT(*)/1000, '천')
                            ELSE COUNT(*) END cnt FROM AF_reply WHERE article_idx = article.idx AND is_delete = 0) AS reply_count
+            , IF(AF_board.is_anonymous=1,'익명',
+                    IF(AF_wholesale.company_name IS NOT NULL,AF_wholesale.company_name,
+                        IF(AF_retail.company_name IS NOT NULL,AF_retail.company_name,AF_user.name)
+                    )
+             ) AS writer"))
+            ->join('AF_board', 'AF_board.idx', 'article.board_idx')
+            ->leftJoin('AF_user', 'AF_user.idx', 'article.user_idx')
+            ->leftJoin('AF_admin', 'AF_admin.idx', 'article.admin_idx')
+            ->leftJoin('AF_wholesale', function($query) {
+                $query->on('AF_wholesale.idx', 'AF_user.company_idx')->where('AF_user.type', 'W');
+            })
+            ->leftJoin('AF_retail', function($query) {
+                $query->on('AF_retail.idx', 'AF_user.company_idx')->where('AF_user.type', 'R');
+            })
+            ->where('AF_board.view_access', 'like', "%".Auth::user()['type']."%")
+            ->where('article.is_delete', 0)
+            ->where('AF_board.is_open', 1);
+
+            if(isset($params['isCommunity']) && $params['excludedBoardList']) {
+                $query->whereNotIn('AF_board.idx', $params['excludedBoardList']);
+            }
+
+            $query->orderBy('article.register_time','DESC');
+            
+            
+        // 키워드 검색 시
+        if (isset($params['keyword']) && !empty($params['keyword'])) {
+            $keyword = $params['keyword'];
+            $query->where(function($query) use($keyword) {
+                $query->where('AF_user.name','like',"%{$keyword}%")
+                    ->orWhere('AF_wholesale.company_name','like',"%{$keyword}%")
+                    ->orWhere('AF_retail.company_name','like',"%{$keyword}%")
+                    ->orWhere('article.title','like',"%{$keyword}%");
+            });
+        }
+        
+        
+        // 게시글명으로 검색 시
+        if (isset($params['board_name']) && !empty($params['board_name'])) {
+            $boardName = $params['board_name'];
+            $query->where('AF_board.name', $boardName);
+        }
+        
+        
+        // 내가 작성한 글 찾기
+        if (isset($params['user_idx']) && !empty($params['user_idx'])) {
+            $query->where('article.user_idx', $params['user_idx']);
+        } else {
+            $query->where('article.is_open', 1);
+        }
+        
+        
+        // 좋아요한 글 찾기
+        if (isset($params['likes']) && !empty($params['likes'])) {
+            $query->join('AF_article_like', 'AF_article_like.article_idx', 'article.idx')
+                ->where('AF_article_like.user_idx', Auth::user()['idx']);
+        }
+
+        $count = $query->count();
+
+        if(isset($params['offset']) && isset($params['limit'])) {
+            $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
+            $limit = $params['limit'];
+            $query->offset($offset)->limit($limit);
+        }
+
+        $list = $query->get();
+        
+        return ['count' => $count, 'list' => $list];
+    }
+    
+
+    /**
+     * 게시글 리스트 database 에서 조회하기
+     * @param array $params
+     * @return array
+     */
+    private function getArticlesDB2(array $params=[]): array {
+        
+        $query = DB::table('AF_board_article','article')
+            ->select(DB::raw("article.*, AF_board.name AS board_name, AF_board.is_anonymous
+            , IF(DATE_ADD(article.register_time, INTERVAL +1 DAY) > now(),'new','') AS is_new
+            , CASE WHEN TIMESTAMPDIFF(SECOND ,article.register_time, now()) < 60 THEN '방금'
+                   WHEN TIMESTAMPDIFF(SECOND ,article.register_time, now()) < 3600 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,article.register_time, now())/60),'분 전')
+                   WHEN TIMESTAMPDIFF(SECOND ,article.register_time, now()) < 86400 THEN CONCAT(FLOOR(TIMESTAMPDIFF(SECOND ,article.register_time, now())/3600),'시간 전')
+                   ELSE DATE_FORMAT(article.register_time, '%Y.%m.%d')
+              END diff_time
             , IF(AF_board.is_anonymous=1,'익명',
                     IF(AF_wholesale.company_name IS NOT NULL,AF_wholesale.company_name,
                         IF(AF_retail.company_name IS NOT NULL,AF_retail.company_name,AF_user.name)
