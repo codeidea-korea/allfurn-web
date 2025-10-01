@@ -4,19 +4,19 @@
                             'signin', 'signup','findid', 'findpw'
                         ]))
             {{-- 아무것도 표시 안함 --}}
-        @else
-            <div id="prod_regist_btn" class="">
-                <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
-            </div>
+    @else
+        <div id="prod_regist_btn" class="">
+            <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br>등록</a>
+        </div>
+    @endif
+    @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
+        <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
+            <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
+        </div>
+        @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
+            @include('layouts.includes.send-catalog')
         @endif
-        @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-            <div style="z-index:50; position:fixed; right:40px; bottom:115px; display:flex; align-items:center; justify-content:center; width:68px; height:68px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;">
-                <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
-            </div>
-            @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
-                @include('layouts.includes.send-catalog')
-            @endif
-        @endif
+    @endif
 @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
@@ -41,7 +41,7 @@
             <img src="/img/logo_gray.svg" alt="">
             <div>
                 사업자등록번호 : 182-81-02804 | 대표 : 송도현<br/>
-                주소 : 경기도 고양시 일산동구 산두로213번길 18 (정발산동)<br/>
+                주소 : 경기도 고양시 일산서구 송산로 26, 다동(구산동)<br/>
                 E-mail : cs@all-furn.com | Tel : 031-813-5588
             </div>
         </div>
