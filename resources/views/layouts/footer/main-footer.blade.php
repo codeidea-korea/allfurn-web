@@ -13,7 +13,7 @@
                             Tel : 031-813-5588<span class="bar"></span>E-mail :
                             <a href="mailto:cs@all-furn.com ">cs@all-furn.com </a>
                         </p>
-                        <p>주소 : 경기도 고양시 일산동구 산두로213번길 18(정발산동)</p>
+                        <p>주소 : 경기도 고양시 일산서구 송산로 26, 다동(구산동)</p>
                     </div>
                 </div>
 
