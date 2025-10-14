@@ -9,11 +9,13 @@
                             사업자등록번호 : 182-81-02804<span class="bar"></span>대표 :
                             송도현
                         </p>
-                        <p>
-                            Tel : 031-813-5588<span class="bar"></span>E-mail :
-                            <a href="mailto:cs@all-furn.com ">cs@all-furn.com </a>
-                        </p>
                         <p>주소 : 경기도 고양시 일산서구 송산로 26, 다동(구산동)</p>
+                        <p>
+                            E-mail :
+                            <a href="mailto:cs@all-furn.com ">cs@all-furn.com </a>
+                            <span class="bar"></span>
+                            Tel : 031-813-5588
+                        </p>
                     </div>
                 </div>
 
