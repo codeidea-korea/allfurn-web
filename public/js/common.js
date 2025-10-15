@@ -190,6 +190,44 @@ $('.file_input').on('change', function() {
     }
 });
 
+const ajaxPageLoad = {
+    variables: {
+        imgLoadedSize: 0,
+        maxImgSize: 0,
+        timer: null
+    },
+    actions: {
+        isLoadCompleteImage: function(){
+            return ajaxPageLoad.variables.imgLoadedSize >= ajaxPageLoad.variables.maxImgSize;
+        },
+        checkLoadedImage: function(){
+            if(this.isLoadCompleteImage()) {
+                $('#loadingContainer').hide();
+                return false;
+            }
+            ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
+        },
+        preCompleteAjax: function(){
+            const imageTags = $('img');
+            ajaxPageLoad.variables.imgLoadedSize = imageTags.length;
+        },
+        postCompleteAjax: function(){
+            const imageTags = $('img');
+            ajaxPageLoad.variables.maxImgSize = imageTags.length;
+
+            for (let idx = ajaxPageLoad.variables.imgLoadedSize; idx < imageTags.length; idx++) {
+                const imageTag = imageTags[idx];
+                imageTag.onload = function(){
+                    ajaxPageLoad.variables.imgLoadedSize = ajaxPageLoad.variables.imgLoadedSize + 1;
+                };
+                imageTag.onerror = function(){
+                    ajaxPageLoad.variables.imgLoadedSize = ajaxPageLoad.variables.imgLoadedSize + 1;
+                };
+            }
+            this.checkLoadedImage();
+        }
+    }
+};
 $(document).ready(function(){
     
     const originFn = $.ajax;
@@ -197,12 +235,14 @@ $(document).ready(function(){
         const beforeSendFn = (options && options.beforeSend) || function(a,b){};
         options.beforeSend = (a,b) => {
             $('#loadingContainer').show();
+            ajaxPageLoad.actions.preCompleteAjax();
             beforeSendFn(a,b);
         };
         const successFn =  (options && options.success) || function(a,b,c){};
         options.success = (a,b,c) => {
-            $('#loadingContainer').hide();
+//            $('#loadingContainer').hide();
             successFn(a,b,c);
+            setTimeout(ajaxPageLoad.actions.postCompleteAjax, 200);
         };
         originFn(options);
     };
