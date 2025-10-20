@@ -296,7 +296,11 @@ $(document).ready(function(){
         options.success = (a,b,c) => {
 //            $('#loadingContainer').hide();
             successFn(a,b,c);
-            setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
+            if(location.pathname == '/') {
+                setTimeout(function(){ $('#loadingContainer').hide(); }, 800);
+            } else {
+                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
+            }
         };
         originFn(options);
     };
