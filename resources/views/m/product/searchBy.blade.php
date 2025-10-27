@@ -16,7 +16,7 @@
                 </ul>
             </div>
             <div class="bg-stone-100 px-[18px] py-3">
-                <p class="text-stone-400"><span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span class="total">0</span>개의 상품</p>
+                <p class="text-stone-400" style="display:none;"><span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span class="total">0</span>개의 상품</p>
             </div>
             <div class="sub_filter px-[18px] mt-3">
                 <div class="filter_box">
@@ -86,7 +86,9 @@
                     window.scrollTo(0, 1430);
                     firstLoad = false;
                 }
-                $('#loadingContainer').hide();
+                $('.total').parent().show();
+//                $('#loadingContainer').hide();
+                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
             }
         })
     }

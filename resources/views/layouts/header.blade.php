@@ -300,6 +300,9 @@ $(document).on('click', '.search_btn svg', function() {
 })
 
 function clickKeyword(keyword) {
+    $('[data-idx='+keyword+']').css('color', '#FB4760');
+    $('#loadingContainer').show();
+
     fetch("/home/search/" + keyword, {
         method: 'PUT',
         headers: {
