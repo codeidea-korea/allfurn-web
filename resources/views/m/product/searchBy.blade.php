@@ -12,11 +12,11 @@
             <div class="sub_category !pb-0 !mb-0">
                 <ul>
                     <li class="active w-full"><a class="inline-block w-full py-3 text-center" href="javascript:void(0);">상품</a></li>
-                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="/wholesaler/search?kw={{$_GET['kw']}}">업체</a></li>
+                    <li class="w-full"><a class="inline-block w-full py-3 text-center" href="/wholesaler/search?kw={{$_GET['kw']}}">업체 <span class="otherCount" style="color: #FB4760;"></span></a></li>
                 </ul>
             </div>
             <div class="bg-stone-100 px-[18px] py-3">
-                <p class="text-stone-400" style="display:none;"><span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span class="total">0</span>개의 상품</p>
+                <p class="text-stone-400 total"></p>
             </div>
             <div class="sub_filter px-[18px] mt-3">
                 <div class="filter_box">
@@ -68,7 +68,9 @@
                     $(".prod_list").empty();
                 }
                 $(".prod_list").append(result.data.html);
-                $(".total").html(result.total.toLocaleString('ko-KR'));
+                $(".total").html('<span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span>'+result.total.toLocaleString('ko-KR')+'</span>개의 상품');
+                $(".otherCount").text('('+result.data.otherCount+')');
+                $(".otherCount").show();
 
                 if(target) {
                     target.prop("disabled", false);
@@ -153,7 +155,7 @@
     }
 
     $(document).ready(function(){
-        $('#loadingContainer').show();
+        // $('#loadingContainer').show();
         setTimeout(() => {
             loadNewProductList(true);
             $("#filter_location-modal .btn-primary").text('상품 찾아보기');
@@ -167,7 +169,7 @@
     });
 
     $(window).on('load', function(){
-        $('#loadingContainer').hide();
+        // $('#loadingContainer').hide();
     });
     </script>
 @endsection

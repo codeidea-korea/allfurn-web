@@ -16,7 +16,7 @@
                 </ul>
             </div>
             <div class="bg-stone-100 px-[18px] py-3">
-                <p class="text-stone-400" style="display:none;"><span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span class="total">0</span>개의 도매업체</p>
+                <p class="text-stone-400 total"></p>
             </div>
             <div class="sub_filter px-[18px] mt-3">
                 <div class="filter_box">
@@ -64,7 +64,7 @@
                     $(".obtain_list").empty();
                 }
                 $(".obtain_list").append(result.data.html);
-                $(".total").text(result.total.toLocaleString('ko-KR'));
+                $(".total").html('<span>"{{$_GET['kw']}}"</span> 검색 결과 총 <span>'+result.total.toLocaleString('ko-KR')+'</span>개의 상품');
 
                 if(target) {
                     target.prop("disabled", false);
@@ -72,7 +72,7 @@
                 }
 
                 isLastPage = currentPage === result.last_page;
-                $('#loadingContainer').hide();
+                // $('#loadingContainer').hide();
             },
             complete : function () {
                 displaySelectedCategories();

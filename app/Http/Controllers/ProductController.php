@@ -511,12 +511,12 @@ class ProductController extends BaseController
         $data['orderedElement'] = $request->orderedElement == null ? "" : $request->orderedElement;
 
         $list = $this->productService->listByCategoryAjax($data);
-
         
         $html = view('product.inc-search-product-result', ['list' => $list])->render();
         //$modalHtml = view(getDeviceType() . 'product.inc-product-modal-common', ['product' => $list])->render();
         $list['html'] = $html;
         $list['test'] = $list->total();
+        $list['otherCount'] = $this->productService->wholesalerCountByCategoryAjax($data);
         //$list['modalHtml'] = $modalHtml;
 
         return response()->json($list);

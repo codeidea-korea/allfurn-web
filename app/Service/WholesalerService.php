@@ -342,6 +342,54 @@ class WholesalerService {
         return $list;     
     }
 
+    public function productCountByCategoryAjax(array $param = []) {
+        $list = DB::table(DB::raw('
+                (select prod.* from AF_product as prod join AF_user as user ON user.company_idx = prod.company_idx and user.type = prod.company_type and user.state = "JS") as aprod
+            '))->select('aprod.*',
+            DB::raw('(CASE WHEN aprod.company_type = "W" THEN aw.company_name
+                    WHEN aprod.company_type = "R" THEN ar.company_name
+                    ELSE "" END) as companyName
+            '))
+            ->leftJoin('AF_wholesale as aw', function($query){
+                $query->on('aw.idx', 'aprod.company_idx')-> where('aprod.company_type', 'W');
+            })
+            ->leftJoin('AF_retail as ar', function($query){
+                $query->on('ar.idx', 'aprod.company_idx')-> where('aprod.company_type', 'R');
+            })
+            ->whereIn('aprod.state', ['S', 'O'])
+            ->whereNull('aprod.deleted_at');
+
+        if ($param['categories'] != "" && $param['categories'] != null) {
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereRaw("parent_idx in (".$param['categories'].")")->where('is_delete', 0)->first();
+            $list->whereRaw("aprod.category_idx in ({$searchCategory->cateIds})");
+        }
+
+        if (isset($param['keyword'])) {
+            $keyword = $param['keyword'];
+            $list->Where(function($query) use($keyword) {
+                    $query->whereRaw("(aprod.name like '%".$keyword."%' or aprod.product_detail like '%".$keyword."%')")
+                        ->orWhere('aw.company_name','like',"%{$keyword}%")
+                        ->orWhere('aw.owner_name','like',"%{$keyword}%")
+                        ->orWhere('ar.company_name','like',"%{$keyword}%")
+                        ->orWhere('ar.owner_name','like',"%{$keyword}%");
+                });
+        }
+
+        if ($param['locations'] != "" && $param['locations'] != null) {
+            $arr_locations = explode(',', $param['locations']);
+            $whereLocations = "(";
+            foreach($arr_locations as $location) {
+                $quotedLocations[] = "'".$location."'";
+                $whereLocations .= "aw.business_address like '%".$location."%' or ";
+            }
+            $whereLocations = substr($whereLocations, 0, strlen($whereLocations) - 3);
+            $whereLocations .= ")";
+            $list->whereRaw($whereLocations);
+        }
+
+        return $list->count();
+    }
+
     public function getPopularBrand()
     {
         // 인기 브랜드

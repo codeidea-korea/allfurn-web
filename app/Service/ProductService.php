@@ -1355,6 +1355,78 @@ class ProductService
         return $result;
     }
 
+    public function wholesalerCountByCategoryAjax(array $param = []) {
+
+        $whereCategory = "";
+        // if (isset($params['categories']) && !empty($params['categories'])) {
+        //     $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
+        // }
+
+        if (isset($param['keyword'])) {
+            $keyword = $param['keyword'];
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " (AF_wholesale.company_name like '%".$param['keyword']."%' 
+                or AF_wholesale.owner_name like '%".$param['keyword']."%') ";
+        }
+        if ($param['categories'] != "" && $param['categories'] != null) {
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
+        }
+        //DB::enableQueryLog();
+        $list = DB::table(DB::raw('
+            ( SELECT 
+                AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.owner_name as owner_name, AF_wholesale.business_address
+                , CASE WHEN COUNT(DISTINCT aba.idx) > 0 THEN 1 ELSE 0 END AS isAd
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0) AS totalAdPrice
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0)/ 100000 * 0.1  AS addtionalRate
+                , AF_wholesale.inquiry_count AS companyInquiryCount
+                , SUM(DISTINCT(ap.inquiry_count)) AS productInquiryCount
+                , AF_wholesale.access_count AS companyAccessCount
+                , SUM(DISTINCT(ap.access_count))  AS productAccessCount
+                , COUNT(DISTINCT(ao.idx)) as orderCnt
+                , COUNT(DISTINCT(ap.idx)) as productCnt
+                , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
+                , ap.register_time as register_time
+            FROM AF_wholesale
+            JOIN AF_product ap
+            ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O") and ap.deleted_at is null
+            JOIN AF_user as user ON user.company_idx = AF_wholesale.idx and user.type = "W" and user.is_delete = 0  and user.state = "JS" 
+            LEFT JOIN AF_order as ao
+            ON ao.product_idx = ap.idx
+            LEFT JOIN AF_banner_ad aba 
+            ON aba.company_idx = AF_wholesale.idx AND aba.is_delete = 0 AND aba.is_open = 1
+            LEFT JOIN AF_category ac
+            ON ac.idx = ap.category_idx
+            LEFT JOIN AF_category ac2
+            ON ac2.idx = ac.parent_idx
+            '.$whereCategory.'
+            GROUP BY AF_wholesale.idx
+            ) AS wholesalerList        
+        '))->select('*'
+                , DB::raw('(companyInquiryCount + productInquiryCount + productAccessCount + companyAccessCount) * (1+ addtionalRate) AS score')
+                , DB::raw('ROW_NUMBER() OVER(ORDER BY score DESC) AS rank')
+                , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
+        );
+
+        //소재지 필터링
+        if (isset($param['locations'])) {
+            $locations = explode(',', $param['locations']);
+            $list->where(function ($query) use ($locations) {
+                foreach ($locations as $key => $loc) {
+                    if($key == 0) {
+                        $query->where('wholesalerList.business_address', 'like', "$loc%");
+                    } else {
+                        $query->orWhere('wholesalerList.business_address', 'like', "$loc%");
+                    }
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'wholesalerList.business_address', $relativeTables);
+                    }
+                }
+            });
+        }
+
+        return $list->count();     
+    }
+
     public function countSearchWholesales(string $keyword)
     {
         return CompanyWholesale::select('AF_wholesale.idx')

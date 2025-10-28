@@ -13,7 +13,7 @@
                 <div class="sub_category">
                     <ul>
                         <li class="active"><a href="javascript:(0);">상품</a></li>
-                        <li><a href="/wholesaler/search?kw={{$_GET['kw']}}">업체</a></li>
+                        <li><a href="/wholesaler/search?kw={{$_GET['kw']}}">업체 <span class="otherCount" style="color: #FB4760;"></span></a></li>
                     </ul>
                 </div>
                 <div class="sub_filter">
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="sub_filter mt-5">
-                    <div class="total" style="display:none;"><span>‘{{$_GET['kw']}}'</span> 검색 결과 총 0개의 상품</div>
+                    <div class="total"></div>
                     <div class="filter_box">
                         <button onclick="modalOpen('#filter_align-modal02')">최신 상품 등록순</button>
                     </div>
@@ -87,6 +87,8 @@
                 }
                 $(".prod_list").append(result.data.html);
                 $(".total").text('전체 ' + result.total.toLocaleString('ko-KR') + '개');
+                $(".otherCount").text('('+result.data.otherCount+')');
+                $(".otherCount").show();
 
                 if(target) {
                     target.prop("disabled", false);
@@ -215,7 +217,7 @@
     });
 
     $(document).ready(function(){
-        $('#loadingContainer').show();
+        // $('#loadingContainer').show();
         setTimeout(() => {
             loadNewProductList(true);
             $("#filter_location-modal .btn-primary").text('상품 찾아보기');
@@ -229,7 +231,7 @@
     });
 
     $(window).on('load', function(){
-        $('#loadingContainer').hide();
+        // $('#loadingContainer').hide();
     });
     </script>
 @endsection
