@@ -230,7 +230,7 @@ $(document).ready(function(){
             successFn(a,b,c);
             if(location.pathname == '/') {
                 setTimeout(function(){ $('#loadingContainer').hide(); }, 800);
-            } else if (location.pathname == '/product/search') {
+            } else if (location.pathname == '/product/search' || location.pathname == '/wholesaler/search') {
                 // none;
             } else {
                 setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
