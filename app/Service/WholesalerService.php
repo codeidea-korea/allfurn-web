@@ -218,7 +218,7 @@ class WholesalerService {
         }
         if ($param['categories'] != "" && $param['categories'] != null) {
             $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
-            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
+            $whereCategory .= ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
         }
         //DB::enableQueryLog();
         $list = DB::table(DB::raw('
