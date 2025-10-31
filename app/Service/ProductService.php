@@ -1259,31 +1259,9 @@ class ProductService
             DB::raw('(CASE WHEN aprod.company_type = "W" THEN aw.company_name
                     WHEN aprod.company_type = "R" THEN ar.company_name
                     ELSE "" END) as companyName,
-                    '. $this->generateMappingThumbnailQuery('at') . ',
                 (SELECT if(count(pi.idx) > 0, 1, 0) FROM AF_product_interest as pi WHERE pi.product_idx = aprod.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest,
                 (SELECT COUNT(*) cnt FROM AF_order as ao WHERE ao.product_idx = aprod.idx) as orderCnt
             '))
-            ->leftJoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(aprod.attachment_idx, ",", 1)'));
-            })
-            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
-                $query->on('mpg_at.main_attach_idx', 'at.idx');
-            })
-            ->leftjoin('AF_attachment as at100', function($query) {
-                $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at200', function($query) {
-                $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at400', function($query) {
-                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at600', function($query) {
-                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
-            })
-            ->leftjoin('AF_attachment as at1000', function($query) {
-                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
-            })
             ->leftJoin('AF_wholesale as aw', function($query){
                 $query->on('aw.idx', 'aprod.company_idx')-> where('aprod.company_type', 'W');
             })
@@ -1338,7 +1316,115 @@ class ProductService
         }
         
         $result = $list->paginate(20);
+
+        
+        $prevImagePath = preImgUrl();
+        foreach($result as $product){
+            $representImageIndxes = explode(',', $product->attachment_idx);
+            if(count($representImageIndxes) < 1) {
+                $product->imgUrl = $prevImagePath . '';
+                continue;
+            }
+
+            $mappedImages = DB::table('AF_attachment as at')
+                ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                    $query->on('mpg_at.main_attach_idx', 'at.idx');
+                })
+                ->leftjoin('AF_attachment as at100', function($query) {
+                    $query->on('at100.idx', 'mpg_at.size_100_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at200', function($query) {
+                    $query->on('at200.idx', 'mpg_at.size_200_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at400', function($query) {
+                    $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at600', function($query) {
+                    $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at1000', function($query) {
+                    $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
+                })
+                ->selectRaw($this->generateMappingThumbnailQuery('at'))
+                ->where('at.idx', $representImageIndxes[0])
+                ->first();
+
+            $product->imgUrl = $mappedImages->imgUrl;
+        }
+
         return $result;
+    }
+
+    public function wholesalerCountByCategoryAjax(array $param = []) {
+
+        $whereCategory = "";
+        // if (isset($params['categories']) && !empty($params['categories'])) {
+        //     $whereCategory = 'WHERE ac2.idx IN ('.$params['categories'].')';
+        // }
+
+        if (isset($param['keyword'])) {
+            $keyword = $param['keyword'];
+            $whereCategory = ($whereCategory == "" ? 'WHERE ' : 'AND') . " (AF_wholesale.company_name like '%".$param['keyword']."%' 
+                or AF_wholesale.owner_name like '%".$param['keyword']."%') ";
+        }
+        if ($param['categories'] != "" && $param['categories'] != null) {
+            $searchCategory = Category::selectRaw('group_concat(idx) as cateIds')->whereIn('parent_idx', [$param['categories']])->where('is_delete', 0)->first();
+            $whereCategory .= ($whereCategory == "" ? 'WHERE ' : 'AND') . " ap.category_idx in ({$searchCategory->cateIds}) ";
+        }
+        //DB::enableQueryLog();
+        $list = DB::table(DB::raw('
+            ( SELECT 
+                AF_wholesale.idx as company_idx, AF_wholesale.company_name as company_name, AF_wholesale.owner_name as owner_name, AF_wholesale.business_address
+                , CASE WHEN COUNT(DISTINCT aba.idx) > 0 THEN 1 ELSE 0 END AS isAd
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0) AS totalAdPrice
+                , COALESCE(SUM(DISTINCT (aba.banner_price)), 0)/ 100000 * 0.1  AS addtionalRate
+                , AF_wholesale.inquiry_count AS companyInquiryCount
+                , SUM(DISTINCT(ap.inquiry_count)) AS productInquiryCount
+                , AF_wholesale.access_count AS companyAccessCount
+                , SUM(DISTINCT(ap.access_count))  AS productAccessCount
+                , COUNT(DISTINCT(ao.idx)) as orderCnt
+                , COUNT(DISTINCT(ap.idx)) as productCnt
+                , COALESCE(MAX(DISTINCT access_date), MAX(ap.register_time)) as access_date
+                , ap.register_time as register_time
+            FROM AF_wholesale
+            JOIN AF_product ap
+            ON ap.company_idx = AF_wholesale.idx AND ap.company_type = "W" AND ap.state IN ("S", "O") and ap.deleted_at is null
+            JOIN AF_user as user ON user.company_idx = AF_wholesale.idx and user.type = "W" and user.is_delete = 0  and user.state = "JS" 
+            LEFT JOIN AF_order as ao
+            ON ao.product_idx = ap.idx
+            LEFT JOIN AF_banner_ad aba 
+            ON aba.company_idx = AF_wholesale.idx AND aba.is_delete = 0 AND aba.is_open = 1
+            LEFT JOIN AF_category ac
+            ON ac.idx = ap.category_idx
+            LEFT JOIN AF_category ac2
+            ON ac2.idx = ac.parent_idx
+            '.$whereCategory.'
+            GROUP BY AF_wholesale.idx
+            ) AS wholesalerList        
+        '))->select('*'
+                , DB::raw('(companyInquiryCount + productInquiryCount + productAccessCount + companyAccessCount) * (1+ addtionalRate) AS score')
+                , DB::raw('ROW_NUMBER() OVER(ORDER BY score DESC) AS rank')
+                , DB::raw('SUBSTRING_INDEX(wholesalerList.business_address, " ", 1) as location')
+        );
+
+        //소재지 필터링
+        if (isset($param['locations'])) {
+            $locations = explode(',', $param['locations']);
+            $list->where(function ($query) use ($locations) {
+                foreach ($locations as $key => $loc) {
+                    if($key == 0) {
+                        $query->where('wholesalerList.business_address', 'like', "$loc%");
+                    } else {
+                        $query->orWhere('wholesalerList.business_address', 'like', "$loc%");
+                    }
+                    if (!empty($relativeTables)) {
+                        $this->filterByRelationship($query, 'wholesalerList.business_address', $relativeTables);
+                    }
+                }
+            });
+        }
+
+        return $list->count();     
     }
 
     public function countSearchWholesales(string $keyword)

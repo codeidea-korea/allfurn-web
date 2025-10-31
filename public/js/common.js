@@ -190,6 +190,31 @@ $('.file_input').on('change', function() {
     }
 });
 
+const ajaxPageLoad = {
+    variables: {
+        timer: null
+    },
+    actions: {
+        isLoadCompleteImage: function(){
+            const imageTags = $('img');
+            for (let idx = 0; idx < imageTags.length; idx++) {
+                const imageTag = imageTags[idx];
+                if(! imageTag.complete) {
+                    // 하나라도 false 라면 return
+                    return false;
+                }
+            }
+            return true;
+        },
+        checkLoadedImage: function(){
+            if(ajaxPageLoad.actions.isLoadCompleteImage()) {
+                $('#loadingContainer').hide();
+                return false;
+            }
+            ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
+        }
+    }
+};
 $(document).ready(function(){
     
     const originFn = $.ajax;
@@ -201,8 +226,15 @@ $(document).ready(function(){
         };
         const successFn =  (options && options.success) || function(a,b,c){};
         options.success = (a,b,c) => {
-            $('#loadingContainer').hide();
+//            $('#loadingContainer').hide();
             successFn(a,b,c);
+            if(location.pathname == '/') {
+                setTimeout(function(){ $('#loadingContainer').hide(); }, 800);
+            } else if (location.pathname == '/product/search' || location.pathname == '/wholesaler/search') {
+                // none;
+            } else {
+                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
+            }
         };
         originFn(options);
     };

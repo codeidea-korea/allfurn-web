@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="sub_filter mt-5">
-                    <div class="total"><span>‘{{$_GET['kw']}}'</span> 검색 결과 총 0개의 도매업체</div>
+                    <div class="total"></div>
                     <div class="filter_box">
                         <button onclick="modalOpen('#filter_align-modal02')">최신 상품 등록순</button>
                     </div>
@@ -89,7 +89,7 @@
                 }
 
                 isLastPage = currentPage === result.last_page;
-                $('#loadingContainer').hide();
+                // $('#loadingContainer').hide();
             },
             complete : function () {
                 displaySelectedCategories();
@@ -97,7 +97,9 @@
                 displaySelectedOrders();
                 toggleFilterBox();
                 isLoading = false;
-                $('#loadingContainer').hide();
+                $('.total').show();
+//                $('#loadingContainer').hide();
+                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
             }
         })
     }

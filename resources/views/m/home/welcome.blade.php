@@ -179,7 +179,7 @@
                         <p>
                             사업자등록번호 : 182-81-02804<span class="bar"></span>대표 : 송도현
                         </p>
-                        <p>주소 : 경기도 고양시 일산동구 산두로213번길 18(정발산동)</p>
+                        <p>주소 : 경기도 고양시 일산서구 송산로 26, 다동(구산동)</p>
                         <p>
                             Tel : 031-813-5588<span class="bar"></span>E-mail :
                             <a href="mailto:gaguoutlet11@naver.com">gaguoutlet11@naver.com</a>

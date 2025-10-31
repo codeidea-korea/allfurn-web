@@ -169,6 +169,7 @@ class WholesalerController extends BaseController
         $html = view( getDeviceType(). 'wholesaler.inc-wholesalerList-common', ['list' => $list])->render();
         //$modalHtml = view(getDeviceType() . 'product.inc-product-modal-common', ['product' => $list])->render();
         $list['html'] = $html;
+        $list['otherCount'] = $this->wholesalerService->productCountByCategoryAjax($data);
         //$list['modalHtml'] = $modalHtml;
 
         return response()->json($list);
