@@ -121,7 +121,7 @@
         <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br/>등록</a>
     </div>
     @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
-        <div style="display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
+        <div class="right_quick_btn" style="background-color:#000; color:#fff; ">
             <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
         </div>
         @if(isset(Auth::user()['type']) && in_array(Auth::user()['type'], ['W']))
@@ -130,7 +130,7 @@
     @endif
     
 @if(request()->is(['wholesaler/detail/*' ]))
-    <div style=" display:flex; align-items:center; justify-content:center; width:50px; height:50px; border-radius:50%; background-color:#000; color:#fff; text-align:center; line-height:1.15;font-size: smaller;">
+    <div class="right_quick_btn" style=" background-color:#000; color:#fff; ">
         <a href="javascript:shareCatalog({{$data['info']->idx}},6);">카탈로그<br>받기</a>
     </div>
     @include('layouts.includes.send-catalog')
