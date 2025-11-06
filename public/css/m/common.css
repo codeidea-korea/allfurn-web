@@ -443,7 +443,7 @@ header .header_top .search_btn {position:relative; display:block; flex-grow:1; a
 header .header_top .search_btn svg {position:absolute; left:5px; top:calc(50% - 12px); width:24px; height:24px; }
 header .header_top .right_link {gap:20px; }
 header .header_top .right_link .alarm_btn {position:relative; display:block; }
-header .header_top .right_link .alarm_btn span {position:absolute; right:-6px; top:-6px; display:flex; align-items:center; justify-content:center; min-width:18px; min-height:18px; padding:0px 3px; color:#fff; font-size:11px; line-height:1; background-color:var(--main_color); border-radius:30px; text-align:center; white-space:nowrap; }
+header .header_top .right_link .alarm_btn span {position:absolute; right:-6px; top:-6px; display:flex; align-items:center; justify-content:center; min-width:18px; min-height:18px; padding:0px 3px; color:#fff; font-size:11px; background-color:var(--main_color); border-radius:30px; text-align:center; white-space:nowrap; }
 header .header_top .right_link .alarm_btn svg {width:24px; height:24px; }
 
 header .header_top.sub_header .title {font-size: 18px;font-weight: 600;position: absolute;transform: translateX(-50%);left: 50%; white-space:nowrap; }
