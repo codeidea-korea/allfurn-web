@@ -482,8 +482,8 @@
                                 image400.src = e.target.result;
 
                                 var image600 = new Image;
-                                image600.width = 600;
-                                image600.height = 600;
+                                //image600.width = 600;
+                                //image600.height = 600;
                                 image600.onload = function() {
                                     const i600 = getThumbFile(image600, 600, this.width, this.height);
                                     stored600Files.push(i600);

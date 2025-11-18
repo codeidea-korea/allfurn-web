@@ -257,14 +257,36 @@ var _tmp = 0;
         $(`.${item}`).addClass('hidden')
     }
 
-    function getThumbFile(_IMG, maxWidth, width, height){
+function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
     if(width < maxWidth) {
 //        return _IMG;
     }
-    canvas.width = width; // (maxWidth);
-    canvas.height = height; // ((maxWidth / (width*1.0))*height);
-    canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
+    canvas.width = maxWidth; // (maxWidth);
+    canvas.height = maxWidth; // ((maxWidth / (width*1.0))*height);
+
+    let cropInfo = {
+        x: 0,
+        y: 0,
+        width: width,
+        height: height
+    };
+    if(_IMG.width != _IMG.height) {
+        if(_IMG.width > _IMG.height) {
+            cropInfo.width = _IMG.height;
+            cropInfo.x = Math.floor((_IMG.width - _IMG.height) / 2);
+        } else {
+            cropInfo.height = _IMG.width;
+            cropInfo.y = Math.floor((_IMG.height - _IMG.width) / 2);
+        }
+    }
+        const wrate = maxWidth / _IMG.width;
+        const hrate = maxWidth / _IMG.height;
+        cropInfo.width = _IMG.width * wrate;
+        cropInfo.height = _IMG.height * hrate;
+        cropInfo.x = cropInfo.x * wrate;
+        cropInfo.y = cropInfo.y * hrate;
+    canvas.getContext("2d").drawImage(_IMG, cropInfo.x, cropInfo.y, cropInfo.width, cropInfo.height, 0, 0, maxWidth, maxWidth);
 
     var dataURL = canvas.toDataURL("image/png");
     var byteString = atob(dataURL.split(',')[1]);
@@ -321,8 +343,8 @@ $(document).on('change', '#form-list02', function() {
                     image400.src = e.target.result;
 
                     var image600 = new Image;
-                    image600.width = 600;
-                    image600.height = 600;
+                    //image600.width = 600;
+                    //image600.height = 600;
                     image600.onload = function() {
                         const i600 = getThumbFile(image600, 600, this.width, this.height);
                         stored600Files.push(i600);
