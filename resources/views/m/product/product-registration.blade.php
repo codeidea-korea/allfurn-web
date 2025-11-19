@@ -265,28 +265,30 @@ function getThumbFile(_IMG, maxWidth, width, height){
     canvas.width = maxWidth; // (maxWidth);
     canvas.height = maxWidth; // ((maxWidth / (width*1.0))*height);
 
-    let cropInfo = {
-        x: 0,
-        y: 0,
-        width: width,
-        height: height
-    };
-    if(_IMG.width != _IMG.height) {
-        if(_IMG.width > _IMG.height) {
-            cropInfo.width = _IMG.height;
-            cropInfo.x = Math.floor((_IMG.width - _IMG.height) / 2);
-        } else {
-            cropInfo.height = _IMG.width;
-            cropInfo.y = Math.floor((_IMG.height - _IMG.width) / 2);
+    const baseWidth = canvas.width;
+
+    const cropInfo = {
+        isFit: Math.floor(_IMG.width) == Math.floor(_IMG.height),
+        isLowerWidth: _IMG.width < _IMG.height,
+        cropPosition: {
+            x: 0, y: 0
         }
+    };
+    console.log(cropInfo)
+
+    if(cropInfo.isFit) {
+        canvas.getContext("2d").drawImage(_IMG, 0, 0, baseWidth, baseWidth);
+    } else {
+        cropInfo.wrate = baseWidth / _IMG.width;
+        cropInfo.hrate = baseWidth / _IMG.height;
+        cropInfo.cropPosition.x = cropInfo.isLowerWidth ? 0 : Math.floor((_IMG.width * cropInfo.wrate) - (_IMG.height * cropInfo.hrate)) * -1 / 2;
+        cropInfo.cropPosition.y = cropInfo.isLowerWidth ? Math.floor((_IMG.height * cropInfo.hrate) - (_IMG.width * cropInfo.wrate)) * -1 / 2 : 0;
+
+        canvas.getContext("2d").drawImage(_IMG, 0, 0, (cropInfo.isLowerWidth ? _IMG.width : _IMG.height), cropInfo.isLowerWidth ? _IMG.width : _IMG.height, cropInfo.cropPosition.x, cropInfo.cropPosition.y, baseWidth, baseWidth);
+
+        cropInfo.rate = cropInfo.isLowerWidth ? cropInfo.hrate : cropInfo.wrate;
+        canvas.getContext("2d").scale(cropInfo.rate, cropInfo.rate);
     }
-        const wrate = maxWidth / _IMG.width;
-        const hrate = maxWidth / _IMG.height;
-        cropInfo.width = _IMG.width * wrate;
-        cropInfo.height = _IMG.height * hrate;
-        cropInfo.x = cropInfo.x * wrate;
-        cropInfo.y = cropInfo.y * hrate;
-    canvas.getContext("2d").drawImage(_IMG, cropInfo.x, cropInfo.y, cropInfo.width, cropInfo.height, 0, 0, maxWidth, maxWidth);
 
     var dataURL = canvas.toDataURL("image/png");
     var byteString = atob(dataURL.split(',')[1]);
@@ -300,6 +302,7 @@ function getThumbFile(_IMG, maxWidth, width, height){
 
     return tmpThumbFile;
 }
+
 $(document).on('change', '#form-list02', function() {
     var files = this.files;
     var i = 0;
