@@ -257,14 +257,38 @@ var _tmp = 0;
         $(`.${item}`).addClass('hidden')
     }
 
-    function getThumbFile(_IMG, maxWidth, width, height){
+function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
     if(width < maxWidth) {
 //        return _IMG;
     }
-    canvas.width = width; // (maxWidth);
-    canvas.height = height; // ((maxWidth / (width*1.0))*height);
-    canvas.getContext("2d").drawImage(_IMG, 0, 0, width, height);
+    canvas.width = maxWidth; // (maxWidth);
+    canvas.height = maxWidth; // ((maxWidth / (width*1.0))*height);
+
+    const baseWidth = canvas.width;
+
+    const cropInfo = {
+        isFit: Math.floor(_IMG.width) == Math.floor(_IMG.height),
+        isLowerWidth: _IMG.width < _IMG.height,
+        cropPosition: {
+            x: 0, y: 0
+        }
+    };
+    console.log(cropInfo)
+
+    if(cropInfo.isFit) {
+        canvas.getContext("2d").drawImage(_IMG, 0, 0, baseWidth, baseWidth);
+    } else {
+        cropInfo.wrate = baseWidth / _IMG.width;
+        cropInfo.hrate = baseWidth / _IMG.height;
+        cropInfo.cropPosition.x = cropInfo.isLowerWidth ? 0 : Math.floor((_IMG.width * cropInfo.wrate) - (_IMG.height * cropInfo.hrate)) * -1 / 2;
+        cropInfo.cropPosition.y = cropInfo.isLowerWidth ? Math.floor((_IMG.height * cropInfo.hrate) - (_IMG.width * cropInfo.wrate)) * -1 / 2 : 0;
+
+        canvas.getContext("2d").drawImage(_IMG, 0, 0, (cropInfo.isLowerWidth ? _IMG.width : _IMG.height), cropInfo.isLowerWidth ? _IMG.width : _IMG.height, cropInfo.cropPosition.x, cropInfo.cropPosition.y, baseWidth, baseWidth);
+
+        cropInfo.rate = cropInfo.isLowerWidth ? cropInfo.hrate : cropInfo.wrate;
+        canvas.getContext("2d").scale(cropInfo.rate, cropInfo.rate);
+    }
 
     var dataURL = canvas.toDataURL("image/png");
     var byteString = atob(dataURL.split(',')[1]);
@@ -278,6 +302,7 @@ var _tmp = 0;
 
     return tmpThumbFile;
 }
+
 $(document).on('change', '#form-list02', function() {
     var files = this.files;
     var i = 0;
@@ -321,8 +346,8 @@ $(document).on('change', '#form-list02', function() {
                     image400.src = e.target.result;
 
                     var image600 = new Image;
-                    image600.width = 600;
-                    image600.height = 600;
+                    //image600.width = 600;
+                    //image600.height = 600;
                     image600.onload = function() {
                         const i600 = getThumbFile(image600, 600, this.width, this.height);
                         stored600Files.push(i600);

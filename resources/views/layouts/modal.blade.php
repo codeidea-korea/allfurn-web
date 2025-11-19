@@ -1333,7 +1333,7 @@
                 contentType     : false,
                 data			: form,
                 type			: 'POST',
-                async: false,
+                async: true,
                 success: function (result) {
                     $('#loadingContainer').hide();
                     modalOpen('#pop_info_2-modal');

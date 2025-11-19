@@ -40,7 +40,7 @@
     <script defer src="https://cdn.tailwindcss.com"></script>
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
     <script src="/js/swiper-bundle.min.js?{{ date('Ymd') }}"></script>
-    <script src="/js/common.js?{{ date('Ymd') }}"></script>
+    <script src="/js/common.js?{{ date('YmdH') }}"></script>
     <!-- flatpickr(datepicker) -->
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script> --}}
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script> --}}
