@@ -1211,6 +1211,10 @@
         },
         fileUpload(input) {
             if (input.files && input.files[0]) {
+				if (input.files[0].size > 1 * 1024) {
+					alert('1 mb 이하만 등록하여 주세요.');
+					return;
+				}
                 var reader = new FileReader();
                 let img = input.parentNode.parentNode.querySelector('.file-form').querySelector('img');
                 if(!img){
