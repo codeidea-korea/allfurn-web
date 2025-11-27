@@ -1211,7 +1211,7 @@
         },
         fileUpload(input) {
             if (input.files && input.files[0]) {
-				if (input.files[0].size > 1 * 1024) {
+				if (input.files[0].size > 1024 * 1024) {
 					input.value = '';
 					alert('이미지 용량은 1MB 이하만 등록할 수 있습니다.');
 					return;

@@ -1261,13 +1261,13 @@ class MessageService
         }
     }
 
+
     public function getUnreadRecipientsList()
     {
         DB::beginTransaction();
 
         $targets = DB::select('
-            SELECT 
-			    UNREADED.room_idx,
+            SELECT DISTINCT
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
@@ -1281,23 +1281,22 @@ class MessageService
 			(
 			    -- 미확인 채팅방
 			    SELECT 
-			        R.room_idx,
+			        R.idx as room_idx,
 			        R.unread_status,
 			        M.sender_company_type, 
 			        M.sender_company_idx,
 			        M.user_idx,
 			        MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
 			    FROM AF_message_room R 
-			    JOIN AF_message M ON M.room_idx = R.room_idx
+			    JOIN AF_message M ON M.room_idx = R.idx
 			    WHERE M.is_read != 1 -- 0 OR NULL
-			    GROUP BY R.room_idx, R.sender_company_type, R.sender_company_idx, M.user_idx
+			    GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, M.user_idx
 			) UNREADED 
-			JOIN AF_user user ON user.user_idx = UNREADED.user_idx
+			JOIN AF_user user ON user.idx = UNREADED.user_idx
 			LEFT JOIN AF_wholesale w ON w.idx = user.company_idx
 			LEFT JOIN AF_retail r ON r.idx = user.company_idx
 			LEFT JOIN AF_normal n ON n.idx = user.company_idx
-			WHERE UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -120 MINUTE)
-			AND (
+			WHERE (
 			    (UNREADED.unread_status = 0 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -120 MINUTE))
 			    OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE))
 			)
@@ -1318,8 +1317,7 @@ class MessageService
         DB::beginTransaction();
 
         $targets = DB::select('
-            SELECT 
-			    UNREADED.room_idx,
+            SELECT DISTINCT
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
@@ -1333,23 +1331,22 @@ class MessageService
 			(
 			    -- 미확인 채팅방
 			    SELECT 
-			        R.room_idx,
+			        R.idx as room_idx,
 			        R.unread_status,
 			        M.sender_company_type, 
 			        M.sender_company_idx,
 			        M.user_idx,
 			        MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
 			    FROM AF_message_room R 
-			    JOIN AF_message M ON M.room_idx = R.room_idx
+			    JOIN AF_message M ON M.room_idx = R.idx
 			    WHERE M.is_read != 1 -- 0 OR NULL
-			    GROUP BY R.room_idx, R.sender_company_type, R.sender_company_idx, M.user_idx
+			    GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, M.user_idx
 			) UNREADED 
-			JOIN AF_user user ON user.user_idx = UNREADED.user_idx
+			JOIN AF_user user ON user.idx = UNREADED.user_idx
 			LEFT JOIN AF_wholesale w ON w.idx = user.company_idx
 			LEFT JOIN AF_retail r ON r.idx = user.company_idx
 			LEFT JOIN AF_normal n ON n.idx = user.company_idx
-			WHERE UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -120 MINUTE)
-			AND UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
+			WHERE UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
             ')->get();
 
         MessageRoom::whereRaw('register_time < ADDDATE(now(), INTERVAL -240 MINUTE) AND unread_status = 2')

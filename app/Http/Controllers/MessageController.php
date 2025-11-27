@@ -276,11 +276,12 @@ class MessageController extends BaseController
             array_push($sendPhoneNumbers, $receiverCheck);
 
             $sreq = [];
-            $sreq['회사명'] = $list[$idx]->회사명;
+            $sreq['업체명'] = $list[$idx]->회사명;
+            $sreq['올톡링크'] = env('APP_URL2').'/message';
             $result[] = $receiver;
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'TT_3925', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
+                'UD_7843', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
         }
 
         return $result;
@@ -304,11 +305,12 @@ class MessageController extends BaseController
             array_push($sendPhoneNumbers, $receiverCheck);
 
             $sreq = [];
-            $sreq['회사명'] = $list[$idx]->회사명;
+            $sreq['업체명'] = $list[$idx]->회사명;
+            $sreq['올톡링크'] = env('APP_URL2').'/message';
             $result[] = $receiver;
 
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'TT_3925', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
+                'UD_7843', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
         }
 
         return $result;
