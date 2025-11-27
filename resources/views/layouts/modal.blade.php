@@ -1212,7 +1212,8 @@
         fileUpload(input) {
             if (input.files && input.files[0]) {
 				if (input.files[0].size > 1 * 1024) {
-					alert('1 mb 이하만 등록하여 주세요.');
+					input.value = '';
+					alert('이미지 용량은 1MB 이하만 등록할 수 있습니다.');
 					return;
 				}
                 var reader = new FileReader();
