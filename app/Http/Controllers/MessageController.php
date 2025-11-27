@@ -285,6 +285,34 @@ class MessageController extends BaseController
 
         return $result;
     }
+    
+
+    public function sendToUnreadYesterdayRecipients()
+    {
+        $list = $this->messageService->getBeforeDayUnreadRecipientsList();
+        
+        $result = [];
+        $sendPhoneNumbers = [];
+        for($idx = 0; $idx < count($list); $idx = $idx + 1) {
+        
+            $receiver = $list[$idx]->phone_number;
+            $receiverCheck = str_replace("-", "", $receiver);
+            if(in_array($receiverCheck, $sendPhoneNumbers)) {
+                // 이미 확인 요청을 보낸 핸드폰에 재요청을 하지 않습니다.
+                continue;
+            }
+            array_push($sendPhoneNumbers, $receiverCheck);
+
+            $sreq = [];
+            $sreq['회사명'] = $list[$idx]->회사명;
+            $result[] = $receiver;
+
+            $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
+                'TT_3925', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
+        }
+
+        return $result;
+    }
 
     /**
      * 메시지 읽음 처리
