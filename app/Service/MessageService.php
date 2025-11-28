@@ -692,6 +692,9 @@ class MessageService
         Message::where('room_idx', '=', $idx)
             ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
             ->update(['is_read' => 1]);
+		
+		MessageRoom::where('room_idx', '=', $idx)
+            ->update(['unread_status' => 0]);
 
         // 읽은 시점 전달
         event(new ChatUser($idx, 
