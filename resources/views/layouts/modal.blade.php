@@ -995,7 +995,7 @@
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
 
-                    <div class="mb-3 hidden">
+                    <div class="mb-3">
                         <dl>
                             <dt class="necessary">사업자 등록 번호</dt>
                             <dd class="flex gap-1">
@@ -1055,7 +1055,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-3 hidden">
+                    <div class="mb-3">
                         <dl>
                             <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
                             <dd>
@@ -1093,7 +1093,7 @@
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
 
-                    <div class="mb-8 hidden">
+                    <div class="mb-8">
                         <dl class="flex">
                             <dt class="necessary">사업자 등록 번호</dt>
                             <dd class="flex gap-1">
@@ -1152,7 +1152,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8 hidden">
+                    <div class="mb-8">
                         <dl class="flex">
                             <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
                             <dd>
@@ -1276,14 +1276,14 @@
         },
         verifyForm(){
             const targetCompanySection = $('._convert_company_section:visible');
-            //const businessCode = targetCompanySection.find('.business_code').val();
+            const businessCode = targetCompanySection.find('.business_code').val();
             const companyName = targetCompanySection.find('.company_name').val();
             const ownerName = targetCompanySection.find('.owner_name').val();
 
-//            if(!businessCode || businessCode.trim() == '') {
-//                targetCompanySection.find('._focus_business_code').show();
-//                return false;
-//            }
+            if(!businessCode || businessCode.trim() == '') {
+                targetCompanySection.find('._focus_business_code').show();
+                return false;
+            }
             if(!companyName || companyName.trim() == '') {
                 targetCompanySection.find('._focus_company_name').show();
                 return false;
@@ -1299,10 +1299,10 @@
 
             $('#loadingContainer').show();
 
-            if(/* !convertCompany.checkCompanyNumber(1) || */!convertCompany.verifyForm()) {
-//                if(!convertCompany.checkCompanyNumber(1)) {
-//                    alert('중복된 사업자 등록번호입니다.');
-//                }
+            if( !convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
+                if(!convertCompany.checkCompanyNumber(1)) {
+                    alert('중복된 사업자 등록번호입니다.');
+                }
                 $('#loadingContainer').hide();
                 modalOpen('#pop_info_4-modal');
                 return;
