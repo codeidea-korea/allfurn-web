@@ -276,7 +276,7 @@ class MessageController extends BaseController
             array_push($sendPhoneNumbers, $receiverCheck);
 
             $sreq = [];
-            $sreq['업체명'] = $list[$idx]->회사명;
+            $sreq['회사명'] = $list[$idx]->회사명;
             $sreq['올톡링크'] = env('APP_URL2').'/message';
             $result[] = $receiver;
 
@@ -305,7 +305,7 @@ class MessageController extends BaseController
             array_push($sendPhoneNumbers, $receiverCheck);
 
             $sreq = [];
-            $sreq['업체명'] = $list[$idx]->회사명;
+            $sreq['회사명'] = $list[$idx]->회사명;
             $sreq['올톡링크'] = env('APP_URL2').'/message';
             $result[] = $receiver;
 
