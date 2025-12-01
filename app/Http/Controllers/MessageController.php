@@ -275,13 +275,12 @@ class MessageController extends BaseController
             }
             array_push($sendPhoneNumbers, $receiverCheck);
 
-            $sreq = [];
-            $sreq['회사명'] = $list[$idx]->회사명;
-            $sreq['올톡링크'] = env('APP_URL2').'/message';
-            $result[] = $receiver;
-
-            $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'UD_7843', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
+            $message = '[' . $list[$idx]->회사명 . ']님이 읽지 않은 중요한 메세지💬가 있어요. 지금 앱을 켜서 확인해 보세요!';
+            $roomIdx = $list[$idx]->room_idx;
+                
+            $this->pushService->sendPush('거래처에서 메시지가 왔어요!', $message, 
+                $list[$idx]->user_idx, 5, env('APP_URL').'/message/room?room_idx=' . $roomIdx, env('APP_URL').'/message/room?room_idx=' . $roomIdx);
+                            
         }
 
         return $result;

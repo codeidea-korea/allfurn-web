@@ -1271,9 +1271,11 @@ class MessageService
 
         $targets = DB::select('
             SELECT DISTINCT
+                UNREADED.room_idx,
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
+			    user.idx as user_idx,
 			    user.phone_number,
 			    CASE sender_company_type 
 			        WHEN "W" THEN w.company_name
@@ -1303,7 +1305,7 @@ class MessageService
 			    (UNREADED.unread_status = 0 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -120 MINUTE))
 			    OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE))
 			)
-            ')->get();
+            ');
 
         MessageRoom::whereRaw('(register_time < ADDDATE(now(), INTERVAL -120 MINUTE) AND unread_status = 0) 
 				OR (register_time < ADDDATE(now(), INTERVAL -240 MINUTE) AND unread_status = 1)')
@@ -1350,7 +1352,7 @@ class MessageService
 			LEFT JOIN AF_retail r ON r.idx = user.company_idx
 			LEFT JOIN AF_normal n ON n.idx = user.company_idx
 			WHERE UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
-            ')->get();
+            ');
 
         MessageRoom::whereRaw('register_time < ADDDATE(now(), INTERVAL -240 MINUTE) AND unread_status = 2')
             ->update(['unread_status' => DB::raw('unread_status + 1')]);
