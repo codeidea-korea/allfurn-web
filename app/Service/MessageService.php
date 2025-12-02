@@ -693,7 +693,7 @@ class MessageService
             ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
             ->update(['is_read' => 1]);
 		
-		MessageRoom::where('room_idx', '=', $idx)
+		MessageRoom::where('idx', '=', $idx)
             ->update(['unread_status' => 0]);
 
         // 읽은 시점 전달
