@@ -1275,8 +1275,8 @@ class MessageService
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
-			    user.idx as user_idx,
-			    user.phone_number,
+			    UNREADED.user_idx,
+			    UNREADED.phone_number,
 			    CASE sender_company_type 
 			        WHEN "W" THEN w.company_name
 			        WHEN "R" THEN r.company_name
@@ -1285,29 +1285,32 @@ class MessageService
 			FROM
 			(
 			    -- 미확인 채팅방
-			    SELECT 
-			        R.idx as room_idx,
-			        R.unread_status,
-			        M.sender_company_type, 
-			        M.sender_company_idx,
-			        M.user_idx,
-			        MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
-			    FROM AF_message_room R 
-			    JOIN AF_message M ON M.room_idx = R.idx
-			    WHERE M.is_read != 1 -- 0 OR NULL
-			    GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, M.user_idx
+                SELECT 
+                    R.idx as room_idx,
+                    R.unread_status,
+                    M.sender_company_type, 
+                    M.sender_company_idx,
+                    U.idx as user_idx,
+                    U.company_idx,
+                    U.phone_number,
+                    MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
+                FROM AF_message_room R 
+                JOIN AF_message M ON M.room_idx = R.idx
+                LEFT JOIN AF_user U ON ((U.type = R.first_company_type AND U.company_idx = R.first_company_idx) or (U.type = R.second_company_type AND U.company_idx = R.second_company_idx))
+                WHERE M.is_read != 1 -- 0 OR NULL
+                and U.is_delete != 1
+                GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, U.idx
 			) UNREADED 
-			JOIN AF_user user ON user.idx = UNREADED.user_idx
-			LEFT JOIN AF_wholesale w ON w.idx = user.company_idx
-			LEFT JOIN AF_retail r ON r.idx = user.company_idx
-			LEFT JOIN AF_normal n ON n.idx = user.company_idx
+            LEFT JOIN AF_wholesale w ON w.idx = UNREADED.company_idx
+            LEFT JOIN AF_retail r ON r.idx = UNREADED.company_idx
+            LEFT JOIN AF_normal n ON n.idx = UNREADED.company_idx
 			WHERE (
-			    (UNREADED.unread_status = 0 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -120 MINUTE))
-			    OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE))
+                (UNREADED.unread_status = 0 AND (UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -110 MINUTE) AND (UNREADED.unread_started_at > ADDDATE(now(), INTERVAL -230 MINUTE))))
+                OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -230 MINUTE))
 			)
             ');
 		$requiredIdxes = [];
-		foreach($target : $targets) {
+		foreach($targets as $target) {
 			array_push($requiredIdxes, $target->room_idx);
 		}
 
@@ -1326,11 +1329,12 @@ class MessageService
 
         $targets = DB::select('
             SELECT DISTINCT
-			    UNREADED.room_idx,
+                UNREADED.room_idx,
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
-			    user.phone_number,
+			    UNREADED.user_idx,
+			    UNREADED.phone_number,
 			    CASE sender_company_type 
 			        WHEN "W" THEN w.company_name
 			        WHEN "R" THEN r.company_name
@@ -1339,27 +1343,30 @@ class MessageService
 			FROM
 			(
 			    -- 미확인 채팅방
-			    SELECT 
-			        R.idx as room_idx,
-			        R.unread_status,
-			        M.sender_company_type, 
-			        M.sender_company_idx,
-			        M.user_idx,
-			        MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
-			    FROM AF_message_room R 
-			    JOIN AF_message M ON M.room_idx = R.idx
-			    WHERE M.is_read != 1 -- 0 OR NULL
-			    GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, M.user_idx
+                SELECT 
+                    R.idx as room_idx,
+                    R.unread_status,
+                    M.sender_company_type, 
+                    M.sender_company_idx,
+                    U.idx as user_idx,
+                    U.company_idx,
+                    U.phone_number,
+                    MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
+                FROM AF_message_room R 
+                JOIN AF_message M ON M.room_idx = R.idx
+                LEFT JOIN AF_user U ON ((U.type = R.first_company_type AND U.company_idx = R.first_company_idx) or (U.type = R.second_company_type AND U.company_idx = R.second_company_idx))
+                WHERE M.is_read != 1 -- 0 OR NULL
+                and U.is_delete != 1
+                GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, U.idx
 			) UNREADED 
-			JOIN AF_user user ON user.idx = UNREADED.user_idx
-			LEFT JOIN AF_wholesale w ON w.idx = user.company_idx
-			LEFT JOIN AF_retail r ON r.idx = user.company_idx
-			LEFT JOIN AF_normal n ON n.idx = user.company_idx
+            LEFT JOIN AF_wholesale w ON w.idx = UNREADED.company_idx
+            LEFT JOIN AF_retail r ON r.idx = UNREADED.company_idx
+            LEFT JOIN AF_normal n ON n.idx = UNREADED.company_idx
 			WHERE UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
             ');
 
         $requiredIdxes = [];
-		foreach($target : $targets) {
+		foreach($targets as $target) {
 			array_push($requiredIdxes, $target->room_idx);
 		}
 
