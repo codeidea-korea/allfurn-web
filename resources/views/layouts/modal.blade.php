@@ -1211,6 +1211,11 @@
         },
         fileUpload(input) {
             if (input.files && input.files[0]) {
+				if (input.files[0].size > 1024 * 1024) {
+					input.value = '';
+					alert('이미지 용량은 1MB 이하만 등록할 수 있습니다.');
+					return;
+				}
                 var reader = new FileReader();
                 let img = input.parentNode.parentNode.querySelector('.file-form').querySelector('img');
                 if(!img){
@@ -1294,7 +1299,7 @@
 
             $('#loadingContainer').show();
 
-            if(!convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
+            if( !convertCompany.checkCompanyNumber(1) || !convertCompany.verifyForm()) {
                 if(!convertCompany.checkCompanyNumber(1)) {
                     alert('중복된 사업자 등록번호입니다.');
                 }
@@ -1315,7 +1320,7 @@
             }
             const targetCompanySection = $('._convert_company_section:visible');        
             form.append("email", $('#pop_info_4-user_email').val());
-            form.append("business_code", targetCompanySection.find('.business_code').val());
+            // form.append("business_code", targetCompanySection.find('.business_code').val());
             form.append("company_name", targetCompanySection.find('.company_name').val());
             form.append("owner_name", targetCompanySection.find('.owner_name').val());
             form.append("business_address", targetCompanySection.find('.business_address').val());

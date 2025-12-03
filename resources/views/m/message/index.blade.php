@@ -162,13 +162,17 @@ $header_banner = '';
         const rooms = document.querySelector('._chatting_rooms > li');
         const newestRoom = $('._chatting_rooms > li[data-key='+messages.roomIdx+']');
 
+        if(!messages.title || messages.title == '') {
+            return;
+        }
+
         if(newestRoom.length > 0) {
             rooms.insertAdjacentElement('beforebegin', newestRoom[0]);
             const count = Number($('#chat-'+messages.roomIdx+'-unreadCount').text());
-	    $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
-	     $('#chat-'+messages.roomIdx+'-unreadCount').removeClass('num');
+	        $('#chat-'+messages.roomIdx+'-unreadCount').text(count + 1);
+	        $('#chat-'+messages.roomIdx+'-unreadCount').removeClass('num');
 
- $('#chat-'+messages.roomIdx+'-unreadCount').addClass('num');
+            $('#chat-'+messages.roomIdx+'-unreadCount').addClass('num');
         } else {
 	        var d = new Date();
             const tmpChattingRoom = 

@@ -362,6 +362,7 @@ Route::prefix('help')->name('help')
 });
 
 Route::get('/message/unread','MessageController@sendToUnreadRecipients');
+Route::get('/message/unread-yesterday','MessageController@sendToUnreadYesterdayRecipients');
 Route::get('/push-send/all', 'ExtraApiController@sendPushByStatusPending')->name('sendPushByStatusPending');
 
 // 임시로 작성

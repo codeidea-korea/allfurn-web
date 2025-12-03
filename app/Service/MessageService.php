@@ -692,6 +692,9 @@ class MessageService
         Message::where('room_idx', '=', $idx)
             ->where('sender_company_idx', '!=', Auth::user()['company_idx'])
             ->update(['is_read' => 1]);
+		
+		MessageRoom::where('idx', '=', $idx)
+            ->update(['unread_status' => 0]);
 
         // 읽은 시점 전달
         event(new ChatUser($idx, 
@@ -972,7 +975,7 @@ class MessageService
                         $userType = $targetUser->type;
                         $userCompanyIdx = $targetUser->company_idx;
                         $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-                            $targetUser->idx, 5, env('APP_URL').'/message/room?room_idx=' . $message->room_idx, env('APP_URL').'/message/room?room_idx=' . $message->room_idx);
+                            $targetUser->idx, 5, env('APP_URL').'/message', env('APP_URL').'/message');
                             
                         event(new ChatUser($message->room_idx, 
                             $targetUser->idx, 
@@ -1261,65 +1264,114 @@ class MessageService
         }
     }
 
+
     public function getUnreadRecipientsList()
     {
         DB::beginTransaction();
 
         $targets = DB::select('
-            SELECT 
-                usr.phone_number,
-                CASE sender_company_type 
-                    WHEN "W" THEN (SELECT company_name FROM AF_wholesale WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
-                    room.first_company_idx, room.second_company_idx))
-                    WHEN "R" THEN (SELECT company_name FROM AF_retail    WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
-                    room.first_company_idx, room.second_company_idx))
-                    WHEN "S" || "N" THEN (SELECT name FROM AF_normal    WHERE idx = if(sender_company_idx = room.first_company_idx && sender_company_type = room.first_company_type, 
-                    room.first_company_idx, room.second_company_idx))
-                END 
-                AS 회사명
-            FROM (SELECT 
-                    max(room_idx) AS last_room_idx, 
-                    sender_company_type,
-                    sender_company_idx, 
-					user_idx,
-                    count(idx) AS count_unread,
-                    max(register_time) AS last_unread_time
-                FROM ALLFURN.AF_message 
-                WHERE (is_read = 0 or is_read is null)
-                AND (
-                    (register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
-                    AND pushed < 2)
-                    OR 
-                    (register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
-                    AND pushed < 3)
-                )
-                GROUP BY sender_company_type,sender_company_idx, user_idx) msg
-            JOIN ALLFURN.AF_message_room room on msg.last_room_idx = room.idx
-            JOIN (SELECT 
-                    idx, 
-                    company_idx, 
-                    type,
-                    phone_number
-                FROM ALLFURN.AF_user 
-                WHERE is_delete = 0 
-                AND state = "JS") usr on (
-                    (room.first_company_idx = usr.company_idx AND room.first_company_type = usr.type)
-                    OR (room.second_company_idx = usr.company_idx AND room.second_company_type = usr.type)
-                )
-			AND usr.idx = msg.user_idx
-            GROUP BY usr.idx
+            SELECT DISTINCT
+                UNREADED.room_idx,
+			    UNREADED.unread_status,
+			    UNREADED.sender_company_type,
+			    UNREADED.sender_company_idx,
+			    UNREADED.user_idx,
+			    UNREADED.phone_number,
+			    CASE sender_company_type 
+			        WHEN "W" THEN w.company_name
+			        WHEN "R" THEN r.company_name
+			        WHEN "S" || "N" THEN n.name
+			    END AS 회사명
+			FROM
+			(
+			    -- 미확인 채팅방
+                SELECT 
+                    R.idx as room_idx,
+                    R.unread_status,
+                    M.sender_company_type, 
+                    M.sender_company_idx,
+                    U.idx as user_idx,
+                    U.company_idx,
+                    U.phone_number,
+                    MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
+                FROM AF_message_room R 
+                JOIN AF_message M ON M.room_idx = R.idx
+                LEFT JOIN AF_user U ON ((U.type = R.first_company_type AND U.company_idx = R.first_company_idx) or (U.type = R.second_company_type AND U.company_idx = R.second_company_idx))
+                WHERE M.is_read != 1 -- 0 OR NULL
+                and U.is_delete != 1
+                GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, U.idx
+			) UNREADED 
+            LEFT JOIN AF_wholesale w ON w.idx = UNREADED.company_idx
+            LEFT JOIN AF_retail r ON r.idx = UNREADED.company_idx
+            LEFT JOIN AF_normal n ON n.idx = UNREADED.company_idx
+			WHERE (
+                (UNREADED.unread_status = 0 AND (UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -110 MINUTE) AND (UNREADED.unread_started_at > ADDDATE(now(), INTERVAL -230 MINUTE))))
+                OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -230 MINUTE))
+			)
+            ');
+		$requiredIdxes = [];
+		foreach($targets as $target) {
+			array_push($requiredIdxes, $target->room_idx);
+		}
+
+		MessageRoom::whereIn('idx', $requiredIdxes)
+            ->update(['unread_status' => DB::raw('unread_status + 1')]);
+
+        DB::commit();
+
+        return $targets;
+    }
+
+	// 전일 안읽음 카톡 발송 대상: 익일 오전에 2회 발송된 채팅방 대상
+    public function getBeforeDayUnreadRecipientsList()
+    {
+        DB::beginTransaction();
+
+        $targets = DB::select('
+            SELECT DISTINCT
+                UNREADED.room_idx,
+			    UNREADED.unread_status,
+			    UNREADED.sender_company_type,
+			    UNREADED.sender_company_idx,
+			    UNREADED.user_idx,
+			    UNREADED.phone_number,
+			    CASE sender_company_type 
+			        WHEN "W" THEN w.company_name
+			        WHEN "R" THEN r.company_name
+			        WHEN "S" || "N" THEN n.name
+			    END AS 회사명
+			FROM
+			(
+			    -- 미확인 채팅방
+                SELECT 
+                    R.idx as room_idx,
+                    R.unread_status,
+                    M.sender_company_type, 
+                    M.sender_company_idx,
+                    U.idx as user_idx,
+                    U.company_idx,
+                    U.phone_number,
+                    MIN(M.register_time) AS unread_started_at -- 안 읽기 시작한 시간
+                FROM AF_message_room R 
+                JOIN AF_message M ON M.room_idx = R.idx
+                LEFT JOIN AF_user U ON ((U.type = R.first_company_type AND U.company_idx = R.first_company_idx) or (U.type = R.second_company_type AND U.company_idx = R.second_company_idx))
+                WHERE M.is_read != 1 -- 0 OR NULL
+                and U.is_delete != 1
+                GROUP BY R.idx, M.sender_company_type, M.sender_company_idx, U.idx
+			) UNREADED 
+            LEFT JOIN AF_wholesale w ON w.idx = UNREADED.company_idx
+            LEFT JOIN AF_retail r ON r.idx = UNREADED.company_idx
+            LEFT JOIN AF_normal n ON n.idx = UNREADED.company_idx
+			WHERE UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
             ');
 
-        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -240 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -250 MINUTE)
-                    AND pushed < 3)')
-            ->update(['pushed' => 3]);
-        $message = Message::whereRaw('(register_time < ADDDATE(now(), INTERVAL -120 MINUTE)
-                    AND register_time > ADDDATE(now(), INTERVAL -130 MINUTE)
-                    AND pushed < 2)')
-            ->update(['pushed' => 2]);
+        $requiredIdxes = [];
+		foreach($targets as $target) {
+			array_push($requiredIdxes, $target->room_idx);
+		}
+
+		MessageRoom::whereIn('idx', $requiredIdxes)
+            ->update(['unread_status' => DB::raw('unread_status + 1')]);
 
         DB::commit();
 

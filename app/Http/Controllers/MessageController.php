@@ -275,10 +275,46 @@ class MessageController extends BaseController
             }
             array_push($sendPhoneNumbers, $receiverCheck);
 
+            $message = '[' . $list[$idx]->회사명 . ']님이 읽지 않은 중요한 메세지💬가 있어요. 지금 앱을 켜서 확인해 보세요!';
+            $roomIdx = $list[$idx]->room_idx;
+                
+            $this->pushService->sendPush('거래처에서 메시지가 왔어요!', $message, 
+                $list[$idx]->user_idx, 5, env('APP_URL').'/message/room?room_idx=' . $roomIdx, env('APP_URL').'/message/room?room_idx=' . $roomIdx);
+                            
+        }
+
+        return $result;
+    }
+    
+
+    public function sendToUnreadYesterdayRecipients()
+    {
+        $list = $this->messageService->getBeforeDayUnreadRecipientsList();
+        
+        $result = [];
+        $sendPhoneNumbers = [];
+        for($idx = 0; $idx < count($list); $idx = $idx + 1) {
+        
+            $receiver = $list[$idx]->phone_number;
+            $receiverCheck = str_replace("-", "", $receiver);
+            if(in_array($receiverCheck, $sendPhoneNumbers)) {
+                // 이미 확인 요청을 보낸 핸드폰에 재요청을 하지 않습니다.
+                continue;
+            }
+            array_push($sendPhoneNumbers, $receiverCheck);
+
+
+            /*
+            $sreq = [];
+            $sreq['회사명'] = $list[$idx]->회사명;
+            $sreq['올톡링크'] = env('APP_URL2').'/message';
+            $result[] = $receiver;
+            $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
+                'UD_7843', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
+*/
             $sreq = [];
             $sreq['회사명'] = $list[$idx]->회사명;
             $result[] = $receiver;
-
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
                 'TT_3925', '[상품 문의 미확인 알림]', $sreq, $receiver, null));
         }
