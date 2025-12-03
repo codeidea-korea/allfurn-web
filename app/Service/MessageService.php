@@ -975,7 +975,7 @@ class MessageService
                         $userType = $targetUser->type;
                         $userCompanyIdx = $targetUser->company_idx;
                         $this->pushService->sendPush('Allfurn - 채팅', $companyInfo->company_name . ': ' . $params['message'], 
-                            $targetUser->idx, 5, env('APP_URL').'/message/room?room_idx=' . $message->room_idx, env('APP_URL').'/message/room?room_idx=' . $message->room_idx);
+                            $targetUser->idx, 5, env('APP_URL').'/message', env('APP_URL').'/message');
                             
                         event(new ChatUser($message->room_idx, 
                             $targetUser->idx, 
@@ -1306,9 +1306,12 @@ class MessageService
 			    OR (UNREADED.unread_status = 1 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE))
 			)
             ');
+		$requiredIdxes = [];
+		foreach($target : $targets) {
+			array_push($requiredIdxes, $target->room_idx);
+		}
 
-        MessageRoom::whereRaw('(register_time < ADDDATE(now(), INTERVAL -120 MINUTE) AND unread_status = 0) 
-				OR (register_time < ADDDATE(now(), INTERVAL -240 MINUTE) AND unread_status = 1)')
+		MessageRoom::whereIn('idx', $requiredIdxes)
             ->update(['unread_status' => DB::raw('unread_status + 1')]);
 
         DB::commit();
@@ -1323,6 +1326,7 @@ class MessageService
 
         $targets = DB::select('
             SELECT DISTINCT
+			    UNREADED.room_idx,
 			    UNREADED.unread_status,
 			    UNREADED.sender_company_type,
 			    UNREADED.sender_company_idx,
@@ -1354,7 +1358,12 @@ class MessageService
 			WHERE UNREADED.unread_status = 2 AND UNREADED.unread_started_at < ADDDATE(now(), INTERVAL -240 MINUTE)
             ');
 
-        MessageRoom::whereRaw('register_time < ADDDATE(now(), INTERVAL -240 MINUTE) AND unread_status = 2')
+        $requiredIdxes = [];
+		foreach($target : $targets) {
+			array_push($requiredIdxes, $target->room_idx);
+		}
+
+		MessageRoom::whereIn('idx', $requiredIdxes)
             ->update(['unread_status' => DB::raw('unread_status + 1')]);
 
         DB::commit();
