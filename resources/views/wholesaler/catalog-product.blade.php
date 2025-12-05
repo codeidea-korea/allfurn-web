@@ -73,12 +73,14 @@
         <div class="company_detail">
             <div class="detail">
                 <div class="top_info">
+                    <!--
                     <div class="tit">
                         <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
                         <p>가구 도매 플랫폼</p>
                     </div>
+-->
                     <div class="txt">
-                        <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                        <!-- <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p> -->
                         <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                     </div>
                 </div>
