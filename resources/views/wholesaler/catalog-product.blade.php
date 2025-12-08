@@ -35,6 +35,11 @@
 
 <link rel="stylesheet" href="{{ env('APP_URL') }}/css/catalog.css">
 
+<style>
+    #catalog:before {
+        background-image: url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')
+    }
+</style>
 <div id="catalog">
     <div class="bot_quick">
         <button type="button" class="tab_btn active" onclick="history.back();">판매상품</button>
