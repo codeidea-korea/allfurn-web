@@ -308,6 +308,7 @@
         slidesPerView: 2.5,
         spaceBetween: 8,
     });
+    $('#loadingContainer').show();
 
 
     $('.catalog_con02 .prod_type').on('click',function(){
@@ -510,7 +511,7 @@
 @include('layouts.modal')
 	
 <!-- ** 페이지 로딩 ** -->
-<div id="loadingContainer" style="display:none;">
+<div id="loadingContainer">
     <svg width="50" viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="rgb(255, 255, 255)" class="w-10 h-10">
 	<circle cx="15" cy="15" r="15">
 		<animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate>
