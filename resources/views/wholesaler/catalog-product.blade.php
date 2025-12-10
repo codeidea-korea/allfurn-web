@@ -63,8 +63,12 @@
     </div>
     
     <div class="catalog_content">
-        <div class="company_img">
+        <div class="company_img">            
+			@if($data['info']->imgUrl != null)
             <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" class="w-[130px] h-[130px] object-cover rounded-full border-2 border-white" alt="">
+			@else
+			<span>{{$data['info']->company_name}}</span>
+			@endif
         </div>
 
         <div class="tab_content">
