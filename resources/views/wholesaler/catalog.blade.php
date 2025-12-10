@@ -41,7 +41,7 @@
 -->
 	
 <style>
-    #catalog:before {
+    #catalog .logo:before {
         background-image: url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')
     }
 </style>
