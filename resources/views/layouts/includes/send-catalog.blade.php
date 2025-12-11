@@ -1,5 +1,7 @@
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-<script> Kakao.init('2b966eb2c764be29d46d709f6d100afb'); </script>
+<script> Kakao.init('7e12cb16dd8a77a9c882f845b609b3e4'); </script>
+<!-- 개발 --> 
+<!-- <script> Kakao.init('c6fd02e1e170f732585aa2908ea63ce1'); </script> -->
 <script>
     var isProccessing2ShareCatalog = false;
 

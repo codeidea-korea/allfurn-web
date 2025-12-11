@@ -39,6 +39,12 @@
     <img src="{{ env('APP_URL') }}/img/catalog_intro.png" alt="">
 </div>
 -->
+	
+<style>
+    #catalog .logo:before {
+        background-image: url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')
+    }
+</style>
 <div id="catalog">
     <div class="bot_quick">
         <button type="button" class="tab_btn active" onclick="tabChange(this,0)">판매상품</button>
@@ -61,7 +67,11 @@
     
     <div class="catalog_content">
         <div class="company_img">
+			@if($data['info']->imgUrl != null)
             <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" class="w-[130px] h-[130px] object-cover rounded-full border-2 border-white" alt="">
+			@else
+			<span>{{$data['info']->company_name}}</span>
+			@endif
         </div>
 
         <div class="tab_content">
@@ -123,12 +133,14 @@
                 <div class="company_detail">
                     <div class="detail">
                         <div class="top_info">
+                            <!--
                             <div class="tit">
                                 <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
                                 <p>가구 도매 플랫폼</p>
                             </div>
+-->
                             <div class="txt">
-                                <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                                <!-- <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p> -->
                                 <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                             </div>
                         </div>
@@ -274,12 +286,14 @@
                 <div class="company_detail">
                     <div class="detail">
                         <div class="top_info">
+                            <!--
                             <div class="tit">
                                 <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
                                 <p>가구 도매 플랫폼</p>
                             </div>
+-->
                             <div class="txt">
-                                <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                                <!-- <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p> -->
                                 <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                             </div>
                         </div>
@@ -298,6 +312,7 @@
         slidesPerView: 2.5,
         spaceBetween: 8,
     });
+    $('#loadingContainer').show();
 
 
     $('.catalog_con02 .prod_type').on('click',function(){
@@ -498,5 +513,23 @@
 </script>
 
 @include('layouts.modal')
+	
+<!-- ** 페이지 로딩 ** -->
+<div id="loadingContainer">
+    <svg width="50" viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="rgb(255, 255, 255)" class="w-10 h-10">
+	<circle cx="15" cy="15" r="15">
+		<animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate>
+		<animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate>
+	</circle>
+	<circle cx="60" cy="15" r="9" fill-opacity="0.3">
+		<animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate>
+		<animate attributeName="fill-opacity" from="0.5" to="0.5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate>
+	</circle>
+	<circle cx="105" cy="15" r="15">
+		<animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate>
+		<animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate>
+	</circle>
+</svg>
+</div>
 </body>
 </html>

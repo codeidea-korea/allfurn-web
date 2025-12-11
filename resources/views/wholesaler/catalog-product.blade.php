@@ -35,6 +35,11 @@
 
 <link rel="stylesheet" href="{{ env('APP_URL') }}/css/catalog.css">
 
+<style>
+    #catalog:before {
+        background-image: url('@if($data['info']->imgUrl2 != null) {{$data['info']->imgUrl2}} @else /img/company_banner.png @endif')
+    }
+</style>
 <div id="catalog">
     <div class="bot_quick">
         <button type="button" class="tab_btn active" onclick="history.back();">판매상품</button>
@@ -58,8 +63,12 @@
     </div>
     
     <div class="catalog_content">
-        <div class="company_img">
+        <div class="company_img">            
+			@if($data['info']->imgUrl != null)
             <img src="@if($data['info']->imgUrl != null) {{$data['info']->imgUrl}} @else /img/profile_img.svg @endif" class="w-[130px] h-[130px] object-cover rounded-full border-2 border-white" alt="">
+			@else
+			<span>{{$data['info']->company_name}}</span>
+			@endif
         </div>
 
         <div class="tab_content">
@@ -73,12 +82,14 @@
         <div class="company_detail">
             <div class="detail">
                 <div class="top_info">
+                    <!--
                     <div class="tit">
                         <img src="{{ env('APP_URL') }}/img/logo.svg" alt="">
                         <p>가구 도매 플랫폼</p>
                     </div>
+-->
                     <div class="txt">
-                        <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p>
+                        <!-- <p>매일 새로운 가구를 올펀에서 무료로 만나보세요!</p> -->
                         <a href="{{ env('APP_URL') }}/wholesaler/detail/{{$data['info']->idx}}" class="btn btn-primary">{{$data['info']->company_name}} 견적서 받기</a>
                     </div>
                 </div>
