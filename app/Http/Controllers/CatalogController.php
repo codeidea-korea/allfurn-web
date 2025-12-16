@@ -20,11 +20,13 @@ class CatalogController extends BaseController
 {
     private $wholesalerService;
     private $productService;
+    private $pushService;
 
-    public function __construct(WholesalerService $wholesalerService, ProductService $productService)
+    public function __construct(WholesalerService $wholesalerService, ProductService $productService, PushService $pushService)
     {
         $this->wholesalerService = $wholesalerService;
         $this->productService = $productService;
+        $this->pushService = $pushService;
     }
 
     public function catalog(Request $request, int $wholesalerIdx)
@@ -104,6 +106,21 @@ class CatalogController extends BaseController
         $data['response_user_type'] = $request->query('company_type');
         $data['product_idx'] = $request->query('product_idx');
         $data['request_type'] = $request->query('request_type');
+
+        if($data['request_type'] == '6') {
+            $user = User::where([
+                'company_idx' => $data['response_user_id'],
+                'type' => 'W'
+            ])->first();
+            $receiver = $user->phone_number;
+            $sreq = [];
+            $sreq['회원명'] = Auth::user()['name'];
+            $sreq['올펀상품링크'] = env('APP_URL') . '/';
+            $sreq['올펀카탈로그링크'] = env('APP_URL') . '/catalog/' . $data['response_user_id'];
+            
+            $result[] = $receiver;
+            $this->pushService->sendKakaoAlimtalk('UE_2208', '[카탈로그 전송 알림]', $sreq, $receiver, null);
+        }
         
         return response()->json($this->productService->saveUserAction($data));
     }
