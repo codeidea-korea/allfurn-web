@@ -242,7 +242,7 @@ class MemberController extends BaseController {
             $data = [];
             $data = array_merge($data, $request->all());
         Log::info("***** data > " . json_encode($data));
-
+/*
             if(array_key_exists('company_file', $data)) {
                 $storageName = "name-card-image";
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
@@ -253,6 +253,9 @@ class MemberController extends BaseController {
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
+                */
+            $data['attachmentIdx'] = 127126;
+            $data['userAttachmentIdx'] = 127126;
             DB::beginTransaction();
             $this->memberService->updateUserWait($data);
             DB::commit();
