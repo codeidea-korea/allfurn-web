@@ -254,15 +254,19 @@ class MemberController extends BaseController {
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
                 */
-            $data['attachmentIdx'] = 127126;
-            $data['userAttachmentIdx'] = 127126;
+            $data['attachmentIdx'] = 127132;
+            $data['userAttachmentIdx'] = 127132;
+            $data['license_image'] = preImgUrl() . 'business-license-image/9078385440c05c3a433545e71c95247ceab3da68a559aae90c3162db5faf16e8.jpg';
+            $data['business_license_number'] = '0000000000';
+            $data['business_code'] = '0000000000';
+
             DB::beginTransaction();
             $this->memberService->updateUserWait($data);
             DB::commit();
             
             return response()->json([
                 'success' => true,
-                'message' => ''
+                'message' => json_encode($data)
             ]);
             
         } catch (Exception $e) {
