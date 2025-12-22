@@ -1549,6 +1549,21 @@ class MypageService
             return null;
         }
     }
+    /**
+     * 유저 첨부 이미지 가져오기
+     */
+    public function getUserImageByIdx($attachmentIdx)
+    {
+        $image = DB::table('AF_attachment AS attachment')
+            ->where('attachment.idx', $attachmentIdx)
+            ->select(DB::raw('CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename) AS image'))
+            ->first();
+        if ($image) {
+            return $image->image;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * 업체 걔정 정보 수정

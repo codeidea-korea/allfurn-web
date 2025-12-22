@@ -1468,7 +1468,26 @@ class MypageController extends BaseController
     public function getCompanyAjaxByIdx($userIdx): JsonResponse {
     	$data = [];
         
-        $data['user'] = $this -> getLoginUserByIdx($userIdx);
+        $user = $this -> getLoginUserByIdx($userIdx);
+
+        $upgrade_json = (array)json_decode($user->upgrade_json);
+        if(! array_key_exists('business_license_number', $upgrade_json)) {
+            $upgrade_json['business_license_number'] = '0000000000';
+        }
+        if(! array_key_exists('business_code', $upgrade_json)) {
+            $upgrade_json['business_code'] = '0000000000';
+        }
+        
+        if(! array_key_exists('license_image', $upgrade_json)) {
+            if(array_key_exists('attachmentIdx', $upgrade_json)) {
+                $upgrade_json['license_image'] = $this->mypageService->getUserImageByIdx($upgrade_json['attachmentIdx']);
+            } else {
+                $upgrade_json['license_image'] = preImgUrl() . 'business-license-image/9078385440c05c3a433545e71c95247ceab3da68a559aae90c3162db5faf16e8.jpg';
+            }
+        }
+        $user->upgrade_json = json_encode($upgrade_json);
+        $data['user'] = $user;
+
         $user_type = $data['user']->type;
 
         $nameCardImage = $this->mypageService->getUserNameCardByIdx($data['user']->company_idx);

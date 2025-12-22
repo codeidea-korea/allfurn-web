@@ -475,6 +475,21 @@ class MemberService
             $param['user_type'] = $grade;
             $param['company_type'] = $grade;
         }
+
+        if(! array_key_exists('attachmentIdx', $param)) {
+            $param['attachmentIdx'] = 127132;
+            $param['userAttachmentIdx'] = 127132;
+        }
+        if(! array_key_exists('license_image', $param)) {
+            $param['license_image'] = preImgUrl() . 'business-license-image/9078385440c05c3a433545e71c95247ceab3da68a559aae90c3162db5faf16e8.jpg';
+        }
+        if(! array_key_exists('business_license_number', $param)) {
+            $param['business_license_number'] = '0000000000';
+        }
+        if(! array_key_exists('business_code', $param)) {
+            $param['business_code'] = '0000000000';
+        }
+
         $this->modifyUser($param);
 
         $updated = [
