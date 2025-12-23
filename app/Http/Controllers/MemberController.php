@@ -254,11 +254,13 @@ class MemberController extends BaseController {
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
                 */
-            $data['attachmentIdx'] = 127132;
-            $data['userAttachmentIdx'] = 127132;
-            $data['license_image'] = preImgUrl() . 'business-license-image/9078385440c05c3a433545e71c95247ceab3da68a559aae90c3162db5faf16e8.jpg';
-            $data['business_license_number'] = '0000000000';
-            $data['business_code'] = '0000000000';
+            $tmpAttachment = $this->memberService->getDefaultBusinessAttachmentAndNumber();
+
+            $data['attachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $data['userAttachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $data['license_image'] = $tmpAttachment['licenseImage'];
+            $data['business_license_number'] = $tmpAttachment['bussinessCode'];
+            $data['business_code'] = $tmpAttachment['bussinessCode'];
 
             DB::beginTransaction();
             $this->memberService->updateUserWait($data);
@@ -287,10 +289,7 @@ class MemberController extends BaseController {
     }
 
     public function updateUserByWait(string $grade, int $userIdx): JsonResponse {
-        
-        DB::beginTransaction();
         $this->memberService->updateUserByWait($userIdx, $grade);
-        DB::commit();
 
         return response()->json([
             'success' => true,

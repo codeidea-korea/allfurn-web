@@ -172,7 +172,12 @@ class MemberService
                     $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                     $detail->save();
 
-                    return UserNormal::where('register_time', $detail->register_time)
+                    usleep(500000);
+
+                    return UserNormal::where('owner_name', $detail->owner_name)
+                        ->where('phone_number', $detail->phone_number)
+                        ->where('business_address', $detail->business_address)
+                        ->orderBy('register_time', 'desc')
                         ->first()->idx;
                 break;
                 
@@ -190,7 +195,13 @@ class MemberService
                 $detail->register_time = DB::raw('now()');
                 $detail->save();
 
-                return CompanyRetail::where('register_time', $detail->register_time)
+                usleep(500000);
+
+                return CompanyRetail::where('owner_name', $detail->owner_name)
+                    ->where('phone_number', $detail->phone_number)
+                    ->where('business_email', $detail->business_email)
+                    ->where('business_address', $detail->business_address)
+                    ->orderBy('register_time', 'desc')
                     ->first()->idx;
                 break;
             case "W":
@@ -207,7 +218,13 @@ class MemberService
                 $detail->register_time = DB::raw('now()');
                 $detail->save();
 
-                return CompanyWholesale::where('register_time', $detail->register_time)
+                usleep(500000);
+
+                return CompanyWholesale::where('owner_name', $detail->owner_name)
+                    ->where('phone_number', $detail->phone_number)
+                    ->where('business_email', $detail->business_email)
+                    ->where('business_address', $detail->business_address)
+                    ->orderBy('register_time', 'desc')
                     ->first()->idx;
                 break;
         }
@@ -364,7 +381,11 @@ class MemberService
 
     public function modifyUser(array $params)
     {
-        $userInfo = User::where('account', $params['user_email'])->where('state', '=', 'JS')->first();
+        if(!array_key_exists('user_idx', $params)) {
+            $userInfo = User::where('account', $params['user_email'])->where('state', '=', 'JS')->first();
+        } else {
+            $userInfo = User::where('idx', $params['user_idx'])->first();
+        }
         $params['email'] = $params['user_email'];
         
         if($userInfo->type == $params['company_type']) {
@@ -413,7 +434,6 @@ class MemberService
                 'is_delete' => 1
             ]);
 
-            // 회원 구분 변경, 회원 미승인 상태로 교체
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
@@ -423,9 +443,15 @@ class MemberService
             if(array_key_exists('userAttachmentIdx', $params)) {
                 $updated['attachment_idx'] = $params['userAttachmentIdx'];
             }
-            User::where('account', $params['user_email'])
-//                ->where('state', '=', 'JS')
-                ->update($updated);
+            if(!array_key_exists('user_idx', $params)) {
+                User::where('account', $params['user_email'])
+    //                ->where('state', '=', 'JS')
+                    ->update($updated);
+            } else {
+                User::where('idx', $params['user_idx'])
+    //                ->where('state', '=', 'JS')
+                    ->update($updated);
+            }
         }
         // 회원 정보 수정
         $updated = [
@@ -436,9 +462,15 @@ class MemberService
         if(array_key_exists('userAttachmentIdx', $params)) {
             $updated['attachment_idx'] = $params['userAttachmentIdx'];
         }
-        User::where('account', $params['user_email'])
-//            ->where('state', '=', 'JS')
-            ->update($updated);
+        if(!array_key_exists('user_idx', $params)) {
+            User::where('account', $params['user_email'])
+//                ->where('state', '=', 'JS')
+                ->update($updated);
+        } else {
+            User::where('idx', $params['user_idx'])
+//                ->where('state', '=', 'JS')
+                ->update($updated);
+        }
     }
 
     
@@ -461,6 +493,17 @@ class MemberService
             ->update($updated);
     }
 
+    public function getDefaultBusinessAttachmentAndNumber() {
+        // 기본값 요구 조건 리턴
+        $tmpAttachment = Attachment::find(127132);
+
+        return array(
+            'attachmentIdx' => $tmpAttachment->idx,
+            'bussinessCode' => '0000000000',
+            'licenseImage' => preImgUrl() . $tmpAttachment->folder . '/' . $tmpAttachment->filename,
+        );
+    }
+
     public function updateUserByWait(int $userIdx, string $grade)
     {
         $user = User::where('idx', $userIdx)->first();
@@ -469,6 +512,7 @@ class MemberService
             return;
         }
 
+        $param['user_idx'] = $userIdx;
         $param = json_decode($user->upgrade_json,true);
         if($grade != null && isset($grade) && ($grade == 'W' || $grade == 'R')) {
             $param['prev_company_type'] = $param['company_type'];
@@ -477,17 +521,18 @@ class MemberService
         }
 
         if(! array_key_exists('attachmentIdx', $param)) {
-            $param['attachmentIdx'] = 127132;
-            $param['userAttachmentIdx'] = 127132;
-        }
-        if(! array_key_exists('license_image', $param)) {
-            $param['license_image'] = preImgUrl() . 'business-license-image/9078385440c05c3a433545e71c95247ceab3da68a559aae90c3162db5faf16e8.jpg';
+            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
+            $param['attachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $param['userAttachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $param['license_image'] = $tmpAttachment['licenseImage'];
         }
         if(! array_key_exists('business_license_number', $param)) {
-            $param['business_license_number'] = '0000000000';
+            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
+            $param['business_license_number'] = $tmpAttachment['bussinessCode'];
         }
         if(! array_key_exists('business_code', $param)) {
-            $param['business_code'] = '0000000000';
+            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
+            $param['business_code'] = $tmpAttachment['bussinessCode'];
         }
 
         $this->modifyUser($param);
