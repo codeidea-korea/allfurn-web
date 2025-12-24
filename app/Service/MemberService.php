@@ -170,15 +170,11 @@ class MemberService
                     $detail->is_domestic = 0;
                     $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                     $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
-                    $detail->save();
+                    $detail = $detail->create();
 
                     usleep(500000);
 
-                    return UserNormal::where('owner_name', $detail->owner_name)
-                        ->where('phone_number', $detail->phone_number)
-                        ->where('business_address', $detail->business_address)
-                        ->orderBy('register_time', 'desc')
-                        ->first()->idx;
+                    return $detail->getKey();
                 break;
                 
             case "R":
@@ -193,16 +189,11 @@ class MemberService
                 $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                 $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                 $detail->register_time = DB::raw('now()');
-                $detail->save();
+                $detail = $detail->create();
 
                 usleep(500000);
 
-                return CompanyRetail::where('owner_name', $detail->owner_name)
-                    ->where('phone_number', $detail->phone_number)
-                    ->where('business_email', $detail->business_email)
-                    ->where('business_address', $detail->business_address)
-                    ->orderBy('register_time', 'desc')
-                    ->first()->idx;
+                return $detail->getKey();
                 break;
             case "W":
                 $detail = new CompanyWholesale;
@@ -216,16 +207,11 @@ class MemberService
                 $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                 $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                 $detail->register_time = DB::raw('now()');
-                $detail->save();
+                $detail = $detail->create();
 
                 usleep(500000);
 
-                return CompanyWholesale::where('owner_name', $detail->owner_name)
-                    ->where('phone_number', $detail->phone_number)
-                    ->where('business_email', $detail->business_email)
-                    ->where('business_address', $detail->business_address)
-                    ->orderBy('register_time', 'desc')
-                    ->first()->idx;
+                return $detail->getKey();
                 break;
         }
     }
