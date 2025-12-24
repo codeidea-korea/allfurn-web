@@ -476,9 +476,9 @@ class LoginController extends BaseController
     public function signOut() {
         try {
             PushToken::where('user_idx', Auth::user()['idx'])->update(['expired' => 1]);
-    
+
+			Auth::logout();
             Session::flush();
-            Auth::logout();
         } catch (\Throwable $e) {
         }
         return Redirect('/signin');
