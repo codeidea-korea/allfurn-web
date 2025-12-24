@@ -154,7 +154,7 @@ class MemberService
 
         return $user->idx;
     }
-    public function createCompanyNew(array $params = [])
+    public function createCompanyNew(array $params)
     {
         switch ($params['user_type'])
         {
@@ -170,9 +170,7 @@ class MemberService
                     $detail->is_domestic = 0;
                     $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                     $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
-                    $detail = $detail->create();
-
-                    usleep(500000);
+                    $detail->save();
 
                     return $detail->getKey();
                 break;
@@ -189,9 +187,7 @@ class MemberService
                 $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                 $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                 $detail->register_time = DB::raw('now()');
-                $detail = $detail->create();
-
-                usleep(500000);
+                $detail->save();
 
                 return $detail->getKey();
                 break;
@@ -207,9 +203,7 @@ class MemberService
                 $detail->business_address = array_key_exists('business_address', $params) ? $params['business_address'] : '';
                 $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                 $detail->register_time = DB::raw('now()');
-                $detail = $detail->create();
-
-                usleep(500000);
+                $detail->save();
 
                 return $detail->getKey();
                 break;
@@ -481,7 +475,8 @@ class MemberService
 
     public function getDefaultBusinessAttachmentAndNumber() {
         // 기본값 요구 조건 리턴
-        $tmpAttachment = Attachment::find(127132);
+//        $tmpAttachment = Attachment::find(127132); // DEV
+        $tmpAttachment = Attachment::find(176859); // PROD
 
         return array(
             'attachmentIdx' => $tmpAttachment->idx,
