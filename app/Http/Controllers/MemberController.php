@@ -242,7 +242,7 @@ class MemberController extends BaseController {
             $data = [];
             $data = array_merge($data, $request->all());
         Log::info("***** data > " . json_encode($data));
-
+/*
             if(array_key_exists('company_file', $data)) {
                 $storageName = "name-card-image";
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
@@ -253,13 +253,22 @@ class MemberController extends BaseController {
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
+                */
+            $tmpAttachment = $this->memberService->getDefaultBusinessAttachmentAndNumber();
+
+            $data['attachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $data['userAttachmentIdx'] = $tmpAttachment['attachmentIdx'];
+            $data['license_image'] = $tmpAttachment['licenseImage'];
+            $data['business_license_number'] = $tmpAttachment['bussinessCode'];
+            $data['business_code'] = $tmpAttachment['bussinessCode'];
+
             DB::beginTransaction();
             $this->memberService->updateUserWait($data);
             DB::commit();
             
             return response()->json([
                 'success' => true,
-                'message' => ''
+                'message' => json_encode($data)
             ]);
             
         } catch (Exception $e) {
@@ -280,10 +289,7 @@ class MemberController extends BaseController {
     }
 
     public function updateUserByWait(string $grade, int $userIdx): JsonResponse {
-        
-        DB::beginTransaction();
         $this->memberService->updateUserByWait($userIdx, $grade);
-        DB::commit();
 
         return response()->json([
             'success' => true,

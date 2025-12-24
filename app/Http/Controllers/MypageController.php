@@ -19,6 +19,7 @@ use App\Service\LoginService;
 use App\Service\ProductService;
 use App\Service\TmpLikeService;
 use App\Service\PushService;
+use App\Service\MemberService;
 use \Exception;
 use Session;
 
@@ -28,15 +29,18 @@ class MypageController extends BaseController
     private $loginService;
     private $productService;
     private $tmpLikeService;
+    private $memberService;
     private $limit = 20;
     private $user;
-    public function __construct(MypageService $mypageService, LoginService $loginService, ProductService $productService, TmpLikeService $tmpLikeService, PushService $pushService)
+    public function __construct(MypageService $mypageService, LoginService $loginService, ProductService $productService, 
+                                TmpLikeService $tmpLikeService, PushService $pushService, MemberService $memberService)
     {
         $this->mypageService = $mypageService;
         $this->loginService = $loginService;
         $this -> productService = $productService;
         $this->tmpLikeService = $tmpLikeService;
         $this -> pushService = $pushService;
+        $this -> memberService = $memberService;
     }
 
     public function index(): Response
@@ -1468,7 +1472,33 @@ class MypageController extends BaseController
     public function getCompanyAjaxByIdx($userIdx): JsonResponse {
     	$data = [];
         
-        $data['user'] = $this -> getLoginUserByIdx($userIdx);
+        $user = $this -> getLoginUserByIdx($userIdx);
+
+        $tmpAttachment = $this->memberService->getDefaultBusinessAttachmentAndNumber();
+        $upgrade_json = (array)json_decode($user->upgrade_json);
+        if(! array_key_exists('business_license_number', $upgrade_json)) {
+            $upgrade_json['business_license_number'] = $tmpAttachment['bussinessCode'];
+        }
+        if(! array_key_exists('business_code', $upgrade_json)) {
+            $upgrade_json['business_code'] = $tmpAttachment['bussinessCode'];
+        }
+        if(! array_key_exists('attachmentIdx', $upgrade_json) || empty($upgrade_json['attachmentIdx'])) {
+            $upgrade_json['attachmentIdx'] = $tmpAttachment['attachmentIdx'];
+        }
+        if(! array_key_exists('userAttachmentIdx', $upgrade_json)) {
+            $upgrade_json['userAttachmentIdx'] = $tmpAttachment['attachmentIdx'];
+        }
+        
+        if(! array_key_exists('license_image', $upgrade_json)) {
+            if(array_key_exists('attachmentIdx', $upgrade_json)) {
+                $upgrade_json['license_image'] = $this->mypageService->getUserImageByIdx($upgrade_json['attachmentIdx']);
+            } else {
+                $upgrade_json['license_image'] = $tmpAttachment['licenseImage'];
+            }
+        }
+        $user->upgrade_json = json_encode($upgrade_json);
+        $data['user'] = $user;
+
         $user_type = $data['user']->type;
 
         $nameCardImage = $this->mypageService->getUserNameCardByIdx($data['user']->company_idx);
