@@ -108,22 +108,22 @@ class CatalogController extends BaseController
         $data['product_idx'] = $request->query('product_idx');
         $data['request_type'] = $request->query('request_type');
 
-        if($userAction->request_type > 3) {
+        if($data['request_type'] > 3) {
             // 카탈로그 액션 (4: 보내기, 5: 공유하기, 6:받기)
             $companyIdx = $data['response_user_id'];
             $company = $this->wholesalerService->getCompanyDetailByCatalog($companyIdx);
             
-            array_push($receiver, str_replace("-", "", $company->phone_number));
-
             $sreq = [];
             $sreq['회원명'] = '*****'; // 받는 이 가입 여부 알 수 없음. 콜백 없음 (추후 개발 필요할 수 있음)
-            $sreq['올펀상품링크'] = env('APP_URL') . '/wholesaler/detail/' . $companyIdx;
-            $sreq['올펀카탈로그링크'] = env('APP_URL') . '/catalog/' . $companyIdx;
-            $result[] = $receiver;
+            $sreq['올펀상품링크'] = env('APP_URL2') . '/wholesaler/detail/' . $companyIdx;
+            $sreq['올펀카탈로그링크'] = env('APP_URL2') . '/catalog/' . $companyIdx;
+            $result = array();
             $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
-                'UE_4210', '[카탈로그 열람 알림]', $sreq, $receiver, null));
+                'UE_4210', '[카탈로그 열람 알림]', $sreq, str_replace("-", "", $company->phone_number), null));
         }
+
+        $result2 = $this->productService->saveUserAction($data);
         
-        return response()->json($this->productService->saveUserAction($data));
+        return response()->json([ 'data' => $data, 'result' => $result, 'result2' => $result2 ]);
     }
 }
