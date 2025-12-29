@@ -23,11 +23,15 @@
                 // alert('해당 화면은 ' + tmpMsg + ' 회원만 이용 가능합니다.');
                 modalOpen('#pop_info_1-modal');
 
+                // 권한별 오픈 로직 제거되고 라디오로 선택되게 되면서 해당 로직은 간단하게 병합됨
+                /*
                 if(grades.indexOf('R') > -1) {
                     $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByRetail);
                 } else if(grades.indexOf('W') > -1) {
                     $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByWholesaler);
                 }
+                */
+                $('#pop_info_1-open-modal').off().on('click', convertCompany.openPopupByGrageUpRequest);
 
                 if(userGrade === 'S'){
 //                    localStorage.setItem('loadRequiredUserGrade', '["' + grades.join('","') + '"]');

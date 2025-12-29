@@ -990,11 +990,26 @@
             <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
             <div class="modal_body  _convert_company_section">
                 <div class="form_box p-5">
-                    <input type="hidden" id="pop_info_4-member_type" value="0">
                     <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
 
+                    <div class="mb-3">
+                        <dl>
+                            <dt class="necessary">회원 구분</dt>
+                            <dd class="flex gap-1">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" id="type_store" class="radio-form member_type" value="R" checked>
+                                    <label for="type_store">판매/매장</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" id="type_wholesale" class="radio-form member_type" value="W">
+                                    <label for="type_wholesale">제조/도매</label>
+                                </div>
+                                <label for="" class="error _focus_member_type" style="display: none;">회원 구분을 선택해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
                     <div class="mb-3 hidden">
                         <dl>
                             <dt class="necessary">사업자 등록 번호</dt>
@@ -1088,11 +1103,26 @@
             <button class="close_btn" onclick="modalClose('#pop_info_4-modal')"><svg class="w-11 h-11"><use xlink:href="./img/icon-defs.svg#Close"></use></svg></button>
             <div class="modal_body  _convert_company_section">
                 <div class="form_box p-10">
-                    <input type="hidden" id="pop_info_4-member_type" value="0">
                     <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
 
+                    <div class="mb-8">
+                        <dl class="flex">
+                            <dt class="necessary">회원 구분</dt>
+                            <dd class="flex gap-1">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" id="type_store" class="radio-form member_type" value="R" checked>
+                                    <label for="type_store">판매/매장</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" id="type_wholesale" class="radio-form member_type" value="W">
+                                    <label for="type_wholesale">제조/도매</label>
+                                </div>
+                                <label for="" class="error _focus_member_type" style="display: none;">회원 구분을 선택해주세요</label>
+                            </dd>
+                        </dl>
+                    </div>
                     <div class="mb-8 hidden">
                         <dl class="flex">
                             <dt class="necessary">사업자 등록 번호</dt>
@@ -1282,6 +1312,7 @@
             const businessCode = '0000000000'; // targetCompanySection.find('.business_code').val();
             const companyName = targetCompanySection.find('.company_name').val();
             const ownerName = targetCompanySection.find('.owner_name').val();
+            const memberType = targetCompanySection.find('.member_type:checked').val();
 
             if(!businessCode || businessCode.trim() == '') {
                 targetCompanySection.find('._focus_business_code').show();
@@ -1293,6 +1324,10 @@
             }
             if(!ownerName || ownerName.trim() == '') {
                 targetCompanySection.find('._focus_owner_name').show();
+                return false;
+            }
+            if(!memberType || memberType.trim() == '') {
+                targetCompanySection.find('._focus_member_type').show();
                 return false;
             }
             return true;
@@ -1312,8 +1347,7 @@
             }
 
             var form = new FormData();
-                    
-            form.append("company_type", _convert_company_type);
+            
             form.append("user_email", $('#pop_info_4-user_email').val());
             form.append("user_name", $('#pop_info_4-user_name').val());
             form.append("user_phone", $('#pop_info_4-user_phone').val());
@@ -1328,6 +1362,7 @@
             form.append("owner_name", targetCompanySection.find('.owner_name').val());
             form.append("business_address", targetCompanySection.find('.business_address').val());
             form.append("business_address_detail", targetCompanySection.find('.business_address_detail').val());
+            form.append("company_type", targetCompanySection.find('.member_type:checked').val());
 
             if(convertCompany.storedCompanyFile) {
                 form.append("company_file", convertCompany.storedCompanyFile);
@@ -1391,28 +1426,14 @@
                 modalOpen('#pop_info_kakao-modal');
             });
         },
-        openPopupByWholesaler(){
+        openPopupByGrageUpRequest(){
             const userGrade = '{{Auth::user()-> type}}';
             if(['W'].indexOf(userGrade) > -1) {
                 // 이미 권한이 충분합니다.
                 return false;
             }
-            $('.__label_profile_business_attachement').text('사업자등록증');
-            $('.__error_profile_business_attachement').text('사업자등록증을 첨부해주세요.');
-            _convert_company_type = 'W';
-            convertCompany.loadPopup();
-            modalClose('#pop_info_1-modal');
-            modalOpen('#pop_info_4-modal');
-        },
-        openPopupByRetail(){
-            const userGrade = '{{Auth::user()-> type}}';
-            if(['R'].indexOf(userGrade) > -1) {
-                // 이미 권한이 충분합니다.
-                return false;
-            }
             $('.__label_profile_business_attachement').text('명함 또는 사업자등록증');
             $('.__error_profile_business_attachement').text('명함 또는 사업자등록증을 첨부해주세요.');
-            _convert_company_type = 'R';
             convertCompany.loadPopup();
             
             modalClose('#pop_info_1-modal');
@@ -1439,6 +1460,7 @@
                         $('._convert_company_section').find('.owner_name').val(company.owner_name);
                         $('._convert_company_section').find('.business_address').val(company.business_address);
                         $('._convert_company_section').find('.business_address_detail').val(company.business_address_detail);
+                        $('._convert_company_section').find('.member_type').val(company.company_type ? company.company_type : 'R');
                         $('._convert_company_section').find('#pop_info_4-business').parent().find('div').addClass('!hidden');
                         $('._convert_company_section').find('#pop_info_4-business').parent()
                             .append('<img class="mx-auto" src="'+company.license_image+'" onerror="this.src=\'/img/member/img_icon.svg\';">');
