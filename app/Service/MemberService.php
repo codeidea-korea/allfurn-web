@@ -417,6 +417,7 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
+                'upgrade_at' => date('Y-m-d h:i:s'),
                 'is_undefined_type' => 0
 //                'state' => 'JW'
             ];
