@@ -999,11 +999,11 @@
                             <dt class="necessary">회원 구분</dt>
                             <dd class="flex gap-1">
                                 <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_store" class="radio-form member_type" value="R" checked>
+                                    <input type="radio" id="type_store" name="pop_info_4-member_type" class="radio-form member_type" value="R" checked>
                                     <label for="type_store">판매/매장</label>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_wholesale" class="radio-form member_type" value="W">
+                                    <input type="radio" id="type_wholesale" name="pop_info_4-member_type" class="radio-form member_type" value="W">
                                     <label for="type_wholesale">제조/도매</label>
                                 </div>
                                 <label for="" class="error _focus_member_type" style="display: none;">회원 구분을 선택해주세요</label>
@@ -1112,11 +1112,11 @@
                             <dt class="necessary">회원 구분</dt>
                             <dd class="flex gap-1">
                                 <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_store" class="radio-form member_type" value="R" checked>
+                                    <input type="radio" id="type_store" name="pop_info_4-member_type" class="radio-form member_type" value="R" checked>
                                     <label for="type_store">판매/매장</label>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_wholesale" class="radio-form member_type" value="W">
+                                    <input type="radio" id="type_wholesale" name="pop_info_4-member_type" class="radio-form member_type" value="W">
                                     <label for="type_wholesale">제조/도매</label>
                                 </div>
                                 <label for="" class="error _focus_member_type" style="display: none;">회원 구분을 선택해주세요</label>
