@@ -476,8 +476,13 @@ class MemberService
 
     public function getDefaultBusinessAttachmentAndNumber() {
         // 기본값 요구 조건 리턴
-//        $tmpAttachment = Attachment::find(127132); // DEV
-        $tmpAttachment = Attachment::find(176859); // PROD
+        
+        $envType = env('ENV_TYPE');
+        if($envType == 'DEV') {
+            $tmpAttachment = Attachment::find(127132); // DEV
+        } else {
+            $tmpAttachment = Attachment::find(176859); // PROD
+        }
 
         return array(
             'attachmentIdx' => $tmpAttachment->idx,
