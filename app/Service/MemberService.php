@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Carbon\Carbon;
 use App\Models\Attachment;
 use App\Models\MessageRoom;
 use App\Models\Message;
@@ -417,6 +418,7 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
+                'upgrade_at' => Carbon::now(),
                 'is_undefined_type' => 0
 //                'state' => 'JW'
             ];
@@ -475,8 +477,13 @@ class MemberService
 
     public function getDefaultBusinessAttachmentAndNumber() {
         // 기본값 요구 조건 리턴
-//        $tmpAttachment = Attachment::find(127132); // DEV
-        $tmpAttachment = Attachment::find(176859); // PROD
+        
+        $envType = env('ENV_TYPE');
+        if($envType == 'DEV') {
+            $tmpAttachment = Attachment::find(127132); // DEV
+        } else {
+            $tmpAttachment = Attachment::find(176859); // PROD
+        }
 
         return array(
             'attachmentIdx' => $tmpAttachment->idx,
