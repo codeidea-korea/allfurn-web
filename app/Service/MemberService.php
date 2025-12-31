@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Carbon\Carbon;
 use App\Models\Attachment;
 use App\Models\MessageRoom;
 use App\Models\Message;
@@ -417,7 +418,7 @@ class MemberService
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
-                'upgrade_at' => date('Y-m-d h:i:s'),
+                'upgrade_at' => Carbon::now(),
                 'is_undefined_type' => 0
 //                'state' => 'JW'
             ];
