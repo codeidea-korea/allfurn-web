@@ -1196,18 +1196,18 @@ class MypageService
      */
     public function getRegisterProducts(array $params): array
     {
-        $user = User::find(Auth::user()['idx']);
-        
         $offset = $params['offset'] > 1 ? ($params['offset']-1) * $params['limit'] : 0;
         $limit = $params['limit'];
 
         if (isset($params['type']) && $params['type'] == 'temp') {
-            $query = ProductTemp::from('AF_product_temp AS p')->where('user_idx', $user->idx]);
+            $query = ProductTemp::from('AF_product_temp AS p')->where('company_type', Auth::user()['type'])
+                ->where('company_idx', Auth::user()['company_idx']);
             $query->addSelect(DB::raw("DATE_FORMAT(p.update_time, '%Y.%m.%d') AS update_time")
                 ,"0 AS inquiry_count"
                 ,"0 AS access_count");
         } else {
-            $query = Product::from('AF_product AS p')->where('user_idx', $user->idx)
+            $query = Product::from('AF_product AS p')->where('company_type', Auth::user()['type'])
+                ->where('company_idx', Auth::user()['company_idx'])
                 ->whereNull('deleted_at');
             $query->where('is_represent', 0);
             $query->addSelect(DB::raw("CASE WHEN inquiry_count >= 100000000 THEN CONCAT(inquiry_count/100000000,'억')
@@ -1264,16 +1264,14 @@ class MypageService
      */
     public function getTotalProductCount(): array
     {
-        $user = User::find(Auth::user()['idx']);
-        
         $return = [
             'register_count' => 0,
             'temp_register_count' => 0,
         ];
-        $return['register_count'] = Product::where('company_idx', $user->company_idx)
-            ->where('company_type', $user->type)->count();
-        $return['temp_register_count'] = ProductTemp::where('company_idx', $user->company_idx)
-            ->where('company_type', $user->type)->count();
+        $return['register_count'] = Product::where('company_idx', Auth::user()['company_idx'])
+            ->where('company_type', Auth::user()['type'])->count();
+        $return['temp_register_count'] = ProductTemp::where('company_idx', Auth::user()['company_idx'])
+            ->where('company_type', Auth::user()['type'])->count();
 
         return $return;
     }
@@ -1543,21 +1541,6 @@ class MypageService
         $image = DB::table('AF_normal AS normal')
             ->join('AF_attachment AS attachment', 'attachment.idx', 'normal.namecard_attachment_idx')
             ->where('normal.idx', $companyIdx)
-            ->select(DB::raw('CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename) AS image'))
-            ->first();
-        if ($image) {
-            return $image->image;
-        } else {
-            return null;
-        }
-    }
-    /**
-     * 유저 첨부 이미지 가져오기
-     */
-    public function getUserImageByIdx($attachmentIdx)
-    {
-        $image = DB::table('AF_attachment AS attachment')
-            ->where('attachment.idx', $attachmentIdx)
             ->select(DB::raw('CONCAT("'.preImgUrl().'",attachment.folder,"/",attachment.filename) AS image'))
             ->first();
         if ($image) {

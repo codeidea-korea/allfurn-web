@@ -80,8 +80,8 @@
                             <div class="title"><p>납품 예산견적 정보</p></div>
                             <div>
                                 <div class="txt_desc">
-                                    <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                                    <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                                    <div class="name"><p>총 상품<span id="selected_count">0</span>건</p></div>
+                                    <div><b id="selected_total_price">0</b><b>원</b></div>
                                 </div>
                             </div>
                         </div>
@@ -98,6 +98,18 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
+                                @php
+                                    $cleanPrice = (int)preg_replace('/[^0-9]/','',$row->product_each_price);
+                                @endphp
+
+                                <div class="flex items-center mb-2 p-2 bg-gray-50 rounded">
+                                    <input type="checkbox" name="estimate_item" value="{{$row ->estimate_idx}}"
+                                        class="item_selector w-5 h-5 cursor-pointer"
+                                        data-price="{{$cleanPrice}}"
+                                        onchange="updateEstimateInfo()" checked> 
+                                    <label class="ml-2 text-sm font-bold cursor-pointer" onclick="$(this).prev().click()"></label>
+                                </div>
+
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">

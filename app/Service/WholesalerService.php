@@ -1199,14 +1199,4 @@ class WholesalerService {
 
         return $list;
     }
-
-    public function getCompanyDetailByCatalog(Int $companyIdx)
-    {
-        return CompanyWholesale::where('AF_wholesale.idx', $companyIdx)
-            ->select('AF_wholesale.*', 'user.phone_number')
-            ->leftjoin('AF_user as user', function($query) {
-                $query->on('user.company_idx', 'AF_wholesale.idx')->where('user.type', 'W');
-            })
-            ->first();
-    }
 }

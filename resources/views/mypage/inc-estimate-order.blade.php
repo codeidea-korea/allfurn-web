@@ -159,12 +159,13 @@
                     <div class="fold_area active">
                         <div class="target">
                             <button class="title" onclick="foldToggle(this)">
-                                <span>주문 상품 {{ count( $lists ) }}건 리스트 보기</span>
+                                <span>주문 상품 {{ collect($lists)->where('estimate_check', 'Y')->count() }}건 리스트 보기</span>
                                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                             </button>
                         </div>
                         <div class="py-7">
                             @foreach( $lists AS $key => $row )
+                            @if( $row->estimate_check == 'Y' )
                             <div class="prod_info">
                                 <div class="img_box">
                                     <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
@@ -230,6 +231,7 @@
                                 </div>
                             </div>
                             <hr>
+                            @endif
                             @endforeach
                         </div>
                     </div>

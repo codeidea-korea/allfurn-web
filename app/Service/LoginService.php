@@ -183,9 +183,6 @@ class LoginService
     public function getAuthToken(string $idx) {
         if ($idx == null) { return null;}
 
-		Auth::logout();
-		session()->flush();
-
         session()->regenerate();
         $token = hash_hmac('sha256', Str::random(40), 'APP_KEY');
         $session['token'] = $token;

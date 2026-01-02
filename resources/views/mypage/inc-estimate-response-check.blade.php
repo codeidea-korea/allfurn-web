@@ -11,7 +11,7 @@
   -->
             <div class="relative">
                 <div class="info">'{{ $lists[0]->request_company_name }}'업체의 '{{ $lists[0]->response_company_name }}' {{ count( $lists ) }}건 상품 견적서 입니다.</div>
-                <div class="p-7">
+                <div class="p-3">
                     <!-- 견적 기본정보 -->
                     <div class="fold_area txt_info active">
                         <div class="target title" onclick="foldToggle(this)">
@@ -22,7 +22,7 @@
                             </div>
                         </div>
                         <div>
-                            <div class="flex gap-2 mt-2">
+                            <div class="flex flex-col gap-2 mt-2">
                                 <div class="img_box"><img src="{{ $lists[0]->business_license}}" alt=""></div>
                                 <div class="flex-1">
                                     <div class="txt_desc">
@@ -80,14 +80,14 @@
                             <div class="title"><p>납품 예산견적 정보</p></div>
                             <div>
                                 <div class="txt_desc">
-                                    <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                                    <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                                    <div class="name"><p>총 상품<span id="selected_count">0</span>건</p></div>
+                                    <div><b id="selected_total_price">0</b><b>원</b></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="p-7">
+                    <div class="p-3">
                         <!-- 접기/펼치기 -->
                         <div class="fold_area active">
                             <div class="target">
@@ -98,10 +98,15 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
+                                @php
+                                    $cleanPrice = (int)preg_replace('/[^0-9]/','',$row->product_each_price);
+                                @endphp
+
+
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
-                                        <input type="checkbox" id="check_7" class="hidden">
+                                        <input type="checkbox" id="check_7" class="hidden" >
                                         <!-- <label for="check_7" class="add_btn">추가</label> -->
                                         <img src="{{ $row->product_thumbnail }}" alt="">
                                     </div>
@@ -136,7 +141,7 @@
                                                 <div class="name">가격</div>
                                                 <div class="total_price">
                                                     @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
-                                                        업체 문의
+                                                        {{ $row->price_text }}
                                                     @else
                                                         {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
                                                     @endif
@@ -184,3 +189,40 @@
 
 
   -->
+<script>
+    function updateEstimateInfo(obj){
+        let count = 0;
+        let total = 0;
+        const items = document.querySelectorAll('.item_selector');
+
+        if(obj) {
+            const orderCode = obj.getAttribute('data-code');
+            if(obj.checked) {
+                console.log('개별주문번호 : ' + orderCode + ' 체크!');
+            } else {
+                console.log('개별주문번호 : ' + orderCode + ' 해제!');
+            }
+        }
+
+
+        items.forEach(item => {
+            if(item.checked){
+                count++;
+                let priceNum = parseInt(item.getAttribute('data-price')) || 0;
+                total += priceNum;
+            }
+        });
+
+        const countElem = document.getElementById('selected_count');
+        const priceElem = document.getElementById('selected_total_price');
+    
+
+        if(countElem) countElem.innerText = count;
+        if(priceElem) priceElem.innerText = total.toLocaleString();
+        console.log('디버깅 - 선택건수:', count, ' / 총 합계:', total);
+
+    }
+
+    // 모달 로드 직후 첫 계산 실행
+    setTimeout(updateEstimateInfo, 100);
+</script>
