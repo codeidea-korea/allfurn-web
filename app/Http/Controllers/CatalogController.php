@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Service\ProductService;
 use App\Service\WholesalerService;
+use App\Service\PushService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -20,11 +21,13 @@ class CatalogController extends BaseController
 {
     private $wholesalerService;
     private $productService;
+    private $pushService;
 
-    public function __construct(WholesalerService $wholesalerService, ProductService $productService)
+    public function __construct(WholesalerService $wholesalerService, ProductService $productService, PushService $pushService)
     {
         $this->wholesalerService = $wholesalerService;
         $this->productService = $productService;
+        $this->pushService = $pushService;
     }
 
     public function catalog(Request $request, int $wholesalerIdx)
@@ -104,7 +107,23 @@ class CatalogController extends BaseController
         $data['response_user_type'] = $request->query('company_type');
         $data['product_idx'] = $request->query('product_idx');
         $data['request_type'] = $request->query('request_type');
+
+        if($data['request_type'] > 3) {
+            // 카탈로그 액션 (4: 보내기, 5: 공유하기, 6:받기)
+            $companyIdx = $data['response_user_id'];
+            $company = $this->wholesalerService->getCompanyDetailByCatalog($companyIdx);
+            
+            $sreq = [];
+            $sreq['회원명'] = '*****'; // 받는 이 가입 여부 알 수 없음. 콜백 없음 (추후 개발 필요할 수 있음)
+            $sreq['올펀상품링크'] = env('APP_URL2') . '/wholesaler/detail/' . $companyIdx;
+            $sreq['올펀카탈로그링크'] = env('APP_URL2') . '/catalog/' . $companyIdx;
+            $result = array();
+            $result[] = response()->json($this->pushService->sendKakaoAlimtalk(
+                'UE_4210', '[카탈로그 열람 알림]', $sreq, str_replace("-", "", $company->phone_number), null));
+        }
+
+        $result2 = $this->productService->saveUserAction($data);
         
-        return response()->json($this->productService->saveUserAction($data));
+        return response()->json([ 'data' => $data, 'result' => $result, 'result2' => $result2 ]);
     }
 }

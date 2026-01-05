@@ -296,33 +296,16 @@ class EstimateService {
 
     public function insertOrder(array $params) {
         $product_total_count = 0;
-        $real_total_price=0;
-        
         $list = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> get();
-        $selected_code = isset($params['select_idx'])? $params['select_idx'] : [];
 
         for($i = 0; $i < count($list); $i++) {
             $estimate = Estimate::find($list[$i]['idx']);
-            if(in_array($estimate->estimate_code, $selected_code)){
 
-                $estimate-> estimate_check = 'Y';
-                $estimate -> estimate_state = 'O';
-                $estimate -> product_count = $list[$i]['product_count'];
-                $estimate -> product_total_price = $list[$i]['product_total_price'];
-                $estimate -> estimate_total_price = $list[$i]['response_estimate_estimate_total_price'];
-                $product_option_price = 0;
-                $product_option_price  = $product_option_price * $list[$i]['product_count'];
-                $estimate -> product_option_price = $product_option_price;
-                $product_total_count += $list[$i]['product_count'];
-                $estimate -> save();
-                $real_total_price += $list[$i]['response_estimate_estimate_total_price'];
-
-            } else {
-                
-                $estimate-> estimate_check = 'N';
-                $estimate->save(); 
-                continue; 
-            }
+            $estimate -> estimate_state = 'O';
+            $estimate -> product_count = $list[$i]['product_count'];
+            $estimate -> product_total_price = $list[$i]['product_total_price'];
+            $estimate -> estimate_total_price = $list[$i]['response_estimate_estimate_total_price'];
+            $product_option_price = 0;
 
             /*
             $product_option_key = 'product_option_key_'.$list[$i]['product_idx'][$i];
@@ -345,6 +328,12 @@ class EstimateService {
                 }
             }
             */
+            $product_option_price  = $product_option_price * $list[$i]['product_count'];
+            $estimate -> product_option_price = $product_option_price;
+
+            $estimate -> save();
+
+            $product_total_count += $list[$i]['product_count'];
         }
 
         $check = Order::where('order_group_code', $estimate['estimate_group_code']) -> count();
@@ -421,8 +410,6 @@ class EstimateService {
         return $order -> idx;
     }
 
-
-
     public function holdOrder(array $params): array {
         $item = Order::where('order_group_code', $params['estimate_group_code'])
             ->update(['order_state' => 'X']);
@@ -458,7 +445,7 @@ class EstimateService {
         if($estimate[0] -> estimate_state !== 'F') {
             DB::table('AF_estimate')
                 -> where('estimate_group_code', $params['estimate_group_code'])
-                -> update(['estimate_state' => 'F']); //여기서 status=>f로 업데이트
+                -> update(['estimate_state' => 'F']);
 
             $sql =
                 "SELECT * FROM AF_user
