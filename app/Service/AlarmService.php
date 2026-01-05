@@ -6,7 +6,6 @@ namespace App\Service;
 
 use App\Models\Attachment;
 use App\Models\Push;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +28,6 @@ class AlarmService
      */
     public function getList(array $params): array {
 
-        $user = User::find(Auth::user()['idx']);
         /*DB::listen(function ($query) {
             dd("Query executed in {$query->time}ms: {$query->sql}");
         });*/
@@ -46,8 +44,8 @@ class AlarmService
                 END send_date")
             )
             ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_notification.attachment_idx');
-        $logs->where('AF_notification.target_company_type', $user->type);
-        $logs->where('AF_notification.target_company_idx', $user->company_idx);
+        $logs->where('AF_notification.target_company_type', Auth::user()['type']);
+        $logs->where('AF_notification.target_company_idx', Auth::user()['company_idx']);
         
         if (isset($params['type'])) {
             switch($params['type']) {
@@ -105,8 +103,8 @@ class AlarmService
         //dd(DB::getQueryLog());
 
         Push::where([
-            'target_company_type' => $user->type,
-            'target_company_idx' => $user->company_idx
+            'target_company_type' => Auth::user()['type'],
+            'target_company_idx' => Auth::user()['company_idx']
             ])
             ->update(['is_alert' => 0]);
 

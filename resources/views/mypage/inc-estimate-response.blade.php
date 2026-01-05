@@ -2,7 +2,7 @@
     <div class="info">'{{ $lists[0]->request_company_name }}'업체의 {{ count( $lists ) }}건 상품 견적 요청서 입니다.</div>
     <div class="p-7">
         <!-- 견적 기본정보 -->
-        <div class="fold_area txt_info">
+        <div class="fold_area active txt_info">
             <div class="target title" onclick="foldToggle(this)">
                 <p>구매업체 기본정보 <span>(주문번호 : {{ $lists[0]->estimate_group_code }})</span></p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="fold_area txt_info">
+        <div class="fold_area active txt_info">
             <div class="target title" onclick="foldToggle(this)">
                 <p>견적 기본정보</p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
@@ -106,7 +106,11 @@
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div><b>{{ $lists[0]->product_total_price }}</b></div>
+                        <div>
+                            <b id='total_price_display' data-base-price="{{ $lists[0]->product_total_price }}">
+                            {{ number_format($lists[0]->product_total_price) }}
+                            </b>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,7 +185,7 @@
 
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required" value="{{ $row->price }}"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required price-input" value="{{ $row->price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
@@ -252,3 +256,18 @@
 
     </div>
 </div>
+<script>
+$(document).on('input', '[name="product_each_price"]', function() {
+    
+    let basePrice = Number($('#total_price_display').attr('data-base-price')) || 0;
+    let addedPrice = 0;
+
+    $('[name="product_each_price"]').each(function() {
+        let val = Number($(this).val().replace(/[^0-9]/g, "")) || 0; 
+        addedPrice += val;
+    });
+
+    let finalTotal = basePrice + addedPrice;
+    $('#total_price_display').text(finalTotal.toLocaleString());
+});
+</script>

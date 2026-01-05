@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use Carbon\Carbon;
 use App\Models\Attachment;
 use App\Models\MessageRoom;
 use App\Models\Message;
@@ -155,7 +154,7 @@ class MemberService
 
         return $user->idx;
     }
-    public function createCompanyNew(array $params)
+    public function createCompanyNew(array $params = [])
     {
         switch ($params['user_type'])
         {
@@ -173,7 +172,8 @@ class MemberService
                     $detail->business_address_detail = array_key_exists('business_address_detail', $params) ? $params['business_address_detail'] : '';
                     $detail->save();
 
-                    return $detail->getKey();
+                    return UserNormal::where('register_time', $detail->register_time)
+                        ->first()->idx;
                 break;
                 
             case "R":
@@ -190,7 +190,8 @@ class MemberService
                 $detail->register_time = DB::raw('now()');
                 $detail->save();
 
-                return $detail->getKey();
+                return CompanyRetail::where('register_time', $detail->register_time)
+                    ->first()->idx;
                 break;
             case "W":
                 $detail = new CompanyWholesale;
@@ -206,7 +207,8 @@ class MemberService
                 $detail->register_time = DB::raw('now()');
                 $detail->save();
 
-                return $detail->getKey();
+                return CompanyWholesale::where('register_time', $detail->register_time)
+                    ->first()->idx;
                 break;
         }
     }
@@ -362,11 +364,7 @@ class MemberService
 
     public function modifyUser(array $params)
     {
-        if(!array_key_exists('user_idx', $params)) {
-            $userInfo = User::where('account', $params['user_email'])->where('state', '=', 'JS')->first();
-        } else {
-            $userInfo = User::where('idx', $params['user_idx'])->first();
-        }
+        $userInfo = User::where('account', $params['user_email'])->where('state', '=', 'JS')->first();
         $params['email'] = $params['user_email'];
         
         if($userInfo->type == $params['company_type']) {
@@ -415,25 +413,19 @@ class MemberService
                 'is_delete' => 1
             ]);
 
+            // 회원 구분 변경, 회원 미승인 상태로 교체
             $updated = [
                 'company_idx' => $company_idx,
                 'type' => $params['company_type'],
-                'upgrade_at' => Carbon::now(),
                 'is_undefined_type' => 0
 //                'state' => 'JW'
             ];
             if(array_key_exists('userAttachmentIdx', $params)) {
                 $updated['attachment_idx'] = $params['userAttachmentIdx'];
             }
-            if(!array_key_exists('user_idx', $params)) {
-                User::where('account', $params['user_email'])
-    //                ->where('state', '=', 'JS')
-                    ->update($updated);
-            } else {
-                User::where('idx', $params['user_idx'])
-    //                ->where('state', '=', 'JS')
-                    ->update($updated);
-            }
+            User::where('account', $params['user_email'])
+//                ->where('state', '=', 'JS')
+                ->update($updated);
         }
         // 회원 정보 수정
         $updated = [
@@ -444,15 +436,9 @@ class MemberService
         if(array_key_exists('userAttachmentIdx', $params)) {
             $updated['attachment_idx'] = $params['userAttachmentIdx'];
         }
-        if(!array_key_exists('user_idx', $params)) {
-            User::where('account', $params['user_email'])
-//                ->where('state', '=', 'JS')
-                ->update($updated);
-        } else {
-            User::where('idx', $params['user_idx'])
-//                ->where('state', '=', 'JS')
-                ->update($updated);
-        }
+        User::where('account', $params['user_email'])
+//            ->where('state', '=', 'JS')
+            ->update($updated);
     }
 
     
@@ -475,23 +461,6 @@ class MemberService
             ->update($updated);
     }
 
-    public function getDefaultBusinessAttachmentAndNumber() {
-        // 기본값 요구 조건 리턴
-        
-        $envType = env('ENV_TYPE');
-        if($envType == 'DEV') {
-            $tmpAttachment = Attachment::find(127132); // DEV
-        } else {
-            $tmpAttachment = Attachment::find(176859); // PROD
-        }
-
-        return array(
-            'attachmentIdx' => $tmpAttachment->idx,
-            'bussinessCode' => '0000000000',
-            'licenseImage' => preImgUrl() . $tmpAttachment->folder . '/' . $tmpAttachment->filename,
-        );
-    }
-
     public function updateUserByWait(int $userIdx, string $grade)
     {
         $user = User::where('idx', $userIdx)->first();
@@ -500,29 +469,12 @@ class MemberService
             return;
         }
 
-        $param['user_idx'] = $userIdx;
         $param = json_decode($user->upgrade_json,true);
         if($grade != null && isset($grade) && ($grade == 'W' || $grade == 'R')) {
             $param['prev_company_type'] = $param['company_type'];
             $param['user_type'] = $grade;
             $param['company_type'] = $grade;
         }
-
-        if(! array_key_exists('attachmentIdx', $param)) {
-            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
-            $param['attachmentIdx'] = $tmpAttachment['attachmentIdx'];
-            $param['userAttachmentIdx'] = $tmpAttachment['attachmentIdx'];
-            $param['license_image'] = $tmpAttachment['licenseImage'];
-        }
-        if(! array_key_exists('business_license_number', $param)) {
-            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
-            $param['business_license_number'] = $tmpAttachment['bussinessCode'];
-        }
-        if(! array_key_exists('business_code', $param)) {
-            $tmpAttachment = $this->getDefaultBusinessAttachmentAndNumber();
-            $param['business_code'] = $tmpAttachment['bussinessCode'];
-        }
-
         $this->modifyUser($param);
 
         $updated = [
