@@ -105,8 +105,11 @@
 
                                 <div class="prod_info">
                                     <div class="img_box">
+                                        <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
                                         <input type="checkbox" id="check_7"  class="item_selector" data-code="{{ $row->estimate_code }}" 
                                         data-price="{{$cleanPrice}}" onclick="updateEstimateInfo(this)" checked>
+                                        <!-- <label for="check_7" class="add_btn">추가</label> -->
+                                        <img src="{{ $row->product_thumbnail }}" alt="">
                                     </div>
                                     <div class="info_box">
                                         <div class="order_num noline">개별주문번호 : {{ $row->estimate_code }}</div>
