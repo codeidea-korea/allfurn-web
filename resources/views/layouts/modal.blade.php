@@ -1296,7 +1296,7 @@
             const businessCode = '0000000000'; // targetCompanySection.find('.business_code').val();
             const companyName = targetCompanySection.find('.company_name').val();
             const ownerName = targetCompanySection.find('.owner_name').val();
-            const memberType = targetCompanySection.find('.member_type:checked').val();
+            
 
             if(!businessCode || businessCode.trim() == '') {
                 targetCompanySection.find('._focus_business_code').show();
@@ -1310,10 +1310,7 @@
                 targetCompanySection.find('._focus_owner_name').show();
                 return false;
             }
-            if(!memberType || memberType.trim() == '') {
-                targetCompanySection.find('._focus_member_type').show();
-                return false;
-            }
+            
             return true;
         },
         updateUserInfo() {
@@ -1346,7 +1343,7 @@
             form.append("owner_name", targetCompanySection.find('.owner_name').val());
             form.append("business_address", targetCompanySection.find('.business_address').val());
             form.append("business_address_detail", targetCompanySection.find('.business_address_detail').val());
-            form.append("company_type", targetCompanySection.find('.member_type:checked').val());
+            form.append("company_type", 'W');
 
             if(convertCompany.storedCompanyFile) {
                 form.append("company_file", convertCompany.storedCompanyFile);
