@@ -1091,22 +1091,7 @@
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
 
-                    <div class="mb-8">
-                        <dl class="flex">
-                            <dt class="necessary">회원 구분</dt>
-                            <dd class="flex gap-1">
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_store" name="pop_info_4-member_type" class="radio-form member_type" value="R" checked>
-                                    <label for="type_store">판매/매장</label>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" id="type_wholesale" name="pop_info_4-member_type" class="radio-form member_type" value="W">
-                                    <label for="type_wholesale">제조/도매</label>
-                                </div>
-                                <label for="" class="error _focus_member_type" style="display: none;">회원 구분을 선택해주세요</label>
-                            </dd>
-                        </dl>
-                    </div>
+                    
                     <div class="mb-8 hidden">
                         <dl class="flex">
                             <dt class="necessary">사업자 등록 번호</dt>
