@@ -98,10 +98,35 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
-                                @php
+                                 @php
+                                    // 1. 기본 상품 가격 숫자만 추출
                                     $cleanPrice = (int)preg_replace('/[^0-9]/','',$row->product_each_price);
-                                @endphp
 
+                                    // 2. 옵션 가격 미리 계산 (체크박스 data-price 합산을 위해)
+                                    $optionPriceSum = 0;
+                                    if(isset($row->product_option_json) && $row->product_option_json != '[]') {
+                                        $tempOptions = json_decode($row->product_option_json);
+                                        if (is_array($tempOptions) || is_object($tempOptions)) {
+                                            foreach($tempOptions as $tempItem) {
+                                                if (!isset($tempItem->optionValue)) continue;
+                                                foreach($tempItem->optionValue as $tempSub) {
+                                                    // 기존 로직과 동일하게 price 속성 체크
+                                                    if(!property_exists($tempSub, 'price')) {
+                                                        continue;
+                                                    }
+                                                    // each_price 더하기 (콤마 제거 후 숫자만 추출하여 합산)
+                                                    if(isset($tempSub->each_price)) {
+                                                        $cleanOptionPrice = (int)preg_replace('/[^0-9]/', '', $tempSub->each_price);
+                                                        $optionPriceSum += $cleanOptionPrice;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // 3. 최종 가격 (기본가 + 옵션가)
+                                    $totalPriceForCalc = $cleanPrice + $optionPriceSum;
+                                @endphp
 
                                 <div class="prod_info">
                                     <div class="img_box">

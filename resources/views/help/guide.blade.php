@@ -65,6 +65,37 @@
 
 <script>
     $(document).ready(function() {
+
+        function autoLinkText(element) {
+            $(element).contents().each(function() {
+                if (this.nodeType === 3) { // 3은 텍스트 노드를 의미합니다.
+                    var text = this.nodeValue;
+                    // 정규표현식: http, https, www로 시작하는 패턴 탐지
+                    var urlRegex = /((https?:\/\/)|(www\.))[^\s]+/gi;
+
+                    if (urlRegex.test(text)) {
+                        var replacedText = text.replace(urlRegex, function(url) {
+                            var href = url;
+                            // www.으로 시작하면 앞에 http://를 붙여줌
+                            if (url.toLowerCase().indexOf("www.") === 0) {
+                                href = "http://" + url;
+                            }
+                            // 링크 태그로 변환 (파란색, 밑줄 스타일 적용)
+                            return '<a href="' + href + '" target="_blank" style="color:#007bff; text-decoration:underline;">' + url + '</a>';
+                        });
+                        $(this).replaceWith(replacedText);
+                    }
+                } else if (this.nodeType === 1 && this.tagName !== 'A' && this.tagName !== 'SCRIPT' && this.tagName !== 'STYLE') {
+                    // 텍스트가 아닌 요소(div, p 등)는 내부를 재귀적으로 탐색 (단, 이미 링크인 <a> 태그는 제외)
+                    autoLinkText(this);
+                }
+            });
+        }
+
+        // 아코디언 본문(.accordion-body)들에 대해 자동 링크 적용 실행
+        $(".accordion-body").each(function() {
+            autoLinkText(this);
+        });
  
         $(".accordion-header").click(function() {
             // 클릭된 항목의 바디를 토글합니다.

@@ -994,25 +994,8 @@
                     <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
-                    <div class="mb-3">
-                        <dl class="flex">
-                            <dt class="necessary">회원구분</dt>
-                            <dd>
-                                <div class="flex gap-1">
-                                    <div class ="flex-1">
-                                        <input type="radio" id="sale_category" name="company_type" value="R" class="radio-form" checked>
-                                        <label for="sale_category" class="cursor-pointer">판매</label>
-                                    </div>
-                                    <div class ="flex-1">
-                                        <input type="radio" id="manufacture_category" name="company_type" value="W" class="radio-form">
-                                        <label for="manufacture_category" class="cursor-pointer">제조</label>
-                                    </div>
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 hidden">
                         <dl>
                             <dt class="necessary">사업자 등록 번호</dt>
                             <dd class="flex gap-1">
@@ -1072,7 +1055,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 hidden">
                         <dl>
                             <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
                             <dd>
@@ -1109,25 +1092,8 @@
                     <input type="hidden" id="pop_info_4-user_email" value="{{ auth()->user() -> account }}">
                     <input type="hidden" id="pop_info_4-user_name" value="{{ auth()->user() -> name }}">
                     <input type="hidden" id="pop_info_4-user_phone" value="{{ auth()->user() -> phone_number }}">
-                    <div class="mb-3">
-                        <dl class="flex">
-                            <dt class="necessary">회원구분</dt>
-                            <dd>
-                                <div class="flex gap-1">
-                                    <div class ="flex-1">
-                                        <input type="radio" id="sale_category" name="company_type" value="R" class="radio-form">
-                                        <label for="sale_category" class="cursor-pointer">판매</label>
-                                    </div>
-                                    <div class ="flex-1">
-                                        <input type="radio" id="manufacture_category" name="company_type" value="W" class="radio-form">
-                                        <label for="manufacture_category" class="cursor-pointer">제조</label>
-                                    </div>
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
 
-                    <div class="mb-8">
+                    <div class="mb-8 hidden">
                         <dl class="flex">
                             <dt class="necessary">사업자 등록 번호</dt>
                             <dd class="flex gap-1">
@@ -1186,7 +1152,7 @@
                             </dd>
                         </dl>
                     </div>
-                    <div class="mb-8">
+                    <div class="mb-8 hidden">
                         <dl class="flex">
                             <dt class="necessary  __label_profile_business_attachement">사업자등록증</dt>
                             <dd>
@@ -1277,12 +1243,13 @@
         },
         checkCompanyNumber(isOpenOkVal) {
             const targetCompanySection = $('._convert_company_section:visible');
-            const businessCode = targetCompanySection.find('.business_code').val();
+            const businessCode = '0000000000'; //targetCompanySection.find('.business_code').val();
             
             if(businessCode.replaceAll('-','').length != 10){
                 alert('잘못된 사업자 등록번호입니다.');
                 return false;
             }
+            /*
             let dupplicated = true;
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1307,10 +1274,12 @@
                 }
             });
             return !dupplicated;
+            */
+           return true;
         },
         verifyForm(){
             const targetCompanySection = $('._convert_company_section:visible');
-            const businessCode = targetCompanySection.find('.business_code').val();
+            const businessCode = '0000000000'; // targetCompanySection.find('.business_code').val();
             const companyName = targetCompanySection.find('.company_name').val();
             const ownerName = targetCompanySection.find('.owner_name').val();
 
@@ -1343,7 +1312,7 @@
             }
 
             var form = new FormData();
-            _convert_company_type= $('input[name="company_type"]:checked').val();
+                    
             form.append("company_type", _convert_company_type);
             form.append("user_email", $('#pop_info_4-user_email').val());
             form.append("user_name", $('#pop_info_4-user_name').val());
@@ -1374,8 +1343,6 @@
                 type			: 'POST',
                 async: true,
                 success: function (result) {
-                    console.log("서버 응답 성공:", response);
-                    console.error("에러 발생:", xhr.responseText);
                     $('#loadingContainer').hide();
                     modalOpen('#pop_info_2-modal');
                 }, error: function (e) {

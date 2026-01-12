@@ -294,7 +294,7 @@ class EstimateService {
         ];
     }
 
-    public function insertOrder(array $params) {
+        public function insertOrder(array $params) {
         $product_total_count = 0;
         $real_total_price=0;
         
