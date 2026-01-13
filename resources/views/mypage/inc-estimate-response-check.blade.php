@@ -98,40 +98,54 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
-                                 @php
-                                    // 1. 기본 상품 가격 숫자만 추출
-                                    $cleanPrice = (int)preg_replace('/[^0-9]/','',$row->product_each_price);
+                                    @php
+                                        // 1. 견적가(product_each_price) 숫자만 추출 (항상 포함)
+                                        $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
 
-                                    // 2. 옵션 가격 미리 계산 (체크박스 data-price 합산을 위해)
-                                    $optionPriceSum = 0;
-                                    if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                                        $tempOptions = json_decode($row->product_option_json);
-                                        if (is_array($tempOptions) || is_object($tempOptions)) {
-                                            foreach($tempOptions as $tempItem) {
-                                                if (!isset($tempItem->optionValue)) continue;
-                                                foreach($tempItem->optionValue as $tempSub) {
-                                                    // 기존 로직과 동일하게 price 속성 체크
-                                                    if(!property_exists($tempSub, 'price')) {
-                                                        continue;
-                                                    }
-                                                    // each_price 더하기 (콤마 제거 후 숫자만 추출하여 합산)
-                                                    if(isset($tempSub->each_price)) {
-                                                        $cleanOptionPrice = (int)preg_replace('/[^0-9]/', '', $tempSub->each_price);
-                                                        $optionPriceSum += $cleanOptionPrice;
+                                        // 2. 단가(product_total_price) 숫자만 추출 (옵션이 없을 때 사용될 후보)
+                                        $cleanUnitPrice = 0;
+                                        if(isset($row->product_total_price)) {
+                                            $cleanUnitPrice = (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
+                                        }
+
+                                        // 3. 옵션 가격 계산 및 옵션 유무 확인
+                                        $optionPriceSum = 0;
+                                        $hasOption = false; // 옵션 존재 여부를 판단할 플래그 변수 초기화
+
+                                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
+                                            $tempOptions = json_decode($row->product_option_json);
+                                            
+                                            // 데이터가 비어있지 않고 배열이나 객체인지 확인
+                                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
+                                                $hasOption = true; // 옵션이 확실히 존재함
+
+                                                foreach($tempOptions as $tempItem) {
+                                                    if (!isset($tempItem->optionValue)) continue;
+                                                    foreach($tempItem->optionValue as $tempSub) {
+                                                        if(!property_exists($tempSub, 'price')) continue;
+                                                        if(isset($tempSub->each_price)) {
+                                                            // 옵션 가격 합산
+                                                            $optionPriceSum += (int)preg_replace('/[^0-9]/', '', $tempSub->each_price);
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    // 3. 최종 가격 (기본가 + 옵션가)
-                                    $totalPriceForCalc = $cleanPrice + $optionPriceSum;
-                                @endphp
+                                        // 4. 최종 가격 계산 (분기 처리)
+                                        if ($hasOption) {
+                                            // A. 옵션이 있는 경우: 견적가 + 옵션 합계
+                                            $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
+                                        } else {
+                                            // B. 옵션이 없는 경우: 견적가 + 단가
+                                            $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
+                                        }
+                                    @endphp
 
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
-                                        <input type="checkbox" id="check_7"  class="item_selector" data-code="{{ $row->estimate_code }}" 
+                                        <input type="checkbox" id="check_7"  class="item_selector hidden" data-code="{{ $row->estimate_code }}" 
                                         data-price="{{$totalPriceForCalc}}" onclick="updateEstimateInfo(this)" checked>
                                         <!-- <label for="check_7" class="add_btn">추가</label> -->
                                         <img src="{{ $row->product_thumbnail }}" alt="">
