@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="fold_area active txt_info">
+        <div class="fold_area txt_info">
             <div class="target title" onclick="foldToggle(this)">
                 <p>견적 기본정보</p>
                 <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
@@ -45,54 +45,45 @@
             $sample_total_price = 0;
             $count_open_price = 0;
             $count_close_price = 0;
-            
-            // [수정] 옵션 가격의 합계만 따로 관리하기 위한 변수
-            $total_option_price = 0;
-            
-            // [수정] 전체 견적가 합계를 정확히 다시 계산하기 위해 0으로 초기화
-            $lists[0]->product_total_price = 0;
 
             foreach( $lists AS $key => $row ){
-                // 공개/비공개 카운트 (기존 로직 유지)
                 if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
                     $count_close_price = $count_close_price + 1;
                 } else {
                     $count_open_price = $count_open_price + 1;
                 }
-                
-                $_each_price = 0; // 현재 상품의 옵션 합계
-
                 if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                    $arr = json_decode($row->product_option_json);
-                    foreach($arr as $item2) {                                      
+                    $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0;
+                    foreach($arr as $item2)   {                                              
                         foreach($item2->optionValue as $sub) {
-                            if(! property_exists($sub, 'price')) {
-                                continue;
-                            }
-                            // [수정] 하단 뷰와 동일하게 each_price를 사용하여 합산 (가격 비공개 여부와 상관없이 계산)
-                            if (property_exists($sub, 'each_price')) {
-                                $_each_price += $sub->each_price;
-                            } else {
-                                // each_price가 없는 경우 기존 방식 예비 사용
-                                $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1));
-                            }
+                        if(! property_exists($sub, 'price')) {
+                            continue;
+                        }
+                        $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
                         }
                     }
-                } 
-
-                // [수정] 전체 견적가 합계 계산 (공개 여부 상관없이 무조건 합산)
-                // 하단 JS는 input 값($row->price) + 옵션가($_each_price)를 더하므로, PHP도 동일하게 계산
-                $current_product_price = is_numeric($row->price) ? $row->price : 0;
-                $lists[0]->product_total_price += ($current_product_price + $_each_price);
-
-                // [수정] 옵션 총액 누적 (공개 여부 상관없이 무조건 합산)
-                $total_option_price += $_each_price;
+                    if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
+                        $lists[0]->is_price_open = 0;
+                        $lists[0]->price_text = $row->price_text;
+                    } else{
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                        $lists[0]->product_total_price += $row->price + $_each_price;
+                    }
+                } else {
+                    if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
+                        $lists[0]->is_price_open = 0;
+                        $lists[0]->price_text = $row->price_text;
+                    } else {
+                        $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                        $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                    }
+                }
             }
             @endphp
             <div>
                 <div class="txt_desc">
                     <div class="name">가격 표기 {{ $count_open_price }}건</div>
-                    <div>견적가 <b>{{  number_format($lists[0]->product_total_price)  }}</b></div>
+                    <div>견적가 <b>{{  $lists[0]->product_total_price  }}</b></div>
                 </div>
                 <div class="txt_desc">
                     <div class="name">업체문의 상품 {{ $count_close_price }}건</div>
@@ -109,23 +100,20 @@
 
     </div>
     <div class="relative">
+
+       
         <div class="info">
             <div class="txt_info">
                 <div class="title"><p>납품 예산견적 정보</p></div>
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div>
-                            <!-- [수정] data-base-price에 전체 총합이 아닌 '옵션 총합($total_option_price)'을 할당 -->
-                            <!-- 페이지 로딩 시 JS가 이 값 + input 값들을 합산하여 텍스트를 갱신함 -->
-                            <b id='total_price_display' data-base-price="{{ $total_option_price }}">
-                            {{ number_format($lists[0]->product_total_price) }}
-                            </b>
-                        </div>
+                        <div><b id="final_total_display">0</b>원</div>
                     </div>
                 </div>
             </div>
         </div>
+        
 
         <div class="p-7">
             <!-- 접기/펼치기 -->
@@ -138,7 +126,51 @@
                 </div>
                 <div class="py-7">
                     @foreach( $lists AS $key => $row )
+                    @php
+                        // 1. 견적가 (입력받은 값 혹은 설정된 값)
+                        $cleanEstimatePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
+
+                        // 2. 단가 (기존 상품 총액 혹은 단가)
+                        $cleanUnitPrice = isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0;
+
+                        // 3. 옵션 가격 계산
+                        $optionPriceSum = 0;
+                        $hasOption = false;
+
+                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
+                            $tempOptions = json_decode($row->product_option_json);
+                            
+                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
+                                $hasOption = true; 
+                                foreach($tempOptions as $tempItem) {
+                                    if (!isset($tempItem->optionValue)) continue;
+                                    foreach($tempItem->optionValue as $tempSub) {
+                                        if(!property_exists($tempSub, 'price')) continue;
+                                        
+                                        // 가격 추출
+                                        $optPrice = isset($tempSub->each_price) ? (int)preg_replace('/[^0-9]/', '', $tempSub->each_price) : 0;
+                                    
+                                        
+                                        // 옵션 총액 = 가격 * 수량
+                                        $optionPriceSum += $optPrice;
+                                    }
+                                }
+                            }
+                        }
+
+                        // 4. 최종 계산 (이 부분을 정책에 맞게 수정하세요)
+                        if ($hasOption) {
+                            // [케이스 A] 옵션 있음: (견적가 + 옵션총액)
+                            // ※ 만약 견적가가 '상품기본가' 역할을 한다면 더하는 게 맞습니다.
+                            $totalPriceForCalc = $optionPriceSum;
+                        } else {
+                            // [케이스 B] 옵션 없음: 
+                            // 의도하신 대로 두 값을 더하는 로직을 유지했습니다. (정책 확인 필요)
+                            $totalPriceForCalc = $cleanUnitPrice;
+                        }
+                    @endphp
                     <div class="prod_info">
+                        <input type="hidden" class="calc_base_price" value="{{ $totalPriceForCalc }}">
                         <div class="img_box">
                             <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
                             <!--input type="checkbox" id="check_7" class="hidden" checked disabled>
@@ -162,8 +194,7 @@
                                             @endphp
                                             <div class="option_item">
                                                 <div class="">
-                                                    <!-- [수정] optionName -> propertyName 변경 -->
-                                                    <p class="option_name">{{$sub->propertyName}}</p>
+                                                    <p class="option_name">{{$item2->optionName}}</p>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div>{{ ($sub->count) . '' }}개</div>
@@ -197,7 +228,7 @@
 
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required price-input" value="{{ $row->price }}"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required calc_input_price" value="{{ $row->price }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
@@ -269,29 +300,34 @@
     </div>
 </div>
 <script>
-    // [수정] 총 견적가 계산 함수
-    function updateTotalEstimatePrice() {
-        // PHP에서 계산한 '순수 옵션 총합'
-        let basePrice = Number($('#total_price_display').attr('data-base-price')) || 0;
-        let addedPrice = 0;
+$(document).ready(function() {
+    updateTotalPrice(); // 페이지 로드 시 1회 실행
 
-        // 현재 입력된 모든 상품의 견적가(단가) 합산
-        $('input[name="product_each_price"]').each(function() {
-            let val = Number($(this).val().replace(/[^0-9]/g, "")) || 0; 
-            addedPrice += val;
-        });
+    // (선택사항) 만약 사용자가 입력창(견적가) 숫자를 바꾸면 실시간으로 합계도 바꾸고 싶다면 아래 주석 해제
+    
+    $('.calc_input_price').on('keyup change', function() {
+        updateTotalPrice();
+    });
+    
+});
 
-        // 최종 합계 = 옵션 총합 + 상품 견적가 총합
-        let finalTotal = basePrice + addedPrice;
-        $('#total_price_display').text(finalTotal.toLocaleString());
-    }
+function updateTotalPrice() {
+    let grandTotal = 0;
 
-    $(document).on('input', '[name="product_each_price"]', function() {
-        updateTotalEstimatePrice();
+    // 리스트의 각 항목(prod_info)을 순회
+    $('.prod_info').each(function() {
+        // 1. 숨겨둔 product_total_price 값 가져오기 (없으면 0)
+        let basePrice = parseInt($(this).find('.calc_base_price').val()) || 0;
+        
+        // 2. 입력창(견적가) 값 가져오기 (콤마 제거 후 정수 변환, 없으면 0)
+        let inputVal = $(this).find('.calc_input_price').val();
+        let inputPrice = parseInt(inputVal.replace(/,/g, '')) || 0;
+
+        // 3. 두 값을 더해서 전체 합계에 누적
+        grandTotal += (basePrice + inputPrice);
     });
 
-    // [수정] 페이지 로드 시 즉시 계산하여 초기화
-    $(function() {
-        updateTotalEstimatePrice();
-    });
+    // 4. 위쪽(id="final_total_display")에 천단위 콤마 찍어서 출력
+    $('#final_total_display').text(grandTotal.toLocaleString());
+}
 </script>

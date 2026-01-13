@@ -45,6 +45,12 @@
                             </div>
                         @endif
                         <h4>{{$data['detail']->name}}</h4>
+                        <h4>
+                            <input type="hidden" id="fixed_unit_price" value="{{ $data['detail']->price }}">
+                            <span class="static_price" data-unit_price="{{ $data['detail']->price }}">
+                                가격 : {{ $data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원' : $data['detail']->price_text }}
+                            </span>
+                        </h4>
                         <div class="border-t border-b py-4 mt-4">
                             @if($data['detail']->product_code != '')
                                 <div class="flex items-center">
@@ -305,6 +311,9 @@
                             <div class="img_box"><img src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt=""></div>
                             <div class="info_box">
                                 <div class="prod_name">{{ $data['detail'] -> name }}</div>
+                                <span class="static_price" data-unit_price="{{ $data['detail']->price }}">
+                                    가격 : {{ $data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원' : $data['detail']->price_text }}
+                                </span>
                                 <div class="prod_option">
                                     <div class="name">수량</div>
                                     <div>
@@ -1749,5 +1758,6 @@
 
             initEventListener();
         }
+        var unitPrice = parseInt($('#fixed_unit_price').val()) || 0;
     </script>
 @endsection

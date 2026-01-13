@@ -11,6 +11,9 @@
             
             <div class="info_box">
                 <div class="prod_name">{{$item->name}}</div>
+                <span class="static_price" data-unit_price="{{ $item->price }}">
+                    가격 : {{ $item->is_price_open ? number_format($item->price, 0).'원' : $item->price_text }}
+                </span>
                 @foreach($arr as $item2)
                 <div class="dropdown_wrap noline">
                     <button class="dropdown_btn" onclick="openOption({{$item->idx}}, {{$inx}})"><p>{{$item2->optionName}} 선택
