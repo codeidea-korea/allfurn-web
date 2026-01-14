@@ -171,7 +171,7 @@
                     <div class="prod_info">
                     <input type="hidden" class="calc_base_price" value="{{ $totalPriceForCalc }}">    
                     <div class="img_box">
-                            <input type="hidden" name="idx[]" value="{{ $row->estimate_idx }}">
+                            <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
                             <!--input type="checkbox" id="check_7" class="hidden" checked disabled>
                             <label for="check_7" class="add_btn">대표</label //-->
                             <img src="{{ $row->product_thumbnail }}" alt="">
