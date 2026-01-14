@@ -388,7 +388,7 @@
         });
         $('.fold_area .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
-            products[index]['response_estimate_product_total_price'] = sum_price;
+            //products[index]['response_estimate_product_total_price'] = sum_price;
         });
         
         $.ajax({
