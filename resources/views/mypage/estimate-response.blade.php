@@ -325,7 +325,8 @@
                 response_estimate_product_delivery_info: $('#delivery_type').text(),
                 response_estimate_product_option_price: response_estimate_product_option_price,
                 response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
-                response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
+                //response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
+                response_estimate_product_total_price: Number($('input[name=product_total_price]')[index].value),
                 product_memo:estimate_data.lists[index].product_memo || '',
                 response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });
