@@ -227,7 +227,7 @@
         </div>
 
         <div class="modal_footer">
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류</button>
+            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
             <button type="button" onClick="updateResponse();">견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
@@ -484,7 +484,8 @@
                 response_estimate_product_delivery_info: $('#delivery_type').text(),
                 response_estimate_product_option_price: response_estimate_product_option_price,
                 response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
-                response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
+                //response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
+                response_estimate_product_total_price: estimate_data.lists[index].product_total_price,
                 product_memo:estimate_data.lists[index].product_memo || '',
                 response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });
@@ -543,11 +544,12 @@
         }
         sum_price = 0;
         $('.fold_area .prod_info').each(function (index) {
-            sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
-        });
+            //sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
+            //sum_price += estimate_data.lists[index].product_total_price;
+            sum_price += Number(estimate_data.lists[index].product_total_price);        });
         $('.fold_area .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
-            products[index]['response_estimate_product_total_price'] = sum_price;
+            //products[index]['response_estimate_product_total_price'] = sum_price;
         });
         
         $.ajax({

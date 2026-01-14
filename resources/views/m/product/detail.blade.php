@@ -1445,6 +1445,7 @@
         if(!option) {
             return;
         }
+        var $container = $('._productChooseOptions_'+option.index);
 
         const priceText = isNaN(Number(option.itemPrice)) ? option.itemPrice : Number(option.price).toLocaleString();
 
@@ -1467,6 +1468,12 @@
         $('._productChooseOptions_'+option.index).append(tmpHtml);
 
         initEventListener();
+        var $lastItem = $container.children().last();
+        var $plus = $lastItem.find('.plus');
+        var $minus = $lastItem.find('.minus');
+
+        $plus.trigger('click'); 
+        $minus.trigger('click');
     }
 
 </script>
