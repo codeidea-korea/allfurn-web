@@ -311,9 +311,6 @@
                             <div class="img_box"><img src="{{ isset($data['detail'] -> attachment[0]) ? ($data['detail'] -> attachment[0]) -> imgUrl : '' }}" alt=""></div>
                             <div class="info_box">
                                 <div class="prod_name">{{ $data['detail'] -> name }}</div>
-                                <span class="static_price" data-unit_price="{{ $data['detail']->price }}">
-                                    가격 : {{ $data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원' : $data['detail']->price_text }}
-                                </span>
                                 <div class="prod_option">
                                     <div class="name">수량</div>
                                     <div>
