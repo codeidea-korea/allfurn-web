@@ -386,7 +386,8 @@
         sum_price = 0;
         $('.fold_area .prod_info').each(function (index) {
             //sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
-            sum_price += estimate_data.lists[index].product_total_price;
+            //sum_price += estimate_data.lists[index].product_total_price;
+            sum_price += Number(estimate_data.lists[index].product_total_price);
         });
         $('.fold_area .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
