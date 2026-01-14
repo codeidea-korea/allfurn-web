@@ -45,10 +45,6 @@
                             </div>
                         @endif
                         <h4>{{$data['detail']->name}}</h4>
-                        <h4>
-                            <input type="hidden" id="fixed_unit_price" value="{{ $data['detail']->price }}">
-
-                        </h4>
                         <div class="border-t border-b py-4 mt-4">
                             @if($data['detail']->product_code != '')
                                 <div class="flex items-center">
@@ -1753,6 +1749,5 @@
 
             initEventListener();
         }
-        var unitPrice = parseInt($('#fixed_unit_price').val()) || 0;
     </script>
 @endsection
