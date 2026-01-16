@@ -67,17 +67,23 @@
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
-                    } 
+                    }
+
+                    else{
                         // [수정] 별도 변수에 합산
-                    $grand_total_price += $row->price + $_each_price;
+                        $grand_total_price += $row->price + $_each_price;
+                    }
                     
                 } else {
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
-                    } 
+                    }
+
+                    else {
                         // [수정] 별도 변수에 합산
-                    $grand_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                        $grand_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                    }
                     
                 }
             }
@@ -172,7 +178,7 @@
                         }
                     @endphp
                     <div class="prod_info">
-                        <input type="hidden" class="calc_base_price" value="{{ $totalPriceForCalc }}">
+                        <input type="hidden" class="calc_base_price" value="{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? 0 : $totalPriceForCalc }}">
                         <div class="img_box">
                             <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
                             <!--input type="checkbox" id="check_7" class="hidden" checked disabled>
@@ -224,7 +230,7 @@
                                 </div>
                                 <div class="prod_option">
                                     <div class="name">단가</div>
-                                    <div>{{ $row->product_total_price }}</div>
+                                    {{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? '업체 문의' : number_format($row->product_total_price).'원' }}
                                 </div>
                             @endif
 
