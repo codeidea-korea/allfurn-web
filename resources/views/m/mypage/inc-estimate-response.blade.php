@@ -192,7 +192,7 @@
                                             @endphp
                                             <div class="option_item">
                                                 <div class="">
-                                                    <p class="option_name">{{$item2->optionName}}</p>
+                                                    <p class="option_name">{{$sub->propertyName}}</p>
                                                 </div>
                                                 <div class="mt-2">
                                                     <div>{{ ($sub->count) . '' }}개</div>
