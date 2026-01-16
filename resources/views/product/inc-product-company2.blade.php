@@ -33,7 +33,7 @@
             <div class="prod_option">
                 <div class="name">가격</div>
                 <div class="total_price">
-                    @if( $item->is_price_open == 0 || $item->price_text == '수량마다 상이' || $item->price_text == '업체 문의' ? 1 : 0 )
+                    @if( $item->is_price_open == 0 ? 1 : 0 )
                         {{ $item->price_text }}
                     @else
                         {{$item->is_price_open ? number_format($item->price + $_each_price, 0).'원': $item->price_text}}
