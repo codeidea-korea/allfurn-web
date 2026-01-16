@@ -327,7 +327,7 @@
                 response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
                 //response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
                 //response_estimate_product_total_price: estimate_data.lists[index].product_total_price,
-                response_estimate_product_total_price: (estimate_data.lists[index].price_text ) ? estimate_data.lists[index].product_total_price :  estimate_data.lists[index].product_total_price,
+                response_estimate_product_total_price: Number($('.fold_area .prod_info').eq(index).find('.calc_base_price').val()) || 0,
                 product_memo:estimate_data.lists[index].product_memo || '',
                 response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });

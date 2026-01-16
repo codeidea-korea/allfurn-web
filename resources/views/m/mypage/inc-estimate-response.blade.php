@@ -130,8 +130,12 @@
                         // 1. 견적가 (입력받은 값 혹은 설정된 값)
                         $cleanEstimatePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
 
+                        $is_inquiry = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
+
                         // 2. 단가 (기존 상품 총액 혹은 단가)
-                        $cleanUnitPrice = isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0;
+                        //$cleanUnitPrice = isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0;
+                        //$cleanUnitPrice = (!isset($row->product_total_price) || $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? 0 : (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
+                        $cleanUnitPrice = $is_inquiry ? 0 : (isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0);
 
                         // 3. 옵션 가격 계산
                         $optionPriceSum = 0;
