@@ -386,7 +386,7 @@
                 <!--
                 <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
                 -->
-                <button class="close_btn" type="button" onclick="checkOrder()">주문 보류</button>
+                <button class="close_btn" type="button" onclick="modalClose('#check_estimate-modal')">주문 보류</button>
                 <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/img/icon/arrow-right.svg" alt=""></button>
 
             </div>
