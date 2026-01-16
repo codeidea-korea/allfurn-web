@@ -58,104 +58,104 @@ class LoginController extends BaseController
     	return null;
     }
 
-//     public function index(Request $request)
-//     {
-//     	$target = $this->safeRedirectTarget($request->input('replaceUrl'));
-    	
-//     	if (Auth::check()) {
-//     		return $target ? redirect()->to($target) : redirect('/');
-//     	}
-//     	return view(getDeviceType().'login.login', ['replaceUrl' => $request->input('replaceUrl')]);
-//     }
-
-//     public function social(Request $request)
-//     {
-        
-//         $replaceUrl = $request->input('replaceUrl');
-//         Log::info("***** LoginController > social :: $replaceUrl");
-//         if (Auth::check()) {
-//             if (empty($replaceUrl)) {
-//                 return redirect('/');
-//             } else {
-//                 return redirect($replaceUrl);
-//             }
-//         }
-//         Log::info(getDeviceType());
-//         if(getDeviceType() === 'm.'){
-//             return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
-//         }
-//         return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
-//     }
-
     public function index(Request $request)
     {
-    	$rawReplaceUrl = $request->input('replaceUrl'); // 인코딩된 값일 수 있음
-    	$targetUrl = null;
-    	
-    	if (!empty($rawReplaceUrl)) {
-    		$decoded = urldecode($rawReplaceUrl);
-    		
-    		// (1) 절대 URL이면 우리 도메인만 허용
-    		if (preg_match('#^https?://#i', $decoded)) {
-    			$host = parse_url($decoded, PHP_URL_HOST);
-    			$allowedHosts = ['all-furn.com', 'www.all-furn.com'];
-    			
-    			if (in_array($host, $allowedHosts, true)) {
-    				$targetUrl = $decoded;
-    			}
-    		}
-    		
-    		// (2) 상대경로도 허용하고 싶으면 아래 주석 해제
-    		// else if (strpos($decoded, '/') === 0) {
-    		//     $targetUrl = $decoded;
-    		// }
-    	}
+    	$target = $this->safeRedirectTarget($request->input('replaceUrl'));
     	
     	if (Auth::check()) {
-    		return $targetUrl ? redirect()->to($targetUrl) : redirect('/');
+    		return $target ? redirect()->to($target) : redirect('/');
     	}
-    	
-    	// ✅ 뷰에는 원본(인코딩된 replaceUrl) 그대로 전달
-    	return view(getDeviceType() . 'login.login', ['replaceUrl' => $rawReplaceUrl]);
+    	return view(getDeviceType().'login.login', ['replaceUrl' => $request->input('replaceUrl')]);
     }
-    
+
     public function social(Request $request)
     {
-    	$rawReplaceUrl = $request->input('replaceUrl');
-    	Log::info("***** LoginController > social :: " . ($rawReplaceUrl ?? ''));
-    	
-    	$targetUrl = null;
-    	
-    	if (!empty($rawReplaceUrl)) {
-    		$decoded = urldecode($rawReplaceUrl);
-    		
-    		if (preg_match('#^https?://#i', $decoded)) {
-    			$host = parse_url($decoded, PHP_URL_HOST);
-    			$allowedHosts = ['all-furn.com', 'www.all-furn.com'];
-    			
-    			if (in_array($host, $allowedHosts, true)) {
-    				$targetUrl = $decoded;
-    			}
-    		}
-    		
-    		// else if (strpos($decoded, '/') === 0) {
-    		//     $targetUrl = $decoded;
-    		// }
-    	}
-    	
-    	if (Auth::check()) {
-    		return $targetUrl ? redirect()->to($targetUrl) : redirect('/');
-    	}
-    	
-    	Log::info(getDeviceType());
-    	
-    	// 기존 로직 유지 (둘 다 같은 뷰라면 단순화 가능하지만 요청대로 유지)
-    	if (getDeviceType() === 'm.') {
-    		return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $rawReplaceUrl]);
-    	}
-    	
-    	return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $rawReplaceUrl]);
+        
+        $replaceUrl = $request->input('replaceUrl');
+        Log::info("***** LoginController > social :: $replaceUrl");
+        if (Auth::check()) {
+            if (empty($replaceUrl)) {
+                return redirect('/');
+            } else {
+                return redirect($replaceUrl);
+            }
+        }
+        Log::info(getDeviceType());
+        if(getDeviceType() === 'm.'){
+            return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
+        }
+        return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $replaceUrl]);
     }
+
+//     public function index(Request $request)
+//     {
+//     	$rawReplaceUrl = $request->input('replaceUrl'); // 인코딩된 값일 수 있음
+//     	$targetUrl = null;
+    	
+//     	if (!empty($rawReplaceUrl)) {
+//     		$decoded = urldecode($rawReplaceUrl);
+    		
+//     		// (1) 절대 URL이면 우리 도메인만 허용
+//     		if (preg_match('#^https?://#i', $decoded)) {
+//     			$host = parse_url($decoded, PHP_URL_HOST);
+//     			$allowedHosts = ['all-furn.com', 'www.all-furn.com'];
+    			
+//     			if (in_array($host, $allowedHosts, true)) {
+//     				$targetUrl = $decoded;
+//     			}
+//     		}
+    		
+//     		// (2) 상대경로도 허용하고 싶으면 아래 주석 해제
+//     		// else if (strpos($decoded, '/') === 0) {
+//     		//     $targetUrl = $decoded;
+//     		// }
+//     	}
+    	
+//     	if (Auth::check()) {
+//     		return $targetUrl ? redirect()->to($targetUrl) : redirect('/');
+//     	}
+    	
+//     	// ✅ 뷰에는 원본(인코딩된 replaceUrl) 그대로 전달
+//     	return view(getDeviceType() . 'login.login', ['replaceUrl' => $rawReplaceUrl]);
+//     }
+    
+//     public function social(Request $request)
+//     {
+//     	$rawReplaceUrl = $request->input('replaceUrl');
+//     	Log::info("***** LoginController > social :: " . ($rawReplaceUrl ?? ''));
+    	
+//     	$targetUrl = null;
+    	
+//     	if (!empty($rawReplaceUrl)) {
+//     		$decoded = urldecode($rawReplaceUrl);
+    		
+//     		if (preg_match('#^https?://#i', $decoded)) {
+//     			$host = parse_url($decoded, PHP_URL_HOST);
+//     			$allowedHosts = ['all-furn.com', 'www.all-furn.com'];
+    			
+//     			if (in_array($host, $allowedHosts, true)) {
+//     				$targetUrl = $decoded;
+//     			}
+//     		}
+    		
+//     		// else if (strpos($decoded, '/') === 0) {
+//     		//     $targetUrl = $decoded;
+//     		// }
+//     	}
+    	
+//     	if (Auth::check()) {
+//     		return $targetUrl ? redirect()->to($targetUrl) : redirect('/');
+//     	}
+    	
+//     	Log::info(getDeviceType());
+    	
+//     	// 기존 로직 유지 (둘 다 같은 뷰라면 단순화 가능하지만 요청대로 유지)
+//     	if (getDeviceType() === 'm.') {
+//     		return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $rawReplaceUrl]);
+//     	}
+    	
+//     	return view(getDeviceType() . 'login.login_social', ['replaceUrl' => $rawReplaceUrl]);
+//     }
 
     public function signupNew(Request $request)
     {

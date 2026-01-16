@@ -116,6 +116,103 @@ class HomeController extends BaseController
         
     }
     
+//     public function index(Request $params)
+//     {
+//     	Log::info('-------- HomeController > index ');
+    	
+//     	$mAgent = ["iPhone","iPod","Android","Blackberry","Opera Mini","Windows ce","Nokia","sony"];
+//     	$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+//     	$chkMobile = false;
+    	
+//     	for ($i = 0; $i < sizeof($mAgent); $i++) {
+//     		// ✅ stripos()는 0도 나올 수 있으니 !== false 로 체크해야 함
+//     		if (stripos($ua, $mAgent[$i]) !== false) {
+//     			$chkMobile = true;
+//     			break;
+//     		}
+//     	}
+    	
+//     	// ✅ replaceUrl 처리 (있으면 decode 후 안전검증)
+//     	$rawReplaceUrl = $params->input('replaceUrl'); // 인코딩된 상태로 들어옴(https%3A%2F...)
+//     	$targetUrl = null;
+    	
+//     	if (!empty($rawReplaceUrl)) {
+//     		$decoded = urldecode($rawReplaceUrl);
+    		
+//     		// (1) 절대 URL이면 우리 도메인만 허용
+//     		if (preg_match('#^https?://#i', $decoded)) {
+//     			$host = parse_url($decoded, PHP_URL_HOST);
+//     			$allowedHosts = ['all-furn.com', 'www.all-furn.com'];
+    			
+//     			if (in_array($host, $allowedHosts, true)) {
+//     				$targetUrl = $decoded;
+//     			}
+//     		}
+//     		// (2) 상대경로도 허용하고 싶으면 아래 주석 해제
+//     		// else if (strpos($decoded, '/') === 0) {
+//     		//     $targetUrl = $decoded;
+//     		// }
+//     	}
+    	
+//     	$categoryList = $this->productService->getCategoryList();
+    	
+//     	if ($chkMobile) {
+    		
+//     		if (Auth::check()) {
+//     			$schData = $this->homeService->getSearchData();
+//     			$data = $this->homeService->getHomeData();
+//     			$xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+    			
+//     			// ✅ 로그인 상태면 targetUrl 있으면 거기로 이동
+//     			if ($targetUrl) {
+//     				return redirect()->to($targetUrl);
+//     			}
+    			
+//     			return view('m/home/index', [
+//     					'data' => $data,
+//     					'xtoken' => $xtoken,
+//     					'categoryList' => $categoryList,
+//     					'schData' => $schData['category'],
+//     			]);
+    			
+//     		} else {
+//     			$data = [];
+    			
+//     			if ($params->input('isweb')) {
+//     				$data['isweb'] = $params->input('isweb');
+//     			}
+//     			// ✅ 뷰에는 원본(인코딩된 replaceUrl) 그대로 넘겨도 됨
+//     			if (!empty($rawReplaceUrl)) {
+//     				$data['replaceUrl'] = $rawReplaceUrl;
+//     			}
+    			
+//     			return view('home/mWelcome', $data);
+//     		}
+    		
+//     	} else {
+    		
+//     		Log::info('------------------ user --------------------');
+//     		Log::info(Auth::user());
+//     		Log::info('--------------------------------------------');
+    		
+//     		if (Auth::check()) {
+//     			$schData = $this->homeService->getSearchData();
+//     			$data = $this->homeService->getHomeData();
+    			
+//     			if ($targetUrl) {
+//     				return redirect()->to($targetUrl);
+//     			}
+    			
+//     			return view('home/index', [
+//     					'data' => $data,
+//     					'categoryList' => $categoryList,
+//     					'schData' => $schData['category'],
+//     			]);
+//     		} else {
+//     			return view('home/welcome');
+//     		}
+//     	}
+//     }
     
     public function welcome() {
         
@@ -243,33 +340,6 @@ class HomeController extends BaseController
 
         $categoryList = $this->productService->getCategoryListV2();
         return view("m.home.category", ['categoryList' => $categoryList, 'family_ad' => $family_ad]);
-    }
-
-
-
-
-    // 슬릭 슬라이더에 들어갈 페이지 내용
-    public function getSlickSlideItems(Request $request)
-    {
-        $data['pageNo'] = $request->query('pageNo') == null ? 1 : $request->query('pageNo');
-        $data['pageSize'] = $request->query('pageSize') == null ? 20 : $request->query('pageSize');
-        $data['slideType'] = $request->query('slideType') == null ? 'best' : $request->query('slideType');
-
-        $page = array();
-        $page['offset'] = ($data['pageNo'] - 1) * $data['pageSize'];
-        $page['limit'] = $data['pageSize'];
-
-        if($data['slideType'] == 'best') {
-            // 베스트 신상품 목록
-            $data['views'] = $this->homeService->getProductAds($page);
-        } else if($data['slideType'] == 'new') {
-            // 신상품 목록 
-            $data['views'] = $this->homeService->getNewProducts($page);
-        }
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
     }
 }
 
