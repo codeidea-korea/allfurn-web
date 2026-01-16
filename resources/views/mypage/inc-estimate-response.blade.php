@@ -65,8 +65,8 @@
                         }
                     }
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
-                        $lists[0]->is_price_open = 0;
-                        $lists[0]->price_text = $row->price_text;
+                        //$lists[0]->is_price_open = 0;
+                        //$lists[0]->price_text = $row->price_text;
                     }
 
                     else{
@@ -76,8 +76,8 @@
                     
                 } else {
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
-                        $lists[0]->is_price_open = 0;
-                        $lists[0]->price_text = $row->price_text;
+                        //$lists[0]->is_price_open = 0;
+                        //$lists[0]->price_text = $row->price_text;
                     }
 
                     else {
