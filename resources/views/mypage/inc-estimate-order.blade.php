@@ -19,7 +19,10 @@
                             <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
-                        <?php $grand_total = 0; ?>
+                        <?php 
+                            $grand_total = 0; 
+                            $is_any_price_hide = false;
+                        ?>
                         @foreach( $lists AS $key => $row )
                             <?php 
                                 $estimate_val = 0;
@@ -28,6 +31,10 @@
                                     $estimate_val = (int) str_replace(',', '', $row->product_each_price);
                                 }
                                 $price_temp = isset($row->price) ? (int) str_replace(',', '', $row->price) : 0;
+
+                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ) {
+                                    $is_any_price_hide = true;
+                                }
                             ?>
                             @if(isset($row->product_option_json) && $row->product_option_json != '[]')
                                 <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
@@ -80,7 +87,7 @@
                         @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $lists[0]->is_price_open == 0 ? '업체 문의' : number_format($grand_total, 0) }}</div>
+                                <div>{{ $is_any_price_hide ? '업체 문의' : number_format($grand_total, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>
