@@ -54,31 +54,32 @@
                 } else {
                     $count_open_price = $count_open_price + 1;
                 }
+                
                 if(isset($row->product_option_json) && $row->product_option_json != '[]') {
                     $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0;
                     foreach($arr as $item2)   {                                              
                         foreach($item2->optionValue as $sub) {
-                        if(! property_exists($sub, 'price')) {
-                            continue;
-                        }
-                        $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
+                            if(! property_exists($sub, 'price')) {
+                                continue;
+                            }
+                            $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
                         }
                     }
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
-                    } else{
-                        // [수정] 별도 변수에 합산
-                        $grand_total_price += $row->price + $_each_price;
                     }
+
+                    $grand_total_price += $row->price + $_each_price;
+                    
                 } else {
                     if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
                         $lists[0]->is_price_open = 0;
                         $lists[0]->price_text = $row->price_text;
-                    } else {
-                        // [수정] 별도 변수에 합산
-                        $grand_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
                     }
+                    
+                    $grand_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                    
                 }
             }
             @endphp
