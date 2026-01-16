@@ -19,7 +19,23 @@
                             <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
+                        <?php 
+                            $grand_total = 0; 
+                            $is_any_price_hide = false;
+                        ?>
                         @foreach( $lists AS $key => $row )
+                        <?php 
+                                $estimate_val = 0;
+                                if(isset($row->product_each_price) && $row->product_each_price) {
+                                    // 콤마(,)를 빈 문자열로 바꾸고 정수(int)로 변환
+                                    $estimate_val = (int) str_replace(',', '', $row->product_each_price);
+                                }
+                                $price_temp = isset($row->price) ? (int) str_replace(',', '', $row->price) : 0;
+
+                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ) {
+                                    $is_any_price_hide = true;
+                                }
+                        ?>
                             @if(isset($row->product_option_json) && $row->product_option_json != '[]')
                                 <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
                                 @foreach($arr as $item2)                                                
@@ -34,30 +50,38 @@
                                 @endforeach
                                 <?
                                 if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
-                                    $lists[0]->is_price_open = 0;
-                                    $lists[0]->price_text = $row->price_text;
+                                    //$lists[0]->is_price_open = 0;
+                                    //$lists[0]->price_text = $row->price_text;
                                 } else{
-                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
-                                    $row->price = $row->price == null || !is_numeric($row->price) ? 0 : $row->price;
+                                    //$lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                                    //$row->price = $row->price == null || !is_numeric($row->price) ? 0 : $row->price;
 					
-                                    $lists[0]->product_total_price += $row->price + $_each_price;
+                                    //$lists[0]->product_total_price += $row->price + $_each_price;
+                                    $grand_total += ($price_temp + $_each_price) * $row->product_count;
                                 }
                                 ?>
                             @else
                                 <?
                                 if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
-                                    $lists[0]->is_price_open = 0;
-                                    $lists[0]->price_text = $row->price_text;
+                                    //$lists[0]->is_price_open = 0;
+                                    //$lists[0]->price_text = $row->price_text;
                                 } else {
-                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
-                                    $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                                    //$lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
+                                    //$lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                                    $grand_total += $row->product_count * $price_temp;
                                 }
                                 ?>
                             @endif
+                            <?php
+                                // 만약 '가격 비공개' 상태가 아니라면 견적가를 합산합니다.
+                                if (!($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의')) {
+                                    $grand_total += $estimate_val;
+                                }
+                            ?>
                         @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $lists[0]->is_price_open == 0 ? $lists[0]->price_text : number_format($lists[0]->product_total_price, 0) }}</div>
+                                <div>{{ $is_any_price_hide ? '업체 문의' : number_format($grand_total, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>
