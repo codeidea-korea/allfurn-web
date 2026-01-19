@@ -193,7 +193,13 @@
                                             </div>
                                             <div class="prod_option">
                                                 <div class="name">단가</div>
-                                                <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? '업체 문의' : number_format($row->product_total_price).'원' }}</div>
+                                                <div>
+                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                        {{ $row->price_text }}
+                                                    @else
+                                                        {{ $row->product_total_price }}
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endif
                                         <div class="prod_option">
