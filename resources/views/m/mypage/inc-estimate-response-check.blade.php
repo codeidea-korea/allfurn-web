@@ -98,7 +98,7 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
-                                @php
+                                    /*@php
                                         // 1. 견적가(product_each_price) 숫자만 추출 (항상 포함)
                                         $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
 
@@ -140,6 +140,71 @@
                                             // B. 옵션이 없는 경우: 견적가 + 단가
                                             $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
                                         }
+                                    @endphp*/
+                                    @php
+                                        // -----------------------------------------------------------
+                                        // 1. 견적가 (Wholesaler's Estimate Price)
+                                        // -----------------------------------------------------------
+                                        $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
+
+                                        // -----------------------------------------------------------
+                                        // 2. 상품 기본가 (Base Unit Price)
+                                        // -----------------------------------------------------------
+                                        // 화면 출력 로직($row->price)과 맞추기 위해 $row->price 사용
+                                        $productBasePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
+
+                                        // 옵션이 없을 때 사용할 예비 단가 (기존 로직 유지용)
+                                        $cleanUnitPrice = 0;
+                                        if(isset($row->product_total_price)) {
+                                            $cleanUnitPrice = (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
+                                        }
+
+                                        // -----------------------------------------------------------
+                                        // 3. 옵션 가격 계산 ($_each_price)
+                                        // -----------------------------------------------------------
+                                        $optionPriceSum = 0;
+                                        $hasOption = false;
+
+                                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
+                                            $tempOptions = json_decode($row->product_option_json);
+                                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
+                                                $hasOption = true; 
+                                                foreach($tempOptions as $tempItem) {
+                                                    if (!isset($tempItem->optionValue)) continue;
+                                                    foreach($tempItem->optionValue as $tempSub) {
+                                                        if(!property_exists($tempSub, 'price')) continue;
+                                                        // 옵션 가격 합산
+                                                        $optPrice = isset($tempSub->each_price) ? (int)preg_replace('/[^0-9]/', '', $tempSub->each_price) : 0;
+                                                        $optionPriceSum += $optPrice;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // -----------------------------------------------------------
+                                        // 4. 최종 가격 계산 ($totalPriceForCalc) - 요청 로직 반영
+                                        // -----------------------------------------------------------
+                                        
+                                        // 가격 비공개 조건 (0: 비공개, 1: 공개)
+                                        // 혹은 특정 텍스트('수량마다 상이', '업체 문의')가 있는 경우 비공개로 간주
+                                        $isPriceHidden = ($row->is_price_open == 0);
+
+                                        if ($hasOption) {
+                                            // [옵션이 있는 경우]
+                                            if ($isPriceHidden) {
+                                                // Case 1: 텍스트(업체문의 등)가 표시되는 경우
+                                                // 요청: $cleanEstimatePrice + $optionPriceSum
+                                                $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
+                                            } else {
+                                                // Case 2: 숫자(가격+옵션)가 표시되는 경우
+                                                // 요청: $cleanEstimatePrice + ($row->price + $_each_price)
+                                                $totalPriceForCalc = $cleanEstimatePrice + ($productBasePrice + $optionPriceSum);
+                                            }
+                                        } else {
+                                            // [옵션이 없는 경우] 기존 로직 유지
+                                            // (견적가 + 기존단가)
+                                            $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
+                                        }
                                     @endphp
                                 <div class="prod_info">
                                     <div class="img_box">
@@ -179,7 +244,7 @@
                                             <div class="prod_option">
                                                 <div class="name">가격</div>
                                                 <div class="total_price">
-                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
                                                         {{ $row->price_text }}
                                                     @else
                                                         {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
@@ -194,7 +259,7 @@
                                             <div class="prod_option">
                                                 <div class="name">단가</div>
                                                 <div>
-                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
                                                         {{ $row->price_text }}
                                                     @else
                                                         {{ $row->product_total_price }}
