@@ -221,7 +221,7 @@
                                                 
                                                 <div>
                                                     @if( $row->is_price_open == 0 ? 1 : 0 )
-                                                        {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '업체 협의' : $row->price_text }}
+                                                        {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '업체 문의' : $row->price_text }}
                                                     @else
                                                         {{ $row->product_total_price }}
                                                     @endif
