@@ -98,49 +98,6 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
-                                    /*@php
-                                        // 1. 견적가(product_each_price) 숫자만 추출 (항상 포함)
-                                        $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
-
-                                        // 2. 단가(product_total_price) 숫자만 추출 (옵션이 없을 때 사용될 후보)
-                                        $cleanUnitPrice = 0;
-                                        if(isset($row->product_total_price)) {
-                                            $cleanUnitPrice = (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
-                                        }
-
-                                        // 3. 옵션 가격 계산 및 옵션 유무 확인
-                                        $optionPriceSum = 0;
-                                        $hasOption = false; // 옵션 존재 여부를 판단할 플래그 변수 초기화
-
-                                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                                            $tempOptions = json_decode($row->product_option_json);
-                                            
-                                            // 데이터가 비어있지 않고 배열이나 객체인지 확인
-                                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
-                                                $hasOption = true; // 옵션이 확실히 존재함
-
-                                                foreach($tempOptions as $tempItem) {
-                                                    if (!isset($tempItem->optionValue)) continue;
-                                                    foreach($tempItem->optionValue as $tempSub) {
-                                                        if(!property_exists($tempSub, 'price')) continue;
-                                                        if(isset($tempSub->each_price)) {
-                                                            // 옵션 가격 합산
-                                                            $optionPriceSum += (int)preg_replace('/[^0-9]/', '', $tempSub->each_price);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        // 4. 최종 가격 계산 (분기 처리)
-                                        if ($hasOption) {
-                                            // A. 옵션이 있는 경우: 견적가 + 옵션 합계
-                                            $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
-                                        } else {
-                                            // B. 옵션이 없는 경우: 견적가 + 단가
-                                            $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
-                                        }
-                                    @endphp*/
                                     @php
                                         // -----------------------------------------------------------
                                         // 1. 견적가 (Wholesaler's Estimate Price)
@@ -260,7 +217,7 @@
                                                 <div class="name">단가</div>
                                                 <div>
                                                     @if( $row->is_price_open == 0 ? 1 : 0 )
-                                                        {{ $row->price_text }}
+                                                        {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '업체 협의' : $row->price_text }}
                                                     @else
                                                         {{ $row->product_total_price }}
                                                     @endif
