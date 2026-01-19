@@ -54,7 +54,7 @@
             </div>
             <div class="prod_option">
                 <div class="name">단가</div>
-                <div class="sub_tot_price">{{$item->is_price_open ? number_format($item->price, 0).'원': $item->price_text}}</div>
+                <div class="sub_tot_price">{{ $item->is_price_open ? number_format($item->price, 0).'원' : (($item->price_text === null || $item->price_text === '' || $item->price_text ==='가격 안내 문구 선택') ? '업체 협의' : $item->price_text) }}</div>
             </div>
         </div>
         @endif
