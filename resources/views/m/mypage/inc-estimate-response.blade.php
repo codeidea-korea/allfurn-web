@@ -132,53 +132,6 @@
                 </div>
                 <div class="py-7">
                     @foreach( $lists AS $key => $row )
-                    /*@php
-                        // 1. 견적가 (입력받은 값 혹은 설정된 값)
-                        $cleanEstimatePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
-
-                        //$is_inquiry = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
-
-                        // 2. 단가 (기존 상품 총액 혹은 단가)
-                        //$cleanUnitPrice = isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0;
-                        $cleanUnitPrice = (!isset($row->product_total_price) || $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? 0 : (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
-                        //$cleanUnitPrice = $is_inquiry ? 0 : (isset($row->product_total_price) ? (int)preg_replace('/[^0-9]/', '', $row->product_total_price) : 0);
-
-                        // 3. 옵션 가격 계산
-                        $optionPriceSum = 0;
-                        $hasOption = false;
-
-                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                            $tempOptions = json_decode($row->product_option_json);
-                            
-                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
-                                $hasOption = true; 
-                                foreach($tempOptions as $tempItem) {
-                                    if (!isset($tempItem->optionValue)) continue;
-                                    foreach($tempItem->optionValue as $tempSub) {
-                                        if(!property_exists($tempSub, 'price')) continue;
-                                        
-                                        // 가격 추출
-                                        $optPrice = isset($tempSub->each_price) ? (int)preg_replace('/[^0-9]/', '', $tempSub->each_price) : 0;
-                                    
-                                        
-                                        // 옵션 총액 = 가격 * 수량
-                                        $optionPriceSum += $optPrice;
-                                    }
-                                }
-                            }
-                        }
-
-                        // 4. 최종 계산 (이 부분을 정책에 맞게 수정하세요)
-                        if ($hasOption) {
-                            // [케이스 A] 옵션 있음: (견적가 + 옵션총액)
-                            // ※ 만약 견적가가 '상품기본가' 역할을 한다면 더하는 게 맞습니다.
-                            $totalPriceForCalc = $optionPriceSum;
-                        } else {
-                            // [케이스 B] 옵션 없음: 
-                            // 의도하신 대로 두 값을 더하는 로직을 유지했습니다. (정책 확인 필요)
-                            $totalPriceForCalc = $cleanUnitPrice;
-                        }
-                    @endphp*/
                     @php
                         // -------------------------------------------------------------------------
                         // 1. 기본 변수 설정 및 옵션 가격($_each_price) 미리 계산
