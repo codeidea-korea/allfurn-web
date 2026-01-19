@@ -246,10 +246,8 @@ class MemberController extends BaseController {
             if(array_key_exists('company_file', $data)) {
                 $storageName = "name-card-image";
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('company_file'));
-                $data['attachmentIdx'] = $this->memberService->saveAttachment($stored);
-            }
-            if(array_key_exists('user_file', $data)) {
-                $storageName = "user-image";
+
+@@ -253,113 +253,107 @@
                 $stored = Storage::disk('vultr')->put($storageName, $request->file('user_file'));
                 $data['userAttachmentIdx'] = $this->memberService->saveAttachment($stored);
             }
@@ -289,7 +287,10 @@ class MemberController extends BaseController {
     }
 
     public function updateUserByWait(string $grade, int $userIdx): JsonResponse {
+
+
         $this->memberService->updateUserByWait($userIdx, $grade);
+
 
         return response()->json([
             'success' => true,

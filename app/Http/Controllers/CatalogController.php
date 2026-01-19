@@ -108,6 +108,8 @@ class CatalogController extends BaseController
         $data['product_idx'] = $request->query('product_idx');
         $data['request_type'] = $request->query('request_type');
 
+        $result = [];
+
         if($data['request_type'] > 3) {
             // 카탈로그 액션 (4: 보내기, 5: 공유하기, 6:받기)
             $companyIdx = $data['response_user_id'];

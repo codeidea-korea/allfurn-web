@@ -1202,7 +1202,7 @@ class MypageService
         $limit = $params['limit'];
 
         if (isset($params['type']) && $params['type'] == 'temp') {
-            $query = ProductTemp::from('AF_product_temp AS p')->where('user_idx', $user->idx]);
+            $query = ProductTemp::from('AF_product_temp AS p')->where('user_idx', $user->idx);
             $query->addSelect(DB::raw("DATE_FORMAT(p.update_time, '%Y.%m.%d') AS update_time")
                 ,"0 AS inquiry_count"
                 ,"0 AS access_count");

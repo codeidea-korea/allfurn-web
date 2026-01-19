@@ -19,45 +19,89 @@
                             <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                         </div>
                         <div>
+                        <?php 
+                            $grand_total = 0; 
+                            $is_any_price_hide = false;
+                        ?>
                         @foreach( $lists AS $key => $row )
-                            @if(isset($row->product_option_json) && $row->product_option_json != '[]')
-                                <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
-                                @foreach($arr as $item2)                                                
-                                    @foreach($item2->optionValue as $sub)
-                                    <? 
-                                    if(! property_exists($sub, 'price')) {
-                                        continue;
+                            <?php 
+                                // -----------------------------------------------------------
+                                // 1. 견적가 (Estimate Price)
+                                // -----------------------------------------------------------
+                                $estimate_val = 0;
+                                if(isset($row->product_each_price) && $row->product_each_price) {
+                                    $estimate_val = (int) str_replace(',', '', $row->product_each_price);
+                                }
+
+                                // -----------------------------------------------------------
+                                // 2. 상품 기본가 (Base Price)
+                                // -----------------------------------------------------------
+                                // 화면 로직($row->price)과 맞추기 위해 사용
+                                $productBasePrice = isset($row->price) ? (int) str_replace(',', '', $row->price) : 0;
+
+                                // 가격 비공개 여부 체크 (기존 로직 유지)
+                                if( $row->is_price_open == 0 ) {
+                                    $is_any_price_hide = true;
+                                }
+
+                                // -----------------------------------------------------------
+                                // 3. 옵션 가격 계산 ($_each_price) 및 옵션 유무 확인 ($hasOption)
+                                // -----------------------------------------------------------
+                                $_each_price = 0;
+                                $hasOption = false;
+
+                                if(isset($row->product_option_json) && $row->product_option_json != '[]') {
+                                    $arr = json_decode($row->product_option_json);
+                                    if (!empty($arr) && (is_array($arr) || is_object($arr))) {
+                                        $hasOption = true;
+                                        foreach($arr as $item2) {
+                                            if (!isset($item2->optionValue)) continue;
+                                            foreach($item2->optionValue as $sub) {
+                                                if(!property_exists($sub, 'price')) continue;
+                                                
+                                                $cnt = (property_exists($sub, 'count') && $sub->count != null) ? $sub->count : 1;
+                                                $_each_price += (intval($sub->price) * $cnt);
+                                            }
+                                        }
                                     }
-                                    $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
-                                    ?>
-                                    @endforeach
-                                @endforeach
-                                <?
-                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
-                                    $lists[0]->is_price_open = 0;
-                                    $lists[0]->price_text = $row->price_text;
-                                } else{
-                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
-                                    $row->price = $row->price == null || !is_numeric($row->price) ? 0 : $row->price;
-					
-                                    $lists[0]->product_total_price += $row->price + $_each_price;
                                 }
-                                ?>
-                            @else
-                                <?
-                                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
-                                    $lists[0]->is_price_open = 0;
-                                    $lists[0]->price_text = $row->price_text;
+
+                                // -----------------------------------------------------------
+                                // 4. 최종 합계($grand_total) 누적 - 사용자 요청 반영
+                                // -----------------------------------------------------------
+                                
+                                // [A] 견적가가 있으면 무조건 더함 (기존 로직 유지 여부 확인 필요, 일단 유지)
+                                // 단, 가격 비공개 상태가 아닐 때만 더하던 기존 로직을 따름
+                                $isPriceHidden = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
+                                
+                                if (!$isPriceHidden) {
+                                    $grand_total += $estimate_val;
+                                }
+
+                                // [B] 상품 가격(단가+옵션) 계산 및 누적
+                                if ($hasOption) {
+                                    // [옵션 있음]
+                                    if ($row->is_price_open == 0) { // 화면에 텍스트(업체문의)가 뜨는 경우
+                                        // -> 옵션 가격($_each_price)만 합산
+                                        $grand_total += $_each_price;
+                                    } else { // 화면에 숫자(가격+옵션)가 뜨는 경우
+                                        // -> (상품기본가 + 옵션가격) * 수량 합산
+                                        // 주의: 주문서는 '수량'($row->product_count)을 곱해야 정확한 총액이 나옵니다.
+                                        $grand_total += $productBasePrice + $_each_price;
+                                    }
                                 } else {
-                                    $lists[0]->product_total_price = $lists[0]->product_total_price == null || !is_numeric($lists[0]->product_total_price) ? 0 : $lists[0]->product_total_price;
-                                    $lists[0]->product_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
+                                    // [옵션 없음] 기존 로직 유지
+                                    // (상품기본가 * 수량) 합산
+                                    // 단, 가격 비공개일 때는 0원 처리되도록 로직 구성
+                                    if ($row->is_price_open != 0) {
+                                        $grand_total += $productBasePrice * $row->product_count;
+                                    }
                                 }
-                                ?>
-                            @endif
+                            ?>
                         @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $lists[0]->is_price_open == 0 ? $lists[0]->price_text : number_format($lists[0]->product_total_price, 0) }}</div>
+                                <div>{{ $is_any_price_hide ? '업체 문의' : number_format($grand_total, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>
@@ -202,7 +246,7 @@
                                         <div class="prod_option">
                                             <div class="name">가격</div>
                                             <div class="total_price">
-                                                @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                @if( $row->is_price_open == 0 ? 1 : 0 )
                                                     {{ $row->price_text }}
                                                 @else
                                                     {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
@@ -216,7 +260,7 @@
                                         </div>
                                         <div class="prod_option">
                                             <div class="name">단가</div>
-                                            <div>{{ $row->product_total_price }}</div>
+                                            <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : $row->price_text) : number_format($row->product_total_price).'원' }}</div>
                                         </div>
                                     @endif
                                     <div class="prod_option">

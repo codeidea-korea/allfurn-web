@@ -283,7 +283,7 @@
             <!--
                 <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
              -->
-            <button class="close_btn" type="button" onclick="checkOrder()">주문 보류</button>
+            <button class="close_btn" type="button" onclick="modalClose('#check_estimate-modal')">주문 보류</button>
              <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/img/icon/arrow-right.svg" alt=""></button>
             </div>
         </div>
@@ -703,7 +703,18 @@
         }
     });
 
-    const insertOrder = () => {
+   const insertOrder = () => {
+        
+        let checkedIds = [];
+        $('.item_selector:checked').each(function() {
+            checkedIds.push($(this).data('code'));
+        });
+
+        if (checkedIds.length === 0) {
+            alert('주문할 상품을 선택해주세요.');
+            return;
+        }
+
         if(confirm('이대로 주문하시겠습니까?')) {
 
             fetch('/estimate/insertOrder', {
@@ -713,7 +724,8 @@
                     'X-CSRF-TOKEN'  : '{{csrf_token()}}'
                 },
                 body    : JSON.stringify({
-                    estimate_group_code: estimate_data[0].estimate_group_code
+                    estimate_group_code: estimate_data[0].estimate_group_code,
+                    select_idx: checkedIds
                 })
             }).then(response => {
                 return response.json();
@@ -729,6 +741,9 @@
                     $('.response_order_detail:not(button)').attr('href', '/mypage/order/detail?orderGroupCode=' + $('.order_group_code').first().text() + '&type=P');
 
                     $('.response_order_prod_list').html('');
+
+        
+
                     for(var i = 0; i < $('input[name="product_count[]"]').length; i++) {
                         $('.response_order_prod_list').append(
                             `<div class="p-4 flex items-center">

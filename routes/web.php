@@ -419,3 +419,42 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
     Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
 
 });
+
+
+//ai 사진합성기능
+Route::prefix('ai-allfurn')->name('ai.allfurn.')->group(function(){
+
+    // 1. 메인 페이지 (이미지 업로드 화면)
+    // URL: /ai-allfurn
+    Route::get('/', [AiAllFurnController::class, 'index'])->name('index');
+
+    // 2. 생성 요청 (비동기 Job 실행 -> job_id 또는 task_id 반환)
+    // URL: /ai-allfurn/generate
+    Route::post('/generate', [AiAllFurnController::class, 'generate'])->name('generate');
+
+    // 3. 처리 상태 및 결과 조회 (AJAX 폴링용)
+    // 기획서의 6-2 항목 구현을 위해 필요합니다.
+    // URL: /ai-allfurn/status/{taskId}
+    Route::get('/status/{taskId}', [AiAllFurnController::class, 'checkStatus'])->name('status');
+
+});
+
+Route::prefix('ai-allfurn')->name('ai_allfurn.')->group(function(){
+
+    // 메인 화면 (이미지 업로드 폼)
+    // URL: domain.com/ai-allfurn
+    // Route Name: ai_allfurn.index
+    Route::get('/', 'AiAllFurnController@index')->name('index');
+
+    // 이미지 생성 요청 (AJAX 또는 Form Submit)
+    // URL: domain.com/ai-allfurn/generate
+    // Route Name: ai_allfurn.generate
+    Route::post('/generate', 'AiAllFurnController@generate')->name('generate');
+
+    // [중요] 처리 상태 조회 (기획서 6-2 반영)
+    // 작업이 오래 걸릴 경우(Queue 사용 시), 프론트엔드에서 주기적으로 호출할 주소입니다.
+    // URL: domain.com/ai-allfurn/status/{taskId}
+    // Route Name: ai_allfurn.status
+    Route::get('/status/{taskId}', 'AiAllFurnController@checkStatus')->name('status');
+
+});
