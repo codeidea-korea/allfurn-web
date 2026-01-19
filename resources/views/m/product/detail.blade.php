@@ -1103,63 +1103,93 @@
 
         $(document).off()
             .on('click', '#orderProductList .plus', function(e) {
-                e.preventDefault();
+                    e.preventDefault();
+                    var price = $(this).data('price');
+                    var cnt = parseInt( $(this).prev('input').val() ) + 1;
 
-                var price = $(this).data('price');
-                var cnt = parseInt( $(this).prev('input').val() ) + 1;
+                    console.log( cnt );
 
-                console.log( cnt );
-
-                var tot_price = 0;
-                if( cnt > 0 ) {
-                    $(this).prev('input').val( cnt );
+                    var tot_price = 0;
+                    if( cnt > 0 ) {
+                        $(this).prev('input').val( cnt );
                     
-                    const options = $(this).parent().parent().parent().parent().find('.option_item');
-                    tot_price = $(options[0]).data('itemPrice');
-                    for (let index = 0; index < options.length; index++) {
-                        const option = options[index];
-                        var eachPrice = $(option).data('price');
-                        var eachCount = $(option).find('input').val();
+                        const options = $(this).parent().parent().parent().parent().find('.option_item');
+                        
+                        /*tot_price = $(options[0]).data('itemPrice');
+                        for (let index = 0; index < options.length; index++) {
+                            const option = options[index];
+                            var eachPrice = $(option).data('price');
+                            var eachCount = $(option).find('input').val();
 
-                        tot_price += eachPrice * eachCount;
+                            tot_price += eachPrice * eachCount;
+                        }*/
+
+                        if (options.length > 0) {
+                            // [수정 2] data-itemPrice가 없을 경우를 대비해 기본값 0 처리 또는 올바른 속성(data-price 등) 참조
+                            tot_price = $(options[0]).data('itemPrice') || 0; 
+
+                            for (let index = 0; index < options.length; index++) {
+                                const option = options[index];
+                                var eachPrice = $(option).data('price') || 0; // data-price가 없을 경우 대비
+                                var eachCount = $(option).find('input').val();
+                                tot_price += eachPrice * eachCount;
+                            }
+                        } else {
+                            // 옵션이 없는 경우, 기본 price를 tot_price로 설정하거나 로직에 맞게 수정
+                            tot_price = price * cnt; 
+                        }
+
+                        if( price > 0 ) {
+                            // [수정 3] tot_price가 숫자인지 확인 후 출력
+                            var displayPrice = (typeof tot_price === 'number') ? tot_price : 0;
+                            $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                            $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                        }
+                    }
+                })
+                .on('click', '#orderProductList .minus', function(e) {
+                    e.preventDefault();
+                    var price = $(this).data('price');
+                    // [중요] minus 버튼은 input 바로 앞에 있으므로 next()를 사용합니다.
+                    var cnt = parseInt( $(this).next('input').val() ) - 1; 
+
+                    if(cnt < 1) {
+                        return;
                     }
 
-                    if( price > 0 ) {
-                        $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
-                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
-                    }
-                }
-            })
-            .on('click', '#orderProductList .minus', function(e) {
-                e.preventDefault();
-                var price = $(this).data('price');
-                var cnt = parseInt( $(this).next('input').val() ) - 1;
-                if(cnt < 1) {
-                    return;
-                }
+                    console.log( cnt );
 
-                console.log( cnt );
-
-                var tot_price = 0;
-                if( cnt > 0 ) {
-                    $(this).next('input').val( cnt );
+                    var tot_price = 0;
+                    if( cnt > 0 ) {
+                        $(this).next('input').val( cnt ); // 변경된 수량 적용
                     
-                    const options = $(this).parent().parent().parent().parent().find('.option_item');
-                    tot_price = $(options[0]).data('itemPrice');
-                    for (let index = 0; index < options.length; index++) {
-                        const option = options[index];
-                        var eachPrice = $(option).data('price');
-                        var eachCount = $(option).find('input').val();
+                        const options = $(this).parent().parent().parent().parent().find('.option_item');
 
-                        tot_price += eachPrice * eachCount;
-                    }
+                        if (options.length > 0) {
+                            // [옵션이 있는 경우]
+                            // data-itemPrice가 없거나 undefined일 경우 0으로 처리
+                            tot_price = $(options[0]).data('itemPrice') || 0; 
 
-                    if( price > 0 ) {
-                        $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
-                        $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(tot_price.toLocaleString() + '원');
+                            for (let index = 0; index < options.length; index++) {
+                                const option = options[index];
+                                var eachPrice = $(option).data('price') || 0; // data-price 안전 처리
+                                var eachCount = $(option).find('input').val();
+                                tot_price += eachPrice * eachCount;
+                            }
+                        } else {
+                            // [옵션이 없는 경우] 기본 가격 * 수량
+                            tot_price = price * cnt; 
+                        }
+
+                        if( price > 0 ) {
+                            // [출력] tot_price가 숫자인지 확인 후 출력 (오류 방지)
+                            var displayPrice = (typeof tot_price === 'number') ? tot_price : 0;
+                            
+                            $(this).parent().parent().parent().parent().parent().find('.prod_option').find('.sub_tot_price').text(displayPrice.toLocaleString() + '원');
+                            $(this).closest('.prod_option').next('.prod_option').find('.sub_tot_price').text(displayPrice.toLocaleString() + '원');
+                        }
                     }
-                }
-            })
+                })
             .on('input', '#request_memo', function() {
                 let inputText = $(this).val();
 
