@@ -169,7 +169,7 @@ function unCheckedMyAllFurn()
 }
 
 // 마이올펀 : 요청받은 견적 수
-function countUnCheckedMyAllFurn()
+/*function countUnCheckedMyAllFurn()
 {
     if (auth()->check()){
         $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
@@ -190,6 +190,28 @@ function countUnCheckedMyAllFurn()
 
         $estimate = Illuminate\Support\Facades\DB::select($sql);
         $total = $estimate[0]->count_res_n;
+
+        return $total;
+    }else{
+        return 0;
+    }
+}*/
+
+function countUnCheckedMyAllFurn()
+{
+    if (auth()->check()){
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
+
+        $sql = "SELECT 
+                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." 
+                AND response_company_type = '".$user->type."' 
+                AND estimate_state IN ('N', 'R', 'O', 'F')) 
+                AS count_res_total
+            FROM DUAL";
+
+        $estimate = Illuminate\Support\Facades\DB::select($sql);
+        $total = $estimate[0]->count_res_total;
 
         return $total;
     }else{

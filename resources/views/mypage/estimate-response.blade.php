@@ -155,7 +155,7 @@
         </div>
 
         <div class="modal_footer">
-            <button class="close_btn" onclick="modalClose('#request_confirm_write-modal')">견적보류 닫기</button>
+            <button class="close_btn" onclick="checkOrder()">견적보류 닫기</button>
             <button type="button" onClick="updateResponse();">견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
@@ -668,6 +668,31 @@
                     if( res.result === 'success' ) {
                         console.log( res );
                         alert('저장 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert(res.message);
+                    }
+                }, error: function (e) {
+
+                }
+            });
+        }
+        function checkOrder (){
+            modalClose('#check_estimate-modal');
+            $.ajax({
+                url: '/estimate/checkOrder',
+                type: 'put',
+                data: {
+                    'estimate_group_code'   : estimate_group_code
+                },
+                dataType: 'JSON',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+                },
+                success: function (res) {
+                    if( res.result === 'success' ) {
+                        console.log( res );
+                        alert('확인 되었습니다.');
                         location.reload();
                     } else {
                         alert(res.message);
