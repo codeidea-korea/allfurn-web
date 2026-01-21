@@ -656,6 +656,36 @@ class EstimateService {
         }
     }
 
+    public function holdOrderCheck(array $params) {
+        $estimate = Estimate::find($params['estimate_idx']);
+
+        // 1. 상태를 'F'(견적보류)로 강제 설정
+        $estimate -> estimate_state = 'F';
+
+        // 2. 나머지 데이터 업데이트 (updateResponse와 동일하게 입력한 값 저장)
+        $estimate -> estimate_total_price = $params['response_estimate_estimate_total_price'];
+        $estimate -> response_company_name = $params['response_estimate_res_company_name'];
+        $estimate -> response_business_license_number = $params['response_estimate_res_business_license_number'];
+        $estimate -> response_phone_number = $params['response_estimate_res_phone_number'];
+        $estimate -> response_address1 = $params['response_estimate_res_address1'];
+        $estimate -> response_account = $params['response_estimate_account1'].' '.$params['response_estimate_response_account2'];
+        $estimate -> response_memo = $params['response_estimate_res_memo'];
+        $estimate -> response_time = $params['response_estimate_res_time'];
+        $estimate -> expiration_date = $params['expiration_date'];
+        $estimate -> product_each_price = $params['response_estimate_product_each_price'];
+        $estimate -> product_delivery_info = $params['response_estimate_product_delivery_info'];
+        $estimate -> product_option_price = $params['response_estimate_product_option_price'];
+        $estimate -> product_delivery_price = $params['response_estimate_product_delivery_price'];
+        $estimate -> product_total_price = $params['response_estimate_product_total_price'];
+        $estimate -> product_memo = (array_key_exists('product_memo', $params) ? $params['product_memo'] : $params['response_estimate_product_memo']);
+
+        $estimate -> save();
+
+        // 3. 알림 전송 로직은 제거함 (보류 상태이므로)
+
+        return $estimate -> idx;
+    }
+
     public function insertRequestProduct(array $param)
     {
         if( empty( $param ) ) return false;

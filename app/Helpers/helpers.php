@@ -203,7 +203,7 @@ function countUnCheckedMyAllFurn()
         $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
 
         $sql = "SELECT 
-                (SELECT COUNT(DISTINCT(estimate_group_code)) FROM AF_estimate 
+                (SELECT COUNT(DISTINCT estimate_group_code, estimate_state) FROM AF_estimate 
                 WHERE response_company_idx = ".$user->company_idx." 
                 AND response_company_type = '".$user->type."' 
                 AND estimate_state IN ('N', 'R', 'O', 'F')) 

@@ -140,6 +140,7 @@ Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::put('/holdEstimate', 'EstimateController@holdEstimate');
     Route::post('/insertOrder', 'EstimateController@insertOrder');
     Route::put('/checkOrder', 'EstimateController@checkOrder');
+    Route::post('/holdOrderCheck', 'EstimateController@holdOrderCheck');
 
     Route::post('/companyList', 'EstimateController@getCompanyList');
     Route::post('/updateResponseMulti', 'EstimateController@updateResponseMulti');

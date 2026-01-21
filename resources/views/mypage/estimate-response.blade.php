@@ -155,7 +155,7 @@
         </div>
 
         <div class="modal_footer">
-            <button class="close_btn" onclick="checkOrder()">견적보류 닫기</button>
+            <button class="close_btn" onclick="holdOrderCheck()">견적보류 닫기</button>
             <button type="button" onClick="updateResponse();">견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
         </div>
     </div>
@@ -432,6 +432,157 @@
         }).then(json => {
             
         });*/
+    }
+
+    const holdOrderCheck = () => {
+        let products = [];
+        let sum_price = 0;
+        let is_not_all_set = false;
+
+        $('.fold_area .prod_info').each(function (index) {
+            let product_price = 0;
+            var response_estimate_product_option_price = 0;
+            
+            // 옵션 가격 계산
+            var options = $($('div .prod_info')[index]).find('.option_item').find('.price');
+            if(options) {
+                for (let idx = 0; idx < options.length; idx++) {
+                    const option = options[idx];
+                    response_estimate_product_option_price += Number(option.innerText.replace(/,/g, '')); // 콤마 제거 안전장치 추가
+                }
+            }
+
+            products.push({
+                estimate_idx: $('div .prod_info').find('input[name=idx]')[index].value,
+                estimate_code: estimate_code,
+                estimate_group_code: estimate_group_code,
+                response_company_type: response_company_type,
+                
+                // *** 핵심 변경 사항: 견적 상태를 F로 설정 ***
+                estimate_state: 'F', 
+
+                product_idx: estimate_data.lists[index].product_idx,
+                product_count: estimate_data.lists[index].product_count,
+                name: estimate_data.lists[index].name,
+                product_total_price: estimate_data.lists[index].price,
+                response_estimate_estimate_total_price: 0,
+                memo: estimate_data.lists[index].request_memo,
+
+                address1: estimate_data.lists[index].request_address1,
+                phone_number: estimate_data.lists[index].request_phone_number,
+                register_time: estimate_data.lists[index].request_time,
+                response_estimate_req_user_idx: estimate_data.lists[index].request_company_idx,
+
+                response_estimate_res_company_name: '{{ $user -> company_name }}',
+                response_estimate_res_business_license_number: '{{ $user -> business_license_number }}',
+                response_estimate_res_phone_number: '{{ $user -> phone_number }}',
+                response_estimate_res_address1: estimate_data.lists[index].product_address || '',
+                response_estimate_account1: "",
+                response_estimate_response_account2: "",
+                response_estimate_res_memo: "", 
+                response_estimate_res_time: getToday(0),
+                expiration_date: getToday(15),
+                response_estimate_product_each_price: Number($('input[name=product_each_price]')[index].value),
+                response_estimate_product_delivery_info: $('#delivery_type').text(),
+                response_estimate_product_option_price: response_estimate_product_option_price,
+                response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
+                
+                // 화면에 계산된 합계 금액 가져오기
+                response_estimate_product_total_price: Number($('.fold_area .prod_info').eq(index).find('.calc_base_price').val()) || 0,
+                product_memo: estimate_data.lists[index].product_memo || '',
+                response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
+            });
+
+            // 입력값 바인딩
+            $(this).find('input').each(function (idx, item) {
+                let i_name = $(item).attr('name');
+                let i_val = '';
+                if(i_name == 'price'){
+                    i_val = parseInt($(item).val());
+                    if(isNaN(i_val)){
+                        product_price = 0;
+                        i_val = 0;
+                    }else{
+                        product_price = i_val;
+                    }
+                    if(i_val < 1) {
+                        is_not_all_set = true;
+                    }
+                    products[index][i_name] = i_val;
+                }else{
+                    i_val = $(item).val();
+                    products[index][i_name] = i_val;
+                }
+            });
+            
+            // 배송비 및 계좌 정보 처리
+            products[index]['product_delivery_info_temp'] = $('#delivery_type').text();
+            
+            var delivery_price = 0;
+            if($('#delivery_type').text() == '착불'){
+                delivery_price = $('#delivery_price').val()
+                if(delivery_price == ''){
+                    delivery_price = 0;
+                }
+            }else{
+                delivery_price = 0
+            }
+            products[index]['product_delivery_price_temp'] = delivery_price;
+            
+            if($('#bank_type').text() != '은행선택'){
+                products[index]['response_estimate_account1'] = $('#bank_type').text();
+                products[index]['response_estimate_response_account2'] = $('#account_number').val();
+            }else {
+                products[index]['response_estimate_account1'] = "";
+                products[index]['response_estimate_response_account2'] = "";
+            }
+            products[index]['request_memo'] = $('#etc_memo').val();
+            products[index]['response_memo'] = $('#response_memo').val();
+            products[index]['response_estimate_res_memo'] = $('#response_memo').val();
+            
+            sum_price += product_price;
+        });
+
+        // "견적보류" 시에도 가격 0원 체크를 할 것인지 여부는 정책에 따라 결정 (현재는 유지)
+        if(is_not_all_set) {
+            alert('견적가가 0원인 상품이 있어 처리를 완료할 수 없습니다.');
+            return;
+        }
+
+        // 전체 합계 재계산
+        sum_price = 0;
+        $('.fold_area .prod_info').each(function (index) {
+            sum_price += Number(estimate_data.lists[index].product_total_price);
+        });
+        $('.fold_area .prod_info').each(function (index) {
+            products[index]['response_estimate_estimate_total_price'] = sum_price;
+        });
+        
+        // AJAX 요청 (updateResponse와 동일한 엔드포인트 사용)
+        $.ajax({
+            url: '/estimate/holdOrderCheck',
+            type: 'post',
+            processData: false,
+            contentType: 'application/json',
+            data: JSON.stringify(products),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'));
+            },
+            success: function (res) {
+                if (res.success) {
+                    $('#loadingContainer').hide();
+                    alert('견적 보류 처리가 완료되었습니다.'); // 메시지 변경
+                    location.reload(); 
+                } else {
+                    $('#loadingContainer').hide();
+                    alert('일시적인 오류로 처리되지 않았습니다.');
+                    return false;
+                }
+            }, error: function (xhr, status, error) {
+                console.error("오류 발생: ", status, error);
+                alert("문제가 발생했습니다. 다시 시도해 주세요.");
+            }
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function(){
