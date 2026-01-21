@@ -595,12 +595,8 @@ $(document).ready(function(){
 
 @if(isset($replaceUrl) && $replaceUrl != '')
 $(window).on('load', function () {
-    
-    if (history.replaceState) {
-        var cleanUrl = location.protocol + "//" + location.host + location.pathname; // 쿼리스트링 제거한 URL
-        window.history.replaceState({path: cleanUrl}, '', cleanUrl);
-    }
 
+    // 리다이렉트 실행
     setTimeout(() => {
         location.href="{{ $replaceUrl ?? '/main' }}";        
     }, 1100);
