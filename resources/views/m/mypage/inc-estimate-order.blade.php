@@ -22,9 +22,13 @@
                         <?php 
                             $grand_total = 0; 
                             $is_any_price_hide = false;
+                            $checked_count = 0;
                         ?>
                         @foreach( $lists AS $key => $row )
                             <?php 
+                                if (isset($row->estimate_check) && $row->estimate_check != 'Y') {
+                                    continue;
+                                }
                                 // -----------------------------------------------------------
                                 // 1. 견적가 (Estimate Price)
                                 // -----------------------------------------------------------
@@ -209,6 +213,7 @@
                         </div>
                         <div class="py-7">
                             @foreach( $lists AS $key => $row )
+                            @if(isset($row->estimate_check) && $row->estimate_check == 'Y')
                             <div class="prod_info">
                                 <div class="img_box">
                                     <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
@@ -274,6 +279,7 @@
                                 </div>
                             </div>
                             <hr>
+                            @endif
                             @endforeach
                         </div>
                     </div>
