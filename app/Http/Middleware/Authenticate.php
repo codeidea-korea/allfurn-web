@@ -44,9 +44,10 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
     	if (! $request->expectsJson()) {
-    
-    		$replaceUrl = urlencode($request->fullUrl());
-    
+
+            $fullUri = $request->fullUrl();
+            $replaceUrl = ($fullUri);
+        
     		// 모바일 UA 체크
     		$ua = $request->userAgent() ?? '';
     		$isMobile = preg_match('/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i', $ua);

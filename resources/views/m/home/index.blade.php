@@ -589,7 +589,18 @@ $(document).ready(function(){
     if(cookiedata.indexOf("mainEventPopupClose=Y")<0){
         modalOpen("#main-event");
     }
+  
 });
+
+
+@if(isset($replaceUrl) && $replaceUrl != '')
+$(window).on('load', function () {
+    setTimeout(() => {
+        location.href="{{ $replaceUrl ?? '/main' }}";        
+    }, 1100);
+});
+@endif
+
 </script>
 
 

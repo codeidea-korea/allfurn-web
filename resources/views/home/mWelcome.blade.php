@@ -237,17 +237,22 @@ function checkMobile(){
                     'accessToken': accessToken
                 })
             }).then(result => {
+
                 return result.json();
             }).then(result => {
                 const pendingTime = new Date().getTime() - callTime;
 
                 if (result.success) {                    
                     if(pendingTime > 1100) {
-                        location.href = '/';
+                        document.querySelector('.splash').classList.remove('splash');
+                        location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                        //location.href = '/';
 //                        $('.splash').removeClass('splash');
                     } else {
                         setTimeout(() => {
-                        location.href = '/';
+                            document.querySelector('.splash').classList.remove('splash');
+                            location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                            //location.href = '/';
 //                            $('.splash').removeClass('splash');
                         }, (1100 - pendingTime));
                     }
@@ -263,7 +268,10 @@ function checkMobile(){
                     }
 //                    alert(result.msg);
                 }
-            })
+            });
+            
+                
+                
         } else {
             setTimeout(() => {
                 document.querySelector('.splash').classList.remove('splash');
