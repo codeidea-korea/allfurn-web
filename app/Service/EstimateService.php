@@ -318,7 +318,7 @@ class EstimateService {
                 $real_total_price += $list[$i]['response_estimate_estimate_total_price'];
 
             } else {
-                
+                $estimate-> estimate_state = 'F';
                 $estimate-> estimate_check = 'N';
                 $estimate->save(); 
                 continue; 
