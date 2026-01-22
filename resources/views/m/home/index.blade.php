@@ -595,7 +595,6 @@ $(document).ready(function(){
 
 @if(isset($replaceUrl) && $replaceUrl != '')
 $(window).on('load', function () {
-
     // 리다이렉트 실행
     setTimeout(() => {
         location.href="{{ $replaceUrl ?? '/main' }}";        
