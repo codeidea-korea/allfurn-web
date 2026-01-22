@@ -257,6 +257,19 @@
 
   -->
 <script>
+    const prod2 = (item) => {
+        // item은 클릭된 체크박스(input)
+        const label = $(item).next('label'); // 바로 뒤의 label 찾기
+
+        if($(item).prop('checked')){
+            // 체크된 상태 -> '취소'
+            label.text('취소');
+        } else {
+            // 체크 해제된 상태 -> '추가'
+            label.text('추가');
+        }
+    }
+
     function updateEstimateInfo(obj){
         let count = 0;
         let total = 0;
@@ -290,6 +303,26 @@
 
     }
 
+    $(document).ready(function(){
+        // 1. 페이지 로드 시, 이미 체크되어 있는 항목들의 텍스트(추가->취소) 변경
+        $('.item_selector:checked').each(function(){
+            prod2(this);
+        });
+
+        // 2. 체크박스 클릭 시 prod2 함수 실행 (jQuery 이벤트 연결)
+        // HTML의 onclick="updateEstimateInfo(this)"와 별개로 동작하므로
+        // HTML에서는 prod2(this)를 지우셔도 됩니다.
+        $(document).on('click', '.item_selector', function(){
+            prod2(this);
+        });
+
+        // 3. 모달 로드 직후 첫 계산 실행
+        // (updateEstimateInfo는 obj 인자가 없어도 동작하도록 작성되어 있으므로 안전합니다)
+        setTimeout(function() {
+            updateEstimateInfo(null);
+        }, 100);
+    });
+
     // 모달 로드 직후 첫 계산 실행
-    setTimeout(updateEstimateInfo, 100);
+    //setTimeout(updateEstimateInfo, 100);
 </script>
