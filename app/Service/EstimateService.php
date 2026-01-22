@@ -449,7 +449,7 @@ class EstimateService {
         ];
     }
 
-    public function checkOrder(array $params): array {
+    /*public function checkOrder(array $params): array {
         $sql = "SELECT * FROM AF_estimate WHERE estimate_group_code = '".$params['estimate_group_code']."'";
         $estimate = DB::select($sql);
 
@@ -483,6 +483,86 @@ class EstimateService {
         return [
             'result'    => 'success',
             'message'   => ''
+        ];
+    }*/
+    public function checkOrder(array $params): array {
+        // 1. 해당 그룹 코드의 모든 견적 조회
+        // (SQL Injection 방지를 위해 바인딩이나 Query Builder 사용 권장)
+        $estimates = DB::table('AF_estimate')
+            ->where('estimate_group_code', $params['estimate_group_code'])
+            ->get();
+
+        // 2. View에서 넘어온 선택된 코드 배열 (select_idx)
+        $selected_code = isset($params['select_idx']) ? $params['select_idx'] : [];
+
+        // 유효한 견적서가 없으면 리턴
+        if ($estimates->isEmpty()) {
+            return [
+                'result'  => 'fail',
+                'message' => '존재하지 않는 견적입니다.'
+            ];
+        }
+
+        $hasConfirmedItem = false; // 'F'로 변경된 항목이 있는지 확인하는 플래그
+
+        // 3. 개별 상품 순회 및 상태 업데이트
+        foreach ($estimates as $estimate) {
+            if (in_array($estimate->estimate_code, $selected_code)) {
+                // [선택됨] -> 상태를 'F'로 변경
+                DB::table('AF_estimate')
+                    ->where('idx', $estimate->idx)
+                    ->update(['estimate_state' => 'F']);
+                
+                $hasConfirmedItem = true;
+            } else {
+                // [선택안됨] -> 상태를 'T'로 변경 (또는 삭제)
+                
+                // 방법 A: 상태값만 'T'로 변경할 경우
+                /*DB::table('AF_estimate')
+                    ->where('idx', $estimate->idx)
+                    ->update(['estimate_state' => 'T']);*/
+
+                // 방법 B: 아예 삭제할 경우 (원하시면 위 코드 대신 아래 주석을 사용하세요)
+                DB::table('AF_estimate')->where('idx', $estimate->idx)->delete();
+            }
+        }
+
+        // 4. 알림 발송 (하나라도 'F'상태로 확정된 경우에만 발송)
+        if ($hasConfirmedItem) {
+            // 첫 번째 견적 정보를 기준으로 구매자/판매자 정보 조회 (그룹이 같으므로 동일)
+            $firstEst = $estimates[0];
+
+            $sql = "SELECT * FROM AF_user 
+                    WHERE type = '".$firstEst->request_company_type."' 
+                    AND company_idx = ".$firstEst->request_company_idx." 
+                    AND parent_idx = 0";
+            $user = DB::select($sql);
+
+            if (count($user) > 0) {
+                $this->pushService->sendPush(
+                    '발주서 확인 알림', 
+                    '('.$firstEst->response_company_name.') 님이 요청하신 발주서를 확인했습니다.',
+                    $user[0]->idx, 
+                    5, 
+                    env('APP_URL').'/mypage/requestEstimate'
+                );
+
+                $this->pushService->sendKakaoAlimtalk(
+                    'TS_5426', 
+                    '[발주서 확인 알림]',
+                    [ 
+                        '회사명' => $firstEst->response_company_name,
+                        '발주서링크' => env('APP_URL2').'/mypage/requestEstimate'
+                    ],
+                    $user[0]->phone_number, 
+                    null
+                );
+            }
+        }
+
+        return [
+            'result'  => 'success',
+            'message' => ''
         ];
     }
 
