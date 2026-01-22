@@ -92,7 +92,7 @@
                                     } else { // 화면에 숫자(가격+옵션)가 뜨는 경우
                                         // -> (상품기본가 + 옵션가격) * 수량 합산
                                         // 주의: 주문서는 '수량'($row->product_count)을 곱해야 정확한 총액이 나옵니다.
-                                        $grand_total += $productBasePrice + $_each_price;
+                                        $grand_total += $productBasePrice + $_each_price + $estimate_val;;
                                     }
                                 } else {
                                     // [옵션 없음] 기존 로직 유지
