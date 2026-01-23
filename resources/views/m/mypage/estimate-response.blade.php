@@ -26,15 +26,15 @@
                     <p class="text-sm">요청받은 견적</p>
                     <p class="text-sm main_color font-bold">{{ $info[0] -> count_res_n }}</p>
                 </a>
-                <a href="/mypage/responseEstimate?statun=R" class="flex gap-5 justify-center items-center flex-1">
+                <a href="/mypage/responseEstimate?status=R" class="flex gap-5 justify-center items-center flex-1">
                     <p class="text-sm">보낸 견적</p>
                     <p class="text-sm font-bold">{{ $info[0] -> count_res_r }}</p>
                 </a>
-                <a href="/mypage/responseEstimate?statun=O" class="flex gap-5 justify-center items-center flex-1">
+                <a href="/mypage/responseEstimate?status=O" class="flex gap-5 justify-center items-center flex-1">
                     <p class="text-sm">주문서 수</p>
                     <p class="text-sm main_color font-bold">{{ $info[0] -> count_res_o }}</p>
                 </a>
-                <a href="/mypage/responseEstimate?statun=F" class="flex gap-5 justify-center items-center flex-1">
+                <a href="/mypage/responseEstimate?status=F" class="flex gap-5 justify-center items-center flex-1">
                     <p class="text-sm">확인/완료</p>
                     <p class="text-sm font-bold">{{ $info[0] -> count_res_f }}</p>
                 </a>
