@@ -1110,12 +1110,26 @@ var response_estimate_estimate_total_price = 0;
     };
 
         function checkOrder (){
+
+            // 1. 체크된 항목 수집 (insertOrder와 동일한 로직)
+            let checkedIds = [];
+            $('.item_selector:checked').each(function() {
+                checkedIds.push($(this).data('code'));
+            });
+
+            // (선택사항) 아무것도 선택하지 않았을 때 알림
+            if (checkedIds.length === 0) {
+                alert('확인할 상품을 선택해주세요.');
+                return;
+            }
+
             modalClose('#check_estimate-modal');
             $.ajax({
                 url: '/estimate/checkOrder',
                 type: 'put',
                 data: {
-                    'estimate_group_code'   : estimate_group_code
+                    'estimate_group_code'   : estimate_group_code,
+                    'select_idx'          : checkedIds
                 },
                 dataType: 'JSON',
                 beforeSend: function (xhr) {
