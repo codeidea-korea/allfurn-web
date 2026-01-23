@@ -429,7 +429,7 @@
                 delete bodies['offset'];
             }
 
-            location.href = '/mypage/requestEstimate?' + new URLSearchParams(bodies);
+            location.href = '/mypage/responseEstimate?' + new URLSearchParams(bodies);
         }
 
         const moveToEstimatePage = page => {
@@ -441,7 +441,7 @@
             if (urlSearch.get('estimateDate'))     bodies.estimateDate = urlSearch.get('estimateDate');
             if (urlSearch.get('keyword'))       bodies.keyword = urlSearch.get('keyword');
 
-            location.replace('/mypage/requestEstimate?' + new URLSearchParams(bodies));
+            location.replace('/mypage/responseEstimate?' + new URLSearchParams(bodies));
         }
 
 
