@@ -77,7 +77,7 @@
                                 
                                 // [A] 견적가가 있으면 무조건 더함 (기존 로직 유지 여부 확인 필요, 일단 유지)
                                 // 단, 가격 비공개 상태가 아닐 때만 더하던 기존 로직을 따름
-                                $isPriceHidden = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
+                                $isPriceHidden = ($row->is_price_open == 0);
                                 
                                 if (!$isPriceHidden) {
                                     $grand_total += $estimate_val;
