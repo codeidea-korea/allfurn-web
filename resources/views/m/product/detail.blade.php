@@ -533,7 +533,7 @@
                         <div class="fold_area txt_info active">
                             <div class="target title" onclick="foldToggle(this)">
                                 <p>견적 기본정보</p>
-                                <img class="arrow" src="./img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                             </div>
                             <div>
                                 <div class="txt_desc">
