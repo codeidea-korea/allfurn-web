@@ -107,7 +107,7 @@
                         @elseif ($list -> estimate_state == 'R' || $list -> estimate_state == 'H')
                         <button class="btn outline_primary btn-h-auto check_estimate_detail" data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $response['response_company_type'] }}">견적서 확인</button>
                         @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
-                        <button class="btn outline_primary btn-h-auto check_order_detail" data-code="{{ $list -> estimate_code }}" data-group_code="{{ $list -> estimate_group_code }}" data-state="{{ $list -> estimate_state }}">주문서 확인</button>
+                        <button class="btn outline_primary btn-h-auto check_order_detail" data-code="{{ $list -> estimate_code }}" data-group_code="{{ $list -> estimate_group_code }}" data-state="{{ $list -> estimate_state }}">견적 보류</button>
                         @endif
                     </td>
                 </tr>

@@ -832,6 +832,11 @@ var response_estimate_estimate_total_price = 0;
             const bodies = params;
             const urlSearch = new URLSearchParams(location.search);
 
+            if (urlSearch.get('status') && typeof bodies.status === 'undefined') {
+                bodies.status = urlSearch.get('status');
+            }
+    
+
             if (urlSearch.get('keywordType') && typeof bodies.keywordType === 'undefined') {
                 bodies.keywordType = urlSearch.get('keywordType');
             } else if (bodies.keywordType === '') {
@@ -863,6 +868,7 @@ var response_estimate_estimate_total_price = 0;
             const urlSearch = new URLSearchParams(location.search);
             let bodies = { offset: page };
 
+            if (urlSearch.get('status'))        bodies.status = urlSearch.get('status');
             if (urlSearch.get('keywordType'))        bodies.keywordType = urlSearch.get('keywordType');
             if (urlSearch.get('requestDate'))     bodies.requestDate = urlSearch.get('requestDate');
             if (urlSearch.get('keyword'))       bodies.keyword = urlSearch.get('keyword');

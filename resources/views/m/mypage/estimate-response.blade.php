@@ -101,7 +101,7 @@
                                 data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적서 확인</a>
                             @elseif ($list -> estimate_state == 'O' || $list -> estimate_state == 'F')
                             <a href="javascript:void(0);" class="flex items-center justify-center h-[42px] text-primary border border-primary font-medium w-full rounded-sm check_order_detail"
-                                data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">주문서 확인</a>
+                                data-idx="{{ $list -> estimate_idx }}" data-group_code="{{ $list -> estimate_group_code }}" data-code="{{ $list -> estimate_code }}" data-response_company_type="{{ $list -> company_type }}">견적 보류</a>
                             @endif
                         </div>
                     </li>
@@ -110,15 +110,29 @@
                 @endif
             </div>
         </div>
-        {{-- 
-        <div class="pagenation flex items-center justify-center py-6">
-            <a href="javascript:;" class="active">1</a>
-            <a href="javascriot:;">2</a>
-            <a href="javascriot:;">3</a>
-            <a href="javascriot:;">4</a>
-            <a href="javascriot:;">5</a>
+        <div class="pagenation flex items-center justify-center py-12">
+            @if (($response['pagination'])['prev'] > 0)
+            <button type="button" class="prev" onclick="moveToEstimatePage({{ ($response['pagination'])['prev'] }})">
+                <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 1L1 6L6 11" stroke="#DBDBDB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            @endif
+            @foreach (($response['pagination'])['pages'] as $paginate)
+                @if ($paginate == $response['offset'])
+                <a href="javascript: void(0)" class="active" onclick="moveToEstimatePage({{ $paginate }})">{{ $paginate }}</a>
+                @else
+                <a href="javascript: void(0)" onclick="moveToEstimatePage({{ $paginate }})">{{ $paginate }}</a>
+                @endif
+            @endforeach
+            @if (($response['pagination'])['next'] > 0)
+            <button type="button" class="next" onclick="moveToEstimatePage({{ ($response['pagination'])['next'] }})">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12L10 7L5 2" stroke="#828282" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            @endif
         </div>
-        --}}
     </div>
 
     <!-- 검색 유형 -->
@@ -387,6 +401,10 @@
             const bodies = params;
             const urlSearch = new URLSearchParams(location.search);
 
+            if (urlSearch.get('status') && typeof bodies.status === 'undefined') {
+                bodies.status = urlSearch.get('status');
+            }
+
             if (urlSearch.get('keywordType') && typeof bodies.keywordType === 'undefined') {
                 bodies.keywordType = urlSearch.get('keywordType');
             } else if (bodies.keywordType === '') {
@@ -418,6 +436,7 @@
             const urlSearch = new URLSearchParams(location.search);
             let bodies = { offset: page };
 
+            if (urlSearch.get('status'))        bodies.status = urlSearch.get('status');
             if (urlSearch.get('keywordType'))        bodies.keywordType = urlSearch.get('keywordType');
             if (urlSearch.get('estimateDate'))     bodies.estimateDate = urlSearch.get('estimateDate');
             if (urlSearch.get('keyword'))       bodies.keyword = urlSearch.get('keyword');
