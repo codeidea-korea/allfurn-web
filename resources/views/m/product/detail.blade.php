@@ -1038,7 +1038,7 @@
     $(function(){
         initEventListener();
     });
-        $('.count_box2 .minus').off().on('click', function(){
+        /*$('.count_box2 .minus').off().on('click', function(){
             let num = Number($(this).siblings('input').val());
             if(isNaN(num)) {
                 num = 1;
@@ -1067,6 +1067,47 @@
                 $('._requestEstimateTotalPrice').text("업체 문의");
             } else {
                 $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+            }
+        });*/
+        $('.count_box2 .minus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            if (num !== 1) {
+                $(this).siblings('input').val(`${num - 1}`);
+            }
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+            
+            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("업체 문의");
+            } else {
+                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
+                let unitPrice = Number($('.product_price').data('total_price'));
+                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
+
+                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
+            }
+        });
+
+        $('.count_box2 .plus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            $(this).siblings('input').val(`${num + 1}`);
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+
+            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("업체 문의");
+            } else {
+                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
+                let unitPrice = Number($('.product_price').data('total_price'));
+                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
+                
+                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
             }
         });
     function initEventListener(){
