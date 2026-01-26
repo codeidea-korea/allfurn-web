@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', 'HomeController@index');
+Route::get('/main', 'HomeController@home');
 Route::prefix('home')->group(function() {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/category', 'HomeController@categoryList');
@@ -34,7 +35,6 @@ Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('s
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 Route::get('/signin/choose-emails', 'LoginController@chooseLoginEmails')->name('chooseLoginEmails');
 Route::post('/user/update-grade/{grade}/{idx}', 'MemberController@updateUserByWait');
-//Route::get('/user/update-grade22/{grade}/{idx}', 'MemberController@updateUserByWait');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -56,7 +56,6 @@ Route::post('/allimtalk/send', 'LoginController@asend');
 Route::post('/product-temp/bulk/thumbnail', 'ProductTempController@saveBulkProductImage');
 Route::get('/product-temp/bulk/thumbnail', 'ProductTempController@uploadview');
 
-
 Route::get('/json/wholesaler/{wholesalerIdx}', 'CatalogController@wholesalerInfoJson');
 Route::get('/catalog/{wholesalerIdx}/product/detail/{productIdx}', 'CatalogController@productDetail')->name('.wholesaler.catalogProduct');
 Route::get('/catalog/{wholesalerIdx}', 'CatalogController@catalog')->name('.wholesaler.catalog');
@@ -74,7 +73,7 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 Route::post('checkAlert', 'HomeController@checkAlert');
 
 Route::prefix('/family')->name('family')->group(function() {
-//    Route::get('/', 'HomeController@getAllFamily');
+    Route::get('/', 'HomeController@getAllFamily');
     Route::get('/{idx}', 'HomeController@getFamilyMember');
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
@@ -141,6 +140,7 @@ Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::put('/holdEstimate', 'EstimateController@holdEstimate');
     Route::post('/insertOrder', 'EstimateController@insertOrder');
     Route::put('/checkOrder', 'EstimateController@checkOrder');
+    Route::post('/holdOrderCheck', 'EstimateController@holdOrderCheck');
 
     Route::post('/companyList', 'EstimateController@getCompanyList');
     Route::post('/updateResponseMulti', 'EstimateController@updateResponseMulti');
@@ -410,51 +410,13 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
     Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
 
     Route::get('/apple/callback', 'SocialController@appleCallback')->name('.apple.callback');
-    
+
+
     /**
      * 소셜 로그인 공통
      */
     Route::get('/social', 'SocialController@commonCallback')->name('.social');
 
     Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
-
-});
-
-
-//ai 사진합성기능
-Route::prefix('ai-allfurn')->name('ai.allfurn.')->group(function(){
-
-    // 1. 메인 페이지 (이미지 업로드 화면)
-    // URL: /ai-allfurn
-    Route::get('/', [AiAllFurnController::class, 'index'])->name('index');
-
-    // 2. 생성 요청 (비동기 Job 실행 -> job_id 또는 task_id 반환)
-    // URL: /ai-allfurn/generate
-    Route::post('/generate', [AiAllFurnController::class, 'generate'])->name('generate');
-
-    // 3. 처리 상태 및 결과 조회 (AJAX 폴링용)
-    // 기획서의 6-2 항목 구현을 위해 필요합니다.
-    // URL: /ai-allfurn/status/{taskId}
-    Route::get('/status/{taskId}', [AiAllFurnController::class, 'checkStatus'])->name('status');
-
-});
-
-Route::prefix('ai-allfurn')->name('ai_allfurn.')->group(function(){
-
-    // 메인 화면 (이미지 업로드 폼)
-    // URL: domain.com/ai-allfurn
-    // Route Name: ai_allfurn.index
-    Route::get('/', 'AiAllFurnController@index')->name('index');
-
-    // 이미지 생성 요청 (AJAX 또는 Form Submit)
-    // URL: domain.com/ai-allfurn/generate
-    // Route Name: ai_allfurn.generate
-    Route::post('/generate', 'AiAllFurnController@generate')->name('generate');
-
-    // [중요] 처리 상태 조회 (기획서 6-2 반영)
-    // 작업이 오래 걸릴 경우(Queue 사용 시), 프론트엔드에서 주기적으로 호출할 주소입니다.
-    // URL: domain.com/ai-allfurn/status/{taskId}
-    // Route Name: ai_allfurn.status
-    Route::get('/status/{taskId}', 'AiAllFurnController@checkStatus')->name('status');
 
 });

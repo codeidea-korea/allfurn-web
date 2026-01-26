@@ -174,7 +174,7 @@ if(strpos($_SERVER['REQUEST_URI'], 'mypage/interest')) {
                     </a>
                     <ul>
                         <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=N');">요청한 견적<b>{{ $info[0] -> count_req_n }}</b></a></li>
-                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=R);">받은 견적<b class="txt-primary">{{ $info[0] -> count_req_r }}</b></a></li>
+                        <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=R');">받은 견적<b class="txt-primary">{{ $info[0] -> count_req_r }}</b></a></li>
                         <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=O');">주문서 수<b class="txt-primary">{{ $info[0] -> count_req_o }}</b></a></li>
                         <li><a href="javascript:gotoLink('/mypage/requestEstimate?status=F');">확인/완료<b>{{ $info[0] -> count_req_f }}</b></a></li>
                     </ul>

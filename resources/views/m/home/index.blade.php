@@ -589,7 +589,19 @@ $(document).ready(function(){
     if(cookiedata.indexOf("mainEventPopupClose=Y")<0){
         modalOpen("#main-event");
     }
+  
 });
+
+
+@if(isset($replaceUrl) && $replaceUrl != '')
+$(window).on('load', function () {
+    // 리다이렉트 실행
+    setTimeout(() => {
+        location.href="{{ $replaceUrl ?? '/main' }}";        
+    }, 1100);
+});
+@endif
+
 </script>
 
 

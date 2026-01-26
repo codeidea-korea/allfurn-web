@@ -832,6 +832,11 @@ var response_estimate_estimate_total_price = 0;
             const bodies = params;
             const urlSearch = new URLSearchParams(location.search);
 
+            if (urlSearch.get('status') && typeof bodies.status === 'undefined') {
+                bodies.status = urlSearch.get('status');
+            }
+    
+
             if (urlSearch.get('keywordType') && typeof bodies.keywordType === 'undefined') {
                 bodies.keywordType = urlSearch.get('keywordType');
             } else if (bodies.keywordType === '') {
@@ -863,6 +868,7 @@ var response_estimate_estimate_total_price = 0;
             const urlSearch = new URLSearchParams(location.search);
             let bodies = { offset: page };
 
+            if (urlSearch.get('status'))        bodies.status = urlSearch.get('status');
             if (urlSearch.get('keywordType'))        bodies.keywordType = urlSearch.get('keywordType');
             if (urlSearch.get('requestDate'))     bodies.requestDate = urlSearch.get('requestDate');
             if (urlSearch.get('keyword'))       bodies.keyword = urlSearch.get('keyword');
@@ -1104,12 +1110,26 @@ var response_estimate_estimate_total_price = 0;
     };
 
         function checkOrder (){
+
+            // 1. 체크된 항목 수집 (insertOrder와 동일한 로직)
+            let checkedIds = [];
+            $('.item_selector:checked').each(function() {
+                checkedIds.push($(this).data('code'));
+            });
+
+            // (선택사항) 아무것도 선택하지 않았을 때 알림
+            if (checkedIds.length === 0) {
+                alert('확인할 상품을 선택해주세요.');
+                return;
+            }
+
             modalClose('#check_estimate-modal');
             $.ajax({
                 url: '/estimate/checkOrder',
                 type: 'put',
                 data: {
-                    'estimate_group_code'   : estimate_group_code
+                    'estimate_group_code'   : estimate_group_code,
+                    'select_idx'          : checkedIds
                 },
                 dataType: 'JSON',
                 beforeSend: function (xhr) {

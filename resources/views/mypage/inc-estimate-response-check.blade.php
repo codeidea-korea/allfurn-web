@@ -98,56 +98,80 @@
                             </div>
                             <div class="py-7">
                                 @foreach( $lists AS $key => $row )
+                                    
                                     @php
-                                        // 1. 견적가(product_each_price) 숫자만 추출 (항상 포함)
+                                        // -----------------------------------------------------------
+                                        // 1. 견적가 (Wholesaler's Estimate Price)
+                                        // -----------------------------------------------------------
                                         $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
 
-                                        // 2. 단가(product_total_price) 숫자만 추출 (옵션이 없을 때 사용될 후보)
+                                        // -----------------------------------------------------------
+                                        // 2. 상품 기본가 (Base Unit Price)
+                                        // -----------------------------------------------------------
+                                        // 화면 출력 로직($row->price)과 맞추기 위해 $row->price 사용
+                                        $productBasePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
+
+                                        // 옵션이 없을 때 사용할 예비 단가 (기존 로직 유지용)
                                         $cleanUnitPrice = 0;
                                         if(isset($row->product_total_price)) {
                                             $cleanUnitPrice = (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
                                         }
 
-                                        // 3. 옵션 가격 계산 및 옵션 유무 확인
+                                        // -----------------------------------------------------------
+                                        // 3. 옵션 가격 계산 ($_each_price)
+                                        // -----------------------------------------------------------
                                         $optionPriceSum = 0;
-                                        $hasOption = false; // 옵션 존재 여부를 판단할 플래그 변수 초기화
+                                        $hasOption = false;
 
                                         if(isset($row->product_option_json) && $row->product_option_json != '[]') {
                                             $tempOptions = json_decode($row->product_option_json);
-                                            
-                                            // 데이터가 비어있지 않고 배열이나 객체인지 확인
                                             if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
-                                                $hasOption = true; // 옵션이 확실히 존재함
-
+                                                $hasOption = true; 
                                                 foreach($tempOptions as $tempItem) {
                                                     if (!isset($tempItem->optionValue)) continue;
                                                     foreach($tempItem->optionValue as $tempSub) {
                                                         if(!property_exists($tempSub, 'price')) continue;
-                                                        if(isset($tempSub->each_price)) {
-                                                            // 옵션 가격 합산
-                                                            $optionPriceSum += (int)preg_replace('/[^0-9]/', '', $tempSub->each_price);
-                                                        }
+                                                        // 옵션 가격 합산
+                                                        $optPrice = isset($tempSub->each_price) ? (int)preg_replace('/[^0-9]/', '', $tempSub->each_price) : 0;
+                                                        $optionPriceSum += $optPrice;
                                                     }
                                                 }
                                             }
                                         }
 
-                                        // 4. 최종 가격 계산 (분기 처리)
+                                        // -----------------------------------------------------------
+                                        // 4. 최종 가격 계산 ($totalPriceForCalc) - 요청 로직 반영
+                                        // -----------------------------------------------------------
+                                        
+                                        // 가격 비공개 조건 (0: 비공개, 1: 공개)
+                                        // 혹은 특정 텍스트('수량마다 상이', '업체 문의')가 있는 경우 비공개로 간주
+                                        $isPriceHidden = ($row->is_price_open == 0);
+
                                         if ($hasOption) {
-                                            // A. 옵션이 있는 경우: 견적가 + 옵션 합계
-                                            $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
+                                            // [옵션이 있는 경우]
+                                            if ($isPriceHidden) {
+                                                // Case 1: 텍스트(업체문의 등)가 표시되는 경우
+                                                // 요청: $cleanEstimatePrice + $optionPriceSum
+                                                $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
+                                            } else {
+                                                // Case 2: 숫자(가격+옵션)가 표시되는 경우
+                                                // 요청: $cleanEstimatePrice + ($row->price + $_each_price)
+                                                $totalPriceForCalc = $cleanEstimatePrice + ($productBasePrice + $optionPriceSum);
+                                            }
                                         } else {
-                                            // B. 옵션이 없는 경우: 견적가 + 단가
+                                            // [옵션이 없는 경우] 기존 로직 유지
+                                            // (견적가 + 기존단가)
                                             $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
                                         }
                                     @endphp
+                                    
 
                                 <div class="prod_info">
                                     <div class="img_box">
                                         <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
-                                        <input type="checkbox" id="check_7"  class="item_selector hidden" data-code="{{ $row->estimate_code }}" 
+                                        <input type="checkbox" id="check_{{ $row->estimate_idx }}"  class="item_selector hidden" data-code="{{ $row->estimate_code }}" 
                                         data-price="{{$totalPriceForCalc}}" onclick="updateEstimateInfo(this)" checked>
-                                        <!-- <label for="check_7" class="add_btn">추가</label> -->
+                                        <label for="check_{{ $row->estimate_idx }}" class="add_btn">추가</label>
                                         <img src="{{ $row->product_thumbnail }}" alt="">
                                     </div>
                                     <div class="info_box">
@@ -180,7 +204,7 @@
                                             <div class="prod_option">
                                                 <div class="name">가격</div>
                                                 <div class="total_price">
-                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 )
+                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
                                                         {{ $row->price_text }}
                                                     @else
                                                         {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
@@ -194,7 +218,14 @@
                                             </div>
                                             <div class="prod_option">
                                                 <div class="name">단가</div>
-                                                <div>{{ $row->product_total_price }}</div>
+                                                
+                                                <div>
+                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
+                                                        {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '' : $row->price_text }}
+                                                    @else
+                                                        {{ $row->product_total_price }}
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endif
                                         <div class="prod_option">
@@ -230,6 +261,19 @@
 
   -->
 <script>
+    const prod2 = (item) => {
+        // item은 클릭된 체크박스(input)
+        const label = $(item).next('label'); // 바로 뒤의 label 찾기
+
+        if($(item).prop('checked')){
+            // 체크된 상태 -> '취소'
+            label.text('취소');
+        } else {
+            // 체크 해제된 상태 -> '추가'
+            label.text('추가');
+        }
+    }
+    
     function updateEstimateInfo(obj){
         let count = 0;
         let total = 0;
@@ -263,6 +307,25 @@
 
     }
 
+        $(document).ready(function(){
+        // 1. 페이지 로드 시, 이미 체크되어 있는 항목들의 텍스트(추가->취소) 변경
+        $('.item_selector:checked').each(function(){
+            prod2(this);
+        });
+
+        // 2. 체크박스 클릭 시 prod2 함수 실행 (jQuery 이벤트 연결)
+        // HTML의 onclick="updateEstimateInfo(this)"와 별개로 동작하므로
+        // HTML에서는 prod2(this)를 지우셔도 됩니다.
+        $(document).on('click', '.item_selector', function(){
+            prod2(this);
+        });
+
+        // 3. 모달 로드 직후 첫 계산 실행
+        // (updateEstimateInfo는 obj 인자가 없어도 동작하도록 작성되어 있으므로 안전합니다)
+        setTimeout(function() {
+            updateEstimateInfo(null);
+        }, 100);
+    });
     // 모달 로드 직후 첫 계산 실행
-    setTimeout(updateEstimateInfo, 100);
+    //setTimeout(updateEstimateInfo, 100);
 </script>
