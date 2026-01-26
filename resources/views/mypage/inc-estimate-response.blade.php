@@ -238,7 +238,7 @@
                                 </div>
                                 <div class="prod_option">
                                     <div class="name">단가</div>
-                                    <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : $row->price_text) : number_format($row->product_total_price).'원' }}</div>
+                                    <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : number_format((int)preg_replace('/[^0-9]/', '', $row->product_total_price)).'원' }}</div>
                                 </div>
                             @endif
 
