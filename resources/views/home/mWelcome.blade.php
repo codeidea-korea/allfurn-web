@@ -242,16 +242,20 @@ function checkMobile(){
             }).then(result => {
                 const pendingTime = new Date().getTime() - callTime;
 
-                if (result.success) {                    
+                if (result.success) {             
+                    var replaceUrlParam = "{{ $replaceUrl ?? '' }}";
+                    var finalUrl = replaceUrlParam ? "/main?replaceUrl=" + replaceUrlParam : "/";       
                     if(pendingTime > 1100) {
                         document.querySelector('.splash').classList.remove('splash');
-                        location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                        //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                        location.replace(finalUrl);
                         //location.href = '/';
 //                        $('.splash').removeClass('splash');
                     } else {
                         setTimeout(() => {
                             document.querySelector('.splash').classList.remove('splash');
-                            location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                            //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                            location.replace(finalUrl);
                             //location.href = '/';
 //                            $('.splash').removeClass('splash');
                         }, (1100 - pendingTime));
