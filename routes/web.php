@@ -420,3 +420,11 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
     Route::post('/login', 'LoginController@socialCheckUser')->name('.login');
 
 });
+
+Route::group(['prefix' => 'ai-lab', 'as' => 'ai.'], function () {
+    
+    Route::get('stability', 'StabilityTestController@index')->name('stability.index');
+    Route::post('stability/generate', 'StabilityTestController@generate')->name('stability.generate');
+    
+    
+});
