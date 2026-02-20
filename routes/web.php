@@ -428,3 +428,18 @@ Route::group(['prefix' => 'ai-lab', 'as' => 'ai.'], function () {
     
     
 });
+
+Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => ['auth']], function () {
+
+    Route::get('/', 'ProductAiImageController@index')->name('index');
+    
+    // 1단계: 배경 제거 (Remove Background)
+    // 요청: 원본 이미지 파일 -> 응답: 누끼 따진 이미지 경로 (JSON)
+    Route::post('/remove-bg', 'ProductAiImageController@removeBackground')->name('remove_bg');
+
+    // 2단계: 배경 합성 (Generate/Replace Background)
+    // 요청: 누끼 이미지 경로 + 프롬프트 -> 응답: 최종 합성 이미지 URL (JSON)
+    Route::post('/generate-bg', 'ProductAiImageController@generateBackground')->name('generate_bg');
+
+});
+
