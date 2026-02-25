@@ -411,10 +411,15 @@
             })
             .on('click','.ico__delete--circle',function(e){
                 e.preventDefault();
-                var file = $(this).parent().parent().attr('file');
-                var idx = $(this).parent().parent().index();
+                
+                // .closest()를 사용하여 최상위 컨테이너를 정확히 타겟팅합니다.
+                var $wrapper = $(this).closest('.product-img__add'); 
+                var file = $wrapper.attr('file');
+                var idx = $wrapper.index();
 
-                $(this).parent().parent().remove('');
+                // 해당 전체 컨테이너 삭제
+                $wrapper.remove();
+
                 for(var i = 0; i < storedFiles.length; i++) {
                     if(storedFiles[i].name == file) {
                         stored100Files.splice(i, 1);
