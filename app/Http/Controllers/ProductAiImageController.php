@@ -92,4 +92,48 @@ class ProductAiImageController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function testDecrement(\Illuminate\Http\Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // 1. 남은 횟수 확인
+        if ($user->ai_count <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => '테스트 이미지 생성 횟수(5회)를 모두 소진하였습니다.'
+            ], 403);
+        }
+
+        // 2. 횟수 차감 및 DB 저장
+        $user->ai_count -= 1;
+        $user->save();
+
+        // 3. 성공 신호와 남은 횟수 프론트엔드로 반환
+        return response()->json([
+            'success' => true,
+            'remain_count' => $user->ai_count
+        ]);
+    }
+
+    public function getRemainCount(\Illuminate\Http\Request $request)
+    {
+        // 1. 현재 로그인한 사용자 정보 가져오기
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // (예외 처리) 로그인 상태가 아닐 경우
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => '로그인이 필요합니다.',
+                'remain_count' => 0
+            ], 401);
+        }
+
+        // 2. 사용자의 현재 남은 횟수(ai_count)만 그대로 반환
+        return response()->json([
+            'success' => true,
+            'remain_count' => $user->ai_count
+        ]);
+    }
 }

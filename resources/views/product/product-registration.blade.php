@@ -413,15 +413,14 @@
             })
             .on('click','.ico__delete--circle',function(e){
                 e.preventDefault();
-                
-                // .closest()를 사용하여 최상위 컨테이너를 정확히 타겟팅합니다.
-                var $wrapper = $(this).closest('.product-img__add'); 
-                var file = $wrapper.attr('file');
-                var idx = $wrapper.index();
 
-                // 해당 전체 컨테이너 삭제
+                var $wrapper = $(this).closest('.product-img__add');
+                var file = $(this).parent().parent().attr('file');
+                var idx = $(this).parent().parent().index();
+
                 $wrapper.remove();
 
+                $(this).parent().parent().remove('');
                 for(var i = 0; i < storedFiles.length; i++) {
                     if(storedFiles[i].name == file) {
                         stored100Files.splice(i, 1);
@@ -1349,28 +1348,49 @@
                     $('.w-full .text-primary span').data('category_idx', result['category_idx']);
                     $('.w-full .text-primary span').text( result['category'] );
 
-                    // 첨부파일 이미지 출력
+                    // 첨부파일 이미지 출력 부분 수정
                     if (result['attachment'] != null) {
                         imageAddBtn = $('.product-img__gallery').clone();
                         $('.desc__product-img-wrap').html(imageAddBtn);
                         attIdx = result['attachment_idx'].split(',');
+
                         result['attachment'].map(function (item, i) {
                             if (item != null) {
+                                // 수정 시에도 동일하게 ID와 파일명을 정의해줍니다.
+                                // 기존 이미지는 파일 객체가 없으므로 item의 고유 정보를 활용합니다.
+                                var uniqueId = 'prv_existing_' + i;
+                                var uniqueHiddenId = 'path_existing_' + i;
+                                var fileName = item['originName'] || 'existing_file_' + i; // 서버에서 파일명을 내려주면 그것을 사용하세요.
+
                                 var html = `
-                                    <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
-                                        <img class="w-[200px] h-[200px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
-                                        <div class="absolute top-2.5 right-2.5">
-                                            <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                                            </button>
-                                        </div>`;
-                                    if (i == 0){
-                                        html += '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div>';
-                                    }
-                                html += '</div>';
+                                    <div class="w-[200px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" data-idx="${attIdx[i]}" file="${fileName}">
+                                        <div class="relative w-[200px] h-[200px] bg-slate-100 rounded-md">
+                                            <img id="${uniqueId}" class="w-full h-full object-cover rounded-md" src="${item['imgUrl']}" data-original-src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
+                                            <div class="absolute top-2.5 right-2.5">
+                                                <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" class="mt-2 w-full h-[36px] flex items-center justify-center gap-1 border border-primary text-primary text-sm rounded hover:bg-stone-50" 
+                                                onclick="openAiModal(this, '${fileName}', '#${uniqueId}', '#${uniqueHiddenId}')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                            AI 배경생성
+                                        </button>
+                                        
+                                        <input type="hidden" id="${uniqueHiddenId}" name="ai_generated_paths[${fileName}]">
+                                    </div>`;
+
+                                if (i == 0) {
+                                    // 대표이미지 배지는 이미지 박스 내부에 위치하도록 처리
+                                    // (기존 코드에 맞춰 위치를 조정할 수 있습니다)
+                                    html = html.replace('</div>\n                </div>', '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div></div></div>');
+                                }
                                 $('.desc__product-img-wrap').append(html);
                             }
-                        })
+                        });
+
                         if (result['attachment'].length == 8) {
                             $('.product-img__gallery').hide();
                         }
@@ -1618,6 +1638,23 @@
         // ★ 중요: 현재 작업할 파일을 전역 변수에 담아둡니다 (버튼 클릭 시 사용)
         currentAiFile = selectedFile;
 
+        $.ajax({
+            url: "{{ route('product.ai.get_remain_count') }}", // 새로 만든 조회용 라우트
+            type: 'GET',
+            success: function(res) {
+                if (res.success) {
+                    // 이전에 만든 뱃지에 남은 횟수를 넣고 노출시킵니다.
+                    $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
+                } else {
+                    // 실패 시 숨김 처리
+                    $('#ai_remain_count_display').addClass('hidden');
+                }
+            },
+            error: function() {
+                console.log('남은 횟수를 불러오는 데 실패했습니다.');
+            }
+        });
+
         // FileReader로 이미지 URL 읽어서 모달에 표시
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -1631,6 +1668,7 @@
             $('#ai_input_prompt').val('');
         }
         reader.readAsDataURL(selectedFile);
+        
 
         modalOpen('#ai_image_generator_modal');
     }
@@ -1757,9 +1795,68 @@
         var prompt = $(this).data('prompt');
         $('#ai_input_prompt').val(prompt);
     });
+    
+    var testGenerateQuota = 3;
+
+
+// 4. [STEP 2] 이미지 생성하기 버튼 클릭 (가짜 통신 + DB 횟수 연동)
+    $(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
+        e.preventDefault();
+
+        // 4-1. 유효성 검사
+        if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
+        var prompt = $('#ai_input_prompt').val();
+        if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
+        var $btn = $(this);
+        var originalText = $btn.html();
+
+        // 4-2. 서버(DB)에 횟수 차감만 요청 (실제 AI 동작은 안 함)
+        $.ajax({
+            url: "{{ route('product.ai.test_decrement') }}", // 하단에 안내된 Laravel 라우트 주소
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            success: function(res) {
+                if (res.success) {
+
+                    $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
+
+                    // DB 차감이 성공(횟수가 남아있음)했을 때만 가짜 로딩 시작
+                    $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
+                    
+                    $('#ai_full_loading_overlay h4').text('테스트: AI 이미지 생성 중...');
+                    $('#ai_full_loading_overlay p').text('가짜 통신 중입니다. 남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
+                    $('#ai_full_loading_overlay').removeClass('hidden');
+
+                    $btn.html('<span class="spinner-border spinner-border-sm"></span> 생성 중... (남은 횟수: ' + res.remain_count + ')');
+
+                    // 4-4. 3초 딜레이 후 더미 이미지 적용 (기존 테스트 로직 유지)
+                    setTimeout(function() {
+                        var dummyGeneratedUrl = 'https://via.placeholder.com/500x500.png?text=Test+Generated+Image';
+                        $('#ai_modal_preview_image').attr('src', dummyGeneratedUrl);
+
+                        $('#ai_full_loading_overlay').addClass('hidden');
+                        resetButtons($btn, originalText); 
+
+                        alert('테스트 이미지가 생성되었습니다!\n남은 테스트 가능 횟수: ' + res.remain_count + '회');
+                    }, 3000);
+                } else {
+                    alert(res.message); // 횟수 부족 메시지 출력
+                }
+            },
+            error: function(xhr) {
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    alert(xhr.responseJSON.message);
+                } else {
+                    alert('서버 통신 오류가 발생했습니다.');
+                }
+            }
+        });
+    });
+
 
     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
-    $(document).on('click', '#btn_ai_generate', function(e) {
+    /*$(document).on('click', '#btn_ai_generate', function(e) {
         e.preventDefault();
 
         // 4-1. 유효성 검사
@@ -1815,7 +1912,7 @@
                 resetButtons($btn, originalText);
             }
         });
-    });
+    });*/
 
     // 배경 합성 함수 (분리됨)
     function requestGenerateBg(tempPath, prompt, $btn, originalText) {

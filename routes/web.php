@@ -12,13 +12,17 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+//Authenticate의 파라미터가 이곳으로 전달
 Route::get('/', 'HomeController@index');
-Route::get('/main', 'HomeController@home');
+
+Route::get('/mwelcome', 'HomeController@mwelcome');
 Route::prefix('home')->group(function() {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/category', 'HomeController@categoryList');
     Route::get('/getSearchData', 'HomeController@getSearchData');
     Route::get('/welcome', 'HomeController@welcome');
+    
     Route::put('/search/{keyword}', 'HomeController@putSearchKeyword');
     Route::delete('/search/{idx}', 'HomeController@deleteSearchKeyword');
     Route::get('/searchResult', 'HomeController@searchResult');
@@ -35,6 +39,7 @@ Route::post('/tokenpass-signin', 'LoginController@signinByAccessToken')->name('s
 Route::get('/signin/choose-ids', 'LoginController@chooseLoginIds')->name('chooseLoginIds');
 Route::get('/signin/choose-emails', 'LoginController@chooseLoginEmails')->name('chooseLoginEmails');
 Route::post('/user/update-grade/{grade}/{idx}', 'MemberController@updateUserByWait');
+//Route::get('/user/update-grade22/{grade}/{idx}', 'MemberController@updateUserByWait');
 
 Route::prefix('signup')->group(function() {
     Route::get('/', 'MemberController@signup')->name('signUp');
@@ -56,6 +61,7 @@ Route::post('/allimtalk/send', 'LoginController@asend');
 Route::post('/product-temp/bulk/thumbnail', 'ProductTempController@saveBulkProductImage');
 Route::get('/product-temp/bulk/thumbnail', 'ProductTempController@uploadview');
 
+
 Route::get('/json/wholesaler/{wholesalerIdx}', 'CatalogController@wholesalerInfoJson');
 Route::get('/catalog/{wholesalerIdx}/product/detail/{productIdx}', 'CatalogController@productDetail')->name('.wholesaler.catalogProduct');
 Route::get('/catalog/{wholesalerIdx}', 'CatalogController@catalog')->name('.wholesaler.catalog');
@@ -73,7 +79,7 @@ Route::post('/authCodeCount', 'MemberController@authCodeCount');
 Route::post('checkAlert', 'HomeController@checkAlert');
 
 Route::prefix('/family')->name('family')->group(function() {
-    Route::get('/', 'HomeController@getAllFamily');
+//    Route::get('/', 'HomeController@getAllFamily');
     Route::get('/{idx}', 'HomeController@getFamilyMember');
     Route::post('/like', 'HomeController@toggleCompanyLike');
 });
@@ -410,8 +416,7 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
     Route::get('/kakao/callback', 'SocialController@kakaoCallback')->name('.kakao.callback');
 
     Route::get('/apple/callback', 'SocialController@appleCallback')->name('.apple.callback');
-
-
+    
     /**
      * 소셜 로그인 공통
      */
@@ -421,11 +426,72 @@ Route::prefix('social')->name('social')->middleware('social.session.check')->gro
 
 });
 
+
+//ai 사진합성기능
+Route::prefix('ai-allfurn')->name('ai.allfurn.')->group(function(){
+
+    // 1. 메인 페이지 (이미지 업로드 화면)
+    // URL: /ai-allfurn
+    Route::get('/', [AiAllFurnController::class, 'index'])->name('index');
+
+    // 2. 생성 요청 (비동기 Job 실행 -> job_id 또는 task_id 반환)
+    // URL: /ai-allfurn/generate
+    Route::post('/generate', [AiAllFurnController::class, 'generate'])->name('generate');
+
+    // 3. 처리 상태 및 결과 조회 (AJAX 폴링용)
+    // 기획서의 6-2 항목 구현을 위해 필요합니다.
+    // URL: /ai-allfurn/status/{taskId}
+    Route::get('/status/{taskId}', [AiAllFurnController::class, 'checkStatus'])->name('status');
+
+});
+
+Route::prefix('ai-allfurn')->name('ai_allfurn.')->group(function(){
+
+    // 메인 화면 (이미지 업로드 폼)
+    // URL: domain.com/ai-allfurn
+    // Route Name: ai_allfurn.index
+    Route::get('/', 'AiAllFurnController@index')->name('index');
+
+    // 이미지 생성 요청 (AJAX 또는 Form Submit)
+    // URL: domain.com/ai-allfurn/generate
+    // Route Name: ai_allfurn.generate
+    Route::post('/generate', 'AiAllFurnController@generate')->name('generate');
+
+    // [중요] 처리 상태 조회 (기획서 6-2 반영)
+    // 작업이 오래 걸릴 경우(Queue 사용 시), 프론트엔드에서 주기적으로 호출할 주소입니다.
+    // URL: domain.com/ai-allfurn/status/{taskId}
+    // Route Name: ai_allfurn.status
+    Route::get('/status/{taskId}', 'AiAllFurnController@checkStatus')->name('status');
+
+});
+
 Route::group(['prefix' => 'ai-lab', 'as' => 'ai.'], function () {
     
+    // 1. 테스트 화면 진입
+    // URL: /ai-lab/stability
+    // Controller: StabilityTestController 의 index 메서드 실행
     Route::get('stability', 'StabilityTestController@index')->name('stability.index');
+
+    // 2. 이미지 생성 요청 (POST)
+    // URL: /ai-lab/stability/generate
+    // Controller: StabilityTestController 의 generate 메서드 실행
     Route::post('stability/generate', 'StabilityTestController@generate')->name('stability.generate');
     
+    // ==========================================
+    // 2. OpenAI + Remove.bg (신규 추가)
+    // ==========================================
+    // 누끼는 Remove.bg가, 합성은 DALL·E가 담당
+    // URL: /ai-lab/openai
+    Route::get('openai', 'OpenAiTestController@index')->name('openai.index');
+    Route::post('openai/generate', 'OpenAiTestController@generate')->name('openai.generate');
+
+    // ==========================================
+    // 3. Google Gemini (신규 추가)
+    // ==========================================
+    // 구글의 생성형 AI (Imagen/Nano Banana) 사용
+    // URL: /ai-lab/google
+    Route::get('google', 'GoogleTestController@index')->name('google.index');
+    Route::post('google/generate', 'GoogleTestController@generate')->name('google.generate');
     
 });
 
@@ -441,5 +507,7 @@ Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => [
     // 요청: 누끼 이미지 경로 + 프롬프트 -> 응답: 최종 합성 이미지 URL (JSON)
     Route::post('/generate-bg', 'ProductAiImageController@generateBackground')->name('generate_bg');
 
-});
+    Route::post('/test-decrement', 'ProductAiImageController@testDecrement')->name('test_decrement');
 
+    Route::get('/get-remain-count', 'ProductAiImageController@getRemainCount')->name('get_remain_count');
+});

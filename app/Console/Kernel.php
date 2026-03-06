@@ -27,6 +27,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('reset:aicount')
+                 ->timezone('Asia/Seoul')
+                 ->dailyAt('17:05');
     }
 
     /**

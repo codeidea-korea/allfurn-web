@@ -21,11 +21,11 @@
 
         <div class="flex flex-1 overflow-hidden h-full">
             
-            {{-- [위치 변경됨] 1. 메인 미리보기 영역 (왼쪽으로 이동) --}}
             <div class="flex-1 bg-stone-100 relative flex flex-col">
                 <div class="h-12 border-b bg-white flex items-center justify-between px-4 shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-stone-500">미리보기</span>
+                        <span id="ai_remain_count_display" class="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-full hidden"></span>
                     </div>
                     <div class="flex items-center gap-2">
                         <button class="text-xs flex items-center gap-1 text-stone-500 hover:text-stone-800">
@@ -52,8 +52,6 @@
                 </div>
             </div>
 
-            {{-- [위치 변경됨] 2. 사이드바 (오른쪽으로 이동) --}}
-            {{-- border-r -> border-l (왼쪽 테두리로 변경) --}}
             <div class="w-[320px] border-l bg-white flex flex-col h-full shrink-0 z-10">
                 <div class="p-5 flex-1 overflow-y-auto">
                     
@@ -77,7 +75,7 @@
                                 배경제거
                             </button>
 
-                            {{-- 2. 북유럽 스타일 (배경 이미지형) --}}
+                            {{-- 1. 북유럽 스타일 (배경 이미지형) --}}
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="북유럽"
@@ -107,7 +105,7 @@
                                 <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
                             </button>
 
-                            {{-- 3. 모던 스타일--}}
+                            {{-- 2. 모던 스타일--}}
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="모던"
@@ -133,7 +131,7 @@
                                     <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
                             </button>
 
-                            {{-- 4. 미니멀리즘 스타일--}}
+                            {{-- 3. 미니멀리즘 스타일--}}
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="미니멀리즘"
@@ -159,7 +157,7 @@
                                     <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
                             </button>
 
-                            {{-- 5. 고딕 스타일--}}
+                            {{-- 4. 고딕 스타일--}}
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="고딕"
@@ -219,22 +217,18 @@
 
                 </div>
                 
-                <div class="p-4 border-t bg-stone-50 space-y-3"> {{-- space-y-3 로 버튼 사이 간격 추가 --}}
+                <div class="p-4 border-t bg-stone-50 space-y-3"> 
     
-                    {{-- 1. 이미지 생성하기 버튼 (위로 이동됨) --}}
                     <button type="button" id="btn_ai_generate" class="w-full py-3 bg-stone-800 text-white rounded-lg font-bold hover:bg-stone-700 transition-all flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                         이미지 생성하기
                     </button>
 
                     <div class="flex gap-3 w-full">
-                        {{-- 취소 버튼 --}}
+               
                         <button type="button" onclick="modalClose('#ai_image_generator_modal')" class="flex-1 h-[48px] text-base border border-stone-300 text-stone-600 bg-white hover:bg-stone-50 rounded-lg font-medium transition-colors">
                             취소
                         </button>
-
-                        {{-- 완료 및 저장 버튼 --}}
-                        {{-- 기존 ID(btn_ai_confirm)와 클래스(btn-primary) 유지 --}}
                         <button type="button" id="btn_ai_confirm" class="flex-1 btn btn-primary h-[48px] text-base rounded-lg flex items-center justify-center">
                             완료 및 저장
                         </button>
