@@ -1659,6 +1659,8 @@
         var reader = new FileReader();
         reader.onload = function(e) {
             // 메인 미리보기와 사이드바 썸네일 모두 이미지 설정
+
+
             $('#ai_modal_preview_image').attr('src', e.target.result).removeClass('hidden'); 
             $('#ai_modal_thumbnail').attr('src', e.target.result);
             $('#ai_modal_placeholder_text').addClass('hidden');
@@ -1800,7 +1802,7 @@
 
 
 // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (가짜 통신 + DB 횟수 연동)
-    $(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
+    /*$(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
         e.preventDefault();
 
         // 4-1. 유효성 검사
@@ -1825,7 +1827,7 @@
                     $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
                     
                     $('#ai_full_loading_overlay h4').text('테스트: AI 이미지 생성 중...');
-                    $('#ai_full_loading_overlay p').text('남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
+                    $('#ai_full_loading_overlay p').text('가짜 통신 중입니다. 남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
                     $('#ai_full_loading_overlay').removeClass('hidden');
 
                     $btn.html('<span class="spinner-border spinner-border-sm"></span> 생성 중... (남은 횟수: ' + res.remain_count + ')');
@@ -1852,8 +1854,79 @@
                 }
             }
         });
-    });
+    });*/
+    
+    // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (배경 제거만 수행하여 미리보기 적용)
+    $(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
+        e.preventDefault();
 
+        // 4-1. 유효성 검사
+        if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
+        
+        // (선택) 배경 제거만 수행하므로 프롬프트 검사가 필요 없다면 아래 두 줄은 주석 처리 또는 삭제하셔도 됩니다.
+        // var prompt = $('#ai_input_prompt').val();
+        // if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
+        var $btn = $(this);
+        var originalText = $btn.html();
+
+        // 4-2. UI 잠금 및 로딩 오버레이 표시
+        $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
+        
+        $('#ai_full_loading_overlay h4').text('배경 제거 중...');
+        $('#ai_full_loading_overlay p').text('이미지의 배경을 깔끔하게 지우고 있습니다.');
+        $('#ai_full_loading_overlay').removeClass('hidden');
+
+        $btn.html('<span class="spinner-border spinner-border-sm"></span> 작업 중...');
+
+        // 4-3. 배경 제거 API 실제 호출
+        var formData = new FormData();
+        formData.append('image', currentAiFile);
+
+        $.ajax({
+            url: "{{ route('product.ai.remove_bg') }}", // 배경 제거용 라우트
+            type: 'POST',
+            global: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: formData,
+            contentType: false, 
+            processData: false,
+            beforeSend: function() {
+                // 전역 로딩바가 있다면 숨김 처리 (모달 내 로딩을 사용하므로)
+                $('#loadingContainer').hide(); 
+                $('#loadingContainer').css('display', 'none'); 
+            },
+            success: function(res) {
+                if (res.success) {
+                    // 4-4. 성공 시 배경이 제거된 이미지 URL을 미리보기에 표출
+                    $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+                    
+                    if (res.remain_count !== undefined) {
+                        $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
+                    } 
+                    // case B: res.data.remain_count 로 넘어오는 경우
+                    else if (res.data && res.data.remain_count !== undefined) {
+                        $('#ai_remain_count_display').text('남은 횟수: ' + res.data.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
+                    }
+                } else {
+                    alert('배경 제거 실패: ' + res.message);
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr);
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    alert(xhr.responseJSON.message);
+                } else {
+                    alert('서버 통신 오류가 발생했습니다.');
+                }
+            },
+            complete: function() {
+                // 4-5. 통신 종료 후 로딩 숨김 및 버튼 상태 복구
+                $('#ai_full_loading_overlay').addClass('hidden');
+                resetButtons($btn, originalText); 
+            }
+        });
+    });
 
     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
     /*$(document).on('click', '#btn_ai_generate', function(e) {

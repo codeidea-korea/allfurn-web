@@ -34,6 +34,8 @@ class ProductAiImageController extends Controller
             'image' => 'required|image|max:10240', // 최대 10MB
         ]);
 
+        $user = \Illuminate\Support\Facades\Auth::user();
+
         try {
             // 2. 이미지 파일 받기
             $imageFile = $request->file('image');
@@ -42,12 +44,18 @@ class ProductAiImageController extends Controller
             // 성공 시 결과 이미지 URL을 반환받음
             $result = $this->productAiService->removeBackground($imageFile);
 
+            if ($user) {
+                $user->ai_count -= 1;
+                $user->save();
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'removebg_url' => $result['url'],       // 프론트엔드 이미지 태그 src용
                     'temp_path' => $result['file_path'] // (선택) 다음 단계 요청 시 서버로 다시 보낼 경로
-                ]
+                ],
+                'remain_count' => $user ? $user->ai_count : 0
             ]);
 
         } catch (\Exception $e) {
