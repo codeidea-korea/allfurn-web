@@ -1825,7 +1825,7 @@
                     $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
                     
                     $('#ai_full_loading_overlay h4').text('테스트: AI 이미지 생성 중...');
-                    $('#ai_full_loading_overlay p').text('가짜 통신 중입니다. 남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
+                    $('#ai_full_loading_overlay p').text('남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
                     $('#ai_full_loading_overlay').removeClass('hidden');
 
                     $btn.html('<span class="spinner-border spinner-border-sm"></span> 생성 중... (남은 횟수: ' + res.remain_count + ')');
