@@ -27,12 +27,6 @@
                         <span class="text-xs font-bold text-stone-500">미리보기</span>
                         <span id="ai_remain_count_display" class="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-full hidden"></span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button class="text-xs flex items-center gap-1 text-stone-500 hover:text-stone-800">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                            원본 보기
-                        </button>
-                    </div>
                 </div>
 
                 <div class="flex-1 flex items-center justify-center p-8 overflow-auto">
@@ -253,6 +247,7 @@
 <script>
     var targetImgPreviewId = ""; // 예: '#rep_img_preview' (이미지가 바뀔 태그 ID)
     var targetHiddenInputId = ""; // 예: '#rep_img_path' (서버로 보낼 경로가 담길 input ID)
+    var originalFilesBackup = {};
 
     // [이벤트] 완료 및 저장 버튼 클릭 시
     /*$(document).on('click', '#btn_ai_confirm', function() {
@@ -320,6 +315,16 @@
         if (fileIndex === -1) {
             alert("원본 이미지를 데이터에서 찾을 수 없어 교체할 수 없습니다.");
             return;
+        }
+
+        if (!originalFilesBackup[currentAiFile.name]) {
+            originalFilesBackup[currentAiFile.name] = {
+                main: storedFiles[fileIndex],
+                f100: stored100Files[fileIndex],
+                f400: stored400Files[fileIndex],
+                f600: stored600Files[fileIndex],
+                f1000: stored1000Files[fileIndex]
+            };
         }
 
         // 로딩바 표시 (리사이징 처리에 1~2초 소요될 수 있음)

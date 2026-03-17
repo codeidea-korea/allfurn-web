@@ -68,9 +68,21 @@ class ProductAiImageService
                     'file_path' => $path 
                 ];
             } else {
+                $status = $response->status();
+                $rawBody = $response->body();
                 $errorBody = $response->json();
-                Log::error('Stability RemoveBG Error: ' . json_encode($errorBody));
-                throw new Exception("배경 제거 실패: " . ($errorBody['errors'][0]['message'] ?? 'API 호출 오류'));
+
+                // 2. 로그에 아주 상세하게 기록합니다. (식별하기 쉽게 구분선 추가)
+                Log::error("======= Stability API 호출 실패 =======");
+                Log::error("HTTP 상태 코드: " . $status);
+                Log::error("원본 응답 내용: " . $rawBody);
+                Log::error("디코딩된 에러: " . json_encode($errorBody, JSON_UNESCAPED_UNICODE));
+                Log::error("======================================");
+
+                // 3. 예외 메시지에 상태 코드를 포함하여 프론트에서도 대략적인 원인을 알 수 있게 합니다.
+                $serverMessage = $errorBody['errors'][0]['message'] ?? ($errorBody['message'] ?? '상세 메시지 없음');
+                
+                throw new Exception("Stability API 오류({$status}): " . $serverMessage);
             }
 
         } catch (Exception $e) {
@@ -95,12 +107,6 @@ class ProductAiImageService
             $fileSize = Storage::disk('public')->size($nobgPath);
             Log::info("Step 2 Start. Input File Path: {$nobgPath}");
             Log::info("Step 2 Input File Size: " . number_format($fileSize) . " bytes");
-
-            // [디버깅 2] ★핵심★ 입력 파일을 '눈으로 확인 가능한 위치'에 복사
-            // 브라우저에서 http://도메인/storage/debug_check.png 로 접속하면 
-            // Gemini가 받은 이미지가 '투명 배경'인지 '원본'인지 바로 볼 수 있습니다.
-            //Storage::disk('public')->copy($nobgPath, 'debug_check.png');
-            //Log::info("Debug Check: Copied input file to 'storage/app/public/debug_check.png' for manual inspection.");
 
             // [디버깅 3] 프롬프트 확인
             Log::info("Gemini Prompt: " . $prompt);
@@ -170,8 +176,7 @@ class ProductAiImageService
                 ]],
                 'generationConfig' => [
                     'temperature' => 0.0,
-                    //'maxOutputTokens' => 4096, // 필요 시 주석 해제
-                    //'responseMimeType' => 'image/png' // 이미지 생성을 명시 (일부 모델 지원)
+
                 ]
             ],
             'http_errors' => false

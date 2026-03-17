@@ -240,6 +240,7 @@
         var _tmp = 0;
         editer = null;
 
+
         $(document)
             .on('click', '.setting_category .category_list li > a', function(e) {
 
@@ -1259,11 +1260,20 @@
 
                 attachmentList = '';
 
-            $('.product-img__add').map(function () {
+            /*$('.product-img__add').map(function () {
                 if($(this).data('idx') != undefined) {
                     attachmentList += $(this).data('idx') + ',';
                 }
-            })
+            })*/
+           $('.product-img__add').map(function () {
+                // ★ .data() 대신 .attr()을 사용하여 현재 상태를 정확히 읽어옵니다.
+                var currentIdx = $(this).attr('data-idx');
+                
+                // currentIdx가 존재하고 비어있지 않은 경우에만 유지 목록에 추가
+                if(currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
+                    attachmentList += currentIdx + ',';
+                }
+            });
 
             if (attachmentList != '') {
                 form.append('attachmentIdx', attachmentList.slice(0, -1));
@@ -1360,7 +1370,8 @@
                                 // 기존 이미지는 파일 객체가 없으므로 item의 고유 정보를 활용합니다.
                                 var uniqueId = 'prv_existing_' + i;
                                 var uniqueHiddenId = 'path_existing_' + i;
-                                var fileName = item['originName'] || 'existing_file_' + i; // 서버에서 파일명을 내려주면 그것을 사용하세요.
+                                //var fileName = item['originName'] || 'existing_file_' + i; // 서버에서 파일명을 내려주면 그것을 사용하세요.
+                                var fileName = item['originName'] || 'existing_file_' + i + '.jpg';
 
                                 var html = `
                                     <div class="w-[200px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" data-idx="${attIdx[i]}" file="${fileName}">
@@ -1388,6 +1399,24 @@
                                     html = html.replace('</div>\n                </div>', '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div></div></div>');
                                 }
                                 $('.desc__product-img-wrap').append(html);
+                                var proxyUrl = "{{ route('product.ai.proxy_image') }}?url=" + encodeURIComponent(item['imgUrl']);
+
+                                fetch(proxyUrl)
+                                    .then(res => {
+                                        if (!res.ok) {
+                                            throw new Error('네트워크 응답 에러 (상태 코드: ' + res.status + ')');
+                                        }
+                                        return res.blob();
+                                    })
+                                    .then(blob => {
+                                        var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+                                        storedFiles.push(file);
+                                        console.log("프록시 우회 성공: " + fileName + " 배열 추가 완료 (총 " + storedFiles.length + "개)");
+                                    })
+                                    .catch(err => {
+                                        console.error('기존 이미지 변환 실패:', err);
+                                        alert('CORS 우회 실패!\n\n에러 내용: ' + err.message);
+                                    });
                             }
                         });
 
@@ -1617,8 +1646,18 @@
 
     var currentAiFile = null;
     var targetAiBtn = null; // [수정] 현재 작업 중인 버튼을 저장할 전역 변수
+    var originalFilesBackup = {};
+    var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
 
-    // [수정] openAiModal 함수 파라미터에 btnElement(this) 추가
+    function updateAiCountUI(count) {
+        if (count !== undefined && count !== null) {
+            userAiCount = count; // 전역 변수 동기화
+            $('#ai_remain_count_display')
+                .text('남은 횟수: ' + count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.')
+                .removeClass('hidden');
+        }
+    }
+
     function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
         
         targetAiBtn = btnElement; // [수정] 클릭된 버튼 엘리먼트 저장
@@ -1631,7 +1670,19 @@
         var selectedFile = storedFiles.find(f => f.name === fileName);
 
         if (!selectedFile) {
-            alert('이미지 파일을 찾을 수 없습니다.');
+            // [디버깅용 추가 코드]
+            var debugMsg = "찾으려는 파일명: " + fileName + "\n\n";
+            debugMsg += "현재 storedFiles 배열 길이: " + storedFiles.length + "개\n";
+            
+            if (storedFiles.length > 0) {
+                // 배열 안에 있는 파일들의 이름만 뽑아서 문자열로 합침
+                var storedNames = storedFiles.map(function(f) { return f.name; }).join('\n- ');
+                debugMsg += "\n[배열에 저장된 파일 목록]\n- " + storedNames;
+            } else {
+                debugMsg += "\n배열이 완전히 비어있습니다.\n(fetch 로직이 아직 완료되지 않았거나 실행되지 않음)";
+            }
+
+            alert("이미지 파일을 찾을 수 없습니다.\n\n=== 디버그 로그 ===\n" + debugMsg);
             return;
         }
         
@@ -1643,8 +1694,7 @@
             type: 'GET',
             success: function(res) {
                 if (res.success) {
-                    // 이전에 만든 뱃지에 남은 횟수를 넣고 노출시킵니다.
-                    $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
+                    updateAiCountUI(res.remain_count);
                 } else {
                     // 실패 시 숨김 처리
                     $('#ai_remain_count_display').addClass('hidden');
@@ -1678,6 +1728,12 @@
     // 2. [기능 독립] 배경 제거 버튼 클릭 이벤트
     $(document).on('click', '#btn_remove_bg', function(e) {
         e.preventDefault();
+
+        if (userAiCount <= 0) {
+            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+            return false; // 여기서 함수 종료
+        }
+        
         if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
 
         var $btn = $(this);
@@ -1707,6 +1763,7 @@
             success: function(res) {
                 if (res.success) {
                     $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+                    updateAiCountUI(res.remain_count);
                     alert('배경 제거가 완료되었습니다.');
                 } else {
                     alert('실패: ' + res.message);
@@ -1857,7 +1914,7 @@
     });*/
     
     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (배경 제거만 수행하여 미리보기 적용)
-    $(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
+    /*$(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
         e.preventDefault();
 
         // 4-1. 유효성 검사
@@ -1926,11 +1983,16 @@
                 resetButtons($btn, originalText); 
             }
         });
-    });
+    });*/
 
     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
-    /*$(document).on('click', '#btn_ai_generate', function(e) {
+    $(document).on('click', '#btn_ai_generate', function(e) {
         e.preventDefault();
+
+        if (userAiCount <= 0) {
+            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+            return false; // 여기서 함수 종료
+        }
 
         // 4-1. 유효성 검사
         if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
@@ -1963,6 +2025,9 @@
             },
             success: function(res1) {
                 if (res1.success) {
+                    if (res1.remain_count !== undefined) {
+                        userAiCount = res1.remain_count;
+                    }
                     // 성공 시 2단계 진행
                     var tempPath = res1.data.temp_path;
                     $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); // 중간 과정 보여주기
@@ -1981,14 +2046,34 @@
             },
             error: function(xhr) {
                 console.error(xhr);
-                alert('배경 제거 중 오류가 발생했습니다.');
+                var errorLog = '배경 제거 중 오류가 발생했습니다.';
+
+                // 2. 서버에서 보낸 상세 에러 메시지가 있는지 확인 (JSON 응답)
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorLog += '\n\n[상세 내용]: ' + xhr.responseJSON.message;
+                } 
+                // 3. 만약 JSON이 아니라 일반 텍스트(PHP 에러 등)로 왔을 경우
+                else if (xhr.responseText) {
+                    // 너무 길 수 있으므로 앞부분 100자만 추출
+                    errorLog += '\n\n[서버 응답]: ' + xhr.responseText.substring(0, 100) + '...';
+                }
+                // 4. 그 외 상태 코드 확인
+                else {
+                    errorLog += '\n\n[상태 코드]: ' + xhr.status + ' (' + xhr.statusText + ')';
+                }
+
+                // 최종 알림창 표시
+                alert(errorLog);
+                
                 resetButtons($btn, originalText);
             }
         });
-    });*/
+    });
 
     // 배경 합성 함수 (분리됨)
     function requestGenerateBg(tempPath, prompt, $btn, originalText) {
+
+        
 
         $('#ai_full_loading_overlay').removeClass('hidden');
     
@@ -2001,6 +2086,7 @@
             success: function(res2) {
                 if (res2.success) {
                     $('#ai_modal_preview_image').attr('src', res2.data.final_url);
+                    updateAiCountUI(res2.remain_count);
                     alert('이미지가 생성되었습니다! 마음에 드시면 [완료 및 저장]을 눌러주세요.');
                 } else {
                     alert('이미지 생성 실패: ' + res2.message);
@@ -2043,6 +2129,23 @@
 
     // [추가] AI 생성 완료 버튼 클릭 시, 메인 페이지의 버튼을 '원본 복구'로 변경하는 이벤트 리스너
     $(document).on('click', '#btn_ai_confirm', function() {
+
+        var $wrapper = $(targetAiBtn).closest('.product-img__add');
+        var originalIdx = $wrapper.attr('data-idx');
+
+        if (originalIdx) {
+            $wrapper.attr('data-backup-idx', originalIdx);
+            
+            // ★ HTML 속성 제거
+            $wrapper.removeAttr('data-idx');
+            // ★ jQuery 메모리 캐시에서도 완벽히 제거
+            $wrapper.removeData('idx'); 
+            
+            if (!deleteImage.includes(originalIdx)) {
+                deleteImage.push(originalIdx);
+            }
+        }
+
         if(targetAiBtn && $('#ai_modal_preview_image').attr('src') !== "") {
             // 버튼 스타일 및 기능을 '원본 복구'로 변경
              $(targetAiBtn)
@@ -2063,6 +2166,35 @@
         if (originSrc) {
             // 1. 이미지 원상복구
             $img.attr('src', originSrc);
+        }
+        var $wrapper = $(btn).closest('.product-img__add');
+        var backupIdx = $wrapper.attr('data-backup-idx');
+
+        if (backupIdx) {
+            $wrapper.attr('data-idx', backupIdx);
+            $wrapper.data('idx', backupIdx);
+            
+            $wrapper.removeAttr('data-backup-idx');
+            
+            deleteImage = deleteImage.filter(function(item) {
+                return item != backupIdx;
+            });
+        }
+
+        var originalData = originalFilesBackup[fileName];
+        if (originalData) {
+            // 현재 배열에는 "ai_" + 원본파일명 으로 저장되어 있으므로 해당 인덱스를 찾음
+            var aiFileName = "ai_" + fileName;
+            var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
+            
+            if (fileIndex !== -1) {
+                // 배열의 데이터를 다시 원본 파일로 교체
+                storedFiles[fileIndex] = originalData.main;
+                stored100Files[fileIndex] = originalData.f100;
+                stored400Files[fileIndex] = originalData.f400;
+                stored600Files[fileIndex] = originalData.f600;
+                stored1000Files[fileIndex] = originalData.f1000;
+            }
         }
 
         // 2. AI 결과값 hidden input 초기화

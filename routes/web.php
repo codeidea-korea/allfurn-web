@@ -510,4 +510,22 @@ Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => [
     Route::post('/test-decrement', 'ProductAiImageController@testDecrement')->name('test_decrement');
 
     Route::get('/get-remain-count', 'ProductAiImageController@getRemainCount')->name('get_remain_count');
+
+    Route::get('/proxy-image', function (\Illuminate\Http\Request $request) {
+        $url = $request->get('url');
+        
+        if (!$url) {
+            return response('URL이 필요합니다.', 400);
+        }
+
+        // 라라벨 Http 파사드를 이용해 백엔드에서 이미지 다운로드
+        $response = \Illuminate\Support\Facades\Http::get($url);
+        
+        if ($response->successful()) {
+            return response($response->body())
+                ->header('Content-Type', $response->header('Content-Type') ?? 'image/jpeg');
+        }
+
+        return response('이미지를 가져오는데 실패했습니다.', 500);
+    })->name('proxy_image');
 });

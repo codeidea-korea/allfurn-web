@@ -36,6 +36,13 @@ class ProductAiImageController extends Controller
 
         $user = \Illuminate\Support\Facades\Auth::user();
 
+        if (!$user || $user->ai_count <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => '오늘 사용 가능한 AI 생성 횟수를 모두 소진하였습니다.'
+            ], 403);
+        }
+
         try {
             // 2. 이미지 파일 받기
             $imageFile = $request->file('image');
@@ -44,10 +51,9 @@ class ProductAiImageController extends Controller
             // 성공 시 결과 이미지 URL을 반환받음
             $result = $this->productAiService->removeBackground($imageFile);
 
-            if ($user) {
-                $user->ai_count -= 1;
-                $user->save();
-            }
+            // 3. 정상 처리되었을 때만 차감
+            $user->ai_count -= 1;
+            $user->save();
 
             return response()->json([
                 'success' => true,
@@ -79,6 +85,8 @@ class ProductAiImageController extends Controller
             'prompt'    => 'required|string|max:1000', // 사용자 입력 프롬프트
         ]);
 
+        $user = \Illuminate\Support\Facades\Auth::user();
+
         try {
             $tempPath = $request->input('temp_path');
             $prompt   = $request->input('prompt');
@@ -92,7 +100,8 @@ class ProductAiImageController extends Controller
                 'message' => '이미지 생성 완료',
                 'data'    => [
                     'final_url' => $finalUrl
-                ]
+                ],
+                'remain_count' => $user ? $user->ai_count : 0
             ]);
 
         } catch (\Exception $e) {
