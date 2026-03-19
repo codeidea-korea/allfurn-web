@@ -45,7 +45,7 @@
                                 $productBasePrice = isset($row->price) ? (int) str_replace(',', '', $row->price) : 0;
 
                                 // 가격 비공개 여부 체크 (기존 로직 유지)
-                                if( $row->is_price_open == 0 ) {
+                                if ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') {
                                     $is_any_price_hide = true;
                                 }
 
