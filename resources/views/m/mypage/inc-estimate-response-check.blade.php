@@ -144,7 +144,7 @@
                                         
                                         // 가격 비공개 조건 (0: 비공개, 1: 공개)
                                         // 혹은 특정 텍스트('수량마다 상이', '업체 문의')가 있는 경우 비공개로 간주
-                                        $isPriceHidden = ($row->is_price_open == 0);
+                                        $isPriceHidden = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
 
                                         if ($hasOption) {
                                             // [옵션이 있는 경우]
@@ -201,7 +201,7 @@
                                             <div class="prod_option">
                                                 <div class="name">가격</div>
                                                 <div class="total_price">
-                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
+                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' )
                                                         {{ $row->price_text }}
                                                     @else
                                                         {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}

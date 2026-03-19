@@ -145,7 +145,7 @@
                                         
                                         // 가격 비공개 조건 (0: 비공개, 1: 공개)
                                         // 혹은 특정 텍스트('수량마다 상이', '업체 문의')가 있는 경우 비공개로 간주
-                                        $isPriceHidden = ($row->is_price_open == 0);
+                                        $isPriceHidden = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
 
                                         if ($hasOption) {
                                             // [옵션이 있는 경우]
@@ -220,7 +220,7 @@
                                                 <div class="name">단가</div>
                                                 
                                                 <div>
-                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
+                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' )
                                                         {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '' : $row->price_text }}
                                                     @else
                                                         {{ $row->product_total_price }}
@@ -273,7 +273,8 @@
             label.text('추가');
         }
     }
-    
+
+
     function updateEstimateInfo(obj){
         let count = 0;
         let total = 0;
@@ -306,8 +307,8 @@
         console.log('디버깅 - 선택건수:', count, ' / 총 합계:', total);
 
     }
-
-        $(document).ready(function(){
+    
+    $(document).ready(function(){
         // 1. 페이지 로드 시, 이미 체크되어 있는 항목들의 텍스트(추가->취소) 변경
         $('.item_selector:checked').each(function(){
             prod2(this);
@@ -326,6 +327,7 @@
             updateEstimateInfo(null);
         }, 100);
     });
+
     // 모달 로드 직후 첫 계산 실행
     //setTimeout(updateEstimateInfo, 100);
 </script>
