@@ -203,6 +203,32 @@
                                     <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
                             </button>
 
+                            {{-- 6. 재팬디 스타일--}}
+                            <button type="button" 
+                                    class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
+                                    data-style="재팬디"
+                                    data-prompt="Japandi interior style, fusion of Japanese minimalism and Scandinavian functionalism, zen atmosphere, neutral beige palette, natural wood and bamboo textures, soft diffused lighting, clean lines, peaceful and organic vibe">
+
+                                    <img src="{{ asset('img/ai_button/Japandi2.jpg') }}" 
+                                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
+                                            alt=" 스타일 배경">
+
+                                    <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent group-hover:from-black/90 transition-colors duration-300"></div>
+
+                                    <div class="relative z-10 h-full flex flex-col justify-center px-5">
+                                        <span class="text-white font-bold text-lg drop-shadow-md">재팬디 스타일</span>
+                                        <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">차분하고 정적인 무드의 감성 인테리어</span>
+                                    </div>
+
+                                     <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                            </button>
+
                             <input type="hidden" id="ai_input_prompt">
 
                             
@@ -248,54 +274,7 @@
     var targetImgPreviewId = ""; // 예: '#rep_img_preview' (이미지가 바뀔 태그 ID)
     var targetHiddenInputId = ""; // 예: '#rep_img_path' (서버로 보낼 경로가 담길 input ID)
     var originalFilesBackup = {};
-
-    // [이벤트] 완료 및 저장 버튼 클릭 시
-    /*$(document).on('click', '#btn_ai_confirm', function() {
-        
-        // 1. 결과물 유효성 검사
-        var generatedUrl = $('#ai_modal_preview_image').attr('src');
-        if (!generatedUrl || generatedUrl === "") {
-            alert("생성된 이미지가 없습니다. 먼저 스타일 생성을 진행해주세요.");
-            return;
-        }
-
-        // 2. 타겟 설정 검사 (개발자용 안전장치)
-        if (!targetImgPreviewId || !targetHiddenInputId) {
-            console.error("타겟 ID가 설정되지 않았습니다. 모달 열 때 변수를 설정해주세요.");
-            alert("적용할 대상을 찾을 수 없습니다.");
-            return;
-        }
-
-        // 3. 부모 창 UI 갱신 (미리보기 이미지 교체)
-        // 기존 이미지를 AI 이미지로 변경합니다.
-        if ($(targetImgPreviewId).length > 0) {
-            $(targetImgPreviewId).attr('src', generatedUrl);
-        }
-
-        // 4. 데이터 심기 (Hidden Input)
-        // 파일 업로드(<input type="file">) 대신 처리될 경로 값을 넣습니다.
-        // 해당 ID의 input이 없으면 동적으로 만듭니다.
-        if ($(targetHiddenInputId).length === 0) {
-            // targetHiddenInputId에서 '#' 제거
-            var pureId = targetHiddenInputId.replace('#', '');
-            var inputName = pureId; // name값도 동일하게 설정
-            
-            // 파일 인풋 근처나 폼 안에 hidden input 추가
-            // (여기서는 body에 추가하지만, 실제로는 form 태그 안에 있어야 합니다)
-            $('#product-form').append('<input type="hidden" name="' + inputName + '" id="' + pureId + '">');
-        }
-        
-        $(targetHiddenInputId).val(generatedUrl);
-
-        // 5. 기존 파일 인풋 초기화 (중복 전송 방지)
-        // 파일 선택창에 선택된 파일이 있다면 비워줍니다. (AI 이미지를 쓰기로 했으므로)
-        // targetHiddenInputId와 매칭되는 file input을 찾아 비우는 로직이 필요할 수 있습니다.
-        // 예: $('#rep_img').val(''); 
-
-        // 6. 모달 닫기 및 알림
-        modalClose('#ai_image_generator_modal');
-        alert("이미지가 적용되었습니다. '저장' 버튼을 눌러 상품 등록을 완료하세요.");
-    });*/
+    
     $(document).off('click', '#btn_ai_confirm').on('click', '#btn_ai_confirm', function() {
         
         var generatedUrl = $('#ai_modal_preview_image').attr('src');

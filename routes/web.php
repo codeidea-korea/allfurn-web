@@ -511,6 +511,8 @@ Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => [
 
     Route::get('/get-remain-count', 'ProductAiImageController@getRemainCount')->name('get_remain_count');
 
+    Route::get('increment_count', 'ProductAiImageCountroller@incrementCount')->name('increment_count');
+
     Route::get('/proxy-image', function (\Illuminate\Http\Request $request) {
         $url = $request->get('url');
         

@@ -411,12 +411,14 @@
                         }, 1000);
                     }
                 }
+                $(this).val('');
             })
             .on('click','.ico__delete--circle',function(e){
                 e.preventDefault();
 
                 var $wrapper = $(this).closest('.product-img__add');
-                var file = $(this).parent().parent().attr('file');
+                //var file = $(this).parent().parent().attr('file');
+                var file = $wrapper.attr('file');
                 var idx = $(this).parent().parent().index();
 
                 $wrapper.remove();
@@ -1150,7 +1152,7 @@
                 alert('상품 이미지를 등록해주세요.');
                 $('#form-list02').focus();
                 return;
-            } else if ($('#categoryIdx').data('category_idx') < 1) {
+            } else if (!$('#categoryIdx').data('category_idx') || $('#categoryIdx').data('category_idx') < 1) {
                 alert('상품 카테고리를 등록해주세요.');
                 $('.category__list-item.step1').focus();
                 return;
@@ -1258,25 +1260,46 @@
             }
             @endif
 
-                attachmentList = '';
+            attachmentList = '';
+            var imageOrder =[];
 
-            /*$('.product-img__add').map(function () {
-                if($(this).data('idx') != undefined) {
-                    attachmentList += $(this).data('idx') + ',';
-                }
-            })*/
-           $('.product-img__add').map(function () {
-                // ★ .data() 대신 .attr()을 사용하여 현재 상태를 정확히 읽어옵니다.
+
+           $('.product-img__add').each(function () {
                 var currentIdx = $(this).attr('data-idx');
-                
-                // currentIdx가 존재하고 비어있지 않은 경우에만 유지 목록에 추가
-                if(currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
-                    attachmentList += currentIdx + ',';
+                var fileName = $(this).attr('file');
+                var aiPath = $(this).find('input[name^="ai_generated_paths"]').val();
+
+                // 1. AI로 재생성된 이미지인 경우
+                if (aiPath && aiPath !== "") {
+                    imageOrder.push('ai:' + fileName);
+                } 
+                // 2. 기존에 등록되어 있던 이미지인 경우
+                else if (currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
+                    imageOrder.push('idx:' + currentIdx);
+                    attachmentList += currentIdx + ','; // 기존 백엔드 로직 호환을 위해 남겨둠
+                } 
+                // 3. PC에서 새로 올린 일반 이미지인 경우
+                else {
+                    imageOrder.push('new:' + fileName);
                 }
             });
 
+            // 기존 로직: 유지할 기존 이미지 ID들 전송
             if (attachmentList != '') {
                 form.append('attachmentIdx', attachmentList.slice(0, -1));
+            }
+
+            // 💡 핵심 로직: 화면에 보이는 전체 이미지의 '순서표' 전송
+            // 폼 데이터에 'image_order'라는 이름으로 순서표를 담아 보냅니다.
+            if (imageOrder.length > 0) {
+                form.append('image_order', imageOrder.join(','));
+            }
+
+            if (attachmentList != '') {
+                form.append('attachmentIdx', attachmentList.slice(0, -1));
+            }
+            if (imageOrder.length > 0) {
+                form.append('image_order', imageOrder.join(','));
             }
 
             var data = new Array();
@@ -2155,58 +2178,80 @@
                 .attr('onclick', 'restoreOriginal(this, "' + targetImgPreviewId + '", "' + targetHiddenInputId + '", "' + currentAiFile.name + '")');
         }
     });
+   // 1. 클릭된 버튼의 정보를 임시로 저장할 전역 변수 선언
+var restoreParams = {};
 
-    // [추가] 원본 복구 함수
-    function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
-        if (!confirm('원본 이미지로 복구하시겠습니까?')) return;
+// 2. 기존 restoreOriginal 함수 수정 (모달만 띄우기)
+function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
+    // 실제 복구 로직을 실행하기 위해 파라미터들을 임시 저장
+    restoreParams = {
+        btn: btn,
+        previewId: previewId,
+        hiddenInputId: hiddenInputId,
+        fileName: fileName
+    };
 
-        var $img = $(previewId);
-        var originSrc = $img.attr('data-original-src'); // 이미지 태그에 저장해둔 원본 경로 가져오기
+    // 커스텀 모달 열기
+    modalOpen('#ai-restoration');
+}
 
-        if (originSrc) {
-            // 1. 이미지 원상복구
-            $img.attr('src', originSrc);
-        }
-        var $wrapper = $(btn).closest('.product-img__add');
-        var backupIdx = $wrapper.attr('data-backup-idx');
+// 3. 모달 안의 [원본으로 복구] 버튼(#confirm-restoration) 클릭 이벤트 추가
+$(document).on('click', '#confirm-restoration', function() {
+    // 임시 저장해둔 파라미터 꺼내기
+    var btn = restoreParams.btn;
+    var previewId = restoreParams.previewId;
+    var hiddenInputId = restoreParams.hiddenInputId;
+    var fileName = restoreParams.fileName;
 
-        if (backupIdx) {
-            $wrapper.attr('data-idx', backupIdx);
-            $wrapper.data('idx', backupIdx);
-            
-            $wrapper.removeAttr('data-backup-idx');
-            
-            deleteImage = deleteImage.filter(function(item) {
-                return item != backupIdx;
-            });
-        }
+    // 모달창 닫기
+    modalClose('#ai-restoration');
 
-        var originalData = originalFilesBackup[fileName];
-        if (originalData) {
-            // 현재 배열에는 "ai_" + 원본파일명 으로 저장되어 있으므로 해당 인덱스를 찾음
-            var aiFileName = "ai_" + fileName;
-            var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
-            
-            if (fileIndex !== -1) {
-                // 배열의 데이터를 다시 원본 파일로 교체
-                storedFiles[fileIndex] = originalData.main;
-                stored100Files[fileIndex] = originalData.f100;
-                stored400Files[fileIndex] = originalData.f400;
-                stored600Files[fileIndex] = originalData.f600;
-                stored1000Files[fileIndex] = originalData.f1000;
-            }
-        }
+    // --- 여기서부터 기존의 복구 로직 실행 ---
+    var $img = $(previewId);
+    var originSrc = $img.attr('data-original-src');
 
-        // 2. AI 결과값 hidden input 초기화
-        $(hiddenInputId).val('');
-
-        // 3. 버튼 스타일 및 기능을 'AI 배경생성'으로 원상복구
-        $(btn)
-            .removeClass('border-stone-500 text-stone-600 hover:bg-stone-100')
-            .addClass('border-primary text-primary hover:bg-stone-50')
-            .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
-            .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
+    if (originSrc) {
+        $img.attr('src', originSrc);
     }
+    
+    var $wrapper = $(btn).closest('.product-img__add');
+    var backupIdx = $wrapper.attr('data-backup-idx');
+
+    if (backupIdx) {
+        $wrapper.attr('data-idx', backupIdx);
+        $wrapper.data('idx', backupIdx);
+        
+        $wrapper.removeAttr('data-backup-idx');
+        
+        deleteImage = deleteImage.filter(function(item) {
+            return item != backupIdx;
+        });
+    }
+
+    var originalData = originalFilesBackup[fileName];
+    if (originalData) {
+        var aiFileName = "ai_" + fileName;
+        var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
+        
+        if (fileIndex !== -1) {
+            storedFiles[fileIndex] = originalData.main;
+            stored100Files[fileIndex] = originalData.f100;
+            stored400Files[fileIndex] = originalData.f400;
+            stored600Files[fileIndex] = originalData.f600;
+            stored1000Files[fileIndex] = originalData.f1000;
+        }
+    }
+
+    // AI 결과값 hidden input 초기화
+    $(hiddenInputId).val('');
+
+    // 버튼 스타일 및 기능을 'AI 배경생성'으로 원상복구
+    $(btn)
+        .removeClass('border-stone-500 text-stone-600 hover:bg-stone-100')
+        .addClass('border-primary text-primary hover:bg-stone-50')
+        .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
+        .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
+    });
 
     </script>
 @endsection

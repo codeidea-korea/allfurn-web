@@ -501,7 +501,7 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
 });
 
 // [추가] 원본 복구 함수
-function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
+/*function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
     if (!confirm('원본 이미지로 복구하시겠습니까?')) return;
 
     var $img = $(previewId);
@@ -547,7 +547,80 @@ function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
         .addClass('border-primary text-primary bg-white')
         .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
         .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
-}
+}*/
+    var restoreParams = {};
+
+    // 2. 기존 restoreOriginal 함수 수정 (파라미터 저장 후 모달만 띄우기)
+    function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
+        // 실제 복구 로직을 실행하기 위해 파라미터들을 임시 저장
+        restoreParams = {
+            btn: btn,
+            previewId: previewId,
+            hiddenInputId: hiddenInputId,
+            fileName: fileName
+        };
+
+        // 커스텀 모달 열기
+        modalOpen('#ai-restoration');
+    }
+
+    $(document).on('click', '#confirm-restoration', function() {
+    // 임시 저장해둔 파라미터 꺼내기
+        var btn = restoreParams.btn;
+        var previewId = restoreParams.previewId;
+        var hiddenInputId = restoreParams.hiddenInputId;
+        var fileName = restoreParams.fileName;
+
+        // 모달창 닫기
+        modalClose('#ai-restoration');
+
+        // --- 여기서부터 기존의 복구 로직 실행 ---
+        var $img = $(previewId);
+        var originSrc = $img.attr('data-original-src'); 
+
+        if (originSrc) {
+            $img.attr('src', originSrc);
+        }
+        
+        var $wrapper = $(btn).closest('.product-img__add');
+        var backupIdx = $wrapper.attr('data-backup-idx');
+
+        if (backupIdx) {
+            $wrapper.attr('data-idx', backupIdx);
+            $wrapper.data('idx', backupIdx);
+            $wrapper.removeAttr('data-backup-idx');
+            
+            deleteImage = deleteImage.filter(function(item) {
+                return item != backupIdx;
+            });
+        }
+
+        var originalData = originalFilesBackup[fileName];
+        if (originalData) {
+            // 현재 배열에는 "ai_" + 원본파일명 으로 저장되어 있으므로 해당 인덱스를 찾음
+            var aiFileName = "ai_" + fileName;
+            var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
+            
+            if (fileIndex !== -1) {
+                // 배열의 데이터를 다시 원본 파일로 교체
+                storedFiles[fileIndex] = originalData.main;
+                stored100Files[fileIndex] = originalData.f100;
+                stored400Files[fileIndex] = originalData.f400;
+                stored600Files[fileIndex] = originalData.f600;
+                stored1000Files[fileIndex] = originalData.f1000;
+            }
+        }
+
+        // AI 결과값 hidden input 초기화
+        $(hiddenInputId).val('');
+
+        // ★ 모바일 UI 클래스 대응 (PC버전과 클래스가 다르므로 주의)
+        $(btn)
+            .removeClass('border-stone-500 text-stone-600 bg-stone-100')
+            .addClass('border-primary text-primary bg-white')
+            .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
+            .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
+    });
 
     // 결제방식
     const paymentShow = (item)=>{
@@ -715,6 +788,7 @@ $(document).on('change', '#form-list02', function() {
             }, 1000);
         }
     }
+    $(this).val('');
 })
 .on('click','.ico__delete--circle',function(e){
     e.preventDefault();
@@ -723,6 +797,14 @@ $(document).on('change', '#form-list02', function() {
     
     // 해당 영역에서 파일명을 가져옵니다.
     var file = $wrapper.attr('file');
+
+    // 🔥 [여기 추가!] 서버에서 진짜로 지울 수 있도록 기존 이미지 ID를 deleteImage 배열에 담기
+    var originalIdx = $wrapper.attr('data-idx');
+    if (originalIdx && originalIdx !== "undefined") {
+        if (!deleteImage.includes(originalIdx)) {
+            deleteImage.push(originalIdx);
+        }
+    }
     
     // 껍데기만 남지 않도록 영역 전체를 통째로 삭제합니다.
     $wrapper.remove();
@@ -1195,11 +1277,10 @@ const goStep = (item, pn)=>{
                 $('#form-list01').focus();
                 return false;
             } 
-            if (storedFiles.length == 0 && $('.product-img__add').length == 0) {
+            if ($('.product-img__add').length === 0) {
                 alert('상품 이미지를 등록해주세요.');
-                $('#form-list02').focus();
                 return false;
-            } 
+            }
             if ($('#categoryIdx').text() == "-"){
                 alert('상품 카테고리를 등록해주세요.');
                 return false;
@@ -1230,6 +1311,10 @@ const goStep = (item, pn)=>{
 }
 
 function saveProduct(regType) {
+    if (storedFiles.length === 0 && $('.product-img__add').length === 0) {
+        alert('상품 이미지를 최소 1개 이상 등록해주세요.');
+        return false; // 여기서 함수를 종료하여 서버(AJAX)로 요청을 보내지 않음
+    }
     $('#loadingContainer').show();
     console.log(regType);
     var form = new FormData();
@@ -1312,15 +1397,35 @@ function saveProduct(regType) {
     @endif
 
     var attachmentList = '';
-    $('.product-img__add').map(function () {
-        if($(this).data('idx') != undefined) {
-            attachmentList += $(this).data('idx') + ',';
+    var imageOrder = [];
+
+    $('.product-img__add').each(function () {
+        var currentIdx = $(this).attr('data-idx');
+        var fileName = $(this).attr('file');
+        var aiPath = $(this).find('input[name^="ai_generated_paths"]').val();
+
+        // 1. AI로 재생성된 이미지인 경우
+        if (aiPath && aiPath !== "") {
+            imageOrder.push('ai:' + fileName);
+        } 
+        // 2. 기존에 등록되어 있던 이미지인 경우
+        else if (currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
+            imageOrder.push('idx:' + currentIdx);
+            attachmentList += currentIdx + ','; // 기존 로직 호환용
+        } 
+        // 3. 새로 올린 일반 이미지인 경우
+        else {
+            imageOrder.push('new:' + fileName);
         }
-    })
+    });
+
     if (attachmentList != '') {
         form.append('attachmentIdx', attachmentList.slice(0, -1));
     }
-
+    if (imageOrder.length > 0) {
+        form.append('image_order', imageOrder.join(','));
+    }
+    
     var data = new Array();
     $('#optsArea .form__list-wrap').each(function (i, el) {
         var option = new Object();

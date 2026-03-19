@@ -128,22 +128,47 @@ class ProductController extends BaseController
 
         $data = $request->all();
 
+        $newAttachmentIds = []; 
+
         if (isset($data['files'])) {
-            $attachmentIdx = '';
             $data['thumb_idx'] = array();
             foreach ($data['files'] as $file) {
                 if (is_file($file)) {
                     $stored = Storage::disk('vultr')->put('product', $file);
                     $tmpattachmentIdx = $this->productService->saveAttachment($stored);
-                    $attachmentIdx .= $tmpattachmentIdx . ',';
+                    
+                    $newAttachmentIds[] = $tmpattachmentIdx; // 새로 발급받은 ID를 배열에 순서대로 보관
                     array_push($data['thumb_idx'], $tmpattachmentIdx);
                 }
             }
+        }
 
-            if (isset($data['attachmentIdx'])) {
-                $data['attachmentIdx'] .= ',' . substr($attachmentIdx, 0, -1);
-            } else {
-                $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
+        if (isset($data['image_order']) && !empty($data['image_order'])) {
+            $finalAttachmentIds = [];
+            $orderArray = explode(',', $data['image_order']);
+            $newFileIndex = 0;
+
+            foreach ($orderArray as $item) {
+                if (strpos($item, 'idx:') === 0) {
+                   
+                    $finalAttachmentIds[] = str_replace('idx:', '', $item);
+                } else if (strpos($item, 'ai:') === 0 || strpos($item, 'new:') === 0) {
+                    
+                    if (isset($newAttachmentIds[$newFileIndex])) {
+                        $finalAttachmentIds[] = $newAttachmentIds[$newFileIndex];
+                        $newFileIndex++;
+                    }
+                }
+            }
+            
+            $data['attachmentIdx'] = implode(',', $finalAttachmentIds);
+            
+        } else {
+            $attachmentIdxStr = implode(',', $newAttachmentIds);
+            if (isset($data['attachmentIdx']) && !empty($newAttachmentIds)) {
+                $data['attachmentIdx'] .= ',' . $attachmentIdxStr;
+            } else if (!empty($newAttachmentIds)) {
+                $data['attachmentIdx'] = $attachmentIdxStr;
             }
         }
 
