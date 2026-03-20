@@ -1150,3 +1150,28 @@
         </div>
     </div>
 </div>
+
+{{-- 원본 복구 모달 --}}
+<div class="modal" id="ai-restoration">
+    <div class="modal_bg" onclick="modalClose('#ai-restoration')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">원본 이미지 복구</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>원래의 등록 이미지로 되돌리시겠습니까?</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                {{-- 취소 버튼: 단순히 모달을 닫습니다 --}}
+                <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#ai-restoration')">취소</button>
+                
+                {{-- 복구 확인 버튼: 실제 복구 함수를 실행하도록 id를 부여하거나 이벤트를 연결합니다 --}}
+                <button class="btn w-full btn-primary mt-5" id="confirm-restoration">원본으로 복구</button>
+            </div>
+        </div>
+    </div>
+</div>
