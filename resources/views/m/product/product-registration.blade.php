@@ -29,7 +29,7 @@
                     </dd>
                 </dl>
                 <dl class="mb-3">
-                    <dt class="necessary">상품 이미지진희</dt>
+                    <dt class="necessary">상품 이미지</dt>
                     <dd>
                         <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
                             <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center product-img__gallery">
