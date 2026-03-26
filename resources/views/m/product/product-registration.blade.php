@@ -303,13 +303,16 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     // FileReader로 이미지 URL 읽어서 모달에 표시
     var reader = new FileReader();
     reader.onload = function(e) {
-        $('#ai_modal_preview_image').attr('src', e.target.result).removeClass('hidden'); 
+        $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
         $('#ai_modal_thumbnail').attr('src', e.target.result);
         $('#ai_modal_placeholder_text').addClass('hidden');
         $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화
 
-        $('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+        $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
         $('#ai_input_prompt').val('');
+
+        $('.generated-badge').remove(); 
+        $('.btn-style-select').removeAttr('data-generated-url');
     }
     reader.readAsDataURL(selectedFile);
     
@@ -352,7 +355,7 @@ $(document).on('click', '#btn_remove_bg', function(e) {
             if (res.success) {
                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
                 updateAiCountUI(res.remain_count);
-                alert('배경 제거가 완료되었습니다.');
+                modalOpen('#ai-generate-success-modal');
             } else {
                 alert('실패: ' + res.message);
             }
@@ -365,11 +368,19 @@ $(document).on('click', '#btn_remove_bg', function(e) {
 // 3. [STEP 1] 스타일 선택 버튼 클릭 (UI 변경 및 값 저장)
 $(document).on('click', '.btn-style-select', function(e) {
     e.preventDefault();
-    $('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
-    $(this).addClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+    $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+    $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
     var prompt = $(this).data('prompt');
     $('#ai_input_prompt').val(prompt);
+
+    var cachedUrl = $(this).attr('data-generated-url');
+    if (cachedUrl) {
+        $('#ai_modal_preview_image').attr('src', cachedUrl);
+    } else {
+        var baseSrc = $('#ai_modal_preview_image').attr('data-base-src');
+        $('#ai_modal_preview_image').attr('src', baseSrc);
+    }
 });
 
 // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
@@ -383,6 +394,8 @@ $(document).on('click', '#btn_ai_generate', function(e) {
     if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
     var prompt = $('#ai_input_prompt').val();
     if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
+    var $activeStyleBtn = $('.btn-style-select.border-red-500');
 
     var $btn = $(this);
     var originalText = $btn.html();
@@ -418,7 +431,7 @@ $(document).on('click', '#btn_ai_generate', function(e) {
                 $('#ai_full_loading_overlay p').text('선택한 스타일로 공간을 꾸미고 있습니다. (약 10~20초)');
                 $btn.html('<span class="spinner-border spinner-border-sm"></span> 이미지 생성 중...');
                 
-                requestGenerateBg(tempPath, prompt, $btn, originalText);
+                requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn);
             } else {
                 alert('배경 제거 실패: ' + res1.message);
                 resetButtons($btn, originalText);
@@ -433,7 +446,7 @@ $(document).on('click', '#btn_ai_generate', function(e) {
 });
 
 // 배경 합성 함수
-function requestGenerateBg(tempPath, prompt, $btn, originalText) {
+function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn) {
     $('#ai_full_loading_overlay').removeClass('hidden');
 
     $.ajax({
@@ -446,7 +459,14 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText) {
             if (res2.success) {
                 $('#ai_modal_preview_image').attr('src', res2.data.final_url);
                 updateAiCountUI(res2.remain_count);
-                alert('이미지가 생성되었습니다! 마음에 드시면 [완료 및 저장]을 눌러주세요.');
+                if ($activeStyleBtn && $activeStyleBtn.length > 0) {
+                    $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
+                    if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                        var badgeHtml = '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
+                        $activeStyleBtn.append(badgeHtml);
+                    }
+                }
+                modalOpen('#ai-generate-success-modal');
             } else {
                 alert('이미지 생성 실패: ' + res2.message);
             }

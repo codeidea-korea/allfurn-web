@@ -90,13 +90,15 @@
                                     <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">따뜻한 원목과 아늑한 감성</span>
                                 </div>
 
-                               <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                    <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                {{-- 1. 체크 표시 래퍼 --}}
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                    <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                     </div>
                                 </div>
 
-                                <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                {{-- 2. 테두리 래퍼 --}}
+                                <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             {{-- 2. 모던 스타일--}}
@@ -116,13 +118,14 @@
                                         <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">세련된 라인과 도시적 감성</span>
                                     </div>
 
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </div>
                                     </div>
 
-                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             {{-- 3. 미니멀리즘 스타일--}}
@@ -142,13 +145,13 @@
                                         <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">심플하고 정돈된 미니멀 라이프</span>
                                     </div>
 
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                   <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </div>
                                     </div>
 
-                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             {{-- 4. 고딕 스타일--}}
@@ -168,13 +171,13 @@
                                         <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">중후한 무게감과 고풍스러운 미학</span>
                                     </div>
 
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </div>
                                     </div>
 
-                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             {{-- 5. 인더스트리얼 스타일--}}
@@ -194,13 +197,13 @@
                                         <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">투박함 속에 숨겨진 세련된 멋</span>
                                     </div>
 
-                                     <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </div>
                                     </div>
 
-                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             {{-- 6. 재팬디 스타일--}}
@@ -220,13 +223,13 @@
                                         <span class="text-stone-200 text-xs font-medium mt-1 drop-shadow-sm">차분하고 정적인 무드의 감성 인테리어</span>
                                     </div>
 
-                                     <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-primary]:opacity-100 group-[.border-primary]:scale-100 transition-all duration-300 ease-back-out">
-                                        <div class="bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 border-2 border-white">
+                                     <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                        <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                         </div>
                                     </div>
 
-                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-4 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                                    <div class="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-4 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>
                             </button>
 
                             <input type="hidden" id="ai_input_prompt">
@@ -357,7 +360,7 @@
 
                     $btn.prop('disabled', false).html(originalBtnText);
                     modalClose('#ai_image_generator_modal');
-                    alert("이미지가 성공적으로 적용되었습니다. '저장' 버튼을 누르면 AI 이미지로 등록됩니다.");
+                    modalOpen('#ai-apply-success-modal');
                 };
                 image.src = generatedUrl;
             })

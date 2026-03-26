@@ -231,6 +231,7 @@
         var stored400Files = [];
         var stored600Files = [];
         var stored1000Files = [];
+        var storedAiFiles = [];
         
         var subCategoryIdx = null;
         var deleteImage = [];
@@ -314,6 +315,11 @@
                                 var resizedFile = getThumbFile(image, 500, this.width, this.height);
                                 resizedFile.name = file.name; // 파일명 명시
                                 storedFiles.push(resizedFile);
+
+                                // [추가] AI 모달 전송용 (잘리지 않고 여백이 채워진 500px 이미지)
+                                var aiResizedFile = getThumbFileAi(image, 500, this.width, this.height);
+                                aiResizedFile.name = file.name;
+                                storedAiFiles.push(aiResizedFile);
                             };
                             image.src = e.target.result;
 
@@ -431,6 +437,7 @@
                         stored600Files.splice(i, 1);
                         stored1000Files.splice(i, 1);
                         storedFiles.splice(i, 1);
+                        storedAiFiles.splice(i, 1);
                         break;
                     }
                 }
@@ -1434,6 +1441,7 @@
                                     .then(blob => {
                                         var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
                                         storedFiles.push(file);
+                                        storedAiFiles.push(file);
                                         console.log("프록시 우회 성공: " + fileName + " 배열 추가 완료 (총 " + storedFiles.length + "개)");
                                     })
                                     .catch(err => {
@@ -1682,6 +1690,8 @@
     }
 
     function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
+
+        $('.generated-badge').remove();
         
         targetAiBtn = btnElement; // [수정] 클릭된 버튼 엘리먼트 저장
         targetImgPreviewId = previewId || "#rep_img_preview";
@@ -1690,7 +1700,7 @@
         console.log("선택된 파일명:", fileName);
 
         // storedFiles에서 파일 객체 찾기
-        var selectedFile = storedFiles.find(f => f.name === fileName);
+        var selectedFile = storedAiFiles.find(f => f.name === fileName);
 
         if (!selectedFile) {
             // [디버깅용 추가 코드]
@@ -1734,13 +1744,20 @@
             // 메인 미리보기와 사이드바 썸네일 모두 이미지 설정
 
 
-            $('#ai_modal_preview_image').attr('src', e.target.result).removeClass('hidden'); 
+            $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
             $('#ai_modal_thumbnail').attr('src', e.target.result);
             $('#ai_modal_placeholder_text').addClass('hidden');
             $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화(숨김)
+            $('.generated-badge').remove(); 
+            $('.btn-style-select').removeAttr('data-generated-url');
 
             $('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
             $('#ai_input_prompt').val('');
+
+            //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+            //$(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+
+            
         }
         reader.readAsDataURL(selectedFile);
         
@@ -1787,7 +1804,8 @@
                 if (res.success) {
                     $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
                     updateAiCountUI(res.remain_count);
-                    alert('배경 제거가 완료되었습니다.');
+                    //alert('배경 제거가 완료되었습니다.');
+                    modalOpen('#ai-generate-success-modal');
                 } else {
                     alert('실패: ' + res.message);
                 }
@@ -1870,145 +1888,30 @@
         e.preventDefault();
 
         // 3-1. 시각적 효과: 모든 버튼 초기화 후 현재 버튼만 강조
-        $('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
-        $(this).addClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+        //$('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+        //$(this).addClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+        $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+        $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
         // 3-2. 데이터 저장: 버튼에 있는 프롬프트를 숨겨진 input에 입력
         var prompt = $(this).data('prompt');
         $('#ai_input_prompt').val(prompt);
+
+        var cachedUrl = $(this).attr('data-generated-url');
+        if (cachedUrl) {
+            // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
+            $('#ai_modal_preview_image').attr('src', cachedUrl);
+        } else {
+            // 아직 생성 안 한 스타일이라면 베이스 이미지(원본 또는 누끼)로 되돌림
+            var baseSrc = $('#ai_modal_preview_image').attr('data-base-src');
+            $('#ai_modal_preview_image').attr('src', baseSrc);
+        }
     });
     
     var testGenerateQuota = 3;
 
 
-// 4. [STEP 2] 이미지 생성하기 버튼 클릭 (가짜 통신 + DB 횟수 연동)
-    /*$(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
-        e.preventDefault();
-
-        // 4-1. 유효성 검사
-        if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
-        var prompt = $('#ai_input_prompt').val();
-        if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
-
-        var $btn = $(this);
-        var originalText = $btn.html();
-
-        // 4-2. 서버(DB)에 횟수 차감만 요청 (실제 AI 동작은 안 함)
-        $.ajax({
-            url: "{{ route('product.ai.test_decrement') }}", // 하단에 안내된 Laravel 라우트 주소
-            type: 'POST',
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            success: function(res) {
-                if (res.success) {
-
-                    $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
-
-                    // DB 차감이 성공(횟수가 남아있음)했을 때만 가짜 로딩 시작
-                    $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
-                    
-                    $('#ai_full_loading_overlay h4').text('테스트: AI 이미지 생성 중...');
-                    $('#ai_full_loading_overlay p').text('가짜 통신 중입니다. 남은 생성 횟수: ' + res.remain_count + '회 (약 3초 소요)');
-                    $('#ai_full_loading_overlay').removeClass('hidden');
-
-                    $btn.html('<span class="spinner-border spinner-border-sm"></span> 생성 중... (남은 횟수: ' + res.remain_count + ')');
-
-                    // 4-4. 3초 딜레이 후 더미 이미지 적용 (기존 테스트 로직 유지)
-                    setTimeout(function() {
-                        var dummyGeneratedUrl = 'https://via.placeholder.com/500x500.png?text=Test+Generated+Image';
-                        $('#ai_modal_preview_image').attr('src', dummyGeneratedUrl);
-
-                        $('#ai_full_loading_overlay').addClass('hidden');
-                        resetButtons($btn, originalText); 
-
-                        alert('테스트 이미지가 생성되었습니다!\n남은 테스트 가능 횟수: ' + res.remain_count + '회');
-                    }, 3000);
-                } else {
-                    alert(res.message); // 횟수 부족 메시지 출력
-                }
-            },
-            error: function(xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    alert(xhr.responseJSON.message);
-                } else {
-                    alert('서버 통신 오류가 발생했습니다.');
-                }
-            }
-        });
-    });*/
-    
-    // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (배경 제거만 수행하여 미리보기 적용)
-    /*$(document).off('click', '#btn_ai_generate').on('click', '#btn_ai_generate', function(e) {
-        e.preventDefault();
-
-        // 4-1. 유효성 검사
-        if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
-        
-        // (선택) 배경 제거만 수행하므로 프롬프트 검사가 필요 없다면 아래 두 줄은 주석 처리 또는 삭제하셔도 됩니다.
-        // var prompt = $('#ai_input_prompt').val();
-        // if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
-
-        var $btn = $(this);
-        var originalText = $btn.html();
-
-        // 4-2. UI 잠금 및 로딩 오버레이 표시
-        $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
-        
-        $('#ai_full_loading_overlay h4').text('배경 제거 중...');
-        $('#ai_full_loading_overlay p').text('이미지의 배경을 깔끔하게 지우고 있습니다.');
-        $('#ai_full_loading_overlay').removeClass('hidden');
-
-        $btn.html('<span class="spinner-border spinner-border-sm"></span> 작업 중...');
-
-        // 4-3. 배경 제거 API 실제 호출
-        var formData = new FormData();
-        formData.append('image', currentAiFile);
-
-        $.ajax({
-            url: "{{ route('product.ai.remove_bg') }}", // 배경 제거용 라우트
-            type: 'POST',
-            global: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            data: formData,
-            contentType: false, 
-            processData: false,
-            beforeSend: function() {
-                // 전역 로딩바가 있다면 숨김 처리 (모달 내 로딩을 사용하므로)
-                $('#loadingContainer').hide(); 
-                $('#loadingContainer').css('display', 'none'); 
-            },
-            success: function(res) {
-                if (res.success) {
-                    // 4-4. 성공 시 배경이 제거된 이미지 URL을 미리보기에 표출
-                    $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
-                    
-                    if (res.remain_count !== undefined) {
-                        $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
-                    } 
-                    // case B: res.data.remain_count 로 넘어오는 경우
-                    else if (res.data && res.data.remain_count !== undefined) {
-                        $('#ai_remain_count_display').text('남은 횟수: ' + res.data.remain_count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.').removeClass('hidden');
-                    }
-                } else {
-                    alert('배경 제거 실패: ' + res.message);
-                }
-            },
-            error: function(xhr) {
-                console.error(xhr);
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    alert(xhr.responseJSON.message);
-                } else {
-                    alert('서버 통신 오류가 발생했습니다.');
-                }
-            },
-            complete: function() {
-                // 4-5. 통신 종료 후 로딩 숨김 및 버튼 상태 복구
-                $('#ai_full_loading_overlay').addClass('hidden');
-                resetButtons($btn, originalText); 
-            }
-        });
-    });*/
-
-    // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
+     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
     $(document).on('click', '#btn_ai_generate', function(e) {
         e.preventDefault();
 
@@ -2021,6 +1924,9 @@
         if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
         var prompt = $('#ai_input_prompt').val();
         if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
+        //var $activeStyleBtn = $('.btn-style-select.border-primary');
+        var $activeStyleBtn = $('.btn-style-select.border-red-500');
 
         // 4-2. 로딩 시작
         var $btn = $(this);
@@ -2061,7 +1967,7 @@
                     $btn.html('<span class="spinner-border spinner-border-sm"></span> 2단계: 이미지 생성 중...');
                     
                     // 배경 합성 요청 (2단계)
-                    requestGenerateBg(tempPath, prompt, $btn, originalText);
+                    requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn);
                 } else {
                     alert('배경 제거 실패: ' + res1.message);
                     resetButtons($btn, originalText);
@@ -2094,9 +2000,8 @@
     });
 
     // 배경 합성 함수 (분리됨)
-    function requestGenerateBg(tempPath, prompt, $btn, originalText) {
+    function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn) {
 
-        
 
         $('#ai_full_loading_overlay').removeClass('hidden');
     
@@ -2110,7 +2015,14 @@
                 if (res2.success) {
                     $('#ai_modal_preview_image').attr('src', res2.data.final_url);
                     updateAiCountUI(res2.remain_count);
-                    alert('이미지가 생성되었습니다! 마음에 드시면 [완료 및 저장]을 눌러주세요.');
+                    if ($activeStyleBtn && $activeStyleBtn.length > 0) {
+                        $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
+                        if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                            var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
+                            $activeStyleBtn.append(badgeHtml);
+                        }
+                    }
+                    modalOpen('#ai-generate-success-modal');
                 } else {
                     alert('이미지 생성 실패: ' + res2.message);
                 }
