@@ -526,54 +526,6 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
     }
 });
 
-// [추가] 원본 복구 함수
-/*function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
-    if (!confirm('원본 이미지로 복구하시겠습니까?')) return;
-
-    var $img = $(previewId);
-    var originSrc = $img.attr('data-original-src'); 
-
-    if (originSrc) {
-        $img.attr('src', originSrc);
-    }
-    var $wrapper = $(btn).closest('.product-img__add');
-    var backupIdx = $wrapper.attr('data-backup-idx');
-
-    if (backupIdx) {
-        $wrapper.attr('data-idx', backupIdx);
-        $wrapper.data('idx', backupIdx);
-        $wrapper.removeAttr('data-backup-idx');
-        
-        deleteImage = deleteImage.filter(function(item) {
-            return item != backupIdx;
-        });
-    }
-
-    var originalData = originalFilesBackup[fileName];
-    if (originalData) {
-        // 현재 배열에는 "ai_" + 원본파일명 으로 저장되어 있으므로 해당 인덱스를 찾음
-        var aiFileName = "ai_" + fileName;
-        var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
-        
-        if (fileIndex !== -1) {
-            // 배열의 데이터를 다시 원본 파일로 교체
-            storedFiles[fileIndex] = originalData.main;
-            stored100Files[fileIndex] = originalData.f100;
-            stored400Files[fileIndex] = originalData.f400;
-            stored600Files[fileIndex] = originalData.f600;
-            stored1000Files[fileIndex] = originalData.f1000;
-        }
-    }
-
-    $(hiddenInputId).val('');
-
-    // 모바일 UI 클래스 대응
-    $(btn)
-        .removeClass('border-stone-500 text-stone-600 bg-stone-100')
-        .addClass('border-primary text-primary bg-white')
-        .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
-        .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
-}*/
     var restoreParams = {};
 
     // 2. 기존 restoreOriginal 함수 수정 (파라미터 저장 후 모달만 띄우기)
