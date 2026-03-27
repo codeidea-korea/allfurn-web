@@ -1753,7 +1753,7 @@
             $('.generated-badge').remove(); 
             $('.btn-style-select').removeAttr('data-generated-url');
 
-            $('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
+            $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             $('#ai_input_prompt').val('');
 
             //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
@@ -1903,8 +1903,7 @@
             // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
             $('#ai_modal_preview_image').attr('src', cachedUrl);
         } else {
-           
-            var styleSampleImg = $(this).find('img').attr('src');  
+            var styleSampleImg = $(this).find('img').attr('src');
             $previewImg.attr('src', styleSampleImg);
             $previewImg.css('object-fit', 'cover');
         }
