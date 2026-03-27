@@ -84,8 +84,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">모던</span>
                         </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-2 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
-                    </button>
+                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
 
                     {{-- 3. 미니멀리즘 --}}
                     <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere">
@@ -94,7 +98,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">미니멀리즘</span>
                         </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-2 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
                     </button>
 
                     {{-- 4. 고딕 --}}
@@ -104,7 +113,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">고딕</span>
                         </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-2 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
+                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
                     </button>
 
                     {{-- 5. 인더스트리얼 --}}
@@ -114,8 +128,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">인더스트리얼</span>
                         </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-primary]:border-primary group-[.border-primary]:ring-2 group-[.border-primary]:ring-primary/30 group-[.border-primary]:ring-inset"></div>
-                    </button>
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
 
                     <input type="hidden" id="ai_input_prompt">
                 </div>
