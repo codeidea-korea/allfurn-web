@@ -31,8 +31,8 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품 이미지</dt>
                         <dd class="font-medium w-full">
-                            <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap ui-sortable">
-                                <div class="border border-dashed w-[200px] h-[200px] rounded-md relative flex items-center justify-center product-img__gallery">
+                            <div class="flex flex-wrap items-start gap-3 desc__product-img-wrap ui-sortable">
+                                <div class="border border-dashed w-[200px] h-[244px] rounded-md relative flex items-center justify-center product-img__gallery">
                                     <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                     <div>
                                         <div class="file_text flex flex-col items-center">
@@ -47,6 +47,8 @@
                                     <p>· 권장 크기: 550 x 550 / 권장 형식: jpg, jpeg, png</p>
                                     <p class="text-primary">· 첫번째 이미지가 대표 이미지로 노출됩니다.</p>
                                     <p>· 이미지는 8개까지 등록 가능합니다.</p>
+                                    <p>· AI 배경 생성 버튼으로 AI 이미지 생성이 가능합니다.</p>
+                                    <p>· AI 수정 이미지 사용 책임은 제품 등록자에게 있습니다.</p>
                                 </div>
                             </div>
                             <div class="mt-3">
@@ -1887,9 +1889,6 @@
     $(document).on('click', '.btn-style-select', function(e) {
         e.preventDefault();
 
-        // 3-1. 시각적 효과: 모든 버튼 초기화 후 현재 버튼만 강조
-        //$('.btn-style-select').removeClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
-        //$(this).addClass('border-primary text-primary bg-primary/5 ring-1 ring-primary');
         $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
         $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
@@ -1897,14 +1896,17 @@
         var prompt = $(this).data('prompt');
         $('#ai_input_prompt').val(prompt);
 
+        var $previewImg = $('#ai_modal_preview_image');
+
         var cachedUrl = $(this).attr('data-generated-url');
         if (cachedUrl) {
             // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
             $('#ai_modal_preview_image').attr('src', cachedUrl);
         } else {
-            // 아직 생성 안 한 스타일이라면 베이스 이미지(원본 또는 누끼)로 되돌림
-            var baseSrc = $('#ai_modal_preview_image').attr('data-base-src');
-            $('#ai_modal_preview_image').attr('src', baseSrc);
+           
+            var styleSampleImg = $(this).find('img').attr('src');  
+            $previewImg.attr('src', styleSampleImg);
+            $previewImg.css('object-fit', 'cover');
         }
     });
     

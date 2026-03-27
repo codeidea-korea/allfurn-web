@@ -29,10 +29,10 @@
                     </dd>
                 </dl>
                 <dl class="mb-3">
-                    <dt class="necessary">상품 이미지</dt>
+                    <dt class="necessary">상품 이미지진희</dt>
                     <dd>
-                        <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
-                            <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center product-img__gallery">
+                        <div class="flex flex-wrap items-start gap-3 desc__product-img-wrap">
+                            <div class="border border-dashed w-[150px] h-[194px] rounded-md relative flex items-center justify-center product-img__gallery">
                                 <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                 <div>
                                     <div class="file_text flex flex-col items-center">
@@ -46,6 +46,8 @@
                             <div class="">
                                 <p class="text-primary">· 첫번째 이미지가 대표 이미지로 노출됩니다.</p>
                                 <p>· 이미지는 8개까지 등록 가능합니다.</p>
+                                <p>· AI 배경 생성 버튼으로 AI 이미지 생성이 가능합니다.</p>
+                                <p>· AI 수정 이미지 사용 책임은 제품 등록자에게 있습니다.</p>
                             </div>
                         </div>
                     </dd>
@@ -355,6 +357,7 @@ $(document).on('click', '#btn_remove_bg', function(e) {
             if (res.success) {
                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
                 updateAiCountUI(res.remain_count);
+                //alert('배경 제거가 완료되었습니다.');
                 modalOpen('#ai-generate-success-modal');
             } else {
                 alert('실패: ' + res.message);
@@ -373,13 +376,16 @@ $(document).on('click', '.btn-style-select', function(e) {
 
     var prompt = $(this).data('prompt');
     $('#ai_input_prompt').val(prompt);
+    var $previewImg = $('#ai_modal_preview_image');
+
 
     var cachedUrl = $(this).attr('data-generated-url');
     if (cachedUrl) {
         $('#ai_modal_preview_image').attr('src', cachedUrl);
     } else {
-        var baseSrc = $('#ai_modal_preview_image').attr('data-base-src');
-        $('#ai_modal_preview_image').attr('src', baseSrc);
+        var styleSampleImg = $(this).find('img').attr('src');  
+        $previewImg.attr('src', styleSampleImg);
+        $previewImg.css('object-fit', 'cover');
     }
 });
 
