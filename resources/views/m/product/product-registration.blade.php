@@ -257,6 +257,7 @@ var targetImgPreviewId = "";
 var targetHiddenInputId = "";
 var originalFilesBackup = {};
 var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
+var tempAiFilesToDelete = [];
 
 function updateAiCountUI(count) {
     if (count !== undefined && count !== null) {
@@ -431,6 +432,11 @@ $(document).on('click', '#btn_ai_generate', function(e) {
                         userAiCount = res1.remain_count;
                     }
                 var tempPath = res1.data.temp_path;
+
+                if (tempPath) {
+                    tempAiFilesToDelete.push(tempPath);
+                }
+
                 $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); 
 
                 $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
@@ -465,6 +471,11 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
             if (res2.success) {
                 $('#ai_modal_preview_image').attr('src', res2.data.final_url);
                 updateAiCountUI(res2.remain_count);
+
+                if (res2.data.final_path) {
+                    tempAiFilesToDelete.push(res2.data.final_path);
+                }
+
                 if ($activeStyleBtn && $activeStyleBtn.length > 0) {
                     $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
                     if ($activeStyleBtn.find('.generated-badge').length === 0) {

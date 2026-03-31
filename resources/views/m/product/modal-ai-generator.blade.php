@@ -84,12 +84,13 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">모던</span>
                         </div>
-                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
                                 <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>                                        
+                    </button>
 
                     {{-- 3. 미니멀리즘 --}}
                     <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere">
@@ -98,12 +99,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">미니멀리즘</span>
                         </div>
-                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
                                 <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>                                        
                     </button>
 
                     {{-- 4. 고딕 --}}
@@ -113,12 +114,12 @@
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">고딕</span>
                         </div>
-                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
                                 <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>                                        
                     </button>
 
                     {{-- 5. 인더스트리얼 --}}
@@ -133,7 +134,8 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
-                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div> 
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>                                        
+                    </button>
 
                     <input type="hidden" id="ai_input_prompt">
                 </div>
@@ -188,7 +190,6 @@
         // 1. 원본 파일 인덱스 찾기
         var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
 
-        var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
         if (fileIndex !== -1 && !originalFilesBackup[currentAiFile.name]) {
             originalFilesBackup[currentAiFile.name] = {
                 main: storedFiles[fileIndex],
@@ -247,6 +248,22 @@
                     $btn.prop('disabled', false).html(originalBtnText);
                     modalClose('#ai_image_generator_modal');
                     modalOpen('#ai-apply-success-modal');
+
+                    if (typeof tempAiFilesToDelete !== 'undefined' && tempAiFilesToDelete.length > 0) {
+                        $.ajax({
+                            url: '/product/ai/cleanup', 
+                            type: 'POST',
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            data: { files: tempAiFilesToDelete },
+                            success: function(response) {
+                                console.log('모바일 서버 임시 파일 정리 완료:', response);
+                                tempAiFilesToDelete = []; // 비우기
+                            },
+                            error: function(err) {
+                                console.error('모바일 임시 파일 정리 실패:', err);
+                            }
+                        });
+                    }
                 };
                 image.src = generatedUrl;
             })
