@@ -507,6 +507,8 @@ Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => [
     // 요청: 누끼 이미지 경로 + 프롬프트 -> 응답: 최종 합성 이미지 URL (JSON)
     Route::post('/generate-bg', 'ProductAiImageController@generateBackground')->name('generate_bg');
 
+    Route::post('/cleanup', 'ProductAiImageController@cleanupTempFiles')->name('cleanup');
+
     Route::post('/test-decrement', 'ProductAiImageController@testDecrement')->name('test_decrement');
 
     Route::get('/get-remain-count', 'ProductAiImageController@getRemainCount')->name('get_remain_count');
