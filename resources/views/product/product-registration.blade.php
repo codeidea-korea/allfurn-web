@@ -1682,6 +1682,8 @@
     var originalFilesBackup = {};
     var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
 
+    var tempAiFilesToDelete = [];
+
     function updateAiCountUI(count) {
         if (count !== undefined && count !== null) {
             userAiCount = count; // 전역 변수 동기화
@@ -1904,7 +1906,9 @@
             $('#ai_modal_preview_image').attr('src', cachedUrl);
         } else {
             var styleSampleImg = $(this).find('img').attr('src');
+            
             $previewImg.attr('src', styleSampleImg);
+            
             $previewImg.css('object-fit', 'cover');
         }
     });
@@ -1960,6 +1964,11 @@
                     }
                     // 성공 시 2단계 진행
                     var tempPath = res1.data.temp_path;
+
+                    if (tempPath) {
+                        tempAiFilesToDelete.push(tempPath);
+                    }
+
                     $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); // 중간 과정 보여주기
 
                     $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
@@ -2016,6 +2025,11 @@
                 if (res2.success) {
                     $('#ai_modal_preview_image').attr('src', res2.data.final_url);
                     updateAiCountUI(res2.remain_count);
+
+                    if (res2.data.final_path) {
+                        tempAiFilesToDelete.push(res2.data.final_path);
+                    }
+
                     if ($activeStyleBtn && $activeStyleBtn.length > 0) {
                         $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
                         if ($activeStyleBtn.find('.generated-badge').length === 0) {

@@ -361,6 +361,25 @@
                     $btn.prop('disabled', false).html(originalBtnText);
                     modalClose('#ai_image_generator_modal');
                     modalOpen('#ai-apply-success-modal');
+
+
+                    if (tempAiFilesToDelete.length > 0) {
+                        $.ajax({
+                            url: '/product/ai/cleanup', // 백엔드 라우트 (새로 생성해야 함)
+                            type: 'POST',
+                            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                            data: { files: tempAiFilesToDelete },
+                            success: function(response) {
+                                console.log('서버 임시 파일 정리 완료:', response);
+                                // 삭제 성공 후 배열 비우기
+                                tempAiFilesToDelete = []; 
+                            },
+                            error: function(err) {
+                                // 통신에 실패해도 사용자의 진행은 막지 않습니다. (스케줄러가 나중에 삭제 처리함)
+                                console.error('임시 파일 정리 실패:', err);
+                            }
+                        });
+                    }
                 };
                 image.src = generatedUrl;
             })

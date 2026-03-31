@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Service\ProductAiImageService; // Stability와 Google을 통합 관리하는 서비스
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductAiImageController extends Controller
 {
@@ -95,11 +97,15 @@ class ProductAiImageController extends Controller
             // 반환값 예시: 'http://.../final_image.png'
             $finalUrl = $this->productAiService->generateBackground($tempPath, $prompt);
 
+            $parsedUrl = parse_url($finalUrl, PHP_URL_PATH); // 결과: /storage/ai-lab/...
+            $finalPath = preg_replace('/^\/?storage\//', '', $parsedUrl); // 결과: ai-lab/...
+
             return response()->json([
                 'success' => true,
                 'message' => '이미지 생성 완료',
                 'data'    => [
-                    'final_url' => $finalUrl
+                    'final_url' => $finalUrl,
+                    'final_path' => $finalPath
                 ],
                 'remain_count' => $user ? $user->ai_count : 0
             ]);
@@ -151,6 +157,29 @@ class ProductAiImageController extends Controller
         return response()->json([
             'success' => true,
             'remain_count' => $user->ai_count
+        ]);
+    }
+
+    public function cleanupTempFiles(Request $request)
+    {
+        $files = $request->input('files', []);
+        $deletedCount = 0;
+
+        foreach ($files as $filePath) {
+            // 보안을 위해 ai-lab 폴더 내의 파일인지 반드시 확인합니다.
+            if (Str::contains($filePath, 'ai-lab')) {
+                // Storage::disk('public') 기준이라고 가정했습니다.
+                // 환경에 따라 Storage::delete() 등으로 맞게 수정하세요.
+                if (Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                    $deletedCount++;
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$deletedCount}개의 임시 파일이 삭제되었습니다."
         ]);
     }
 }
