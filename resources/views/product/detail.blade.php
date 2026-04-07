@@ -376,133 +376,6 @@
                             @endif
                             <div class="py-7" id="orderProductList">
                                 <div>
-                                {{--
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn" onclick="prodAdd(this)">추가</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="dropdown_wrap noline">
-                                            <button type="button" class="dropdown_btn"><p>옵션(사이즈 및 컬러) 선택</p></button>
-                                            <div class="dropdown_list">
-                                                <div class="dropdown_item">옵션명 표기1</div>
-                                                <div class="dropdown_item">옵션명 표기2</div>
-                                                <div class="dropdown_item">옵션명 표기3</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="noline">
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div class="total_price">150,000</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                --}}
                                 </div>
                                 <div class="text-center orderProductList_addlist">
                                     <button type="button" class="more_prod">상품 더보기</button>
@@ -595,7 +468,6 @@
                                 </button>
                             </div>
                             <div class="py-7" id="orderProductList2">
-                                
                                 <hr>
 
                             </div>
@@ -656,19 +528,25 @@
             // 이미 'active' 상태였다면, 위의 로직에 의해 'active' 클래스가 제거됩니다.
         });
 
-        $(".filter_dropdown").click(function(event){
+        /*$(".filter_dropdown").click(function(event){
             $(this).toggleClass('active');
             $(".filter_dropdown_wrap").toggle();
             $(".filter_dropdown svg").toggleClass("active");
             //event.stopPropagation(); // 이벤트 전파 방지
+        });*/
+        $(".filter_dropdown").click(function(event){
+            $(this).toggleClass('active');
+            $(this).next(".filter_dropdown_wrap").toggle(); 
+            $(this).find("svg").toggleClass("active"); 
         });
 
         $(".filter_dropdown_wrap ul li a").click(function(){
             var selectedText = $(this).text();
-            $(".filter_dropdown p").text(selectedText);
-            $(".filter_dropdown_wrap").hide();
-            $(".filter_dropdown").removeClass('active');
-            $(".filter_dropdown svg").removeClass("active");
+            var $dropdownBox = $(this).closest('.dropdown');
+            $dropdownBox.find(".filter_dropdown p").text(selectedText);
+            $dropdownBox.find(".filter_dropdown_wrap").hide();
+            $dropdownBox.find(".filter_dropdown").removeClass('active');
+            $dropdownBox.find(".filter_dropdown svg").removeClass("active");
         });
 
         // 드롭다운 영역 밖 클릭 이벤트
@@ -714,11 +592,25 @@
                     //alert('상위 필수 옵션 선택 후 해당 옵션을 선택해주세요.'); return false;
                 }
 
-                optionTmp.push({
-                    'name': $(this).parents('.dropdown').find('.dropdown__title').data('placeholder'),
-                    'option_name': $(this).data('option_name'),
-                    'option_price': $(this).data('price'),
-                })
+                // =============== [수정된 부분 시작] ===============
+                var currentCategoryName = $(this).parents('.dropdown').find('.dropdown__title').data('placeholder');
+
+                var existingIndex = optionTmp.findIndex(function(item) {
+                    return item.name === currentCategoryName;
+                });
+
+                if (existingIndex !== -1) {
+                    optionTmp[existingIndex].option_name = $(this).data('option_name');
+                    optionTmp[existingIndex].option_price = $(this).data('price');
+                } else {
+
+                    optionTmp.push({
+                        'name': currentCategoryName,
+                        'option_name': $(this).data('option_name'),
+                        'option_price': $(this).data('price'),
+                    });
+                }
+
                 console.log(optionTmp)
 
                 if (requiredCnt > optionTmp.length) {
@@ -745,6 +637,20 @@
             }
 
             if (!same) {
+                // 1. 총 가격을 계산할 변수를 만듭니다.
+                var totalOptionPrice = 0;
+
+                // 2. 필수 옵션(여러 개)일 경우 배열을 돌며 가격을 모두 더합니다.
+                if (required) {
+                    optionTmp.map(function (item) {
+                        totalOptionPrice += parseInt(item['option_price']) || 0;
+                    });
+                } else {
+                    // 선택 옵션(단일)일 경우 방금 클릭한 요소의 가격만 가져옵니다.
+                    totalOptionPrice = parseInt($(this).data('price')) || 0;
+                }
+
+
                 var htmlText = '<div class="option_item option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
                 if (required) {
                     optionTmp.map(function (item) {
@@ -766,7 +672,8 @@
                     '</div>' +
                     '<p class="price">';
                 @if($data['detail']->is_price_open == 1)
-                    htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
+                   //htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
+                   htmlText += '<span>'+totalOptionPrice.toLocaleString()+'</span>원';
                 @else
                     htmlText += '<span>{{$data['detail']->price_text}}</span>';
                 @endif
@@ -1472,7 +1379,7 @@
                     }
                     const productOption = [];
                     // option
-                    $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                    /*$($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
                         productOption.push({
                             optionName: $(ele).find('.selection__text').data('name'),
                             optionValue: [{
@@ -1484,7 +1391,48 @@
                             // 현재 의미가 없음
                             required: "0"
                         });
+                    });*/
+                    /*$($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                        // 1. 현재 선택된 세부 옵션들을 담을 빈 배열을 만듭니다.
+                        let currentOptionValues = [];
+                        
+                        // 2. 내부의 개별 옵션 태그(.selection__text)들을 하나씩 순회하며 데이터를 추출합니다.
+                        $(ele).find('.selection__text').each((i, textEle) => {
+                            currentOptionValues.push({
+                                propertyName: $(textEle).data('option_name'),
+                                // textEle(현재 옵션 텍스트) 바로 다음에 오는 삭제 버튼의 idx를 가져옵니다.
+                                idx: Number($(textEle).next('.ico_opt_remove').data('opt_idx')), 
+                                // 수량은 해당 그룹(.option_item) 전체에 공통으로 적용되므로 기존과 동일하게 가져옵니다.
+                                count: Number($(ele).find('.count_box2 > input').val()),
+                                // 첫 번째가 아닌, "현재 순회 중인" 옵션의 가격을 가져옵니다.
+                                price: $(textEle).data('price')
+                            });
+                        });
+
+                        // 3. 추출한 배열을 최종 데이터 구조에 삽입합니다.
+                        productOption.push({
+                            optionName: $(ele).find('.selection__text').first().data('name'),
+                            optionValue: currentOptionValues,
+                            required: "0"
+                        });
+                    });*/
+
+                    $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                        // 묶지 않고, 개별 옵션을 찾을 때마다 곧바로 productOption 배열에 독립적으로 넣습니다.
+                        $(ele).find('.selection__text').each((i, textEle) => {
+                            productOption.push({
+                                optionName: $(textEle).data('name'), // 첫 번째 값이 아닌, 현재 순회중인 고유 옵션명 (색상, 사이즈 등)
+                                optionValue: [{
+                                    propertyName: $(textEle).data('option_name'),
+                                    idx: Number($(textEle).next('.ico_opt_remove').data('opt_idx')),
+                                    count: Number($(ele).find('.count_box2 > input').val()),
+                                    price: $(textEle).data('price')
+                                }],
+                                required: "0"
+                            });
+                        });
                     });
+
                     prodData.append("p_product_option[" + 0 + "]",  JSON.stringify(productOption));
                     @endif
 
