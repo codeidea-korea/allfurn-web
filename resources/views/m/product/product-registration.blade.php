@@ -29,7 +29,7 @@
                     </dd>
                 </dl>
                 <dl class="mb-3">
-                    <dt class="necessary">상품 이미지진희</dt>
+                    <dt class="necessary">상품 이미지</dt>
                     <dd>
                         <div class="flex flex-wrap items-start gap-3 desc__product-img-wrap">
                             <div class="border border-dashed w-[150px] h-[194px] rounded-md relative flex items-center justify-center product-img__gallery">
@@ -304,7 +304,7 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     });
 
     // FileReader로 이미지 URL 읽어서 모달에 표시
-    var reader = new FileReader();
+    /*var reader = new FileReader();
     reader.onload = function(e) {
         $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
         $('#ai_modal_thumbnail').attr('src', e.target.result);
@@ -317,7 +317,20 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
         $('.generated-badge').remove(); 
         $('.btn-style-select').removeAttr('data-generated-url');
     }
-    reader.readAsDataURL(selectedFile);
+    reader.readAsDataURL(selectedFile);*/
+
+    var validImageSrc = $(targetImgPreviewId).attr('data-original-src') || $(targetImgPreviewId).attr('src');
+
+    // 가져온 정상 데이터를 모달창에 꽂아줍니다.
+    $('#ai_modal_preview_image').attr('src', validImageSrc).attr('data-base-src', validImageSrc).removeClass('hidden'); 
+    $('#ai_modal_thumbnail').attr('src', validImageSrc);
+    $('#ai_modal_placeholder_text').addClass('hidden');
+    $('#ai_modal_result_image').addClass('hidden');
+
+    $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+    $('#ai_input_prompt').val('');
+    $('.generated-badge').remove(); 
+    $('.btn-style-select').removeAttr('data-generated-url');
     
     modalOpen('#ai_image_generator_modal');
 }
@@ -340,8 +353,16 @@ $(document).on('click', '#btn_remove_bg', function(e) {
 
     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
 
+    var validBase64 = $('#ai_modal_preview_image').attr('data-base-src');
+    var fileToSend = currentAiFile; // 기본적으로는 기존 파일 사용
+
+    // 화면에 있는 데이터가 정상적인 Base64 문자열이면, 깡통 파일 대신 이걸로 파일 생성
+    if (validBase64 && validBase64.startsWith('data:image')) {
+        fileToSend = base64ToFile(validBase64, currentAiFile.name);
+    }
+
     var formData = new FormData();
-    formData.append('image', currentAiFile);
+    formData.append('image', fileToSend); // 깡통 파일 대신 정상 파일 전송
 
     $.ajax({
         url: "{{ route('product.ai.remove_bg') }}",
@@ -412,9 +433,15 @@ $(document).on('click', '#btn_ai_generate', function(e) {
     $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
     $('#ai_full_loading_overlay').removeClass('hidden');
 
-    var formData = new FormData();
-    formData.append('image', currentAiFile);
+    var validBase64 = $('#ai_modal_preview_image').attr('data-base-src');
+    var fileToSend = currentAiFile;
 
+    if (validBase64 && validBase64.startsWith('data:image')) {
+        fileToSend = base64ToFile(validBase64, currentAiFile.name);
+    }
+
+    var formData = new FormData();
+    formData.append('image', fileToSend);
     $.ajax({
         url: "{{ route('product.ai.remove_bg') }}",
         type: 'POST',
@@ -619,6 +646,20 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
     const paymentHide  = (item)=>{
         $(`.${item}`).addClass('hidden')
     }
+
+function base64ToFile(dataurl, filename) {
+    var arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), 
+        n = bstr.length, 
+        u8arr = new Uint8Array(n);
+        
+    while(n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    
+    return new File([u8arr], filename, {type: mime});
+}
 
 function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
