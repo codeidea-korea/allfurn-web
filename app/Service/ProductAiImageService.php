@@ -108,21 +108,13 @@ class ProductAiImageService
             Log::info("Step 2 Start. Input File Path: {$nobgPath}");
             Log::info("Step 2 Input File Size: " . number_format($fileSize) . " bytes");
 
-            // [디버깅 3] 프롬프트 확인
             Log::info("Gemini Prompt: " . $prompt);
-
-
 
             // 2. 이미지 데이터 읽기 (public 디스크에서)
             $imageContent = Storage::disk('public')->get($nobgPath);
             $base64Data = base64_encode($imageContent);
             $mimeType = 'image/png'; 
 
-            // 3. Gemini용 프롬프트 구성
-            /*$finalPrompt = "This image has a transparent background. " .
-                           "Place the foreground furniture into a [{$prompt}]. " .
-                           "Ensure realistic lighting, shadows, and reflections on the furniture. " .
-                           "Do not change the shape of the furniture.";*/
 
             $finalPrompt = "You are an expert product photographer. " .
                "Do NOT redraw, alter, or distort the foreground furniture. " .
@@ -176,7 +168,8 @@ class ProductAiImageService
                 ]],
                 'generationConfig' => [
                     'temperature' => 0.0,
-
+                    //'maxOutputTokens' => 4096, // 필요 시 주석 해제
+                    //'responseMimeType' => 'image/png' // 이미지 생성을 명시 (일부 모델 지원)
                 ]
             ],
             'http_errors' => false
@@ -192,16 +185,25 @@ class ProductAiImageService
             throw new Exception("Google API Error ({$statusCode}): {$msg}");
         }
 
-        // 데이터 추출 (inlineData 구조 확인)
-        if (isset($result['candidates'][0]['content']['parts'][0]['inlineData']['data'])) {
-            return $result['candidates'][0]['content']['parts'][0]['inlineData']['data'];
+        $parts = $result['candidates'][0]['content']['parts'] ?? [];
+        $textResponse = '';
+
+        foreach ($parts as $part) {
+            // 순서에 상관없이 이미지 데이터(inlineData)가 발견되면 즉시 반환
+            if (isset($part['inlineData']['data'])) {
+                return $part['inlineData']['data'];
+            }
+            // 텍스트가 있다면 (백틱이나 부연설명 등) 모아둡니다.
+            if (isset($part['text'])) {
+                $textResponse .= $part['text'];
+            }
         }
 
-        // 텍스트로 에러 메시지가 왔는지 확인
-        $textResponse = $result['candidates'][0]['content']['parts'][0]['text'] ?? null;
+        // 3. 이미지를 못 찾았는데 텍스트 응답이라도 있는 경우 (거절 사유 등)
         if ($textResponse) {
             throw new Exception("이미지가 생성되지 않았습니다 (텍스트 응답): {$textResponse}");
         }
+
 
         throw new Exception("Google API 응답에서 이미지 데이터를 찾을 수 없습니다.");
     }

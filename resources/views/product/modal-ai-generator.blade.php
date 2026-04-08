@@ -1,7 +1,7 @@
 <div class="modal" id="ai_image_generator_modal">
     <div class="modal_bg" onclick="modalClose('#ai_image_generator_modal')"></div>
     
-    <div class="modal_inner" style="width: 1200px; max-width: 95vw; height: 85vh; padding: 0; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; background-color: #fff;">
+    <div class="modal_inner" style="width: 1600px; max-width: 98vw; height: 90vh; padding: 0; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; background-color: #fff;">
         
         {{-- 헤더 --}}
         <div class="flex items-center justify-between px-6 py-4 border-b bg-white shrink-0">
@@ -73,7 +73,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="북유럽"
-                                    data-prompt="Scandinavian style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere">
+                                    data-prompt="Nordic style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere, Empty room, unoccupied space, solely focused on the furniture ">
 
                                 {{-- [1층] 배경 이미지 --}}
                                 <img src="{{ asset('img/ai_button/nordic.jpg') }}" 
@@ -105,7 +105,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="모던"
-                                    data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic">
+                                    data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic, Empty room, unoccupied space, solely focused on the furniture">
 
                                     <img src="{{ asset('img/ai_button/modern.jpg') }}" 
                                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
@@ -132,7 +132,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="미니멀리즘"
-                                    data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere">
+                                    data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
 
                                     <img src="{{ asset('img/ai_button/minimalism.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
@@ -158,7 +158,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="고딕"
-                                    data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand">
+                                    data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand, Empty room, unoccupied space, solely focused on the furniture">
 
                                     <img src="{{ asset('img/ai_button/gothic.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
@@ -184,7 +184,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="인더스트리얼"
-                                    data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe">
+                                    data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe, Empty room, unoccupied space, solely focused on the furniture">
 
                                     <img src="{{ asset('img/ai_button/industrial.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
@@ -210,7 +210,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="재팬디"
-                                    data-prompt="Japandi interior style, fusion of Japanese minimalism and Scandinavian functionalism, zen atmosphere, neutral beige palette, natural wood and bamboo textures, soft diffused lighting, clean lines, peaceful and organic vibe">
+                                    data-prompt="Japandi interior style, fusion of Japanese minimalism and Scandinavian functionalism, zen atmosphere, neutral beige palette, natural wood and bamboo textures, soft diffused lighting, clean lines, peaceful and organic vibe, Empty room, unoccupied space, solely focused on the furniture">
 
                                     <img src="{{ asset('img/ai_button/Japandi2.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
@@ -382,6 +382,7 @@
                     }
                 };
                 image.src = generatedUrl;
+                //image.src = URL.createObjectURL(blob);
             })
             .catch(err => {
                 console.error(err);

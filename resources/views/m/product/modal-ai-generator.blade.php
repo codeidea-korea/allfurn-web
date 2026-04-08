@@ -63,7 +63,7 @@
                     </button>
 
                     {{-- 1. 북유럽 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="북유럽" data-prompt="Scandinavian style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="북유럽" data-prompt="Nordic style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
                         <img src="{{ asset('img/ai_button/nordic.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="북유럽">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -78,7 +78,7 @@
                     </button>
 
                     {{-- 2. 모던 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="모던" data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="모던" data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic, Empty room, unoccupied space, solely focused on the furniture">
                         <img src="{{ asset('img/ai_button/modern.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="모던">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -93,7 +93,7 @@
                     </button>
 
                     {{-- 3. 미니멀리즘 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
                         <img src="{{ asset('img/ai_button/minimalism.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="미니멀리즘">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -108,7 +108,7 @@
                     </button>
 
                     {{-- 4. 고딕 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand, Empty room, unoccupied space, solely focused on the furniture">
                         <img src="{{ asset('img/ai_button/gothic.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="고딕">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -123,11 +123,26 @@
                     </button>
 
                     {{-- 5. 인더스트리얼 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="인더스트리얼" data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="인더스트리얼" data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe, Empty room, unoccupied space, solely focused on the furniture">
                         <img src="{{ asset('img/ai_button/industrial.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="인더스트리얼">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
                             <span class="text-white font-bold text-sm">인더스트리얼</span>
+                        </div>
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                                <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/30 group-[.border-red-500]:ring-inset"></div>                                        
+                    </button>
+                    
+                    {{-- 6. 재팬디 --}}
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="재팬디" data-prompt="Japandi interior style, fusion of Japanese minimalism and Scandinavian functionalism, zen atmosphere, neutral beige palette, natural wood and bamboo textures, soft diffused lighting, clean lines, peaceful and organic vibe, Empty room, unoccupied space, solely focused on the furniture">
+                        <img src="{{ asset('img/ai_button/Japandi2.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="재팬디">
+                        <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
+                        <div class="relative z-10 h-full flex flex-col justify-center px-3">
+                            <span class="text-white font-bold text-sm">재팬디</span>
                         </div>
                         <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
                                 <div class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
