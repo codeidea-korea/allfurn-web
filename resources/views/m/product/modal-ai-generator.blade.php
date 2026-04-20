@@ -190,6 +190,14 @@
     var originalFilesBackup = {};
 
     $(document).off('click', '#btn_ai_confirm_m').on('click', '#btn_ai_confirm_m', function() {
+
+        var $activeStyleBtn = $('.btn-style-select.border-red-500'); 
+
+        
+        if ($activeStyleBtn.length > 0 && $activeStyleBtn.find('.generated-badge').length === 0) {
+            alert("아직 AI 이미지가 생성되지 않았습니다.\n먼저 [이미지 생성하기] 버튼을 눌러주세요.");
+            return false; 
+        }
         
         var generatedUrl = $('#ai_modal_preview_image').attr('src');
         if (!generatedUrl || generatedUrl === "") {

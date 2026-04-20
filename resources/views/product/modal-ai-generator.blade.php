@@ -279,6 +279,14 @@
     var originalFilesBackup = {};
     
     $(document).off('click', '#btn_ai_confirm').on('click', '#btn_ai_confirm', function() {
+
+        var $activeStyleBtn = $('.btn-style-select.border-red-500'); // 현재 선택된 스타일 버튼
+
+        
+        if ($activeStyleBtn.length > 0 && $activeStyleBtn.find('.generated-badge').length === 0) {
+            alert("아직 AI 이미지가 생성되지 않았습니다.\n하단의 [이미지 생성하기] 버튼을 먼저 눌러주세요.");
+            return false; 
+        }
     
         var generatedUrl = $('#ai_modal_preview_image').attr('src');
         if (!generatedUrl || generatedUrl === "") {
