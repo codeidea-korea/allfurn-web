@@ -202,59 +202,120 @@
             return;
         }
 
-        // 1. 원본 파일 인덱스 찾기
         var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
-
-        if (fileIndex !== -1 && !originalFilesBackup[currentAiFile.name]) {
-            originalFilesBackup[currentAiFile.name] = {
-                main: storedFiles[fileIndex],
-                f100: stored100Files[fileIndex],
-                f400: stored400Files[fileIndex],
-                f600: stored600Files[fileIndex],
-                f1000: stored1000Files[fileIndex]
-            };
-        }
         
         if (fileIndex === -1) {
             alert("원본 이미지를 데이터에서 찾을 수 없어 교체할 수 없습니다.");
             return;
         }
 
+        
+        var idx100 = stored100Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx400 = stored400Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx600 = stored600Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx1000 = stored1000Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+
+        if(idx100 === -1) idx100 = fileIndex;
+        if(idx400 === -1) idx400 = fileIndex;
+        if(idx600 === -1) idx600 = fileIndex;
+        if(idx1000 === -1) idx1000 = fileIndex;
+
+      
+        if (!originalFilesBackup[currentAiFile.name]) {
+            originalFilesBackup[currentAiFile.name] = {
+                main: storedFiles[fileIndex],
+                f100: stored100Files[idx100],
+                f400: stored400Files[idx400],
+                f600: stored600Files[idx600],
+                f1000: stored1000Files[idx1000]
+            };
+        }
+
         var $btn = $(this);
         var originalBtnText = $btn.html();
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 저장 중...');
 
-        // 2. Fetch 및 리사이징 로직
+       
         fetch(generatedUrl)
             .then(res => res.blob())
             .then(blob => {
                 var newFileName = "ai_" + currentAiFile.name;
                 var newFile = new File([blob], newFileName, { type: blob.type || "image/jpeg" });
 
-                var image = new Image();
-                image.crossOrigin = "Anonymous";
-                image.onload = function() {
-                    var resizedFile = getThumbFile(image, 500, this.width, this.height);
-                    resizedFile.name = newFileName;
-                    storedFiles[fileIndex] = resizedFile;
+                var resizePromises = [];
 
+                // 메인 사이즈
+                resizePromises.push(new Promise((resolve) => {
+                    var image = new Image();
+                    image.crossOrigin = "Anonymous";
+                    image.onload = function() {
+                        var resizedFile = getThumbFile(image, 500, this.width, this.height);
+                        resizedFile.name = newFileName;
+                        storedFiles[fileIndex] = resizedFile; // 메인은 fileIndex
+                        resolve();
+                    };
+                    image.src = generatedUrl;
+                }));
+
+                // 100 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image100 = new Image(); image100.width = 100; image100.height = 100; image100.crossOrigin = "Anonymous";
-                    image100.onload = function() { var i100 = getThumbFile(image100, 100, this.width, this.height); i100.name = newFileName; stored100Files[fileIndex] = i100; };
+                    image100.onload = function() { 
+                        var i100 = getThumbFile(image100, 100, this.width, this.height); 
+                        i100.name = newFileName; 
+                        stored100Files[idx100] = i100; 
+                        resolve(); 
+                    };
                     image100.src = generatedUrl;
+                }));
 
+                // 400 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image400 = new Image(); image400.width = 400; image400.height = 400; image400.crossOrigin = "Anonymous";
-                    image400.onload = function() { var i400 = getThumbFile(image400, 400, this.width, this.height); i400.name = newFileName; stored400Files[fileIndex] = i400; };
+                    image400.onload = function() { 
+                        var i400 = getThumbFile(image400, 400, this.width, this.height); 
+                        i400.name = newFileName; 
+                        stored400Files[idx400] = i400; 
+                        resolve(); 
+                    };
                     image400.src = generatedUrl;
+                }));
 
+                // 600 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image600 = new Image(); image600.crossOrigin = "Anonymous";
-                    image600.onload = function() { var i600 = getThumbFile(image600, 600, this.width, this.height); i600.name = newFileName; stored600Files[fileIndex] = i600; };
+                    image600.onload = function() { 
+                        var i600 = getThumbFile(image600, 600, this.width, this.height); 
+                        i600.name = newFileName; 
+                        stored600Files[idx600] = i600; 
+                        resolve(); 
+                    };
                     image600.src = generatedUrl;
+                }));
 
+                // 1000 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image1000 = new Image(); image1000.width = 1000; image1000.height = 1000; image1000.crossOrigin = "Anonymous";
-                    image1000.onload = function() { var i1000 = getThumbFile(image1000, 1000, this.width, this.height); i1000.name = newFileName; stored1000Files[fileIndex] = i1000; };
+                    image1000.onload = function() { 
+                        var i1000 = getThumbFile(image1000, 1000, this.width, this.height); 
+                        i1000.name = newFileName; 
+                        stored1000Files[idx1000] = i1000; 
+                        resolve(); 
+                    };
                     image1000.src = generatedUrl;
+                }));
 
+               
+                Promise.all(resizePromises).then(() => {
                     currentAiFile = newFile;
+
+                    // [중요] 폼 전송을 위해 DOM 속성 업데이트
+                    if(typeof targetAiBtn !== 'undefined' && targetAiBtn) {
+                        $(targetAiBtn).closest('.product-img__add').attr('file', newFileName);
+                    }
+                    if(targetHiddenInputId) {
+                        $(targetHiddenInputId).val(generatedUrl);
+                    }
 
                     if ($(targetImgPreviewId).length > 0) {
                         $(targetImgPreviewId).attr('src', generatedUrl);
@@ -264,6 +325,7 @@
                     modalClose('#ai_image_generator_modal');
                     modalOpen('#ai-apply-success-modal');
 
+                    // 서버 임시 파일 정리
                     if (typeof tempAiFilesToDelete !== 'undefined' && tempAiFilesToDelete.length > 0) {
                         $.ajax({
                             url: '/product/ai/cleanup', 
@@ -279,8 +341,7 @@
                             }
                         });
                     }
-                };
-                image.src = generatedUrl;
+                });
             })
             .catch(err => {
                 console.error(err);

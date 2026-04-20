@@ -268,7 +268,6 @@ function updateAiCountUI(count) {
     }
 }
 
-// --- 모달 열기 함수 (버튼의 onclick에서 호출됨) ---
 function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     targetAiBtn = btnElement; // 클릭된 버튼 엘리먼트 저장
     targetImgPreviewId = previewId || "#rep_img_preview";
@@ -390,7 +389,6 @@ $(document).on('click', '#btn_remove_bg', function(e) {
     });
 });
 
-// 3. [STEP 1] 스타일 선택 버튼 클릭 (UI 변경 및 값 저장)
 $(document).on('click', '.btn-style-select', function(e) {
     e.preventDefault();
     $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
@@ -411,7 +409,6 @@ $(document).on('click', '.btn-style-select', function(e) {
     }
 });
 
-// 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
 $(document).on('click', '#btn_ai_generate', function(e) {
     e.preventDefault();
     if (userAiCount <= 0) {
@@ -539,7 +536,6 @@ function resetButtons($btn, originalText) {
     $btn.prop('disabled', false).html(originalText);
 }
 
-// [추가] AI 생성 완료 버튼 클릭 시, 메인 페이지의 버튼을 '원본 복구'로 변경
 $(document).on('click', '#btn_ai_confirm_m', function() {
     var $wrapper = $(targetAiBtn).closest('.product-img__add');
     var originalIdx = $wrapper.attr('data-idx');
@@ -737,6 +733,7 @@ $(document).on('change', '#form-list02', function() {
                     image100.height = 100;
                     image100.onload = function() {
                         const i100 = getThumbFile(image100, 100, this.width, this.height);
+                        i100.name = file.name;
                         stored100Files.push(i100);
                     };
                     image100.src = e.target.result;
@@ -746,6 +743,7 @@ $(document).on('change', '#form-list02', function() {
                     image400.height = 400;
                     image400.onload = function() {
                         const i400 = getThumbFile(image400, 400, this.width, this.height);
+                        i400.name = file.name;
                         stored400Files.push(i400);
                     };
                     image400.src = e.target.result;
@@ -755,6 +753,7 @@ $(document).on('change', '#form-list02', function() {
                     //image600.height = 600;
                     image600.onload = function() {
                         const i600 = getThumbFile(image600, 600, this.width, this.height);
+                        i600.name = file.name;
                         stored600Files.push(i600);
                     };
                     image600.src = e.target.result;
@@ -764,6 +763,7 @@ $(document).on('change', '#form-list02', function() {
                     image1000.height = 1000;
                     image1000.onload = function() {
                         const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                        i1000.name = file.name;
                         stored1000Files.push(i1000);
                     };
                     image1000.src = e.target.result;
@@ -825,10 +825,8 @@ $(document).on('change', '#form-list02', function() {
 
     var $wrapper = $(this).closest('.product-img__add');
     
-    // 해당 영역에서 파일명을 가져옵니다.
     var file = $wrapper.attr('file');
 
-    // 🔥 [여기 추가!] 서버에서 진짜로 지울 수 있도록 기존 이미지 ID를 deleteImage 배열에 담기
     var originalIdx = $wrapper.attr('data-idx');
     if (originalIdx && originalIdx !== "undefined") {
         if (!deleteImage.includes(originalIdx)) {
@@ -836,7 +834,6 @@ $(document).on('change', '#form-list02', function() {
         }
     }
     
-    // 껍데기만 남지 않도록 영역 전체를 통째로 삭제합니다.
     $wrapper.remove();
 
     $(this).parent().parent().remove('');
