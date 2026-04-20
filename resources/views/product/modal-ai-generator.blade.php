@@ -279,7 +279,7 @@
     var originalFilesBackup = {};
     
     $(document).off('click', '#btn_ai_confirm').on('click', '#btn_ai_confirm', function() {
-        
+    
         var generatedUrl = $('#ai_modal_preview_image').attr('src');
         if (!generatedUrl || generatedUrl === "") {
             alert("생성된 이미지가 없습니다. 먼저 스타일 생성을 진행해주세요.");
@@ -291,7 +291,7 @@
             return;
         }
 
-        // ★ 1. 원본 파일이 배열(storedFiles)의 몇 번째에 있는지 찾기
+        // 1. 메인 파일의 위치 찾기
         var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
         
         if (fileIndex === -1) {
@@ -299,61 +299,107 @@
             return;
         }
 
+        // ★ 2. 각 리사이징 배열별로 정확한 위치(Index)를 따로 찾습니다.
+        var idx100 = stored100Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx400 = stored400Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx600 = stored600Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx1000 = stored1000Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+
+        // (기존 이미지를 돌렸을 경우 등을 대비한 방어 코드: 못 찾으면 기존 fileIndex로 대체)
+        if(idx100 === -1) idx100 = fileIndex;
+        if(idx400 === -1) idx400 = fileIndex;
+        if(idx600 === -1) idx600 = fileIndex;
+        if(idx1000 === -1) idx1000 = fileIndex;
+
+        // 백업 생성
         if (!originalFilesBackup[currentAiFile.name]) {
             originalFilesBackup[currentAiFile.name] = {
                 main: storedFiles[fileIndex],
-                f100: stored100Files[fileIndex],
-                f400: stored400Files[fileIndex],
-                f600: stored600Files[fileIndex],
-                f1000: stored1000Files[fileIndex]
+                f100: stored100Files[idx100],
+                f400: stored400Files[idx400],
+                f600: stored600Files[idx600],
+                f1000: stored1000Files[idx1000]
             };
         }
 
-        // 로딩바 표시 (리사이징 처리에 1~2초 소요될 수 있음)
         var $btn = $(this);
         var originalBtnText = $btn.html();
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 이미지 적용 중...');
 
-        // ★ 2. AI 이미지 URL을 읽어서 다시 사이즈별로 리사이징 후 배열 '덮어쓰기'
+        // 3. AI 이미지 URL을 읽어서 리사이징 후 정확한 인덱스에 '덮어쓰기'
         fetch(generatedUrl)
             .then(res => res.blob())
             .then(blob => {
-                // 새로운 파일 객체 생성 (기존 이름 앞에 'ai_'를 붙여 구별)
                 var newFileName = "ai_" + currentAiFile.name;
                 var newFile = new File([blob], newFileName, { type: blob.type || "image/jpeg" });
 
-                // 메인 사이즈(500) 변환 및 덮어쓰기
-                var image = new Image();
-                image.crossOrigin = "Anonymous"; // 외부 이미지 CORS 에러 방지
-                image.onload = function() {
-                    var resizedFile = getThumbFile(image, 500, this.width, this.height);
-                    resizedFile.name = newFileName;
-                    storedFiles[fileIndex] = resizedFile; // 기존 파일이 있던 자리에 덮어쓰기!
+                var resizePromises = [];
 
-                    // 100 사이즈
+                resizePromises.push(new Promise((resolve) => {
+                    var image = new Image();
+                    image.crossOrigin = "Anonymous";
+                    image.onload = function() {
+                        var resizedFile = getThumbFile(image, 500, this.width, this.height);
+                        resizedFile.name = newFileName;
+                        storedFiles[fileIndex] = resizedFile; // 메인은 fileIndex
+                        resolve();
+                    };
+                    image.src = generatedUrl;
+                }));
+
+                resizePromises.push(new Promise((resolve) => {
                     var image100 = new Image(); image100.width = 100; image100.height = 100; image100.crossOrigin = "Anonymous";
-                    image100.onload = function() { var i100 = getThumbFile(image100, 100, this.width, this.height); i100.name = newFileName; stored100Files[fileIndex] = i100; };
+                    image100.onload = function() { 
+                        var i100 = getThumbFile(image100, 100, this.width, this.height); 
+                        i100.name = newFileName; 
+                        stored100Files[idx100] = i100; // ★ 정확한 위치(idx100)에 덮어쓰기
+                        resolve(); 
+                    };
                     image100.src = generatedUrl;
+                }));
 
-                    // 400 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image400 = new Image(); image400.width = 400; image400.height = 400; image400.crossOrigin = "Anonymous";
-                    image400.onload = function() { var i400 = getThumbFile(image400, 400, this.width, this.height); i400.name = newFileName; stored400Files[fileIndex] = i400; };
+                    image400.onload = function() { 
+                        var i400 = getThumbFile(image400, 400, this.width, this.height); 
+                        i400.name = newFileName; 
+                        stored400Files[idx400] = i400; // ★ 정확한 위치(idx400)에 덮어쓰기
+                        resolve(); 
+                    };
                     image400.src = generatedUrl;
+                }));
 
-                    // 600 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image600 = new Image(); image600.crossOrigin = "Anonymous";
-                    image600.onload = function() { var i600 = getThumbFile(image600, 600, this.width, this.height); i600.name = newFileName; stored600Files[fileIndex] = i600; };
+                    image600.onload = function() { 
+                        var i600 = getThumbFile(image600, 600, this.width, this.height); 
+                        i600.name = newFileName; 
+                        stored600Files[idx600] = i600; // ★ 정확한 위치(idx600)에 덮어쓰기
+                        resolve(); 
+                    };
                     image600.src = generatedUrl;
+                }));
 
-                    // 1000 사이즈
+                resizePromises.push(new Promise((resolve) => {
                     var image1000 = new Image(); image1000.width = 1000; image1000.height = 1000; image1000.crossOrigin = "Anonymous";
-                    image1000.onload = function() { var i1000 = getThumbFile(image1000, 1000, this.width, this.height); i1000.name = newFileName; stored1000Files[fileIndex] = i1000; };
+                    image1000.onload = function() { 
+                        var i1000 = getThumbFile(image1000, 1000, this.width, this.height); 
+                        i1000.name = newFileName; 
+                        stored1000Files[idx1000] = i1000; // ★ 정확한 위치(idx1000)에 덮어쓰기
+                        resolve(); 
+                    };
                     image1000.src = generatedUrl;
+                }));
 
-                    // ★ 3. 현재 작업 중인 파일 참조도 AI 파일로 업데이트 (연속 작업/복구를 위해)
+                Promise.all(resizePromises).then(() => {
                     currentAiFile = newFile;
 
-                    // ★ 4. 부모 창 UI 갱신 (등록 화면의 썸네일을 AI 이미지로 교체)
+                    if(targetAiBtn) {
+                        $(targetAiBtn).closest('.product-img__add').attr('file', newFileName);
+                    }
+                    if(targetHiddenInputId) {
+                        $(targetHiddenInputId).val(generatedUrl);
+                    }
                     if ($(targetImgPreviewId).length > 0) {
                         $(targetImgPreviewId).attr('src', generatedUrl);
                     }
@@ -362,27 +408,17 @@
                     modalClose('#ai_image_generator_modal');
                     modalOpen('#ai-apply-success-modal');
 
-
                     if (tempAiFilesToDelete.length > 0) {
                         $.ajax({
-                            url: '/product/ai/cleanup', // 백엔드 라우트 (새로 생성해야 함)
+                            url: '/product/ai/cleanup', 
                             type: 'POST',
                             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                             data: { files: tempAiFilesToDelete },
-                            success: function(response) {
-                                console.log('서버 임시 파일 정리 완료:', response);
-                                // 삭제 성공 후 배열 비우기
-                                tempAiFilesToDelete = []; 
-                            },
-                            error: function(err) {
-                                // 통신에 실패해도 사용자의 진행은 막지 않습니다. (스케줄러가 나중에 삭제 처리함)
-                                console.error('임시 파일 정리 실패:', err);
-                            }
+                            success: function(response) { tempAiFilesToDelete = []; },
+                            error: function(err) { console.error('임시 파일 정리 실패:', err); }
                         });
                     }
-                };
-                image.src = generatedUrl;
-                //image.src = URL.createObjectURL(blob);
+                });
             })
             .catch(err => {
                 console.error(err);

@@ -330,6 +330,7 @@
                             image100.height = 100;
                             image100.onload = function() {
                                 const i100 = getThumbFile(image100, 100, this.width, this.height);
+                                i100.name = file.name;
                                 stored100Files.push(i100);
                             };
                             image100.src = e.target.result;
@@ -339,6 +340,7 @@
                             image400.height = 400;
                             image400.onload = function() {
                                 const i400 = getThumbFile(image400, 400, this.width, this.height);
+                                i400.name = file.name;
                                 stored400Files.push(i400);
                             };
                             image400.src = e.target.result;
@@ -348,6 +350,7 @@
                             image600.height = 600;
                             image600.onload = function() {
                                 const i600 = getThumbFile(image600, 600, this.width, this.height);
+                                i600.name = file.name;
                                 stored600Files.push(i600);
                             };
                             image600.src = e.target.result;
@@ -357,6 +360,7 @@
                             image1000.height = 1000;
                             image1000.onload = function() {
                                 const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                                i1000.name = file.name;
                                 stored1000Files.push(i1000);
                             };
                             image1000.src = e.target.result;
@@ -528,7 +532,7 @@
                     })
                     modalOpen('#product_attributes_modal');
                 }
-            }
+            } 
         });
     }
     //### 속성 가져오기2
@@ -1707,12 +1711,10 @@
         var selectedFile = storedAiFiles.find(f => f.name === fileName);
 
         if (!selectedFile) {
-            // [디버깅용 추가 코드]
+            
             var debugMsg = "찾으려는 파일명: " + fileName + "\n\n";
             debugMsg += "현재 storedFiles 배열 길이: " + storedFiles.length + "개\n";
-            
             if (storedFiles.length > 0) {
-                // 배열 안에 있는 파일들의 이름만 뽑아서 문자열로 합침
                 var storedNames = storedFiles.map(function(f) { return f.name; }).join('\n- ');
                 debugMsg += "\n[배열에 저장된 파일 목록]\n- " + storedNames;
             } else {
@@ -1723,11 +1725,10 @@
             return;
         }
         
-        // ★ 중요: 현재 작업할 파일을 전역 변수에 담아둡니다 (버튼 클릭 시 사용)
         currentAiFile = selectedFile;
 
         $.ajax({
-            url: "{{ route('product.ai.get_remain_count') }}", // 새로 만든 조회용 라우트
+            url: "{{ route('product.ai.get_remain_count') }}", 
             type: 'GET',
             success: function(res) {
                 if (res.success) {
@@ -1775,7 +1776,7 @@
 
         if (userAiCount <= 0) {
             alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
-            return false; // 여기서 함수 종료
+            return false; 
         }
         
         if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
