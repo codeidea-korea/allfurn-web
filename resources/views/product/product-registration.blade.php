@@ -429,24 +429,32 @@
                 e.preventDefault();
 
                 var $wrapper = $(this).closest('.product-img__add');
-                //var file = $(this).parent().parent().attr('file');
-                var file = $wrapper.attr('file');
-                var idx = $(this).parent().parent().index();
+                var fileName = $wrapper.attr('file'); 
 
-                $wrapper.remove();
-
-                $(this).parent().parent().remove('');
-                for(var i = 0; i < storedFiles.length; i++) {
-                    if(storedFiles[i].name == file) {
-                        stored100Files.splice(i, 1);
-                        stored400Files.splice(i, 1);
-                        stored600Files.splice(i, 1);
-                        stored1000Files.splice(i, 1);
-                        storedFiles.splice(i, 1);
-                        storedAiFiles.splice(i, 1);
-                        break;
+                var originalIdx = $wrapper.attr('data-idx');
+                if (originalIdx && originalIdx !== "undefined") {
+                    if (!deleteImage.includes(originalIdx)) {
+                        deleteImage.push(originalIdx);
                     }
                 }
+                
+                $wrapper.remove();
+                $(this).parent().parent().remove('');
+
+                var idxMain = storedFiles.findIndex(function(f) { return f.name === fileName; });
+                if (idxMain > -1) storedFiles.splice(idxMain, 1);
+
+                var idx100 = stored100Files.findIndex(function(f) { return f.name === fileName; });
+                if (idx100 > -1) stored100Files.splice(idx100, 1);
+
+                var idx400 = stored400Files.findIndex(function(f) { return f.name === fileName; });
+                if (idx400 > -1) stored400Files.splice(idx400, 1);
+
+                var idx600 = stored600Files.findIndex(function(f) { return f.name === fileName; });
+                if (idx600 > -1) stored600Files.splice(idx600, 1);
+
+                var idx1000 = stored1000Files.findIndex(function(f) { return f.name === fileName; });
+                if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
 
                 img_reload_order();
 
