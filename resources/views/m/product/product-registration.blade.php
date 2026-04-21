@@ -412,7 +412,7 @@ $(document).on('click', '.btn-style-select', function(e) {
     }
 });
 
-$(document).on('click', '#btn_ai_generate', function(e) {
+$(document).on('click', '#btn_ai_generate', async function(e) {
     e.preventDefault();
     if (userAiCount <= 0) {
             alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
@@ -440,8 +440,38 @@ $(document).on('click', '#btn_ai_generate', function(e) {
         fileToSend = base64ToFile(validBase64, currentAiFile.name);
     }
 
+    var safeFile = await new Promise((resolve) => {
+        var image = new Image();
+        var objectUrl = URL.createObjectURL(fileToSend);
+        
+        image.onload = function() {
+            URL.revokeObjectURL(objectUrl); // 메모리 누수 방지
+            var totalPixels = this.width * this.height;
+            
+            // Stability AI 제한(400만 픽셀) 초과 시 안전하게 축소 (약 300만 픽셀)
+            if (totalPixels > 4000000) { 
+                var canvas = document.createElement("canvas");
+                var scale = Math.sqrt(3000000 / totalPixels); 
+                canvas.width = Math.floor(this.width * scale);
+                canvas.height = Math.floor(this.height * scale);
+                
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+                
+                var dataURL = canvas.toDataURL("image/jpeg", 0.9); // 압축
+                resolve(base64ToFile(dataURL, currentAiFile.name));
+            } else {
+                resolve(fileToSend); // 크기가 정상이면 원본 그대로 반환
+            }
+        };
+        image.onerror = function() {
+            resolve(fileToSend); // 에러 발생 시 원본 반환 (진행을 막지 않음)
+        };
+        image.src = objectUrl;
+    });
+
     var formData = new FormData();
-    formData.append('image', fileToSend);
+    formData.append('image', safeFile);
     $.ajax({
         url: "{{ route('product.ai.remove_bg') }}",
         type: 'POST',
