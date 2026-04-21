@@ -307,13 +307,13 @@
             return;
         }
 
-        // ★ 2. 각 리사이징 배열별로 정확한 위치(Index)를 따로 찾습니다.
+       
         var idx100 = stored100Files.findIndex(function(f) { return f.name === currentAiFile.name; });
         var idx400 = stored400Files.findIndex(function(f) { return f.name === currentAiFile.name; });
         var idx600 = stored600Files.findIndex(function(f) { return f.name === currentAiFile.name; });
         var idx1000 = stored1000Files.findIndex(function(f) { return f.name === currentAiFile.name; });
 
-        // (기존 이미지를 돌렸을 경우 등을 대비한 방어 코드: 못 찾으면 기존 fileIndex로 대체)
+       
         if(idx100 === -1) idx100 = fileIndex;
         if(idx400 === -1) idx400 = fileIndex;
         if(idx600 === -1) idx600 = fileIndex;
@@ -360,7 +360,7 @@
                     image100.onload = function() { 
                         var i100 = getThumbFile(image100, 100, this.width, this.height); 
                         i100.name = newFileName; 
-                        stored100Files[idx100] = i100; // ★ 정확한 위치(idx100)에 덮어쓰기
+                        stored100Files[idx100] = i100; 
                         resolve(); 
                     };
                     image100.src = generatedUrl;
@@ -371,7 +371,7 @@
                     image400.onload = function() { 
                         var i400 = getThumbFile(image400, 400, this.width, this.height); 
                         i400.name = newFileName; 
-                        stored400Files[idx400] = i400; // ★ 정확한 위치(idx400)에 덮어쓰기
+                        stored400Files[idx400] = i400;
                         resolve(); 
                     };
                     image400.src = generatedUrl;
@@ -382,7 +382,7 @@
                     image600.onload = function() { 
                         var i600 = getThumbFile(image600, 600, this.width, this.height); 
                         i600.name = newFileName; 
-                        stored600Files[idx600] = i600; // ★ 정확한 위치(idx600)에 덮어쓰기
+                        stored600Files[idx600] = i600;
                         resolve(); 
                     };
                     image600.src = generatedUrl;
@@ -393,7 +393,7 @@
                     image1000.onload = function() { 
                         var i1000 = getThumbFile(image1000, 1000, this.width, this.height); 
                         i1000.name = newFileName; 
-                        stored1000Files[idx1000] = i1000; // ★ 정확한 위치(idx1000)에 덮어쓰기
+                        stored1000Files[idx1000] = i1000;
                         resolve(); 
                     };
                     image1000.src = generatedUrl;
