@@ -328,7 +328,7 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
 
     $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
     $('#ai_input_prompt').val('');
-    $('#btn_ai_confirm').prop('disabled', true);
+    $('#btn_ai_confirm_m').prop('disabled', true);
     $('.generated-badge').remove(); 
     $('.btn-style-select').removeAttr('data-generated-url');
     
@@ -403,12 +403,12 @@ $(document).on('click', '.btn-style-select', function(e) {
     var cachedUrl = $(this).attr('data-generated-url');
     if (cachedUrl) {
         $('#ai_modal_preview_image').attr('src', cachedUrl);
-        $('#btn_ai_confirm').prop('disabled', false);
+        $('#btn_ai_confirm_m').prop('disabled', false);
     } else {
         var styleSampleImg = $(this).find('img').attr('src');  
         $previewImg.attr('src', styleSampleImg);
         $previewImg.css('object-fit', 'cover');
-        $('#btn_ai_confirm').prop('disabled', true);
+        $('#btn_ai_confirm_m').prop('disabled', true);
     }
 });
 
@@ -510,7 +510,7 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
                         $activeStyleBtn.append(badgeHtml);
                     }
                 }
-                $('#btn_ai_confirm').prop('disabled', false); 
+                $('#btn_ai_confirm_m').prop('disabled', false);
                 modalOpen('#ai-generate-success-modal');
             } else {
                 alert('이미지 생성 실패: ' + res2.message);
