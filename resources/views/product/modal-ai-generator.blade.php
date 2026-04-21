@@ -252,7 +252,7 @@
                         <button type="button" onclick="modalClose('#ai_image_generator_modal')" class="flex-1 h-[48px] text-base border border-stone-300 text-stone-600 bg-white hover:bg-stone-50 rounded-lg font-medium transition-colors">
                             취소
                         </button>
-                        <button type="button" id="btn_ai_confirm" class="flex-1 btn btn-primary h-[48px] text-base rounded-lg flex items-center justify-center">
+                        <button type="button" id="btn_ai_confirm" class="flex-1 btn btn-primary h-[48px] text-base rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                             완료 및 저장
                         </button>
                     </div>

@@ -1767,6 +1767,8 @@
             $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             $('#ai_input_prompt').val('');
 
+            $('#btn_ai_confirm').prop('disabled', true);
+
             //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             //$(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
@@ -1913,12 +1915,14 @@
         if (cachedUrl) {
             // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
             $('#ai_modal_preview_image').attr('src', cachedUrl);
+            $('#btn_ai_confirm').prop('disabled', false);
         } else {
             var styleSampleImg = $(this).find('img').attr('src');
             
             $previewImg.attr('src', styleSampleImg);
             
             $previewImg.css('object-fit', 'cover');
+            $('#btn_ai_confirm').prop('disabled', true);
         }
     });
     
@@ -2046,6 +2050,7 @@
                             $activeStyleBtn.append(badgeHtml);
                         }
                     }
+                    $('#btn_ai_confirm').prop('disabled', false); // ★ 추가: 이미지 생성 완료 시 버튼 활성화
                     modalOpen('#ai-generate-success-modal');
                 } else {
                     alert('이미지 생성 실패: ' + res2.message);

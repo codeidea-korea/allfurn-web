@@ -168,9 +168,9 @@
                     취소
                 </button>
                 <button type="button" id="btn_ai_confirm_m" 
-                    class="flex-1 py-3 text-white text-sm rounded-lg font-medium flex items-center justify-center" 
-                    style="display: flex !important; background-color: #fb4760 !important; -webkit-appearance: none; appearance: none;">
-                    완료 및 저장
+                    class="flex-1 py-3 text-white text-sm rounded-lg font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
+                    style="display: flex !important; background-color: #fb4760 !important; -webkit-appearance: none; appearance: none;"
+                    disabled> 완료 및 저장
                 </button>
             </div>
         </div>
