@@ -390,39 +390,43 @@ class LoginController extends BaseController
         $ip = $request->ip();
         $requestTarget = $request->input('target') ?? $request->input('phoneno') ?? $request->input('userid') ?? 'unknown';
 
-       
         $blockTime = 43200;
-
-        
         $limiter = app(\Illuminate\Cache\RateLimiter::class);
 
-        $ipKey = 'send-auth-ip:' . $ip;
-        if ($limiter->tooManyAttempts($ipKey, 3)) {
-            Log::warning("[어뷰징 차단] IP 12시간 제한 적용: {$ip}");
-            return response()->json([
-                'success' => false,
-                'result' => 'fail',
-                'code' => 429,
-                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 IP의 인증번호 발송이 12시간 동안 제한됩니다.\n\n12시간 후 다시 시도해주세요."
-            ]);
-        }
+        $ipBlockKey = 'auth-block-ip:' . $ip;
+        $targetBlockKey = 'auth-block-target:' . $requestTarget;
 
-        $targetKey = 'send-auth-target:' . $requestTarget;
-        if ($limiter->tooManyAttempts($targetKey, 3)) {
-            $seconds = $limiter->availableIn($targetKey);
+        if ($limiter->tooManyAttempts($ipBlockKey, 1) || $limiter->tooManyAttempts($targetBlockKey, 1)) {
+            $seconds = max($limiter->availableIn($ipBlockKey), $limiter->availableIn($targetBlockKey));
             $hours = ceil($seconds / 3600);
-            
-            Log::warning("[어뷰징 차단] 동일 번호 12시간 제한: {$requestTarget}");
+
             return response()->json([
                 'success' => false,
                 'result' => 'fail',
                 'code' => 429,
-                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 휴대전화번호의 인증번호 발송이 12시간 동안 제한됩니다.\n\n약 {$hours}시간 후 다시 시도해주세요."
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 12시간 동안 인증번호 발송이 제한됩니다.\n\n약 {$hours}시간 후 다시 시도해주세요."
             ]);
         }
 
-        $limiter->hit($ipKey, $blockTime);
-        $limiter->hit($targetKey, $blockTime);
+        $ipCheckKey = 'auth-check-ip:' . $ip;
+        $targetCheckKey = 'auth-check-target:' . $requestTarget;
+
+        $limiter->hit($ipCheckKey, 60);
+        $limiter->hit($targetCheckKey, 60);
+
+        if ($limiter->tooManyAttempts($ipCheckKey, 3) || $limiter->tooManyAttempts($targetCheckKey, 3)) {
+            $limiter->hit($ipBlockKey, $blockTime);
+            $limiter->hit($targetBlockKey, $blockTime);
+
+            Log::warning("[어뷰징 차단 실행] IP: {$ip} / Target: {$requestTarget}");
+
+            return response()->json([
+                'success' => false,
+                'result' => 'fail',
+                'code' => 429,
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 12시간 동안 인증번호 발송이 제한됩니다.\n\n12시간 후 다시 시도해주세요."
+            ]);
+        }
 
         Log::info("***** LoginController > sendAuthCode :: " . $request->input('target'));
 
