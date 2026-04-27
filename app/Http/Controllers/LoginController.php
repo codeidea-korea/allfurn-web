@@ -390,7 +390,7 @@ class LoginController extends BaseController
         $ip = $request->ip();
         $requestTarget = $request->input('target') ?? $request->input('phoneno') ?? $request->input('userid') ?? 'unknown';
 
-        $blockTime = 43200;
+        $blockTime = 86400;
         $limiter = app(\Illuminate\Cache\RateLimiter::class);
 
         $ipBlockKey = 'auth-block-ip:' . $ip;
@@ -404,7 +404,7 @@ class LoginController extends BaseController
                 'success' => false,
                 'result' => 'fail',
                 'code' => 429,
-                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 12시간 동안 인증번호 발송이 제한됩니다.\n\n약 {$hours}시간 후 다시 시도해주세요."
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 24시간 동안 인증번호 발송이 제한됩니다.\n\n약 {$hours}시간 후 다시 시도해주세요."
             ]);
         }
 
@@ -424,7 +424,7 @@ class LoginController extends BaseController
                 'success' => false,
                 'result' => 'fail',
                 'code' => 429,
-                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 12시간 동안 인증번호 발송이 제한됩니다.\n\n12시간 후 다시 시도해주세요."
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 정보는 24시간 동안 인증번호 발송이 제한됩니다.\n\n24시간 후 다시 시도해주세요."
             ]);
         }
 
