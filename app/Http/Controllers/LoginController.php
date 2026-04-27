@@ -386,7 +386,46 @@ class LoginController extends BaseController
     }
 
     public function sendAuthCode(Request $request) {
-        Log::info("***** LoginController > sendAuthCode :: $request->input('target')");
+
+        $ip = $request->ip();
+        $requestTarget = $request->input('target') ?? $request->input('phoneno') ?? $request->input('userid') ?? 'unknown';
+
+       
+        $blockTime = 43200;
+
+        
+        $limiter = app(\Illuminate\Cache\RateLimiter::class);
+
+        $ipKey = 'send-auth-ip:' . $ip;
+        if ($limiter->tooManyAttempts($ipKey, 3)) {
+            Log::warning("[어뷰징 차단] IP 12시간 제한 적용: {$ip}");
+            return response()->json([
+                'success' => false,
+                'result' => 'fail',
+                'code' => 429,
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 IP의 인증번호 발송이 12시간 동안 제한됩니다.\n\n12시간 후 다시 시도해주세요."
+            ]);
+        }
+
+        $targetKey = 'send-auth-target:' . $requestTarget;
+        if ($limiter->tooManyAttempts($targetKey, 3)) {
+            $seconds = $limiter->availableIn($targetKey);
+            $hours = ceil($seconds / 3600);
+            
+            Log::warning("[어뷰징 차단] 동일 번호 12시간 제한: {$requestTarget}");
+            return response()->json([
+                'success' => false,
+                'result' => 'fail',
+                'code' => 429,
+                'message' => "비정상적인 접근이 감지되었습니다.\n\n해당 휴대전화번호의 인증번호 발송이 12시간 동안 제한됩니다.\n\n약 {$hours}시간 후 다시 시도해주세요."
+            ]);
+        }
+
+        $limiter->hit($ipKey, $blockTime);
+        $limiter->hit($targetKey, $blockTime);
+
+        Log::info("***** LoginController > sendAuthCode :: " . $request->input('target'));
+
         $isUser = true;
         if(($request->has('target'))) {
             $user = $this->loginService->getUserByPhoneNumber($request->input('target'));
