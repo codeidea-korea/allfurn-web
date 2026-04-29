@@ -22,71 +22,108 @@ class ProductAiImageService
         $this->client = new Client();
     }
 
-    /**
+        /**
      * [Flow 1] Stability AI를 사용하여 배경 제거 (직접 호출)
      */
+    // public function removeBackground($imageFile)
+    // {
+    //     $apiKey = $this->stabilityApiKey;
+
+    //     if (!$apiKey) {
+    //         throw new Exception("Stability AI API 키가 설정되지 않았습니다.");
+    //     }
+
+    //     try {
+    //         // 1. API 요청
+    //         $response = Http::withoutVerifying()->withHeaders([
+    //             'Authorization' => 'Bearer ' . $apiKey,
+    //             'Accept'        => 'image/*'
+    //         ])->attach(
+    //             'image', 
+    //             file_get_contents($imageFile->getRealPath()), 
+    //             $imageFile->getClientOriginalName()
+    //         )->post('https://api.stability.ai/v2beta/stable-image/edit/remove-background', [
+    //             'output_format' => 'png'
+    //         ]);
+
+    //         if ($response->successful()) {
+    //             $imageContent = $response->body();
+                
+    //             // [수정 포인트 1] 파일명 생성
+    //             $timestamp = time();
+    //             $rand = mt_rand(1000, 9999);
+    //             $fileName = "nobg_{$timestamp}_{$rand}.png";
+                
+    //             // [수정 포인트 2] 경로에서 'public/' 제거 (ai-lab 폴더에 바로 저장)
+    //             $path = "ai-lab/{$fileName}"; 
+                
+    //             // [수정 포인트 3] 'public' 디스크를 명시적으로 사용
+    //             // 실제 저장 위치: storage/app/public/ai-lab/파일명.png
+    //             Storage::disk('public')->put($path, $imageContent);
+
+    //             // [수정 포인트 4] URL 생성
+    //             // 생성된 URL: /storage/ai-lab/파일명.png (public 중복 없음)
+    //             return [
+    //                 'url' => '/storage/' . $path,
+    //                 'file_path' => $path 
+    //             ];
+    //         } else {
+    //             $status = $response->status();
+    //             $rawBody = $response->body();
+    //             $errorBody = $response->json();
+
+    //             // 2. 로그에 아주 상세하게 기록합니다. (식별하기 쉽게 구분선 추가)
+    //             Log::error("======= Stability API 호출 실패 =======");
+    //             Log::error("HTTP 상태 코드: " . $status);
+    //             Log::error("원본 응답 내용: " . $rawBody);
+    //             Log::error("디코딩된 에러: " . json_encode($errorBody, JSON_UNESCAPED_UNICODE));
+    //             Log::error("======================================");
+
+    //             // 3. 예외 메시지에 상태 코드를 포함하여 프론트에서도 대략적인 원인을 알 수 있게 합니다.
+    //             $serverMessage = $errorBody['errors'][0]['message'] ?? ($errorBody['message'] ?? '상세 메시지 없음');
+                
+    //             throw new Exception("Stability API 오류({$status}): " . $serverMessage);
+    //         }
+
+    //     } catch (Exception $e) {
+    //         Log::error("ProductAiImageService (RemoveBG) Exception: " . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
     public function removeBackground($imageFile)
     {
-        $apiKey = $this->stabilityApiKey;
-
-        if (!$apiKey) {
-            throw new Exception("Stability AI API 키가 설정되지 않았습니다.");
-        }
+        $apiKey = env('PHOTOROOM_API_KEY');
 
         try {
-            // 1. API 요청
-            $response = Http::withoutVerifying()->withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Accept'        => 'image/*'
+            // Photoroom API 호출
+            $response = Http::withHeaders([
+                'x-api-key' => $apiKey,
             ])->attach(
-                'image', 
-                file_get_contents($imageFile->getRealPath()), 
+                'image_file', // Photoroom은 파라미터명이 image_file입니다.
+                file_get_contents($imageFile->getRealPath()),
                 $imageFile->getClientOriginalName()
-            )->post('https://api.stability.ai/v2beta/stable-image/edit/remove-background', [
-                'output_format' => 'png'
+            )->post('https://sdk.photoroom.com/v1/segment', [
+                // 가구 누끼의 핵심: 배경은 지우되, 바닥 그림자는 자연스럽게 남깁니다.
+                'background.color' => 'transparent',
+                'format' => 'png',
+                'scaling' => 'fill', // 가구가 잘리지 않게 꽉 채웁니다.
             ]);
 
             if ($response->successful()) {
                 $imageContent = $response->body();
-                
-                // [수정 포인트 1] 파일명 생성
-                $timestamp = time();
-                $rand = mt_rand(1000, 9999);
-                $fileName = "nobg_{$timestamp}_{$rand}.png";
-                
-                // [수정 포인트 2] 경로에서 'public/' 제거 (ai-lab 폴더에 바로 저장)
-                $path = "ai-lab/{$fileName}"; 
-                
-                // [수정 포인트 3] 'public' 디스크를 명시적으로 사용
-                // 실제 저장 위치: storage/app/public/ai-lab/파일명.png
+                $fileName = "photoroom_" . time() . "_" . mt_rand(1000, 9999) . ".png";
+                $path = "ai-lab/{$fileName}";
+
                 Storage::disk('public')->put($path, $imageContent);
 
-                // [수정 포인트 4] URL 생성
-                // 생성된 URL: /storage/ai-lab/파일명.png (public 중복 없음)
                 return [
                     'url' => '/storage/' . $path,
-                    'file_path' => $path 
+                    'file_path' => $path
                 ];
             } else {
-                $status = $response->status();
-                $rawBody = $response->body();
-                $errorBody = $response->json();
-
-                // 2. 로그에 아주 상세하게 기록합니다. (식별하기 쉽게 구분선 추가)
-                Log::error("======= Stability API 호출 실패 =======");
-                Log::error("HTTP 상태 코드: " . $status);
-                Log::error("원본 응답 내용: " . $rawBody);
-                Log::error("디코딩된 에러: " . json_encode($errorBody, JSON_UNESCAPED_UNICODE));
-                Log::error("======================================");
-
-                // 3. 예외 메시지에 상태 코드를 포함하여 프론트에서도 대략적인 원인을 알 수 있게 합니다.
-                $serverMessage = $errorBody['errors'][0]['message'] ?? ($errorBody['message'] ?? '상세 메시지 없음');
-                
-                throw new Exception("Stability API 오류({$status}): " . $serverMessage);
+                throw new \Exception("Photoroom API Error: " . $response->status());
             }
-
-        } catch (Exception $e) {
-            Log::error("ProductAiImageService (RemoveBG) Exception: " . $e->getMessage());
+        } catch (\Exception $e) {
             throw $e;
         }
     }
