@@ -1,5 +1,5 @@
 <div class="modal" id="ai_image_generator_modal">
-    <div class="modal_bg" onclick="modalClose('#ai_image_generator_modal')"></div>
+    <div class="modal_bg"></div>
     
     <div class="modal_inner" style="width: 1600px; max-width: 98vw; height: 90vh; padding: 0; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; background-color: #fff;">
         
