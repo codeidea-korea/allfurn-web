@@ -21,8 +21,22 @@
 
         {{-- 스크롤 가능한 본문 영역 (PC의 좌우 분할을 상하로 변경) --}}
         <div class="flex-1 overflow-y-auto bg-stone-50">
-            
-            {{-- [상단] 미리보기 영역 --}}
+
+            {{--원본 이미지 영역 --}}
+            <div class="relative bg-white border-b flex flex-col">
+                <div class="h-10 border-b bg-stone-50 flex items-center justify-between px-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-stone-500">원본 이미지</span>
+                    </div>
+                </div>
+
+                <div class="relative w-full aspect-square max-h-[40vh] bg-stone-100 flex items-center justify-center p-2">
+                    <div class="absolute inset-0 bg-white"></div>
+                    <img id="ai_modal_thumbnail" src="" class="relative z-10 w-full h-full object-contain mx-auto">
+                </div>
+            </div>
+                        
+            {{--미리보기 영역 --}}
             <div class="relative bg-white border-b flex flex-col">
                 <div class="h-10 border-b bg-stone-50 flex items-center justify-between px-3">
                     <div class="flex items-center gap-2">
@@ -46,10 +60,6 @@
 
             {{-- [하단] 스타일 선택 영역 --}}
             <div class="p-4 bg-white">
-                {{-- 썸네일은 모바일에서 자리를 많이 차지하므로 선택적으로 숨기거나 작게 표시 --}}
-                <div class="mb-4 hidden">
-                    <img id="ai_modal_thumbnail" src="" class="w-0 h-0">
-                </div>
 
                 <label class="block text-sm font-bold text-stone-700 mb-3">배경 스타일</label>
                 
