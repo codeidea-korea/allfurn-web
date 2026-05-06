@@ -103,7 +103,7 @@
                     </button>
 
                     {{-- 3. 미니멀리즘 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist interior style, calm and refined atmosphere, clean uncluttered space, simple architectural lines, neutral white and soft gray palette, subtle warm beige accents, natural daylight, premium showroom mood, spacious modern room, carefully balanced composition, realistic floor and wall materials, tasteful minimal styling, quiet luxury interior, solely focused on the selected furniture, remove unrelated partial objects at the image borders, replace background clutter with clean floor or wall, no people, no showroom clutter, no random objects, no extra furniture, no text, no logos">
                         <img src="{{ asset('img/ai_button/minimalism.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="미니멀리즘">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -148,7 +148,8 @@
                     </button>
                     
                     {{-- 6. 재팬디 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="재팬디" data-prompt="Japandi interior style, fusion of Japanese minimalism and Scandinavian functionalism, zen atmosphere, neutral beige palette, natural wood and bamboo textures, soft diffused lighting, clean lines, peaceful and organic vibe, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="재팬디" data-prompt="Japandi interior style, refined modern room, Japanese minimalism and Scandinavian functionalism, natural wood and bamboo details, warm neutral palette, clean architectural lines, calm premium showroom atmosphere, realistic interior photography, clear natural daylight, balanced contrast, crisp material textures, realistic floor and wall materials, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no text, no logos"
+>
                         <img src="{{ asset('img/ai_button/Japandi2.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="재팬디">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
