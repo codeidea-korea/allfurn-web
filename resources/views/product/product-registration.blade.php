@@ -1767,8 +1767,6 @@
             $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             $('#ai_input_prompt').val('');
 
-            $('#btn_ai_confirm').prop('disabled', true);
-
             //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             //$(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
@@ -1922,7 +1920,6 @@
             $previewImg.attr('src', styleSampleImg);
             
             $previewImg.css('object-fit', 'cover');
-            $('#btn_ai_confirm').prop('disabled', true);
         }
     });
     
