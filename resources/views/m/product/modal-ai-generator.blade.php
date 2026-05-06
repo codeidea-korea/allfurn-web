@@ -169,8 +169,7 @@
                 </button>
                 <button type="button" id="btn_ai_confirm_m" 
                     class="flex-1 py-3 text-white text-sm rounded-lg font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed" 
-                    style="display: flex !important; background-color: #fb4760 !important; -webkit-appearance: none; appearance: none;"
-                    disabled> 완료 및 저장
+                    style="display: flex !important; background-color: #fb4760 !important; -webkit-appearance: none; appearance: none;"> 완료 및 저장
                 </button>
             </div>
         </div>
@@ -191,12 +190,14 @@
 
     $(document).off('click', '#btn_ai_confirm_m').on('click', '#btn_ai_confirm_m', function() {
 
-        var $activeStyleBtn = $('.btn-style-select.border-red-500'); 
+        var $activeStyleBtn = $('.btn-style-select.border-red-500');
+        var generatedStyleUrl = $activeStyleBtn.attr('data-generated-url');
 
-        
-        if ($activeStyleBtn.length > 0 && $activeStyleBtn.find('.generated-badge').length === 0) {
-            alert("아직 AI 이미지가 생성되지 않았습니다.\n먼저 [이미지 생성하기] 버튼을 눌러주세요.");
-            return false; 
+        if ($activeStyleBtn.length === 0 ||
+            $activeStyleBtn.find('.generated-badge').length === 0 ||
+            !generatedStyleUrl) {
+            modalOpen('#ai-not-generated-modal');
+            return false;
         }
         
         var generatedUrl = $('#ai_modal_preview_image').attr('src');

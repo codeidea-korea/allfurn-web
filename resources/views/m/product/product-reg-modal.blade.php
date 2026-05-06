@@ -1220,3 +1220,23 @@
     </div>
 </div>
 
+{{-- AI 이미지 미생성 경고 모달 --}}
+<div class="modal" id="ai-not-generated-modal" style="z-index: 100000 !important;">
+    <div class="modal_bg" onclick="modalClose('#ai-not-generated-modal')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">알림</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>아직 AI 이미지가 생성되지 않았습니다.<br/>원하시는 스타일을 선택하고 하단의<br/>[이미지 생성하기] 버튼을 먼저 눌러주세요.</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#ai-not-generated-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
