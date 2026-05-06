@@ -154,11 +154,16 @@ class ProductAiImageService
 
 
             $finalPrompt = "You are an expert product photographer. " .
-               "Do NOT redraw, alter, or distort the foreground furniture. " .
-               "Keep the foreground object EXACTLY as provided in the input image, preserving its original texture, shape, color, and details. " .
-               "Only generate a background environment of [{$prompt}] behind the object. " .
-               "The object must remain unchanged." .
-               "Output only the image. No text description.";
+                "Identify the selected product as the largest main furniture item near the center of the input image. " .
+                "Treat ONLY this selected main furniture item as the foreground product. " .
+                "Do NOT redraw, alter, rotate, or distort the selected product furniture. " .
+                "Keep the original camera angle, perspective, framing, product position, and product scale exactly the same. " .
+                "Preserve only the selected product furniture's original texture, shape, color, material, edges, and details. " .
+                "Do NOT preserve unrelated objects around the edges of the original photo. " .
+                "Remove and replace side tables, papers, chairs, plants, wall posters, showroom clutter, partial furniture, and any objects cut off by the image border unless they are the selected product itself. " .
+                "Only generate a background environment of [{$prompt}] around and behind the selected product furniture. " .
+                "The selected product furniture must remain unchanged. " .
+                "Output only the image. No text description.";
 
             // 4. Gemini API 호출
             $resultImageData = $this->callGeminiApi($base64Data, $mimeType, $finalPrompt);

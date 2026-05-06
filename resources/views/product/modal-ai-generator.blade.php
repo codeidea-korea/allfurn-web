@@ -132,7 +132,8 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="미니멀리즘"
-                                    data-prompt="Minimalist style, decluttered space, simple forms, monochromatic color scheme, less is more, calm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
+                                    data-prompt="Minimalist interior style, calm and refined atmosphere, clean uncluttered space, simple architectural lines, neutral white and soft gray palette, subtle warm beige accents, natural daylight, premium showroom mood, spacious modern room, carefully balanced composition, realistic floor and wall materials, tasteful minimal styling, quiet luxury interior, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no text, no logos"
+>
 
                                     <img src="{{ asset('img/ai_button/minimalism.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 
