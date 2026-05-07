@@ -159,7 +159,7 @@
                             <button type="button" 
                                     class="btn-style-select relative w-full h-24 rounded-xl overflow-hidden group text-left transition-all hover:scale-[1.02] shadow-sm"
                                     data-style="고딕"
-                                    data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand, Empty room, unoccupied space, solely focused on the furniture">
+                                    data-prompt="Modern Gothic interior style, elegant dark-toned premium showroom, deep charcoal and warm wood palette, subtle Gothic arches, refined ornate details, realistic floor and wall materials, soft directional lighting, balanced composition, luxurious but clean furniture showroom atmosphere, harmonize the background with the selected furniture, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no extra furniture, no text, no logos">
 
                                     <img src="{{ asset('img/ai_button/gothic.jpg') }}" 
                                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" 

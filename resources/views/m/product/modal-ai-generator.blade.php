@@ -118,7 +118,7 @@
                     </button>
 
                     {{-- 4. 고딕 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Gothic interior style, dramatic atmosphere, dark rich colors, ornate details, pointed arches, velvet textures, mysterious and grand, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Modern Gothic interior style, elegant dark-toned premium showroom, deep charcoal and warm wood palette, subtle Gothic arches, refined ornate details, realistic floor and wall materials, soft directional lighting, balanced composition, luxurious but clean furniture showroom atmosphere, harmonize the background with the selected furniture, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no extra furniture, no text, no logos">
                         <img src="{{ asset('img/ai_button/gothic.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="고딕">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">

@@ -720,7 +720,7 @@ function getThumbFile(_IMG, maxWidth, width, height){
         canvas.getContext("2d").scale(cropInfo.rate, cropInfo.rate);
     }
 
-    var dataURL = canvas.toDataURL("image/png");
+    var dataURL = canvas.toDataURL("image/webp");
     var byteString = atob(dataURL.split(',')[1]);
     var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
     var ab = new ArrayBuffer(byteString.length);
