@@ -255,15 +255,19 @@ function getThumbFileAi(_IMG, maxWidth, width, height) {
         cropH = height;
     }
 
-    var scale = Math.min(1, maxWidth / Math.max(cropW, cropH));
-    var targetW = Math.round(cropW * scale);
-    var targetH = Math.round(cropH * scale);
-
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
 
-    canvas.width = targetW;
-    canvas.height = targetH;
+    canvas.width = maxWidth;
+    canvas.height = maxWidth;
+
+    ctx.clearRect(0, 0, maxWidth, maxWidth);
+
+    var scale = Math.min(maxWidth / cropW, maxWidth / cropH);
+    var targetW = Math.round(cropW * scale);
+    var targetH = Math.round(cropH * scale);
+    var targetX = Math.round((maxWidth - targetW) / 2);
+    var targetY = Math.round((maxWidth - targetH) / 2);
 
     ctx.drawImage(
         _IMG,
@@ -271,8 +275,8 @@ function getThumbFileAi(_IMG, maxWidth, width, height) {
         cropTop,
         cropW,
         cropH,
-        0,
-        0,
+        targetX,
+        targetY,
         targetW,
         targetH
     );
@@ -289,6 +293,7 @@ function getThumbFileAi(_IMG, maxWidth, width, height) {
 
     return new Blob([ab], { type: mimeString });
 }
+
 
 $('.file_input').on('change', function() {
     var file = this.files[0];
