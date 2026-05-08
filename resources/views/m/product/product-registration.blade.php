@@ -244,6 +244,7 @@ var stored100Files = [];
 var stored400Files = [];
 var stored600Files = [];
 var stored1000Files = [];
+var storedAiFiles = [];
 var subCategoryIdx = null;
 var deleteImage = [];
 var proc = false;
@@ -275,8 +276,8 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     
     console.log("선택된 파일명:", fileName);
 
-    // storedFiles에서 파일 객체 찾기
-    var selectedFile = storedFiles.find(f => f.name === fileName);
+    // AI 전송용 파일을 우선 사용하고, 기존 AI 적용 이미지 등 예외 상황에서는 등록용 파일로 보완합니다.
+    var selectedFile = storedAiFiles.find(f => f.name === fileName) || storedFiles.find(f => f.name === fileName);
 
     if (!selectedFile) {
         alert("이미지 파일을 찾을 수 없습니다. 다시 시도해주세요.");
@@ -352,13 +353,7 @@ $(document).on('click', '#btn_remove_bg', function(e) {
 
     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
 
-    var validBase64 = $('#ai_modal_preview_image').attr('data-base-src');
     var fileToSend = currentAiFile; // 기본적으로는 기존 파일 사용
-
-    // 화면에 있는 데이터가 정상적인 Base64 문자열이면, 깡통 파일 대신 이걸로 파일 생성
-    if (validBase64 && validBase64.startsWith('data:image')) {
-        fileToSend = base64ToFile(validBase64, currentAiFile.name);
-    }
 
     var formData = new FormData();
     formData.append('image', fileToSend); // 깡통 파일 대신 정상 파일 전송
@@ -430,12 +425,7 @@ $(document).on('click', '#btn_ai_generate', async function(e) {
     $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
     $('#ai_full_loading_overlay').removeClass('hidden');
 
-    var validBase64 = $('#ai_modal_preview_image').attr('data-base-src');
     var fileToSend = currentAiFile;
-
-    if (validBase64 && validBase64.startsWith('data:image')) {
-        fileToSend = base64ToFile(validBase64, currentAiFile.name);
-    }
 
     var safeFile = await new Promise((resolve) => {
         var image = new Image();
@@ -733,6 +723,99 @@ function getThumbFile(_IMG, maxWidth, width, height){
     return tmpThumbFile;
 }
 
+function getThumbFileAi(_IMG, maxWidth, width, height) {
+    var scanCanvas = document.createElement("canvas");
+    var scanCtx = scanCanvas.getContext("2d");
+
+    scanCanvas.width = width;
+    scanCanvas.height = height;
+    scanCtx.drawImage(_IMG, 0, 0, width, height);
+
+    var imageData = scanCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+
+    function getPixel(x, y) {
+        var i = (y * width + x) * 4;
+        return [data[i], data[i + 1], data[i + 2]];
+    }
+
+    function colorDistance(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+    }
+
+    function isSolidRow(y) {
+        var sample = getPixel(Math.floor(width / 2), y);
+        var similarCount = 0;
+
+        for (var x = 0; x < width; x += 4) {
+            var p = getPixel(x, y);
+            if (colorDistance(sample, p) < 35) {
+                similarCount++;
+            }
+        }
+
+        return similarCount / Math.ceil(width / 4) > 0.96;
+    }
+
+    var cropTop = 0;
+    var cropBottom = height - 1;
+
+    while (cropTop < height && isSolidRow(cropTop)) {
+        cropTop++;
+    }
+
+    while (cropBottom > cropTop && isSolidRow(cropBottom)) {
+        cropBottom--;
+    }
+
+    var cropLeft = 0;
+    var cropW = width;
+    var cropH = cropBottom - cropTop + 1;
+
+    if (cropH < height * 0.5) {
+        cropTop = 0;
+        cropH = height;
+    }
+
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+
+    canvas.width = maxWidth;
+    canvas.height = maxWidth;
+
+    ctx.clearRect(0, 0, maxWidth, maxWidth);
+
+    var scale = Math.min(maxWidth / cropW, maxWidth / cropH);
+    var targetW = Math.round(cropW * scale);
+    var targetH = Math.round(cropH * scale);
+    var targetX = Math.round((maxWidth - targetW) / 2);
+    var targetY = Math.round((maxWidth - targetH) / 2);
+
+    ctx.drawImage(
+        _IMG,
+        cropLeft,
+        cropTop,
+        cropW,
+        cropH,
+        targetX,
+        targetY,
+        targetW,
+        targetH
+    );
+
+    var dataURL = canvas.toDataURL("image/png");
+    var byteString = atob(dataURL.split(',')[1]);
+    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: mimeString });
+}
+
 $(document).on('change', '#form-list02', function() {
     var files = this.files;
     var i = 0;
@@ -755,6 +838,10 @@ $(document).on('change', '#form-list02', function() {
                         var resizedFile = getThumbFile(image, 500, this.width, this.height);
                         resizedFile.name = file.name;
                         storedFiles.push(resizedFile);
+
+                        var aiResizedFile = getThumbFileAi(image, 1000, this.width, this.height);
+                        aiResizedFile.name = file.name;
+                        storedAiFiles.push(aiResizedFile);
                     };
                     image.src = e.target.result;
 
@@ -882,6 +969,13 @@ $(document).on('change', '#form-list02', function() {
 
     var idx1000 = stored1000Files.findIndex(function(f) { return f.name === fileName; });
     if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
+
+    var originalAiFileName = fileName.indexOf('ai_') === 0 ? fileName.substring(3) : fileName;
+    var appliedAiFileName = fileName.indexOf('ai_') === 0 ? fileName : "ai_" + fileName;
+    var idxAi = storedAiFiles.findIndex(function(f) {
+        return f.name === originalAiFileName || f.name === appliedAiFileName;
+    });
+    if (idxAi > -1) storedAiFiles.splice(idxAi, 1);
 
     img_reload_order();
 
@@ -1728,6 +1822,17 @@ function loadProduct() {
                                 .then(blob => {
                                     var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
                                     storedFiles.push(file);
+
+                                    var objectUrl = URL.createObjectURL(blob);
+                                    var image = new Image();
+                                    image.onload = function() {
+                                        URL.revokeObjectURL(objectUrl);
+
+                                        var aiFile = getThumbFileAi(image, 1000, this.width, this.height);
+                                        aiFile.name = fileName;
+                                        storedAiFiles.push(aiFile);
+                                    };
+                                    image.src = objectUrl;
                                 })
                                 .catch(err => {
                                     console.error('기존 이미지 변환 실패:', err);
