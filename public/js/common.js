@@ -200,65 +200,30 @@ function getThumbFile(_IMG, maxWidth, width, height){
     return tmpThumbFile;
 }
 
-function getThumbFileAi(_IMG, maxWidth, width, height){
+function getThumbFileAi(_IMG, maxWidth, width, height) {
     var canvas = document.createElement("canvas");
-    if(width < maxWidth) {
-        return _IMG;
-    }
-    canvas.width = maxWidth; // (maxWidth);
-    canvas.height = maxWidth; // ((maxWidth / (width*1.0))*height);
+    var ctx = canvas.getContext("2d");
 
-    const baseWidth = canvas.width;
-    const ctx = canvas.getContext("2d");
+    var scale = Math.min(1, maxWidth / Math.max(width, height));
+    var targetW = Math.round(width * scale);
+    var targetH = Math.round(height * scale);
 
-    // [추가] 캔버스 배경을 흰색으로 채움 (여백이 투명색(검정)으로 뚫리는 것 방지)
-    //ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, baseWidth, baseWidth);
+    canvas.width = targetW;
+    canvas.height = targetH;
 
-    // 기존 cropInfo의 구조를 유지하되, 여백 계산(Fit)용으로 변경
-    const fitInfo = {
-        isFit: Math.floor(_IMG.width) == Math.floor(_IMG.height),
-        isLowerWidth: _IMG.width < _IMG.height,
-        drawPosition: {
-            x: 0, y: 0, w: baseWidth, h: baseWidth
-        }
-    };
-    console.log("AI 썸네일 Fit 정보:", fitInfo);
+    ctx.drawImage(_IMG, 0, 0, targetW, targetH);
 
-    if(fitInfo.isFit) {
-        // 이미지가 이미 정사각형인 경우 꽉 채워서 그림
-        ctx.drawImage(_IMG, 0, 0, baseWidth, baseWidth);
-    } else {
-        // [핵심 변경] 잘라내는 좌표 계산 대신, 축소 비율(rate)과 여백(x, y) 좌표를 계산
-        fitInfo.rate = Math.min(baseWidth / _IMG.width, baseWidth / _IMG.height);
-        
-        fitInfo.drawPosition.w = _IMG.width * fitInfo.rate;
-        fitInfo.drawPosition.h = _IMG.height * fitInfo.rate;
-        fitInfo.drawPosition.x = (baseWidth - fitInfo.drawPosition.w) / 2;
-        fitInfo.drawPosition.y = (baseWidth - fitInfo.drawPosition.h) / 2;
-
-        // 자르기(파라미터 9개) 대신, 캔버스 중앙에 그리기(파라미터 5개) 적용
-        ctx.drawImage(
-            _IMG, 
-            fitInfo.drawPosition.x, 
-            fitInfo.drawPosition.y, 
-            fitInfo.drawPosition.w, 
-            fitInfo.drawPosition.h
-        );
-    }
-
-    // --- 이 아래 Blob 데이터 변환 로직은 기존 코드와 100% 동일합니다 ---
     var dataURL = canvas.toDataURL("image/png");
     var byteString = atob(dataURL.split(',')[1]);
     var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
     var ab = new ArrayBuffer(byteString.length);
     var ia = new Uint8Array(ab);
+
     for (var i = 0; i < byteString.length; i++) {
         ia[i] = byteString.charCodeAt(i);
     }
-    var tmpThumbFile = new Blob([ab], {type: mimeString});
 
-    return tmpThumbFile;
+    return new Blob([ab], { type: mimeString });
 }
 
 $('.file_input').on('change', function() {

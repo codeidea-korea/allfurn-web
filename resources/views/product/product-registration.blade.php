@@ -319,7 +319,7 @@
                                 storedFiles.push(resizedFile);
 
                                 // [추가] AI 모달 전송용 (잘리지 않고 여백이 채워진 500px 이미지)
-                                var aiResizedFile = getThumbFileAi(image, 500, this.width, this.height);
+                                var aiResizedFile = getThumbFileAi(image, 1000, this.width, this.height);
                                 aiResizedFile.name = file.name;
                                 storedAiFiles.push(aiResizedFile);
                             };

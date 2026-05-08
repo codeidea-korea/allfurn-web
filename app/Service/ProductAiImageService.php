@@ -157,8 +157,11 @@ class ProductAiImageService
                 "Identify the selected product as the largest main furniture item near the center of the input image. " .
                 "Treat ONLY this selected main furniture item as the foreground product. " .
                 "Do NOT redraw, alter, rotate, or distort the selected product furniture. " .
-                "Keep the original camera angle, perspective, framing, product position, and product scale exactly the same. " .
+                "Keep the original camera angle, perspective, product position, and product scale exactly the same. " .
                 "Preserve only the selected product furniture's original texture, shape, color, material, edges, and details. " .
+                "Ignore and remove any black letterbox bars, empty margins, transparent bands, or blurred border areas from the input image. " .
+                "Fill the entire image frame edge-to-edge with a sharp realistic interior background. " .
+                "Do not create blurred top or bottom bands, vignette edges, haze, or soft border extensions. " .
                 "Do NOT preserve unrelated objects around the edges of the original photo. " .
                 "Remove and replace side tables, papers, chairs, plants, wall posters, showroom clutter, partial furniture, and any objects cut off by the image border unless they are the selected product itself. " .
                 "Only generate a background environment of [{$prompt}] around and behind the selected product furniture. " .
