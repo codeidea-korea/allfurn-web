@@ -201,17 +201,81 @@ function getThumbFile(_IMG, maxWidth, width, height){
 }
 
 function getThumbFileAi(_IMG, maxWidth, width, height) {
+    var scanCanvas = document.createElement("canvas");
+    var scanCtx = scanCanvas.getContext("2d");
+
+    scanCanvas.width = width;
+    scanCanvas.height = height;
+    scanCtx.drawImage(_IMG, 0, 0, width, height);
+
+    var imageData = scanCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+
+    function getPixel(x, y) {
+        var i = (y * width + x) * 4;
+        return [data[i], data[i + 1], data[i + 2]];
+    }
+
+    function colorDistance(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+    }
+
+    function isSolidRow(y) {
+        var sample = getPixel(Math.floor(width / 2), y);
+        var similarCount = 0;
+
+        for (var x = 0; x < width; x += 4) {
+            var p = getPixel(x, y);
+            if (colorDistance(sample, p) < 35) {
+                similarCount++;
+            }
+        }
+
+        return similarCount / Math.ceil(width / 4) > 0.96;
+    }
+
+    var cropTop = 0;
+    var cropBottom = height - 1;
+
+    while (cropTop < height && isSolidRow(cropTop)) {
+        cropTop++;
+    }
+
+    while (cropBottom > cropTop && isSolidRow(cropBottom)) {
+        cropBottom--;
+    }
+
+    var cropLeft = 0;
+    var cropW = width;
+    var cropH = cropBottom - cropTop + 1;
+
+    // 과도한 crop 방지
+    if (cropH < height * 0.5) {
+        cropTop = 0;
+        cropH = height;
+    }
+
+    var scale = Math.min(1, maxWidth / Math.max(cropW, cropH));
+    var targetW = Math.round(cropW * scale);
+    var targetH = Math.round(cropH * scale);
+
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
-
-    var scale = Math.min(1, maxWidth / Math.max(width, height));
-    var targetW = Math.round(width * scale);
-    var targetH = Math.round(height * scale);
 
     canvas.width = targetW;
     canvas.height = targetH;
 
-    ctx.drawImage(_IMG, 0, 0, targetW, targetH);
+    ctx.drawImage(
+        _IMG,
+        cropLeft,
+        cropTop,
+        cropW,
+        cropH,
+        0,
+        0,
+        targetW,
+        targetH
+    );
 
     var dataURL = canvas.toDataURL("image/png");
     var byteString = atob(dataURL.split(',')[1]);
