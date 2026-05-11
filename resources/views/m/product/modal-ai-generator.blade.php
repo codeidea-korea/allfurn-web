@@ -67,7 +67,11 @@
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     
                     {{-- 배경제거 버튼 (전체 너비 차지) --}}
-                    <button type="button" id="btn_remove_bg" class="col-span-2 py-2.5 bg-white border border-stone-200 rounded-lg text-stone-600 text-sm font-medium hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
+                    <button type="button"
+                        id="btn_remove_bg"
+                        class="btn-style-select relative col-span-2 py-2.5 bg-white border border-stone-200 rounded-lg text-stone-600 text-sm font-medium hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                        data-action="remove_bg"
+                        data-prompt="">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M15 4.5l-4 4"/><path d="M14 20l-4-4"/><path d="M8 20l4-4"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/></svg>
                         배경제거
                     </button>
@@ -199,21 +203,43 @@
     var targetHiddenInputId = "";
     var originalFilesBackup = {};
 
-    $(document).off('click', '#btn_ai_confirm_m').on('click', '#btn_ai_confirm_m', function() {
+    $(document)
+        .off('click.aiConfirmMobile', '#btn_ai_confirm_m')
+        .on('click.aiConfirmMobile', '#btn_ai_confirm_m', function() {
 
         var $activeStyleBtn = $('.btn-style-select.border-red-500');
-        var generatedStyleUrl = $activeStyleBtn.attr('data-generated-url');
+        var $removeBgBtn = $('#btn_remove_bg');
+        var removeBgUrl = $removeBgBtn.attr('data-generated-url');
+        var previewUrl = $('#ai_modal_preview_image').attr('src');
 
-        if ($activeStyleBtn.length === 0 ||
-            $activeStyleBtn.find('.generated-badge').length === 0 ||
-            !generatedStyleUrl) {
+        if (removeBgUrl && previewUrl === removeBgUrl) {
+            $activeStyleBtn = $removeBgBtn;
+        } else if ($activeStyleBtn.length === 0 && removeBgUrl) {
+            $activeStyleBtn = $removeBgBtn;
+        }
+
+        var generatedStyleUrl = $activeStyleBtn.attr('data-generated-url');
+        var isRemoveBgResult = $activeStyleBtn.is('#btn_remove_bg');
+
+        if (
+            $activeStyleBtn.length === 0 ||
+            !generatedStyleUrl ||
+            (!isRemoveBgResult && $activeStyleBtn.find('.generated-badge').length === 0)
+        ) {
             modalOpen('#ai-not-generated-modal');
             return false;
         }
-        
-        var generatedUrl = $('#ai_modal_preview_image').attr('src');
+
+        var generatedUrl = generatedStyleUrl;
+
+
         if (!generatedUrl || generatedUrl === "") {
             alert("생성된 이미지가 없습니다. 먼저 스타일 생성을 진행해주세요.");
+            return;
+        }
+
+        if (!currentAiFile) {
+            alert("작업할 이미지가 없습니다.");
             return;
         }
 
@@ -222,7 +248,10 @@
             return;
         }
 
-        var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var fileIndex = storedFiles.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+
         
         if (fileIndex === -1) {
             alert("원본 이미지를 데이터에서 찾을 수 없어 교체할 수 없습니다.");
@@ -230,15 +259,23 @@
         }
 
         
-        var idx100 = stored100Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx400 = stored400Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx600 = stored600Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx1000 = stored1000Files.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var idx100 = stored100Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx400 = stored400Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx600 = stored600Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx1000 = stored1000Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
 
-        if(idx100 === -1) idx100 = fileIndex;
-        if(idx400 === -1) idx400 = fileIndex;
-        if(idx600 === -1) idx600 = fileIndex;
-        if(idx1000 === -1) idx1000 = fileIndex;
+        if (idx100 === -1) idx100 = stored100Files.length;
+        if (idx400 === -1) idx400 = stored400Files.length;
+        if (idx600 === -1) idx600 = stored600Files.length;
+        if (idx1000 === -1) idx1000 = stored1000Files.length;
 
       
         if (!originalFilesBackup[currentAiFile.name]) {

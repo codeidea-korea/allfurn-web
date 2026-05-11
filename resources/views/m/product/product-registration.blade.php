@@ -277,7 +277,11 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     console.log("선택된 파일명:", fileName);
 
     // AI 전송용 파일을 우선 사용하고, 기존 AI 적용 이미지 등 예외 상황에서는 등록용 파일로 보완합니다.
-    var selectedFile = storedAiFiles.find(f => f.name === fileName) || storedFiles.find(f => f.name === fileName);
+    var selectedFile = storedAiFiles.find(function(f) {
+        return f && f.name === fileName;
+    }) || storedFiles.find(function(f) {
+        return f && f.name === fileName;
+    });
 
     if (!selectedFile) {
         alert("이미지 파일을 찾을 수 없습니다. 다시 시도해주세요.");
@@ -331,94 +335,125 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     $('#ai_input_prompt').val('');
     $('.generated-badge').remove(); 
     $('.btn-style-select').removeAttr('data-generated-url');
+    $('#btn_remove_bg').removeAttr('data-generated-url').find('.generated-badge').remove();
     
     modalOpen('#ai_image_generator_modal');
 }
 
 // 2. [기능 독립] 배경 제거 버튼 클릭 이벤트
-$(document).on('click', '#btn_remove_bg', function(e) {
-    e.preventDefault();
-    if (userAiCount <= 0) {
-            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
-            return false; // 여기서 함수 종료
-        }
-    if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
+// $(document).on('click', '#btn_remove_bg', function(e) {
+//     e.preventDefault();
+//     if (userAiCount <= 0) {
+//             alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+//             return false; // 여기서 함수 종료
+//         }
+//     if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
 
-    var $btn = $(this);
-    var originalHtml = $btn.html();
+//     var $btn = $(this);
+//     var originalHtml = $btn.html();
 
-    $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
-    $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
-    $('#ai_full_loading_overlay').removeClass('hidden');
+//     $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+//     $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+//     $('#ai_full_loading_overlay').removeClass('hidden');
 
-    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
+//     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
 
-    var fileToSend = currentAiFile; // 기본적으로는 기존 파일 사용
+//     var fileToSend = currentAiFile; // 기본적으로는 기존 파일 사용
 
-    var formData = new FormData();
-    formData.append('image', fileToSend); // 깡통 파일 대신 정상 파일 전송
+//     var formData = new FormData();
+//     formData.append('image', fileToSend); // 깡통 파일 대신 정상 파일 전송
 
-    $.ajax({
-        url: "{{ route('product.ai.remove_bg') }}",
-        type: 'POST',
-        global: false,
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        data: formData,
-        contentType: false, processData: false,
-        beforeSend: function() {
-            $('#loadingContainer').hide(); 
-            $('#loadingContainer').css('display', 'none'); 
-        },
-        success: function(res) {
-            if (res.success) {
-                $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
-                updateAiCountUI(res.remain_count);
-                //alert('배경 제거가 완료되었습니다.');
-                modalOpen('#ai-generate-success-modal');
-            } else {
-                alert('실패: ' + res.message);
-            }
-        },
-        error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
-        complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
-    });
-});
+//     $.ajax({
+//         url: "{{ route('product.ai.remove_bg') }}",
+//         type: 'POST',
+//         global: false,
+//         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+//         data: formData,
+//         contentType: false, processData: false,
+//         beforeSend: function() {
+//             $('#loadingContainer').hide(); 
+//             $('#loadingContainer').css('display', 'none'); 
+//         },
+//         success: function(res) {
+//             if (res.success) {
+//                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+
+//                 var $removeBgBtn = $('#btn_remove_bg');
+//                 $removeBgBtn.attr('data-generated-url', res.data.removebg_url);
+
+//                 if ($removeBgBtn.find('.generated-badge').length === 0) {
+//                     $removeBgBtn.append(
+//                         '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">생성 완료</div>'
+//                     );
+//                 }
+
+//                 $('#btn_ai_confirm_m').prop('disabled', false);
+//                 updateAiCountUI(res.remain_count);
+//                 modalOpen('#ai-generate-success-modal');
+//             }
+//         },
+//         error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
+//         complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
+//     });
+// });
 
 $(document).on('click', '.btn-style-select', function(e) {
     e.preventDefault();
+
     $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
     $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
-    var prompt = $(this).data('prompt');
+    var action = $(this).data('action') || 'generate_bg';
+    var prompt = $(this).data('prompt') || '';
     $('#ai_input_prompt').val(prompt);
+
     var $previewImg = $('#ai_modal_preview_image');
-
-
     var cachedUrl = $(this).attr('data-generated-url');
+
     if (cachedUrl) {
-        $('#ai_modal_preview_image').attr('src', cachedUrl);
-    } else {
-        var styleSampleImg = $(this).find('img').attr('src');  
-        $previewImg.attr('src', styleSampleImg);
-        $previewImg.css('object-fit', 'cover');
+        $previewImg.attr('src', cachedUrl).css('object-fit', 'contain');
+        return;
     }
+
+    if (action === 'remove_bg') {
+        var baseSrc = $previewImg.attr('data-base-src') || $('#ai_modal_thumbnail').attr('src');
+        $previewImg.attr('src', baseSrc).css('object-fit', 'contain');
+        return;
+    }
+
+    var styleSampleImg = $(this).find('img').attr('src');
+    $previewImg.attr('src', styleSampleImg).css('object-fit', 'cover');
 });
 
 $(document).on('click', '#btn_ai_generate', async function(e) {
     e.preventDefault();
+
     if (userAiCount <= 0) {
-            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
-            return false; // 여기서 함수 종료
-        }
+        alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+        return false;
+    }
 
     if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
-    var prompt = $('#ai_input_prompt').val();
-    if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
 
     var $activeStyleBtn = $('.btn-style-select.border-red-500');
 
+    if ($activeStyleBtn.length === 0) {
+        return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+    }
+
+    var action = $activeStyleBtn.data('action') || 'generate_bg';
+
+    if (action === 'remove_bg') {
+        requestRemoveBgOnly($(this), $activeStyleBtn);
+        return;
+    }
+
+    var prompt = $('#ai_input_prompt').val();
+    if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
     var $btn = $(this);
     var originalText = $btn.html();
+    
     $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
     
     $('#ai_full_loading_overlay h4').text('1단계: 배경 제거 중...');
@@ -556,7 +591,94 @@ function resetButtons($btn, originalText) {
     $btn.prop('disabled', false).html(originalText);
 }
 
+function requestRemoveBgOnly($btn, $activeStyleBtn) {
+    if (userAiCount <= 0) {
+        alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+        return false;
+    }
+
+    if (!currentAiFile) {
+        alert('작업할 이미지가 없습니다.');
+        return false;
+    }
+
+    var originalText = $btn.html();
+
+    $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+    $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+    $('#ai_full_loading_overlay').removeClass('hidden');
+
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 배경 제거 중...');
+    $('.btn-style-select, #btn_remove_bg').prop('disabled', true);
+
+    var formData = new FormData();
+    formData.append('image', currentAiFile);
+
+    $.ajax({
+        url: "{{ route('product.ai.remove_bg') }}",
+        type: 'POST',
+        global: false,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: formData,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $('#loadingContainer').hide();
+            $('#loadingContainer').css('display', 'none');
+        },
+        success: function(res) {
+            if (res.success) {
+                $('#ai_modal_preview_image').attr('src', res.data.removebg_url).css('object-fit', 'contain');
+
+                $activeStyleBtn.attr('data-generated-url', res.data.removebg_url);
+
+                if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                    $activeStyleBtn.append(
+                        '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">생성 완료</div>'
+                    );
+                }
+
+                $('#btn_ai_confirm_m').prop('disabled', false);
+                updateAiCountUI(res.remain_count);
+                modalOpen('#ai-generate-success-modal');
+            } else {
+                alert('실패: ' + (res.message || '배경 제거에 실패했습니다.'));
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr);
+            alert('서버 통신 오류');
+        },
+        complete: function() {
+            $('#ai_full_loading_overlay').addClass('hidden');
+            resetButtons($btn, originalText);
+        }
+    });
+}
+
 $(document).on('click', '#btn_ai_confirm_m', function() {
+
+    var $activeStyleBtn = $('.btn-style-select.border-red-500');
+    var $removeBgBtn = $('#btn_remove_bg');
+    var removeBgUrl = $removeBgBtn.attr('data-generated-url');
+    var previewUrl = $('#ai_modal_preview_image').attr('src');
+
+    if (removeBgUrl && previewUrl === removeBgUrl) {
+        $activeStyleBtn = $removeBgBtn;
+    } else if ($activeStyleBtn.length === 0 && removeBgUrl) {
+        $activeStyleBtn = $removeBgBtn;
+    }
+
+    var generatedStyleUrl = $activeStyleBtn.attr('data-generated-url');
+    var isRemoveBgResult = $activeStyleBtn.is('#btn_remove_bg');
+
+    if (
+        $activeStyleBtn.length === 0 ||
+        !generatedStyleUrl ||
+        (!isRemoveBgResult && $activeStyleBtn.find('.generated-badge').length === 0)
+    ) {
+        return;
+    }
     var $wrapper = $(targetAiBtn).closest('.product-img__add');
     var originalIdx = $wrapper.attr('data-idx');
 
@@ -581,6 +703,28 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
 });
 
     var restoreParams = {};
+
+    function removeFileByName(arr, fileName) {
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] && arr[i].name === fileName) {
+                arr.splice(i, 1);
+            }
+        }
+    }
+
+    function restoreFileToArray(arr, originalFile) {
+        if (!originalFile) return;
+
+        var idx = arr.findIndex(function(f) {
+            return f && f.name === originalFile.name;
+        });
+
+        if (idx === -1) {
+            arr.push(originalFile);
+        } else {
+            arr[idx] = originalFile;
+        }
+    }
 
     // 2. 기존 restoreOriginal 함수 수정 (파라미터 저장 후 모달만 띄우기)
     function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
@@ -627,20 +771,25 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
             });
         }
 
+        $wrapper.attr('file', fileName);
+
         var originalData = originalFilesBackup[fileName];
+
         if (originalData) {
-            // 현재 배열에는 "ai_" + 원본파일명 으로 저장되어 있으므로 해당 인덱스를 찾음
             var aiFileName = "ai_" + fileName;
-            var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
-            
-            if (fileIndex !== -1) {
-                // 배열의 데이터를 다시 원본 파일로 교체
-                storedFiles[fileIndex] = originalData.main;
-                stored100Files[fileIndex] = originalData.f100;
-                stored400Files[fileIndex] = originalData.f400;
-                stored600Files[fileIndex] = originalData.f600;
-                stored1000Files[fileIndex] = originalData.f1000;
-            }
+
+            removeFileByName(storedFiles, aiFileName);
+            removeFileByName(stored100Files, aiFileName);
+            removeFileByName(stored400Files, aiFileName);
+            removeFileByName(stored600Files, aiFileName);
+            removeFileByName(stored1000Files, aiFileName);
+            removeFileByName(storedAiFiles, aiFileName);
+
+            restoreFileToArray(storedFiles, originalData.main);
+            restoreFileToArray(stored100Files, originalData.f100);
+            restoreFileToArray(stored400Files, originalData.f400);
+            restoreFileToArray(stored600Files, originalData.f600);
+            restoreFileToArray(stored1000Files, originalData.f1000);
         }
 
         // AI 결과값 hidden input 초기화
@@ -955,25 +1104,25 @@ $(document).on('change', '#form-list02', function() {
     $wrapper.remove();
     $(this).parent().parent().remove('');
 
-    var idxMain = storedFiles.findIndex(function(f) { return f.name === fileName; });
+    var idxMain = storedFiles.findIndex(function(f) { return f && f.name === fileName;});
     if (idxMain > -1) storedFiles.splice(idxMain, 1);
 
-    var idx100 = stored100Files.findIndex(function(f) { return f.name === fileName; });
+    var idx100 = stored100Files.findIndex(function(f) { return f && f.name === fileName; });
     if (idx100 > -1) stored100Files.splice(idx100, 1);
 
-    var idx400 = stored400Files.findIndex(function(f) { return f.name === fileName; });
+    var idx400 = stored400Files.findIndex(function(f) { return f && f.name === fileName; });
     if (idx400 > -1) stored400Files.splice(idx400, 1);
 
-    var idx600 = stored600Files.findIndex(function(f) { return f.name === fileName; });
+    var idx600 = stored600Files.findIndex(function(f) { return f && f.name === fileName; });
     if (idx600 > -1) stored600Files.splice(idx600, 1);
 
-    var idx1000 = stored1000Files.findIndex(function(f) { return f.name === fileName; });
+    var idx1000 = stored1000Files.findIndex(function(f) {return f && f.name === fileName; });
     if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
 
     var originalAiFileName = fileName.indexOf('ai_') === 0 ? fileName.substring(3) : fileName;
     var appliedAiFileName = fileName.indexOf('ai_') === 0 ? fileName : "ai_" + fileName;
     var idxAi = storedAiFiles.findIndex(function(f) {
-        return f.name === originalAiFileName || f.name === appliedAiFileName;
+        return f && (f.name === originalAiFileName || f.name === appliedAiFileName);
     });
     if (idxAi > -1) storedAiFiles.splice(idxAi, 1);
 
@@ -1477,19 +1626,19 @@ function saveProduct(regType) {
     form.append("reg_type", regType);
     form.append("name", $('#form-list01').val());
     for (var i = 0; i < stored600Files.length; i++) {
-        form.append('files[]', stored600Files[i]);
+        if (stored600Files[i]) form.append('files[]', stored600Files[i]);
     }
     for (var i = 0; i < stored100Files.length; i++) {
-        form.append('files100[]', stored100Files[i]);
+        if (stored100Files[i]) form.append('files100[]', stored100Files[i]);
     }
     for (var i = 0; i < stored400Files.length; i++) {
-        form.append('files400[]', stored400Files[i]);
+        if (stored400Files[i]) form.append('files400[]', stored400Files[i]);
     }
     for (var i = 0; i < stored600Files.length; i++) {
-        form.append('files600[]', stored600Files[i]);
+        if (stored600Files[i]) form.append('files600[]', stored600Files[i]);
     }
     for (var i = 0; i < stored1000Files.length; i++) {
-        form.append('files1000[]', stored1000Files[i]);
+        if (stored1000Files[i]) form.append('files1000[]', stored1000Files[i]);
     }
 
     var property = '';
