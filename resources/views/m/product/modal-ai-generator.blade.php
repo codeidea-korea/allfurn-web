@@ -69,11 +69,30 @@
                     {{-- 배경제거 버튼 (전체 너비 차지) --}}
                     <button type="button"
                         id="btn_remove_bg"
-                        class="btn-style-select relative col-span-2 py-2.5 bg-white border border-stone-200 rounded-lg text-stone-600 text-sm font-medium hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                        class="btn-style-select group relative col-span-2 py-2.5 pr-10 bg-red-50 border-2 border-red-300 rounded-lg text-red-700 text-sm font-bold hover:bg-red-100 hover:border-red-500 hover:text-red-700 shadow-sm transition-all flex items-center justify-center gap-2"
+                        data-style="배경제거"
                         data-action="remove_bg"
                         data-prompt="">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M15 4.5l-4 4"/><path d="M14 20l-4-4"/><path d="M8 20l4-4"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/></svg>
-                        배경제거
+                        <span>배경제거</span>
+
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 z-20 opacity-0 scale-50 group-[.border-red-500]:opacity-100 group-[.border-red-500]:scale-100 transition-all duration-300 ease-back-out">
+                            <div class="bg-red-500 text-white w-7 h-7 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 border-2 border-white">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="3"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="absolute inset-0 rounded-lg pointer-events-none transition-all duration-300 border-2 border-transparent group-[.border-red-500]:border-red-500 group-[.border-red-500]:ring-2 group-[.border-red-500]:ring-red-500/20 group-[.border-red-500]:ring-inset"></div>
                     </button>
 
                     {{-- 1. 북유럽 --}}
