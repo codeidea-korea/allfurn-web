@@ -36,6 +36,11 @@
 
                         {{-- 메인 미리보기 이미지 ID: ai_modal_preview_image --}}
                         <img id="ai_modal_preview_image" src="" class="relative z-10 w-full h-full object-contain mx-auto" style="max-height: 70vh;">
+
+                        <div id="ai_style_preview_badge"
+                            class="absolute left-4 top-4 z-30 hidden rounded-md bg-black/70 px-3 py-1.5 text-xs font-bold text-white shadow">
+                            스타일 미리보기
+                        </div>
                         
                         {{-- 플레이스홀더 (로딩/안내 문구) --}}
                         <div id="ai_modal_placeholder_text" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-white/80">
