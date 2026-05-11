@@ -1762,6 +1762,7 @@
 
 
             $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
+            $('#ai_style_preview_badge').addClass('hidden');
             $('#ai_modal_thumbnail').attr('src', e.target.result);
             $('#ai_modal_placeholder_text').addClass('hidden');
             $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화(숨김)
@@ -1916,31 +1917,35 @@
         var $previewImg = $('#ai_modal_preview_image');
 
         if ($(this).data('action') === 'remove_bg') {
-        var cachedUrl = $(this).attr('data-generated-url');
-        var baseSrc = $previewImg.attr('data-base-src');
+            var cachedUrl = $(this).attr('data-generated-url');
+            var baseSrc = $previewImg.attr('data-base-src');
 
-        if (cachedUrl) {
-            $previewImg.attr('src', cachedUrl);
-        } else if (baseSrc) {
-            $previewImg.attr('src', baseSrc);
+            if (cachedUrl) {
+                $previewImg.attr('src', cachedUrl);
+            } else if (baseSrc) {
+                $previewImg.attr('src', baseSrc);
+            }
+
+            $('#ai_style_preview_badge').addClass('hidden');
+
+            $('#btn_ai_confirm').prop('disabled', false);
+            $previewImg.css('object-fit', 'contain');
+            return;
         }
-
-        $('#btn_ai_confirm').prop('disabled', false);
-        $previewImg.css('object-fit', 'contain');
-        return;
-    }
 
         var cachedUrl = $(this).attr('data-generated-url');
         if (cachedUrl) {
             // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
             $('#ai_modal_preview_image').attr('src', cachedUrl);
+            $('#ai_style_preview_badge').addClass('hidden');
             $('#btn_ai_confirm').prop('disabled', false);
         } else {
             var styleSampleImg = $(this).find('img').attr('src');
-            
+
             $previewImg.attr('src', styleSampleImg);
-            
             $previewImg.css('object-fit', 'cover');
+
+            $('#ai_style_preview_badge').removeClass('hidden');
            
         }
     });
@@ -2094,6 +2099,7 @@
             success: function(res2) {
                 if (res2.success) {
                     $('#ai_modal_preview_image').attr('src', res2.data.final_url);
+                    $('#ai_style_preview_badge').addClass('hidden');
                     updateAiCountUI(res2.remain_count);
 
                     if (res2.data.final_path) {
