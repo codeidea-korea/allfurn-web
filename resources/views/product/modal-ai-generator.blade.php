@@ -66,7 +66,7 @@
                            
                             <button type="button"
                                     id="btn_remove_bg"
-                                    class="btn-style-select group relative w-full py-3 pr-12 bg-white border border-stone-200 rounded-lg text-stone-600 font-medium hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                                    class="btn-style-select group relative w-full py-3 pr-12 bg-red-50 border-2 border-red-300 rounded-lg text-red-700 font-bold hover:bg-red-100 hover:border-red-500 hover:text-red-700 shadow-sm transition-all flex items-center justify-center gap-2"
                                     data-style="배경제거"
                                     data-action="remove_bg"
                                     data-prompt="">
