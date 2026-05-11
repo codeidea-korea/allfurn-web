@@ -345,7 +345,7 @@
         }
 
         // 1. 메인 파일의 위치 찾기
-        var fileIndex = storedFiles.findIndex(function(f) { return f.name === currentAiFile.name; });
+        var fileIndex = storedFiles.findIndex(function(f) { return f && f.name === currentAiFile.name; });
         
         if (fileIndex === -1) {
             alert("원본 이미지를 데이터에서 찾을 수 없어 교체할 수 없습니다.");
@@ -353,16 +353,23 @@
         }
 
        
-        var idx100 = stored100Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx400 = stored400Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx600 = stored600Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-        var idx1000 = stored1000Files.findIndex(function(f) { return f.name === currentAiFile.name; });
-
-       
-        if(idx100 === -1) idx100 = fileIndex;
-        if(idx400 === -1) idx400 = fileIndex;
-        if(idx600 === -1) idx600 = fileIndex;
-        if(idx1000 === -1) idx1000 = fileIndex;
+        var idx100 = stored100Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx400 = stored400Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx600 = stored600Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+        var idx1000 = stored1000Files.findIndex(function(f) {
+            return f && f.name === currentAiFile.name;
+        });
+            
+        if (idx100 === -1) idx100 = stored100Files.length;
+        if (idx400 === -1) idx400 = stored400Files.length;
+        if (idx600 === -1) idx600 = stored600Files.length;
+        if (idx1000 === -1) idx1000 = stored1000Files.length;
 
         // 백업 생성
         if (!originalFilesBackup[currentAiFile.name]) {

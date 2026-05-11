@@ -441,19 +441,19 @@
                 $wrapper.remove();
                 $(this).parent().parent().remove('');
 
-                var idxMain = storedFiles.findIndex(function(f) { return f.name === fileName; });
+                var idxMain = storedFiles.findIndex(function(f) { return f && f.name === fileName; });
                 if (idxMain > -1) storedFiles.splice(idxMain, 1);
 
-                var idx100 = stored100Files.findIndex(function(f) { return f.name === fileName; });
+                var idx100 = stored100Files.findIndex(function(f) { return f && f.name === fileName; });
                 if (idx100 > -1) stored100Files.splice(idx100, 1);
 
-                var idx400 = stored400Files.findIndex(function(f) { return f.name === fileName; });
+                var idx400 = stored400Files.findIndex(function(f) { return f && f.name === fileName; });
                 if (idx400 > -1) stored400Files.splice(idx400, 1);
 
-                var idx600 = stored600Files.findIndex(function(f) { return f.name === fileName; });
+                var idx600 = stored600Files.findIndex(function(f) { return f && f.name === fileName; });
                 if (idx600 > -1) stored600Files.splice(idx600, 1);
 
-                var idx1000 = stored1000Files.findIndex(function(f) { return f.name === fileName; });
+                var idx1000 = stored1000Files.findIndex(function(f) { return f && f.name === fileName; });
                 if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
 
                 img_reload_order();
@@ -1454,9 +1454,11 @@
                                     })
                                     .then(blob => {
                                         var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+
                                         storedFiles.push(file);
                                         storedAiFiles.push(file);
-                                        console.log("프록시 우회 성공: " + fileName + " 배열 추가 완료 (총 " + storedFiles.length + "개)");
+
+                                        console.log("프록시 우회 성공: " + fileName + " 배열 추가 완료");
                                     })
                                     .catch(err => {
                                         console.error('기존 이미지 변환 실패:', err);
@@ -1716,7 +1718,9 @@
         console.log("선택된 파일명:", fileName);
 
         // storedFiles에서 파일 객체 찾기
-        var selectedFile = storedAiFiles.find(f => f.name === fileName);
+        var selectedFile = storedAiFiles.find(function(f) {
+            return f && f.name === fileName;
+        });
 
         if (!selectedFile) {
             
@@ -2176,6 +2180,28 @@
    // 1. 클릭된 버튼의 정보를 임시로 저장할 전역 변수 선언
 var restoreParams = {};
 
+function removeFileByName(arr, fileName) {
+    for (var i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] && arr[i].name === fileName) {
+            arr.splice(i, 1);
+        }
+    }
+}
+
+function restoreFileToArray(arr, originalFile) {
+    if (!originalFile) return;
+
+    var idx = arr.findIndex(function(f) {
+        return f && f.name === originalFile.name;
+    });
+
+    if (idx === -1) {
+        arr.push(originalFile);
+    } else {
+        arr[idx] = originalFile;
+    }
+}
+
 // 2. 기존 restoreOriginal 함수 수정 (모달만 띄우기)
 function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
     // 실제 복구 로직을 실행하기 위해 파라미터들을 임시 저장
@@ -2210,6 +2236,8 @@ $(document).on('click', '#confirm-restoration', function() {
     }
     
     var $wrapper = $(btn).closest('.product-img__add');
+    $wrapper.attr('file', fileName);
+
     var backupIdx = $wrapper.attr('data-backup-idx');
 
     if (backupIdx) {
@@ -2224,17 +2252,22 @@ $(document).on('click', '#confirm-restoration', function() {
     }
 
     var originalData = originalFilesBackup[fileName];
+
     if (originalData) {
         var aiFileName = "ai_" + fileName;
-        var fileIndex = storedFiles.findIndex(function(f) { return f.name === aiFileName; });
-        
-        if (fileIndex !== -1) {
-            storedFiles[fileIndex] = originalData.main;
-            stored100Files[fileIndex] = originalData.f100;
-            stored400Files[fileIndex] = originalData.f400;
-            stored600Files[fileIndex] = originalData.f600;
-            stored1000Files[fileIndex] = originalData.f1000;
-        }
+
+        removeFileByName(storedFiles, aiFileName);
+        removeFileByName(stored100Files, aiFileName);
+        removeFileByName(stored400Files, aiFileName);
+        removeFileByName(stored600Files, aiFileName);
+        removeFileByName(stored1000Files, aiFileName);
+        removeFileByName(storedAiFiles, aiFileName);
+
+        restoreFileToArray(storedFiles, originalData.main);
+        restoreFileToArray(stored100Files, originalData.f100);
+        restoreFileToArray(stored400Files, originalData.f400);
+        restoreFileToArray(stored600Files, originalData.f600);
+        restoreFileToArray(stored1000Files, originalData.f1000);
     }
 
     // AI 결과값 hidden input 초기화
