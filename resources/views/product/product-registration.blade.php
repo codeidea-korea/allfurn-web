@@ -1767,6 +1767,8 @@
             $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             $('#ai_input_prompt').val('');
 
+    
+
             //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             //$(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
 
@@ -1779,54 +1781,54 @@
     }
 
     // 2. [기능 독립] 배경 제거 버튼 클릭 이벤트
-    $(document).on('click', '#btn_remove_bg', function(e) {
-        e.preventDefault();
+    // $(document).on('click', '#btn_remove_bg', function(e) {
+    //     e.preventDefault();
 
-        if (userAiCount <= 0) {
-            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
-            return false; 
-        }
+    //     if (userAiCount <= 0) {
+    //         alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+    //         return false; 
+    //     }
         
-        if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
+    //     if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
 
-        var $btn = $(this);
-        var originalHtml = $btn.html();
+    //     var $btn = $(this);
+    //     var originalHtml = $btn.html();
         
 
-        $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
-        $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
-        $('#ai_full_loading_overlay').removeClass('hidden');
+    //     $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+    //     $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+    //     $('#ai_full_loading_overlay').removeClass('hidden');
 
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
+    //     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
 
-        var formData = new FormData();
-        formData.append('image', currentAiFile);
+    //     var formData = new FormData();
+    //     formData.append('image', currentAiFile);
 
-        $.ajax({
-            url: "{{ route('product.ai.remove_bg') }}",
-            type: 'POST',
-            global: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            data: formData,
-            contentType: false, processData: false,
-            beforeSend: function() {
-            $('#loadingContainer').hide(); 
-            $('#loadingContainer').css('display', 'none'); 
-        },
-            success: function(res) {
-                if (res.success) {
-                    $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
-                    updateAiCountUI(res.remain_count);
-                    //alert('배경 제거가 완료되었습니다.');
-                    modalOpen('#ai-generate-success-modal');
-                } else {
-                    alert('실패: ' + res.message);
-                }
-            },
-            error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
-            complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
-        });
-    });
+    //     $.ajax({
+    //         url: "{{ route('product.ai.remove_bg') }}",
+    //         type: 'POST',
+    //         global: false,
+    //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+    //         data: formData,
+    //         contentType: false, processData: false,
+    //         beforeSend: function() {
+    //         $('#loadingContainer').hide(); 
+    //         $('#loadingContainer').css('display', 'none'); 
+    //     },
+    //         success: function(res) {
+    //             if (res.success) {
+    //                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+    //                 updateAiCountUI(res.remain_count);
+    //                 //alert('배경 제거가 완료되었습니다.');
+    //                 modalOpen('#ai-generate-success-modal');
+    //             } else {
+    //                 alert('실패: ' + res.message);
+    //             }
+    //         },
+    //         error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
+    //         complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
+    //     });
+    // });
 
     // 스타일 버튼 클릭 이벤트 (북유럽, 모던 등 공통 처리)
     $(document).on('click', '.btn-style-generate', function(e) {
@@ -1909,6 +1911,22 @@
 
         var $previewImg = $('#ai_modal_preview_image');
 
+        if ($(this).data('action') === 'remove_bg') {
+            var cachedUrl = $(this).attr('data-generated-url');
+            var baseSrc = $previewImg.attr('data-base-src');
+
+            if (cachedUrl) {
+                $previewImg.attr('src', cachedUrl);
+                $('#btn_ai_confirm').prop('disabled', false);
+            } else if (baseSrc) {
+                $previewImg.attr('src', baseSrc);
+                $('#btn_ai_confirm').prop('disabled', true);
+            }
+
+            $previewImg.css('object-fit', 'contain');
+            return;
+        }
+
         var cachedUrl = $(this).attr('data-generated-url');
         if (cachedUrl) {
             // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
@@ -1920,6 +1938,7 @@
             $previewImg.attr('src', styleSampleImg);
             
             $previewImg.css('object-fit', 'cover');
+           
         }
     });
     
@@ -1932,24 +1951,41 @@
 
         if (userAiCount <= 0) {
             alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
-            return false; // 여기서 함수 종료
+            return false;
         }
 
         // 4-1. 유효성 검사
         if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
-        var prompt = $('#ai_input_prompt').val();
-        if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
 
         //var $activeStyleBtn = $('.btn-style-select.border-primary');
         var $activeStyleBtn = $('.btn-style-select.border-red-500');
+
+        if ($activeStyleBtn.length === 0) {
+            return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+        }
+
+        var action = $activeStyleBtn.data('action');
+        var prompt = $('#ai_input_prompt').val();
+
+        if (action !== 'remove_bg' && !prompt) {
+            return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+        }
 
         // 4-2. 로딩 시작
         var $btn = $(this);
         var originalText = $btn.html();
         $('.btn-style-select, #btn_remove_bg').prop('disabled', true); // 다른 조작 방지
         
-        $('#ai_full_loading_overlay h4').text('1단계: 배경 제거 중...');
-        $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
+        if (action === 'remove_bg') {
+            $('#ai_full_loading_overlay h4').text('배경 제거 중...');
+            $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+            $btn.html('<span class="spinner-border spinner-border-sm"></span> 배경 제거 중...');
+        } else {
+            $('#ai_full_loading_overlay h4').text('1단계: 배경 제거 중...');
+            $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
+            $btn.html('<span class="spinner-border spinner-border-sm"></span> 1단계: 배경 제거 중...');
+        }
+
         $('#ai_full_loading_overlay').removeClass('hidden');
 
         // 4-3. 배경 제거 요청 (1단계)
@@ -1974,12 +2010,27 @@
                     }
                     // 성공 시 2단계 진행
                     var tempPath = res1.data.temp_path;
+                    var removeBgUrl = res1.data.removebg_url;
 
                     if (tempPath) {
                         tempAiFilesToDelete.push(tempPath);
                     }
 
                     $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); // 중간 과정 보여주기
+                    updateAiCountUI(res1.remain_count);
+
+                    if (action === 'remove_bg') {
+                        $activeStyleBtn.attr('data-generated-url', removeBgUrl);
+
+                        if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                            var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">생성 완료</div>';
+                            $activeStyleBtn.append(badgeHtml);
+                        }
+
+                        $('#btn_ai_confirm').prop('disabled', false);
+                        modalOpen('#ai-generate-success-modal');
+                        return;
+                    }
 
                     $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
                     $('#ai_full_loading_overlay p').text('선택한 스타일로 공간을 꾸미고 있습니다. (약 10~20초)');
@@ -2015,6 +2066,12 @@
                 alert(errorLog);
                 
                 resetButtons($btn, originalText);
+            },
+            complete: function() {
+                if (action === 'remove_bg') {
+                    $('#ai_full_loading_overlay').addClass('hidden');
+                    resetButtons($btn, originalText);
+                }
             }
         });
     });
