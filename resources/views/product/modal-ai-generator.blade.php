@@ -283,7 +283,8 @@
                 
                 <div class="p-4 border-t bg-stone-50 space-y-3"> 
     
-                    <button type="button" id="btn_ai_generate" class="w-full py-3 bg-stone-800 text-white rounded-lg font-bold hover:bg-stone-700 transition-all flex items-center justify-center gap-2">
+                    <button type="button" id="btn_ai_generate"
+                        class="w-full py-3 bg-white border-2 border-red-300 text-red-600 rounded-lg font-bold hover:bg-red-50 hover:border-red-500 hover:text-red-700 shadow-sm shadow-red-100 transition-all flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                         이미지 생성하기
                     </button>

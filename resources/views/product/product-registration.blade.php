@@ -1916,20 +1916,19 @@
         var $previewImg = $('#ai_modal_preview_image');
 
         if ($(this).data('action') === 'remove_bg') {
-            var cachedUrl = $(this).attr('data-generated-url');
-            var baseSrc = $previewImg.attr('data-base-src');
+        var cachedUrl = $(this).attr('data-generated-url');
+        var baseSrc = $previewImg.attr('data-base-src');
 
-            if (cachedUrl) {
-                $previewImg.attr('src', cachedUrl);
-                $('#btn_ai_confirm').prop('disabled', false);
-            } else if (baseSrc) {
-                $previewImg.attr('src', baseSrc);
-                $('#btn_ai_confirm').prop('disabled', true);
-            }
-
-            $previewImg.css('object-fit', 'contain');
-            return;
+        if (cachedUrl) {
+            $previewImg.attr('src', cachedUrl);
+        } else if (baseSrc) {
+            $previewImg.attr('src', baseSrc);
         }
+
+        $('#btn_ai_confirm').prop('disabled', false);
+        $previewImg.css('object-fit', 'contain');
+        return;
+    }
 
         var cachedUrl = $(this).attr('data-generated-url');
         if (cachedUrl) {
