@@ -49,6 +49,11 @@
                 <div class="relative w-full aspect-square max-h-[40vh] bg-stone-100 flex items-center justify-center p-2">
                     <div class="absolute inset-0 bg-white"></div>
                     <img id="ai_modal_preview_image" src="" class="relative z-10 w-full h-full object-contain mx-auto">
+
+                    <div id="ai_style_preview_badge"
+                        class="absolute left-3 top-3 z-30 hidden rounded-md bg-black/70 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                        스타일 미리보기
+                    </div>
                     
                     {{-- 플레이스홀더 --}}
                     <div id="ai_modal_placeholder_text" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-white/80">

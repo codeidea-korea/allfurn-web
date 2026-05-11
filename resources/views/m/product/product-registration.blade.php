@@ -327,6 +327,7 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
 
     // 가져온 정상 데이터를 모달창에 꽂아줍니다.
     $('#ai_modal_preview_image').attr('src', validImageSrc).attr('data-base-src', validImageSrc).removeClass('hidden'); 
+    $('#ai_style_preview_badge').addClass('hidden');
     $('#ai_modal_thumbnail').attr('src', validImageSrc);
     $('#ai_modal_placeholder_text').addClass('hidden');
     $('#ai_modal_result_image').addClass('hidden');
@@ -412,17 +413,20 @@ $(document).on('click', '.btn-style-select', function(e) {
 
     if (cachedUrl) {
         $previewImg.attr('src', cachedUrl).css('object-fit', 'contain');
+        $('#ai_style_preview_badge').addClass('hidden');
         return;
     }
 
     if (action === 'remove_bg') {
         var baseSrc = $previewImg.attr('data-base-src') || $('#ai_modal_thumbnail').attr('src');
         $previewImg.attr('src', baseSrc).css('object-fit', 'contain');
+        $('#ai_style_preview_badge').addClass('hidden');
         return;
     }
 
     var styleSampleImg = $(this).find('img').attr('src');
     $previewImg.attr('src', styleSampleImg).css('object-fit', 'cover');
+    $('#ai_style_preview_badge').removeClass('hidden');
 });
 
 $(document).on('click', '#btn_ai_generate', async function(e) {
@@ -517,6 +521,7 @@ $(document).on('click', '#btn_ai_generate', async function(e) {
                 }
 
                 $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); 
+                $('#ai_style_preview_badge').addClass('hidden');
 
                 $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
                 $('#ai_full_loading_overlay p').text('선택한 스타일로 공간을 꾸미고 있습니다. (약 10~20초)');
@@ -549,6 +554,7 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
         success: function(res2) {
             if (res2.success) {
                 $('#ai_modal_preview_image').attr('src', res2.data.final_url);
+                $('#ai_style_preview_badge').addClass('hidden');
                 updateAiCountUI(res2.remain_count);
 
                 if (res2.data.final_path) {
@@ -629,6 +635,7 @@ function requestRemoveBgOnly($btn, $activeStyleBtn) {
         success: function(res) {
             if (res.success) {
                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url).css('object-fit', 'contain');
+                $('#ai_style_preview_badge').addClass('hidden');
 
                 $activeStyleBtn.attr('data-generated-url', res.data.removebg_url);
 
