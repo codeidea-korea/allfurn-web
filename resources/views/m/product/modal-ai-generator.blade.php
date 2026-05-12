@@ -109,7 +109,7 @@
                     </button>
 
                     {{-- 1. 북유럽 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="북유럽" data-prompt="Nordic style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="북유럽" data-prompt="Nordic style, natural wood tones, bright and airy, beige and white palette, cozy textures, functional design, warm atmosphere, Empty room, unoccupied space, solely focused on the furniture, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/nordic.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="북유럽">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -124,7 +124,7 @@
                     </button>
 
                     {{-- 2. 모던 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="모던" data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="모던" data-prompt="Modern interior design, sleek lines, geometric shapes, neutral colors, polished surfaces, contemporary look, clean aesthetic, Empty room, unoccupied space, solely focused on the furniture, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/modern.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="모던">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -139,7 +139,7 @@
                     </button>
 
                     {{-- 3. 미니멀리즘 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist interior style, calm and refined atmosphere, clean uncluttered space, simple architectural lines, neutral white and soft gray palette, subtle warm beige accents, natural daylight, premium showroom mood, spacious modern room, carefully balanced composition, realistic floor and wall materials, tasteful minimal styling, quiet luxury interior, solely focused on the selected furniture, remove unrelated partial objects at the image borders, replace background clutter with clean floor or wall, no people, no showroom clutter, no random objects, no extra furniture, no text, no logos">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="미니멀리즘" data-prompt="Minimalist interior style, calm and refined atmosphere, clean uncluttered space, simple architectural lines, neutral white and soft gray palette, subtle warm beige accents, natural daylight, premium showroom mood, spacious modern room, carefully balanced composition, realistic floor and wall materials, tasteful minimal styling, quiet luxury interior, solely focused on the selected furniture, remove unrelated partial objects at the image borders, replace background clutter with clean floor or wall, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/minimalism.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="미니멀리즘">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -154,7 +154,7 @@
                     </button>
 
                     {{-- 4. 고딕 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Modern Gothic interior style, elegant dark-toned premium showroom, deep charcoal and warm wood palette, subtle Gothic arches, refined ornate details, realistic floor and wall materials, soft directional lighting, balanced composition, luxurious but clean furniture showroom atmosphere, harmonize the background with the selected furniture, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no extra furniture, no text, no logos">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="고딕" data-prompt="Modern Gothic interior style, elegant dark-toned premium showroom, deep charcoal and warm wood palette, subtle Gothic arches, refined ornate details, realistic floor and wall materials, soft directional lighting, balanced composition, luxurious but clean furniture showroom atmosphere, harmonize the background with the selected furniture, solely focused on the selected furniture, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/gothic.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="고딕">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -169,7 +169,7 @@
                     </button>
 
                     {{-- 5. 인더스트리얼 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="인더스트리얼" data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe, Empty room, unoccupied space, solely focused on the furniture">
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="인더스트리얼" data-prompt="Industrial loft style, exposed brick walls, concrete floors, metal accents, raw materials, high ceilings, urban vintage vibe, Empty room, unoccupied space, solely focused on the furniture, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/industrial.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="인더스트리얼">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">
@@ -184,8 +184,7 @@
                     </button>
                     
                     {{-- 6. 재팬디 --}}
-                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="재팬디" data-prompt="Japandi interior style, refined modern room, Japanese minimalism and Scandinavian functionalism, natural wood and bamboo details, warm neutral palette, clean architectural lines, calm premium showroom atmosphere, realistic interior photography, clear natural daylight, balanced contrast, crisp material textures, realistic floor and wall materials, solely focused on the selected furniture, no people, no showroom clutter, no random objects, no text, no logos"
->
+                    <button type="button" class="btn-style-select relative w-full h-20 rounded-lg overflow-hidden group text-left shadow-sm" data-style="재팬디" data-prompt="Japandi interior style, refined modern room, Japanese minimalism and Scandinavian functionalism, natural wood and bamboo details, warm neutral palette, clean architectural lines, calm premium showroom atmosphere, realistic interior photography, clear natural daylight, balanced contrast, crisp material textures, realistic floor and wall materials, solely focused on the selected furniture, no people, no person, no human, no model, no mannequin, no face, no body, no hands, no arms, no legs, no feet, no skin, no human reflection, remove all people and all human body parts completely, only the selected furniture product remains, replace any removed human area with clean realistic interior background, no text, no logos">
                         <img src="{{ asset('img/ai_button/Japandi2.jpg') }}" class="absolute inset-0 w-full h-full object-cover" alt="재팬디">
                         <div class="absolute inset-0 bg-black/50 group-[.border-primary]:bg-black/70"></div>
                         <div class="relative z-10 h-full flex flex-col justify-center px-3">

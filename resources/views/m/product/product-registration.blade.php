@@ -628,7 +628,10 @@ $(document).on('click', '#btn_ai_generate', async function(e) {
                     tempAiFilesToDelete.push(tempPath);
                 }
 
-                $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); 
+                $('#ai_modal_preview_image')
+                    .attr('src', res1.data.removebg_url)
+                    .css('object-fit', 'contain');
+
                 $('#ai_style_preview_badge').addClass('hidden');
 
                 $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
@@ -661,7 +664,10 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
         dataType: 'json',
         success: function(res2) {
             if (res2.success) {
-                $('#ai_modal_preview_image').attr('src', res2.data.final_url);
+                $('#ai_modal_preview_image')
+                    .attr('src', res2.data.final_url)
+                    .css('object-fit', 'contain');
+
                 $('#ai_style_preview_badge').addClass('hidden');
                 updateAiCountUI(res2.remain_count);
 
