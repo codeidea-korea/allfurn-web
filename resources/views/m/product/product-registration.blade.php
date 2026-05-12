@@ -325,6 +325,9 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
 
     var validImageSrc = $(targetImgPreviewId).attr('data-original-src') || $(targetImgPreviewId).attr('src');
 
+    $('#ai_original_image_section').removeClass('hidden');
+    $('#ai_preview_image_section').addClass('hidden');
+
     // 가져온 정상 데이터를 모달창에 꽂아줍니다.
     $('#ai_modal_preview_image').attr('src', validImageSrc).attr('data-base-src', validImageSrc).removeClass('hidden'); 
     $('#ai_style_preview_badge').addClass('hidden');
@@ -400,6 +403,9 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
 
 $(document).on('click', '.btn-style-select', function(e) {
     e.preventDefault();
+
+    $('#ai_original_image_section').addClass('hidden');
+    $('#ai_preview_image_section').removeClass('hidden');
 
     $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
     $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');

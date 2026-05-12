@@ -23,7 +23,7 @@
         <div class="flex-1 overflow-y-auto bg-stone-50">
 
             {{--원본 이미지 영역 --}}
-            <div class="relative bg-white border-b flex flex-col">
+            <div id="ai_original_image_section" class="relative bg-white border-b flex flex-col">
                 <div class="h-10 border-b bg-stone-50 flex items-center justify-between px-3">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-stone-500">원본 이미지</span>
@@ -37,7 +37,7 @@
             </div>
                         
             {{--미리보기 영역 --}}
-            <div class="relative bg-white border-b flex flex-col">
+            <div id="ai_preview_image_section" class="relative bg-white border-b flex flex-col hidden">
                 <div class="h-10 border-b bg-stone-50 flex items-center justify-between px-3">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-stone-500">미리보기</span>
