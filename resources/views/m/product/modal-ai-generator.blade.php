@@ -61,6 +61,14 @@
                         <p class="text-stone-400 text-xs">이미지를 불러오는 중...</p>
                     </div>
                 </div>
+                <div id="ai_generated_shelf" class="hidden border-t bg-white p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-bold text-stone-600">생성 이미지 보관함</p>
+                        <p id="ai_generated_shelf_count" class="text-[11px] text-stone-400">0/3</p>
+                    </div>
+
+                    <div id="ai_generated_shelf_list" class="grid grid-cols-3 gap-2"></div>
+                </div>
             </div>
 
             {{-- [하단] 스타일 선택 영역 --}}

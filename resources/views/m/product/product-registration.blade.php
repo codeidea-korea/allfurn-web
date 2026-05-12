@@ -260,6 +260,87 @@ var originalFilesBackup = {};
 var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
 var tempAiFilesToDelete = [];
 
+var aiGeneratedStore = {};
+var selectedAiGeneratedUrl = null;
+var selectedAiGeneratedStyleKey = null;
+
+function getAiStyleKey($btn) {
+    if ($btn.data('action') === 'remove_bg') {
+        return 'remove_bg';
+    }
+
+    return $btn.data('style') || '';
+}
+
+function renderAiGeneratedShelf($styleBtn) {
+    var styleKey = getAiStyleKey($styleBtn);
+    var bucket = aiGeneratedStore[styleKey] || [];
+    var $shelf = $('#ai_generated_shelf');
+    var $list = $('#ai_generated_shelf_list');
+
+    $list.empty();
+    $('#ai_generated_shelf_count').text(bucket.length + '/3');
+
+    if (bucket.length === 0) {
+        $shelf.addClass('hidden');
+        return;
+    }
+
+    bucket.forEach(function(item, index) {
+        var isActive = selectedAiGeneratedUrl === item.url;
+
+        var $thumb = $('<button>', {
+            type: 'button',
+            class: 'ai-generated-thumb relative h-16 rounded-md overflow-hidden border bg-white shadow-sm transition-all ' + (isActive ? 'border-red-500 ring-2 ring-red-500' : 'border-stone-200'),
+            'data-url': item.url,
+            'data-style-key': styleKey
+        });
+
+        $('<img>', {
+            src: item.url,
+            alt: '생성 이미지 ' + (index + 1),
+            class: 'w-full h-full object-cover'
+        }).appendTo($thumb);
+
+        $('<span>', {
+            class: 'absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white',
+            text: index + 1
+        }).appendTo($thumb);
+
+        $list.append($thumb);
+    });
+
+    $shelf.removeClass('hidden');
+}
+
+function storeAiGeneratedImage($styleBtn, imageUrl) {
+    var styleKey = getAiStyleKey($styleBtn);
+
+    if (!styleKey || !imageUrl) {
+        return;
+    }
+
+    var bucket = aiGeneratedStore[styleKey] || [];
+
+    bucket = bucket.filter(function(item) {
+        return item.url !== imageUrl;
+    });
+
+    bucket.unshift({
+        url: imageUrl,
+        createdAt: Date.now()
+    });
+
+    aiGeneratedStore[styleKey] = bucket.slice(0, 3);
+
+    selectedAiGeneratedUrl = imageUrl;
+    selectedAiGeneratedStyleKey = styleKey;
+
+    $styleBtn.attr('data-generated-url', imageUrl);
+    renderAiGeneratedShelf($styleBtn);
+}
+
+
 function updateAiCountUI(count) {
     if (count !== undefined && count !== null) {
         userAiCount = count; // 전역 변수 동기화
@@ -340,6 +421,13 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     $('.generated-badge').remove(); 
     $('.btn-style-select').removeAttr('data-generated-url');
     $('#btn_remove_bg').removeAttr('data-generated-url').find('.generated-badge').remove();
+
+    aiGeneratedStore = {};
+    selectedAiGeneratedUrl = null;
+    selectedAiGeneratedStyleKey = null;
+    $('#ai_generated_shelf').addClass('hidden');
+    $('#ai_generated_shelf_list').empty();
+    $('#ai_generated_shelf_count').text('0/3');
     
     modalOpen('#ai_image_generator_modal');
 }
@@ -412,16 +500,30 @@ $(document).on('click', '.btn-style-select', function(e) {
 
     var action = $(this).data('action') || 'generate_bg';
     var prompt = $(this).data('prompt') || '';
+    var $previewImg = $('#ai_modal_preview_image');
+
     $('#ai_input_prompt').val(prompt);
 
-    var $previewImg = $('#ai_modal_preview_image');
-    var cachedUrl = $(this).attr('data-generated-url');
+    var styleKey = getAiStyleKey($(this));
+    var bucket = aiGeneratedStore[styleKey] || [];
 
-    if (cachedUrl) {
-        $previewImg.attr('src', cachedUrl).css('object-fit', 'contain');
+    renderAiGeneratedShelf($(this));
+
+    if (bucket.length > 0) {
+        selectedAiGeneratedUrl = bucket[0].url;
+        selectedAiGeneratedStyleKey = styleKey;
+
+        $previewImg.attr('src', selectedAiGeneratedUrl).css('object-fit', 'contain');
+        $(this).attr('data-generated-url', selectedAiGeneratedUrl);
+
         $('#ai_style_preview_badge').addClass('hidden');
+        $('#btn_ai_confirm_m').prop('disabled', false);
         return;
     }
+
+    selectedAiGeneratedUrl = null;
+    selectedAiGeneratedStyleKey = null;
+    $(this).removeAttr('data-generated-url');
 
     if (action === 'remove_bg') {
         var baseSrc = $previewImg.attr('data-base-src') || $('#ai_modal_thumbnail').attr('src');
@@ -568,12 +670,14 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
                 }
 
                 if ($activeStyleBtn && $activeStyleBtn.length > 0) {
-                    $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
+                    storeAiGeneratedImage($activeStyleBtn, res2.data.final_url);
                     if ($activeStyleBtn.find('.generated-badge').length === 0) {
                         var badgeHtml = '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
                         $activeStyleBtn.append(badgeHtml);
                     }
                 }
+
+                $('#btn_ai_confirm_m').prop('disabled', false);
                 modalOpen('#ai-generate-success-modal');
             } else {
                 alert('이미지 생성 실패: ' + res2.message);
@@ -596,6 +700,30 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
         }
     });
 }
+
+$(document).on('click', '.ai-generated-thumb', function(e) {
+    e.preventDefault();
+
+    selectedAiGeneratedUrl = $(this).attr('data-url');
+    selectedAiGeneratedStyleKey = $(this).attr('data-style-key');
+
+    $('#ai_modal_preview_image')
+        .attr('src', selectedAiGeneratedUrl)
+        .css('object-fit', 'contain');
+
+    $('#ai_style_preview_badge').addClass('hidden');
+
+    $('.ai-generated-thumb')
+        .removeClass('border-red-500 ring-2 ring-red-500')
+        .addClass('border-stone-200');
+
+    $(this)
+        .removeClass('border-stone-200')
+        .addClass('border-red-500 ring-2 ring-red-500');
+
+    $('.btn-style-select.border-red-500').attr('data-generated-url', selectedAiGeneratedUrl);
+    $('#btn_ai_confirm_m').prop('disabled', false);
+});
 
 // 버튼 상태 초기화
 function resetButtons($btn, originalText) {
@@ -643,7 +771,7 @@ function requestRemoveBgOnly($btn, $activeStyleBtn) {
                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url).css('object-fit', 'contain');
                 $('#ai_style_preview_badge').addClass('hidden');
 
-                $activeStyleBtn.attr('data-generated-url', res.data.removebg_url);
+                storeAiGeneratedImage($activeStyleBtn, res.data.removebg_url);
 
                 if ($activeStyleBtn.find('.generated-badge').length === 0) {
                     $activeStyleBtn.append(
@@ -690,7 +818,8 @@ $(document).on('click', '#btn_ai_confirm_m', function() {
         !generatedStyleUrl ||
         (!isRemoveBgResult && $activeStyleBtn.find('.generated-badge').length === 0)
     ) {
-        return;
+        modalOpen('#ai-not-generated-modal');
+        return false;
     }
     var $wrapper = $(targetAiBtn).closest('.product-img__add');
     var originalIdx = $wrapper.attr('data-idx');
