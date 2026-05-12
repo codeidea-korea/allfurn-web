@@ -2314,18 +2314,28 @@ function removeFileByName(arr, fileName) {
     }
 }
 
-function restoreFileToArray(arr, originalFile) {
+function restoreFileToArray(arr, originalFile, aiFileName) {
     if (!originalFile) return;
 
-    var idx = arr.findIndex(function(f) {
+    var aiIdx = arr.findIndex(function(f) {
+        return f && f.name === aiFileName;
+    });
+
+    if (aiIdx !== -1) {
+        arr[aiIdx] = originalFile;
+        return;
+    }
+
+    var originalIdx = arr.findIndex(function(f) {
         return f && f.name === originalFile.name;
     });
 
-    if (idx === -1) {
-        arr.push(originalFile);
-    } else {
-        arr[idx] = originalFile;
+    if (originalIdx !== -1) {
+        arr[originalIdx] = originalFile;
+        return;
     }
+
+    arr.push(originalFile);
 }
 
 // 2. 기존 restoreOriginal 함수 수정 (모달만 띄우기)
@@ -2382,18 +2392,13 @@ $(document).on('click', '#confirm-restoration', function() {
     if (originalData) {
         var aiFileName = "ai_" + fileName;
 
-        removeFileByName(storedFiles, aiFileName);
-        removeFileByName(stored100Files, aiFileName);
-        removeFileByName(stored400Files, aiFileName);
-        removeFileByName(stored600Files, aiFileName);
-        removeFileByName(stored1000Files, aiFileName);
-        removeFileByName(storedAiFiles, aiFileName);
+        restoreFileToArray(storedFiles, originalData.main, aiFileName);
+        restoreFileToArray(stored100Files, originalData.f100, aiFileName);
+        restoreFileToArray(stored400Files, originalData.f400, aiFileName);
+        restoreFileToArray(stored600Files, originalData.f600, aiFileName);
+        restoreFileToArray(stored1000Files, originalData.f1000, aiFileName);
 
-        restoreFileToArray(storedFiles, originalData.main);
-        restoreFileToArray(stored100Files, originalData.f100);
-        restoreFileToArray(stored400Files, originalData.f400);
-        restoreFileToArray(stored600Files, originalData.f600);
-        restoreFileToArray(stored1000Files, originalData.f1000);
+        removeFileByName(storedAiFiles, aiFileName);
     }
 
     // AI 결과값 hidden input 초기화
