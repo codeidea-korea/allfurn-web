@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div class="flex-1 flex items-center justify-center p-8 overflow-auto">
+                <div class="flex-1 flex flex-col items-center justify-center gap-4 p-8 overflow-auto">
                     <div class="relative shadow-xl rounded-lg overflow-hidden bg-white" style="min-width: 500px; min-height: 500px; max-width: 100%; max-height: 100%;">
                         
                         <div class="absolute inset-0 bg-white"></div>
@@ -48,6 +48,15 @@
                             <p class="text-stone-400">이미지를 불러오는 중입니다...</p>
                         </div>
                     </div>
+                    <div id="ai_generated_shelf" class="w-full max-w-[500px] hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs font-bold text-stone-600">생성 이미지 보관함</p>
+                            <p id="ai_generated_shelf_count" class="text-[11px] text-stone-400">0/3</p>
+                        </div>
+
+                        <div id="ai_generated_shelf_list" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+
                 </div>
             </div>
 
@@ -279,9 +288,9 @@
                             </button>
 
                             <input type="hidden" id="ai_input_prompt">
-
-                            
                         </div>
+
+
                     </div>
 
                 </div>

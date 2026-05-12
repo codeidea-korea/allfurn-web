@@ -1698,6 +1698,86 @@
 
     var tempAiFilesToDelete = [];
 
+    var aiGeneratedStore = {};
+    var selectedAiGeneratedUrl = null;
+    var selectedAiGeneratedStyleKey = null;
+
+    function getAiStyleKey($btn) {
+        if ($btn.data('action') === 'remove_bg') {
+            return 'remove_bg';
+        }
+
+        return $btn.data('style') || '';
+    }
+
+    function renderAiGeneratedShelf($styleBtn) {
+        var styleKey = getAiStyleKey($styleBtn);
+        var bucket = aiGeneratedStore[styleKey] || [];
+        var $shelf = $('#ai_generated_shelf');
+        var $list = $('#ai_generated_shelf_list');
+
+        $list.empty();
+        $('#ai_generated_shelf_count').text(bucket.length + '/3');
+
+        if (bucket.length === 0) {
+            $shelf.addClass('hidden');
+            return;
+        }
+
+        bucket.forEach(function(item, index) {
+            var isActive = selectedAiGeneratedUrl === item.url;
+
+            var $thumb = $('<button>', {
+                type: 'button',
+                class: 'ai-generated-thumb relative h-20 rounded-lg overflow-hidden border bg-white shadow-sm transition-all ' + (isActive ? 'border-red-500 ring-2 ring-red-500' : 'border-stone-200 hover:border-red-300'),
+                'data-url': item.url,
+                'data-style-key': styleKey
+            });
+
+            $('<img>', {
+                src: item.url,
+                alt: '생성 이미지 ' + (index + 1),
+                class: 'w-full h-full object-cover'
+            }).appendTo($thumb);
+
+            $('<span>', {
+                class: 'absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white',
+                text: index + 1
+            }).appendTo($thumb);
+
+            $list.append($thumb);
+        });
+
+        $shelf.removeClass('hidden');
+    }
+
+    function storeAiGeneratedImage($styleBtn, imageUrl) {
+        var styleKey = getAiStyleKey($styleBtn);
+
+        if (!styleKey || !imageUrl) {
+            return;
+        }
+
+        var bucket = aiGeneratedStore[styleKey] || [];
+
+        bucket = bucket.filter(function(item) {
+            return item.url !== imageUrl;
+        });
+
+        bucket.unshift({
+            url: imageUrl,
+            createdAt: Date.now()
+        });
+
+        aiGeneratedStore[styleKey] = bucket.slice(0, 3);
+
+        selectedAiGeneratedUrl = imageUrl;
+        selectedAiGeneratedStyleKey = styleKey;
+
+        $styleBtn.attr('data-generated-url', imageUrl);
+        renderAiGeneratedShelf($styleBtn);
+    }
+
     function updateAiCountUI(count) {
         if (count !== undefined && count !== null) {
             userAiCount = count; // 전역 변수 동기화
@@ -1768,6 +1848,12 @@
             $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화(숨김)
             $('.generated-badge').remove(); 
             $('.btn-style-select').removeAttr('data-generated-url');
+            aiGeneratedStore = {};
+            selectedAiGeneratedUrl = null;
+            selectedAiGeneratedStyleKey = null;
+            $('#ai_generated_shelf').addClass('hidden');
+            $('#ai_generated_shelf_list').empty();
+            $('#ai_generated_shelf_count').text('0/3');
 
             $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
             $('#ai_input_prompt').val('');
@@ -1933,20 +2019,31 @@
             return;
         }
 
-        var cachedUrl = $(this).attr('data-generated-url');
-        if (cachedUrl) {
-            // 이전에 생성해 둔 이미지가 있다면 그것을 보여줌
-            $('#ai_modal_preview_image').attr('src', cachedUrl);
+        var styleKey = getAiStyleKey($(this));
+        var bucket = aiGeneratedStore[styleKey] || [];
+
+        renderAiGeneratedShelf($(this));
+
+        if (bucket.length > 0) {
+            selectedAiGeneratedUrl = bucket[0].url;
+            selectedAiGeneratedStyleKey = styleKey;
+
+            $previewImg.attr('src', selectedAiGeneratedUrl);
+            $previewImg.css('object-fit', 'contain');
+
+            $(this).attr('data-generated-url', selectedAiGeneratedUrl);
             $('#ai_style_preview_badge').addClass('hidden');
             $('#btn_ai_confirm').prop('disabled', false);
         } else {
+            selectedAiGeneratedUrl = null;
+            selectedAiGeneratedStyleKey = null;
+
             var styleSampleImg = $(this).find('img').attr('src');
 
             $previewImg.attr('src', styleSampleImg);
             $previewImg.css('object-fit', 'cover');
 
             $('#ai_style_preview_badge').removeClass('hidden');
-           
         }
     });
     
@@ -2028,7 +2125,7 @@
                     updateAiCountUI(res1.remain_count);
 
                     if (action === 'remove_bg') {
-                        $activeStyleBtn.attr('data-generated-url', removeBgUrl);
+                        storeAiGeneratedImage($activeStyleBtn, removeBgUrl);
 
                         if ($activeStyleBtn.find('.generated-badge').length === 0) {
                             var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">생성 완료</div>';
@@ -2107,7 +2204,7 @@
                     }
 
                     if ($activeStyleBtn && $activeStyleBtn.length > 0) {
-                        $activeStyleBtn.attr('data-generated-url', res2.data.final_url);
+                        storeAiGeneratedImage($activeStyleBtn, res2.data.final_url);
                         if ($activeStyleBtn.find('.generated-badge').length === 0) {
                             var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
                             $activeStyleBtn.append(badgeHtml);
@@ -2147,6 +2244,30 @@
             }
         });
     }
+    
+    $(document).on('click', '.ai-generated-thumb', function(e) {
+        e.preventDefault();
+
+        selectedAiGeneratedUrl = $(this).attr('data-url');
+        selectedAiGeneratedStyleKey = $(this).attr('data-style-key');
+
+        $('#ai_modal_preview_image')
+            .attr('src', selectedAiGeneratedUrl)
+            .css('object-fit', 'contain');
+
+        $('#ai_style_preview_badge').addClass('hidden');
+
+        $('.ai-generated-thumb')
+            .removeClass('border-red-500 ring-2 ring-red-500')
+            .addClass('border-stone-200');
+
+        $(this)
+            .removeClass('border-stone-200')
+            .addClass('border-red-500 ring-2 ring-red-500');
+
+        $('.btn-style-select.border-red-500').attr('data-generated-url', selectedAiGeneratedUrl);
+        $('#btn_ai_confirm').prop('disabled', false);
+    });
 
     // 버튼 상태 초기화
     function resetButtons($btn, originalText) {
