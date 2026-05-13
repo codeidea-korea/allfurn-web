@@ -80,9 +80,9 @@
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     
                     {{-- 배경제거 버튼 (전체 너비 차지) --}}
-                    <button type="button"
+                   <button type="button"e
                         id="btn_remove_bg"
-                        class="btn-style-select group relative col-span-2 py-2.5 pr-10 bg-white border-2 border-red-300 rounded-lg text-stone-900 text-sm font-bold hover:bg-red-50 hover:border-red-500 hover:text-stone-900 shadow-sm transition-all flex items-center justify-center gap-2"
+                        class="btn-style-select group relative col-span-2 h-20 pr-10 bg-white border-2 border-red-300 rounded-lg text-stone-900 text-sm font-bold hover:bg-red-50 hovr:border-red-500 hover:text-stone-900 shadow-sm transition-all flex items-center justify-center gap-2"
                         data-style="배경제거"
                         data-action="remove_bg"
                         data-prompt="">
