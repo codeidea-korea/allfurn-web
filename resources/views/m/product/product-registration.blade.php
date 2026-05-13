@@ -492,8 +492,6 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
 $(document).on('click', '.btn-style-select', function(e) {
     e.preventDefault();
 
-    $('#ai_original_image_section').addClass('hidden');
-    $('#ai_preview_image_section').removeClass('hidden');
 
     $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
     $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
@@ -513,6 +511,8 @@ $(document).on('click', '.btn-style-select', function(e) {
         selectedAiGeneratedUrl = bucket[0].url;
         selectedAiGeneratedStyleKey = styleKey;
 
+        $('#ai_preview_image_section').removeClass('hidden');
+
         $previewImg.attr('src', selectedAiGeneratedUrl).css('object-fit', 'contain');
         $(this).attr('data-generated-url', selectedAiGeneratedUrl);
 
@@ -525,6 +525,8 @@ $(document).on('click', '.btn-style-select', function(e) {
     selectedAiGeneratedStyleKey = null;
     $(this).removeAttr('data-generated-url');
 
+    $('#ai_preview_image_section').addClass('hidden');
+
     if (action === 'remove_bg') {
         var baseSrc = $previewImg.attr('data-base-src') || $('#ai_modal_thumbnail').attr('src');
         $previewImg.attr('src', baseSrc).css('object-fit', 'contain');
@@ -532,9 +534,7 @@ $(document).on('click', '.btn-style-select', function(e) {
         return;
     }
 
-    var styleSampleImg = $(this).find('img').attr('src');
-    $previewImg.attr('src', styleSampleImg).css('object-fit', 'cover');
-    $('#ai_style_preview_badge').removeClass('hidden');
+    $('#ai_style_preview_badge').addClass('hidden');
 });
 
 $(document).on('click', '#btn_ai_generate', async function(e) {
@@ -628,9 +628,6 @@ $(document).on('click', '#btn_ai_generate', async function(e) {
                     tempAiFilesToDelete.push(tempPath);
                 }
 
-                $('#ai_modal_preview_image')
-                    .attr('src', res1.data.removebg_url)
-                    .css('object-fit', 'contain');
 
                 $('#ai_style_preview_badge').addClass('hidden');
 
@@ -664,6 +661,7 @@ function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn
         dataType: 'json',
         success: function(res2) {
             if (res2.success) {
+                $('#ai_preview_image_section').removeClass('hidden');
                 $('#ai_modal_preview_image')
                     .attr('src', res2.data.final_url)
                     .css('object-fit', 'contain');
@@ -712,6 +710,8 @@ $(document).on('click', '.ai-generated-thumb', function(e) {
 
     selectedAiGeneratedUrl = $(this).attr('data-url');
     selectedAiGeneratedStyleKey = $(this).attr('data-style-key');
+
+    $('#ai_preview_image_section').removeClass('hidden');
 
     $('#ai_modal_preview_image')
         .attr('src', selectedAiGeneratedUrl)
@@ -774,6 +774,7 @@ function requestRemoveBgOnly($btn, $activeStyleBtn) {
         },
         success: function(res) {
             if (res.success) {
+                $('#ai_preview_image_section').removeClass('hidden');
                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url).css('object-fit', 'contain');
                 $('#ai_style_preview_badge').addClass('hidden');
 
