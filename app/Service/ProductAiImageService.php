@@ -22,7 +22,7 @@ class ProductAiImageService
         $this->client = new Client();
     }
 
-        /**
+    /**
      * [Flow 1] Stability AI를 사용하여 배경 제거 (직접 호출)
      */
     // public function removeBackground($imageFile)
@@ -90,41 +90,181 @@ class ProductAiImageService
     //         throw $e;
     //     }
     // }
-    public function removeBackground($imageFile)
-    {
-        $apiKey = env('PHOTOROOM_API_KEY');
+    public function removeBackground($imageFile, $normalizeForAi = false)
+        {
+            $apiKey = env('PHOTOROOM_API_KEY');
+            $normalizedPath = null;
 
-        try {
-            // Photoroom API 호출
-            $response = Http::withHeaders([
-                'x-api-key' => $apiKey,
-            ])->attach(
-                'image_file', // Photoroom은 파라미터명이 image_file입니다.
-                file_get_contents($imageFile->getRealPath()),
-                $imageFile->getClientOriginalName()
-            )->post('https://sdk.photoroom.com/v1/segment', [
-                // 가구 누끼의 핵심: 배경은 지우되, 바닥 그림자는 자연스럽게 남깁니다.
-                'background.color' => 'transparent',
-                'format' => 'png',
-                'scaling' => 'fill', // 가구가 잘리지 않게 꽉 채웁니다.
-            ]);
+            try {
+                $sendPath = $imageFile->getRealPath();
+                $sendName = $imageFile->getClientOriginalName();
 
-            if ($response->successful()) {
-                $imageContent = $response->body();
-                $fileName = "photoroom_" . time() . "_" . mt_rand(1000, 9999) . ".png";
-                $path = "ai-lab/{$fileName}";
+                if ($normalizeForAi) {
+                    $normalizedPath = $this->makeSquareContainImageForAi($imageFile);
+                    $sendPath = $normalizedPath;
+                    $sendName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME) . '_ai.png';
+                }
 
-                Storage::disk('public')->put($path, $imageContent);
+                $response = Http::withHeaders([
+                    'x-api-key' => $apiKey,
+                ])->attach(
+                    'image_file',
+                    file_get_contents($sendPath),
+                    $sendName
+                )->post('https://sdk.photoroom.com/v1/segment', [
+                    'background.color' => 'transparent',
+                    'format' => 'png',
+                    'scaling' => 'fill', 
+                ]);
 
-                return [
-                    'url' => '/storage/' . $path,
-                    'file_path' => $path
-                ];
-            } else {
-                throw new \Exception("Photoroom API Error: " . $response->status());
+                if ($response->successful()) {
+                    $imageContent = $response->body();
+                    $fileName = "photoroom_" . time() . "_" . mt_rand(1000, 9999) . ".png";
+                    $path = "ai-lab/{$fileName}";
+
+                    Storage::disk('public')->put($path, $imageContent);
+
+                    return [
+                        'url' => '/storage/' . $path,
+                        'file_path' => $path
+                    ];
+                } else {
+                    throw new \Exception("Photoroom API Error: " . $response->status());
+                }
+            } catch (\Exception $e) {
+                throw $e;
+            } finally {
+                if ($normalizedPath && is_file($normalizedPath)) {
+                    @unlink($normalizedPath);
+                }
             }
-        } catch (\Exception $e) {
-            throw $e;
+        }
+
+        private function makeSquareContainImageForAi($imageFile, $maxWidth = 1000)
+    {
+        $sourceContent = file_get_contents($imageFile->getRealPath());
+        $source = imagecreatefromstring($sourceContent);
+
+        if (!$source) {
+            throw new \Exception('서버 이미지 정규화 실패: 이미지를 읽을 수 없습니다.');
+        }
+
+        $source = $this->fixJpegOrientation($source, $imageFile->getRealPath(), $imageFile->getMimeType());
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+
+        $cropTop = 0;
+        $cropBottom = $height - 1;
+
+        while ($cropTop < $height && $this->isSolidRow($source, $width, $cropTop)) {
+            $cropTop++;
+        }
+
+        while ($cropBottom > $cropTop && $this->isSolidRow($source, $width, $cropBottom)) {
+            $cropBottom--;
+        }
+
+        $cropLeft = 0;
+        $cropW = $width;
+        $cropH = $cropBottom - $cropTop + 1;
+
+        if ($cropH < $height * 0.5) {
+            $cropTop = 0;
+            $cropH = $height;
+        }
+
+        $canvas = imagecreatetruecolor($maxWidth, $maxWidth);
+        imagealphablending($canvas, false);
+        imagesavealpha($canvas, true);
+
+        $transparent = imagecolorallocatealpha($canvas, 255, 255, 255, 127);
+        imagefilledrectangle($canvas, 0, 0, $maxWidth, $maxWidth, $transparent);
+
+        $scale = min($maxWidth / $cropW, $maxWidth / $cropH);
+        $targetW = (int) round($cropW * $scale);
+        $targetH = (int) round($cropH * $scale);
+        $targetX = (int) round(($maxWidth - $targetW) / 2);
+        $targetY = (int) round(($maxWidth - $targetH) / 2);
+
+        imagecopyresampled(
+            $canvas,
+            $source,
+            $targetX,
+            $targetY,
+            $cropLeft,
+            $cropTop,
+            $targetW,
+            $targetH,
+            $cropW,
+            $cropH
+        );
+
+        $tempPath = tempnam(storage_path('app'), 'ai_norm_');
+        imagepng($canvas, $tempPath);
+
+        imagedestroy($source);
+        imagedestroy($canvas);
+
+        return $tempPath;
+    }
+
+    private function isSolidRow($image, $width, $y)
+    {
+        $sample = $this->rgbAt($image, (int) floor($width / 2), $y);
+        $similarCount = 0;
+        $totalCount = 0;
+
+        for ($x = 0; $x < $width; $x += 4) {
+            $pixel = $this->rgbAt($image, $x, $y);
+
+            if ($this->colorDistance($sample, $pixel) < 35) {
+                $similarCount++;
+            }
+
+            $totalCount++;
+        }
+
+        return $totalCount > 0 && ($similarCount / $totalCount) > 0.96;
+    }
+
+    private function rgbAt($image, $x, $y)
+    {
+        $rgb = imagecolorat($image, $x, $y);
+
+        return [
+            ($rgb >> 16) & 0xFF,
+            ($rgb >> 8) & 0xFF,
+            $rgb & 0xFF,
+        ];
+    }
+
+    private function colorDistance($a, $b)
+    {
+        return abs($a[0] - $b[0]) + abs($a[1] - $b[1]) + abs($a[2] - $b[2]);
+    }
+
+    private function fixJpegOrientation($image, $path, $mime)
+    {
+        if ($mime !== 'image/jpeg' || !function_exists('exif_read_data')) {
+            return $image;
+        }
+
+        $exif = @exif_read_data($path);
+
+        if (!$exif || empty($exif['Orientation'])) {
+            return $image;
+        }
+
+        switch ((int) $exif['Orientation']) {
+            case 3:
+                return imagerotate($image, 180, 0);
+            case 6:
+                return imagerotate($image, -90, 0);
+            case 8:
+                return imagerotate($image, 90, 0);
+            default:
+                return $image;
         }
     }
     /**
@@ -133,56 +273,51 @@ class ProductAiImageService
     public function generateBackground($nobgPath, $prompt)
     {
         try {
-            // [수정 1] 'public' 디스크 명시
-            // 1단계에서 저장한 경로(ai-lab/...)를 public 디스크에서 찾아야 함
+
             if (!Storage::disk('public')->exists($nobgPath)) {
                 throw new Exception("1단계 처리된 파일({$nobgPath})을 찾을 수 없습니다.");
             }
             
-
-            // [디버깅 1] 파일 크기 로그 (너무 크거나 작으면 의심)
             $fileSize = Storage::disk('public')->size($nobgPath);
             Log::info("Step 2 Start. Input File Path: {$nobgPath}");
             Log::info("Step 2 Input File Size: " . number_format($fileSize) . " bytes");
 
             Log::info("Gemini Prompt: " . $prompt);
 
-            // 2. 이미지 데이터 읽기 (public 디스크에서)
+
             $imageContent = Storage::disk('public')->get($nobgPath);
             $base64Data = base64_encode($imageContent);
             $mimeType = 'image/png'; 
 
-
             $finalPrompt = "You are an expert product photographer. " .
+                "Create a sharp realistic square 1:1 product image. " .
                 "Identify the selected product as the largest main furniture item near the center of the input image. " .
                 "Treat ONLY this selected main furniture item as the foreground product. " .
-                "Do NOT redraw, alter, rotate, or distort the selected product furniture. " .
+                "Do NOT redraw, alter, rotate, resize, crop, or distort the selected product furniture. " .
                 "Keep the original camera angle, perspective, product position, and product scale exactly the same. " .
+                "Keep the entire selected furniture fully visible inside the frame with natural margin around it. " .
                 "Preserve only the selected product furniture's original texture, shape, color, material, edges, and details. " .
                 "Ignore and remove any black letterbox bars, empty margins, transparent bands, or blurred border areas from the input image. " .
                 "Fill the entire image frame edge-to-edge with a sharp realistic interior background. " .
-                "Do not create blurred top or bottom bands, vignette edges, haze, or soft border extensions. " .
+                "Generate a clean, fully detailed background across all four corners and all image edges. " .
+                "Do not create blurred corners, smeared colors, color bleeding, vignette edges, haze, soft border extensions, or stretched background artifacts. " .
+                "Do not leave transparent areas, empty bands, faded edges, or low-detail corner regions. " .
                 "Do NOT preserve unrelated objects around the edges of the original photo. " .
                 "Remove and replace side tables, papers, chairs, plants, wall posters, showroom clutter, partial furniture, and any objects cut off by the image border unless they are the selected product itself. " .
                 "Only generate a background environment of [{$prompt}] around and behind the selected product furniture. " .
                 "The selected product furniture must remain unchanged. " .
                 "Output only the image. No text description.";
 
-            // 4. Gemini API 호출
             $resultImageData = $this->callGeminiApi($base64Data, $mimeType, $finalPrompt);
 
-            // 5. 최종 결과 저장
             $timestamp = time();
             $rand = mt_rand(1000, 9999);
             $fileName = "final_{$timestamp}_{$rand}.png";
             
-            // [수정 2] 저장 경로 설정 (ai-lab 폴더에 바로 저장)
             $savedPath = "ai-lab/{$fileName}";
 
-            // [수정 3] public 디스크에 저장
             Storage::disk('public')->put($savedPath, base64_decode($resultImageData));
 
-            // [수정 4] URL 반환 (도메인 문제 방지를 위한 상대 경로 사용)
             return '/storage/' . $savedPath;
 
         } catch (Exception $e) {
@@ -196,7 +331,8 @@ class ProductAiImageService
      */
     private function callGeminiApi($base64Data, $mimeType, $prompt)
     {
-        $modelName = 'gemini-2.5-flash-image'; // 또는 'gemini-1.5-flash' 등 사용 가능한 모델명
+        //$modelName = 'gemini-3.1-flash-image-preview';
+        $modelName = 'gemini-2.5-flash-image'; 
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent?key={$this->googleApiKey}";
 
         $response = $this->client->post($url, [
@@ -213,8 +349,8 @@ class ProductAiImageService
                 ]],
                 'generationConfig' => [
                     'temperature' => 0.0,
-                    //'maxOutputTokens' => 4096, // 필요 시 주석 해제
-                    //'responseMimeType' => 'image/png' // 이미지 생성을 명시 (일부 모델 지원)
+                    //'maxOutputTokens' 
+                    //'responseMimeType' 
                 ]
             ],
             'http_errors' => false
@@ -234,17 +370,18 @@ class ProductAiImageService
         $textResponse = '';
 
         foreach ($parts as $part) {
-            // 순서에 상관없이 이미지 데이터(inlineData)가 발견되면 즉시 반환
+
             if (isset($part['inlineData']['data'])) {
                 return $part['inlineData']['data'];
             }
-            // 텍스트가 있다면 (백틱이나 부연설명 등) 모아둡니다.
+
             if (isset($part['text'])) {
                 $textResponse .= $part['text'];
             }
         }
 
-        // 3. 이미지를 못 찾았는데 텍스트 응답이라도 있는 경우 (거절 사유 등)
+        // 텍스트로 에러 메시지가 왔는지 확인
+        $textResponse = $result['candidates'][0]['content']['parts'][0]['text'] ?? null;
         if ($textResponse) {
             throw new Exception("이미지가 생성되지 않았습니다 (텍스트 응답): {$textResponse}");
         }

@@ -32,8 +32,10 @@ class ProductAiImageController extends Controller
     public function removeBackground(Request $request)
     {
         // 1. 유효성 검사
+        $normalizeForAi = $request->boolean('normalize_for_ai');
+
         $request->validate([
-            'image' => 'required|image|max:10240', // 최대 10MB
+            'image' => 'required|image|max:' . ($normalizeForAi ? '20480' : '10240'),
         ]);
 
         $user = \Illuminate\Support\Facades\Auth::user();
@@ -51,7 +53,7 @@ class ProductAiImageController extends Controller
 
             // 3. 서비스 호출 (배경 제거 로직 실행)
             // 성공 시 결과 이미지 URL을 반환받음
-            $result = $this->productAiService->removeBackground($imageFile);
+            $result = $this->productAiService->removeBackground($imageFile, $normalizeForAi);
 
             // 3. 정상 처리되었을 때만 차감
             $user->ai_count -= 1;

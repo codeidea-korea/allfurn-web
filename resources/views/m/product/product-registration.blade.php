@@ -246,6 +246,7 @@ var stored600Files = [];
 var stored1000Files = [];
 var storedAiFiles = [];
 var subCategoryIdx = null;
+var storedAiSourceFiles = []; 
 var deleteImage = [];
 var proc = false;
 var authList = ['KS 인증', 'ISO 인증', 'KC 인증', '친환경 인증', '외코텍스(OEKO-TEX) 인증', '독일 LGA 인증', 'GOTS(오가닉) 인증', '라돈테스트 인증', '전자파 인증', '전기용품안전 인증'];
@@ -358,11 +359,14 @@ function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
     console.log("선택된 파일명:", fileName);
 
     // AI 전송용 파일을 우선 사용하고, 기존 AI 적용 이미지 등 예외 상황에서는 등록용 파일로 보완합니다.
-    var selectedFile = storedAiFiles.find(function(f) {
-        return f && f.name === fileName;
-    }) || storedFiles.find(function(f) {
+    var selectedFile = storedAiSourceFiles.find(function(f) {
         return f && f.name === fileName;
     });
+
+    if (!selectedFile) {
+        alert("AI 처리용 원본 이미지가 아직 준비 중입니다. 잠시 후 다시 시도해주세요.");
+        return;
+    }
 
     if (!selectedFile) {
         alert("이미지 파일을 찾을 수 없습니다. 다시 시도해주세요.");
@@ -572,40 +576,11 @@ $(document).on('click', '#btn_ai_generate', async function(e) {
     $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
     $('#ai_full_loading_overlay').removeClass('hidden');
 
-    var fileToSend = currentAiFile;
 
-    var safeFile = await new Promise((resolve) => {
-        var image = new Image();
-        var objectUrl = URL.createObjectURL(fileToSend);
-        
-        image.onload = function() {
-            URL.revokeObjectURL(objectUrl); // 메모리 누수 방지
-            var totalPixels = this.width * this.height;
-            
-            // Stability AI 제한(400만 픽셀) 초과 시 안전하게 축소 (약 300만 픽셀)
-            if (totalPixels > 4000000) { 
-                var canvas = document.createElement("canvas");
-                var scale = Math.sqrt(3000000 / totalPixels); 
-                canvas.width = Math.floor(this.width * scale);
-                canvas.height = Math.floor(this.height * scale);
-                
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
-                
-                var dataURL = canvas.toDataURL("image/jpeg", 0.9); // 압축
-                resolve(base64ToFile(dataURL, currentAiFile.name));
-            } else {
-                resolve(fileToSend); // 크기가 정상이면 원본 그대로 반환
-            }
-        };
-        image.onerror = function() {
-            resolve(fileToSend); // 에러 발생 시 원본 반환 (진행을 막지 않음)
-        };
-        image.src = objectUrl;
-    });
 
     var formData = new FormData();
-    formData.append('image', safeFile);
+    formData.append('image', currentAiFile, currentAiFile.name || 'ai_source_image.jpg');
+    formData.append('normalize_for_ai', '1'); // 모바일만 서버 정사각형 보정
     $.ajax({
         url: "{{ route('product.ai.remove_bg') }}",
         type: 'POST',
@@ -758,7 +733,8 @@ function requestRemoveBgOnly($btn, $activeStyleBtn) {
     $('.btn-style-select, #btn_remove_bg').prop('disabled', true);
 
     var formData = new FormData();
-    formData.append('image', currentAiFile);
+    formData.append('image', currentAiFile, currentAiFile.name || 'ai_source_image.jpg');
+    formData.append('normalize_for_ai', '1'); // 모바일만 서버 정사각형 보정
 
     $.ajax({
         url: "{{ route('product.ai.remove_bg') }}",
@@ -1136,6 +1112,10 @@ $(document).on('change', '#form-list02', function() {
                         alert('파일은 8개 까지 등록 가능합니다.');
                         return;
                     }
+
+                    removeFileByName(storedAiSourceFiles, file.name);
+                    storedAiSourceFiles.push(file);
+
                     var image = new Image;
                     image.onload = function() {
                         var resizedFile = getThumbFile(image, 500, this.width, this.height);
@@ -1279,6 +1259,11 @@ $(document).on('change', '#form-list02', function() {
         return f && (f.name === originalAiFileName || f.name === appliedAiFileName);
     });
     if (idxAi > -1) storedAiFiles.splice(idxAi, 1);
+
+    removeFileByName(storedAiSourceFiles, originalAiFileName);
+    removeFileByName(storedAiSourceFiles, appliedAiFileName);
+    removeFileByName(storedAiSourceFiles, fileName);
+
 
     img_reload_order();
 
@@ -2125,6 +2110,9 @@ function loadProduct() {
                                 .then(blob => {
                                     var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
                                     storedFiles.push(file);
+
+                                    removeFileByName(storedAiSourceFiles, fileName);
+                                    storedAiSourceFiles.push(file);
 
                                     var objectUrl = URL.createObjectURL(blob);
                                     var image = new Image();
