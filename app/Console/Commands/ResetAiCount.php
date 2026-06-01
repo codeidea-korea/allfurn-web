@@ -22,7 +22,7 @@ class ResetAiCount extends Command
     public function handle()
     {
         // af_user 테이블의 모든 데이터의 ai_count를 5로 업데이트
-        DB::table('AF_user')->update(['ai_count' => 5]);
+        DB::table('AF_user')->update(['ai_count' => 3]);
         
         $this->info('모든 유저의 ai_count가 5로 초기화되었습니다.');
     }
