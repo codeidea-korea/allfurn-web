@@ -148,46 +148,11 @@ class ProductAiImageService
             Log::info("Gemini Prompt: " . $prompt);
 
 
-
-            // 2. 이미지 데이터 읽기 (public 디스크에서)
             $imageContent = Storage::disk('public')->get($nobgPath);
             $base64Data = base64_encode($imageContent);
             $mimeType = 'image/png'; 
 
-            // $finalPrompt = "You are an expert product photographer. " .
-            //    "Do NOT redraw, alter, or distort the foreground furniture. " .
-            //    "Keep the foreground object EXACTLY as provided in the input image, preserving its original texture, shape, color, and details. " .
-            //    "Only generate a background environment of [{$prompt}] behind the object. " .
-            //    "The object must remain unchanged." .
-            //    "Output only the image. No text description.";
-
-            // $finalPrompt = "You are an expert product photographer. " .
-            //     "Identify the selected product as the largest main furniture item near the center of the input image. " .
-            //     "Treat ONLY this selected main furniture item as the foreground product. " .
-            //     "Do NOT redraw, alter, rotate, or distort the selected product furniture. " .
-            //     "Keep the original camera angle, perspective, framing, product position, and product scale exactly the same. " .
-            //     "Preserve only the selected product furniture's original texture, shape, color, material, edges, and details. " .
-            //     "Do NOT preserve unrelated objects around the edges of the original photo. " .
-            //     "Remove and replace side tables, papers, chairs, plants, wall posters, showroom clutter, partial furniture, and any objects cut off by the image border unless they are the selected product itself. " .
-            //     "Only generate a background environment of [{$prompt}] around and behind the selected product furniture. " .
-            //     "The selected product furniture must remain unchanged. " .
-            //     "Output only the image. No text description.";
-
-            // $finalPrompt = "You are an expert product photographer. " .
-            //     "Identify the selected product as the largest main furniture item near the center of the input image. " .
-            //     "Treat ONLY this selected main furniture item as the foreground product. " .
-            //     "Do NOT redraw, alter, rotate, or distort the selected product furniture. " .
-            //     "Keep the original camera angle, perspective, product position, and product scale exactly the same. " .
-            //     "Preserve only the selected product furniture's original texture, shape, color, material, edges, and details. " .
-            //     "Ignore and remove any black letterbox bars, empty margins, transparent bands, or blurred border areas from the input image. " .
-            //     "Fill the entire image frame edge-to-edge with a sharp realistic interior background. " .
-            //     "Do not create blurred top or bottom bands, vignette edges, haze, or soft border extensions. " .
-            //     "Do NOT preserve unrelated objects around the edges of the original photo. " .
-            //     "Remove and replace side tables, papers, chairs, plants, wall posters, showroom clutter, partial furniture, and any objects cut off by the image border unless they are the selected product itself. " .
-            //     "Only generate a background environment of [{$prompt}] around and behind the selected product furniture. " .
-            //     "The selected product furniture must remain unchanged. " .
-            //     "Output only the image. No text description.";
-
+    
             $finalPrompt = "You are an expert product photographer. " .
                 "Create a sharp realistic square 1:1 product image. " .
                 "Identify the selected product as the largest main furniture item near the center of the input image. " .
