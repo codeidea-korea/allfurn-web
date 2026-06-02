@@ -735,37 +735,65 @@
 
     const modalProductPreview = (idx, temp) => {
         $('#loadingContainer').show();
-        if (temp === true) {
-            document.getElementById('productPreviewModal').src = '/product/registration?temp=' + idx;
-        } else {
-            document.getElementById('productPreviewModal').src = '/product/modify/' + idx;
-        }
-        $('#productPreviewModal').on( 'load', function() {
-            document.getElementById('productPreviewModal').contentWindow.document.getElementById('previewBtn').click();
-            const productDetail = document.querySelector('#productPreviewModal').contentWindow.product_detail;
-            document.querySelector('#state_preview_modal .modal_body').innerHTML =
-                document.querySelector('#productPreviewModal').contentWindow.document.getElementById('state_preview_modal').innerHTML;
-            $('#loadingContainer').hide();
-            modalOpen('#state_preview_modal');
 
-            $('#state_preview_modal .product-detail__img-area').html(productDetail);
-            
-            // thismonth_con01 - pager
-            const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
-                slidesPerView: 'auto',
-                direction: "vertical",
-                spaceBetween: 8,
-            });
+        const iframe = document.getElementById('productPreviewModal');
 
-            // thismonth_con01 
-            const detail_thumb = new Swiper(".prod_detail_top .big_thumb", {
-                slidesPerView: 1,
-                spaceBetween: 0,
-                thumbs: {
-                    swiper: detail_thumb_list,
-                },
-            });
+        $('#productPreviewModal').off('load').on('load', function() {
+            const win = iframe.contentWindow;
+            let tries = 0;
+
+            const waitAndPreview = function () {
+                const previewBtn = win.document.getElementById('previewBtn');
+                const hasProductData = typeof win.product_detail !== 'undefined';
+                const hasImages = win.$ && win.$('.product-img__add img').length > 0;
+
+                if ((!previewBtn || !hasProductData || !hasImages) && tries < 30) {
+                    tries++;
+                    setTimeout(waitAndPreview, 200);
+                    return;
+                }
+
+                if (!previewBtn) {
+                    $('#loadingContainer').hide();
+                    alert('미리보기 화면을 불러오지 못했습니다.');
+                    return;
+                }
+
+                previewBtn.click();
+
+                const productDetail = win.product_detail || '';
+
+                document.querySelector('#state_preview_modal .modal_body').innerHTML =
+                    win.document.getElementById('state_preview_modal').innerHTML;
+
+                $('#loadingContainer').hide();
+                modalOpen('#state_preview_modal');
+
+                $('#state_preview_modal .product-detail__img-area').html(productDetail);
+
+                const detail_thumb_list = new Swiper(".prod_detail_top .left_thumb", {
+                    slidesPerView: 'auto',
+                    direction: "vertical",
+                    spaceBetween: 8,
+                });
+
+                new Swiper(".prod_detail_top .big_thumb", {
+                    slidesPerView: 1,
+                    spaceBetween: 0,
+                    thumbs: {
+                        swiper: detail_thumb_list,
+                    },
+                });
+            };
+
+            waitAndPreview();
         });
+
+        if (temp === true) {
+            iframe.src = '/product/registration?temp=' + idx;
+        } else {
+            iframe.src = '/product/modify/' + idx;
+        }
     }
 
     var representOrders = {};
