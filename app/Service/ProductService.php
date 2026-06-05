@@ -24,6 +24,7 @@ use App\Models\ThumbnailMpg;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class ProductService
@@ -35,12 +36,14 @@ class ProductService
      */
     public function getCategoryList(int $orderIdx = 0)
     {
-        if ($orderIdx != 0) {
-            return Category::where('parent_idx', $orderIdx)
-                ->where('is_delete', 0)
-                ->orderBy('order_idx', 'asc')
-                ->get();
-        } else {
+        return Cache::remember('category:list:'.$orderIdx, 86400, function () use ($orderIdx) {
+            if ($orderIdx != 0) {
+                return Category::where('parent_idx', $orderIdx)
+                    ->where('is_delete', 0)
+                    ->orderBy('order_idx', 'asc')
+                    ->get();
+            }
+
             return Category::select('AF_category.*',
                 DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
                 ->where('parent_idx', null)
@@ -50,26 +53,28 @@ class ProductService
                 })
                 ->orderBy('AF_category.order_idx', 'asc')
                 ->get();
-        }
+        });
     }
 
     public function getCategoryListV2()
     {
-        $category = Category::select('AF_category.*',
-            DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
-            ->where('parent_idx', null)
-            ->where('is_delete', 0)
-            ->leftjoin('AF_attachment as aat', function($query) {
-                $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
-            })
-            ->orderBy('AF_category.order_idx', 'asc')
-            ->get();
-            
-        foreach($category as $depth1) {
-            $depth1->depth2 = Category::whereRaw('is_delete=0 and parent_idx='.$depth1->idx)->orderBy('order_idx', 'asc')->get();
-        }
+        return Cache::remember('category:list:v2', 86400, function () {
+            $category = Category::select('AF_category.*',
+                DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
+                ->where('parent_idx', null)
+                ->where('is_delete', 0)
+                ->leftjoin('AF_attachment as aat', function($query) {
+                    $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
+                })
+                ->orderBy('AF_category.order_idx', 'asc')
+                ->get();
 
-        return $category;
+            foreach($category as $depth1) {
+                $depth1->depth2 = Category::whereRaw('is_delete=0 and parent_idx='.$depth1->idx)->orderBy('order_idx', 'asc')->get();
+            }
+
+            return $category;
+        });
     }
 
     public function getCategoryProperty(array $params = [])
@@ -91,23 +96,25 @@ class ProductService
 
     public function getCategoryTree()
     {
-        $category = Category::select('AF_category.*',
-            DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
-            ->where('parent_idx', null)
-            ->where('is_delete', 0)
-            ->leftjoin('AF_attachment as aat', function($query) {
-                $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
-            })
-            ->orderBy('AF_category.order_idx', 'asc')
-            ->get();
+        return Cache::remember('category:tree', 86400, function () {
+            $category = Category::select('AF_category.*',
+                DB::raw('CONCAT("'.preImgUrl().'", aat.folder, "/", aat.filename) AS imgUrl'))
+                ->where('parent_idx', null)
+                ->where('is_delete', 0)
+                ->leftjoin('AF_attachment as aat', function($query) {
+                    $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
+                })
+                ->orderBy('AF_category.order_idx', 'asc')
+                ->get();
 
-        if( !empty( $category ) ) {
-            foreach( $category AS $key => $cate ) {
-                $category[$key]->property = $this->getCategoryList($cate->idx);
+            if( !empty( $category ) ) {
+                foreach( $category AS $key => $cate ) {
+                    $category[$key]->property = $this->getCategoryList($cate->idx);
+                }
             }
-        }
 
-        return $category;
+            return $category;
+        });
     }
 
 
