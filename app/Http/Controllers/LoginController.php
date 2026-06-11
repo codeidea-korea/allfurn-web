@@ -63,7 +63,7 @@ class LoginController extends BaseController
     	$target = $this->safeRedirectTarget($request->input('replaceUrl'));
     	
     	if (Auth::check()) {
-    		return $target ? redirect()->to($target) : redirect('/');
+            return $target ? redirect()->to($target) : redirect('/test');
     	}
     	return view(getDeviceType().'login.login', ['replaceUrl' => $request->input('replaceUrl')]);
     }
@@ -75,7 +75,7 @@ class LoginController extends BaseController
         Log::info("***** LoginController > social :: $replaceUrl");
         if (Auth::check()) {
             if (empty($replaceUrl)) {
-                return redirect('/');
+                return redirect('/test');
             } else {
                 return redirect($replaceUrl);
             }
@@ -180,7 +180,7 @@ class LoginController extends BaseController
     public function findid()
     {
         if(Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         return view(getDeviceType() . 'login.findid');
     }
@@ -188,7 +188,7 @@ class LoginController extends BaseController
     public function findpw()
     {
         if(Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         return view(getDeviceType() . 'login.findpw');
     }
@@ -196,7 +196,7 @@ class LoginController extends BaseController
     public function signupcomplete()
     {
         if (Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         return view(getDeviceType() . 'login.signupcomplete');
     }
@@ -250,7 +250,7 @@ class LoginController extends BaseController
                 if ($userInfo->type == "W" && $userInfo->isFirst > 1) {
                     return redirect(getDeviceType() . '/mypage');
                 } else {
-                    return redirect('/');
+                    return redirect('/test');
                 }
 //            }
         }
@@ -378,7 +378,7 @@ class LoginController extends BaseController
 
                 return response()->json([
                     'status' => 'success',
-                    'redirect' => '/',
+                    'redirect' => '/test',
                     'script' => 'parent', // 부모 창 제어를 위한 플래그
                 ]);
             }
@@ -695,7 +695,7 @@ class LoginController extends BaseController
     public function chooseLoginIds(Request $request)
     {
         if (Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         $cellphone = $request->input('cellphone');
         if(empty($cellphone)) {
@@ -704,7 +704,7 @@ class LoginController extends BaseController
         $users = $this->loginService->getUsersByPhoneNumber($cellphone);
         if(count($users) == 1) {
             $this->loginService->getAuthToken($users[0]->idx);
-            return redirect('/');
+            return redirect('/test');
         }
 
         return view(getDeviceType() . 'login.choose_login_ids', [
@@ -717,7 +717,7 @@ class LoginController extends BaseController
     public function chooseLoginEmails(Request $request)
     {
         if (Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         $email = $request->input('email');
         if(empty($email)) {
@@ -726,7 +726,7 @@ class LoginController extends BaseController
         $users = $this->loginService->getUsersByEmail($email);
         if(count($users) == 1) {
             $this->loginService->getAuthToken($users[0]->idx);
-            return redirect('/');
+            return redirect('/test');
         }
 
         return view(getDeviceType() . 'login.choose_login_emails', [

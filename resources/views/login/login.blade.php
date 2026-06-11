@@ -226,7 +226,7 @@ function signin() {
         },
         success : function(result) {
             if (result.success) {
-                window.location.href = '/';
+                window.location.href = '/test';
             } else {
                 alert(result.message);
             }
@@ -417,7 +417,7 @@ function openKakaoLogin() {
         <div class="modal_body agree_modal_body">
             <p class="text-center py-4"><b>로그인 완료</b></p>
             <div class="flex gap-2 justify-center">
-                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#login_success');location.href='/';" type="button">확인</button>
+                <button class="btn btn-primary w-1/2 mt-5" onclick="modalClose('#login_success');location.href='/test';" type="button">확인</button>
             </div>
         </div>
     </div>

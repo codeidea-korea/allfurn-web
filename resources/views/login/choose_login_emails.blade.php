@@ -65,7 +65,7 @@ function signin() {
         },
         success : function(result) {
             if (result.success) {
-                window.location.href = '/';
+                window.location.href = '/test';
             } else {
                 alert(result.message);
             }

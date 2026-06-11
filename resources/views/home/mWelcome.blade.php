@@ -244,17 +244,17 @@ function checkMobile(){
 
                 if (result.success) {             
                     var replaceUrlParam = "{{ $replaceUrl ?? '' }}";
-                    var finalUrl = replaceUrlParam ? "/main?replaceUrl=" + replaceUrlParam : "/";       
+                    var finalUrl = replaceUrlParam ? "/test?replaceUrl=" + replaceUrlParam : "/test";
                     if(pendingTime > 1100) {
                         document.querySelector('.splash').classList.remove('splash');
-                        //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                        //location.replace("/test?replaceUrl={{ $replaceUrl ?? '' }}");
                         location.replace(finalUrl);
                         //location.href = '/';
 //                        $('.splash').removeClass('splash');
                     } else {
                         setTimeout(() => {
                             document.querySelector('.splash').classList.remove('splash');
-                            //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                            //location.replace("/test?replaceUrl={{ $replaceUrl ?? '' }}");
                             location.replace(finalUrl);
                             //location.href = '/';
 //                            $('.splash').removeClass('splash');

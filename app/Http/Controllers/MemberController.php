@@ -34,7 +34,7 @@ class MemberController extends BaseController {
     public function signup()
     {
         if (Auth::check()) {
-            return redirect('/');
+            return redirect('/test');
         }
         return view(getDeviceType() . 'login.signup');
     }
@@ -321,7 +321,7 @@ class MemberController extends BaseController {
         $this->memberService->saveAgreement($data);
         $this->loginService->getAuthToken($data['idx']);
 
-        return redirect('/');
+        return redirect('/test');
     }
 
     public function signOut()

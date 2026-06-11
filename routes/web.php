@@ -14,11 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Authenticate의 파라미터가 이곳으로 전달
-Route::get('/', 'HomeController@index');
+Route::get('/', 'HomeController@landing');
+Route::get('/test', 'HomeController@index')->middleware('auth')->name('home');
 
 Route::get('/mwelcome', 'HomeController@mwelcome');
 Route::prefix('home')->group(function() {
-    Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/', function () {
+        return redirect('/test');
+    });
     Route::get('/category', 'HomeController@categoryList');
     Route::get('/getSearchData', 'HomeController@getSearchData');
     Route::get('/welcome', 'HomeController@welcome');

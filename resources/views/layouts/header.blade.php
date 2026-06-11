@@ -38,7 +38,7 @@
     </script>
     <div class="header_top">
         <div class="inner">
-            <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
+            <h1 class="logo"><a class="flex items-center gap-1" href="/test"><img src="/img/logo.svg" alt="">가구 B2B플랫폼</a></h1>
 
             <div class="product_search relative">
                 <div class="search_btn">
@@ -128,7 +128,7 @@
     <div class="inner relative">
         <ul class="gnb flex items-center">
             <li><button class="flex items-center category_btn"><svg><use xlink:href="/img/icon-defs.svg#Hamicon"></use></svg>카테고리</button></li>
-            <li class="{{ Request::segment(1) == '' ? 'active' : '' }}"><a href="/">홈</a></li>
+            <li class="{{ Request::is('test') ? 'active' : '' }}"><a href="/test">홈</a></li>
             <li class="{{ (Request::segment(1) == 'product' && Request::segment(2) == 'new') ? 'active' : '' }}"><a href="/product/new">신상품</a></li>
             <li class="{{ Request::segment(1) == 'wholesaler' ? 'active' : '' }}"><a href="/wholesaler">도매업체</a></li>
             <li class="{{ Request::segment(2) == 'thisMonth' ? 'active' : '' }}"><a href="/product/thisMonth"><span>이벤트를 모아보는</span>이달의딜</a></li>

@@ -35,83 +35,82 @@ class HomeController extends BaseController
         $this->loginService = $loginService;
     }
 
-    public function index(Request $params) {
-        
-        Log::info('-------- HomeController > index ');
-        
+    private function isMobileRequest(): bool
+    {
         $mAgent = array("iPhone","iPod","Android","Blackberry",
             "Opera Mini", "Windows ce", "Nokia", "sony" );
-            
-        $chkMobile = false;
-        
+
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
         for ( $i=0; $i<sizeof($mAgent); $i++ ) {
-            if(stripos( $_SERVER['HTTP_USER_AGENT'], $mAgent[$i] )){
-                $chkMobile = true;
-                break;
+            if(stripos($userAgent, $mAgent[$i]) !== false){
+                return true;
             }
         }
 
-        $categoryList = $this->productService->getCategoryList();
-        if ($chkMobile) {
+        return false;
+    }
 
-            if (Auth::check()) {
-                    
-                $schData = $this->homeService->getSearchData();
-                
-                $data = $this->homeService->getHomeData();
-                $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+    public function landing(Request $params) {
+        Log::info('-------- HomeController > landing ');
 
-                if($params->input('replaceUrl')) {
-                    //return redirect($params->input('replaceUrl'));
-                }
-
-                return view('m/home/index', [
-                    'replaceUrl'=>$params->input('replaceUrl'),
-                    'data'=>$data,
-                    'xtoken' => $xtoken,
-                    'categoryList'  => $categoryList,
-                    'schData'   => $schData['category']
-                ]);
-                
-            } else {
-                $data = array();
-                if($params->input('isweb')) {
-                    $data['isweb'] = $params->input('isweb');
-                }
-                if($params->input('replaceUrl')) {
-                    $data['replaceUrl'] = $params->input('replaceUrl');
-                }
-                
-                return view('home/mWelcome', $data);
-                
+        if ($this->isMobileRequest()) {
+            $data = array();
+            if($params->input('isweb')) {
+                $data['isweb'] = $params->input('isweb');
             }
-            
-            
+            if($params->input('replaceUrl')) {
+                $data['replaceUrl'] = $params->input('replaceUrl');
+            }
+
+            return view('home/mWelcome', $data);
+        }
+
+        return view('home/welcome');
+    }
+
+    public function index(Request $params) {
+
+        Log::info('-------- HomeController > index ');
+
+        $categoryList = $this->productService->getCategoryList();
+        if ($this->isMobileRequest()) {
+
+            $schData = $this->homeService->getSearchData();
+
+            $data = $this->homeService->getHomeData();
+            $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+
+            if($params->input('replaceUrl')) {
+                //return redirect($params->input('replaceUrl'));
+            }
+
+            return view('m/home/index', [
+                'replaceUrl'=>$params->input('replaceUrl'),
+                'data'=>$data,
+                'xtoken' => $xtoken,
+                'categoryList'  => $categoryList,
+                'schData'   => $schData['category']
+            ]);
+
         } else {
             
             Log::info('------------------ user --------------------');
             Log::info(Auth::user());
             Log::info('--------------------------------------------');
             
-            if (Auth::check()) {
-                $schData = $this->homeService->getSearchData();
-                $data = $this->homeService->getHomeData();
+            $schData = $this->homeService->getSearchData();
+            $data = $this->homeService->getHomeData();
 
-                if($params->input('replaceUrl')) {
-                    return redirect($params->input('replaceUrl'));
-                }
-
-                return view('home/index', [
-                    'data'=>$data,
-                    'categoryList'  => $categoryList,
-                    'schData'   => $schData['category']
-                ]);
-                
-            } else {
-                
-                return view('home/welcome');
-                
+            if($params->input('replaceUrl')) {
+                return redirect($params->input('replaceUrl'));
             }
+
+            return view('home/index', [
+                'data'=>$data,
+                'categoryList'  => $categoryList,
+                'schData'   => $schData['category']
+            ]);
             
         }
         
@@ -344,7 +343,7 @@ class HomeController extends BaseController
     public function categoryList()
     {
         if(getDeviceType() != "m.") {
-            return redirect('/');
+            return redirect('/test');
         }
         // 올펀패밀리
         $family_ad = FamilyAd::select('AF_family_ad.*', 

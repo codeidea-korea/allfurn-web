@@ -156,7 +156,7 @@ function gotoFindpw() {
         },
         success : function(result) {
             if (result.success) {
-                window.location.href = '/';
+                window.location.href = '/test';
             } else {
                 alert(result.msg);
             }
