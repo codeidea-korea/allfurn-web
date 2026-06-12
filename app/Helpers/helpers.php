@@ -30,7 +30,7 @@ if (! function_exists('paginate')) {
 }
 
 function preImgUrl() {
-    return env('AWS_S3_URL', 'https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/');
+    return env('AWS_S3_URL', 'https://cdn-w5ydnw3kw8pn.vultrcdn.com/');
 }
 
 function api() {
