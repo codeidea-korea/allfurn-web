@@ -3,7 +3,7 @@
     <div class="head__fixed">
         <div class="inner">
             <div class="head__flex">
-                <h1 class="head__logo"><a href="/test"><span class="a11y">All FURN</span></a></h1>
+                <h1 class="head__logo"><a href="/"><span class="a11y">All FURN</span></a></h1>
 
                 <div class="textfield @if(isset($_GET['kw'])) textfield--active @endif">
                     <i class="textfield__icon ico__search"><span class="a11y">검색</span></i>
@@ -197,3 +197,4 @@
     });
     
 </script>
+

@@ -45,7 +45,7 @@
 <header class="{{ $only_quick=='yes'?'hidden':'' }}">
     <div class="header_top {{ ($header_depth=='mypage' || $header_depth=='prodlist') ? 'hidden' : '' }}">
         <div class="inner">
-            <h1 class="logo"><a class="flex items-center gap-1" href="/test"><img src="/img/logo.svg" alt=""></a></h1>
+            <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt=""></a></h1>
             <button class="search_btn" onclick="getSearchModal();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 검색어를 입력하세요</button>
             <ul class="right_link flex items-center">
                 <li><a class="alarm_btn" href="/alarm"><span style="display: none;">1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>
@@ -93,7 +93,7 @@
     <div class="relative">
         <ul class="gnb flex items-center">
             {{-- <li><button class="flex items-center category_btn"><svg><use xlink:href="/img/icon-defs.svg#Hamicon"></use></svg>카테고리</button></li> --}}
-            <li class="{{ $header_depth=='home' ? 'active':'' }}"><a href="/test">홈</a></li>
+            <li class="{{ $header_depth=='home' ? 'active':'' }}"><a href="/">홈</a></li>
             <li class="{{ $header_depth=='new_arrival' ? 'active':'' }}"><a href="/product/new">신상품</a></li>
             <li class="{{ $header_depth=='wholesaler' ? 'active':'' }}"><a href="/wholesaler">도매업체</a></li>
             <li class="{{ $header_depth=='thismonth' ? 'active':'' }}"><a href="/product/thisMonth"><span>이벤트를 모아보는</span>이달의딜</a></li>
@@ -108,7 +108,7 @@
     <ul class="menu">
         <li class="{{$header_depth=='category'?'active':'' }}"><a href="/home/category"><svg><use xlink:href="/img/m/icon-defs.svg#quick_category"></use></svg><span>카테고리</span></a></li>
         <li class="{{$header_depth=='like'?'active':'' }}"><a href="/like/product"><svg><use xlink:href="/img/m/icon-defs.svg#quick_like"></use></svg><span>좋아요</span></a></li>
-        <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="/test"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
+        <li class="{{($header_depth!=='like'&&$header_depth!=='talk'&&$header_depth!=='mypage'&&$header_depth!=='category') ?'active':'' }}"><a href="/"><svg><use xlink:href="/img/m/icon-defs.svg#quick_home"></use></svg><span>홈</span></a></li>
         <!-- 안읽은 메세지 수 숫자로 표기 -->
         <li class="{{$header_depth=='talk'?'active':'' }}"><a href="javascript:gotoLink('/message');"><svg><use xlink:href="/img/m/icon-defs.svg#quick_talk"></use></svg><span>올톡</span>@if (unCheckedAllTalkCount() > 0) <b class="_totChatMessageCount">{{ unCheckedAllTalkCount() }}</b> @endif</a></li>
         <!-- 확인하지 않은 내용 있을 때 붉은점 noread 클래스 추가 -->
@@ -120,7 +120,7 @@
     <div id="prod_regist_btn" class="{{($header_depth=='mypage' || $header_depth=='community' || $header_depth=='talk'|| $header_depth=='thismonth' )?'hidden':'' }}">
         <a href="{{ Auth::user()['type'] === 'W' ? "javascript:gotoLink('/product/registration');" : "javascript:requiredUserGrade(['W']);" }}">상품<br/>등록</a>
     </div>
-    @if(request()->is(['', '/', 'test', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
+    @if(request()->is(['', '/', 'mypage', 'mypage/deal', 'wholesaler/detail/'.Auth::user()['company_idx'] ]))
         <div class="right_quick_btn" style="background-color:#000; color:#fff; ">
             <a href="{{ Auth::user()['type'] === 'W' ? "javascript:shareCatalog(".Auth::user()['company_idx'].",4);" : "javascript:requiredUserGrade(['W']);" }}">카탈로그<br>보내기</a>
         </div>

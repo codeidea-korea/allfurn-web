@@ -597,7 +597,7 @@ $(document).ready(function(){
 $(window).on('load', function () {
     // 리다이렉트 실행
     setTimeout(() => {
-        location.href="{{ $replaceUrl ?? '/test' }}";
+        location.href="{{ $replaceUrl ?? '/main' }}";        
     }, 1100);
 });
 @endif

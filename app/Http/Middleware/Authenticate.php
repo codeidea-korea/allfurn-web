@@ -54,7 +54,7 @@ class Authenticate extends Middleware
     
     		// 모바일일 경우 브릿지 페이지로 이동
     		if ($isMobile) {
-                return $request->getSchemeAndHttpHost() . '/?isweb=Y&replaceUrl=' . $replaceUrl;
+    			return 'https://all-furn.com/?isweb=Y&replaceUrl=' . $replaceUrl;
     		}
     
     		// pc인경우에는 기존 페이지 이동

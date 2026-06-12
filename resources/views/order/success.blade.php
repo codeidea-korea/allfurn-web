@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="completed__button-group">
-                        <button type="button" class="button button--blank" onclick="location.href='/test'">쇼핑 계속하기</button>
+                        <button type="button" class="button button--blank" onclick="location.href='/'">쇼핑 계속하기</button>
                         <button type="button" class="button button--solid" onclick="location.href='/mypage/purchase'">주문 현황 보러가기</button>
                     </div>
                 </div>
