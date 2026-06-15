@@ -60,11 +60,11 @@
                         @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
-                                <div class="dropdown my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                <div class="dropdown my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
-                                            @if($item->required == 1)
+                                            @if(($item->required ?? 0) == 1)
                                                 (필수)
                                             @else
                                                 (선택)
@@ -318,11 +318,11 @@
                                 @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
                                     <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown my_filterbox relative mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                        <div class="dropdown my_filterbox relative mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
-                                                    @if($item->required == 1)
+                                                    @if(($item->required ?? 0) == 1)
                                                         (필수)
                                                     @else
                                                         (선택)

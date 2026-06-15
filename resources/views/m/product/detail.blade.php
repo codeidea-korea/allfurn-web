@@ -63,11 +63,11 @@
                             <input type="hidden" name="product_option_exist" value="1" readOnly />
                             <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
-                                <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown2 w-full h-full flex justify-between items-center">
                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
-                                            @if($item->required == 1)
+                                            @if(($item->required ?? 0) == 1)
                                                 (필수)
                                             @else
                                                 (선택)
@@ -305,11 +305,11 @@
                                 
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                        <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
-                                                    @if($item->required == 1)
+                                                    @if(($item->required ?? 0) == 1)
                                                         (필수)
                                                     @else
                                                         (선택)

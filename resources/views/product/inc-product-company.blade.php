@@ -15,7 +15,7 @@
                 @foreach($arr as $item2)
                 <div class="dropdown_wrap noline">
                     <button class="dropdown_btn" onclick="openOption({{$item->idx}}, {{$inx}})"><p>{{$item2->optionName}} 선택
-                            @if($item2->required == 1)
+                            @if(($item2->required ?? 0) == 1)
                                 (필수)
                             @else
                                 (선택)
