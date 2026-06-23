@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@push('preload')
+    @foreach($data['new_product']->take(8) as $item)
+        @if(!empty($item->imgUrl))
+            <link rel="preload" as="image" href="{{ $item->imgUrl }}" fetchpriority="high">
+        @endif
+    @endforeach
+@endpush
+
 @section('content')
 @include('layouts.header')
 

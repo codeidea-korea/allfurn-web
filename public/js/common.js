@@ -90,7 +90,18 @@ $( function() {
 // }
 
 // 모달제어
+const loadDeferredImages = (scope)=>{
+    $(`${scope} img[data-src]`).each(function(){
+        const src = $(this).attr('data-src')
+        if(src){
+            $(this).attr('src', src)
+            $(this).removeAttr('data-src')
+        }
+    })
+}
+
 const modalOpen = (modal)=>{
+    loadDeferredImages(modal);
     $(`${modal}`).addClass('show');
     $('body').addClass('overflow-hidden');
 }

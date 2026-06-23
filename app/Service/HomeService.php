@@ -157,7 +157,7 @@ class HomeService
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                '. $this->homeProductThumbnailSelect('at') . ',
                 (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))
             ->join('AF_product', function ($query) {
@@ -166,6 +166,18 @@ class HomeService
             })
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
             })
             ->where('AF_product_ad.state', 'G')
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
@@ -185,11 +197,23 @@ class HomeService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
+                '. $this->homeProductThumbnailSelect('at') . ',
                 (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
             ))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
             })
             ->where([
                 'AF_product.is_new_product' => 1,
@@ -389,9 +413,21 @@ class HomeService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'))
+                                '. $this->homeProductThumbnailSelect('at')))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
             })
             ->where([
                 'AF_product.is_new_product' => 1,
@@ -405,6 +441,26 @@ class HomeService
         return response()->json([
             'list'=> $newProduct
         ]);
+    }
+
+    private function homeProductThumbnailSelect($attachmentAlias)
+    {
+        $cdnUrl = preImgUrl();
+        $cardAlias = getDeviceType() === 'm.' ? $attachmentAlias.'400' : $attachmentAlias.'600';
+        $modalAlias = $attachmentAlias.'1000';
+        $originalUrl = "CONCAT('{$cdnUrl}', {$attachmentAlias}.folder,'/', {$attachmentAlias}.filename)";
+        $cardUrl = "CONCAT('{$cdnUrl}', {$cardAlias}.folder,'/', {$cardAlias}.filename)";
+        $modalUrl = "CONCAT('{$cdnUrl}', {$modalAlias}.folder,'/', {$modalAlias}.filename)";
+
+        return "{$originalUrl} as originalImgUrl,
+                {$cardUrl} as thumbCardImgUrl,
+                {$modalUrl} as thumb1000ImgUrl,
+                (CASE WHEN {$cardAlias}.folder IS NOT NULL
+                    THEN {$cardUrl}
+                    WHEN {$modalAlias}.folder IS NOT NULL
+                    THEN {$modalUrl}
+                    ELSE {$originalUrl}
+                END) as imgUrl";
     }
 
 

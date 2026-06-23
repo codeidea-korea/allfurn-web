@@ -9,7 +9,7 @@
                     @foreach($bestNewProducts as $item)
                         <li class="swiper-slide">
                             <div class="img_box">
-                                <img src="{{ $item->imgUrl }}" alt="">
+                                <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $item->thumb1000ImgUrl ?? $item->imgUrl }}" loading="lazy" decoding="async" width="572" height="572" alt="">
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
