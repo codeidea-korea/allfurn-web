@@ -25,10 +25,30 @@
 
 
 <script>
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+var allfurnYouTubeApiPromise = null;
+function loadYouTubeIframeApi()
+{
+    if(window.YT && window.YT.Player) {
+        return Promise.resolve();
+    }
+
+    if(allfurnYouTubeApiPromise) {
+        return allfurnYouTubeApiPromise;
+    }
+
+    allfurnYouTubeApiPromise = new Promise(function(resolve) {
+        window.onYouTubeIframeAPIReady = function() {
+            resolve();
+        };
+
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.async = true;
+        document.head.appendChild(tag);
+    });
+
+    return allfurnYouTubeApiPromise;
+}
 </script>
 
 
@@ -42,36 +62,95 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
                 <div class="video_box"><div class="" id="player_{{ $key }}"></div></div>
                     <script>
                         var player_{{ $key }};
+                        var playerPromise_{{ $key }} = null;
+
+                        const initYoutubePlayer_{{ $key }} = ()=>{
+                            if(player_{{ $key }}) {
+                                return Promise.resolve(player_{{ $key }});
+                            }
+
+                            if(playerPromise_{{ $key }}) {
+                                return playerPromise_{{ $key }};
+                            }
+
+                            playerPromise_{{ $key }} = loadYouTubeIframeApi().then(function() {
+                                return new Promise(function(resolve) {
+                                    player_{{ $key }} = new YT.Player('player_{{ $key }}', {
+                                        width: '100%',
+                                        videoId: '{{ $video->youtube_link }}',
+                                        playerVars: {
+                                            'rel': 0,
+                                            'controls': 1,
+                                            'autoplay' : 0,
+                                            'mute' : 0,
+                                            'loop' : 0,
+                                            'playsinline' : 1,
+                                            'playlist' : '{{ $video->youtube_link }}'
+                                        },
+                                        events: {
+                                            onReady: function() {
+                                                resolve(player_{{ $key }});
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+
+                            return playerPromise_{{ $key }};
+                        }
+
                         const videoModalOpen_{{ $key }} = (modal)=>{
                             $(`${modal}`).addClass('show');
                             $('body').addClass('overflow-hidden');
-                            player_{{ $key }}.playVideo();
-                            player_{{ $key }}.setVolume(70);
-                            player_{{ $key }}.unMute();
+                            initYoutubePlayer_{{ $key }}().then(function(player) {
+                                player.playVideo();
+                                player.setVolume(70);
+                                player.unMute();
+                            });
                         }
 
                         const videoModalClose_{{ $key }} = (modal)=>{
                             $(`${modal}`).removeClass('show');
                             $('body').removeClass('overflow-hidden');
-                            player_{{ $key }}.stopVideo();
+                            if(player_{{ $key }}) {
+                                player_{{ $key }}.stopVideo();
+                            }
                         }
                     </script>
                 @else 
-                    <video width="1244" height="700" controls id="vplayer_{{ $key }}">
-                        <source src="{{ $video->video_url }}" type="video/mp4">
+                    <video width="1244" height="700" controls preload="none" id="vplayer_{{ $key }}">
+                        <source data-src="{{ $video->video_url }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                     <script>
+                        const initVideoSource_{{ $key }} = ()=>{
+                            const video = $('#vplayer_{{ $key }}').get(0);
+                            const source = video ? video.querySelector('source[data-src]') : null;
+
+                            if(source) {
+                                source.src = source.dataset.src;
+                                source.removeAttribute('data-src');
+                                video.load();
+                            }
+
+                            return video;
+                        }
+
                         const videoModalOpen_{{ $key }} = (modal)=>{
                             $(`${modal}`).addClass('show');
                             $('body').addClass('overflow-hidden');
-                            $('#vplayer_{{ $key }}').get(0).play();
-                            $('#vplayer_{{ $key }}').get(0).volume = 0.7;
+                            const video = initVideoSource_{{ $key }}();
+                            video.play();
+                            video.volume = 0.7;
                         }
                         const videoModalClose_{{ $key }} = (modal)=>{
                             $(`${modal}`).removeClass('show');
                             $('body').removeClass('overflow-hidden');
-                            $('#vplayer_{{ $key }}').get(0).pause();
+                            const video = $('#vplayer_{{ $key }}').get(0);
+
+                            if(video) {
+                                video.pause();
+                            }
                         }
                     </script>
                 @endif 
@@ -81,7 +160,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 @endforeach 
 
 <script>
-function onYouTubeIframeAPIReady() {
+function legacyOnYouTubeIframeAPIReadyDisabled() {
     @foreach($data['video_ad'] as $key => $video)
         @if ($video->video_upload_type == 0)
             player_{{ $key }} = new YT.Player('player_{{ $key }}', {

@@ -198,13 +198,13 @@
                 <div class="mt-4 swiper search_swhiper" id="headerNavBanner">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide rounded-md overflow-hidden">
-                            <img src="/img/search_img_d.png" class="w-full h-[110px]" alt="">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/img/search_img_d.png" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-[110px]" alt="">
                         </div>
                         <div class="swiper-slide rounded-md overflow-hidden">
-                            <img src="/img/search_img_d.png" class="w-full h-[110px]" alt="">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/img/search_img_d.png" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-[110px]" alt="">
                         </div>
                         <div class="swiper-slide rounded-md overflow-hidden">
-                            <img src="/img/search_img_d.png" class="w-full h-[110px]" alt="">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/img/search_img_d.png" loading="lazy" decoding="async" fetchpriority="low" class="w-full h-[110px]" alt="">
                         </div>
                     </div>
                     <div class="search-button-next">
@@ -235,7 +235,7 @@
 
     
     const getSearchData = () => {
-        fetch("/home/getSearchData", {
+        return fetch("/home/getSearchData", {
             headers: {
                 'X-CSRF-TOKEN': '{{csrf_token()}}'
             }
@@ -322,11 +322,14 @@
                             break;
                     }
                     bannerPart += '">' +
-                        '       <img src="{{preImgUrl()}}' + json['banner'][i]['folder'] + '/' + json['banner'][i]['filename'] + '">' +
+                        '       <img src="{{preImgUrl()}}' + json['banner'][i]['folder'] + '/' + json['banner'][i]['filename'] + '" loading="lazy" decoding="async" fetchpriority="low">' +
                         '   </a>' +
                         '</div>';
                 }
                 document.querySelector('#headerNavBanner .swiper-wrapper').innerHTML = bannerPart;
+                if(search_swhiper) {
+                    search_swhiper.update();
+                }
             } else {
                 bannerPart += '<div class="row">' +
                     '   <div class="row__text search-list--nodata">최근 검색한 내역이 없습니다.</div>' +
@@ -347,25 +350,41 @@
         }
     });
 
-    var search_swhiper = new Swiper(".search_swhiper", {
-        autoplay: {
-            delay: 2500,
-            disableOnInteraction: false,
-        },
-        navigation: {
-            nextEl: ".search-button-next",
-            prevEl: ".search-button-prev",
-        },
-        pagination: {
-            el: ".count_pagination",
-            type: "fraction",
-        },
-    });
+    var search_swhiper = null;
+
+    function initHeaderSearchSwiper()
+    {
+        if(search_swhiper) {
+            search_swhiper.update();
+            return search_swhiper;
+        }
+
+        search_swhiper = new Swiper(".search_swhiper", {
+            autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+            },
+            navigation: {
+                nextEl: ".search-button-next",
+                prevEl: ".search-button-prev",
+            },
+            pagination: {
+                el: ".count_pagination",
+                type: "fraction",
+            },
+        });
+
+        return search_swhiper;
+    }
 
     function getSearchModal()
     {
-        getSearchData();
-        modalOpen('#search_modal')
+        getSearchData()
+            .catch(function(){})
+            .then(function(){
+                initHeaderSearchSwiper();
+                modalOpen('#search_modal');
+            });
     }
 
 

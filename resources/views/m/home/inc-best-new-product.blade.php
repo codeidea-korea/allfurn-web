@@ -10,7 +10,7 @@
                 <h3 class="text-primary">HOT 신상품</h3>
             </div>
             <div class="flex items-center gap-7">
-                <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="./img/icon-defs.svg#zoom"></use></svg>확대보기</button>
+                <button class="zoom_btn flex items-center gap-1" onclick="openProductZoomModal('#zoom_view-modal')"><svg><use xlink:href="./img/icon-defs.svg#zoom"></use></svg>확대보기</button>
             </div>
         </div>
         <div class="relative">

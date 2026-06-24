@@ -1,4 +1,5 @@
 @extends('layouts.app_m')
+@section('deferMobileOptionalScripts', 'true')
 @php
     $mainVisualLcpImage = null;
     $lcpPreloadImage = null;
@@ -331,9 +332,50 @@
 
 <script>
 
+const runWhenIdle = (callback, timeout = 1500)=>{
+    if('requestIdleCallback' in window){
+        requestIdleCallback(callback, { timeout });
+    }else{
+        setTimeout(callback, timeout);
+    }
+}
+
+const initHomeSwiperNear = (selector, callback, rootMargin = '250px 0px')=>{
+    const target = document.querySelector(selector);
+
+    if(!target){
+        return;
+    }
+
+    if(!('IntersectionObserver' in window)){
+        runWhenIdle(callback);
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, currentObserver)=>{
+        entries.forEach((entry)=>{
+            if(entry.isIntersecting){
+                callback();
+                currentObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin,
+        threshold: 0.01
+    });
+
+    observer.observe(target);
+}
+
 
 // 팝업
-const popup = new Swiper('.modal .intro_popup .popup_slide',{
+let popup = null;
+const initPopupSwiper = ()=>{
+    if(popup){
+        return popup;
+    }
+
+    popup = new Swiper('.modal .intro_popup .popup_slide',{
     loop: true,
     speed:700,
     autoplay: {
@@ -344,7 +386,10 @@ const popup = new Swiper('.modal .intro_popup .popup_slide',{
         el: ".modal .intro_popup .pager",
         type: "bullets",
     },
-})
+    });
+
+    return popup;
+}
 // 팝업 > 오늘하루 그만보기
 $('.modal .noTodaybtn').click(function(){
     modalClose('#popup01')
@@ -409,7 +454,13 @@ $('.category_banner li').on('click',function(){
 
 
 // best_prod 
-const best_prod = new Swiper(".best_prod .slide_box", {
+let best_prod = null;
+initHomeSwiperNear(".best_prod", ()=>{
+    if(best_prod){
+        return;
+    }
+
+    best_prod = new Swiper(".best_prod .slide_box", {
     slidesPerView: 'auto',
     spaceBetween: 8,
     grid: {
@@ -419,10 +470,17 @@ const best_prod = new Swiper(".best_prod .slide_box", {
         el: ".best_prod .count_pager",
         type: "fraction",
     },
+    });
 });
 
 // best_prod_modal
-const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+let zoom_view_modal = null;
+const initZoomViewModal = ()=>{
+    if(zoom_view_modal){
+        return zoom_view_modal;
+    }
+
+    zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     grid: {
@@ -436,10 +494,19 @@ const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
         el: "#zoom_view-modal .count_pager",
         type: "fraction",
     },
-});
+    });
+
+    return zoom_view_modal;
+}
 
 // new_prod 
-const new_prod = new Swiper(".new_prod .slide_box", {
+let new_prod = null;
+initHomeSwiperNear(".new_prod", ()=>{
+    if(new_prod){
+        return;
+    }
+
+    new_prod = new Swiper(".new_prod .slide_box", {
     slidesPerView: 'auto',
     spaceBetween: 8,
     grid: {
@@ -449,10 +516,17 @@ const new_prod = new Swiper(".new_prod .slide_box", {
         el: ".new_prod .count_pager",
         type: "fraction",
     },
+    });
 });
 
 // new_prod_modal
-const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
+let new_prod_modal = null;
+const initNewProdModal = ()=>{
+    if(new_prod_modal){
+        return new_prod_modal;
+    }
+
+    new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     slidesPerGroup: 1,
@@ -467,7 +541,21 @@ const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
         el: "#zoom_view-modal-new .count_pager",
         type: "fraction",
     },
-});
+    });
+
+    return new_prod_modal;
+}
+
+const openProductZoomModal = (modal)=>{
+    if(modal === '#zoom_view-modal'){
+        initZoomViewModal();
+    }else if(modal === '#zoom_view-modal-new'){
+        initNewProdModal();
+    }
+
+    modalOpen(modal);
+}
+window.openProductZoomModal = openProductZoomModal;
 
 // 테마별상품 탭
 $('.theme_prod .tab_layout li').on('click',function(){
@@ -478,13 +566,24 @@ $('.theme_prod .tab_layout li').on('click',function(){
     })
 })
 
-const theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
-    slidesPerView: 'auto',
-    spaceBetween: 10,
-});
+let theme_prod_tab = null;
+let theme_prod_01 = null;
+let theme_prod_02 = null;
+let theme_prod_03 = null;
+let theme_prod_04 = null;
+
+initHomeSwiperNear(".theme_prod", ()=>{
+    if(theme_prod_tab){
+        return;
+    }
+
+    theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+    });
 
 // theme_prod 
-const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+    theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -494,7 +593,7 @@ const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
     },
 });
 
-const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+    theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -504,7 +603,7 @@ const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
     },
 });
 
-const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+    theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -514,7 +613,7 @@ const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
     },
 });
 
-const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+    theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -523,9 +622,18 @@ const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
         type: "fraction",
     },
 });
+});
 
 // popular_prod 
-const popular_prod_pager = new Swiper(".popular_prod .pager_box", {
+let popular_prod_pager = null;
+let popular_prod = null;
+
+initHomeSwiperNear(".popular_prod", ()=>{
+    if(popular_prod){
+        return;
+    }
+
+    popular_prod_pager = new Swiper(".popular_prod .pager_box", {
     slidesPerView: 'auto',
     spaceBetween: 10,
     navigation: {
@@ -534,7 +642,7 @@ const popular_prod_pager = new Swiper(".popular_prod .pager_box", {
     },
 });
 
-const popular_prod = new Swiper(".popular_prod .slide_box", {
+    popular_prod = new Swiper(".popular_prod .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     pagination: {
@@ -553,22 +661,36 @@ const popular_prod = new Swiper(".popular_prod .slide_box", {
         }
     }
 });
+});
 
 // sale_prod 
-const sale_prod = new Swiper(".sale_prod .slide_box", {
-    slidesPerView: 1.1,
-    spaceBetween: 12,
-    
+let sale_prod = null;
+initHomeSwiperNear(".sale_prod", ()=>{
+    if(sale_prod){
+        return;
+    }
+
+    sale_prod = new Swiper(".sale_prod .slide_box", {
+        slidesPerView: 1.1,
+        spaceBetween: 12,
+    });
 });
 
 // video_prod 
-const video_prod = new Swiper(".video_prod .slide_box", {
-    slidesPerView: 1,
-    spaceBetween: 10,
-    pagination: {
-        el: ".video_prod .count_pager",
-        type: "fraction",
-    },
+let video_prod = null;
+initHomeSwiperNear(".video_prod", ()=>{
+    if(video_prod){
+        return;
+    }
+
+    video_prod = new Swiper(".video_prod .slide_box", {
+        slidesPerView: 1,
+        spaceBetween: 10,
+        pagination: {
+            el: ".video_prod .count_pager",
+            type: "fraction",
+        },
+    });
 });
 
 $(document)
@@ -613,6 +735,7 @@ function popupUrl() {
 $(document).ready(function(){
     var cookiedata = document.cookie;
     if(cookiedata.indexOf("mainEventPopupClose=Y")<0){
+        initPopupSwiper();
         modalOpen("#main-event");
     }
   

@@ -1181,7 +1181,9 @@
     @endif
 
 
-    <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    @if(!isset($isMobile))
+        <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    @endif
     <script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
 
