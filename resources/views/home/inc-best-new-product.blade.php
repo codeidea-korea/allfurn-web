@@ -1,5 +1,6 @@
 @php
     $hasProductAds = isset($data['productAd']) && count($data['productAd']) > 0;
+    $prioritizeProductAdLcp = empty($mainVisualLcpImage);
 @endphp
 
 <section class="main_section best_prod">
@@ -28,7 +29,7 @@
                         <li class="prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img
-                                    @if($loop->first)
+                                    @if($loop->first && $prioritizeProductAdLcp)
                                         src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
                                     @elseif($loop->index < 8)
                                         src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"

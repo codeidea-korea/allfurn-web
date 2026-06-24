@@ -1,5 +1,5 @@
 @php
-    $prioritizeNewProductLcp = !isset($data['productAd']) || count($data['productAd']) === 0;
+    $prioritizeNewProductLcp = empty($mainVisualLcpImage) && (!isset($data['productAd']) || count($data['productAd']) === 0);
 @endphp
 
 <section class="main_section new_prod">

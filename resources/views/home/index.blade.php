@@ -2,18 +2,29 @@
 
 @section('disableTailwindCdn', 'true')
 
+@php
+    $mainVisualLcpImage = null;
+    $lcpPreloadImage = null;
+
+    if (isset($data['banner_top']) && count($data['banner_top']) > 0) {
+        $firstTopBanner = $data['banner_top']->first();
+
+        if ($firstTopBanner && $firstTopBanner->banner_type === 'img' && !empty($firstTopBanner->folder) && !empty($firstTopBanner->filename)) {
+            $mainVisualLcpImage = preImgUrl().$firstTopBanner->folder.'/'.$firstTopBanner->filename;
+            $lcpPreloadImage = $mainVisualLcpImage;
+        }
+    }
+
+    if (empty($lcpPreloadImage) && isset($data['productAd']) && count($data['productAd']) > 0) {
+        $lcpPreloadImage = $data['productAd']->first()->imgUrl ?? null;
+    }
+
+    if (empty($lcpPreloadImage) && isset($data['new_product']) && count($data['new_product']) > 0) {
+        $lcpPreloadImage = $data['new_product']->first()->imgUrl ?? null;
+    }
+@endphp
+
 @push('preload')
-    @php
-        $lcpPreloadImage = null;
-
-        if (isset($data['productAd']) && count($data['productAd']) > 0) {
-            $lcpPreloadImage = $data['productAd']->first()->imgUrl ?? null;
-        }
-
-        if (empty($lcpPreloadImage) && isset($data['new_product']) && count($data['new_product']) > 0) {
-            $lcpPreloadImage = $data['new_product']->first()->imgUrl ?? null;
-        }
-    @endphp
     @if(!empty($lcpPreloadImage))
         <link rel="preload" as="image" href="{{ $lcpPreloadImage }}" fetchpriority="high">
     @endif
@@ -121,9 +132,9 @@
                                 <a href="javascript:linkToPage('{{$link}}');">
                                     <span class="brand">{{ $item->company_name }}</span>
                                     @if(isset($item->folder) && isset($item->filename))
-                                        <img src="{{preImgUrl().$item->folder."/".$item->filename}}" alt="">
+                                        <img src="{{preImgUrl().$item->folder."/".$item->filename}}" @if($loop->first) loading="eager" fetchpriority="high" @else loading="lazy" fetchpriority="low" @endif decoding="async" alt="">
                                     @else 
-                                        <img src="/img/main_visual.png" alt="">
+                                        <img src="/img/main_visual.png" @if($loop->first && empty($mainVisualLcpImage)) loading="eager" fetchpriority="high" @else loading="lazy" fetchpriority="low" @endif decoding="async" alt="">
                                     @endif
                                 </a>
                             </li>
