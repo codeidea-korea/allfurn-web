@@ -623,6 +623,8 @@ footer .bottom_link li:last-of-type a::before {display:none; }
 .intro_popup .popup_slide img {width:100%; }
 .intro_popup .btn_bot {display:flex; gap:10px; width:100%; padding:10px; }
 .intro_popup .btn_bot button {flex-grow:1; width:50%; }
+.intro_popup .main_event_btn_bot {padding-top:1rem !important; padding-bottom:1rem !important; }
+.intro_popup .btn_bot .main_event_btn {flex-grow:0 !important; width:auto !important; }
 .intro_popup .pager {z-index:10; position:absolute; bottom:5px; text-align:center; }
 .intro_popup .pager .swiper-pagination-bullet {background:#fff; opacity:1; }
 .intro_popup .pager .swiper-pagination-bullet-active {background:var(--main_color); }

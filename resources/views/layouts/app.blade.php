@@ -38,7 +38,9 @@
     <script src="/js/jquery-1.12.4.js"></script>
     <script src="/js/jquery-ui-1.13.1.js"></script>
     <script defer src="/js/pci.js"></script>
-    <script defer src="https://cdn.tailwindcss.com"></script>
+    @unless(trim($__env->yieldContent('disableTailwindCdn')) === 'true')
+        <script defer src="https://cdn.tailwindcss.com"></script>
+    @endunless
     {{-- <script defer src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script> --}}
     <script src="/js/swiper-bundle.min.js?{{ date('Ymd') }}"></script>
     <script src="/js/common.js?{{ date('YmdH') }}"></script>

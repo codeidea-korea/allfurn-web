@@ -1,16 +1,22 @@
 @extends('layouts.app')
 
+@section('disableTailwindCdn', 'true')
+
 @push('preload')
-    @foreach($data['productAd']->take(8) as $item)
-        @if(!empty($item->imgUrl))
-            <link rel="preload" as="image" href="{{ $item->imgUrl }}" fetchpriority="high">
-        @endif
-    @endforeach
-    @foreach($data['new_product']->take(8) as $item)
-        @if(!empty($item->imgUrl))
-            <link rel="preload" as="image" href="{{ $item->imgUrl }}" fetchpriority="high">
-        @endif
-    @endforeach
+    @php
+        $lcpPreloadImage = null;
+
+        if (isset($data['productAd']) && count($data['productAd']) > 0) {
+            $lcpPreloadImage = $data['productAd']->first()->imgUrl ?? null;
+        }
+
+        if (empty($lcpPreloadImage) && isset($data['new_product']) && count($data['new_product']) > 0) {
+            $lcpPreloadImage = $data['new_product']->first()->imgUrl ?? null;
+        }
+    @endphp
+    @if(!empty($lcpPreloadImage))
+        <link rel="preload" as="image" href="{{ $lcpPreloadImage }}" fetchpriority="high">
+    @endif
 @endpush
 
 @section('content')
@@ -59,9 +65,9 @@
                 </ul>
                 <div class="pager"></div>
             </div>
-            <div class="btn_bot justify-between !py-4">
-                <button class="!w-auto !flex-grow-0 px-4 noTodaybtn" onclick="popupClose()">오늘 하루 보지 않기</button>
-                <button class="!w-auto !flex-grow-0 px-4" onclick="modalClose('#main-event')">닫기</button>
+            <div class="btn_bot justify-between main_event_btn_bot">
+                <button class="main_event_btn px-4 noTodaybtn" onclick="popupClose()">오늘 하루 보지 않기</button>
+                <button class="main_event_btn px-4" onclick="modalClose('#main-event')">닫기</button>
             </div>
         </div>
     </div>

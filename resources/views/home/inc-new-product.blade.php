@@ -1,3 +1,7 @@
+@php
+    $prioritizeNewProductLcp = !isset($data['productAd']) || count($data['productAd']) === 0;
+@endphp
+
 <section class="main_section new_prod">
     <div class="inner">
         <div class="main_tit mb-8 flex justify-between items-center">
@@ -19,8 +23,10 @@
                         <li class=" prod_item">
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img
-                                    @if($loop->index < 8)
+                                    @if($loop->first && $prioritizeNewProductLcp)
                                         src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
+                                    @elseif($loop->index < 8)
+                                        src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
                                     @else
                                         src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-lazy="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
                                     @endif
