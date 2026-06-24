@@ -275,13 +275,14 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .slide_arrow.type03.prev svg {transform:rotate(0); }
 
 .slick_ul li {padding:10px; }
-.best_prod .slick_ul:not(.slick-initialized),
+.best_prod .slick_ul.has-items:not(.slick-initialized),
 .new_prod .slick_ul:not(.slick-initialized) {display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); height:796px; overflow:hidden; }
-.best_prod .slick_ul:not(.slick-initialized) > li,
+.best_prod .slick_ul.has-items:not(.slick-initialized) > li,
 .new_prod .slick_ul:not(.slick-initialized) > li {box-sizing:border-box; min-width:0; }
 .slick_ul .slick-dots,
 .slick_ul .slick-prev,
 .slick_ul .slick-next {display:none !important; }
+.best_prod .best_prod_empty {display:flex; align-items:center; justify-content:center; height:240px; border:1px solid rgba(218, 221, 224, 0.60); border-radius:4px; background:#fafafa; color:var(--gray_color); font-size:16px; }
 
 /* 상품아이템 */
 .prod_item .img_box {overflow:hidden; position:relative; width:100%; padding-bottom:100%; border-radius:4px; background-color:#f5f5f5; border:1px solid #f5f5f5; }
