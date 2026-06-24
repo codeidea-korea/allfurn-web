@@ -37,7 +37,7 @@
                 @foreach( $data['popularbrand_ad'] AS $brand )
                     <ul class="swiper-slide">
                         <li class="popular_banner">
-                            <img src="{{$brand->appBigImgUrl}}" class="h-[320px]" alt="{{ $brand->companyName }}">
+                            <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{$brand->appBigImgUrl}}" loading="lazy" decoding="async" fetchpriority="low" class="h-[320px]" alt="{{ $brand->companyName }}">
                             <div class="txt_box">
                                     <p>
                                         <b>{{$brand->subtext1 == '' ? ' ' : $brand->subtext1}}</b><br/>{{$brand->subtext2 == '' ? ' ' : $brand->subtext2}}
@@ -48,7 +48,7 @@
                         @foreach ( $brand->product_info AS $item )
                             <li class="prod_item">
                                 <div class="img_box">
-                                    <a href="/product/detail/{{$item['mdp_gidx']}}"><img src="{{$item['mdp_gimg']}}" alt="{{$item['mdp_gname']}}" alt=""></a>
+                                    <a href="/product/detail/{{$item['mdp_gidx']}}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{$item['mdp_gimg']}}" loading="lazy" decoding="async" fetchpriority="low" width="285" height="285" alt="{{$item['mdp_gname']}}"></a>
                                     <button class="zzim_btn prd_{{$item['mdp_gidx']}} {{($brand->product_interest[$item['mdp_gidx']])?'active':''}}" pIdx="{{$item['mdp_gidx']}}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                 </div>
                                 <!-- 고객사 요청으로 삭제 -->

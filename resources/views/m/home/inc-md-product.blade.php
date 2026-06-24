@@ -29,7 +29,7 @@
                                 @else
                                 <li class="swiper-slide prod_item">
                                     <div class="img_box">
-                                        <a href="/product/detail/{{ $goods['mdp_gidx'] }}"><img src="{{ $goods['mdp_gimg'] }}" alt=""></a>
+                                        <a href="/product/detail/{{ $goods['mdp_gidx'] }}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $goods['mdp_gimg'] }}" loading="lazy" decoding="async" fetchpriority="low" width="285" height="285" alt=""></a>
                                         <button class="zzim_btn prd_{{ $goods['mdp_gidx'] }} {{ ($data['md_product_interest'][$goods['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $goods['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
                                     <div class="txt_box">

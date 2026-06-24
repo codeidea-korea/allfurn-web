@@ -1,3 +1,8 @@
+@php
+    $hasProductAds = isset($data['productAd']) && count($data['productAd']) > 0;
+    $prioritizeProductAdLcp = empty($mainVisualLcpImage);
+@endphp
+
 <section class="main_section best_prod overflow-hidden">
     <div class="inner">
         <div class="main_tit mb-5 flex justify-between items-center">
@@ -16,7 +21,15 @@
                         @else
                         <li class="swiper-slide prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{ $item->idx }}"><img @if($loop->index >= 2) loading="lazy" @endif decoding="async" src="{{ $item->imgUrl }}" alt=""></a>
+                                <a href="/product/detail/{{ $item->idx }}"><img
+                                    @if($loop->first && $prioritizeProductAdLcp)
+                                        src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
+                                    @elseif($loop->index < 2)
+                                        src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @else
+                                        src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @endif
+                                    decoding="async" width="285" height="285" alt=""></a>
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">

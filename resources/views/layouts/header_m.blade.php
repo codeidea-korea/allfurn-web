@@ -45,7 +45,7 @@
 <header class="{{ $only_quick=='yes'?'hidden':'' }}">
     <div class="header_top {{ ($header_depth=='mypage' || $header_depth=='prodlist') ? 'hidden' : '' }}">
         <div class="inner">
-            <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" alt=""></a></h1>
+            <h1 class="logo"><a class="flex items-center gap-1" href="/"><img src="/img/logo.svg" width="113" height="23" decoding="async" fetchpriority="high" alt=""></a></h1>
             <button class="search_btn" onclick="getSearchModal();"><svg class="w-11 h-11"><use xlink:href="/img/icon-defs.svg#Search"></use></svg> 검색어를 입력하세요</button>
             <ul class="right_link flex items-center">
                 <li><a class="alarm_btn" href="/alarm"><span style="display: none;">1</span><svg><use xlink:href="/img/icon-defs.svg#Alarm"></use></svg></a></li>

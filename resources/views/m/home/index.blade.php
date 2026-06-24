@@ -1,10 +1,35 @@
 @extends('layouts.app_m')
 @php
+    $mainVisualLcpImage = null;
+    $lcpPreloadImage = null;
+
+    if (isset($data['banner_top']) && count($data['banner_top']) > 0) {
+        $firstTopBanner = $data['banner_top']->first();
+
+        if ($firstTopBanner && $firstTopBanner->banner_type === 'img' && !empty($firstTopBanner->folder) && !empty($firstTopBanner->filename)) {
+            $mainVisualLcpImage = preImgUrl().$firstTopBanner->folder.'/'.$firstTopBanner->filename;
+            $lcpPreloadImage = $mainVisualLcpImage;
+        }
+    }
+
+    if (empty($lcpPreloadImage) && isset($data['productAd']) && count($data['productAd']) > 0) {
+        $lcpPreloadImage = $data['productAd']->first()->imgUrl ?? null;
+    }
+
+    if (empty($lcpPreloadImage) && isset($data['new_product']) && count($data['new_product']) > 0) {
+        $lcpPreloadImage = $data['new_product']->first()->imgUrl ?? null;
+    }
+
     $only_quick = '';
     $header_depth = 'home';
     $top_title = '';
     $header_banner = '';
 @endphp
+@push('preload')
+    @if(!empty($lcpPreloadImage))
+        <link rel="preload" as="image" href="{{ $lcpPreloadImage }}" fetchpriority="high">
+    @endif
+@endpush
 @section('content')
 @include('layouts.header_m')
 
@@ -46,7 +71,7 @@
                                 break;
                         }
                         ?>
-                        <li class="swiper-slide"><a href="{{$link}}"><img src="{{$item->imgUrl}}" alt=""></a></li>
+                        <li class="swiper-slide"><a href="{{$link}}"><img src="{{$item->imgUrl}}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a></li>
                     @endforeach
                 </ul>
                 <div class="pager"></div>
@@ -103,9 +128,10 @@
                     ?>
                     @if($item->banner_type == 'img')
                         @if(isset($item->folder) && isset($item->filename))
-                            <li class="swiper-slide" style="background-image:url('{{preImgUrl().$item->folder."/".$item->filename}}')">
+                            @php $bannerImage = preImgUrl().$item->folder.'/'.$item->filename; @endphp
+                            <li class="swiper-slide" @if($loop->first) style="background-image:url('{{ $bannerImage }}')" @else data-bg="{{ $bannerImage }}" @endif>
                         @else 
-                            <li class="swiper-slide" style="background-image:url('/img/main_visual.png')">
+                            <li class="swiper-slide" @if($loop->first && empty($mainVisualLcpImage)) style="background-image:url('/img/main_visual.png')" @else data-bg="/img/main_visual.png" @endif>
                         @endif
                             <a href="javascript:linkToPage('{{$link}}');">
                                 <span class="brand">{{ $item->company_name }}</span>
@@ -142,37 +168,37 @@
                     </li>   
                     <li class="swiper-slide">
                          <a href="/wholesaler?list">
-                            <img src="/img/main/shop_icon.png" alt="">
+                            <img src="/img/main/shop_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>도매업체<br/> 보기</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                         <a href="/product/best-new">
-                            <img src="/img/main/best_icon.png" alt="">
+                            <img src="/img/main/best_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>BEST<br/>신상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                         <a href="javascript:modalOpen('#search-modal');">
-                            <img src="/img/main/search_icon.png" alt="">
+                            <img src="/img/main/search_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>쉬운<br/> 상품 찾기</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                         <a href="/product/thisMonth">
-                            <img src="/img/main/event_icon.png" alt="">
+                            <img src="/img/main/event_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>할인/이벤트<br/> 상품</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                         <a href="/magazine/daily">
-                            <img src="/img/main/news_icon.png" alt="">
+                            <img src="/img/main/news_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>일일 <br/>가구 뉴스</span>
                          </a>
                     </li>
                     <li class="swiper-slide">
                         <a href="/community?board_name=상품문의">
-                            <img src="/img/main/message_icon.png" alt="">
+                            <img src="/img/main/message_icon.png" loading="lazy" decoding="async" fetchpriority="low" alt="">
                             <span>상품 문의</span>
                          </a>
                     </li>
@@ -197,7 +223,7 @@
                     @foreach($data['categoryAlist'] as $item)
                         <li class="swiper-slide">
                             <a href="/product/category?pre={{ $item->idx }}">
-                                <i><img src="{{ $item->imgUrl }}"></i>
+                                <i><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $item->imgUrl }}" loading="lazy" decoding="async" fetchpriority="low" alt=""></i>
                                 @if($item->idx == 4)
                                     <span>서랍장/옷장</span>
                                 @elseif ($item->idx == 6)
@@ -245,7 +271,7 @@
                     <ul class="main_board_list2">
                         @foreach($data['magazine'] as $item)
                             <li>
-                                <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
+                                <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $item->image_url }}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a></div>
                                 <div class="txt_box">
                                     <a href="/magazine/detail/{{ $item->idx }}">
                                         <b>[{{ $item->category_list }}] {{$item->title}}</b>

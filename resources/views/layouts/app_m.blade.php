@@ -23,6 +23,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>All FURN  | Home</title>
+    @stack('preload')
     <link rel="stylesheet" href="/css/m/font.css">
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"> --}}
     {{-- <link href="https://cdn.jsdelivr.net/npm/anypicker/dist/anypicker-all.min.css" rel="stylesheet"> --}}
