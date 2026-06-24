@@ -23,6 +23,7 @@ use App\Models\LikeCompany;
 use App\Models\Club;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\FacadesAuth;
@@ -152,14 +153,19 @@ class HomeService
 
     // 모듈 분리
     function getProductAds($page) {
-        $product_ad = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
+        $offset = isset($page['offset']) ? (int) $page['offset'] : 0;
+        $limit = isset($page['limit']) ? (int) $page['limit'] : 40;
+        $device = getDeviceType() === 'm.' ? 'mobile' : 'pc';
+        $cacheKey = 'home:product_ads:'.$device.':offset:'.$offset.':limit:'.$limit.':v1';
+
+        $product_ad = Cache::remember($cacheKey, 300, function () use ($offset, $limit) {
+            $products = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                '. $this->homeProductThumbnailSelect('at') . ',
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
+                '. $this->homeProductThumbnailSelect('at'))
+            )
             ->join('AF_product', function ($query) {
                 $query->on('AF_product.idx', 'AF_product_ad.product_idx')
                     ->whereIn('AF_product.state', ['S', 'O']);
@@ -186,12 +192,47 @@ class HomeService
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
             // 분해 불가
-            ->orderByRaw('AF_product_ad.price desc, RAND()')
-            ->offset($page['offset'])->limit($page['limit'])
+            ->orderBy('AF_product_ad.price', 'desc')
             ->get();
 
-        return $product_ad;
+            return $products->groupBy('ad_price')->flatMap(function ($items) {
+                return $items->shuffle();
+            })->slice($offset, $limit)->values();
+        });
+
+        return $this->applyProductInterest($product_ad);
     }
+
+    private function applyProductInterest($products)
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        if (!Auth::check()) {
+            return $products->map(function ($product) {
+                $product->isInterest = 0;
+                return $product;
+            });
+        }
+
+        $productIds = $products->pluck('idx')->filter()->unique()->values();
+        $interestIds = DB::table('AF_product_interest')
+            ->where('user_idx', Auth::user()->idx)
+            ->whereIn('product_idx', $productIds)
+            ->pluck('product_idx')
+            ->map(function ($productId) {
+                return (int) $productId;
+            })
+            ->all();
+        $interestMap = array_flip($interestIds);
+
+        return $products->map(function ($product) use ($interestMap) {
+            $product->isInterest = isset($interestMap[(int) $product->idx]) ? 1 : 0;
+            return $product;
+        });
+    }
+
     function getNewProducts($page) {
         $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)

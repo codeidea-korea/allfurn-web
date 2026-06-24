@@ -20,7 +20,7 @@
                             <div class="img_box">
                                 <a href="/product/detail/{{ $item->idx }}"><img
                                     @if($loop->index < 8)
-                                        src="{{ $item->imgUrl }}" loading="eager"
+                                        src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
                                     @else
                                         src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-lazy="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
                                     @endif
