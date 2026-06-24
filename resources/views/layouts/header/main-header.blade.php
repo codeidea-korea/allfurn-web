@@ -164,6 +164,10 @@
                     result.data.map(function(banner) {
                         
                         var link = banner.web_link;
+
+                        if (banner.web_link_type === '4') {
+                            link = "/help/notice";
+                        }
                         
                         // console.log('link', link);
                         
