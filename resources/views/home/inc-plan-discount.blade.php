@@ -18,7 +18,7 @@
                         <li class="swiper-slide prod_item type02">
                             <div class="img_box">
                                 <a href="{{ $goods->web_link }}">
-                                    <img src="{{ $goods->imgUrl }}" alt="">
+                                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $goods->imgUrl }}" loading="lazy" decoding="async" fetchpriority="low" alt="">
                                     <span><b>{{ $goods->subtext1 }}</b><br/>{{ $goods->subtext2 }}</span>
                                 </a>
                                 @if ($goods->gidx != "")

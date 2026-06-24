@@ -275,6 +275,10 @@ a.btn {display:flex; justify-content: center; align-items: center; }
 .slide_arrow.type03.prev svg {transform:rotate(0); }
 
 .slick_ul li {padding:10px; }
+.best_prod .slick_ul:not(.slick-initialized),
+.new_prod .slick_ul:not(.slick-initialized) {display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); height:796px; overflow:hidden; }
+.best_prod .slick_ul:not(.slick-initialized) > li,
+.new_prod .slick_ul:not(.slick-initialized) > li {box-sizing:border-box; min-width:0; }
 .slick_ul .slick-dots,
 .slick_ul .slick-prev,
 .slick_ul .slick-next {display:none !important; }

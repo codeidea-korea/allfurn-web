@@ -89,16 +89,73 @@ $( function() {
 //     // })
 // }
 
+const loadDeferredImage = (image)=>{
+    const $image = $(image);
+    const src = $image.attr('data-src');
+
+    if(src){
+        $image.attr('src', src);
+        $image.removeAttr('data-src');
+    }
+}
+
+const loadDeferredBackground = (element)=>{
+    const $element = $(element);
+    const bg = $element.attr('data-bg');
+
+    if(bg){
+        element.style.backgroundImage = `url("${bg.replace(/"/g, '\\"')}")`;
+        $element.removeAttr('data-bg');
+    }
+}
+
+const loadDeferredAsset = (element)=>{
+    if(element.tagName && element.tagName.toLowerCase() === 'img'){
+        loadDeferredImage(element);
+    }else{
+        loadDeferredBackground(element);
+    }
+}
+
 // 모달제어
 const loadDeferredImages = (scope)=>{
-    $(`${scope} img[data-src]`).each(function(){
-        const src = $(this).attr('data-src')
-        if(src){
-            $(this).attr('src', src)
-            $(this).removeAttr('data-src')
-        }
+    $(`${scope} img[data-src], ${scope} [data-bg]`).each(function(){
+        loadDeferredAsset(this);
     })
 }
+
+const observeDeferredAssets = ()=>{
+    const assets = $('img[data-src], [data-bg]').toArray();
+
+    if(!assets.length){
+        return;
+    }
+
+    if(!('IntersectionObserver' in window)){
+        assets.forEach(loadDeferredAsset);
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, currentObserver)=>{
+        entries.forEach((entry)=>{
+            if(entry.isIntersecting){
+                loadDeferredAsset(entry.target);
+                currentObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin: '400px 0px',
+        threshold: 0.01
+    });
+
+    assets.forEach((asset)=>{
+        observer.observe(asset);
+    });
+}
+
+$(function(){
+    observeDeferredAssets();
+});
 
 const modalOpen = (modal)=>{
     loadDeferredImages(modal);

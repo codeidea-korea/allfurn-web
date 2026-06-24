@@ -407,11 +407,34 @@ class HomeService
         return $video_ad;
     }
     function getMagazines() {
+        $cdnUrl = preImgUrl();
+        $cardAlias = getDeviceType() === 'm.' ? 'at400' : 'at600';
+        $originalUrl = "CONCAT('{$cdnUrl}', at.folder, '/', at.filename)";
+        $cardUrl = "CONCAT('{$cdnUrl}', {$cardAlias}.folder, '/', {$cardAlias}.filename)";
+        $modalUrl = "CONCAT('{$cdnUrl}', at1000.folder, '/', at1000.filename)";
+
         return Magazine::select('AF_magazine.*',
-                DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
-            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
-            ->where('is_delete', 0)
-            ->where('is_open', 1)
+                DB::raw("(CASE WHEN {$cardAlias}.folder IS NOT NULL
+                    THEN {$cardUrl}
+                    WHEN at1000.folder IS NOT NULL
+                    THEN {$modalUrl}
+                    ELSE {$originalUrl}
+                END) as image_url"))
+            ->leftJoin('AF_attachment as at', 'at.idx', 'AF_magazine.attachment_idx')
+            ->leftJoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftJoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftJoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftJoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
+            })
+            ->where('AF_magazine.is_delete', 0)
+            ->where('AF_magazine.is_open', 1)
             ->orderby('AF_magazine.register_time', 'desc')
             ->limit(3)
             ->get();

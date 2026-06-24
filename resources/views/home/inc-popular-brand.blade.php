@@ -16,7 +16,7 @@
                         @if($loop->index >= 5)
                         @else
                         <ul class="swiper-slide">
-                            <li class="popular_banner" style="background:url('{{ $brand->imgUrl }}') no-repeat center center / cover;">
+                            <li class="popular_banner" data-bg="{{ $brand->imgUrl }}" style="background-repeat:no-repeat; background-position:center center; background-size:cover;">
                                 <div class="txt_box">
                                     <p>
                                         <b>{{$brand->subtext1 == '' ? ' ' : $brand->subtext1}}</b><br/>{{$brand->subtext2 == '' ? ' ' : $brand->subtext2}}
@@ -27,7 +27,7 @@
                             @foreach($brand->product_info as $key => $info)
                                 <li class="prod_item">
                                     <div class="img_box">
-                                        <a href="/product/detail/{{ $info['mdp_gidx'] }}"><img src="{{ $info['mdp_gimg'] }}" alt=""></a>
+                                        <a href="/product/detail/{{ $info['mdp_gidx'] }}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $info['mdp_gimg'] }}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a>
                                         <button class="zzim_btn prd_{{ $info['mdp_gidx'] }} {{ ($brand->product_interest[$info['mdp_gidx']] == 1) ? 'active' : '' }}" pidx="{{ $info['mdp_gidx'] }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                                     </div>
                                     <!-- 고객사 요청으로 삭제 -->

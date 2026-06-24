@@ -259,7 +259,7 @@
                     <ul class="main_board_list2">
                         @foreach($data['magazine'] as $item)
                         <li>
-                            <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="{{ $item->image_url }}" alt=""></a></div>
+                            <div class="img_box"><a href="/magazine/detail/{{ $item->idx }}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $item->image_url }}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a></div>
                             <div class="txt_box">
                                 <a href="/magazine/detail/{{ $item->idx }}">
                                     <b>[{{ $item->category_list }}] {{$item->title}}</b>
