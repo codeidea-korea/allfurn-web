@@ -201,22 +201,36 @@ const loadDeferredBackground = (element)=>{
     }
 }
 
+const loadDeferredFrame = (frame)=>{
+    const $frame = $(frame);
+    const src = $frame.attr('data-src');
+
+    if(src){
+        $frame.attr('src', src);
+        $frame.removeAttr('data-src');
+    }
+}
+
 const loadDeferredAsset = (element)=>{
-    if(element.tagName && element.tagName.toLowerCase() === 'img'){
+    const tagName = element.tagName && element.tagName.toLowerCase();
+
+    if(tagName === 'img'){
         loadDeferredImage(element);
+    }else if(tagName === 'iframe'){
+        loadDeferredFrame(element);
     }else{
         loadDeferredBackground(element);
     }
 }
 
 const loadDeferredImages = (scope)=>{
-    $(`${scope} img[data-src], ${scope} [data-bg]`).each(function(){
+    $(`${scope} img[data-src], ${scope} iframe[data-src], ${scope} [data-bg]`).each(function(){
         loadDeferredAsset(this);
     })
 }
 
 const observeDeferredAssets = ()=>{
-    const assets = $('img[data-src], [data-bg]').toArray();
+    const assets = $('img[data-src], iframe[data-src], [data-bg]').toArray();
 
     if(!assets.length){
         return;
