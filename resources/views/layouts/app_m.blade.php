@@ -26,6 +26,7 @@
     @stack('preload')
     @php
         $deferMobileOptionalScripts = trim($__env->yieldContent('deferMobileOptionalScripts')) === 'true';
+        $disableTailwindCdn = trim($__env->yieldContent('disableTailwindCdn')) === 'true';
     @endphp
     <link rel="stylesheet" href="/css/m/font.css?{{ date('Ymdhis') }}">
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css?{{ date('Ymdhis') }}"> --}}
@@ -120,7 +121,9 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js?{{ date('Ymdhis') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js?{{ date('Ymdhis') }}"></script>
     @endif
-    <script src="https://cdn.tailwindcss.com"></script>
+    @unless($disableTailwindCdn)
+        <script src="https://cdn.tailwindcss.com"></script>
+    @endunless
     {{-- <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script> --}}
     <script src="/js/m/swiper-bundle.min.js?{{ date('Ymdhis') }}"></script>
 
@@ -137,6 +140,18 @@
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
         <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     @endunless
+    @if($disableTailwindCdn)
+        <style>
+            .\!w-auto{width:auto!important}.\!flex-grow-0{flex-grow:0!important}.\!py-4{padding-top:1rem!important;padding-bottom:1rem!important}
+            .mb-2{margin-bottom:.5rem}.mb-8{margin-bottom:2rem}.mt-2\.5{margin-top:.625rem}.mt-7{margin-top:1.75rem}.mt-14{margin-top:3.5rem}.mx-auto{margin-left:auto;margin-right:auto}
+            .grid{display:grid}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.flex-1{flex:1 1 0%}.flex-wrap{flex-wrap:wrap}.gap-7{gap:1.75rem}
+            .h-\[51px\]{height:51px}.h-\[217px\]{height:217px}.h-\[320px\]{height:320px}.w-10{width:2.5rem}.w-1\/3{width:33.333333%}
+            .p-10{padding:2.5rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-20{padding-left:5rem;padding-right:5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.pb-10{padding-bottom:2.5rem}
+            .border-stone-300{--tw-border-opacity:1;border-color:rgb(214 211 209 / var(--tw-border-opacity))}.border-stone-400{--tw-border-opacity:1;border-color:rgb(168 162 158 / var(--tw-border-opacity))}
+            .bg-transparent{background-color:transparent}.text-base{font-size:1rem;line-height:1.5rem}.text-stone-500{--tw-text-opacity:1;color:rgb(120 113 108 / var(--tw-text-opacity))}.text-stone-800{--tw-text-opacity:1;color:rgb(41 37 36 / var(--tw-text-opacity))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity))}
+            .object-cover{object-fit:cover}.table-auto{table-layout:auto}
+        </style>
+    @endif
 </head>
 <body>
 @php 

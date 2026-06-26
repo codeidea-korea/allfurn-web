@@ -1,4 +1,5 @@
 @extends('layouts.app_m')
+@section('disableTailwindCdn', 'true')
 @section('deferMobileOptionalScripts', 'true')
 @php
     $mainVisualLcpImage = null;
