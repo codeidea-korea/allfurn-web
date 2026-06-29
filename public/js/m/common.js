@@ -229,8 +229,15 @@ const loadDeferredImages = (scope)=>{
     })
 }
 
+const isDeferredAssetInClosedModal = (element)=>{
+    const $modal = $(element).closest('.modal');
+
+    return $modal.length > 0 && !$modal.hasClass('show');
+}
+
 const observeDeferredAssets = ()=>{
-    const assets = $('img[data-src], iframe[data-src], [data-bg]').toArray();
+    const assets = $('img[data-src], iframe[data-src], [data-bg]').toArray()
+        .filter((asset)=>!isDeferredAssetInClosedModal(asset));
 
     if(!assets.length){
         return;

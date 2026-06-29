@@ -73,7 +73,7 @@
                                 break;
                         }
                         ?>
-                        <li class="swiper-slide"><a href="{{$link}}"><img src="{{$item->imgUrl}}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a></li>
+                        <li class="swiper-slide"><a href="{{$link}}"><img src="{{$item->imgUrl}}" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async" fetchpriority="{{ $loop->first ? 'high' : 'low' }}" alt=""></a></li>
                     @endforeach
                 </ul>
                 <div class="pager"></div>
@@ -377,16 +377,12 @@ const initPopupSwiper = ()=>{
     }
 
     popup = new Swiper('.modal .intro_popup .popup_slide',{
-    loop: true,
-    speed:700,
-    autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-    },
-    pagination: {
-        el: ".modal .intro_popup .pager",
-        type: "bullets",
-    },
+        loop: false,
+        speed:700,
+        pagination: {
+            el: ".modal .intro_popup .pager",
+            type: "bullets",
+        },
     });
 
     return popup;
