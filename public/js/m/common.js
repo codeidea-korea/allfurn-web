@@ -356,6 +356,16 @@ const ajaxPageLoad = {
             const imageTags = $('img');
             for (let idx = 0; idx < imageTags.length; idx++) {
                 const imageTag = imageTags[idx];
+                const src = imageTag.currentSrc || imageTag.src || '';
+
+                if(
+                    imageTag.dataset && imageTag.dataset.src ||
+                    src.indexOf('data:image/gif') === 0 ||
+                    $(imageTag).closest('.modal:not(.show)').length > 0
+                ) {
+                    continue;
+                }
+
                 if(! imageTag.complete) {
                     // 하나라도 false 라면 return
                     return false;
