@@ -151,18 +151,6 @@ var header_banner = new Swiper(".header_banner_slide", {
     },
 });
 
-function escapeSearchHtml(value) {
-    return String(value).replace(/[&<>"']/g, function(match) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        }[match];
-    });
-}
-
 const getSearchData = () => {
     fetch("/home/getSearchData", {
         headers: {
@@ -174,10 +162,9 @@ const getSearchData = () => {
         var keywordPart = "";
         if (json['keywords'].length > 0) {
             for(i=0; i<json['keywords'].length; i++) {
-                var keyword = escapeSearchHtml(json['keywords'][i]['keyword']);
                 keywordPart += '' +
                     '<li class="flex items-center justify-between text-sm">' +
-                    '   <a href="javascript:;" class="search-keyword-item" data-idx="' + keyword + '">' + keyword + '</a>' +
+                    '   <a href="javascript:;" onClick="clickKeyword(\'' + json['keywords'][i]['keyword'] + '\')" data-idx="' + json['keywords'][i]['keyword'] + '">' + json['keywords'][i]['keyword'] + '</a>' +
                     '   <button class="a11y" onclick="deleteSearchKeyword('+ json['keywords'][i]['idx'] +')">' +
                     '       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-400">' +
                     '           <path d="M18 6 6 18"></path>' +
@@ -312,24 +299,11 @@ $(document).on('click', '.search_btn svg', function() {
     }
 })
 
-$(document).on('click', '.search-keyword-item', function() {
-    clickKeyword($(this).attr('data-idx'));
-})
-
 function clickKeyword(keyword) {
-    keyword = $.trim(String(keyword));
-    if(!keyword) {
-        return;
-    }
-
-    $('[data-idx]').filter(function() {
-        return $(this).attr('data-idx') === keyword;
-    }).css('color', '#FB4760');
+    $('[data-idx='+keyword+']').css('color', '#FB4760');
     $('#loadingContainer').show();
 
-    var encodedKeyword = encodeURIComponent(keyword);
-
-    fetch("/home/search/" + encodedKeyword, {
+    fetch("/home/search/" + keyword, {
         method: 'PUT',
         headers: {
             'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -338,7 +312,7 @@ function clickKeyword(keyword) {
         return response.json();
     }).then(json => {
         if (json.success == true) {
-            location.href = '/product/search?kw=' + encodedKeyword;
+            location.href = '/product/search?kw=' + keyword;
         }
     });
 }
