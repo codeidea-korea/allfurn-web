@@ -79,6 +79,18 @@
 <div id="globalsearch-modal" class="globalsearch-modal"></div>
 
 <script>
+    function escapeSearchHtml(value) {
+        return String(value).replace(/[&<>"']/g, function(match) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[match];
+        });
+    }
+
     const getSearchData = () => {
         fetch("/home/getSearchData", {
             headers: {
@@ -90,8 +102,9 @@
             var keywordPart = "";
             if (json['keywords'].length > 0) {
                 for(i=0; i<json['keywords'].length; i++) {
+                    var keyword = escapeSearchHtml(json['keywords'][i]['keyword']);
                     keywordPart += '<div class="row">' +
-                        ' <div class="row__text" onClick="clickKeyword(\'' + json['keywords'][i]['keyword'] + '\')" data-idx="' + json['keywords'][i]['keyword'] + '" style="cursor:pointer;">'+json['keywords'][i]['keyword']+'</div>' +
+                        ' <div class="row__text search-keyword-item" data-idx="' + keyword + '" style="cursor:pointer;">'+keyword+'</div>' +
                         ' <a role="button" href="javascript:void(0)" onclick="deleteSearchKeyword(' + json['keywords'][i]['idx'] + ')">' +
                         '     <div class="ico__delete10"><span class="a11y">삭제하기</span></div>' +
                         ' </a>' +
@@ -214,6 +227,10 @@
         $('#search_keyword').focus();
     })
 
+    $(document).on('click', '.search-keyword-item', function() {
+        clickKeyword($(this).attr('data-idx'));
+    })
+
     // 검색
     if ($('#search_keyword').length) {
         document.getElementById('search_keyword').addEventListener('change', evt => {
@@ -222,7 +239,14 @@
     }
 
     function clickKeyword(keyword) {
-        fetch("/home/search/" + keyword, {
+        keyword = $.trim(String(keyword));
+        if(!keyword) {
+            return;
+        }
+
+        var encodedKeyword = encodeURIComponent(keyword);
+
+        fetch("/home/search/" + encodedKeyword, {
             method: 'PUT',
             headers: {
                 'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -231,7 +255,7 @@
             return response.json();
         }).then(json => {
             if (json.success == true) {
-                location.replace('/product/search?kw=' + keyword);
+                location.replace('/product/search?kw=' + encodedKeyword);
             }
         });
     }
