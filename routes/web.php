@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 //Authenticate의 파라미터가 이곳으로 전달
 Route::get('/', 'HomeController@index');
+Route::get('/main', 'HomeController@home');
 
 Route::get('/mwelcome', 'HomeController@mwelcome');
 Route::prefix('home')->group(function() {
