@@ -46,7 +46,7 @@ class Authenticate extends Middleware
     	if (! $request->expectsJson()) {
 
             $fullUri = $request->fullUrl();
-            $replaceUrl = ($fullUri);
+            $replaceUrl = urlencode($fullUri);
         
     		// 모바일 UA 체크
     		$ua = $request->userAgent() ?? '';

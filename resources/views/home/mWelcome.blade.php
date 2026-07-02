@@ -243,8 +243,8 @@ function checkMobile(){
                 const pendingTime = new Date().getTime() - callTime;
 
                 if (result.success) {             
-                    var replaceUrlParam = "{{ $replaceUrl ?? '' }}";
-                    var finalUrl = replaceUrlParam ? "/main?replaceUrl=" + replaceUrlParam : "/";       
+                    var replaceUrlParam = {!! json_encode($replaceUrl ?? '', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!};
+                    var finalUrl = getSafeRedirectUrl(replaceUrlParam);
                     if(pendingTime > 1100) {
                         document.querySelector('.splash').classList.remove('splash');
                         //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
@@ -288,6 +288,24 @@ function checkMobile(){
         @if(!isset($isweb) || $isweb != 'Y')
         location.replace('/?isweb=Y');
         @endif
+    }
+    function getSafeRedirectUrl(url) {
+        if (!url) {
+            return '/';
+        }
+
+        try {
+            const redirectUrl = new URL(url, window.location.origin);
+            const allowedHosts = ['all-furn.com', 'www.all-furn.com', window.location.hostname];
+
+            if (!allowedHosts.includes(redirectUrl.hostname)) {
+                return '/';
+            }
+
+            return redirectUrl.href;
+        } catch (e) {
+            return '/';
+        }
     }
     </script>
 </body>
