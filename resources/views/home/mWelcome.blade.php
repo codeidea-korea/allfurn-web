@@ -248,14 +248,14 @@ function checkMobile(){
                     if(pendingTime > 1100) {
                         document.querySelector('.splash').classList.remove('splash');
                         //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
-                        location.replace(finalUrl);
+                        redirectAfterSignin(finalUrl);
                         //location.href = '/';
 //                        $('.splash').removeClass('splash');
                     } else {
                         setTimeout(() => {
                             document.querySelector('.splash').classList.remove('splash');
                             //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
-                            location.replace(finalUrl);
+                            redirectAfterSignin(finalUrl);
                             //location.href = '/';
 //                            $('.splash').removeClass('splash');
                         }, (1100 - pendingTime));
@@ -289,6 +289,32 @@ function checkMobile(){
         location.replace('/?isweb=Y');
         @endif
     }
+    function redirectAfterSignin(url) {
+        if (!url || url === '/' || url === window.location.origin + '/') {
+            location.replace('/');
+            return;
+        }
+
+        try {
+            sessionStorage.setItem('allfurnPushBackHome', 'Y');
+        } catch (e) {
+            console.log(e);
+        }
+
+        location.href = addPushBackHomeParam(url);
+    }
+
+    window.addEventListener('pageshow', function () {
+        try {
+            if (location.search.indexOf('replaceUrl=') !== -1 && sessionStorage.getItem('allfurnPushBackHome') === 'Y') {
+                sessionStorage.removeItem('allfurnPushBackHome');
+                location.replace('/');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
     function getSafeRedirectUrl(url) {
         if (!url) {
             return '/';
@@ -305,6 +331,16 @@ function checkMobile(){
             return redirectUrl.href;
         } catch (e) {
             return '/';
+        }
+    }
+
+    function addPushBackHomeParam(url) {
+        try {
+            const redirectUrl = new URL(url, window.location.origin);
+            redirectUrl.searchParams.set('pushBackHome', 'Y');
+            return redirectUrl.href;
+        } catch (e) {
+            return url;
         }
     }
     </script>
