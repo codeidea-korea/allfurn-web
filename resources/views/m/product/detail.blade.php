@@ -10,7 +10,7 @@
     <div id="content">
         <div class="prod_detail_top">
             <div class="img_box">
-                <a href="javascript:goProductBack()" class="back"><svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>
+                <a href="javascript:window.history.back()" class="back"><svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>
                 <div class="count_pager dark_type"><b>1</b> / 12</div>
                 <div class="big_thumb">
                     <ul class="swiper-wrapper">
@@ -1547,43 +1547,5 @@
         $minus.trigger('click');
     }
 
-    var allfurnPushBackHome = new URLSearchParams(window.location.search).get('pushBackHome') === 'Y';
-
-    function goProductBack() {
-        try {
-            if (isPushBackHome()) {
-                sessionStorage.removeItem('allfurnPushBackHome');
-                location.replace('/');
-                return;
-            }
-        } catch (e) {
-            console.log(e);
-        }
-
-        window.history.back();
-    }
-
-    function isPushBackHome() {
-        if (allfurnPushBackHome || new URLSearchParams(window.location.search).get('pushBackHome') === 'Y') {
-            return true;
-        }
-
-        try {
-            return sessionStorage.getItem('allfurnPushBackHome') === 'Y';
-        } catch (e) {
-            return false;
-        }
-    }
-
-    if (allfurnPushBackHome) {
-        try {
-            const cleanUrl = new URL(window.location.href);
-            cleanUrl.searchParams.delete('pushBackHome');
-            history.replaceState(null, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
-            sessionStorage.setItem('allfurnPushBackHome', 'Y');
-        } catch (e) {
-            console.log(e);
-        }
-    }
 </script>
 @endsection
