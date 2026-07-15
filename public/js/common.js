@@ -391,14 +391,52 @@ $('.file_input').on('change', function() {
 
 const ajaxPageLoad = {
     variables: {
-        timer: null
+        timer: null,
+        startedAt: null,
+        maxWaitMs: 2500
     },
     actions: {
+        clearTimer: function(){
+            if(ajaxPageLoad.variables.timer) {
+                clearTimeout(ajaxPageLoad.variables.timer);
+                ajaxPageLoad.variables.timer = null;
+            }
+        },
+        shouldWaitImage: function(imageTag){
+            if(! imageTag || imageTag.complete) {
+                return false;
+            }
+
+            const src = imageTag.currentSrc || imageTag.src || '';
+            if(src.indexOf('data:image') === 0) {
+                return false;
+            }
+
+            const modal = imageTag.closest ? imageTag.closest('.modal') : null;
+            if(modal && ! modal.classList.contains('show')) {
+                return false;
+            }
+
+            if(! (imageTag.offsetWidth || imageTag.offsetHeight || imageTag.getClientRects().length)) {
+                return false;
+            }
+
+            const rect = imageTag.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+            const margin = 200;
+
+            if(rect.bottom < -margin || rect.top > viewportHeight + margin || rect.right < -margin || rect.left > viewportWidth + margin) {
+                return false;
+            }
+
+            return true;
+        },
         isLoadCompleteImage: function(){
             const imageTags = $('img');
             for (let idx = 0; idx < imageTags.length; idx++) {
                 const imageTag = imageTags[idx];
-                if(! imageTag.complete) {
+                if(ajaxPageLoad.actions.shouldWaitImage(imageTag)) {
                     // 하나라도 false 라면 return
                     return false;
                 }
@@ -406,11 +444,23 @@ const ajaxPageLoad = {
             return true;
         },
         checkLoadedImage: function(){
-            if(ajaxPageLoad.actions.isLoadCompleteImage()) {
+            if(! ajaxPageLoad.variables.startedAt) {
+                ajaxPageLoad.variables.startedAt = Date.now();
+            }
+
+            const elapsed = Date.now() - ajaxPageLoad.variables.startedAt;
+            if(ajaxPageLoad.actions.isLoadCompleteImage() || elapsed >= ajaxPageLoad.variables.maxWaitMs) {
                 $('#loadingContainer').hide();
+                ajaxPageLoad.actions.clearTimer();
+                ajaxPageLoad.variables.startedAt = null;
                 return false;
             }
             ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
+        },
+        startCheck: function(delay){
+            ajaxPageLoad.actions.clearTimer();
+            ajaxPageLoad.variables.startedAt = Date.now();
+            ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, delay || 200);
         }
     }
 };
@@ -420,6 +470,8 @@ $(document).ready(function(){
     $.ajax = (options) => {
         const beforeSendFn = (options && options.beforeSend) || function(a,b){};
         options.beforeSend = (a,b) => {
+            ajaxPageLoad.actions.clearTimer();
+            ajaxPageLoad.variables.startedAt = null;
             $('#loadingContainer').show();
             beforeSendFn(a,b);
         };
@@ -432,7 +484,7 @@ $(document).ready(function(){
             } else if (location.pathname == '/product/search' || location.pathname == '/wholesaler/search') {
                 // none;
             } else {
-                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
+                ajaxPageLoad.actions.startCheck(200);
             }
         };
         originFn(options);
