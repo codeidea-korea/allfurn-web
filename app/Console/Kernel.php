@@ -29,11 +29,11 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('reset:aicount')
                  ->timezone('Asia/Seoul')
-                 ->dailyAt('24:00');
+                 ->dailyAt('00:00');
         
         $schedule->command('ai:clean-temp')
                  ->timezone('Asia/Seoul')
-                 ->dailyAt('24:00');
+                 ->dailyAt('00:00');
 
         $schedule->command('push:daily-new-products')
                  ->timezone('Asia/Seoul')
