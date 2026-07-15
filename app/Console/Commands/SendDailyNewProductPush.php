@@ -1,0 +1,221 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\ProductStateHistory;
+use App\Models\PushQ;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+class SendDailyNewProductPush extends Command
+{
+    private const TIMEZONE = 'Asia/Seoul';
+    private const LINK_TYPE = 5;
+    private const PRODUCT_LINK = '/product/new';
+
+    /**
+     * @var string
+     */
+    protected $signature = 'push:daily-new-products
+                            {--date= : 기준일 YYYY-MM-DD}
+                            {--dry-run : 푸시 큐를 생성하지 않고 조회 결과만 확인}';
+
+    /**
+     * @var string
+     */
+    protected $description = '전날 17시부터 당일 16시 59분까지 등록된 신상품 수와 최근 신상품 이미지로 전체 회원 푸시를 생성합니다.';
+
+    /**
+     * @return int
+     */
+    public function handle()
+    {
+        try {
+            $baseDate = $this->resolveBaseDate();
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            return 1;
+        }
+
+        $startAt = $baseDate->copy()->subDay()->setTime(17, 0, 0);
+        $endAt = $baseDate->copy()->setTime(17, 0, 0);
+        $marker = 'daily-new-products:' . $baseDate->format('Y-m-d');
+
+        if ($this->alreadyQueued($marker)) {
+            $this->info('이미 생성된 신상품 푸시입니다. marker=' . $marker);
+            return 0;
+        }
+
+        $count = $this->newProductQuery($startAt, $endAt)
+            ->count(DB::raw('distinct h.product_idx'));
+
+        if ($count < 1) {
+            $this->info(sprintf(
+                '신상품이 없어 푸시를 생성하지 않습니다. (%s ~ %s)',
+                $startAt->format('Y-m-d H:i:s'),
+                $endAt->copy()->subSecond()->format('Y-m-d H:i:s')
+            ));
+            return 0;
+        }
+
+        $latestProduct = $this->newProductQuery($startAt, $endAt)
+            ->select('p.*', 'h.idx as history_idx', 'h.register_time as sold_at')
+            ->orderBy('h.register_time', 'desc')
+            ->orderBy('h.idx', 'desc')
+            ->first();
+
+        if ($latestProduct === null) {
+            $this->error('신상품 개수는 확인되었지만 최근 상품을 찾지 못했습니다.');
+            return 1;
+        }
+
+        $attachmentIdx = $this->representativeAttachmentIdx($latestProduct->attachment_idx);
+        $title = '신상품 ' . number_format($count) . '개가 올라왔어요';
+        $content = '최근 판매중 전환 상품: ' . $this->limitText($latestProduct->name, 35) . '. 지금 신상품을 확인해보세요.';
+
+        if ($this->option('dry-run')) {
+            $this->line('[DRY RUN] 신상품 푸시 생성 예정');
+            $this->line('기간: ' . $startAt->format('Y-m-d H:i:s') . ' ~ ' . $endAt->copy()->subSecond()->format('Y-m-d H:i:s'));
+            $this->line('개수: ' . number_format($count));
+            $this->line('최근 상품 idx: ' . $latestProduct->idx);
+            $this->line('판매중 전환 이력 idx: ' . $latestProduct->history_idx);
+            $this->line('판매중 전환 시간: ' . $latestProduct->sold_at);
+            $this->line('대표 이미지 attachment_idx: ' . $attachmentIdx);
+            $this->line('제목: ' . $title);
+            $this->line('내용: ' . $content);
+            return 0;
+        }
+
+        $push = new PushQ();
+        $push->type = 'push';
+        $push->title = $title;
+        $push->content = $content;
+        $push->push_info = $marker;
+        $push->attachment_idx = $attachmentIdx;
+        $push->app_link_type = self::LINK_TYPE;
+        $push->app_link = self::PRODUCT_LINK;
+        $push->web_link_type = self::LINK_TYPE;
+        $push->web_link = self::PRODUCT_LINK;
+        $push->send_type = 'G';
+        $push->send_target = 'A';
+        $push->state = 'W';
+        $push->send_date = Carbon::now(self::TIMEZONE)->addSeconds(5)->format('Y-m-d H:i:s');
+        $push->is_ad = 0;
+        $push->is_delete = 0;
+        $push->register_time = DB::raw('now()');
+        $push->save();
+
+        Log::info('[DailyNewProductPush] push queued', [
+            'push_idx' => $push->idx,
+            'marker' => $marker,
+            'count' => $count,
+            'latest_product_idx' => $latestProduct->idx,
+            'latest_history_idx' => $latestProduct->history_idx,
+            'latest_sold_at' => $latestProduct->sold_at,
+            'attachment_idx' => $attachmentIdx,
+            'start_at' => $startAt->format('Y-m-d H:i:s'),
+            'end_at' => $endAt->format('Y-m-d H:i:s'),
+        ]);
+
+        $this->info('신상품 푸시 큐를 생성했습니다. push_idx=' . $push->idx . ', marker=' . $marker);
+        return 0;
+    }
+
+    /**
+     * @return \Carbon\Carbon
+     * @throws \Exception
+     */
+    private function resolveBaseDate()
+    {
+        $date = $this->option('date');
+
+        if ($date === null || $date === '') {
+            return Carbon::now(self::TIMEZONE)->startOfDay();
+        }
+
+        $baseDate = Carbon::createFromFormat('Y-m-d', $date, self::TIMEZONE);
+
+        if ($baseDate === false || $baseDate->format('Y-m-d') !== $date) {
+            throw new \Exception('--date 옵션은 YYYY-MM-DD 형식이어야 합니다.');
+        }
+
+        return $baseDate->startOfDay();
+    }
+
+    /**
+     * @param string $marker
+     * @return bool
+     */
+    private function alreadyQueued($marker)
+    {
+        return PushQ::where('is_delete', 0)
+            ->where('push_info', $marker)
+            ->exists();
+    }
+
+    /**
+     * @param \Carbon\Carbon $startAt
+     * @param \Carbon\Carbon $endAt
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function newProductQuery(Carbon $startAt, Carbon $endAt)
+    {
+        return ProductStateHistory::from('AF_product_state_history as h')
+            ->join('AF_product as p', 'p.idx', '=', 'h.product_idx')
+            ->join('AF_admin as a', 'a.idx', '=', 'h.admin_idx')
+            ->where('h.type', 'S')
+            ->where('p.is_new_product', 1)
+            ->whereIn('p.state', ['S', 'O'])
+            ->whereNull('p.deleted_at')
+            ->where('h.register_time', '>=', $startAt->format('Y-m-d H:i:s'))
+            ->where('h.register_time', '<', $endAt->format('Y-m-d H:i:s'));
+    }
+
+    /**
+     * @param string|null $attachmentIdxes
+     * @return int
+     */
+    private function representativeAttachmentIdx($attachmentIdxes)
+    {
+        if ($attachmentIdxes === null || trim($attachmentIdxes) === '') {
+            return 0;
+        }
+
+        $attachmentIdxes = explode(',', $attachmentIdxes);
+
+        foreach ($attachmentIdxes as $attachmentIdx) {
+            $attachmentIdx = trim($attachmentIdx);
+            if ($attachmentIdx !== '' && ctype_digit($attachmentIdx) && (int) $attachmentIdx > 0) {
+                return (int) $attachmentIdx;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param string|null $text
+     * @param int $limit
+     * @return string
+     */
+    private function limitText($text, $limit)
+    {
+        $text = trim((string) $text);
+
+        if ($text === '') {
+            return '신상품';
+        }
+
+        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+            return mb_strlen($text, 'UTF-8') > $limit
+                ? mb_substr($text, 0, $limit, 'UTF-8') . '...'
+                : $text;
+        }
+
+        return strlen($text) > $limit
+            ? substr($text, 0, $limit) . '...'
+            : $text;
+    }
+}

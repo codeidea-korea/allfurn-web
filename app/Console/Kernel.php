@@ -34,6 +34,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('ai:clean-temp')
                  ->timezone('Asia/Seoul')
                  ->dailyAt('24:00');
+
+        $schedule->command('push:daily-new-products')
+                 ->timezone('Asia/Seoul')
+                 ->dailyAt('17:00')
+                 ->withoutOverlapping();
     }
 
     /**
