@@ -32,6 +32,10 @@ use Illuminate\Support\FacadesStorage;
 
 class HomeService
 {
+    private const HOME_CACHE_LOCK_SECONDS = 180;
+    private const HOME_CACHE_COLD_WAIT_ATTEMPTS = 80;
+    private const HOME_CACHE_COLD_WAIT_MICROSECONDS = 250000;
+
     /**
      * 홈페이지 데이터 가져오기
      * @return
@@ -123,7 +127,7 @@ class HomeService
 
         $md_product_interest = array();
         $theme_name_list = [];
-        $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true);
+        $md_product_info = normalizeProductInfoImageUrls(json_decode($data['md_product_ad']['md_product_info'], true));
         foreach ($md_product_info as $key => $theme) {
             array_push($theme_name_list, $theme['th_name']);
             foreach ($theme['groups'] as $key => $goods) {
@@ -178,19 +182,19 @@ class HomeService
 
 
     // 모듈 분리
-    function getProductAds($page) {
+    function getProductAds($page, $device = null, $forceRefresh = false) {
         $offset = isset($page['offset']) ? (int) $page['offset'] : 0;
         $limit = isset($page['limit']) ? (int) $page['limit'] : 40;
-        $device = getDeviceType() === 'm.' ? 'mobile' : 'pc';
-        $cacheKey = 'home:product_ads:'.$device.':offset:'.$offset.':limit:'.$limit.':v1';
+        $device = $this->resolveHomeCacheDevice($device);
+        $cacheKey = $this->homeCacheKey('product_ads', $device, $offset, $limit);
 
-        $product_ad = Cache::remember($cacheKey, 300, function () use ($offset, $limit) {
+        $builder = function () use ($offset, $limit, $device) {
             $products = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                '. $this->homeProductThumbnailSelect('at'))
+                '. $this->homeProductThumbnailSelect('at', $device))
             )
             ->join('AF_product', function ($query) {
                 $query->on('AF_product.idx', 'AF_product_ad.product_idx')
@@ -224,7 +228,13 @@ class HomeService
             return $products->groupBy('ad_price')->flatMap(function ($items) {
                 return $items->shuffle();
             })->slice($offset, $limit)->values();
-        });
+        };
+
+        if ($forceRefresh) {
+            return $this->refreshHomeCache($cacheKey, $builder);
+        }
+
+        $product_ad = $this->readOrBuildHomeCache($cacheKey, $builder);
 
         return $this->applyProductInterest($product_ad);
     }
@@ -259,18 +269,18 @@ class HomeService
         });
     }
 
-    function getNewProducts($page) {
+    function getNewProducts($page, $device = null, $forceRefresh = false) {
         $offset = isset($page['offset']) ? (int) $page['offset'] : 0;
         $limit = isset($page['limit']) ? (int) $page['limit'] : 40;
-        $device = getDeviceType() === 'm.' ? 'mobile' : 'pc';
-        $cacheKey = 'home:new_products:'.$device.':offset:'.$offset.':limit:'.$limit.':v1';
+        $device = $this->resolveHomeCacheDevice($device);
+        $cacheKey = $this->homeCacheKey('new_products', $device, $offset, $limit);
 
-        $new_product = Cache::remember($cacheKey, 300, function () use ($offset, $limit) {
+        $builder = function () use ($offset, $limit, $device) {
             return Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
                 DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                     WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                     ELSE "" END) as companyName,
-                    '. $this->homeProductThumbnailSelect('at'))
+                    '. $this->homeProductThumbnailSelect('at', $device))
                 )
                 ->leftjoin('AF_attachment as at', function($query) {
                     $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
@@ -294,9 +304,95 @@ class HomeService
                 ->orderBy('AF_product.register_time', 'desc')
                 ->offset($offset)->limit($limit)
                 ->get();
-        });
+        };
+
+        if ($forceRefresh) {
+            return $this->refreshHomeCache($cacheKey, $builder);
+        }
+
+        $new_product = $this->readOrBuildHomeCache($cacheKey, $builder);
 
         return $this->applyProductInterest($new_product);
+    }
+
+    public function warmHomeCaches($device, $offset = 0, $limit = 40)
+    {
+        $page = [
+            'offset' => (int) $offset,
+            'limit' => (int) $limit,
+        ];
+
+        return [
+            'product_ads' => $this->getProductAds($page, $device, true),
+            'new_products' => $this->getNewProducts($page, $device, true),
+        ];
+    }
+
+    private function readOrBuildHomeCache($cacheKey, \Closure $builder)
+    {
+        $cached = Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $lock = Cache::lock($cacheKey.':refresh_lock', self::HOME_CACHE_LOCK_SECONDS);
+        if ($lock->get()) {
+            try {
+                $cached = Cache::get($cacheKey);
+                if ($cached !== null) {
+                    return $cached;
+                }
+
+                $value = $builder();
+                Cache::forever($cacheKey, $value);
+                return $value;
+            } finally {
+                $lock->release();
+            }
+        }
+
+        for ($attempt = 0; $attempt < self::HOME_CACHE_COLD_WAIT_ATTEMPTS; $attempt++) {
+            usleep(self::HOME_CACHE_COLD_WAIT_MICROSECONDS);
+            $cached = Cache::get($cacheKey);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
+
+        return $builder();
+    }
+
+    private function refreshHomeCache($cacheKey, \Closure $builder)
+    {
+        $lock = Cache::lock($cacheKey.':refresh_lock', self::HOME_CACHE_LOCK_SECONDS);
+        if (! $lock->get()) {
+            return false;
+        }
+
+        try {
+            Cache::forever($cacheKey, $builder());
+            return true;
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function homeCacheKey($section, $device, $offset, $limit)
+    {
+        return 'home:'.$section.':'.$device.':offset:'.$offset.':limit:'.$limit.':v1';
+    }
+
+    private function resolveHomeCacheDevice($device = null)
+    {
+        if ($device === null) {
+            return getDeviceType() === 'm.' ? 'mobile' : 'pc';
+        }
+
+        if (! in_array($device, ['pc', 'mobile'], true)) {
+            throw new \InvalidArgumentException('Home cache device must be pc or mobile.');
+        }
+
+        return $device;
     }
     function getPopularbrandAds() {
         $popularbrand_ad = Banner::select('AF_banner_ad.*', 
@@ -326,7 +422,7 @@ class HomeService
         
         foreach($popularbrand_ad as $brand){
             $brand_product_interest = array();
-            $brand_product_info = json_decode($brand->product_info, true);
+            $brand_product_info = normalizeProductInfoImageUrls(json_decode($brand->product_info, true));
             $brand->product_info = $brand_product_info;
             foreach ($brand_product_info as $key => $info) {
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
@@ -538,10 +634,11 @@ class HomeService
         ]);
     }
 
-    private function homeProductThumbnailSelect($attachmentAlias)
+    private function homeProductThumbnailSelect($attachmentAlias, $device = null)
     {
         $cdnUrl = preImgUrl();
-        $cardAlias = getDeviceType() === 'm.' ? $attachmentAlias.'400' : $attachmentAlias.'600';
+        $device = $this->resolveHomeCacheDevice($device);
+        $cardAlias = $device === 'mobile' ? $attachmentAlias.'400' : $attachmentAlias.'600';
         $modalAlias = $attachmentAlias.'1000';
         $originalUrl = "CONCAT('{$cdnUrl}', {$attachmentAlias}.folder,'/', {$attachmentAlias}.filename)";
         $cardUrl = "CONCAT('{$cdnUrl}', {$cardAlias}.folder,'/', {$cardAlias}.filename)";

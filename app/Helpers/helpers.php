@@ -33,6 +33,58 @@ function preImgUrl() {
     return env('AWS_S3_URL', 'https://cdn-w5ydnw3kw8pn.vultrcdn.com/');
 }
 
+function cdnImgUrl($url) {
+    if (! is_string($url) || $url === '') {
+        return $url;
+    }
+
+    $cdnUrl = rtrim(preImgUrl(), '/') . '/';
+    $objectUrls = [
+        'https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/',
+        'http://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/',
+    ];
+
+    foreach ($objectUrls as $objectUrl) {
+        if (stripos($url, $objectUrl) === 0) {
+            return $cdnUrl . ltrim(substr($url, strlen($objectUrl)), '/');
+        }
+    }
+
+    return $url;
+}
+
+function normalizeProductInfoImageUrls($productInfo) {
+    if (! is_array($productInfo)) {
+        return $productInfo;
+    }
+
+    foreach ($productInfo as $key => $item) {
+        if (is_array($item)) {
+            if (isset($item['mdp_gimg'])) {
+                $item['mdp_gimg'] = cdnImgUrl($item['mdp_gimg']);
+            }
+
+            if (isset($item['groups']) && is_array($item['groups'])) {
+                $item['groups'] = normalizeProductInfoImageUrls($item['groups']);
+            }
+
+            $productInfo[$key] = $item;
+        } elseif (is_object($item)) {
+            if (isset($item->mdp_gimg)) {
+                $item->mdp_gimg = cdnImgUrl($item->mdp_gimg);
+            }
+
+            if (isset($item->groups) && is_array($item->groups)) {
+                $item->groups = normalizeProductInfoImageUrls($item->groups);
+            }
+
+            $productInfo[$key] = $item;
+        }
+    }
+
+    return $productInfo;
+}
+
 function api() {
     return env('ALLFURN_API_DOMAIN', 'https://api.all-furn.com');
 }

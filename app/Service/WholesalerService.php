@@ -189,7 +189,7 @@ class WholesalerService {
 
         foreach($data['popularbrand_ad'] as $brand){
             $brand_product_interest = array();
-            $brand_product_info = json_decode($brand->product_info, true);
+            $brand_product_info = normalizeProductInfoImageUrls(json_decode($brand->product_info, true));
             $brand->product_info = $brand_product_info;
             foreach ($brand_product_info as $key => $info) {
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
@@ -420,7 +420,7 @@ class WholesalerService {
 
         foreach($data['popularbrand_ad'] as $brand){
             $brand_product_interest = array();
-            $brand_product_info = json_decode($brand->product_info, true);
+            $brand_product_info = normalizeProductInfoImageUrls(json_decode($brand->product_info, true));
             $brand->product_info = $brand_product_info;
             foreach ($brand_product_info as $key => $info) {
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
@@ -669,7 +669,7 @@ class WholesalerService {
         foreach($banners as $banner){
             if ($banner->ad_location == "popularbrand" || $banner->ad_location == "dealbrand"){
                 // 도매업체-인기브랜드, 이달의딜-인기브랜드는 선택한 상품들 정보로...
-                $banner_product_info = json_decode($banner->product_info, true);
+                $banner_product_info = normalizeProductInfoImageUrls(json_decode($banner->product_info, true));
                 foreach ($banner_product_info as $key => $info) {
                     if ($info['mdp_gidx'] != ""){
                         array_push($arr_product_idx, $info['mdp_gidx']);
@@ -862,7 +862,7 @@ class WholesalerService {
         foreach($banners as $banner){
             if ($banner->ad_location == "popularbrand" || $banner->ad_location == "dealbrand"){
                 // 도매업체-인기브랜드, 이달의딜-인기브랜드는 선택한 상품들 정보로...
-                $banner_product_info = json_decode($banner->product_info, true);
+                $banner_product_info = normalizeProductInfoImageUrls(json_decode($banner->product_info, true));
                 foreach ($banner_product_info as $key => $info) {
                     if ($info['mdp_gidx'] != ""){
                         array_push($arr_product_idx, $info['mdp_gidx']);

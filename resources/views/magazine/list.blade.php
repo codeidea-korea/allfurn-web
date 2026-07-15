@@ -101,7 +101,7 @@
                                             
                                         }
                                     @endphp
-                                    <img src="{{ $tmp ? $tmp : '' }}" alt="">
+                                    <img src="{{ $tmp ? cdnImgUrl($tmp) : '' }}" alt="">
                                 @endif
                             </a>
                         </div>

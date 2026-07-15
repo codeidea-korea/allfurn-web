@@ -2230,7 +2230,7 @@ class ProductService
 
         foreach($list as $brand){
             $brand_product_interest = array();
-            $brand_product_info = json_decode($brand->product_info, true);
+            $brand_product_info = normalizeProductInfoImageUrls(json_decode($brand->product_info, true));
             $brand->product_info = $brand_product_info;
             foreach ($brand_product_info as $key => $info) {
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')

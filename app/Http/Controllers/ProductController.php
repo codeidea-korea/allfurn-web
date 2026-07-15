@@ -590,7 +590,8 @@ class ProductController extends BaseController
             $data[$key]->subtext1 = $banner['subtext1'];
             $data[$key]->subtext2 = $banner['subtext2'];
             $data[$key]->content = $banner['content'];
-            $data[$key]->product_info = $banner['product_info'];
+            $productInfo = normalizeProductInfoImageUrls(json_decode($banner['product_info']));
+            $data[$key]->product_info = json_encode($productInfo, JSON_UNESCAPED_UNICODE);
             $data[$key]->banner_type = $banner['banner_type'];
             $data[$key]->bg_color = $banner['bg_color'];
             $data[$key]->font_color = $banner['font_color'];
@@ -602,7 +603,6 @@ class ProductController extends BaseController
             $data[$key]->appBigImgUrl = $banner['appBigImgUrl'];
             $data[$key]->app51ImgUrl = $banner['app51ImgUrl'];
 
-            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
             foreach ($productInfo as $i => $info) {
@@ -659,7 +659,8 @@ class ProductController extends BaseController
             $data[$key]->subtext1 = $banner['subtext1'];
             $data[$key]->subtext2 = $banner['subtext2'];
             $data[$key]->content = $banner['content'];
-            $data[$key]->product_info = $banner['product_info'];
+            $productInfo = normalizeProductInfoImageUrls(json_decode($banner['product_info']));
+            $data[$key]->product_info = json_encode($productInfo, JSON_UNESCAPED_UNICODE);
             $data[$key]->banner_type = $banner['banner_type'];
             $data[$key]->bg_color = $banner['bg_color'];
             $data[$key]->font_color = $banner['font_color'];
@@ -669,7 +670,6 @@ class ProductController extends BaseController
             $data[$key]->imgUrl = $banner['imgUrl'];
             $data[$key]->mainImgUrl = $banner['mainImgUrl'];
 
-            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
             foreach ($productInfo as $i => $info) {

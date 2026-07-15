@@ -39,6 +39,11 @@ class Kernel extends ConsoleKernel
                  ->timezone('Asia/Seoul')
                  ->dailyAt('17:00')
                  ->withoutOverlapping();
+
+        $schedule->command('home:warm-cache')
+                 ->timezone('Asia/Seoul')
+                 ->cron('*/4 * * * *')
+                 ->withoutOverlapping(10);
     }
 
     /**
