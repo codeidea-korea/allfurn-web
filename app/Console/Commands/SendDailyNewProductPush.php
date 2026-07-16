@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\Log;
 class SendDailyNewProductPush extends Command
 {
     private const TIMEZONE = 'Asia/Seoul';
-    private const LINK_TYPE = 5;
-    private const PRODUCT_LINK = '/product/new';
+    private const LINK_TYPE = 1;
 
     /**
      * @var string
      */
     protected $signature = 'push:daily-new-products
-                            {--date= : 기준일 YYYY-MM-DD}
-                            {--dry-run : 푸시 큐를 생성하지 않고 조회 결과만 확인}';
+                        {--date= : 기준일 YYYY-MM-DD}
+                        {--dry-run : 푸시 큐를 생성하지 않고 조회 결과만 확인}
+                        {--force : 이미 생성된 신상품 푸시가 있어도 새 큐를 생성}';
 
     /**
      * @var string
@@ -43,9 +43,19 @@ class SendDailyNewProductPush extends Command
         $endAt = $baseDate->copy()->setTime(17, 0, 0);
         $marker = 'daily-new-products:' . $baseDate->format('Y-m-d');
 
-        if ($this->alreadyQueued($marker)) {
+        $alreadyQueued = $this->alreadyQueued($marker);
+
+        if ($alreadyQueued && ! $this->option('dry-run') && ! $this->option('force')) {
             $this->info('이미 생성된 신상품 푸시입니다. marker=' . $marker);
             return 0;
+        }
+
+        if ($alreadyQueued && $this->option('dry-run')) {
+            $this->warn('이미 생성된 신상품 푸시가 있지만 dry-run 조회를 계속합니다. marker=' . $marker);
+        }
+
+        if ($alreadyQueued && $this->option('force')) {
+            $this->warn('이미 생성된 신상품 푸시가 있지만 --force 옵션으로 새 큐를 생성합니다. marker=' . $marker);
         }
 
         $count = $this->newProductQuery($startAt, $endAt)
@@ -72,8 +82,9 @@ class SendDailyNewProductPush extends Command
         }
 
         $attachmentIdx = $this->representativeAttachmentIdx($latestProduct->attachment_idx);
-        $title = '신상품 ' . number_format($count) . '개가 올라왔어요';
-        $content = '최근 판매중 전환 상품: ' . $this->limitText($latestProduct->name, 35) . '. 지금 신상품을 확인해보세요.';
+        $productLink = $this->productDetailLink($latestProduct->idx);
+        $title = '오늘 신상품 ' . number_format($count) . '건이 등록되었습니다.';
+        $content = '지금 바로 확인하고 트랜드를 선점하세요!';
 
         if ($this->option('dry-run')) {
             $this->line('[DRY RUN] 신상품 푸시 생성 예정');
@@ -95,9 +106,9 @@ class SendDailyNewProductPush extends Command
         $push->push_info = $marker;
         $push->attachment_idx = $attachmentIdx;
         $push->app_link_type = self::LINK_TYPE;
-        $push->app_link = self::PRODUCT_LINK;
+        $push->app_link = $productLink;
         $push->web_link_type = self::LINK_TYPE;
-        $push->web_link = self::PRODUCT_LINK;
+        $push->web_link = $productLink;
         $push->send_type = 'G';
         $push->send_target = 'A';
         $push->state = 'W';
@@ -115,12 +126,22 @@ class SendDailyNewProductPush extends Command
             'latest_history_idx' => $latestProduct->history_idx,
             'latest_sold_at' => $latestProduct->sold_at,
             'attachment_idx' => $attachmentIdx,
+            'link' => $productLink,
             'start_at' => $startAt->format('Y-m-d H:i:s'),
             'end_at' => $endAt->format('Y-m-d H:i:s'),
         ]);
 
         $this->info('신상품 푸시 큐를 생성했습니다. push_idx=' . $push->idx . ', marker=' . $marker);
         return 0;
+    }
+
+    /**
+     * @param int $productIdx
+     * @return string
+     */
+    private function productDetailLink($productIdx)
+    {
+        return rtrim((string) config('app.url'), '/') . config('constants.POPUP.TYPE.PRODUCT', '/product/detail/') . $productIdx;
     }
 
     /**
