@@ -141,7 +141,7 @@ class SendDailyNewProductPush extends Command
      */
     private function productDetailLink($productIdx)
     {
-        return rtrim((string) config('app.url'), '/') . config('constants.POPUP.TYPE.PRODUCT', '/product/detail/') . $productIdx;
+        return rtrim((string) config('app.url'), '/') . config('constants.POPUP.TYPE.PRODUCT', '/product/detail/') . $productIdx . '?pushBackHome=Y';
     }
 
     /**
