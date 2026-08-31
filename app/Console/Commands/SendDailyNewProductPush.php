@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\ProductStateHistory;
 use App\Models\PushQ;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -58,8 +57,9 @@ class SendDailyNewProductPush extends Command
             $this->warn('이미 생성된 신상품 푸시가 있지만 --force 옵션으로 새 큐를 생성합니다. marker=' . $marker);
         }
 
-        $count = $this->newProductQuery($startAt, $endAt)
-            ->count(DB::raw('distinct h.product_idx'));
+        $count = DB::query()
+            ->fromSub($this->newProductQuery($startAt, $endAt), 'new_products')
+            ->count(DB::raw('distinct idx'));
 
         if ($count < 1) {
             $this->info(sprintf(
@@ -70,10 +70,10 @@ class SendDailyNewProductPush extends Command
             return 0;
         }
 
-        $latestProduct = $this->newProductQuery($startAt, $endAt)
-            ->select('p.*', 'h.idx as history_idx', 'h.register_time as sold_at')
-            ->orderBy('h.register_time', 'desc')
-            ->orderBy('h.idx', 'desc')
+        $latestProduct = DB::query()
+            ->fromSub($this->newProductQuery($startAt, $endAt), 'new_products')
+            ->orderBy('sold_at', 'desc')
+            ->orderBy('sort_idx', 'desc')
             ->first();
 
         if ($latestProduct === null) {
@@ -91,8 +91,9 @@ class SendDailyNewProductPush extends Command
             $this->line('기간: ' . $startAt->format('Y-m-d H:i:s') . ' ~ ' . $endAt->copy()->subSecond()->format('Y-m-d H:i:s'));
             $this->line('개수: ' . number_format($count));
             $this->line('최근 상품 idx: ' . $latestProduct->idx);
-            $this->line('판매중 전환 이력 idx: ' . $latestProduct->history_idx);
-            $this->line('판매중 전환 시간: ' . $latestProduct->sold_at);
+            $this->line('판매중 기준: ' . $latestProduct->source);
+            $this->line('판매중 전환 이력 idx: ' . ($latestProduct->history_idx ?: '-'));
+            $this->line('판매중 기준 시간: ' . $latestProduct->sold_at);
             $this->line('대표 이미지 attachment_idx: ' . $attachmentIdx);
             $this->line('제목: ' . $title);
             $this->line('내용: ' . $content);
@@ -124,6 +125,7 @@ class SendDailyNewProductPush extends Command
             'count' => $count,
             'latest_product_idx' => $latestProduct->idx,
             'latest_history_idx' => $latestProduct->history_idx,
+            'latest_source' => $latestProduct->source,
             'latest_sold_at' => $latestProduct->sold_at,
             'attachment_idx' => $attachmentIdx,
             'link' => $productLink,
@@ -179,19 +181,53 @@ class SendDailyNewProductPush extends Command
     /**
      * @param \Carbon\Carbon $startAt
      * @param \Carbon\Carbon $endAt
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
     private function newProductQuery(Carbon $startAt, Carbon $endAt)
     {
-        return ProductStateHistory::from('AF_product_state_history as h')
+        $startAt = $startAt->format('Y-m-d H:i:s');
+        $endAt = $endAt->format('Y-m-d H:i:s');
+
+        $stateChangedProducts = DB::table('AF_product_state_history as h')
             ->join('AF_product as p', 'p.idx', '=', 'h.product_idx')
             ->join('AF_admin as a', 'a.idx', '=', 'h.admin_idx')
+            ->select(
+                'p.idx',
+                'p.attachment_idx',
+                'h.idx as history_idx',
+                'h.register_time as sold_at',
+                DB::raw("'state_history' as source"),
+                'h.idx as sort_idx'
+            )
             ->where('h.type', 'S')
             ->where('p.is_new_product', 1)
             ->whereIn('p.state', ['S', 'O'])
             ->whereNull('p.deleted_at')
-            ->where('h.register_time', '>=', $startAt->format('Y-m-d H:i:s'))
-            ->where('h.register_time', '<', $endAt->format('Y-m-d H:i:s'));
+            ->where('h.register_time', '>=', $startAt)
+            ->where('h.register_time', '<', $endAt);
+
+        $initialSellingProducts = DB::table('AF_product as p')
+            ->select(
+                'p.idx',
+                'p.attachment_idx',
+                DB::raw('NULL as history_idx'),
+                'p.register_time as sold_at',
+                DB::raw("'product_register' as source"),
+                'p.idx as sort_idx'
+            )
+            ->where('p.is_new_product', 1)
+            ->whereIn('p.state', ['S', 'O'])
+            ->whereNull('p.deleted_at')
+            ->where('p.register_time', '>=', $startAt)
+            ->where('p.register_time', '<', $endAt)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('AF_product_state_history as h')
+                    ->whereColumn('h.product_idx', 'p.idx')
+                    ->where('h.type', 'S');
+            });
+
+        return $stateChangedProducts->unionAll($initialSellingProducts);
     }
 
     /**
