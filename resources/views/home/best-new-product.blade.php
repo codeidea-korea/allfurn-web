@@ -23,7 +23,7 @@
                                 <a href="/product/detail/{{ $item->idx }}">
                                     <span>{{ $item->companyName }}</span>
                                     <p>{{ $item->name }}</p>
-                                    <b>{{ number_format($item->price, 0) }}원</b>
+                                    <b>{{ productDisplayPrice($item) }}</b>
                                 </a>
                             </div>
                         </li>
@@ -54,7 +54,7 @@
                                 <div>
                                     <h5>{{ $item->companyName }}</h5>
                                     <p>{{ $item->name }}</p>
-                                    <b>{{ number_format($item->price, 0) }}원</b>
+                                    <b>{{ productDisplayPrice($item) }}</b>
                                 </div>
                                 <a href="/product/detail/{{ $item->idx }}">제품상세보기</a>
                             </div>

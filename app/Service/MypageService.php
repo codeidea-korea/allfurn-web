@@ -597,7 +597,7 @@ class MypageService
                 $query -> on('AF_retail.idx', 'AF_product.company_idx') -> where('AF_product.company_type', 'R');
             })
             -> select(
-                'AF_product.idx', 'AF_product.name AS product_name', 'AF_product.price', 'AF_product.price_text', 'AF_product_interest_folder.name AS folder_name',
+                'AF_product.idx', 'AF_product.name AS product_name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text', 'AF_product_interest_folder.name AS folder_name',
             DB::raw(
                 'IF(AF_wholesale.idx IS NOT NULL, AF_wholesale.company_name, AF_retail.company_name) 
                 AS company_name'),

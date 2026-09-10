@@ -823,7 +823,9 @@
 
             // 상품가격
             if ($('input[name="price_exposure"]:checked').val() == 0) {
-                $('.prod_detail_top .info p').text($('.select-group__dropdown p:first-child').text());
+                $('.prod_detail_top .info p').text('업체 문의');
+            } else if (Number($('#product-price').val()) <= 0) {
+                $('.prod_detail_top .info p').text('업체 문의');
             } else {
                 $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
             }
@@ -1503,9 +1505,7 @@
                         $('#price_exposure01').attr('checked', false);
                         $('#price_exposure02').attr('checked', true);
                         $('.select-group__dropdown').css('display', 'block');
-                        if (result['price_text'] != null) {
-                            $('.select-group__dropdown .dropdown__title').text(result['price_text'])
-                        }
+                        $('.select-group__dropdown .dropdown__title').text('업체 문의')
                     }
 
                     // 결제 방식

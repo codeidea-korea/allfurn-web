@@ -85,6 +85,36 @@ function normalizeProductInfoImageUrls($productInfo) {
     return $productInfo;
 }
 
+function productIsInquiryPrice($productOrPrice, $isPriceOpen = null) {
+    if (is_array($productOrPrice)) {
+        $price = $productOrPrice['price'] ?? 0;
+        $isPriceOpen = $productOrPrice['is_price_open'] ?? $isPriceOpen;
+    } elseif (is_object($productOrPrice)) {
+        $price = $productOrPrice->price ?? 0;
+        $isPriceOpen = $productOrPrice->is_price_open ?? $isPriceOpen;
+    } else {
+        $price = $productOrPrice;
+    }
+
+    $numericPrice = (int) preg_replace('/[^0-9-]/', '', (string) $price);
+
+    return (string) $isPriceOpen !== '1' || $numericPrice <= 0;
+}
+
+function productDisplayPrice($productOrPrice, $isPriceOpen = null) {
+    if (productIsInquiryPrice($productOrPrice, $isPriceOpen)) {
+        return '업체 문의';
+    }
+
+    $price = is_array($productOrPrice)
+        ? ($productOrPrice['price'] ?? 0)
+        : (is_object($productOrPrice) ? ($productOrPrice->price ?? 0) : $productOrPrice);
+
+    $numericPrice = (int) preg_replace('/[^0-9-]/', '', (string) $price);
+
+    return number_format($numericPrice, 0) . '원';
+}
+
 function api() {
     return env('ALLFURN_API_DOMAIN', 'https://api.all-furn.com');
 }

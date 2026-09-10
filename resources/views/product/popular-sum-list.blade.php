@@ -24,13 +24,7 @@
                                     <a href="/product/detail/{{$product->idx}}">
                                         <span>{{$product->company_name}}</span>
                                         <p>{{$product->name}}</p>
-                                        <b>
-                                            @if( $product->is_price_open == 1 )
-                                                {{number_format( $product->price )}}원
-                                            @else
-                                                {{$product->price_text}}
-                                            @endif
-                                        </b>
+                                        <b>{{ productDisplayPrice($product) }}</b>
                                     </a>
                                 </div>
                             </li>
@@ -75,13 +69,7 @@
                                                 <a href="/product/detail/{{$item->idx}}">
                                                     <span>{{$item->company_name}}</span>
                                                     <p>{{$item->name}}</p>
-                                                    <b>
-                                                        @if($item->is_price_open == 1)
-                                                            {{number_format( $item->price )}}원
-                                                        @else
-                                                            {{$item->price_text}}
-                                                        @endif
-                                                    </b>
+                                                    <b>{{ productDisplayPrice($item) }}</b>
                                                 </a>
                                             </div>
                                         </li>
@@ -169,10 +157,10 @@
                             tabInnerHtml += '</div>';
                             tabInnerHtml += '<div class="txt_box">';
                                 tabInnerHtml += '<a href="/product/detail/'+data.lists[i].idx+'"><span>'+data.lists[i].company_name+'</span><p>'+data.lists[i].name+'</p><b>';
-                                    if (data.lists[i].is_price_open == 1){
+                                    if (data.lists[i].is_price_open == 1 && Number(data.lists[i].price) > 0){
                                         tabInnerHtml += data.lists[i].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
                                     }else{
-                                        tabInnerHtml += data.lists[i].price_text
+                                        tabInnerHtml += '업체 문의';
                                     }
                                 tabInnerHtml += '</b></a>';
                             tabInnerHtml += '</div>';

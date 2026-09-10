@@ -122,7 +122,7 @@
                                             <a href="/product/detail/{{$best->idx}}">
                                                 <span>{{$best->companyName}}</span>
                                                 <p>{{$best->name}}</p>
-                                                <b>{{$best->is_price_open ? number_format($best->price, 0).'원': $best->price_text}}</b>
+                                                <b>{{ productDisplayPrice($best) }}</b>
                                             </a>
                                         </div>
                                     </li>
@@ -183,7 +183,7 @@
                                     <div>
                                         <h5>{{$best->companyName}}</h5>
                                         <p>{{$best->name}}</p>
-                                        <b>{{$best->is_price_open ? number_format($best->price, 0).'원': $best->price_text}}</b>
+                                        <b>{{ productDisplayPrice($best) }}</b>
                                     </div>
                                     <a href="/product/detail/{{$best->idx}}">제품상세보기</a>
                                 </div>

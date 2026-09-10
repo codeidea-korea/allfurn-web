@@ -80,6 +80,10 @@
 
             var key = $(this).data('zoomkey');
             var prod = <?=json_encode( $dealbrand ); ?>;
+            function displayStoredProductPrice(value) {
+                var numericPrice = Number(String(value || '').replace(/[^0-9]/g, ''));
+                return numericPrice > 0 ? numericPrice.toLocaleString('ko-KR') + '원' : '업체 문의';
+            }
 
             html = '';
             $.each( prod, function(index) {
@@ -102,7 +106,7 @@
                         '       <div>' +
                         '           <h5>' + prod[index]['company_name'] + '</h5>' +
                         '               <p>' + item[idx]['mdp_gname'] + '</p>' +
-                        '           <b>' + item[idx]['mdp_gprice'] + '</b>' +
+                        '           <b>' + displayStoredProductPrice(item[idx]['mdp_gprice']) + '</b>' +
                         '       </div>' +
                         '   </div>' +
                         '</li>';

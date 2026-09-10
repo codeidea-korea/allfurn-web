@@ -24,7 +24,7 @@
                             <a href="/product/detail/{{$item->product_idx}}">
                                 <span>{{$item->companyName}}</span>
                                 <p>{{$item->name}}</p>
-                                <b>{{number_format( $item->price )}}원</b>
+                                <b>{{ productDisplayPrice($item) }}</b>
                             </a>
                         </div>
                     </li>

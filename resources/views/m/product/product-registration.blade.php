@@ -1793,7 +1793,7 @@ function saveProduct(regType) {
     form.append("category_idx", $('#categoryIdx').data('category_idx'));
     form.append('price', $('#product-price').val());
     form.append('is_price_open', $('button.is_price_open.active').data('val'));
-    form.append('price_text', $('.price_text').val());
+    form.append('price_text', '업체 문의');
     form.append('is_new_product', $('.is_new_product').val());
 
     var pay_type = '';
@@ -1933,7 +1933,9 @@ function preview() {
 
     // 상품가격
     if ($('button.is_price_open.active').data('val') == 0) {
-        $('.prod_detail_top .info p').text($('.price_text').text());
+        $('.prod_detail_top .info p').text('업체 문의');
+    } else if (Number($('#product-price').val()) <= 0) {
+        $('.prod_detail_top .info p').text('업체 문의');
     } else {
         $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
     }
@@ -2183,7 +2185,7 @@ function loadProduct() {
                     $('button.is_price_open[data-val=0]').addClass('active');
                     $('.div_ptxt0').addClass('active');
                     $('.div_ptxt1').removeClass('active')
-                    $('.price_text').text(result['price_text']);
+                    $('.price_text').val('업체 문의');
                 }
 
                 // 신상품 설정

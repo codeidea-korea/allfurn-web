@@ -36,7 +36,7 @@
                                         <a href="/product/detail/{{ $goods['mdp_gidx'] }}">
                                             <span>{{ $goods['mdp_gcompany'] }}</span>
                                             <p>{{ $goods['mdp_gname'] }}</p>
-                                            <b>{{ $goods['mdp_gprice'] }}</b>
+                                            <b>{{ productDisplayPrice($goods['mdp_gprice'] ?? 0, 1) }}</b>
                                         </a>
                                     </div>
                                 </li>
