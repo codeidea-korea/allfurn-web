@@ -128,22 +128,47 @@ class ProductController extends BaseController
 
         $data = $request->all();
 
+        $newAttachmentIds = []; 
+
         if (isset($data['files'])) {
-            $attachmentIdx = '';
             $data['thumb_idx'] = array();
             foreach ($data['files'] as $file) {
                 if (is_file($file)) {
-                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $stored = $this->storeProductImageAsWebp($file);
                     $tmpattachmentIdx = $this->productService->saveAttachment($stored);
-                    $attachmentIdx .= $tmpattachmentIdx . ',';
+                    
+                    $newAttachmentIds[] = $tmpattachmentIdx; // 새로 발급받은 ID를 배열에 순서대로 보관
                     array_push($data['thumb_idx'], $tmpattachmentIdx);
                 }
             }
+        }
 
-            if (isset($data['attachmentIdx'])) {
-                $data['attachmentIdx'] .= ',' . substr($attachmentIdx, 0, -1);
-            } else {
-                $data['attachmentIdx'] = substr($attachmentIdx, 0, -1);
+        if (isset($data['image_order']) && !empty($data['image_order'])) {
+            $finalAttachmentIds = [];
+            $orderArray = explode(',', $data['image_order']);
+            $newFileIndex = 0;
+
+            foreach ($orderArray as $item) {
+                if (strpos($item, 'idx:') === 0) {
+                   
+                    $finalAttachmentIds[] = str_replace('idx:', '', $item);
+                } else if (strpos($item, 'ai:') === 0 || strpos($item, 'new:') === 0) {
+                    
+                    if (isset($newAttachmentIds[$newFileIndex])) {
+                        $finalAttachmentIds[] = $newAttachmentIds[$newFileIndex];
+                        $newFileIndex++;
+                    }
+                }
+            }
+            
+            $data['attachmentIdx'] = implode(',', $finalAttachmentIds);
+            
+        } else {
+            $attachmentIdxStr = implode(',', $newAttachmentIds);
+            if (isset($data['attachmentIdx']) && !empty($newAttachmentIds)) {
+                $data['attachmentIdx'] .= ',' . $attachmentIdxStr;
+            } else if (!empty($newAttachmentIds)) {
+                $data['attachmentIdx'] = $attachmentIdxStr;
             }
         }
 
@@ -151,7 +176,7 @@ class ProductController extends BaseController
             $attachmentIdx = 0;
             foreach ($data['files100'] as $file) {
                 if (is_file($file)) {
-                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $stored = $this->storeProductImageAsWebp($file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
 
@@ -168,7 +193,7 @@ class ProductController extends BaseController
             $attachmentIdx = 0;
             foreach ($data['files400'] as $file) {
                 if (is_file($file)) {
-                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $stored = $this->storeProductImageAsWebp($file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
 
@@ -185,7 +210,7 @@ class ProductController extends BaseController
             $attachmentIdx = 0;
             foreach ($data['files600'] as $file) {
                 if (is_file($file)) {
-                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $stored = $this->storeProductImageAsWebp($file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
 
@@ -202,7 +227,7 @@ class ProductController extends BaseController
             $attachmentIdx = 0;
             foreach ($data['files1000'] as $file) {
                 if (is_file($file)) {
-                    $stored = Storage::disk('vultr')->put('product', $file);
+                    $stored = $this->storeProductImageAsWebp($file);
                     $attachmentIdx = $this->productService->saveAttachment($stored);
                 }
 
@@ -565,7 +590,8 @@ class ProductController extends BaseController
             $data[$key]->subtext1 = $banner['subtext1'];
             $data[$key]->subtext2 = $banner['subtext2'];
             $data[$key]->content = $banner['content'];
-            $data[$key]->product_info = $banner['product_info'];
+            $productInfo = normalizeProductInfoImageUrls(json_decode($banner['product_info']));
+            $data[$key]->product_info = json_encode($productInfo, JSON_UNESCAPED_UNICODE);
             $data[$key]->banner_type = $banner['banner_type'];
             $data[$key]->bg_color = $banner['bg_color'];
             $data[$key]->font_color = $banner['font_color'];
@@ -577,7 +603,6 @@ class ProductController extends BaseController
             $data[$key]->appBigImgUrl = $banner['appBigImgUrl'];
             $data[$key]->app51ImgUrl = $banner['app51ImgUrl'];
 
-            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
             foreach ($productInfo as $i => $info) {
@@ -634,7 +659,8 @@ class ProductController extends BaseController
             $data[$key]->subtext1 = $banner['subtext1'];
             $data[$key]->subtext2 = $banner['subtext2'];
             $data[$key]->content = $banner['content'];
-            $data[$key]->product_info = $banner['product_info'];
+            $productInfo = normalizeProductInfoImageUrls(json_decode($banner['product_info']));
+            $data[$key]->product_info = json_encode($productInfo, JSON_UNESCAPED_UNICODE);
             $data[$key]->banner_type = $banner['banner_type'];
             $data[$key]->bg_color = $banner['bg_color'];
             $data[$key]->font_color = $banner['font_color'];
@@ -644,7 +670,6 @@ class ProductController extends BaseController
             $data[$key]->imgUrl = $banner['imgUrl'];
             $data[$key]->mainImgUrl = $banner['mainImgUrl'];
 
-            $productInfo = json_decode($banner['product_info']);
             $interestArr = array();
 
             foreach ($productInfo as $i => $info) {
@@ -748,5 +773,81 @@ class ProductController extends BaseController
         $data['query'] = $productList['list'];
 
         return response()->json($data);
+    }
+
+    private function storeProductImageAsWebp($file): string
+    {
+        if (!function_exists('imagewebp')) {
+            throw new \Exception('Server does not support WebP image conversion.');
+        }
+
+        $sourceContent = file_get_contents($file->getRealPath());
+        $source = imagecreatefromstring($sourceContent);
+
+        if (!$source) {
+            throw new \Exception('Uploaded image could not be read.');
+        }
+
+        $source = $this->fixUploadedJpegOrientation($source, $file);
+
+        if (!imageistruecolor($source)) {
+            imagepalettetotruecolor($source);
+        }
+
+        imagealphablending($source, false);
+        imagesavealpha($source, true);
+
+        ob_start();
+        $converted = imagewebp($source, null, 85);
+        $webpContent = ob_get_clean();
+
+        imagedestroy($source);
+
+        if (!$converted || !$webpContent) {
+            throw new \Exception('WebP image conversion failed.');
+        }
+
+        $fileName = 'product_' . time() . '_' . mt_rand(1000, 9999) . '.webp';
+        $path = 'product/' . $fileName;
+
+        if (!Storage::disk('vultr')->put($path, $webpContent)) {
+            throw new \Exception('WebP image upload failed.');
+        }
+
+        return $path;
+    }
+
+    private function fixUploadedJpegOrientation($image, $file)
+    {
+        if ($file->getMimeType() !== 'image/jpeg' || !function_exists('exif_read_data')) {
+            return $image;
+        }
+
+        $exif = @exif_read_data($file->getRealPath());
+
+        if (!$exif || empty($exif['Orientation'])) {
+            return $image;
+        }
+
+        $rotated = null;
+
+        switch ((int) $exif['Orientation']) {
+            case 3:
+                $rotated = imagerotate($image, 180, 0);
+                break;
+            case 6:
+                $rotated = imagerotate($image, -90, 0);
+                break;
+            case 8:
+                $rotated = imagerotate($image, 90, 0);
+                break;
+        }
+
+        if ($rotated) {
+            imagedestroy($image);
+            return $rotated;
+        }
+
+        return $image;
     }
 }

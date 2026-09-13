@@ -164,12 +164,16 @@
                     result.data.map(function(banner) {
                         
                         var link = banner.web_link;
+
+                        if (banner.web_link_type === '4') {
+                            link = "/help/notice";
+                        }
                         
                         // console.log('link', link);
                         
                         banners += "<div class='swiper-slide'>";
                         banners += `    <a href='${link}'>`;
-                        banners += `        <p class='event__banner' style='background-image:url("https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/banner_ad/${banner.filename}")'></p>`;
+                        banners += `        <p class='event__banner' style='background-image:url("{{ preImgUrl() }}banner_ad/${banner.filename}")'></p>`;
                         banners += '    </a>';
                         banners += '</div>';
                     

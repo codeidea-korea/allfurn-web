@@ -22,9 +22,13 @@
                         <?php 
                             $grand_total = 0; 
                             $is_any_price_hide = false;
+                            $checked_count = 0;
                         ?>
                         @foreach( $lists AS $key => $row )
                             <?php 
+                                if (isset($row->estimate_check) && $row->estimate_check != 'Y') {
+                                    continue;
+                                }
                                 // -----------------------------------------------------------
                                 // 1. 견적가 (Estimate Price)
                                 // -----------------------------------------------------------
@@ -40,10 +44,9 @@
                                 $productBasePrice = isset($row->price) ? (int) str_replace(',', '', $row->price) : 0;
 
                                 // 가격 비공개 여부 체크 (기존 로직 유지)
-                                if( $row->is_price_open == 0 ) {
+                                if ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') {
                                     $is_any_price_hide = true;
                                 }
-
                                 // -----------------------------------------------------------
                                 // 3. 옵션 가격 계산 ($_each_price) 및 옵션 유무 확인 ($hasOption)
                                 // -----------------------------------------------------------
@@ -72,7 +75,7 @@
                                 
                                 // [A] 견적가가 있으면 무조건 더함 (기존 로직 유지 여부 확인 필요, 일단 유지)
                                 // 단, 가격 비공개 상태가 아닐 때만 더하던 기존 로직을 따름
-                                $isPriceHidden = ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의');
+                                $isPriceHidden = ($row->is_price_open == 0);
                                 
                                 if (!$isPriceHidden) {
                                     $grand_total += $estimate_val;
@@ -87,7 +90,7 @@
                                     } else { // 화면에 숫자(가격+옵션)가 뜨는 경우
                                         // -> (상품기본가 + 옵션가격) * 수량 합산
                                         // 주의: 주문서는 '수량'($row->product_count)을 곱해야 정확한 총액이 나옵니다.
-                                        $grand_total += $productBasePrice + $_each_price;
+                                        $grand_total += $productBasePrice + $_each_price ;
                                     }
                                 } else {
                                     // [옵션 없음] 기존 로직 유지
@@ -209,6 +212,7 @@
                         </div>
                         <div class="py-7">
                             @foreach( $lists AS $key => $row )
+                            @if(isset($row->estimate_check) && $row->estimate_check == 'Y')
                             <div class="prod_info">
                                 <div class="img_box">
                                     <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
@@ -260,7 +264,7 @@
                                         </div>
                                         <div class="prod_option">
                                             <div class="name">단가</div>
-                                            <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : $row->price_text) : number_format($row->product_total_price).'원' }}</div>
+                                            <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : $row->price_text) : number_format((int)preg_replace('/[^0-9]/', '', $row->product_total_price)).'원' }}</div>
                                         </div>
                                     @endif
                                     <div class="prod_option">
@@ -274,6 +278,7 @@
                                 </div>
                             </div>
                             <hr>
+                            @endif
                             @endforeach
                         </div>
                     </div>

@@ -1,31 +1,49 @@
+@php
+    $hasProductAds = isset($data['productAd']) && count($data['productAd']) > 0;
+    $prioritizeProductAdLcp = empty($mainVisualLcpImage);
+@endphp
+
 <section class="main_section best_prod">
     <div class="inner">
         <div class="main_tit mb-8 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <h3 class="text-primary">HOT 신상품</h3>
-                <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="/img/icon-defs.svg#zoom"></use></svg>확대보기</button>
+                @if($hasProductAds)
+                    <button class="zoom_btn flex items-center gap-1" onclick="modalOpen('#zoom_view-modal')"><svg><use xlink:href="/img/icon-defs.svg#zoom"></use></svg>확대보기</button>
+                @endif
             </div>
-            <div class="flex items-center gap-7">
-                <div class="count_pager"><b>1</b> / 12</div>
-                <a class="more_btn flex items-center" href="/product/best-new">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
-            </div>
+            @if($hasProductAds)
+                <div class="flex items-center gap-7">
+                    <div class="count_pager"><b>1</b> / 12</div>
+                    <a class="more_btn flex items-center" href="/product/best-new">더보기<svg><use xlink:href="/img/icon-defs.svg#more_icon"></use></svg></a>
+                </div>
+            @endif
         </div>
+        @if($hasProductAds)
         <div class="relative">
             <div class="slide_box ">
-                <ul class="slick_ul">
+                <ul class="slick_ul has-items">
                     @foreach ($data['productAd'] as $item)
                         @if($loop->index >= 120)
                         @else
                         <li class="prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{ $item->idx }}"><img loading="lazy" decoding="async" src="{{ $item->imgUrl }}" alt="" width="285" style="width:285px;" loading="lazy"></a>
+                                <a href="/product/detail/{{ $item->idx }}"><img
+                                    @if($loop->first && $prioritizeProductAdLcp)
+                                        src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
+                                    @elseif($loop->index < 8)
+                                        src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @else
+                                        src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-lazy="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @endif
+                                    decoding="async" alt="" width="285" height="285" style="width:285px;"></a>
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
                                 <a href="/product/detail/{{ $item->idx }}">
                                     <span>{{ $item->companyName }}</span>
                                     <p>{{ $item->name }}</p>
-                                    <b>{{ $item->is_price_open ? number_format($item->price, 0).'원': $item->price_text }}</b>
+                                    <b>{{ productDisplayPrice($item) }}</b>
                                 </a>
                             </div>
                         </li>
@@ -36,14 +54,17 @@
             <button class="slide_arrow prev"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
             <button class="slide_arrow next"><svg><use xlink:href="/img/icon-defs.svg#slide_arrow"></use></svg></button>
         </div>
+        @else
+            <div class="best_prod_empty">등록된 HOT 신상품이 없습니다.</div>
+        @endif
     </div>
 </section>
 
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-<script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+@if($hasProductAds)
 <script>
     $('.best_prod .slide_box ul').slick({
         dots: true,
+        lazyLoad: 'ondemand',
         slidesToShow: 4,
         rows: 2,
         infinite: false,
@@ -73,3 +94,4 @@
 </script>
 
 @include('product.best-new-product-ext')
+@endif

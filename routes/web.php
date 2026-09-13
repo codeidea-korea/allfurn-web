@@ -12,12 +12,17 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+//Authenticate의 파라미터가 이곳으로 전달
 Route::get('/', 'HomeController@index');
+
+Route::get('/mwelcome', 'HomeController@mwelcome');
 Route::prefix('home')->group(function() {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/category', 'HomeController@categoryList');
     Route::get('/getSearchData', 'HomeController@getSearchData');
     Route::get('/welcome', 'HomeController@welcome');
+    
     Route::put('/search/{keyword}', 'HomeController@putSearchKeyword');
     Route::delete('/search/{idx}', 'HomeController@deleteSearchKeyword');
     Route::get('/searchResult', 'HomeController@searchResult');
@@ -141,6 +146,7 @@ Route::prefix('estimate') -> name('estimate') -> group(function(){
     Route::put('/holdEstimate', 'EstimateController@holdEstimate');
     Route::post('/insertOrder', 'EstimateController@insertOrder');
     Route::put('/checkOrder', 'EstimateController@checkOrder');
+    Route::post('/holdOrderCheck', 'EstimateController@holdOrderCheck');
 
     Route::post('/companyList', 'EstimateController@getCompanyList');
     Route::post('/updateResponseMulti', 'EstimateController@updateResponseMulti');
@@ -457,4 +463,73 @@ Route::prefix('ai-allfurn')->name('ai_allfurn.')->group(function(){
     // Route Name: ai_allfurn.status
     Route::get('/status/{taskId}', 'AiAllFurnController@checkStatus')->name('status');
 
+});
+
+Route::group(['prefix' => 'ai-lab', 'as' => 'ai.'], function () {
+    
+    // 1. 테스트 화면 진입
+    // URL: /ai-lab/stability
+    // Controller: StabilityTestController 의 index 메서드 실행
+    Route::get('stability', 'StabilityTestController@index')->name('stability.index');
+
+    // 2. 이미지 생성 요청 (POST)
+    // URL: /ai-lab/stability/generate
+    // Controller: StabilityTestController 의 generate 메서드 실행
+    Route::post('stability/generate', 'StabilityTestController@generate')->name('stability.generate');
+    
+    // ==========================================
+    // 2. OpenAI + Remove.bg (신규 추가)
+    // ==========================================
+    // 누끼는 Remove.bg가, 합성은 DALL·E가 담당
+    // URL: /ai-lab/openai
+    Route::get('openai', 'OpenAiTestController@index')->name('openai.index');
+    Route::post('openai/generate', 'OpenAiTestController@generate')->name('openai.generate');
+
+    // ==========================================
+    // 3. Google Gemini (신규 추가)
+    // ==========================================
+    // 구글의 생성형 AI (Imagen/Nano Banana) 사용
+    // URL: /ai-lab/google
+    Route::get('google', 'GoogleTestController@index')->name('google.index');
+    Route::post('google/generate', 'GoogleTestController@generate')->name('google.generate');
+    
+});
+
+Route::group(['prefix' => 'product/ai', 'as' => 'product.ai.', 'middleware' => ['auth']], function () {
+
+    Route::get('/', 'ProductAiImageController@index')->name('index');
+    
+    // 1단계: 배경 제거 (Remove Background)
+    // 요청: 원본 이미지 파일 -> 응답: 누끼 따진 이미지 경로 (JSON)
+    Route::post('/remove-bg', 'ProductAiImageController@removeBackground')->name('remove_bg');
+
+    // 2단계: 배경 합성 (Generate/Replace Background)
+    // 요청: 누끼 이미지 경로 + 프롬프트 -> 응답: 최종 합성 이미지 URL (JSON)
+    Route::post('/generate-bg', 'ProductAiImageController@generateBackground')->name('generate_bg');
+
+    Route::post('/cleanup', 'ProductAiImageController@cleanupTempFiles')->name('cleanup');
+
+    Route::post('/test-decrement', 'ProductAiImageController@testDecrement')->name('test_decrement');
+
+    Route::get('/get-remain-count', 'ProductAiImageController@getRemainCount')->name('get_remain_count');
+
+    Route::get('increment_count', 'ProductAiImageCountroller@incrementCount')->name('increment_count');
+
+    Route::get('/proxy-image', function (\Illuminate\Http\Request $request) {
+        $url = $request->get('url');
+        
+        if (!$url) {
+            return response('URL이 필요합니다.', 400);
+        }
+
+        // 라라벨 Http 파사드를 이용해 백엔드에서 이미지 다운로드
+        $response = \Illuminate\Support\Facades\Http::get($url);
+        
+        if ($response->successful()) {
+            return response($response->body())
+                ->header('Content-Type', $response->header('Content-Type') ?? 'image/jpeg');
+        }
+
+        return response('이미지를 가져오는데 실패했습니다.', 500);
+    })->name('proxy_image');
 });

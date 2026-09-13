@@ -167,6 +167,28 @@ class EstimateController extends BaseController {
         }
     }
 
+    public function holdOrderCheck(Request $request) {
+        $data = $request -> all();
+        $estimateIdx = "";
+
+        // 데이터가 배열로 넘어오는지 단일로 넘어오는지 체크하여 처리 (updateResponse와 동일한 구조)
+        if(is_array($data)) {
+            for($i = 0; $i < count($data); $i++) {
+                // 보류 상태이므로 '전송됨(is_sended)' 여부는 큰 의미가 없으나 로직 통일을 위해 넘김
+                $data[$i]['is_sended'] = false; 
+                $estimateIdx = $this -> estimateService -> holdOrderCheck($data[$i]);
+            }
+        } else {
+            $estimateIdx = $this -> estimateService -> holdOrderCheck($data);
+        }
+
+        return 
+            response() -> json([
+                'success'   => $estimateIdx != null ? true : false,
+            ]);
+    }
+
+
 
 
 

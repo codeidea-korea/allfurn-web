@@ -181,7 +181,96 @@ $( function() {
 // }
 
 // 모달제어
+const loadDeferredImage = (image)=>{
+    const $image = $(image);
+    const src = $image.attr('data-src');
+
+    if(src){
+        $image.attr('src', src);
+        $image.removeAttr('data-src');
+    }
+}
+
+const loadDeferredBackground = (element)=>{
+    const $element = $(element);
+    const bg = $element.attr('data-bg');
+
+    if(bg){
+        element.style.backgroundImage = `url("${bg.replace(/"/g, '\\"')}")`;
+        $element.removeAttr('data-bg');
+    }
+}
+
+const loadDeferredFrame = (frame)=>{
+    const $frame = $(frame);
+    const src = $frame.attr('data-src');
+
+    if(src){
+        $frame.attr('src', src);
+        $frame.removeAttr('data-src');
+    }
+}
+
+const loadDeferredAsset = (element)=>{
+    const tagName = element.tagName && element.tagName.toLowerCase();
+
+    if(tagName === 'img'){
+        loadDeferredImage(element);
+    }else if(tagName === 'iframe'){
+        loadDeferredFrame(element);
+    }else{
+        loadDeferredBackground(element);
+    }
+}
+
+const loadDeferredImages = (scope)=>{
+    $(`${scope} img[data-src], ${scope} iframe[data-src], ${scope} [data-bg]`).each(function(){
+        loadDeferredAsset(this);
+    })
+}
+
+const isDeferredAssetInClosedModal = (element)=>{
+    const $modal = $(element).closest('.modal');
+
+    return $modal.length > 0 && !$modal.hasClass('show');
+}
+
+const observeDeferredAssets = ()=>{
+    const assets = $('img[data-src], iframe[data-src], [data-bg]').toArray()
+        .filter((asset)=>!isDeferredAssetInClosedModal(asset));
+
+    if(!assets.length){
+        return;
+    }
+
+    if(!('IntersectionObserver' in window)){
+        assets.forEach(loadDeferredAsset);
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, currentObserver)=>{
+        entries.forEach((entry)=>{
+            if(entry.isIntersecting){
+                loadDeferredAsset(entry.target);
+                currentObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin: '400px 0px',
+        threshold: 0.01
+    });
+
+    assets.forEach((asset)=>{
+        observer.observe(asset);
+    });
+}
+
+$(function(){
+    observeDeferredAssets();
+});
+
 const modalOpen = (modal)=>{
+    loadDeferredImages(modal);
     $(`${modal}`).addClass('show');
     $('body').addClass('overflow-hidden');
 }
@@ -267,6 +356,16 @@ const ajaxPageLoad = {
             const imageTags = $('img');
             for (let idx = 0; idx < imageTags.length; idx++) {
                 const imageTag = imageTags[idx];
+                const src = imageTag.currentSrc || imageTag.src || '';
+
+                if(
+                    imageTag.dataset && imageTag.dataset.src ||
+                    src.indexOf('data:image/gif') === 0 ||
+                    $(imageTag).closest('.modal:not(.show)').length > 0
+                ) {
+                    continue;
+                }
+
                 if(! imageTag.complete) {
                     // 하나라도 false 라면 return
                     return false;
@@ -307,4 +406,9 @@ $(document).ready(function(){
         originFn(options);
     };
 
+});
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+        $('#loadingContainer').hide();
+    }
 });

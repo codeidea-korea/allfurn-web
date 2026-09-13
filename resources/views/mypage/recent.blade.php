@@ -38,7 +38,7 @@
                         <a href="/product/detail/{{ $row -> idx }}">
                             <span>{{ $row -> company_name }}</span>
                             <p>{{ $row -> name }}</p>
-                            <b>{{$row->is_price_open ? number_format($row->price, 0).'원': $row->price_text}}</b>
+                            <b>{{ productDisplayPrice($row) }}</b>
                         </a>
                     </div>
                 </li>

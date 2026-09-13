@@ -23,6 +23,7 @@ use App\Models\LikeCompany;
 use App\Models\Club;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\FacadesAuth;
@@ -31,12 +32,28 @@ use Illuminate\Support\FacadesStorage;
 
 class HomeService
 {
+    private const HOME_CACHE_LOCK_SECONDS = 180;
+    private const HOME_CACHE_COLD_WAIT_ATTEMPTS = 80;
+    private const HOME_CACHE_COLD_WAIT_MICROSECONDS = 250000;
+
     /**
      * 홈페이지 데이터 가져오기
      * @return
      */
     public function getHomeData()
     {
+        $homePerfTotalStart = microtime(true);
+        $homePerfLapStart = $homePerfTotalStart;
+        $homePerfLap = function ($label) use (&$homePerfLapStart, $homePerfTotalStart) {
+            $now = microtime(true);
+            \Log::info('[HOME_PERF] '.$label, [
+                'elapsed_ms' => round(($now - $homePerfLapStart) * 1000, 2),
+                'total_ms' => round(($now - $homePerfTotalStart) * 1000, 2),
+                'device' => getDeviceType(),
+            ]);
+            $homePerfLapStart = $now;
+        };
+
         // 배너 상단
         $banner_top_query = Banner::select(
               'AF_banner_ad.company_idx', 'AF_banner_ad.company_type', 'AF_banner_ad.web_link_type'
@@ -73,6 +90,7 @@ class HomeService
         }
         
         $data['banner_top'] = $banner_top;
+        $homePerfLap('banner_top');
 
 
         // 상위 카테고리 목록
@@ -82,6 +100,7 @@ class HomeService
                 $query->on('aat.idx', '=', 'AF_category.icon_attachment_idx');
             })
             ->orderBy('AF_category.order_idx', 'asc')->get();
+        $homePerfLap('categoryAlist');
 
 
         // 베스트 신상품 목록
@@ -89,6 +108,7 @@ class HomeService
         $page['offset'] = 0;
         $page['limit'] = 40;
         $data['productAd'] = $this->getProductAds($page);
+        $homePerfLap('productAd');
        
 
         // 신상품 목록 
@@ -96,6 +116,7 @@ class HomeService
         $page['offset'] = 0;
         $page['limit'] = 40;
         $data['new_product'] = $this->getNewProducts($page);
+        $homePerfLap('new_product');
 
         // MD가 추천하는 테마별 상품
         $data['md_product_ad'] = ProductMd::select('AF_product_md.*')
@@ -106,7 +127,7 @@ class HomeService
 
         $md_product_interest = array();
         $theme_name_list = [];
-        $md_product_info = json_decode($data['md_product_ad']['md_product_info'], true);
+        $md_product_info = normalizeProductInfoImageUrls(json_decode($data['md_product_ad']['md_product_info'], true));
         foreach ($md_product_info as $key => $theme) {
             array_push($theme_name_list, $theme['th_name']);
             foreach ($theme['groups'] as $key => $goods) {
@@ -120,30 +141,40 @@ class HomeService
         $data['md_product_info'] = $md_product_info;
         $data['md_product_ad_theme_list'] = $theme_name_list;
         $data['md_product_interest'] = $md_product_interest;
+        $homePerfLap('md_product');
 
         // 인기 브랜드
         $data['popularbrand_ad'] = $this->getPopularbrandAds();
+        $homePerfLap('popularbrand');
 
         // 할인 상품
         $data['plandiscount_ad'] = $this->getPlandiscountAds();
+        $homePerfLap('plandiscount');
 
         // 동영상 광고
         $data['video_ad'] = $this->getVideos();
+        $homePerfLap('video');
 
         // 매거진
         $data['magazine'] = $this->getMagazines();
+        $homePerfLap('magazine');
 
         // 커뮤니티 인기글
         $data['community'] = $this->getArticles();
+        $homePerfLap('community');
 
         // 가구모임
         $data['club'] = $this->getClubs();
+        $homePerfLap('club');
 
         // 올펀패밀리
         $data['family_ad'] = $this->getFamilies();
+        $homePerfLap('family');
 
         // 팝업
         $data['popup'] = $this->getPopups();
+        $homePerfLap('popup');
+        $homePerfLap('total');
 
         return $data;
     }
@@ -151,21 +182,38 @@ class HomeService
 
 
     // 모듈 분리
-    function getProductAds($page) {
-        $product_ad = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
+    function getProductAds($page, $device = null, $forceRefresh = false) {
+        $offset = isset($page['offset']) ? (int) $page['offset'] : 0;
+        $limit = isset($page['limit']) ? (int) $page['limit'] : 40;
+        $device = $this->resolveHomeCacheDevice($device);
+        $cacheKey = $this->homeCacheKey('product_ads', $device, $offset, $limit);
+
+        $builder = function () use ($offset, $limit, $device) {
+            $products = ProductAd::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
             DB::raw('AF_product_ad.price as ad_price, 
                 (CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                 ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
+                '. $this->homeProductThumbnailSelect('at', $device))
+            )
             ->join('AF_product', function ($query) {
                 $query->on('AF_product.idx', 'AF_product_ad.product_idx')
                     ->whereIn('AF_product.state', ['S', 'O']);
             })
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
             })
             ->where('AF_product_ad.state', 'G')
             ->where('AF_product_ad.start_date', '<', DB::raw("now()"))
@@ -174,33 +222,177 @@ class HomeService
             ->where('AF_product_ad.is_delete', 0)
             ->where('AF_product_ad.is_open', 1)
             // 분해 불가
-            ->orderByRaw('AF_product_ad.price desc, RAND()')
-            ->offset($page['offset'])->limit($page['limit'])
+            ->orderBy('AF_product_ad.price', 'desc')
             ->get();
 
-        return $product_ad;
+            return $products->groupBy('ad_price')->flatMap(function ($items) {
+                return $items->shuffle();
+            })->slice($offset, $limit)->values();
+        };
+
+        if ($forceRefresh) {
+            return $this->refreshHomeCache($cacheKey, $builder);
+        }
+
+        $product_ad = $this->readOrBuildHomeCache($cacheKey, $builder);
+
+        return $this->applyProductInterest($product_ad);
     }
-    function getNewProducts($page) {
-        $new_product = Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
-            DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
-                WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
-                ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl, 
-                (SELECT if(count(idx) > 0, 1, 0) FROM AF_product_interest pi WHERE pi.product_idx = AF_product.idx AND pi.user_idx = '.Auth::user()->idx.') as isInterest'
-            ))
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+
+    private function applyProductInterest($products)
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        if (!Auth::check()) {
+            return $products->map(function ($product) {
+                $product->isInterest = 0;
+                return $product;
+            });
+        }
+
+        $productIds = $products->pluck('idx')->filter()->unique()->values();
+        $interestIds = DB::table('AF_product_interest')
+            ->where('user_idx', Auth::user()->idx)
+            ->whereIn('product_idx', $productIds)
+            ->pluck('product_idx')
+            ->map(function ($productId) {
+                return (int) $productId;
             })
-            ->where([
-                'AF_product.is_new_product' => 1,
-                'AF_product.state' => 'S'
-            ])->whereNull('AF_product.deleted_at');
-            if(getDeviceType() == 'm.') {
-                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->offset($page['offset'])->limit($page['limit'])->get();
-            } else {
-                $new_product = $new_product->orderBy('AF_product.register_time', 'desc')->offset($page['offset'])->limit($page['limit'])->get();
+            ->all();
+        $interestMap = array_flip($interestIds);
+
+        return $products->map(function ($product) use ($interestMap) {
+            $product->isInterest = isset($interestMap[(int) $product->idx]) ? 1 : 0;
+            return $product;
+        });
+    }
+
+    function getNewProducts($page, $device = null, $forceRefresh = false) {
+        $offset = isset($page['offset']) ? (int) $page['offset'] : 0;
+        $limit = isset($page['limit']) ? (int) $page['limit'] : 40;
+        $device = $this->resolveHomeCacheDevice($device);
+        $cacheKey = $this->homeCacheKey('new_products', $device, $offset, $limit);
+
+        $builder = function () use ($offset, $limit, $device) {
+            return Product::select('AF_product.idx', 'AF_product.name', 'AF_product.price', 'AF_product.is_price_open', 'AF_product.price_text',
+                DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
+                    WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
+                    ELSE "" END) as companyName,
+                    '. $this->homeProductThumbnailSelect('at', $device))
+                )
+                ->leftjoin('AF_attachment as at', function($query) {
+                    $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+                })
+                ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                    $query->on('mpg_at.main_attach_idx', 'at.idx');
+                })
+                ->leftjoin('AF_attachment as at400', function($query) {
+                    $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at600', function($query) {
+                    $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+                })
+                ->leftjoin('AF_attachment as at1000', function($query) {
+                    $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
+                })
+                ->where([
+                    'AF_product.is_new_product' => 1,
+                    'AF_product.state' => 'S'
+                ])->whereNull('AF_product.deleted_at')
+                ->orderBy('AF_product.register_time', 'desc')
+                ->offset($offset)->limit($limit)
+                ->get();
+        };
+
+        if ($forceRefresh) {
+            return $this->refreshHomeCache($cacheKey, $builder);
+        }
+
+        $new_product = $this->readOrBuildHomeCache($cacheKey, $builder);
+
+        return $this->applyProductInterest($new_product);
+    }
+
+    public function warmHomeCaches($device, $offset = 0, $limit = 40)
+    {
+        $page = [
+            'offset' => (int) $offset,
+            'limit' => (int) $limit,
+        ];
+
+        return [
+            'product_ads' => $this->getProductAds($page, $device, true),
+            'new_products' => $this->getNewProducts($page, $device, true),
+        ];
+    }
+
+    private function readOrBuildHomeCache($cacheKey, \Closure $builder)
+    {
+        $cached = Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $lock = Cache::lock($cacheKey.':refresh_lock', self::HOME_CACHE_LOCK_SECONDS);
+        if ($lock->get()) {
+            try {
+                $cached = Cache::get($cacheKey);
+                if ($cached !== null) {
+                    return $cached;
+                }
+
+                $value = $builder();
+                Cache::forever($cacheKey, $value);
+                return $value;
+            } finally {
+                $lock->release();
             }
-        return $new_product;
+        }
+
+        for ($attempt = 0; $attempt < self::HOME_CACHE_COLD_WAIT_ATTEMPTS; $attempt++) {
+            usleep(self::HOME_CACHE_COLD_WAIT_MICROSECONDS);
+            $cached = Cache::get($cacheKey);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
+
+        return $builder();
+    }
+
+    private function refreshHomeCache($cacheKey, \Closure $builder)
+    {
+        $lock = Cache::lock($cacheKey.':refresh_lock', self::HOME_CACHE_LOCK_SECONDS);
+        if (! $lock->get()) {
+            return false;
+        }
+
+        try {
+            Cache::forever($cacheKey, $builder());
+            return true;
+        } finally {
+            $lock->release();
+        }
+    }
+
+    private function homeCacheKey($section, $device, $offset, $limit)
+    {
+        return 'home:'.$section.':'.$device.':offset:'.$offset.':limit:'.$limit.':v1';
+    }
+
+    private function resolveHomeCacheDevice($device = null)
+    {
+        if ($device === null) {
+            return getDeviceType() === 'm.' ? 'mobile' : 'pc';
+        }
+
+        if (! in_array($device, ['pc', 'mobile'], true)) {
+            throw new \InvalidArgumentException('Home cache device must be pc or mobile.');
+        }
+
+        return $device;
     }
     function getPopularbrandAds() {
         $popularbrand_ad = Banner::select('AF_banner_ad.*', 
@@ -230,7 +422,7 @@ class HomeService
         
         foreach($popularbrand_ad as $brand){
             $brand_product_interest = array();
-            $brand_product_info = json_decode($brand->product_info, true);
+            $brand_product_info = normalizeProductInfoImageUrls(json_decode($brand->product_info, true));
             $brand->product_info = $brand_product_info;
             foreach ($brand_product_info as $key => $info) {
                 $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
@@ -311,11 +503,34 @@ class HomeService
         return $video_ad;
     }
     function getMagazines() {
+        $cdnUrl = preImgUrl();
+        $cardAlias = getDeviceType() === 'm.' ? 'at400' : 'at600';
+        $originalUrl = "CONCAT('{$cdnUrl}', at.folder, '/', at.filename)";
+        $cardUrl = "CONCAT('{$cdnUrl}', {$cardAlias}.folder, '/', {$cardAlias}.filename)";
+        $modalUrl = "CONCAT('{$cdnUrl}', at1000.folder, '/', at1000.filename)";
+
         return Magazine::select('AF_magazine.*',
-                DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) as image_url'))
-            ->leftJoin('AF_attachment', 'AF_attachment.idx', 'AF_magazine.attachment_idx')
-            ->where('is_delete', 0)
-            ->where('is_open', 1)
+                DB::raw("(CASE WHEN {$cardAlias}.folder IS NOT NULL
+                    THEN {$cardUrl}
+                    WHEN at1000.folder IS NOT NULL
+                    THEN {$modalUrl}
+                    ELSE {$originalUrl}
+                END) as image_url"))
+            ->leftJoin('AF_attachment as at', 'at.idx', 'AF_magazine.attachment_idx')
+            ->leftJoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftJoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftJoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftJoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
+            })
+            ->where('AF_magazine.is_delete', 0)
+            ->where('AF_magazine.is_open', 1)
             ->orderby('AF_magazine.register_time', 'desc')
             ->limit(3)
             ->get();
@@ -389,9 +604,21 @@ class HomeService
             DB::raw('(CASE WHEN AF_product.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_product.company_idx)
                                 WHEN AF_product.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_product.company_idx)
                                 ELSE "" END) as companyName,
-                                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl'))
+                                '. $this->homeProductThumbnailSelect('at')))
             ->leftjoin('AF_attachment as at', function($query) {
                 $query->on('at.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'));
+            })
+            ->leftjoin('AF_mapping_thumb_attachment as mpg_at', function($query) {
+                $query->on('mpg_at.main_attach_idx', 'at.idx');
+            })
+            ->leftjoin('AF_attachment as at400', function($query) {
+                $query->on('at400.idx', 'mpg_at.size_400_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at600', function($query) {
+                $query->on('at600.idx', 'mpg_at.size_600_attach_idx');
+            })
+            ->leftjoin('AF_attachment as at1000', function($query) {
+                $query->on('at1000.idx', 'mpg_at.size_1000_attach_idx');
             })
             ->where([
                 'AF_product.is_new_product' => 1,
@@ -405,6 +632,27 @@ class HomeService
         return response()->json([
             'list'=> $newProduct
         ]);
+    }
+
+    private function homeProductThumbnailSelect($attachmentAlias, $device = null)
+    {
+        $cdnUrl = preImgUrl();
+        $device = $this->resolveHomeCacheDevice($device);
+        $cardAlias = $device === 'mobile' ? $attachmentAlias.'400' : $attachmentAlias.'600';
+        $modalAlias = $attachmentAlias.'1000';
+        $originalUrl = "CONCAT('{$cdnUrl}', {$attachmentAlias}.folder,'/', {$attachmentAlias}.filename)";
+        $cardUrl = "CONCAT('{$cdnUrl}', {$cardAlias}.folder,'/', {$cardAlias}.filename)";
+        $modalUrl = "CONCAT('{$cdnUrl}', {$modalAlias}.folder,'/', {$modalAlias}.filename)";
+
+        return "{$originalUrl} as originalImgUrl,
+                {$cardUrl} as thumbCardImgUrl,
+                {$modalUrl} as thumb1000ImgUrl,
+                (CASE WHEN {$cardAlias}.folder IS NOT NULL
+                    THEN {$cardUrl}
+                    WHEN {$modalAlias}.folder IS NOT NULL
+                    THEN {$modalUrl}
+                    ELSE {$originalUrl}
+                END) as imgUrl";
     }
 
 

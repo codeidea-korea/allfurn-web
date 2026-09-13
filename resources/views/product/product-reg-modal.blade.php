@@ -1165,7 +1165,7 @@
                 </div>
                 <div class="mt-10 flex justify-center product-detail__img-area" style="display: flex; flex-direction:column; align-items: center;">
                     <!--
-                    <img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
+                    <img src="{{ preImgUrl() }}user/94ea02e8fa3632d09bcdd99c39c5cf3d41f2fd7d2d58366731548efbd9202d48.jpg" alt="">
                     -->
                 </div>
             </div>
@@ -1294,6 +1294,96 @@
             <div class="btn_bot">
                 <button class="btn btn-line3 refresh_btn" onclick="resetProperty(this)"><svg><use xlink:href="/img/m/icon-defs.svg#refresh"></use></svg>초기화</button>
                 <button class="btn btn-primary confirm_prod_property">선택 완료</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 원본 복구 모달 --}}
+<div class="modal" id="ai-restoration">
+    <div class="modal_bg" onclick="modalClose('#ai-restoration')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">원본 이미지 복구</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>원래의 등록 이미지로 되돌리시겠습니까?</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                {{-- 취소 버튼: 단순히 모달을 닫습니다 --}}
+                <button class="btn w-full btn-primary-line mt-5" onclick="modalClose('#ai-restoration')">취소</button>
+                
+                {{-- 복구 확인 버튼: 실제 복구 함수를 실행하도록 id를 부여하거나 이벤트를 연결합니다 --}}
+                <button class="btn w-full btn-primary mt-5" id="confirm-restoration">원본으로 복구</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 이미지 적용 완료 모달 --}}
+<div class="modal" id="ai-apply-success-modal">
+    <div class="modal_bg" onclick="modalClose('#ai-apply-success-modal')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">이미지 적용 완료</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>이미지가 적용되었습니다.</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                {{-- 취소 버튼: 단순히 모달을 닫습니다 --}}
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#ai-apply-success-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 이미지 생성 완료 모달 --}}
+<div class="modal" id="ai-generate-success-modal" style="z-index: 100000 !important;">
+    <div class="modal_bg" onclick="modalClose('#ai-generate-success-modal')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">이미지 생성 완료</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>이미지가 생성되었습니다!<br/>마음에 드시면 [완료 및 저장]을 눌러주세요.</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                {{-- 취소 버튼: 단순히 모달을 닫습니다 --}}
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#ai-generate-success-modal')">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- AI 이미지 미생성 경고 모달 --}}
+<div class="modal" id="ai-not-generated-modal" style="z-index: 100000 !important;">
+    <div class="modal_bg" onclick="modalClose('#ai-not-generated-modal')"></div>
+    <div class="modal_inner modal-sm">
+        <div class="modal_body agree_modal_body">
+            {{-- 제목 부분 --}}
+            <p class="text-lg font-bold text-left mb-4">알림</p>
+            
+            {{-- 내용 부분 --}}
+            <p class="text-center py-4">
+                <b>아직 AI 이미지가 생성되지 않았습니다.<br/>원하시는 스타일을 선택하고 하단의<br/>[이미지 생성하기] 버튼을 먼저 눌러주세요.</b>
+            </p>
+            
+            {{-- 버튼 영역 --}}
+            <div class="flex gap-2 justify-center">
+                <button class="btn w-full btn-primary mt-5" onclick="modalClose('#ai-not-generated-modal')">확인</button>
             </div>
         </div>
     </div>

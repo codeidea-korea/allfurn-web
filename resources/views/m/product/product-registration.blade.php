@@ -31,8 +31,8 @@
                 <dl class="mb-3">
                     <dt class="necessary">상품 이미지</dt>
                     <dd>
-                        <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap">
-                            <div class="border border-dashed w-[150px] h-[150px] rounded-md relative flex items-center justify-center product-img__gallery">
+                        <div class="flex flex-wrap items-start gap-3 desc__product-img-wrap">
+                            <div class="border border-dashed w-[150px] h-[194px] rounded-md relative flex items-center justify-center product-img__gallery">
                                 <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                 <div>
                                     <div class="file_text flex flex-col items-center">
@@ -46,6 +46,8 @@
                             <div class="">
                                 <p class="text-primary">· 첫번째 이미지가 대표 이미지로 노출됩니다.</p>
                                 <p>· 이미지는 8개까지 등록 가능합니다.</p>
+                                <p>· AI 배경 생성 버튼으로 AI 이미지 생성이 가능합니다.</p>
+                                <p>· AI 수정 이미지 사용 책임은 제품 등록자에게 있습니다.</p>
                             </div>
                         </div>
                     </dd>
@@ -223,6 +225,7 @@
 
     {{-- ############# 모달 모음 시작 --}}
     @include('m.product.product-reg-modal')
+    @include('m.product.modal-ai-generator')
     {{-- ############# 모달 모음 끝 --}}
 
 </div>
@@ -241,12 +244,694 @@ var stored100Files = [];
 var stored400Files = [];
 var stored600Files = [];
 var stored1000Files = [];
+var storedAiFiles = [];
 var subCategoryIdx = null;
+var storedAiSourceFiles = []; 
 var deleteImage = [];
 var proc = false;
 var authList = ['KS 인증', 'ISO 인증', 'KC 인증', '친환경 인증', '외코텍스(OEKO-TEX) 인증', '독일 LGA 인증', 'GOTS(오가닉) 인증', '라돈테스트 인증', '전자파 인증', '전기용품안전 인증'];
 var oIdx = 0;
 var _tmp = 0;
+
+var currentAiFile = null;
+var targetAiBtn = null;
+var targetImgPreviewId = "";
+var targetHiddenInputId = "";
+var originalFilesBackup = {};
+var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
+var tempAiFilesToDelete = [];
+
+var aiGeneratedStore = {};
+var selectedAiGeneratedUrl = null;
+var selectedAiGeneratedStyleKey = null;
+
+function getAiStyleKey($btn) {
+    if ($btn.data('action') === 'remove_bg') {
+        return 'remove_bg';
+    }
+
+    return $btn.data('style') || '';
+}
+
+function renderAiGeneratedShelf($styleBtn) {
+    var styleKey = getAiStyleKey($styleBtn);
+    var bucket = aiGeneratedStore[styleKey] || [];
+    var $shelf = $('#ai_generated_shelf');
+    var $list = $('#ai_generated_shelf_list');
+
+    $list.empty();
+    $('#ai_generated_shelf_count').text(bucket.length + '/3');
+
+    if (bucket.length === 0) {
+        $shelf.addClass('hidden');
+        return;
+    }
+
+    bucket.forEach(function(item, index) {
+        var isActive = selectedAiGeneratedUrl === item.url;
+
+        var $thumb = $('<button>', {
+            type: 'button',
+            class: 'ai-generated-thumb relative h-16 rounded-md overflow-hidden border bg-white shadow-sm transition-all ' + (isActive ? 'border-red-500 ring-2 ring-red-500' : 'border-stone-200'),
+            'data-url': item.url,
+            'data-style-key': styleKey
+        });
+
+        $('<img>', {
+            src: item.url,
+            alt: '생성 이미지 ' + (index + 1),
+            class: 'w-full h-full object-cover'
+        }).appendTo($thumb);
+
+        $('<span>', {
+            class: 'absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white',
+            text: index + 1
+        }).appendTo($thumb);
+
+        $list.append($thumb);
+    });
+
+    $shelf.removeClass('hidden');
+}
+
+function storeAiGeneratedImage($styleBtn, imageUrl) {
+    var styleKey = getAiStyleKey($styleBtn);
+
+    if (!styleKey || !imageUrl) {
+        return;
+    }
+
+    var bucket = aiGeneratedStore[styleKey] || [];
+
+    bucket = bucket.filter(function(item) {
+        return item.url !== imageUrl;
+    });
+
+    bucket.unshift({
+        url: imageUrl,
+        createdAt: Date.now()
+    });
+
+    aiGeneratedStore[styleKey] = bucket.slice(0, 3);
+
+    selectedAiGeneratedUrl = imageUrl;
+    selectedAiGeneratedStyleKey = styleKey;
+
+    $styleBtn.attr('data-generated-url', imageUrl);
+    renderAiGeneratedShelf($styleBtn);
+}
+
+
+function updateAiCountUI(count) {
+    if (count !== undefined && count !== null) {
+        userAiCount = count; // 전역 변수 동기화
+        $('#ai_remain_count_display')
+            .text('남은 횟수: ' + count + '회 남았습니다. 매일 자정 초기화됩니다.')
+            .removeClass('hidden');
+    }
+}
+
+function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
+    targetAiBtn = btnElement; // 클릭된 버튼 엘리먼트 저장
+    targetImgPreviewId = previewId || "#rep_img_preview";
+    targetHiddenInputId = hiddenInputId || "#rep_img_path";
+    
+    console.log("선택된 파일명:", fileName);
+
+    // AI 전송용 파일을 우선 사용하고, 기존 AI 적용 이미지 등 예외 상황에서는 등록용 파일로 보완합니다.
+    var selectedFile = storedAiSourceFiles.find(function(f) {
+        return f && f.name === fileName;
+    });
+
+    if (!selectedFile) {
+        alert("AI 처리용 원본 이미지가 아직 준비 중입니다. 잠시 후 다시 시도해주세요.");
+        return;
+    }
+
+    if (!selectedFile) {
+        alert("이미지 파일을 찾을 수 없습니다. 다시 시도해주세요.");
+        return;
+    }
+    
+    // 현재 작업할 파일을 전역 변수에 저장
+    currentAiFile = selectedFile;
+
+    // AI 남은 횟수 조회
+    $.ajax({
+        url: "{{ route('product.ai.get_remain_count') }}",
+        type: 'GET',
+        success: function(res) {
+            if (res.success) {
+                $('#ai_remain_count_display').text('남은 횟수: ' + res.remain_count + '회 남았습니다. 매일 자정 초기화됩니다.').removeClass('hidden');
+            } else {
+                $('#ai_remain_count_display').addClass('hidden');
+            }
+        },
+        error: function() {
+            console.log('남은 횟수를 불러오는 데 실패했습니다.');
+        }
+    });
+
+    // FileReader로 이미지 URL 읽어서 모달에 표시
+    /*var reader = new FileReader();
+    reader.onload = function(e) {
+        $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
+        $('#ai_modal_thumbnail').attr('src', e.target.result);
+        $('#ai_modal_placeholder_text').addClass('hidden');
+        $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화
+
+        $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+        $('#ai_input_prompt').val('');
+
+        $('.generated-badge').remove(); 
+        $('.btn-style-select').removeAttr('data-generated-url');
+    }
+    reader.readAsDataURL(selectedFile);*/
+
+    var validImageSrc = $(targetImgPreviewId).attr('data-original-src') || $(targetImgPreviewId).attr('src');
+
+    $('#ai_original_image_section').removeClass('hidden');
+    $('#ai_preview_image_section').addClass('hidden');
+
+    // 가져온 정상 데이터를 모달창에 꽂아줍니다.
+    $('#ai_modal_preview_image').attr('src', validImageSrc).attr('data-base-src', validImageSrc).removeClass('hidden'); 
+    $('#ai_style_preview_badge').addClass('hidden');
+    $('#ai_modal_thumbnail').attr('src', validImageSrc);
+    $('#ai_modal_placeholder_text').addClass('hidden');
+    $('#ai_modal_result_image').addClass('hidden');
+
+    $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+    $('#ai_input_prompt').val('');
+    $('.generated-badge').remove(); 
+    $('.btn-style-select').removeAttr('data-generated-url');
+    $('#btn_remove_bg').removeAttr('data-generated-url').find('.generated-badge').remove();
+
+    aiGeneratedStore = {};
+    selectedAiGeneratedUrl = null;
+    selectedAiGeneratedStyleKey = null;
+    $('#ai_generated_shelf').addClass('hidden');
+    $('#ai_generated_shelf_list').empty();
+    $('#ai_generated_shelf_count').text('0/3');
+    
+    modalOpen('#ai_image_generator_modal');
+}
+
+// 2. [기능 독립] 배경 제거 버튼 클릭 이벤트
+// $(document).on('click', '#btn_remove_bg', function(e) {
+//     e.preventDefault();
+//     if (userAiCount <= 0) {
+//             alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+//             return false; // 여기서 함수 종료
+//         }
+//     if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
+
+//     var $btn = $(this);
+//     var originalHtml = $btn.html();
+
+//     $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+//     $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+//     $('#ai_full_loading_overlay').removeClass('hidden');
+
+//     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
+
+//     var fileToSend = currentAiFile; // 기본적으로는 기존 파일 사용
+
+//     var formData = new FormData();
+//     formData.append('image', fileToSend); // 깡통 파일 대신 정상 파일 전송
+
+//     $.ajax({
+//         url: "{{ route('product.ai.remove_bg') }}",
+//         type: 'POST',
+//         global: false,
+//         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+//         data: formData,
+//         contentType: false, processData: false,
+//         beforeSend: function() {
+//             $('#loadingContainer').hide(); 
+//             $('#loadingContainer').css('display', 'none'); 
+//         },
+//         success: function(res) {
+//             if (res.success) {
+//                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+
+//                 var $removeBgBtn = $('#btn_remove_bg');
+//                 $removeBgBtn.attr('data-generated-url', res.data.removebg_url);
+
+//                 if ($removeBgBtn.find('.generated-badge').length === 0) {
+//                     $removeBgBtn.append(
+//                         '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">생성 완료</div>'
+//                     );
+//                 }
+
+//                 $('#btn_ai_confirm_m').prop('disabled', false);
+//                 updateAiCountUI(res.remain_count);
+//                 modalOpen('#ai-generate-success-modal');
+//             }
+//         },
+//         error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
+//         complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
+//     });
+// });
+
+$(document).on('click', '.btn-style-select', function(e) {
+    e.preventDefault();
+
+
+    $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+    $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+
+    var action = $(this).data('action') || 'generate_bg';
+    var prompt = $(this).data('prompt') || '';
+    var $previewImg = $('#ai_modal_preview_image');
+
+    $('#ai_input_prompt').val(prompt);
+
+    var styleKey = getAiStyleKey($(this));
+    var bucket = aiGeneratedStore[styleKey] || [];
+
+    renderAiGeneratedShelf($(this));
+
+    if (bucket.length > 0) {
+        selectedAiGeneratedUrl = bucket[0].url;
+        selectedAiGeneratedStyleKey = styleKey;
+
+        $('#ai_preview_image_section').removeClass('hidden');
+
+        $previewImg.attr('src', selectedAiGeneratedUrl).css('object-fit', 'contain');
+        $(this).attr('data-generated-url', selectedAiGeneratedUrl);
+
+        $('#ai_style_preview_badge').addClass('hidden');
+        $('#btn_ai_confirm_m').prop('disabled', false);
+        return;
+    }
+
+    selectedAiGeneratedUrl = null;
+    selectedAiGeneratedStyleKey = null;
+    $(this).removeAttr('data-generated-url');
+
+    $('#ai_preview_image_section').addClass('hidden');
+
+    if (action === 'remove_bg') {
+        var baseSrc = $previewImg.attr('data-base-src') || $('#ai_modal_thumbnail').attr('src');
+        $previewImg.attr('src', baseSrc).css('object-fit', 'contain');
+        $('#ai_style_preview_badge').addClass('hidden');
+        return;
+    }
+
+    $('#ai_style_preview_badge').addClass('hidden');
+});
+
+$(document).on('click', '#btn_ai_generate', async function(e) {
+    e.preventDefault();
+
+    if (userAiCount <= 0) {
+        alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+        return false;
+    }
+
+    if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
+
+    var $activeStyleBtn = $('.btn-style-select.border-red-500');
+
+    if ($activeStyleBtn.length === 0) {
+        return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+    }
+
+    var action = $activeStyleBtn.data('action') || 'generate_bg';
+
+    if (action === 'remove_bg') {
+        requestRemoveBgOnly($(this), $activeStyleBtn);
+        return;
+    }
+
+    var prompt = $('#ai_input_prompt').val();
+    if (!prompt) return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+
+    var $btn = $(this);
+    var originalText = $btn.html();
+    
+    $('.btn-style-select, #btn_remove_bg').prop('disabled', true); 
+    
+    $('#ai_full_loading_overlay h4').text('1단계: 배경 제거 중...');
+    $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
+    $('#ai_full_loading_overlay').removeClass('hidden');
+
+
+
+    var formData = new FormData();
+    formData.append('image', currentAiFile, currentAiFile.name || 'ai_source_image.jpg');
+    formData.append('normalize_for_ai', '1'); // 모바일만 서버 정사각형 보정
+    $.ajax({
+        url: "{{ route('product.ai.remove_bg') }}",
+        type: 'POST',
+        global: false,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: formData,
+        contentType: false, processData: false,
+        beforeSend: function() {
+            $('#loadingContainer').hide(); 
+            $('#loadingContainer').css('display', 'none'); 
+        },
+        success: function(res1) {
+            if (res1.success) {
+                if (res1.remain_count !== undefined) {
+                        userAiCount = res1.remain_count;
+                    }
+                var tempPath = res1.data.temp_path;
+
+                if (tempPath) {
+                    tempAiFilesToDelete.push(tempPath);
+                }
+
+
+                $('#ai_style_preview_badge').addClass('hidden');
+
+                $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
+                $('#ai_full_loading_overlay p').text('선택한 스타일로 공간을 꾸미고 있습니다. (약 10~20초)');
+                $btn.html('<span class="spinner-border spinner-border-sm"></span> 이미지 생성 중...');
+                
+                requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn);
+            } else {
+                alert('배경 제거 실패: ' + res1.message);
+                resetButtons($btn, originalText);
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr);
+            alert('배경 제거 중 오류가 발생했습니다.');
+            resetButtons($btn, originalText);
+        }
+    });
+});
+
+// 배경 합성 함수
+function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn) {
+    $('#ai_full_loading_overlay').removeClass('hidden');
+
+    $.ajax({
+        url: "{{ route('product.ai.generate_bg') }}",
+        type: 'POST',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: { temp_path: tempPath, prompt: prompt },
+        dataType: 'json',
+        success: function(res2) {
+            if (res2.success) {
+                $('#ai_preview_image_section').removeClass('hidden');
+                $('#ai_modal_preview_image')
+                    .attr('src', res2.data.final_url)
+                    .css('object-fit', 'contain');
+
+                $('#ai_style_preview_badge').addClass('hidden');
+                updateAiCountUI(res2.remain_count);
+
+                if (res2.data.final_path) {
+                    tempAiFilesToDelete.push(res2.data.final_path);
+                }
+
+                if ($activeStyleBtn && $activeStyleBtn.length > 0) {
+                    storeAiGeneratedImage($activeStyleBtn, res2.data.final_url);
+                    if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                        var badgeHtml = '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
+                        $activeStyleBtn.append(badgeHtml);
+                    }
+                }
+
+                $('#btn_ai_confirm_m').prop('disabled', false);
+                modalOpen('#ai-generate-success-modal');
+            } else {
+                alert('이미지 생성 실패: ' + res2.message);
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr);
+            var msg = '이미지 생성 중 오류가 발생했습니다.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg += "\n[상세 내용]: " + xhr.responseJSON.message;
+            } else if (xhr.responseText) {
+                msg += "\n[상세 내용]: " + xhr.responseText.substring(0, 100) + "..."; 
+            }
+            alert(msg);
+            resetButtons($btn, originalText);
+        },
+        complete: function() {
+            $('#ai_full_loading_overlay').addClass('hidden');
+            resetButtons($btn, originalText);
+        }
+    });
+}
+
+$(document).on('click', '.ai-generated-thumb', function(e) {
+    e.preventDefault();
+
+    selectedAiGeneratedUrl = $(this).attr('data-url');
+    selectedAiGeneratedStyleKey = $(this).attr('data-style-key');
+
+    $('#ai_preview_image_section').removeClass('hidden');
+
+    $('#ai_modal_preview_image')
+        .attr('src', selectedAiGeneratedUrl)
+        .css('object-fit', 'contain');
+
+    $('#ai_style_preview_badge').addClass('hidden');
+
+    $('.ai-generated-thumb')
+        .removeClass('border-red-500 ring-2 ring-red-500')
+        .addClass('border-stone-200');
+
+    $(this)
+        .removeClass('border-stone-200')
+        .addClass('border-red-500 ring-2 ring-red-500');
+
+    $('.btn-style-select.border-red-500').attr('data-generated-url', selectedAiGeneratedUrl);
+    $('#btn_ai_confirm_m').prop('disabled', false);
+});
+
+// 버튼 상태 초기화
+function resetButtons($btn, originalText) {
+    $('.btn-style-select, #btn_remove_bg').prop('disabled', false);
+    $btn.prop('disabled', false).html(originalText);
+}
+
+function requestRemoveBgOnly($btn, $activeStyleBtn) {
+    if (userAiCount <= 0) {
+        alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+        return false;
+    }
+
+    if (!currentAiFile) {
+        alert('작업할 이미지가 없습니다.');
+        return false;
+    }
+
+    var originalText = $btn.html();
+
+    $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+    $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+    $('#ai_full_loading_overlay').removeClass('hidden');
+
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 배경 제거 중...');
+    $('.btn-style-select, #btn_remove_bg').prop('disabled', true);
+
+    var formData = new FormData();
+    formData.append('image', currentAiFile, currentAiFile.name || 'ai_source_image.jpg');
+    formData.append('normalize_for_ai', '1'); // 모바일만 서버 정사각형 보정
+
+    $.ajax({
+        url: "{{ route('product.ai.remove_bg') }}",
+        type: 'POST',
+        global: false,
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: formData,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            $('#loadingContainer').hide();
+            $('#loadingContainer').css('display', 'none');
+        },
+        success: function(res) {
+            if (res.success) {
+                $('#ai_preview_image_section').removeClass('hidden');
+                $('#ai_modal_preview_image').attr('src', res.data.removebg_url).css('object-fit', 'contain');
+                $('#ai_style_preview_badge').addClass('hidden');
+
+                storeAiGeneratedImage($activeStyleBtn, res.data.removebg_url);
+
+                if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                    $activeStyleBtn.append(
+                        '<div class="generated-badge absolute top-1 right-1 bg-stone-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md z-30 shadow-md">생성 완료</div>'
+                    );
+                }
+
+                $('#btn_ai_confirm_m').prop('disabled', false);
+                updateAiCountUI(res.remain_count);
+                modalOpen('#ai-generate-success-modal');
+            } else {
+                alert('실패: ' + (res.message || '배경 제거에 실패했습니다.'));
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr);
+            alert('서버 통신 오류');
+        },
+        complete: function() {
+            $('#ai_full_loading_overlay').addClass('hidden');
+            resetButtons($btn, originalText);
+        }
+    });
+}
+
+$(document).on('click', '#btn_ai_confirm_m', function() {
+
+    var $activeStyleBtn = $('.btn-style-select.border-red-500');
+    var $removeBgBtn = $('#btn_remove_bg');
+    var removeBgUrl = $removeBgBtn.attr('data-generated-url');
+    var previewUrl = $('#ai_modal_preview_image').attr('src');
+
+    if (removeBgUrl && previewUrl === removeBgUrl) {
+        $activeStyleBtn = $removeBgBtn;
+    } else if ($activeStyleBtn.length === 0 && removeBgUrl) {
+        $activeStyleBtn = $removeBgBtn;
+    }
+
+    var generatedStyleUrl = $activeStyleBtn.attr('data-generated-url');
+    var isRemoveBgResult = $activeStyleBtn.is('#btn_remove_bg');
+
+    if (
+        $activeStyleBtn.length === 0 ||
+        !generatedStyleUrl ||
+        (!isRemoveBgResult && $activeStyleBtn.find('.generated-badge').length === 0)
+    ) {
+        modalOpen('#ai-not-generated-modal');
+        return false;
+    }
+    var $wrapper = $(targetAiBtn).closest('.product-img__add');
+    var originalIdx = $wrapper.attr('data-idx');
+
+    if (originalIdx) {
+        $wrapper.attr('data-backup-idx', originalIdx);
+        $wrapper.removeAttr('data-idx');
+        $wrapper.removeData('idx'); 
+        
+        if (!deleteImage.includes(originalIdx)) {
+            deleteImage.push(originalIdx);
+        }
+    }
+
+    if(targetAiBtn && $('#ai_modal_preview_image').attr('src') !== "") {
+        // 모바일 UI 클래스 대응 (text-xs, h-[32px] 유지)
+        $(targetAiBtn)
+            .removeClass('border-primary text-primary bg-white')
+            .addClass('border-stone-500 text-stone-600 bg-stone-100')
+            .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/></svg> 원본 복구')
+            .attr('onclick', 'restoreOriginal(this, "' + targetImgPreviewId + '", "' + targetHiddenInputId + '", "' + currentAiFile.name + '")');
+    }
+});
+
+    var restoreParams = {};
+
+    function removeFileByName(arr, fileName) {
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] && arr[i].name === fileName) {
+                arr.splice(i, 1);
+            }
+        }
+    }
+
+    function restoreFileToArray(arr, originalFile, aiFileName) {
+        if (!originalFile) return;
+
+        var aiIdx = arr.findIndex(function(f) {
+            return f && f.name === aiFileName;
+        });
+
+        if (aiIdx !== -1) {
+            arr[aiIdx] = originalFile;
+            return;
+        }
+
+        var originalIdx = arr.findIndex(function(f) {
+            return f && f.name === originalFile.name;
+        });
+
+        if (originalIdx !== -1) {
+            arr[originalIdx] = originalFile;
+            return;
+        }
+
+        arr.push(originalFile);
+    }
+
+    // 2. 기존 restoreOriginal 함수 수정 (파라미터 저장 후 모달만 띄우기)
+    function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
+        // 실제 복구 로직을 실행하기 위해 파라미터들을 임시 저장
+        restoreParams = {
+            btn: btn,
+            previewId: previewId,
+            hiddenInputId: hiddenInputId,
+            fileName: fileName
+        };
+
+        // 커스텀 모달 열기
+        modalOpen('#ai-restoration');
+    }
+
+    $(document).on('click', '#confirm-restoration', function() {
+    // 임시 저장해둔 파라미터 꺼내기
+        var btn = restoreParams.btn;
+        var previewId = restoreParams.previewId;
+        var hiddenInputId = restoreParams.hiddenInputId;
+        var fileName = restoreParams.fileName;
+
+        // 모달창 닫기
+        modalClose('#ai-restoration');
+
+        // --- 여기서부터 기존의 복구 로직 실행 ---
+        var $img = $(previewId);
+        var originSrc = $img.attr('data-original-src'); 
+
+        if (originSrc) {
+            $img.attr('src', originSrc);
+        }
+        
+        var $wrapper = $(btn).closest('.product-img__add');
+        var backupIdx = $wrapper.attr('data-backup-idx');
+
+        if (backupIdx) {
+            $wrapper.attr('data-idx', backupIdx);
+            $wrapper.data('idx', backupIdx);
+            $wrapper.removeAttr('data-backup-idx');
+            
+            deleteImage = deleteImage.filter(function(item) {
+                return item != backupIdx;
+            });
+        }
+
+        $wrapper.attr('file', fileName);
+
+        var originalData = originalFilesBackup[fileName];
+
+        if (originalData) {
+            var aiFileName = "ai_" + fileName;
+
+            restoreFileToArray(storedFiles, originalData.main, aiFileName);
+            restoreFileToArray(stored100Files, originalData.f100, aiFileName);
+            restoreFileToArray(stored400Files, originalData.f400, aiFileName);
+            restoreFileToArray(stored600Files, originalData.f600, aiFileName);
+            restoreFileToArray(stored1000Files, originalData.f1000, aiFileName);
+
+            removeFileByName(storedAiFiles, aiFileName);
+        }
+
+        // AI 결과값 hidden input 초기화
+        $(hiddenInputId).val('');
+
+        // ★ 모바일 UI 클래스 대응 (PC버전과 클래스가 다르므로 주의)
+        $(btn)
+            .removeClass('border-stone-500 text-stone-600 bg-stone-100')
+            .addClass('border-primary text-primary bg-white')
+            .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
+            .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
+    });
 
     // 결제방식
     const paymentShow = (item)=>{
@@ -256,6 +941,20 @@ var _tmp = 0;
     const paymentHide  = (item)=>{
         $(`.${item}`).addClass('hidden')
     }
+
+function base64ToFile(dataurl, filename) {
+    var arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), 
+        n = bstr.length, 
+        u8arr = new Uint8Array(n);
+        
+    while(n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    
+    return new File([u8arr], filename, {type: mime});
+}
 
 function getThumbFile(_IMG, maxWidth, width, height){
     var canvas = document.createElement("canvas");
@@ -290,7 +989,7 @@ function getThumbFile(_IMG, maxWidth, width, height){
         canvas.getContext("2d").scale(cropInfo.rate, cropInfo.rate);
     }
 
-    var dataURL = canvas.toDataURL("image/png");
+    var dataURL = canvas.toDataURL("image/webp");
     var byteString = atob(dataURL.split(',')[1]);
     var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
     var ab = new ArrayBuffer(byteString.length);
@@ -301,6 +1000,99 @@ function getThumbFile(_IMG, maxWidth, width, height){
     var tmpThumbFile = new Blob([ab], {type: mimeString});
 
     return tmpThumbFile;
+}
+
+function getThumbFileAi(_IMG, maxWidth, width, height) {
+    var scanCanvas = document.createElement("canvas");
+    var scanCtx = scanCanvas.getContext("2d");
+
+    scanCanvas.width = width;
+    scanCanvas.height = height;
+    scanCtx.drawImage(_IMG, 0, 0, width, height);
+
+    var imageData = scanCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+
+    function getPixel(x, y) {
+        var i = (y * width + x) * 4;
+        return [data[i], data[i + 1], data[i + 2]];
+    }
+
+    function colorDistance(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+    }
+
+    function isSolidRow(y) {
+        var sample = getPixel(Math.floor(width / 2), y);
+        var similarCount = 0;
+
+        for (var x = 0; x < width; x += 4) {
+            var p = getPixel(x, y);
+            if (colorDistance(sample, p) < 35) {
+                similarCount++;
+            }
+        }
+
+        return similarCount / Math.ceil(width / 4) > 0.96;
+    }
+
+    var cropTop = 0;
+    var cropBottom = height - 1;
+
+    while (cropTop < height && isSolidRow(cropTop)) {
+        cropTop++;
+    }
+
+    while (cropBottom > cropTop && isSolidRow(cropBottom)) {
+        cropBottom--;
+    }
+
+    var cropLeft = 0;
+    var cropW = width;
+    var cropH = cropBottom - cropTop + 1;
+
+    if (cropH < height * 0.5) {
+        cropTop = 0;
+        cropH = height;
+    }
+
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+
+    canvas.width = maxWidth;
+    canvas.height = maxWidth;
+
+    ctx.clearRect(0, 0, maxWidth, maxWidth);
+
+    var scale = Math.min(maxWidth / cropW, maxWidth / cropH);
+    var targetW = Math.round(cropW * scale);
+    var targetH = Math.round(cropH * scale);
+    var targetX = Math.round((maxWidth - targetW) / 2);
+    var targetY = Math.round((maxWidth - targetH) / 2);
+
+    ctx.drawImage(
+        _IMG,
+        cropLeft,
+        cropTop,
+        cropW,
+        cropH,
+        targetX,
+        targetY,
+        targetW,
+        targetH
+    );
+
+    var dataURL = canvas.toDataURL("image/png");
+    var byteString = atob(dataURL.split(',')[1]);
+    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: mimeString });
 }
 
 $(document).on('change', '#form-list02', function() {
@@ -320,10 +1112,19 @@ $(document).on('change', '#form-list02', function() {
                         alert('파일은 8개 까지 등록 가능합니다.');
                         return;
                     }
+
+                    removeFileByName(storedAiSourceFiles, file.name);
+                    storedAiSourceFiles.push(file);
+
                     var image = new Image;
                     image.onload = function() {
-                        file = getThumbFile(image, 500, this.width, this.height);
-                        storedFiles.push(file);
+                        var resizedFile = getThumbFile(image, 500, this.width, this.height);
+                        resizedFile.name = file.name;
+                        storedFiles.push(resizedFile);
+
+                        var aiResizedFile = getThumbFileAi(image, 1000, this.width, this.height);
+                        aiResizedFile.name = file.name;
+                        storedAiFiles.push(aiResizedFile);
                     };
                     image.src = e.target.result;
 
@@ -332,6 +1133,7 @@ $(document).on('change', '#form-list02', function() {
                     image100.height = 100;
                     image100.onload = function() {
                         const i100 = getThumbFile(image100, 100, this.width, this.height);
+                        i100.name = file.name;
                         stored100Files.push(i100);
                     };
                     image100.src = e.target.result;
@@ -341,6 +1143,7 @@ $(document).on('change', '#form-list02', function() {
                     image400.height = 400;
                     image400.onload = function() {
                         const i400 = getThumbFile(image400, 400, this.width, this.height);
+                        i400.name = file.name;
                         stored400Files.push(i400);
                     };
                     image400.src = e.target.result;
@@ -350,6 +1153,7 @@ $(document).on('change', '#form-list02', function() {
                     //image600.height = 600;
                     image600.onload = function() {
                         const i600 = getThumbFile(image600, 600, this.width, this.height);
+                        i600.name = file.name;
                         stored600Files.push(i600);
                     };
                     image600.src = e.target.result;
@@ -359,18 +1163,31 @@ $(document).on('change', '#form-list02', function() {
                     image1000.height = 1000;
                     image1000.onload = function() {
                         const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                        i1000.name = file.name;
                         stored1000Files.push(i1000);
                     };
                     image1000.src = e.target.result;
 
+                    // [추가] 고유 ID 생성 (이미지 태그와 히든값을 매칭하기 위함)
+                    var uniqueId = 'prv_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+                    var uniqueHiddenId = 'path_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+
+                   
                     $('.desc__product-img-wrap').append(
-                        '<div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-400 product-img__add" file="' + file.name +  '">' +
-                        '   <img class="w-[150px] h-[150px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
-                        '   <div class="absolute top-2.5 right-2.5">' +
-                        '       <button class="ico__delete--circle !w-[28px] !h-[28px] bg-stone-600/50 !rounded-full">' +
-                        '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
-                        '       </button>' +
+                        '<div class="w-[150px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" file="' + file.name + '">' +
+                        '   <div class="relative w-[150px] h-[150px] bg-slate-400 rounded-md">' +
+                        '       <img id="' + uniqueId + '" class="w-full h-full object-cover rounded-md" src="' + e.target.result + '" data-original-src="' + e.target.result + '" alt="상품이미지">' +
+                        '       <div class="absolute top-2.5 right-2.5">' +
+                        '           <button class="ico__delete--circle !w-[28px] !h-[28px] bg-stone-600/50 !rounded-full">' +
+                        '               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
+                        '           </button>' +
+                        '       </div>' +
                         '   </div>' +
+                        '   <button type="button" class="mt-2 w-full h-[32px] flex items-center justify-center gap-1 border border-primary text-primary text-xs rounded bg-white" ' +
+                        '           onclick="openAiModal(this, \'' + file.name + '\', \'#' + uniqueId + '\', \'#' + uniqueHiddenId + '\')">' +
+                        '       AI 배경생성' +
+                        '   </button>' +
+                        '   <input type="hidden" id="' + uniqueHiddenId + '" name="ai_generated_paths[' + file.name + ']">' +
                         '</div>'
                     );
 
@@ -401,23 +1218,52 @@ $(document).on('change', '#form-list02', function() {
             }, 1000);
         }
     }
+    $(this).val('');
 })
 .on('click','.ico__delete--circle',function(e){
     e.preventDefault();
-    var file = $(this).parent().parent().attr('file');
-    var idx = $(this).parent().parent().index();
 
-    $(this).parent().parent().remove('');
-    for(var i = 0; i < storedFiles.length; i++) {
-        if(storedFiles[i].name == file) {
-            stored100Files.splice(i, 1);
-            stored400Files.splice(i, 1);
-            stored600Files.splice(i, 1);
-            stored1000Files.splice(i, 1);
-            storedFiles.splice(i, 1);
-            break;
+    var $wrapper = $(this).closest('.product-img__add');
+    var fileName = $wrapper.attr('file'); 
+
+    // 기존 서버 이미지 삭제 처리용
+    var originalIdx = $wrapper.attr('data-idx');
+    if (originalIdx && originalIdx !== "undefined") {
+        if (!deleteImage.includes(originalIdx)) {
+            deleteImage.push(originalIdx);
         }
     }
+    
+    // 화면에서 요소 지우기
+    $wrapper.remove();
+    $(this).parent().parent().remove('');
+
+    var idxMain = storedFiles.findIndex(function(f) { return f && f.name === fileName;});
+    if (idxMain > -1) storedFiles.splice(idxMain, 1);
+
+    var idx100 = stored100Files.findIndex(function(f) { return f && f.name === fileName; });
+    if (idx100 > -1) stored100Files.splice(idx100, 1);
+
+    var idx400 = stored400Files.findIndex(function(f) { return f && f.name === fileName; });
+    if (idx400 > -1) stored400Files.splice(idx400, 1);
+
+    var idx600 = stored600Files.findIndex(function(f) { return f && f.name === fileName; });
+    if (idx600 > -1) stored600Files.splice(idx600, 1);
+
+    var idx1000 = stored1000Files.findIndex(function(f) {return f && f.name === fileName; });
+    if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
+
+    var originalAiFileName = fileName.indexOf('ai_') === 0 ? fileName.substring(3) : fileName;
+    var appliedAiFileName = fileName.indexOf('ai_') === 0 ? fileName : "ai_" + fileName;
+    var idxAi = storedAiFiles.findIndex(function(f) {
+        return f && (f.name === originalAiFileName || f.name === appliedAiFileName);
+    });
+    if (idxAi > -1) storedAiFiles.splice(idxAi, 1);
+
+    removeFileByName(storedAiSourceFiles, originalAiFileName);
+    removeFileByName(storedAiSourceFiles, appliedAiFileName);
+    removeFileByName(storedAiSourceFiles, fileName);
+
 
     img_reload_order();
 
@@ -875,11 +1721,10 @@ const goStep = (item, pn)=>{
                 $('#form-list01').focus();
                 return false;
             } 
-            if (storedFiles.length == 0 && $('.product-img__add').length == 0) {
+            if ($('.product-img__add').length === 0) {
                 alert('상품 이미지를 등록해주세요.');
-                $('#form-list02').focus();
                 return false;
-            } 
+            }
             if ($('#categoryIdx').text() == "-"){
                 alert('상품 카테고리를 등록해주세요.');
                 return false;
@@ -910,25 +1755,29 @@ const goStep = (item, pn)=>{
 }
 
 function saveProduct(regType) {
+    if (storedFiles.length === 0 && $('.product-img__add').length === 0) {
+        alert('상품 이미지를 최소 1개 이상 등록해주세요.');
+        return false; // 여기서 함수를 종료하여 서버(AJAX)로 요청을 보내지 않음
+    }
     $('#loadingContainer').show();
     console.log(regType);
     var form = new FormData();
     form.append("reg_type", regType);
     form.append("name", $('#form-list01').val());
     for (var i = 0; i < stored600Files.length; i++) {
-        form.append('files[]', stored600Files[i]);
+        if (stored600Files[i]) form.append('files[]', stored600Files[i]);
     }
     for (var i = 0; i < stored100Files.length; i++) {
-        form.append('files100[]', stored100Files[i]);
+        if (stored100Files[i]) form.append('files100[]', stored100Files[i]);
     }
     for (var i = 0; i < stored400Files.length; i++) {
-        form.append('files400[]', stored400Files[i]);
+        if (stored400Files[i]) form.append('files400[]', stored400Files[i]);
     }
     for (var i = 0; i < stored600Files.length; i++) {
-        form.append('files600[]', stored600Files[i]);
+        if (stored600Files[i]) form.append('files600[]', stored600Files[i]);
     }
     for (var i = 0; i < stored1000Files.length; i++) {
-        form.append('files1000[]', stored1000Files[i]);
+        if (stored1000Files[i]) form.append('files1000[]', stored1000Files[i]);
     }
 
     var property = '';
@@ -944,7 +1793,7 @@ function saveProduct(regType) {
     form.append("category_idx", $('#categoryIdx').data('category_idx'));
     form.append('price', $('#product-price').val());
     form.append('is_price_open', $('button.is_price_open.active').data('val'));
-    form.append('price_text', $('.price_text').val());
+    form.append('price_text', '업체 문의');
     form.append('is_new_product', $('.is_new_product').val());
 
     var pay_type = '';
@@ -992,15 +1841,35 @@ function saveProduct(regType) {
     @endif
 
     var attachmentList = '';
-    $('.product-img__add').map(function () {
-        if($(this).data('idx') != undefined) {
-            attachmentList += $(this).data('idx') + ',';
+    var imageOrder = [];
+
+    $('.product-img__add').each(function () {
+        var currentIdx = $(this).attr('data-idx');
+        var fileName = $(this).attr('file');
+        var aiPath = $(this).find('input[name^="ai_generated_paths"]').val();
+
+        // 1. AI로 재생성된 이미지인 경우
+        if (aiPath && aiPath !== "") {
+            imageOrder.push('ai:' + fileName);
+        } 
+        // 2. 기존에 등록되어 있던 이미지인 경우
+        else if (currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
+            imageOrder.push('idx:' + currentIdx);
+            attachmentList += currentIdx + ','; // 기존 로직 호환용
+        } 
+        // 3. 새로 올린 일반 이미지인 경우
+        else {
+            imageOrder.push('new:' + fileName);
         }
-    })
+    });
+
     if (attachmentList != '') {
         form.append('attachmentIdx', attachmentList.slice(0, -1));
     }
-
+    if (imageOrder.length > 0) {
+        form.append('image_order', imageOrder.join(','));
+    }
+    
     var data = new Array();
     $('#optsArea .form__list-wrap').each(function (i, el) {
         var option = new Object();
@@ -1064,7 +1933,9 @@ function preview() {
 
     // 상품가격
     if ($('button.is_price_open.active').data('val') == 0) {
-        $('.prod_detail_top .info p').text($('.price_text').text());
+        $('.prod_detail_top .info p').text('업체 문의');
+    } else if (Number($('#product-price').val()) <= 0) {
+        $('.prod_detail_top .info p').text('업체 문의');
     } else {
         $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
     }
@@ -1196,28 +2067,76 @@ function loadProduct() {
                     imageAddBtn = $('.product-img__gallery').clone();
                     $('.desc__product-img-wrap').html(imageAddBtn);
                     attIdx = result['attachment_idx'].split(',');
+                    
                     result['attachment'].map(function (item, i) {
                         if (item != null) {
+                            // 고유 ID 및 파일명 생성
+                            var uniqueId = 'prv_existing_' + i;
+                            var uniqueHiddenId = 'path_existing_' + i;
+                            var fileName = item['originName'] || 'existing_file_' + i + '.jpg';
+
                             var html = `
-                                <div class="w-[150px] h-[150px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
-                                    <img class="w-[150px] h-[150px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
-                                    <div class="absolute top-2.5 right-2.5">
-                                        <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                                        </button>
-                                    </div>`;
-                                    if (i == 0){
-                                        html += '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div>';
-                                    }
-                            html += '</div>';
+                                <div class="w-[150px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" data-idx="${attIdx[i]}" file="${fileName}">
+                                    <div class="relative w-[150px] h-[150px] bg-slate-100 rounded-md">
+                                        <img id="${uniqueId}" class="w-full h-full object-cover rounded-md" src="${item['imgUrl']}" data-original-src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
+                                        <div class="absolute top-2.5 right-2.5">
+                                            <button class="ico__delete--circle !w-[28px] !h-[28px] bg-stone-600/50 !rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                                            </button>
+                                        </div>`;
+                            
+                            if (i == 0) {
+                                html += '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div>';
+                            }
+                            
+                            html += `
+                                    </div>
+                                    <button type="button" class="mt-2 w-full h-[32px] flex items-center justify-center gap-1 border border-primary text-primary text-xs rounded bg-white" 
+                                            onclick="openAiModal(this, '${fileName}', '#${uniqueId}', '#${uniqueHiddenId}')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                        AI 배경생성
+                                    </button>
+                                    <input type="hidden" id="${uniqueHiddenId}" name="ai_generated_paths[${fileName}]">
+                                </div>`;
+
                             $('.desc__product-img-wrap').append(html);
+
+                            // 기존 이미지를 storedFiles 배열에 넣기 위한 Fetch 로직 (CORS 프록시 라우트 사용)
+                            var proxyUrl = "{{ route('product.ai.proxy_image') }}?url=" + encodeURIComponent(item['imgUrl']);
+
+                            fetch(proxyUrl)
+                                .then(res => {
+                                    if (!res.ok) throw new Error('네트워크 응답 에러 (상태 코드: ' + res.status + ')');
+                                    return res.blob();
+                                })
+                                .then(blob => {
+                                    var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+                                    storedFiles.push(file);
+
+                                    removeFileByName(storedAiSourceFiles, fileName);
+                                    storedAiSourceFiles.push(file);
+
+                                    var objectUrl = URL.createObjectURL(blob);
+                                    var image = new Image();
+                                    image.onload = function() {
+                                        URL.revokeObjectURL(objectUrl);
+
+                                        var aiFile = getThumbFileAi(image, 1000, this.width, this.height);
+                                        aiFile.name = fileName;
+                                        storedAiFiles.push(aiFile);
+                                    };
+                                    image.src = objectUrl;
+                                })
+                                .catch(err => {
+                                    console.error('기존 이미지 변환 실패:', err);
+                                });
                         }
-                    })
+                    });
+
                     if (result['attachment'].length == 8) {
                         $('.product-img__gallery').hide();
                     }
                 }
-
                 // 저장된(선택된) 카테고리 값 관련
                 $('input:radio[name=prod_category]').each(function(){
                     if ($(this).val() == result['category_idx']) {
@@ -1266,7 +2185,7 @@ function loadProduct() {
                     $('button.is_price_open[data-val=0]').addClass('active');
                     $('.div_ptxt0').addClass('active');
                     $('.div_ptxt1').removeClass('active')
-                    $('.price_text').text(result['price_text']);
+                    $('.price_text').val('업체 문의');
                 }
 
                 // 신상품 설정

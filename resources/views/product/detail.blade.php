@@ -60,11 +60,11 @@
                         @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
-                                <div class="dropdown my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                <div class="dropdown my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
-                                            @if($item->required == 1)
+                                            @if(($item->required ?? 0) == 1)
                                                 (필수)
                                             @else
                                                 (선택)
@@ -78,7 +78,7 @@
                                                 <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                     <a href="javascript:;" class="flex items-center">
                                                         {{$sub->propertyName}}
-                                                        @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                        @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
                                                             <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                         @endif
                                                     </a>
@@ -102,10 +102,10 @@
                                                 <button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
                                             </div>
                                             <p class="selection__price">
-                                                @if($data['detail']->is_price_open == 1)
+                                                @if(!productIsInquiryPrice($data['detail']))
                                                     <span>0</span>원
                                                 @else
-                                                    <span>{{$data['detail']->price_text}}</span>
+                                                    <span>업체 문의</span>
                                                 @endif
                                             </p>
                                         </div>
@@ -115,7 +115,7 @@
                         @endif
                     </div>
                     <div class="info">
-                        <p class="product_price" data-total_price={{$data['detail']->price}}>{{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}</p>
+                        <p class="product_price" data-total_price="{{ productIsInquiryPrice($data['detail']) ? 0 : $data['detail']->price }}">{{ productDisplayPrice($data['detail']) }}</p>
                         <hr>
                         <div class="company_info">
                             @if($data['detail']->company_type == 'W')
@@ -318,11 +318,11 @@
                                 @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
                                     <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown my_filterbox relative mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                        <div class="dropdown my_filterbox relative mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
-                                                    @if($item->required == 1)
+                                                    @if(($item->required ?? 0) == 1)
                                                         (필수)
                                                     @else
                                                         (선택)
@@ -336,7 +336,7 @@
                                                         <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                             <a href="javascript:;" class="flex items-center">
                                                                 {{$sub->propertyName}}
-                                                                @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                                @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
                                                                     <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                                 @endif
                                                             </a>
@@ -348,16 +348,12 @@
                                     @endforeach
                                     <div class="opt_result_area ori">
                                     </div>
-                                    <p class="product_price" data-total_price="1000">0원</p>
+                                    <p class="product_price" data-total_price="{{ productIsInquiryPrice($data['detail']) ? 0 : $data['detail']->price }}">{{ productIsInquiryPrice($data['detail']) ? '업체 문의' : '0원' }}</p>
                                 @else
                                 <div class="prod_option">
                                     <div class="name">단가</div>
                                     <div class="_requestEstimateTotalPrice">
-                                    @if( $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 )
-                                        업체 문의
-                                    @else
-                                        {{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}
-                                    @endif
+                                    {{ productDisplayPrice($data['detail']) }}
                                     </div>
                                 </div>
                                 @endif
@@ -376,133 +372,6 @@
                             @endif
                             <div class="py-7" id="orderProductList">
                                 <div>
-                                {{--
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn" onclick="prodAdd(this)">추가</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <button type="button" class="add_btn cancel" onclick="prodAdd(this)">취소</button>
-                                        <img src="/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="dropdown_wrap noline">
-                                            <button type="button" class="dropdown_btn"><p>옵션(사이즈 및 컬러) 선택</p></button>
-                                            <div class="dropdown_list">
-                                                <div class="dropdown_item">옵션명 표기1</div>
-                                                <div class="dropdown_item">옵션명 표기2</div>
-                                                <div class="dropdown_item">옵션명 표기3</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="noline">
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button type="button"><img src="/img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button type="button" class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button type="button" class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div class="total_price">150,000</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                --}}
                                 </div>
                                 <div class="text-center orderProductList_addlist">
                                     <button type="button" class="more_prod">상품 더보기</button>
@@ -595,131 +464,6 @@
                                 </button>
                             </div>
                             <div class="py-7" id="orderProductList2">
-                                <!-- div class="prod_info">
-                                    <div class="img_box">
-                                        <input type="checkbox" id="check_4" class="hidden" checked disabled>
-                                        <label for="check_4" class="add_btn">대표</label>
-                                        <img src="./pc/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <input type="checkbox" id="check_5" class="hidden" checked>
-                                        <label for="check_5" class="add_btn" onclick="prodAdd(this)">취소</label>
-                                        <img src="./pc/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="prod_option">
-                                            <div class="name">수량</div>
-                                            <div>
-                                                <div class="count_box2">
-                                                    <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
-                                                    <input type="text" value="1">
-                                                    <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>50,000</div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div>업체문의</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="prod_info">
-                                    <div class="img_box">
-                                        <input type="checkbox" id="check_6" class="hidden" checked>
-                                        <label for="check_6" class="add_btn" onclick="prodAdd(this)">취소</label>
-                                        <img src="./pc/img/prod_thumb3.png" alt="">
-                                    </div>
-                                    <div class="info_box">
-                                        <div class="prod_name">엔젤A</div>
-                                        <div class="dropdown_wrap noline">
-                                            <button class="dropdown_btn"><p>옵션(사이즈 및 컬러) 선택</p></button>
-                                            <div class="dropdown_list">
-                                                <div class="dropdown_item">옵션명 표기1</div>
-                                                <div class="dropdown_item">옵션명 표기2</div>
-                                                <div class="dropdown_item">옵션명 표기3</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="noline">
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">옵션명 표기1</p>
-                                                    <button><img src="./img/icon/x_icon2.svg" alt=""></button>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div class="count_box2">
-                                                        <button class="minus" onclick="changeValue(this,'minus')"><svg><use xlink:href="./pc/img/icon-defs.svg#minus"></use></svg></button>
-                                                        <input type="text" value="1">
-                                                        <button class="plus" onclick="changeValue(this,'plus')"><svg><use xlink:href="./pc/img/icon-defs.svg#plus"></use></svg></button>
-                                                    </div>
-                                                    <div class="price">50,000</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="prod_option">
-                                            <div class="name">가격</div>
-                                            <div class="total_price">150,000</div>
-                                        </div>
-                                    </div>
-                                </div //-->
                                 <hr>
 
                             </div>
@@ -780,19 +524,25 @@
             // 이미 'active' 상태였다면, 위의 로직에 의해 'active' 클래스가 제거됩니다.
         });
 
-        $(".filter_dropdown").click(function(event){
+        /*$(".filter_dropdown").click(function(event){
             $(this).toggleClass('active');
             $(".filter_dropdown_wrap").toggle();
             $(".filter_dropdown svg").toggleClass("active");
             //event.stopPropagation(); // 이벤트 전파 방지
+        });*/
+        $(".filter_dropdown").click(function(event){
+            $(this).toggleClass('active');
+            $(this).next(".filter_dropdown_wrap").toggle(); 
+            $(this).find("svg").toggleClass("active"); 
         });
 
         $(".filter_dropdown_wrap ul li a").click(function(){
             var selectedText = $(this).text();
-            $(".filter_dropdown p").text(selectedText);
-            $(".filter_dropdown_wrap").hide();
-            $(".filter_dropdown").removeClass('active');
-            $(".filter_dropdown svg").removeClass("active");
+            var $dropdownBox = $(this).closest('.dropdown');
+            $dropdownBox.find(".filter_dropdown p").text(selectedText);
+            $dropdownBox.find(".filter_dropdown_wrap").hide();
+            $dropdownBox.find(".filter_dropdown").removeClass('active');
+            $dropdownBox.find(".filter_dropdown svg").removeClass("active");
         });
 
         // 드롭다운 영역 밖 클릭 이벤트
@@ -838,11 +588,25 @@
                     //alert('상위 필수 옵션 선택 후 해당 옵션을 선택해주세요.'); return false;
                 }
 
-                optionTmp.push({
-                    'name': $(this).parents('.dropdown').find('.dropdown__title').data('placeholder'),
-                    'option_name': $(this).data('option_name'),
-                    'option_price': $(this).data('price'),
-                })
+                // =============== [수정된 부분 시작] ===============
+                var currentCategoryName = $(this).parents('.dropdown').find('.dropdown__title').data('placeholder');
+
+                var existingIndex = optionTmp.findIndex(function(item) {
+                    return item.name === currentCategoryName;
+                });
+
+                if (existingIndex !== -1) {
+                    optionTmp[existingIndex].option_name = $(this).data('option_name');
+                    optionTmp[existingIndex].option_price = $(this).data('price');
+                } else {
+
+                    optionTmp.push({
+                        'name': currentCategoryName,
+                        'option_name': $(this).data('option_name'),
+                        'option_price': $(this).data('price'),
+                    });
+                }
+
                 console.log(optionTmp)
 
                 if (requiredCnt > optionTmp.length) {
@@ -869,6 +633,20 @@
             }
 
             if (!same) {
+                // 1. 총 가격을 계산할 변수를 만듭니다.
+                var totalOptionPrice = 0;
+
+                // 2. 필수 옵션(여러 개)일 경우 배열을 돌며 가격을 모두 더합니다.
+                if (required) {
+                    optionTmp.map(function (item) {
+                        totalOptionPrice += parseInt(item['option_price']) || 0;
+                    });
+                } else {
+                    // 선택 옵션(단일)일 경우 방금 클릭한 요소의 가격만 가져옵니다.
+                    totalOptionPrice = parseInt($(this).data('price')) || 0;
+                }
+
+
                 var htmlText = '<div class="option_item option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
                 if (required) {
                     optionTmp.map(function (item) {
@@ -889,10 +667,11 @@
                     '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
                     '</div>' +
                     '<p class="price">';
-                @if($data['detail']->is_price_open == 1)
-                    htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
+                @if(!productIsInquiryPrice($data['detail']))
+                   //htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
+                   htmlText += '<span>'+totalOptionPrice.toLocaleString()+'</span>원';
                 @else
-                    htmlText += '<span>{{$data['detail']->price_text}}</span>';
+                    htmlText += '<span>업체 문의</span>';
                 @endif
                     htmlText += '</p></div></div>';
                 if(required && $('.selection__result.add').length > 0 ) {
@@ -912,7 +691,11 @@
 
         // 옵션 선택 후 가격 계산
         function reCal() {
-            if ( {{$data['detail']->is_price_open}} == 0) {
+            if ({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+                $('.product_price').text('업체 문의');
+                $('.product_price').data('total_price', 0);
+                $('._requestEstimateTotalPrice').text('업체 문의');
+                $('._requestEstimateTotalPrice2').text('업체 문의');
                 return;
             }
             var price = 0;
@@ -939,9 +722,9 @@
                 $('.product_price').text(total.toLocaleString()+'원');
                 $('.product_price').data('total_price', total);
             }
-            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
-                $('._requestEstimateTotalPrice').text("{{ $data['detail']->price_text }}");
-                $('._requestEstimateTotalPrice2').text("{{ $data['detail']->price_text }}");
+            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("업체 문의");
+                $('._requestEstimateTotalPrice2').text("업체 문의");
             } else {
                 $('._requestEstimateTotalPrice').text($('.product_price').text());
                 $('._requestEstimateTotalPrice2').text(price.toLocaleString()+'원');
@@ -1379,9 +1162,9 @@
         });
         $('._requestEstimateCount').text($('#requestEstimateProductCount').val() + '개');
 
-        const price = {{ $data['detail']->is_price_open ? $data['detail']->price : 0 }};
+        const price = {{ productIsInquiryPrice($data['detail']) ? 0 : $data['detail']->price }};
         var optionPrice = 0;
-        if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+        if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
             $('._requestEstimateTotalPrice').text("업체 문의");
             $('._requestEstimateTotalPrice2').text("업체 문의");
         } else {
@@ -1397,8 +1180,10 @@
                 $('.prod_item > .custom_input2 > input').prop('checked', false);
             }
         }
-        $('._requestEstimateTotalPrice').text($('.product_price').text());
-        $('._requestEstimateTotalPrice2').text($('.product_price').text());
+        if(!{{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+            $('._requestEstimateTotalPrice').text($('.product_price').text());
+            $('._requestEstimateTotalPrice2').text($('.product_price').text());
+        }
 
 
         function getWholesalerProductList( company_idx )
@@ -1463,7 +1248,7 @@
                 }
                 const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
-                if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
                     $('._requestEstimateTotalPrice').text("업체 문의");
                 } else {
                     $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
@@ -1478,7 +1263,7 @@
                 $(this).siblings('input').val(`${num + 1}`);
                 const count = Number($('#requestEstimateProductCount').val()+'');
                 $('._requestEstimateCount').text(count + '개');
-                if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+                if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
                     $('._requestEstimateTotalPrice').text("업체 문의");
                 } else {
                     $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
@@ -1596,7 +1381,7 @@
                     }
                     const productOption = [];
                     // option
-                    $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                    /*$($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
                         productOption.push({
                             optionName: $(ele).find('.selection__text').data('name'),
                             optionValue: [{
@@ -1608,7 +1393,48 @@
                             // 현재 의미가 없음
                             required: "0"
                         });
+                    });*/
+                    /*$($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                        // 1. 현재 선택된 세부 옵션들을 담을 빈 배열을 만듭니다.
+                        let currentOptionValues = [];
+                        
+                        // 2. 내부의 개별 옵션 태그(.selection__text)들을 하나씩 순회하며 데이터를 추출합니다.
+                        $(ele).find('.selection__text').each((i, textEle) => {
+                            currentOptionValues.push({
+                                propertyName: $(textEle).data('option_name'),
+                                // textEle(현재 옵션 텍스트) 바로 다음에 오는 삭제 버튼의 idx를 가져옵니다.
+                                idx: Number($(textEle).next('.ico_opt_remove').data('opt_idx')), 
+                                // 수량은 해당 그룹(.option_item) 전체에 공통으로 적용되므로 기존과 동일하게 가져옵니다.
+                                count: Number($(ele).find('.count_box2 > input').val()),
+                                // 첫 번째가 아닌, "현재 순회 중인" 옵션의 가격을 가져옵니다.
+                                price: $(textEle).data('price')
+                            });
+                        });
+
+                        // 3. 추출한 배열을 최종 데이터 구조에 삽입합니다.
+                        productOption.push({
+                            optionName: $(ele).find('.selection__text').first().data('name'),
+                            optionValue: currentOptionValues,
+                            required: "0"
+                        });
+                    });*/
+
+                    $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
+                        // 묶지 않고, 개별 옵션을 찾을 때마다 곧바로 productOption 배열에 독립적으로 넣습니다.
+                        $(ele).find('.selection__text').each((i, textEle) => {
+                            productOption.push({
+                                optionName: $(textEle).data('name'), // 첫 번째 값이 아닌, 현재 순회중인 고유 옵션명 (색상, 사이즈 등)
+                                optionValue: [{
+                                    propertyName: $(textEle).data('option_name'),
+                                    idx: Number($(textEle).next('.ico_opt_remove').data('opt_idx')),
+                                    count: Number($(ele).find('.count_box2 > input').val()),
+                                    price: $(textEle).data('price')
+                                }],
+                                required: "0"
+                            });
+                        });
                     });
+
                     prodData.append("p_product_option[" + 0 + "]",  JSON.stringify(productOption));
                     @endif
 

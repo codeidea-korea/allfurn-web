@@ -120,13 +120,7 @@
                             <a href="/product/detail/{{$item->idx}}">
                                 <span>{{$item->companyName}}</span>
                                 <p>{{$item->name}}</p>
-                                <b>
-                                    @if( $item->is_price_open == 1 )
-                                        {{number_format( $item->price )}}
-                                    @else
-                                        {{$item->price_text}}
-                                    @endif
-                                </b>
+                                <b>{{ productDisplayPrice($item) }}</b>
                             </a>
                         </div>
                     </li>
@@ -388,14 +382,10 @@
                 '           <span>' + product.companyName + '</span>' +
                 '           <p>' + product.name + '</p>' +
                 '           <b>';
-            if (product.is_price_open == 1) {
+            if (product.is_price_open == 1 && Number(product.price) > 0) {
                 html += product.price.toLocaleString('ko-KR') + '원';
             } else {
-                if(product.price_text) {
-                    html += (product.price_text.replace('가격 안내 문구 선택','업체 문의'));
-                } else {
-                    html += '가격 안내 문구 선택';
-                }
+                html += '업체 문의';
             }
             html += '' +
                 '</b>' +

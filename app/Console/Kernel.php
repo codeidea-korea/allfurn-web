@@ -27,6 +27,23 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('reset:aicount')
+                 ->timezone('Asia/Seoul')
+                 ->dailyAt('00:00');
+        
+        $schedule->command('ai:clean-temp')
+                 ->timezone('Asia/Seoul')
+                 ->dailyAt('00:00');
+
+        $schedule->command('push:daily-new-products')
+                 ->timezone('Asia/Seoul')
+                 ->dailyAt('17:00')
+                 ->withoutOverlapping();
+
+        $schedule->command('home:warm-cache')
+                 ->timezone('Asia/Seoul')
+                 ->cron('*/4 * * * *')
+                 ->withoutOverlapping(10);
     }
 
     /**

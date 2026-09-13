@@ -20,6 +20,7 @@
                         <div class="option_item">
                             <div class="">
                                 <p class="option_name">{{$item2->optionName}}</p>
+                                <p class="option_name">{{$sub->propertyName}}</p>
                             </div>
                             <div class="mt-2">
                                 <div>{{ $sub->count }}개</div>
@@ -33,10 +34,10 @@
             <div class="prod_option">
                 <div class="name">가격</div>
                 <div class="total_price">
-                    @if( $item->is_price_open == 0 ? 1 : 0 )
-                        {{ $item->price_text }}
+                    @if( productIsInquiryPrice($item) )
+                        업체 문의
                     @else
-                        {{$item->is_price_open ? number_format($item->price + $_each_price, 0).'원': $item->price_text}}
+                        {{ number_format($item->price + $_each_price, 0).'원' }}
                     @endif
                 </div>
             </div>
@@ -50,7 +51,7 @@
         </div>
         <div class="prod_option">
             <div class="name">단가</div>
-            <div>{{ $item->is_price_open ? number_format($item->price * $item->p_cnt, 0).'원' : (($item->price_text === null || $item->price_text === '' || $item->price_text ==='가격 안내 문구 선택') ? '' : $item->price_text) }}</div>
+            <div>{{ productIsInquiryPrice($item) ? '업체 문의' : number_format($item->price * $item->p_cnt, 0).'원' }}</div>
         </div>
     </div>
     @endif

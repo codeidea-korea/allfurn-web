@@ -283,7 +283,7 @@
             <!--
                 <button type="button" type="button" onclick="insertOrder()"><span class="prodCnt">00</span>건 견적서 완료하기 <img src="/img/icon/arrow-right.svg" alt=""></button>
              -->
-            <button class="close_btn" type="button" onclick="modalClose('#check_estimate-modal')">주문 보류</button>
+            <button class="close_btn" type="button" onclick="checkOrder()">주문 보류</button>
              <button type="button" type="button" onclick="insertOrder()">주문하기<img src="/img/icon/arrow-right.svg" alt=""></button>
             </div>
         </div>
@@ -1057,12 +1057,25 @@
     });
 	
         function checkOrder (){
+
+            // 1. 체크된 항목 수집 (insertOrder와 동일한 로직)
+            let checkedIds = [];
+            $('.item_selector:checked').each(function() {
+                checkedIds.push($(this).data('code'));
+            });
+
+            // (선택사항) 아무것도 선택하지 않았을 때 알림
+            if (checkedIds.length === 0) {
+                alert('확인할 상품을 선택해주세요.');
+                return;
+            }
             modalClose('#check_estimate-modal');
             $.ajax({
                 url: '/estimate/checkOrder',
                 type: 'put',
                 data: {
-                    'estimate_group_code'   : estimate_group_code
+                    'estimate_group_code'   : estimate_group_code,
+                    'select_idx'          : checkedIds
                 },
                 dataType: 'JSON',
                 beforeSend: function (xhr) {

@@ -10,7 +10,7 @@
     <div id="content">
         <div class="prod_detail_top">
             <div class="img_box">
-                <a href="javascript:window.history.back()" class="back"><svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>
+                <a href="javascript:goProductBack()" class="back"><svg><use xlink:href="/img/icon-defs.svg#Notice_arrow"></use></svg></a>
                 <div class="count_pager dark_type"><b>1</b> / 12</div>
                 <div class="big_thumb">
                     <ul class="swiper-wrapper">
@@ -36,12 +36,8 @@
                         <h4>{{$data['detail']->name}}</h4>
                     </div>
                     <div class="info">
-                        <p class="product_price" data-total_price={{$data['detail']->price}}>
-                            @if( $data['detail']->is_price_open == 1 )
-                                {{number_format($data['detail']->price)}}
-                            @else
-                                {{$data['detail']->price_text}}
-                            @endif
+                        <p class="product_price" data-total_price="{{ productIsInquiryPrice($data['detail']) ? 0 : $data['detail']->price }}">
+                            {{ productDisplayPrice($data['detail']) }}
                         </p>
                         <!-- 0325추가 -->
                         <div class="">
@@ -63,11 +59,11 @@
                             <input type="hidden" name="product_option_exist" value="1" readOnly />
                             <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
-                                <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown2 w-full h-full flex justify-between items-center">
                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
-                                            @if($item->required == 1)
+                                            @if(($item->required ?? 0) == 1)
                                                 (필수)
                                             @else
                                                 (선택)
@@ -81,7 +77,7 @@
                                                 <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                     <a href="javascript:;" class="flex items-center">
                                                         {{$sub->propertyName}}
-                                                        @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                        @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
                                                             <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                         @endif
                                                     </a>
@@ -305,11 +301,11 @@
                                 
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown relative my_filterbox mt-3 @if($item->required == 1)required <?php $required = true; ?> @endif">
+                                        <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
-                                                    @if($item->required == 1)
+                                                    @if(($item->required ?? 0) == 1)
                                                         (필수)
                                                     @else
                                                         (선택)
@@ -323,7 +319,7 @@
                                                         <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                             <a href="javascript:;" class="flex items-center">
                                                                 {{$sub->propertyName}}
-                                                                @if((int)$sub->price > 0 && $data['detail']->is_price_open == 1)
+                                                                @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
                                                                     <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                                 @endif
                                                             </a>
@@ -335,16 +331,12 @@
                                     @endforeach
                                     <div class="prod_option opt_result_area flex-wrap ori">
                                     </div>
-                                    <p class="product_price" data-total_price="1000">0원</p>
+                                    <p class="product_price" data-total_price="{{ productIsInquiryPrice($data['detail']) ? 0 : $data['detail']->price }}">{{ productIsInquiryPrice($data['detail']) ? '업체 문의' : '0원' }}</p>
                                 @else
                                 <div class="prod_option">
                                     <div class="name">단가</div>
                                     <div class="_requestEstimateTotalPrice">
-                                    @if( $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 )
-                                        업체 문의
-                                    @else
-                                        {{$data['detail']->is_price_open ? number_format($data['detail']->price, 0).'원': $data['detail']->price_text}}
-                                    @endif
+                                    {{ productDisplayPrice($data['detail']) }}
                                     </div>
                                 </div>
                                 @endif
@@ -522,7 +514,7 @@
         <div class="modal_inner new-modal">
             <div class="modal_header">
                 <h3>견적 요청서 확인</h3>
-                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="./img/icon/x_icon.svg" alt=""></button>
+                <button class="close_btn" onclick="modalClose('#request_confirm-modal')"><img src="/img/icon/x_icon.svg" alt=""></button>
             </div>
 
             <div class="modal_body">
@@ -533,7 +525,7 @@
                         <div class="fold_area txt_info active">
                             <div class="target title" onclick="foldToggle(this)">
                                 <p>견적 기본정보</p>
-                                <img class="arrow" src="./img/icon/arrow-icon.svg" alt="">
+                                <img class="arrow" src="/img/icon/arrow-icon.svg" alt="">
                             </div>
                             <div>
                                 <div class="txt_desc">
@@ -998,7 +990,11 @@
 
     // 옵션 선택 후 가격 계산
     function reCal() {
-        if ( {{$data['detail']->is_price_open}} == 0) {
+        if ({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+            $('.product_price').text('업체 문의');
+            $('.product_price').data('total_price', 0);
+            $('._requestEstimateTotalPrice').text('업체 문의');
+            $('._requestEstimateTotalPrice2').text('업체 문의');
             return;
         }
         var price = 0;
@@ -1025,7 +1021,7 @@
             $('.product_price').text(total.toLocaleString()+'원');
             $('.product_price').data('total_price', total);
         }
-        if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+        if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
             $('._requestEstimateTotalPrice').text("업체 문의");
             $('._requestEstimateTotalPrice2').text("업체 문의");
         } else {
@@ -1038,7 +1034,7 @@
     $(function(){
         initEventListener();
     });
-        $('.count_box2 .minus').off().on('click', function(){
+        /*$('.count_box2 .minus').off().on('click', function(){
             let num = Number($(this).siblings('input').val());
             if(isNaN(num)) {
                 num = 1;
@@ -1048,7 +1044,7 @@
             }
             const count = Number($('#requestEstimateProductCount').val()+'');
             $('._requestEstimateCount').text(count + '개');
-            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
                 $('._requestEstimateTotalPrice').text("업체 문의");
             } else {
                 $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
@@ -1063,10 +1059,51 @@
             $(this).siblings('input').val(`${num + 1}`);
             const count = Number($('#requestEstimateProductCount').val()+'');
             $('._requestEstimateCount').text(count + '개');
-            if({{ $data['detail']->is_price_open == 0 || $data['detail']->price_text == '수량마다 상이' || $data['detail']->price_text == '업체 문의' ? 1 : 0 }}) {
+            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
                 $('._requestEstimateTotalPrice').text("업체 문의");
             } else {
                 $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
+            }
+        });*/
+        $('.count_box2 .minus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            if (num !== 1) {
+                $(this).siblings('input').val(`${num - 1}`);
+            }
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+            
+            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("업체 문의");
+            } else {
+                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
+                let unitPrice = Number($('.product_price').data('total_price'));
+                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
+
+                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
+            }
+        });
+
+        $('.count_box2 .plus').off().on('click', function(){
+            let num = Number($(this).siblings('input').val());
+            if(isNaN(num)) {
+                num = 1;
+            }
+            $(this).siblings('input').val(`${num + 1}`);
+            const count = Number($('#requestEstimateProductCount').val()+'');
+            $('._requestEstimateCount').text(count + '개');
+
+            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
+                $('._requestEstimateTotalPrice').text("업체 문의");
+            } else {
+                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
+                let unitPrice = Number($('.product_price').data('total_price'));
+                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
+                
+                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
             }
         });
     function initEventListener(){
@@ -1446,10 +1483,10 @@
                             '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
                             '</div>' +
                             '<p class="price">';
-                        @if($data['detail']->is_price_open == 1)
+                        @if(!productIsInquiryPrice($data['detail']))
                             htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
                         @else
-                            htmlText += '<span>{{$data['detail']->price_text}}</span>';
+                            htmlText += '<span>업체 문의</span>';
                         @endif
                             htmlText += '</p></div></div>';
                         if(required && $('.selection__result.add').length > 0 ) {
@@ -1506,5 +1543,43 @@
         $minus.trigger('click');
     }
 
+    var allfurnPushBackHome = new URLSearchParams(window.location.search).get('pushBackHome') === 'Y';
+
+    function goProductBack() {
+        try {
+            if (isPushBackHome()) {
+                sessionStorage.removeItem('allfurnPushBackHome');
+                location.replace('/');
+                return;
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+        window.history.back();
+    }
+
+    function isPushBackHome() {
+        if (allfurnPushBackHome || new URLSearchParams(window.location.search).get('pushBackHome') === 'Y') {
+            return true;
+        }
+
+        try {
+            return sessionStorage.getItem('allfurnPushBackHome') === 'Y';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    if (allfurnPushBackHome) {
+        try {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('pushBackHome');
+            history.replaceState(null, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+            sessionStorage.setItem('allfurnPushBackHome', 'Y');
+        } catch (e) {
+            console.log(e);
+        }
+    }
 </script>
 @endsection

@@ -21,7 +21,7 @@
                                         <strong>{{ $banner->content }}</strong>
                                         <span>{{ $banner->companyName }}</span>
                                         <p>{{ $banner->name }}</p>
-                                        <b>{{$banner->is_price_open ? number_format($banner->price, 0).'원': $banner->price_text}}</b>
+                                        <b>{{ productDisplayPrice($banner) }}</b>
                                     </a>
                                 </div>
                             </li>

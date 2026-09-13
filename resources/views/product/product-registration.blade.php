@@ -15,16 +15,9 @@
                 <p class="required_sample flex flex-row-reverse items-center"> 는 필수 입력 항목입니다.</p>
             </div>
 
-            <!-- 기본정보 시작 -->
             <div class="com_setting stting_wrap">
                 <div class="flex items-center pb-5 mb-5 justify-between border-b-2 border-stone-900 ">
                     <h3 class="font-medium text-lg">상품 기본 정보</h3>
-                    {{-- @if(sizeof($productList)>0)
-                        <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="getProductList(1);">
-                            기본 정보 불러오기F
-                        </button>
-                    @endif
-                    button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="modalOpen('#retrieve_information_modal')">기본 정보 불러오기</button>--}}
                 </div>
                 <div class="mb-5 pb-5 border-b">
                     <dl class="flex">
@@ -38,8 +31,8 @@
                     <dl class="flex">
                         <dt class="essential w-[190px] shrink-0 mt-2">상품 이미지</dt>
                         <dd class="font-medium w-full">
-                            <div class="flex flex-wrap items-center gap-3 desc__product-img-wrap ui-sortable">
-                                <div class="border border-dashed w-[200px] h-[200px] rounded-md relative flex items-center justify-center product-img__gallery">
+                            <div class="flex flex-wrap items-start gap-3 desc__product-img-wrap ui-sortable">
+                                <div class="border border-dashed w-[200px] h-[244px] rounded-md relative flex items-center justify-center product-img__gallery">
                                     <input type="file" class="file_input" id="form-list02" name="file" multiple="multiple" required placeholder="이미지 추가">
                                     <div>
                                         <div class="file_text flex flex-col items-center">
@@ -54,7 +47,12 @@
                                     <p>· 권장 크기: 550 x 550 / 권장 형식: jpg, jpeg, png</p>
                                     <p class="text-primary">· 첫번째 이미지가 대표 이미지로 노출됩니다.</p>
                                     <p>· 이미지는 8개까지 등록 가능합니다.</p>
+                                    <p>· AI 배경 생성 버튼으로 AI 이미지 생성이 가능합니다.</p>
+                                    <p>· AI 수정 이미지 사용 책임은 제품 등록자에게 있습니다.</p>
                                 </div>
+                            </div>
+                            <div class="mt-3">
+                                 
                             </div>
                         </dd>
                     </dl>
@@ -116,35 +114,6 @@
                                     </div>
                                 </div>
 
-                                <!-- 미노출일 때 출력 -->
-                                 <!-- 
-                                <div class="select-group__dropdown">
-                                    <div class="mt-5">
-                                        <a href="javascript:;" class="h-[48px] px-3 border rounded-sm inline-block filter_border filter_dropdown w-[410px] flex justify-between items-center">
-                                            <p class="dropdown__title">가격 안내 문구 선택</p>
-                                            <svg class="w-6 h-6 filter_arrow"><use xlink:href="/img/icon-defs.svg#drop_b_arrow"></use></svg>
-                                        </a>
-                                        <div class="filter_dropdown_wrap w-[410px]" style="display: none;">
-                                            <ul>
-                                                <li>
-                                                    <a href="javascript:;" class="flex items-center">수량마다 상이</a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:;" class="flex items-center">업체 문의</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="mt-5 w-[410px]">
-                                        <div class="info">
-                                            <div class="flex items-center gap-1">
-                                                <img class="w-4" src="/img/member/info_icon.svg" alt="">
-                                                <p> 가격 대신 선택한 문구가 노출됩니다.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                 -->
 
                             </div>
                         </dd>
@@ -157,106 +126,6 @@
                 <input type="hidden" name="product_code" value="{{isset($product_number) ? $product_number : ''}}">
                 <input type="hidden" name="notice_info" id="form-list09" value="{{isset($data) ? $data->notice_info : ''}}">
 
-                <!--
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="w-[190px] shrink-0 mt-2">신상품 설정</dt>
-                        <dd class="font-medium w-full">
-                            <div class="radio_btn flex items-center">
-                                <div>
-                                    <input type="radio" name="is_new_product" id="is_new_product_01" {{ isset($data) ? ($data->is_new_product == 1 ? 'checked' : '') : 'checked'}} value="1">
-                                    <label for="is_new_product_01" class="w-[140px] h-[48px] flex items-center justify-center">설정</label>
-                                </div>
-                                <div style="margin-left:-1px;">
-                                    <input type="radio" name="is_new_product" id="is_new_product_02" {{ isset($data) ? ($data->is_new_product == 0 ? 'checked' : '') : ''}} value="0">
-                                    <label for="is_new_product_02" class="w-[140px] h-[48px] flex items-center justify-center">미설정</label>
-                                </div>
-                            </div>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="essential w-[190px] shrink-0 mt-2">결제 방식</dt>
-                        <dd class="font-medium w-full">
-                            <div class="radio_btn flex items-center">
-                                <div>
-                                    <input type="radio" name="payment" id="payment01" {{ isset($data) ? ( $data->pay_type == '1' ? 'checked' : '' ) : '' }} value="1">
-                                    <label for="payment01" class="w-[140px] h-[48px] flex items-center justify-center">업체 협의</label>
-                                </div>
-                                <div style="margin-left:-1px;">
-                                    <input type="radio" name="payment" id="payment02" {{ isset($data) ? ( $data->pay_type == '2' ? 'checked' : '' ) : '' }} value="2">
-                                    <label for="payment02" class="w-[140px] h-[48px] flex items-center justify-center">계좌이체</label>
-                                </div>
-                                <div style="margin-left:-1px;">
-                                    <input type="radio" name="payment" id="payment03" {{ isset($data) ? ( $data->pay_type == '3' ? 'checked' : '' ) : '' }} value="3">
-                                    <label for="payment03" class="w-[140px] h-[48px] flex items-center justify-center">세금계산서 발행</label>
-                                </div>
-                                <div style="margin-left:-1px;">
-                                    <input type="radio" name="payment" id="payment04" {{ isset($data) ? ( $data->pay_type == '4' ? 'checked' : '' ) : '' }} value="4">
-                                    <label for="payment04" class="w-[140px] h-[48px] flex items-center justify-center">직접입력</label>
-                                </div>
-                            </div>
-                            <div class="payment__input-wrap direct_input mt-5 {{ isset($data) ? ( $data->pay_type == '4' ? '' : 'hidden' ) : 'hidden' }}">
-                                <input type="text" name="payment_text" id="payment_text" class="setting_input h-[48px] w-full" placeholder="결제 방식을 입력해주세요." value="{{  isset($data) ? $data->pay_type_text : '' }}">
-                            </div>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="w-[190px] shrink-0 mt-2">상품 코드</dt>
-                        <dd class="font-medium w-full">
-                            <input type="text" name="product_code" maxlength="10" class="setting_input h-[48px] w-full" placeholder="상품 코드를 입력해주세요." value="{{isset($product_number) ? $product_number : ''}}">
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="essential w-[190px] shrink-0 mt-2">배송 방법</dt>
-                        <dd class="font-medium w-full">
-                            <button class="border w-[240px] flex items-center justify-center gap-2 h-[48px] rounded-md hover:bg-stone-100" onclick="openDeliveryModal();">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus text-stone-400"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                                배송 방법 추가
-                            </button>
-                            <div class="mt-3 shipping-wrap__add hidden">
-                                <span class="plus_del text-primary text-sm">추가된 배송 방법</span>
-                                <div class="flex items-center gap-3 mt-3 shipping_method_list"></div>
-                            </div>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="w-[190px] shrink-0 mt-2">상품 추가 공지</dt>
-                        <dd class="font-medium w-full">
-                            <div class="setting_input h-[100px] py-3">
-                                <textarea name="notice_info" id="form-list09" class="w-full h-full" placeholder="상품 추가 공지사항을 입력해주세요."></textarea>
-                            </div>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="mb-5 pb-5 border-b">
-                    <dl class="flex">
-                        <dt class="w-[190px] shrink-0 mt-2">인증 정보</dt>
-                        <dd class="font-medium w-full">
-                            <button class="h-[48px] w-[240px] rounded-md bg-stone-700 text-white hover:bg-stone-600" onclick="modalOpen('#certification_information_modal');">인증 정보 선택</button>
-                            <div class="mt-3 wrap__selected auth-wrap__selected hidden">
-                                <span class="plus_del text-primary text-sm">선택된 인증 정보</span>
-                                <div class="mt-1" id="auth_info">
-                                    {{-- 인증정보 텍스트 영역 --}}
-                                </div>
-
-                            </div>
-                        </dd>
-                    </dl>
-                </div>
-                    -->
 
                 <div class="mb-5 pb-5">
                     <dl class="flex">
@@ -314,10 +183,11 @@
 
         {{-- ############# 모달 모음 시작 --}}
         @include('product.product-reg-modal')
+        @include('product.modal-ai-generator')
         {{-- ############# 모달 모음 끝 --}}
     </div>
 
-    
+     
 
     {{-- ############# 완료, 임시, 미리보기 버튼 시작 --}}
     <div class="fixed bottom-0 border-t border-stone-200 bg-stone-100 w-full z-10">
@@ -363,6 +233,7 @@
         var stored400Files = [];
         var stored600Files = [];
         var stored1000Files = [];
+        var storedAiFiles = [];
         
         var subCategoryIdx = null;
         var deleteImage = [];
@@ -372,18 +243,9 @@
         var _tmp = 0;
         editer = null;
 
+
         $(document)
             .on('click', '.setting_category .category_list li > a', function(e) {
-                // var allLinks = $('.setting_category .category_list li > a');
-                // var otherLinks = allLinks.not(this);
-                // otherLinks.parent('li').css('background-color','');
-                // otherLinks.parent('li').css('color','');
-                // console.log(e)
-                //$('.setting_category .category_list li > a').parent('li').css('background-color','');
-                //$('.setting_category .category_list li > a').css('color','');
-                // $(this).parent('li').css('background-color','#FFF5F6')
-                // $(this).css('color','var(--main_color)')
-                // $(this).next('img').css('filter','grayscale(0)')
 
                 e.preventDefault(); // a 태그의 기본 동작 방지
 
@@ -411,10 +273,10 @@
                                 var infoText = '';
                                 infoText = '<div id="property_info">' +
                                     '   <div class="info">' +
-                                    '       <div class="">' +
-                                    '           <p>· 상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="text-priamry">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>'
-                                '       </div>' +
-                                '   </div>' +
+                                    '        <div class="">' +
+                                    '            <p>· 상품에 맞는 속성이 없는 경우, 추가 공지 영역에 기입해주세요. 혹은 <span class="text-priamry">속성 추가가 필요한 경우, 1:1 문의를 통해 올펀에 요청해주세요.</span></p>'
+                                '        </div>' +
+                                '    </div>' +
                                 '</div>' + infoText;
 
                                 $('#property').empty();
@@ -424,16 +286,8 @@
                         });
                     }
 
-                    // 모든 .depth2 요소를 숨김
                     $('.depth2').hide();
-                    // 클릭된 a 태그의 바로 다음 .depth2만 표시
-                    // $nextDepth2.next('a').each(function(){
-                    //     $(this).css('color','#000')
-                    //     $(this).next('img').css('filter','grayscale(1)')
-                    //     console.log(1)
-                    // })
-                    
-                    //$nextDepth2.next('a').css('color','var(--main_color)')
+
                     $nextDepth2.show();
                 }
             })
@@ -447,83 +301,115 @@
                     var file = files[i];
                     console.log('t1 : '+i)
                     if (file.type.match('image.*')){
-                        readImg.onload = (function(file) {
-                            return function(e) {
-                                console.log('t2 : ' + $('.product-img__add').length)
-                                let imgCnt = $('.product-img__add').length + 1;
+                    readImg.onload = (function(file) {
+                        return function(e) {
+                            console.log('t2 : ' + $('.product-img__add').length)
+                            let imgCnt = $('.product-img__add').length + 1;
 
-                                if (imgCnt == 9) {
-                                    openModal('#alert-modal08');
-                                    return;
-                                }
-                                var image = new Image;
-                                image.onload = function() {
-                                    file = getThumbFile(image, 500, this.width, this.height);
-                                    storedFiles.push(file);
-                                };
-                                image.src = e.target.result;
+                            if (imgCnt == 9) {
+                                openModal('#alert-modal08');
+                                return;
+                            }
 
-                                var image100 = new Image;
-                                image100.width = 100;
-                                image100.height = 100;
-                                image100.onload = function() {
-                                    const i100 = getThumbFile(image100, 100, this.width, this.height);
-                                    stored100Files.push(i100);
-                                };
-                                image100.src = e.target.result;
+                            // --- 리사이징 로직 (기존 유지) ---
+                            var image = new Image;
+                            image.onload = function() {
+                                var resizedFile = getThumbFile(image, 500, this.width, this.height);
+                                resizedFile.name = file.name; // 파일명 명시
+                                storedFiles.push(resizedFile);
 
-                                var image400 = new Image;
-                                image400.width = 400;
-                                image400.height = 400;
-                                image400.onload = function() {
-                                    const i400 = getThumbFile(image400, 400, this.width, this.height);
-                                    stored400Files.push(i400);
-                                };
-                                image400.src = e.target.result;
-
-                                var image600 = new Image;
-                                //image600.width = 600;
-                                //image600.height = 600;
-                                image600.onload = function() {
-                                    const i600 = getThumbFile(image600, 600, this.width, this.height);
-                                    stored600Files.push(i600);
-                                };
-                                image600.src = e.target.result;
-
-                                var image1000 = new Image;
-                                image1000.width = 1000;
-                                image1000.height = 1000;
-                                image1000.onload = function() {
-                                    const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
-                                    stored1000Files.push(i1000);
-                                };
-                                image1000.src = e.target.result;
-
-
-                                $('.desc__product-img-wrap').append(
-                                    '<div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" file="' + file.name +  '">' +
-                                    '   <img class="w-[200px] h-[200px] object-cover rounded-md" src="' + e.target.result + '" alt="상품이미지0' + imgCnt + '">' +
-                                    '   <div class="absolute top-2.5 right-2.5">' +
-                                    '       <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
-                                    '           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
-                                    '       </button>' +
-                                    '   </div>' +
-                                    '</div>'
-                                );
-
-                                if (imgCnt == 1) {
-                                    $('.product-img__add').append(
-                                        '   <div class="absolute top-2.5 left-2.5">' +
-                                        '       <p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p>' +
-                                        '   </div>'
-                                    );
-                                }
-
-                                if (imgCnt == 8) {
-                                    $('.desc__product-img-wrap > div').first().hide();
-                                }
+                                // [추가] AI 모달 전송용 (잘리지 않고 여백이 채워진 500px 이미지)
+                                var aiResizedFile = getThumbFileAi(image, 1000, this.width, this.height);
+                                aiResizedFile.name = file.name;
+                                storedAiFiles.push(aiResizedFile);
                             };
-                        })(file);
+                            image.src = e.target.result;
+
+                            var image100 = new Image;
+                            image100.width = 100;
+                            image100.height = 100;
+                            image100.onload = function() {
+                                const i100 = getThumbFile(image100, 100, this.width, this.height);
+                                i100.name = file.name;
+                                stored100Files.push(i100);
+                            };
+                            image100.src = e.target.result;
+
+                            var image400 = new Image;
+                            image400.width = 400;
+                            image400.height = 400;
+                            image400.onload = function() {
+                                const i400 = getThumbFile(image400, 400, this.width, this.height);
+                                i400.name = file.name;
+                                stored400Files.push(i400);
+                            };
+                            image400.src = e.target.result;
+
+                            var image600 = new Image;
+                            image600.width = 600;
+                            image600.height = 600;
+                            image600.onload = function() {
+                                const i600 = getThumbFile(image600, 600, this.width, this.height);
+                                i600.name = file.name;
+                                stored600Files.push(i600);
+                            };
+                            image600.src = e.target.result;
+
+                            var image1000 = new Image;
+                            image1000.width = 1000;
+                            image1000.height = 1000;
+                            image1000.onload = function() {
+                                const i1000 = getThumbFile(image1000, 1000, this.width, this.height);
+                                i1000.name = file.name;
+                                stored1000Files.push(i1000);
+                            };
+                            image1000.src = e.target.result;
+                            // --------------------------------
+
+                            // [핵심 수정 부분] 고유 ID 생성
+                            var uniqueId = 'prv_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+                            var uniqueHiddenId = 'path_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+
+                            // UI 추가
+                            $('.desc__product-img-wrap').append(
+                                '<div class="w-[200px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" file="' + file.name + '">' +
+                                    
+                                    // 1. 이미지 영역
+                                    '<div class="relative w-[200px] h-[200px] bg-slate-100 rounded-md">' +
+                                        // [중요] ID 할당 및 data-original-src 속성 추가 (원본 복구용)
+                                        '<img id="' + uniqueId + '" class="w-full h-full object-cover rounded-md" src="' + e.target.result + '" data-original-src="' + e.target.result + '" alt="상품이미지">' +
+                                        '<div class="absolute top-2.5 right-2.5">' +
+                                            '<button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">' +
+                                                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>' +
+                                            '</button>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    
+                                    // 2. AI 버튼 영역
+                                    // [중요] openAiModal에 this, ID 전달
+                                    '<button type="button" class="mt-2 w-full h-[36px] flex items-center justify-center gap-1 border border-primary text-primary text-sm rounded hover:bg-stone-50" onclick="openAiModal(this, \'' + file.name + '\', \'#' + uniqueId + '\', \'#' + uniqueHiddenId + '\')">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>' +
+                                        'AI 배경생성' +
+                                    '</button>' +
+
+                                    // 3. 결과 저장용 Hidden Input
+                                    '<input type="hidden" id="' + uniqueHiddenId + '" name="ai_generated_paths[' + file.name + ']">' +
+                                '</div>'
+                            );
+
+                            if (imgCnt == 1) {
+                                $('.product-img__add').append(
+                                    '   <div class="absolute top-2.5 left-2.5">' +
+                                    '        <p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p>' +
+                                    '    </div>'
+                                );
+                            }
+
+                            if (imgCnt == 8) {
+                                $('.desc__product-img-wrap > div').first().hide();
+                            }
+                        };
+                    })(file);
                         readImg.readAsDataURL(file);
 
                     } else {
@@ -537,23 +423,38 @@
                         }, 1000);
                     }
                 }
+                $(this).val('');
             })
             .on('click','.ico__delete--circle',function(e){
                 e.preventDefault();
-                var file = $(this).parent().parent().attr('file');
-                var idx = $(this).parent().parent().index();
 
-                $(this).parent().parent().remove('');
-                for(var i = 0; i < storedFiles.length; i++) {
-                    if(storedFiles[i].name == file) {
-                        stored100Files.splice(i, 1);
-                        stored400Files.splice(i, 1);
-                        stored600Files.splice(i, 1);
-                        stored1000Files.splice(i, 1);
-                        storedFiles.splice(i, 1);
-                        break;
+                var $wrapper = $(this).closest('.product-img__add');
+                var fileName = $wrapper.attr('file'); 
+
+                var originalIdx = $wrapper.attr('data-idx');
+                if (originalIdx && originalIdx !== "undefined") {
+                    if (!deleteImage.includes(originalIdx)) {
+                        deleteImage.push(originalIdx);
                     }
                 }
+                
+                $wrapper.remove();
+                $(this).parent().parent().remove('');
+
+                var idxMain = storedFiles.findIndex(function(f) { return f && f.name === fileName; });
+                if (idxMain > -1) storedFiles.splice(idxMain, 1);
+
+                var idx100 = stored100Files.findIndex(function(f) { return f && f.name === fileName; });
+                if (idx100 > -1) stored100Files.splice(idx100, 1);
+
+                var idx400 = stored400Files.findIndex(function(f) { return f && f.name === fileName; });
+                if (idx400 > -1) stored400Files.splice(idx400, 1);
+
+                var idx600 = stored600Files.findIndex(function(f) { return f && f.name === fileName; });
+                if (idx600 > -1) stored600Files.splice(idx600, 1);
+
+                var idx1000 = stored1000Files.findIndex(function(f) { return f && f.name === fileName; });
+                if (idx1000 > -1) stored1000Files.splice(idx1000, 1);
 
                 img_reload_order();
 
@@ -639,7 +540,7 @@
                     })
                     modalOpen('#product_attributes_modal');
                 }
-            }
+            } 
         });
     }
     //### 속성 가져오기2
@@ -922,7 +823,9 @@
 
             // 상품가격
             if ($('input[name="price_exposure"]:checked').val() == 0) {
-                $('.prod_detail_top .info p').text($('.select-group__dropdown p:first-child').text());
+                $('.prod_detail_top .info p').text('업체 문의');
+            } else if (Number($('#product-price').val()) <= 0) {
+                $('.prod_detail_top .info p').text('업체 문의');
             } else {
                 $('.prod_detail_top .info p').text($('#product-price').val().replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'원');
             }
@@ -952,29 +855,13 @@
             $('#optsArea > div.flex').each(function (i, el) {
                 required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
 
-                /*htmlText += '<div class="dropdown" style="width: 576px">' +
-                    '<p class="dropdown__title">' +
-                    $('#option-name_0' + (i+1)).val() +' 선택' +
-                    '('*/
                 if(required == 1) {
                     requiredCnt ++;
                     //htmlText += '필수';
                 } else {
                     //htmlText += '선택';
                 }
-                /*htmlText += ')' +
-                    '</p>' +
-                    '<ul class="dropdown__wrap">' ;
-                $(el).find('ul.option_value_wrap li.item__input-wrap').each(function (y, eli) {
-                    price = $(eli).find('input[name="option-price"]').val().replace(/\,/g, '').replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 
-                    htmlText += '<li class="dropdown__item">' +
-                        '<p class="name">' + $(eli).find('input[name="option-property_name"]').val() + '</p>' +
-                        '<p class="price">' + (price != '0' ? price +'원' : '') + '</p>' +
-                        '</li>';
-                });
-                htmlText += '</ul>' +
-                    '</div>';*/
             })
 
             htmlText = '';
@@ -1288,7 +1175,7 @@
                 alert('상품 이미지를 등록해주세요.');
                 $('#form-list02').focus();
                 return;
-            } else if ($('#categoryIdx').data('category_idx') < 1) {
+            } else if (!$('#categoryIdx').data('category_idx') || $('#categoryIdx').data('category_idx') < 1) {
                 alert('상품 카테고리를 등록해주세요.');
                 $('.category__list-item.step1').focus();
                 return;
@@ -1316,8 +1203,8 @@
             $('#loadingContainer').show();
 
             // if (proc) {
-            //     alert('등록중입니다.');
-            //     return;
+            //      alert('등록중입니다.');
+            //      return;
             // }
             // proc = true;
 
@@ -1341,6 +1228,17 @@
             for (var i = 0; i < stored1000Files.length; i++) {
                 form.append('files1000[]', stored1000Files[i]);
             }
+
+            $('input[name^="ai_generated_paths"]').each(function() {
+                var val = $(this).val();
+                var name = $(this).attr('name'); // 예: ai_generated_paths[원본파일.jpg]
+                
+                // 값이 비어있지 않다면(AI 이미지가 생성되었다면) form에 담습니다.
+                if(val && val !== "") {
+                    form.append(name, val);
+                    console.log("AI 이미지 전송 준비:", name, val); // 확인용 로그
+                }
+            });
 
             var property = '';
             $('#property .select-group__result div').map(function () {
@@ -1385,16 +1283,46 @@
             }
             @endif
 
-                attachmentList = '';
+            attachmentList = '';
+            var imageOrder =[];
 
-            $('.product-img__add').map(function () {
-                if($(this).data('idx') != undefined) {
-                    attachmentList += $(this).data('idx') + ',';
+
+           $('.product-img__add').each(function () {
+                var currentIdx = $(this).attr('data-idx');
+                var fileName = $(this).attr('file');
+                var aiPath = $(this).find('input[name^="ai_generated_paths"]').val();
+
+                // 1. AI로 재생성된 이미지인 경우
+                if (aiPath && aiPath !== "") {
+                    imageOrder.push('ai:' + fileName);
+                } 
+                // 2. 기존에 등록되어 있던 이미지인 경우
+                else if (currentIdx !== undefined && currentIdx !== false && currentIdx !== "") {
+                    imageOrder.push('idx:' + currentIdx);
+                    attachmentList += currentIdx + ','; // 기존 백엔드 로직 호환을 위해 남겨둠
+                } 
+                // 3. PC에서 새로 올린 일반 이미지인 경우
+                else {
+                    imageOrder.push('new:' + fileName);
                 }
-            })
+            });
+
+            // 기존 로직: 유지할 기존 이미지 ID들 전송
+            if (attachmentList != '') {
+                form.append('attachmentIdx', attachmentList.slice(0, -1));
+            }
+
+            // 💡 핵심 로직: 화면에 보이는 전체 이미지의 '순서표' 전송
+            // 폼 데이터에 'image_order'라는 이름으로 순서표를 담아 보냅니다.
+            if (imageOrder.length > 0) {
+                form.append('image_order', imageOrder.join(','));
+            }
 
             if (attachmentList != '') {
                 form.append('attachmentIdx', attachmentList.slice(0, -1));
+            }
+            if (imageOrder.length > 0) {
+                form.append('image_order', imageOrder.join(','));
             }
 
             var data = new Array();
@@ -1476,51 +1404,71 @@
                     $('.w-full .text-primary span').data('category_idx', result['category_idx']);
                     $('.w-full .text-primary span').text( result['category'] );
 
-                    // $('.setting_category .category_list li a').each(function () {
-                    //     var url = $(this).prop('href');
-                    //     var s_url = url.split('pre=');
-                    //     var param1 = "?pre="+result['category_parent_idx'];
-                    //     if (url.indexOf(param1) > -1 && s_url[1] == result['category_parent_idx']){
-                    //         console.log(3)
-                    //         $(this).parent('li').css('background-color','#FFF5F6')
-                    //         $(this).css('color','var(--main_color)')
-                    //         $(this).next('img').css('filter','grayscale(0)')
-                    //         $(this).next('.depth2').show();
-                    //         var nextDepth = $(this).next('.depth2').find('a');
-                    //         nextDepth.each(function(){
-                    //             var url2 = $(this).prop('href');
-                    //             var s_url2 = url2.split('&');
-                    //             var s_url3 = s_url2[0].split('ca=');
-                    //             if (s_url3[1] == result['category_idx']) {
-                    //                 $(this).parent('li').css('background-color','#FFF5F6')
-                    //                 $(this).css('color','var(--main_color)')
-                    //             }
-                    //         });
-                    //     }
-                    // })
-
-                    // 첨부파일 이미지 출력
+                    // 첨부파일 이미지 출력 부분 수정
                     if (result['attachment'] != null) {
                         imageAddBtn = $('.product-img__gallery').clone();
                         $('.desc__product-img-wrap').html(imageAddBtn);
                         attIdx = result['attachment_idx'].split(',');
+
                         result['attachment'].map(function (item, i) {
                             if (item != null) {
+                                // 수정 시에도 동일하게 ID와 파일명을 정의해줍니다.
+                                // 기존 이미지는 파일 객체가 없으므로 item의 고유 정보를 활용합니다.
+                                var uniqueId = 'prv_existing_' + i;
+                                var uniqueHiddenId = 'path_existing_' + i;
+                                //var fileName = item['originName'] || 'existing_file_' + i; // 서버에서 파일명을 내려주면 그것을 사용하세요.
+                                var fileName = item['originName'] || 'existing_file_' + i + '.jpg';
+
                                 var html = `
-                                    <div class="w-[200px] h-[200px] rounded-md relative flex items-center justify-center bg-slate-100 product-img__add" data-idx="${attIdx[i]}" >
-                                        <img class="w-[200px] h-[200px] object-cover rounded-md" src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
-                                        <div class="absolute top-2.5 right-2.5">
-                                            <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                                            </button>
-                                        </div>`;
-                                        if (i == 0){
-                                            html += '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div>';
-                                        }
-                                html += '</div>';
+                                    <div class="w-[200px] h-auto pb-3 rounded-md relative flex flex-col items-center justify-start product-img__add" data-idx="${attIdx[i]}" file="${fileName}">
+                                        <div class="relative w-[200px] h-[200px] bg-slate-100 rounded-md">
+                                            <img id="${uniqueId}" class="w-full h-full object-cover rounded-md" src="${item['imgUrl']}" data-original-src="${item['imgUrl']}" alt="상품이미지0${(i+1)}">
+                                            <div class="absolute top-2.5 right-2.5">
+                                                <button class="ico__delete--circle w-[28px] h-[28px] bg-stone-600/50 rounded-full">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-white mx-auto w-4 h-4"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" class="mt-2 w-full h-[36px] flex items-center justify-center gap-1 border border-primary text-primary text-sm rounded hover:bg-stone-50" 
+                                                onclick="openAiModal(this, '${fileName}', '#${uniqueId}', '#${uniqueHiddenId}')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                            AI 배경생성
+                                        </button>
+                                        
+                                        <input type="hidden" id="${uniqueHiddenId}" name="ai_generated_paths[${fileName}]">
+                                    </div>`;
+
+                                if (i == 0) {
+                                    // 대표이미지 배지는 이미지 박스 내부에 위치하도록 처리
+                                    // (기존 코드에 맞춰 위치를 조정할 수 있습니다)
+                                    html = html.replace('</div>\n                </div>', '<div class="absolute top-2.5 left-2.5 add__badge"><p class="py-1 px-2 bg-stone-600/50 text-white text-center rounded-full text-sm">대표이미지</p></div></div></div>');
+                                }
                                 $('.desc__product-img-wrap').append(html);
+                                var proxyUrl = "{{ route('product.ai.proxy_image') }}?url=" + encodeURIComponent(item['imgUrl']);
+
+                                fetch(proxyUrl)
+                                    .then(res => {
+                                        if (!res.ok) {
+                                            throw new Error('네트워크 응답 에러 (상태 코드: ' + res.status + ')');
+                                        }
+                                        return res.blob();
+                                    })
+                                    .then(blob => {
+                                        var file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+
+                                        storedFiles.push(file);
+                                        storedAiFiles.push(file);
+
+                                        console.log("프록시 우회 성공: " + fileName + " 배열 추가 완료");
+                                    })
+                                    .catch(err => {
+                                        console.error('기존 이미지 변환 실패:', err);
+                                        alert('CORS 우회 실패!\n\n에러 내용: ' + err.message);
+                                    });
                             }
-                        })
+                        });
+
                         if (result['attachment'].length == 8) {
                             $('.product-img__gallery').hide();
                         }
@@ -1557,9 +1505,7 @@
                         $('#price_exposure01').attr('checked', false);
                         $('#price_exposure02').attr('checked', true);
                         $('.select-group__dropdown').css('display', 'block');
-                        if (result['price_text'] != null) {
-                            $('.select-group__dropdown .dropdown__title').text(result['price_text'])
-                        }
+                        $('.select-group__dropdown .dropdown__title').text('업체 문의')
                     }
 
                     // 결제 방식
@@ -1718,6 +1664,7 @@
 
         modalClose('#prod_category-modal');
     }
+    
 
     $(document).ready(function(){
         init_editor();
@@ -1743,6 +1690,727 @@
     const prodCate = (item)=>{
         $(item).parent('li').toggleClass('on').siblings().removeClass('on')
     }
+
+    var currentAiFile = null;
+    var targetAiBtn = null; // [수정] 현재 작업 중인 버튼을 저장할 전역 변수
+    var originalFilesBackup = {};
+    var userAiCount = {{ Auth::user()->ai_count ?? 0 }}; // 초기값 설정
+
+    var tempAiFilesToDelete = [];
+
+    var aiGeneratedStore = {};
+    var selectedAiGeneratedUrl = null;
+    var selectedAiGeneratedStyleKey = null;
+
+    function getAiStyleKey($btn) {
+        if ($btn.data('action') === 'remove_bg') {
+            return 'remove_bg';
+        }
+
+        return $btn.data('style') || '';
+    }
+
+    function renderAiGeneratedShelf($styleBtn) {
+        var styleKey = getAiStyleKey($styleBtn);
+        var bucket = aiGeneratedStore[styleKey] || [];
+        var $shelf = $('#ai_generated_shelf');
+        var $list = $('#ai_generated_shelf_list');
+
+        $list.empty();
+        $('#ai_generated_shelf_count').text(bucket.length + '/3');
+
+        if (bucket.length === 0) {
+            $shelf.addClass('hidden');
+            return;
+        }
+
+        bucket.forEach(function(item, index) {
+            var isActive = selectedAiGeneratedUrl === item.url;
+
+            var $thumb = $('<button>', {
+                type: 'button',
+                class: 'ai-generated-thumb relative h-20 rounded-lg overflow-hidden border bg-white shadow-sm transition-all ' + (isActive ? 'border-red-500 ring-2 ring-red-500' : 'border-stone-200 hover:border-red-300'),
+                'data-url': item.url,
+                'data-style-key': styleKey
+            });
+
+            $('<img>', {
+                src: item.url,
+                alt: '생성 이미지 ' + (index + 1),
+                class: 'w-full h-full object-cover'
+            }).appendTo($thumb);
+
+            $('<span>', {
+                class: 'absolute left-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white',
+                text: index + 1
+            }).appendTo($thumb);
+
+            $list.append($thumb);
+        });
+
+        $shelf.removeClass('hidden');
+    }
+
+    function storeAiGeneratedImage($styleBtn, imageUrl) {
+        var styleKey = getAiStyleKey($styleBtn);
+
+        if (!styleKey || !imageUrl) {
+            return;
+        }
+
+        var bucket = aiGeneratedStore[styleKey] || [];
+
+        bucket = bucket.filter(function(item) {
+            return item.url !== imageUrl;
+        });
+
+        bucket.unshift({
+            url: imageUrl,
+            createdAt: Date.now()
+        });
+
+        aiGeneratedStore[styleKey] = bucket.slice(0, 3);
+
+        selectedAiGeneratedUrl = imageUrl;
+        selectedAiGeneratedStyleKey = styleKey;
+
+        $styleBtn.attr('data-generated-url', imageUrl);
+        renderAiGeneratedShelf($styleBtn);
+    }
+
+    function updateAiCountUI(count) {
+        if (count !== undefined && count !== null) {
+            userAiCount = count; // 전역 변수 동기화
+            $('#ai_remain_count_display')
+                .text('남은 횟수: ' + count + '회 남았습니다. 매일 자정 AI 이미지 생성 횟수가 초기화됩니다.')
+                .removeClass('hidden');
+        }
+    }
+
+    function openAiModal(btnElement, fileName, previewId, hiddenInputId) {
+
+        $('.generated-badge').remove();
+        
+        targetAiBtn = btnElement; // [수정] 클릭된 버튼 엘리먼트 저장
+        targetImgPreviewId = previewId || "#rep_img_preview";
+        targetHiddenInputId = hiddenInputId || "#rep_img_path";
+        
+        console.log("선택된 파일명:", fileName);
+
+        // storedFiles에서 파일 객체 찾기
+        var selectedFile = storedAiFiles.find(function(f) {
+            return f && f.name === fileName;
+        });
+
+        if (!selectedFile) {
+            
+            var debugMsg = "찾으려는 파일명: " + fileName + "\n\n";
+            debugMsg += "현재 storedFiles 배열 길이: " + storedFiles.length + "개\n";
+            if (storedFiles.length > 0) {
+                var storedNames = storedFiles.map(function(f) { return f.name; }).join('\n- ');
+                debugMsg += "\n[배열에 저장된 파일 목록]\n- " + storedNames;
+            } else {
+                debugMsg += "\n배열이 완전히 비어있습니다.\n(fetch 로직이 아직 완료되지 않았거나 실행되지 않음)";
+            }
+
+            alert("이미지 파일을 찾을 수 없습니다.\n\n=== 디버그 로그 ===\n" + debugMsg);
+            return;
+        }
+        
+        currentAiFile = selectedFile;
+
+        $.ajax({
+            url: "{{ route('product.ai.get_remain_count') }}", 
+            type: 'GET',
+            success: function(res) {
+                if (res.success) {
+                    updateAiCountUI(res.remain_count);
+                } else {
+                    // 실패 시 숨김 처리
+                    $('#ai_remain_count_display').addClass('hidden');
+                }
+            },
+            error: function() {
+                console.log('남은 횟수를 불러오는 데 실패했습니다.');
+            }
+        });
+
+        // FileReader로 이미지 URL 읽어서 모달에 표시
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // 메인 미리보기와 사이드바 썸네일 모두 이미지 설정
+
+
+            $('#ai_modal_preview_image').attr('src', e.target.result).attr('data-base-src', e.target.result).removeClass('hidden'); 
+            $('#ai_style_preview_badge').addClass('hidden');
+            $('#ai_modal_thumbnail').attr('src', e.target.result);
+            $('#ai_modal_placeholder_text').addClass('hidden');
+            $('#ai_modal_result_image').addClass('hidden'); // 결과 이미지는 초기화(숨김)
+            $('.generated-badge').remove(); 
+            $('.btn-style-select').removeAttr('data-generated-url');
+            aiGeneratedStore = {};
+            selectedAiGeneratedUrl = null;
+            selectedAiGeneratedStyleKey = null;
+            $('#ai_generated_shelf').addClass('hidden');
+            $('#ai_generated_shelf_list').empty();
+            $('#ai_generated_shelf_count').text('0/3');
+
+            $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+            $('#ai_input_prompt').val('');
+
+    
+
+            //$('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+            //$(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+
+            
+        }
+        reader.readAsDataURL(selectedFile);
+        
+
+        modalOpen('#ai_image_generator_modal');
+    }
+
+    // 2. [기능 독립] 배경 제거 버튼 클릭 이벤트
+    // $(document).on('click', '#btn_remove_bg', function(e) {
+    //     e.preventDefault();
+
+    //     if (userAiCount <= 0) {
+    //         alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+    //         return false; 
+    //     }
+        
+    //     if (!currentAiFile) return alert('작업할 이미지가 없습니다.');
+
+    //     var $btn = $(this);
+    //     var originalHtml = $btn.html();
+        
+
+    //     $('#ai_full_loading_overlay h4').text('AI 배경 제거 중...');
+    //     $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+    //     $('#ai_full_loading_overlay').removeClass('hidden');
+
+    //     $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 작업중...');
+
+    //     var formData = new FormData();
+    //     formData.append('image', currentAiFile);
+
+    //     $.ajax({
+    //         url: "{{ route('product.ai.remove_bg') }}",
+    //         type: 'POST',
+    //         global: false,
+    //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+    //         data: formData,
+    //         contentType: false, processData: false,
+    //         beforeSend: function() {
+    //         $('#loadingContainer').hide(); 
+    //         $('#loadingContainer').css('display', 'none'); 
+    //     },
+    //         success: function(res) {
+    //             if (res.success) {
+    //                 $('#ai_modal_preview_image').attr('src', res.data.removebg_url);
+    //                 updateAiCountUI(res.remain_count);
+    //                 //alert('배경 제거가 완료되었습니다.');
+    //                 modalOpen('#ai-generate-success-modal');
+    //             } else {
+    //                 alert('실패: ' + res.message);
+    //             }
+    //         },
+    //         error: function(xhr) { console.error(xhr); alert('서버 통신 오류'); },
+    //         complete: function() { $('#ai_full_loading_overlay').addClass('hidden'); $btn.prop('disabled', false).html(originalHtml); }
+    //     });
+    // });
+
+    // 스타일 버튼 클릭 이벤트 (북유럽, 모던 등 공통 처리)
+    $(document).on('click', '.btn-style-generate', function(e) {
+        e.preventDefault();
+
+        // 0. 준비
+        var prompt = $(this).data('prompt'); // 버튼에 심어둔 프롬프트 가져오기
+        var styleName = $(this).data('style');
+        
+        if (!currentAiFile) {
+            alert('작업할 이미지가 선택되지 않았습니다.');
+            return;
+        }
+
+        if (!confirm("'" + styleName + "' 스타일로 이미지를 생성하시겠습니까?\n(배경 제거 후 합성이 진행되며 약 10~20초 소요됩니다.)")) {
+            return;
+        }
+
+        // UI 잠금 및 로딩 표시
+        var $btn = $(this);
+        var originalText = $btn.text();
+        $('.btn-style-generate, #btn_remove_bg').prop('disabled', true); // 모든 버튼 비활성화
+        $btn.html('<span class="spinner-border spinner-border-sm"></span> 1단계: 배경 제거 중...');
+
+        // =========================================================
+        // [Step 1] 배경 제거 요청 (Stability AI)
+        // =========================================================
+        var formData = new FormData();
+        formData.append('image', currentAiFile);
+
+        $.ajax({
+            url: "{{ route('product.ai.remove_bg') }}",
+            type: 'POST',
+            global: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+            $('#loadingContainer').hide(); 
+            $('#loadingContainer').css('display', 'none'); 
+        },
+            success: function(res1) {
+                if (res1.success) {
+                    // 1단계 성공 -> 2단계 진행
+                    var tempPath = res1.data.temp_path; // 서버에 저장된 누끼 파일 경로
+                    
+                    // UI 업데이트
+                    $btn.html('<span class="spinner-border spinner-border-sm"></span> 2단계: 배경 합성 중...');
+                    $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); // 중간 과정 보여주기
+
+                    // =========================================================
+                    // [Step 2] 배경 합성 요청 (Google Gemini)
+                    // =========================================================
+                    generateBackground(tempPath, prompt, $btn, originalText);
+
+                } else {
+                    alert('배경 제거 실패: ' + res1.message);
+                    resetButtons($btn, originalText);
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr);
+                alert('배경 제거 중 서버 오류가 발생했습니다.');
+                resetButtons($btn, originalText);
+            }
+        });
+    });
+
+    // 3. [STEP 1] 스타일 선택 버튼 클릭 (UI 변경 및 값 저장)
+    $(document).on('click', '.btn-style-select', function(e) {
+        e.preventDefault();
+
+        $('.btn-style-select').removeClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+        $(this).addClass('border-red-500 text-red-500 bg-red-500/5 ring-1 ring-red-500');
+
+        // 3-2. 데이터 저장: 버튼에 있는 프롬프트를 숨겨진 input에 입력
+        var prompt = $(this).data('prompt');
+        $('#ai_input_prompt').val(prompt);
+
+        var $previewImg = $('#ai_modal_preview_image');
+
+        if ($(this).data('action') === 'remove_bg') {
+            var cachedUrl = $(this).attr('data-generated-url');
+            var baseSrc = $previewImg.attr('data-base-src');
+
+            if (cachedUrl) {
+                $previewImg.attr('src', cachedUrl);
+            } else if (baseSrc) {
+                $previewImg.attr('src', baseSrc);
+            }
+
+            $('#ai_style_preview_badge').addClass('hidden');
+
+            $('#btn_ai_confirm').prop('disabled', false);
+            $previewImg.css('object-fit', 'contain');
+            return;
+        }
+
+        var styleKey = getAiStyleKey($(this));
+        var bucket = aiGeneratedStore[styleKey] || [];
+
+        renderAiGeneratedShelf($(this));
+
+        if (bucket.length > 0) {
+            selectedAiGeneratedUrl = bucket[0].url;
+            selectedAiGeneratedStyleKey = styleKey;
+
+            $previewImg.attr('src', selectedAiGeneratedUrl);
+            $previewImg.css('object-fit', 'contain');
+
+            $(this).attr('data-generated-url', selectedAiGeneratedUrl);
+            $('#ai_style_preview_badge').addClass('hidden');
+            $('#btn_ai_confirm').prop('disabled', false);
+        } else {
+            selectedAiGeneratedUrl = null;
+            selectedAiGeneratedStyleKey = null;
+
+            var styleSampleImg = $(this).find('img').attr('src');
+
+            $previewImg.attr('src', styleSampleImg);
+            $previewImg.css('object-fit', 'cover');
+
+            $('#ai_style_preview_badge').removeClass('hidden');
+        }
+    });
+    
+    var testGenerateQuota = 3;
+
+
+     // 4. [STEP 2] 이미지 생성하기 버튼 클릭 (실제 실행)
+    $(document).on('click', '#btn_ai_generate', function(e) {
+        e.preventDefault();
+
+        if (userAiCount <= 0) {
+            alert("오늘 사용 가능한 AI 생성 횟수를 모두 소진하셨습니다.\n매일 자정에 횟수가 초기화됩니다.");
+            return false;
+        }
+
+        // 4-1. 유효성 검사
+        if (!currentAiFile) return alert('이미지를 찾을 수 없습니다.');
+
+        //var $activeStyleBtn = $('.btn-style-select.border-primary');
+        var $activeStyleBtn = $('.btn-style-select.border-red-500');
+
+        if ($activeStyleBtn.length === 0) {
+            return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+        }
+
+        var action = $activeStyleBtn.data('action');
+        var prompt = $('#ai_input_prompt').val();
+
+        if (action !== 'remove_bg' && !prompt) {
+            return alert('먼저 원하는 스타일 버튼을 선택해주세요.');
+        }
+
+        // 4-2. 로딩 시작
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $('.btn-style-select, #btn_remove_bg').prop('disabled', true); // 다른 조작 방지
+        
+        if (action === 'remove_bg') {
+            $('#ai_full_loading_overlay h4').text('배경 제거 중...');
+            $('#ai_full_loading_overlay p').text('배경을 깔끔하게 지우고 있습니다.');
+            $btn.html('<span class="spinner-border spinner-border-sm"></span> 배경 제거 중...');
+        } else {
+            $('#ai_full_loading_overlay h4').text('1단계: 배경 제거 중...');
+            $('#ai_full_loading_overlay p').text('이미지 생성을 위해 배경을 지우고 있습니다.');
+            $btn.html('<span class="spinner-border spinner-border-sm"></span> 1단계: 배경 제거 중...');
+        }
+
+        $('#ai_full_loading_overlay').removeClass('hidden');
+
+        // 4-3. 배경 제거 요청 (1단계)
+        var formData = new FormData();
+        formData.append('image', currentAiFile);
+
+        $.ajax({
+            url: "{{ route('product.ai.remove_bg') }}",
+            type: 'POST',
+            global: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: formData,
+            contentType: false, processData: false,
+            beforeSend: function() {
+            $('#loadingContainer').hide(); 
+            $('#loadingContainer').css('display', 'none'); 
+            },
+            success: function(res1) {
+                if (res1.success) {
+                    if (res1.remain_count !== undefined) {
+                        userAiCount = res1.remain_count;
+                    }
+                    // 성공 시 2단계 진행
+                    var tempPath = res1.data.temp_path;
+                    var removeBgUrl = res1.data.removebg_url;
+
+                    if (tempPath) {
+                        tempAiFilesToDelete.push(tempPath);
+                    }
+
+                    $('#ai_modal_preview_image').attr('src', res1.data.removebg_url); // 중간 과정 보여주기
+                    updateAiCountUI(res1.remain_count);
+
+                    if (action === 'remove_bg') {
+                        storeAiGeneratedImage($activeStyleBtn, removeBgUrl);
+
+                        if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                            var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">생성 완료</div>';
+                            $activeStyleBtn.append(badgeHtml);
+                        }
+
+                        $('#btn_ai_confirm').prop('disabled', false);
+                        modalOpen('#ai-generate-success-modal');
+                        return;
+                    }
+
+                    $('#ai_full_loading_overlay h4').text('2단계: AI 이미지 생성 중...');
+                    $('#ai_full_loading_overlay p').text('선택한 스타일로 공간을 꾸미고 있습니다. (약 10~20초)');
+
+                    $btn.html('<span class="spinner-border spinner-border-sm"></span> 2단계: 이미지 생성 중...');
+                    
+                    // 배경 합성 요청 (2단계)
+                    requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn);
+                } else {
+                    alert('배경 제거 실패: ' + res1.message);
+                    resetButtons($btn, originalText);
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr);
+                var errorLog = '배경 제거 중 오류가 발생했습니다.';
+
+                // 2. 서버에서 보낸 상세 에러 메시지가 있는지 확인 (JSON 응답)
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorLog += '\n\n[상세 내용]: ' + xhr.responseJSON.message;
+                } 
+                // 3. 만약 JSON이 아니라 일반 텍스트(PHP 에러 등)로 왔을 경우
+                else if (xhr.responseText) {
+                    // 너무 길 수 있으므로 앞부분 100자만 추출
+                    errorLog += '\n\n[서버 응답]: ' + xhr.responseText.substring(0, 100) + '...';
+                }
+                // 4. 그 외 상태 코드 확인
+                else {
+                    errorLog += '\n\n[상태 코드]: ' + xhr.status + ' (' + xhr.statusText + ')';
+                }
+
+                // 최종 알림창 표시
+                alert(errorLog);
+                
+                resetButtons($btn, originalText);
+            },
+            complete: function() {
+                if (action === 'remove_bg') {
+                    $('#ai_full_loading_overlay').addClass('hidden');
+                    resetButtons($btn, originalText);
+                }
+            }
+        });
+    });
+
+    // 배경 합성 함수 (분리됨)
+    function requestGenerateBg(tempPath, prompt, $btn, originalText, $activeStyleBtn) {
+
+
+        $('#ai_full_loading_overlay').removeClass('hidden');
+    
+        $.ajax({
+            url: "{{ route('product.ai.generate_bg') }}",
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { temp_path: tempPath, prompt: prompt },
+            dataType: 'json',
+            success: function(res2) {
+                if (res2.success) {
+                    $('#ai_modal_preview_image').attr('src', res2.data.final_url);
+                    $('#ai_style_preview_badge').addClass('hidden');
+                    updateAiCountUI(res2.remain_count);
+
+                    if (res2.data.final_path) {
+                        tempAiFilesToDelete.push(res2.data.final_path);
+                    }
+
+                    if ($activeStyleBtn && $activeStyleBtn.length > 0) {
+                        storeAiGeneratedImage($activeStyleBtn, res2.data.final_url);
+                        if ($activeStyleBtn.find('.generated-badge').length === 0) {
+                            var badgeHtml = '<div class="generated-badge absolute top-0.5 right-1 bg-stone-800 text-white text-[11px] font-bold px-2 py-1 rounded-md z-30 shadow-md">✨ 생성 완료</div>';
+                            $activeStyleBtn.append(badgeHtml);
+                        }
+                    }
+                    $('#btn_ai_confirm').prop('disabled', false); // ★ 추가: 이미지 생성 완료 시 버튼 활성화
+                    modalOpen('#ai-generate-success-modal');
+                } else {
+                    alert('이미지 생성 실패: ' + res2.message);
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr);
+                
+                // 1. 기본 에러 메시지
+                var msg = '이미지 생성 중 오류가 발생했습니다.';
+
+                // 2. 서버에서 보낸 JSON 에러 메시지가 있는지 확인 (Controller에서 보낸 message)
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg += "\n[상세 내용]: " + xhr.responseJSON.message;
+                } 
+                // 3. JSON이 아니라면 일반 텍스트 응답(HTML 에러 등) 확인
+                else if (xhr.responseText) {
+                    msg += "\n[상세 내용]: " + xhr.responseText.substring(0, 100) + "..."; // 너무 길 수 있으므로 자름
+                }
+
+                alert(msg);
+                
+                // 버튼 초기화 (로딩 상태 해제) - 기존 코드에 없다면 추가 필요
+                if (typeof resetButtons === 'function') {
+                    resetButtons($btn, originalText);
+                }
+            },
+            complete: function() {
+                $('#ai_full_loading_overlay').addClass('hidden');
+                resetButtons($btn, originalText);
+            }
+        });
+    }
+    
+    $(document).on('click', '.ai-generated-thumb', function(e) {
+        e.preventDefault();
+
+        selectedAiGeneratedUrl = $(this).attr('data-url');
+        selectedAiGeneratedStyleKey = $(this).attr('data-style-key');
+
+        $('#ai_modal_preview_image')
+            .attr('src', selectedAiGeneratedUrl)
+            .css('object-fit', 'contain');
+
+        $('#ai_style_preview_badge').addClass('hidden');
+
+        $('.ai-generated-thumb')
+            .removeClass('border-red-500 ring-2 ring-red-500')
+            .addClass('border-stone-200');
+
+        $(this)
+            .removeClass('border-stone-200')
+            .addClass('border-red-500 ring-2 ring-red-500');
+
+        $('.btn-style-select.border-red-500').attr('data-generated-url', selectedAiGeneratedUrl);
+        $('#btn_ai_confirm').prop('disabled', false);
+    });
+
+    // 버튼 상태 초기화
+    function resetButtons($btn, originalText) {
+        $('.btn-style-select, #btn_remove_bg').prop('disabled', false);
+        $btn.prop('disabled', false).html(originalText);
+    }
+
+    // [추가] AI 생성 완료 버튼 클릭 시, 메인 페이지의 버튼을 '원본 복구'로 변경하는 이벤트 리스너
+    $(document).on('click', '#btn_ai_confirm', function() {
+
+        var $wrapper = $(targetAiBtn).closest('.product-img__add');
+        var originalIdx = $wrapper.attr('data-idx');
+
+        if (originalIdx) {
+            $wrapper.attr('data-backup-idx', originalIdx);
+            
+            // ★ HTML 속성 제거
+            $wrapper.removeAttr('data-idx');
+            // ★ jQuery 메모리 캐시에서도 완벽히 제거
+            $wrapper.removeData('idx'); 
+            
+            if (!deleteImage.includes(originalIdx)) {
+                deleteImage.push(originalIdx);
+            }
+        }
+
+        if(targetAiBtn && $('#ai_modal_preview_image').attr('src') !== "") {
+            // 버튼 스타일 및 기능을 '원본 복구'로 변경
+             $(targetAiBtn)
+                .removeClass('border-primary text-primary hover:bg-stone-50')
+                .addClass('border-stone-500 text-stone-600 hover:bg-stone-100')
+                .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/></svg> 원본 복구')
+                .attr('onclick', 'restoreOriginal(this, "' + targetImgPreviewId + '", "' + targetHiddenInputId + '", "' + currentAiFile.name + '")');
+        }
+    });
+   // 1. 클릭된 버튼의 정보를 임시로 저장할 전역 변수 선언
+var restoreParams = {};
+
+function removeFileByName(arr, fileName) {
+    for (var i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] && arr[i].name === fileName) {
+            arr.splice(i, 1);
+        }
+    }
+}
+
+function restoreFileToArray(arr, originalFile, aiFileName) {
+    if (!originalFile) return;
+
+    var aiIdx = arr.findIndex(function(f) {
+        return f && f.name === aiFileName;
+    });
+
+    if (aiIdx !== -1) {
+        arr[aiIdx] = originalFile;
+        return;
+    }
+
+    var originalIdx = arr.findIndex(function(f) {
+        return f && f.name === originalFile.name;
+    });
+
+    if (originalIdx !== -1) {
+        arr[originalIdx] = originalFile;
+        return;
+    }
+
+    arr.push(originalFile);
+}
+
+// 2. 기존 restoreOriginal 함수 수정 (모달만 띄우기)
+function restoreOriginal(btn, previewId, hiddenInputId, fileName) {
+    // 실제 복구 로직을 실행하기 위해 파라미터들을 임시 저장
+    restoreParams = {
+        btn: btn,
+        previewId: previewId,
+        hiddenInputId: hiddenInputId,
+        fileName: fileName
+    };
+
+    // 커스텀 모달 열기
+    modalOpen('#ai-restoration');
+}
+
+// 3. 모달 안의 [원본으로 복구] 버튼(#confirm-restoration) 클릭 이벤트 추가
+$(document).on('click', '#confirm-restoration', function() {
+    // 임시 저장해둔 파라미터 꺼내기
+    var btn = restoreParams.btn;
+    var previewId = restoreParams.previewId;
+    var hiddenInputId = restoreParams.hiddenInputId;
+    var fileName = restoreParams.fileName;
+
+    // 모달창 닫기
+    modalClose('#ai-restoration');
+
+    // --- 여기서부터 기존의 복구 로직 실행 ---
+    var $img = $(previewId);
+    var originSrc = $img.attr('data-original-src');
+
+    if (originSrc) {
+        $img.attr('src', originSrc);
+    }
+    
+    var $wrapper = $(btn).closest('.product-img__add');
+    $wrapper.attr('file', fileName);
+
+    var backupIdx = $wrapper.attr('data-backup-idx');
+
+    if (backupIdx) {
+        $wrapper.attr('data-idx', backupIdx);
+        $wrapper.data('idx', backupIdx);
+        
+        $wrapper.removeAttr('data-backup-idx');
+        
+        deleteImage = deleteImage.filter(function(item) {
+            return item != backupIdx;
+        });
+    }
+
+    var originalData = originalFilesBackup[fileName];
+
+    if (originalData) {
+        var aiFileName = "ai_" + fileName;
+
+        restoreFileToArray(storedFiles, originalData.main, aiFileName);
+        restoreFileToArray(stored100Files, originalData.f100, aiFileName);
+        restoreFileToArray(stored400Files, originalData.f400, aiFileName);
+        restoreFileToArray(stored600Files, originalData.f600, aiFileName);
+        restoreFileToArray(stored1000Files, originalData.f1000, aiFileName);
+
+        removeFileByName(storedAiFiles, aiFileName);
+    }
+
+    // AI 결과값 hidden input 초기화
+    $(hiddenInputId).val('');
+
+    // 버튼 스타일 및 기능을 'AI 배경생성'으로 원상복구
+    $(btn)
+        .removeClass('border-stone-500 text-stone-600 hover:bg-stone-100')
+        .addClass('border-primary text-primary hover:bg-stone-50')
+        .html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> AI 배경생성')
+        .attr('onclick', 'openAiModal(this, "' + fileName + '", "' + previewId + '", "' + hiddenInputId + '")');
+    });
 
     </script>
 @endsection

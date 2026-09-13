@@ -35,7 +35,6 @@ class HomeController extends BaseController
         $this->loginService = $loginService;
     }
 
-
     public function index(Request $params) {
         
         Log::info('-------- HomeController > index ');
@@ -56,16 +55,18 @@ class HomeController extends BaseController
         if ($chkMobile) {
 
             if (Auth::check()) {
+                    
                 $schData = $this->homeService->getSearchData();
                 
                 $data = $this->homeService->getHomeData();
                 $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
 
                 if($params->input('replaceUrl')) {
-                    return redirect($params->input('replaceUrl'));
+                    //return redirect($params->input('replaceUrl'));
                 }
 
                 return view('m/home/index', [
+                    'replaceUrl'=>$params->input('replaceUrl'),
                     'data'=>$data,
                     'xtoken' => $xtoken,
                     'categoryList'  => $categoryList,
@@ -115,6 +116,29 @@ class HomeController extends BaseController
         }
         
     }
+    
+    public function home(Request $params) {
+
+        $categoryList = $this->productService->getCategoryList();
+        
+        $schData = $this->homeService->getSearchData();
+        
+        $data = $this->homeService->getHomeData();
+        $xtoken = $this->loginService->getFcmToken(Auth::user()['idx']);
+
+        if($params->input('replaceUrl')) {
+            //return redirect($params->input('replaceUrl'));
+        }
+
+        return view('m/home/index', [
+            'replaceUrl'=>$params->input('replaceUrl'),
+            'data'=>$data,
+            'xtoken' => $xtoken,
+            'categoryList'  => $categoryList,
+            'schData'   => $schData['category']
+        ]);
+    }
+        
     
 //     public function index(Request $params)
 //     {

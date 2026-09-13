@@ -13,7 +13,7 @@
                             <div class="txt_box">
                                 <h4>{{ $video->subtext1 }}<br/><span>{{ $video->subtext2 }}</span></h4>
                             </div>
-                            <a href="javascript:;" onclick="videoModalOpen_{{ $key }}('#video-modal_{{ $key }}')"><img src="{{ $video->image_url }}" alt=""></a>
+                            <a href="javascript:;" onclick="videoModalOpen_{{ $key }}('#video-modal_{{ $key }}')"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $video->image_url }}" loading="lazy" decoding="async" fetchpriority="low" alt=""></a>
                         </li>
                     @endforeach
                 </ul>

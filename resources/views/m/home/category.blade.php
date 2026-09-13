@@ -14,7 +14,7 @@
             <ul>
                 <li class="coop">
                     <a>
-                        <i><img src="https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/category/acf77c0381a0cfcfd3e0a11207b2d7130484704a6fe33df4e87bbb6604ecf04a.png"></i>
+                        <i><img src="{{ preImgUrl() }}category/acf77c0381a0cfcfd3e0a11207b2d7130484704a6fe33df4e87bbb6604ecf04a.png"></i>
                         <span onclick="javascript:(0);">가구연관협력업체</span>
                     </a>
                     <div class="depth2">

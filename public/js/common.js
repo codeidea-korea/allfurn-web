@@ -89,8 +89,90 @@ $( function() {
 //     // })
 // }
 
+const loadDeferredImage = (image)=>{
+    const $image = $(image);
+    const src = $image.attr('data-src');
+
+    if(src){
+        $image.attr('src', src);
+        $image.removeAttr('data-src');
+    }
+}
+
+const loadDeferredBackground = (element)=>{
+    const $element = $(element);
+    const bg = $element.attr('data-bg');
+
+    if(bg){
+        element.style.backgroundImage = `url("${bg.replace(/"/g, '\\"')}")`;
+        $element.removeAttr('data-bg');
+    }
+}
+
+const loadDeferredFrame = (frame)=>{
+    const $frame = $(frame);
+    const src = $frame.attr('data-src');
+
+    if(src){
+        $frame.attr('src', src);
+        $frame.removeAttr('data-src');
+    }
+}
+
+const loadDeferredAsset = (element)=>{
+    const tagName = element.tagName && element.tagName.toLowerCase();
+
+    if(tagName === 'img'){
+        loadDeferredImage(element);
+    }else if(tagName === 'iframe'){
+        loadDeferredFrame(element);
+    }else{
+        loadDeferredBackground(element);
+    }
+}
+
 // 모달제어
+const loadDeferredImages = (scope)=>{
+    $(`${scope} img[data-src], ${scope} iframe[data-src], ${scope} [data-bg]`).each(function(){
+        loadDeferredAsset(this);
+    })
+}
+
+const observeDeferredAssets = ()=>{
+    const assets = $('img[data-src], iframe[data-src], [data-bg]').toArray();
+
+    if(!assets.length){
+        return;
+    }
+
+    if(!('IntersectionObserver' in window)){
+        assets.forEach(loadDeferredAsset);
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, currentObserver)=>{
+        entries.forEach((entry)=>{
+            if(entry.isIntersecting){
+                loadDeferredAsset(entry.target);
+                currentObserver.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin: '400px 0px',
+        threshold: 0.01
+    });
+
+    assets.forEach((asset)=>{
+        observer.observe(asset);
+    });
+}
+
+$(function(){
+    observeDeferredAssets();
+});
+
 const modalOpen = (modal)=>{
+    loadDeferredImages(modal);
     $(`${modal}`).addClass('show');
     $('body').addClass('overflow-hidden');
 }
@@ -171,8 +253,6 @@ function getThumbFile(_IMG, maxWidth, width, height){
             x: 0, y: 0
         }
     };
-    console.log(cropInfo)
-
     if(cropInfo.isFit) {
         canvas.getContext("2d").drawImage(_IMG, 0, 0, baseWidth, baseWidth);
     } else {
@@ -187,7 +267,7 @@ function getThumbFile(_IMG, maxWidth, width, height){
         canvas.getContext("2d").scale(cropInfo.rate, cropInfo.rate);
     }
 
-    var dataURL = canvas.toDataURL("image/png");
+    var dataURL = canvas.toDataURL("image/webp");
     var byteString = atob(dataURL.split(',')[1]);
     var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
     var ab = new ArrayBuffer(byteString.length);
@@ -199,6 +279,101 @@ function getThumbFile(_IMG, maxWidth, width, height){
 
     return tmpThumbFile;
 }
+
+function getThumbFileAi(_IMG, maxWidth, width, height) {
+    var scanCanvas = document.createElement("canvas");
+    var scanCtx = scanCanvas.getContext("2d");
+
+    scanCanvas.width = width;
+    scanCanvas.height = height;
+    scanCtx.drawImage(_IMG, 0, 0, width, height);
+
+    var imageData = scanCtx.getImageData(0, 0, width, height);
+    var data = imageData.data;
+
+    function getPixel(x, y) {
+        var i = (y * width + x) * 4;
+        return [data[i], data[i + 1], data[i + 2]];
+    }
+
+    function colorDistance(a, b) {
+        return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+    }
+
+    function isSolidRow(y) {
+        var sample = getPixel(Math.floor(width / 2), y);
+        var similarCount = 0;
+
+        for (var x = 0; x < width; x += 4) {
+            var p = getPixel(x, y);
+            if (colorDistance(sample, p) < 35) {
+                similarCount++;
+            }
+        }
+
+        return similarCount / Math.ceil(width / 4) > 0.96;
+    }
+
+    var cropTop = 0;
+    var cropBottom = height - 1;
+
+    while (cropTop < height && isSolidRow(cropTop)) {
+        cropTop++;
+    }
+
+    while (cropBottom > cropTop && isSolidRow(cropBottom)) {
+        cropBottom--;
+    }
+
+    var cropLeft = 0;
+    var cropW = width;
+    var cropH = cropBottom - cropTop + 1;
+
+    // 과도한 crop 방지
+    if (cropH < height * 0.5) {
+        cropTop = 0;
+        cropH = height;
+    }
+
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+
+    canvas.width = maxWidth;
+    canvas.height = maxWidth;
+
+    ctx.clearRect(0, 0, maxWidth, maxWidth);
+
+    var scale = Math.min(maxWidth / cropW, maxWidth / cropH);
+    var targetW = Math.round(cropW * scale);
+    var targetH = Math.round(cropH * scale);
+    var targetX = Math.round((maxWidth - targetW) / 2);
+    var targetY = Math.round((maxWidth - targetH) / 2);
+
+    ctx.drawImage(
+        _IMG,
+        cropLeft,
+        cropTop,
+        cropW,
+        cropH,
+        targetX,
+        targetY,
+        targetW,
+        targetH
+    );
+
+    var dataURL = canvas.toDataURL("image/png");
+    var byteString = atob(dataURL.split(',')[1]);
+    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: mimeString });
+}
+
 
 $('.file_input').on('change', function() {
     var file = this.files[0];
@@ -216,14 +391,52 @@ $('.file_input').on('change', function() {
 
 const ajaxPageLoad = {
     variables: {
-        timer: null
+        timer: null,
+        startedAt: null,
+        maxWaitMs: 2500
     },
     actions: {
+        clearTimer: function(){
+            if(ajaxPageLoad.variables.timer) {
+                clearTimeout(ajaxPageLoad.variables.timer);
+                ajaxPageLoad.variables.timer = null;
+            }
+        },
+        shouldWaitImage: function(imageTag){
+            if(! imageTag || imageTag.complete) {
+                return false;
+            }
+
+            const src = imageTag.currentSrc || imageTag.src || '';
+            if(src.indexOf('data:image') === 0) {
+                return false;
+            }
+
+            const modal = imageTag.closest ? imageTag.closest('.modal') : null;
+            if(modal && ! modal.classList.contains('show')) {
+                return false;
+            }
+
+            if(! (imageTag.offsetWidth || imageTag.offsetHeight || imageTag.getClientRects().length)) {
+                return false;
+            }
+
+            const rect = imageTag.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+            const margin = 200;
+
+            if(rect.bottom < -margin || rect.top > viewportHeight + margin || rect.right < -margin || rect.left > viewportWidth + margin) {
+                return false;
+            }
+
+            return true;
+        },
         isLoadCompleteImage: function(){
             const imageTags = $('img');
             for (let idx = 0; idx < imageTags.length; idx++) {
                 const imageTag = imageTags[idx];
-                if(! imageTag.complete) {
+                if(ajaxPageLoad.actions.shouldWaitImage(imageTag)) {
                     // 하나라도 false 라면 return
                     return false;
                 }
@@ -231,11 +444,23 @@ const ajaxPageLoad = {
             return true;
         },
         checkLoadedImage: function(){
-            if(ajaxPageLoad.actions.isLoadCompleteImage()) {
+            if(! ajaxPageLoad.variables.startedAt) {
+                ajaxPageLoad.variables.startedAt = Date.now();
+            }
+
+            const elapsed = Date.now() - ajaxPageLoad.variables.startedAt;
+            if(ajaxPageLoad.actions.isLoadCompleteImage() || elapsed >= ajaxPageLoad.variables.maxWaitMs) {
                 $('#loadingContainer').hide();
+                ajaxPageLoad.actions.clearTimer();
+                ajaxPageLoad.variables.startedAt = null;
                 return false;
             }
             ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, 300);
+        },
+        startCheck: function(delay){
+            ajaxPageLoad.actions.clearTimer();
+            ajaxPageLoad.variables.startedAt = Date.now();
+            ajaxPageLoad.variables.timer = setTimeout(ajaxPageLoad.actions.checkLoadedImage, delay || 200);
         }
     }
 };
@@ -245,6 +470,8 @@ $(document).ready(function(){
     $.ajax = (options) => {
         const beforeSendFn = (options && options.beforeSend) || function(a,b){};
         options.beforeSend = (a,b) => {
+            ajaxPageLoad.actions.clearTimer();
+            ajaxPageLoad.variables.startedAt = null;
             $('#loadingContainer').show();
             beforeSendFn(a,b);
         };
@@ -257,10 +484,16 @@ $(document).ready(function(){
             } else if (location.pathname == '/product/search' || location.pathname == '/wholesaler/search') {
                 // none;
             } else {
-                setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
+                ajaxPageLoad.actions.startCheck(200);
             }
         };
         originFn(options);
     };
 
+});
+
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+        $('#loadingContainer').hide();
+    }
 });

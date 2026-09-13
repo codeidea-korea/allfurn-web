@@ -237,17 +237,26 @@ function checkMobile(){
                     'accessToken': accessToken
                 })
             }).then(result => {
+
                 return result.json();
             }).then(result => {
                 const pendingTime = new Date().getTime() - callTime;
 
-                if (result.success) {                    
+                if (result.success) {             
+                    var replaceUrlParam = {!! json_encode($replaceUrl ?? '', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!};
+                    var finalUrl = getSafeRedirectUrl(replaceUrlParam);
                     if(pendingTime > 1100) {
-                        location.href = '/';
+                        document.querySelector('.splash').classList.remove('splash');
+                        //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                        redirectAfterSignin(finalUrl);
+                        //location.href = '/';
 //                        $('.splash').removeClass('splash');
                     } else {
                         setTimeout(() => {
-                        location.href = '/';
+                            document.querySelector('.splash').classList.remove('splash');
+                            //location.replace("/main?replaceUrl={{ $replaceUrl ?? '' }}");
+                            redirectAfterSignin(finalUrl);
+                            //location.href = '/';
 //                            $('.splash').removeClass('splash');
                         }, (1100 - pendingTime));
                     }
@@ -263,7 +272,10 @@ function checkMobile(){
                     }
 //                    alert(result.msg);
                 }
-            })
+            });
+            
+                
+                
         } else {
             setTimeout(() => {
                 document.querySelector('.splash').classList.remove('splash');
@@ -276,6 +288,60 @@ function checkMobile(){
         @if(!isset($isweb) || $isweb != 'Y')
         location.replace('/?isweb=Y');
         @endif
+    }
+    function redirectAfterSignin(url) {
+        if (!url || url === '/' || url === window.location.origin + '/') {
+            location.replace('/');
+            return;
+        }
+
+        try {
+            sessionStorage.setItem('allfurnPushBackHome', 'Y');
+        } catch (e) {
+            console.log(e);
+        }
+
+        location.href = addPushBackHomeParam(url);
+    }
+
+    window.addEventListener('pageshow', function () {
+        try {
+            if (location.search.indexOf('replaceUrl=') !== -1 && sessionStorage.getItem('allfurnPushBackHome') === 'Y') {
+                sessionStorage.removeItem('allfurnPushBackHome');
+                location.replace('/');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    function getSafeRedirectUrl(url) {
+        if (!url) {
+            return '/';
+        }
+
+        try {
+            const redirectUrl = new URL(url, window.location.origin);
+            const allowedHosts = ['all-furn.com', 'www.all-furn.com', window.location.hostname];
+
+            if (!allowedHosts.includes(redirectUrl.hostname)) {
+                return '/';
+            }
+
+            return redirectUrl.href;
+        } catch (e) {
+            return '/';
+        }
+    }
+
+    function addPushBackHomeParam(url) {
+        try {
+            const redirectUrl = new URL(url, window.location.origin);
+            redirectUrl.searchParams.set('pushBackHome', 'Y');
+            return redirectUrl.href;
+        } catch (e) {
+            return url;
+        }
     }
     </script>
 </body>

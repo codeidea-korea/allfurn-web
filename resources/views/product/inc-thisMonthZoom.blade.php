@@ -10,7 +10,7 @@
         <div>
             <h5>{{$zoomData->company_name}}</h5>
             <p>{{$item->mdp_gname}}</p>
-            <b>{{ $item->mdp_gprice }}</b>
+            <b>{{ productDisplayPrice($item->mdp_gprice ?? 0, 1) }}</b>
         </div>
         <a href="/product/detail/{{$item->mdp_gidx}}">제품상세보기</a>
     </div>

@@ -182,9 +182,16 @@ $( document ).ready( function() {
     });
 
     $("#btnSendSMS, #btnResendSMS").on("click", function () {
+
+        if ($(this).prop("disabled")) return;
+
         var data = new Object() ;
         data.target = $('#cellphone').val().replace(/-/g, '');
         data.type = "A" ;
+
+        $("#btnSendSMS").prop("disabled", true);
+        $("#btnResendSMS").prop("disabled", true);
+
         $.ajax({
             url				: '/signup/sendAuthCode',
             contentType     : "application/x-www-form-urlencoded; charset=UTF-8",
@@ -208,7 +215,18 @@ $( document ).ready( function() {
                     startTimer();
                 } else {
                     alert(result.message);
+                    if ($('#cellphone').val().length >= 10) {
+                        $("#btnSendSMS").prop("disabled", false);
+                    }
+                    $("#btnResendSMS").prop("disabled", false);
                 }
+            },
+            error: function() {
+                alert('인증번호 발송에 실패했습니다. 잠시 후 다시 시도해주세요.');
+                if ($('#cellphone').val().length >= 10) {
+                    $("#btnSendSMS").prop("disabled", false);
+                }
+                $("#btnResendSMS").prop("disabled", false);
             }
         });
     });
@@ -302,7 +320,11 @@ function confirmAuthCode() {
             });
         }
     }
+
+var timerInterval;
 function startTimer() {
+    clearInterval(timerInterval);
+
     var time = 179;
     var timerInterval = setInterval(function () {
         var minutes = Math.floor(time / 60);
@@ -311,6 +333,10 @@ function startTimer() {
         time--;
         if (time < 0) {
             clearInterval(timerInterval);
+            // 시간이 만료되면 버튼을 다시 활성화하여 재발송할 수 있게 함
+            $("#btnResendSMS").prop("disabled", false);
+            $("#btnSendSMS").prop("disabled", false);
+            $(".time").text("0:00");
         }
     }, 1000);
 }

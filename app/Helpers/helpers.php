@@ -30,7 +30,89 @@ if (! function_exists('paginate')) {
 }
 
 function preImgUrl() {
-    return env('AWS_S3_URL', 'https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/');
+    return env('AWS_S3_URL', 'https://cdn-w5ydnw3kw8pn.vultrcdn.com/');
+}
+
+function cdnImgUrl($url) {
+    if (! is_string($url) || $url === '') {
+        return $url;
+    }
+
+    $cdnUrl = rtrim(preImgUrl(), '/') . '/';
+    $objectUrls = [
+        'https://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/',
+        'http://allfurn-prod-s3-bucket.sgp1.vultrobjects.com/',
+    ];
+
+    foreach ($objectUrls as $objectUrl) {
+        if (stripos($url, $objectUrl) === 0) {
+            return $cdnUrl . ltrim(substr($url, strlen($objectUrl)), '/');
+        }
+    }
+
+    return $url;
+}
+
+function normalizeProductInfoImageUrls($productInfo) {
+    if (! is_array($productInfo)) {
+        return $productInfo;
+    }
+
+    foreach ($productInfo as $key => $item) {
+        if (is_array($item)) {
+            if (isset($item['mdp_gimg'])) {
+                $item['mdp_gimg'] = cdnImgUrl($item['mdp_gimg']);
+            }
+
+            if (isset($item['groups']) && is_array($item['groups'])) {
+                $item['groups'] = normalizeProductInfoImageUrls($item['groups']);
+            }
+
+            $productInfo[$key] = $item;
+        } elseif (is_object($item)) {
+            if (isset($item->mdp_gimg)) {
+                $item->mdp_gimg = cdnImgUrl($item->mdp_gimg);
+            }
+
+            if (isset($item->groups) && is_array($item->groups)) {
+                $item->groups = normalizeProductInfoImageUrls($item->groups);
+            }
+
+            $productInfo[$key] = $item;
+        }
+    }
+
+    return $productInfo;
+}
+
+function productIsInquiryPrice($productOrPrice, $isPriceOpen = null) {
+    if (is_array($productOrPrice)) {
+        $price = $productOrPrice['price'] ?? 0;
+        $isPriceOpen = $productOrPrice['is_price_open'] ?? $isPriceOpen;
+    } elseif (is_object($productOrPrice)) {
+        $price = $productOrPrice->price ?? 0;
+        $isPriceOpen = $productOrPrice->is_price_open ?? $isPriceOpen;
+    } else {
+        $price = $productOrPrice;
+    }
+
+    $numericPrice = (int) preg_replace('/[^0-9-]/', '', (string) $price);
+
+    return (string) $isPriceOpen !== '1' || $numericPrice <= 0;
+}
+
+function productDisplayPrice($productOrPrice, $isPriceOpen = null) {
+    if (productIsInquiryPrice($productOrPrice, $isPriceOpen)) {
+        return '업체 문의';
+    }
+
+    $price = is_array($productOrPrice)
+        ? ($productOrPrice['price'] ?? 0)
+        : (is_object($productOrPrice) ? ($productOrPrice->price ?? 0) : $productOrPrice);
+
+    $numericPrice = (int) preg_replace('/[^0-9-]/', '', (string) $price);
+
+    return number_format($numericPrice, 0) . '원';
 }
 
 function api() {
@@ -169,7 +251,7 @@ function unCheckedMyAllFurn()
 }
 
 // 마이올펀 : 요청받은 견적 수
-function countUnCheckedMyAllFurn()
+/*function countUnCheckedMyAllFurn()
 {
     if (auth()->check()){
         $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
@@ -190,6 +272,28 @@ function countUnCheckedMyAllFurn()
 
         $estimate = Illuminate\Support\Facades\DB::select($sql);
         $total = $estimate[0]->count_res_n;
+
+        return $total;
+    }else{
+        return 0;
+    }
+}*/
+
+function countUnCheckedMyAllFurn()
+{
+    if (auth()->check()){
+        $user = Illuminate\Support\Facades\DB::table('AF_user')->select('company_idx', 'type')->where('idx', auth()->user()->idx)->first();
+
+        $sql = "SELECT 
+                (SELECT COUNT(DISTINCT estimate_group_code, estimate_state) FROM AF_estimate 
+                WHERE response_company_idx = ".$user->company_idx." 
+                AND response_company_type = '".$user->type."' 
+                AND estimate_state IN ('N', 'R', 'O', 'F')) 
+                AS count_res_total
+            FROM DUAL";
+
+        $estimate = Illuminate\Support\Facades\DB::select($sql);
+        $total = $estimate[0]->count_res_total;
 
         return $total;
     }else{

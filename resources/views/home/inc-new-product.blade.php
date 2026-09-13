@@ -1,3 +1,7 @@
+@php
+    $prioritizeNewProductLcp = empty($mainVisualLcpImage) && (!isset($data['productAd']) || count($data['productAd']) === 0);
+@endphp
+
 <section class="main_section new_prod">
     <div class="inner">
         <div class="main_tit mb-8 flex justify-between items-center">
@@ -18,14 +22,22 @@
                         @else
                         <li class=" prod_item">
                             <div class="img_box">
-                                <a href="/product/detail/{{ $item->idx }}"><img loading="lazy" decoding="async" src="{{ $item->imgUrl }}" width="285" alt="" loading="lazy"></a>
+                                <a href="/product/detail/{{ $item->idx }}"><img
+                                    @if($loop->first && $prioritizeNewProductLcp)
+                                        src="{{ $item->imgUrl }}" loading="eager" fetchpriority="high"
+                                    @elseif($loop->index < 8)
+                                        src="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @else
+                                        src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-lazy="{{ $item->imgUrl }}" loading="lazy" fetchpriority="low"
+                                    @endif
+                                    decoding="async" width="285" height="285" alt=""></a>
                                 <button class="zzim_btn prd_{{ $item->idx }} {{ ($item->isInterest == 1) ? 'active' : '' }}" pidx="{{ $item->idx }}"><svg><use xlink:href="./img/icon-defs.svg#zzim"></use></svg></button>
                             </div>
                             <div class="txt_box">
                                 <a href="/product/detail/{{ $item->idx }}">
                                     <span>{{ $item->companyName }}</span>
                                     <p>{{ $item->name }}</p>
-                                    <b>{{ $item->is_price_open ? number_format($item->price, 0).'원': $item->price_text }}</b>
+                                    <b>{{ productDisplayPrice($item) }}</b>
                                 </a>
                             </div>
                         </li>
@@ -46,6 +58,7 @@
 <script>
     $('.new_prod .slide_box ul').slick({
         dots: true,
+        lazyLoad: 'ondemand',
         slidesToShow: 4,
         rows: 2,
         infinite: false,
