@@ -30,4 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'photoroom' => [
+        'key' => env('PHOTOROOM_API_KEY'),
+    ],
+
+    'google_ai' => [
+        'key' => env('GOOGLE_API_KEY'),
+    ],
+
 ];
