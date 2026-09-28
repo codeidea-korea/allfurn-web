@@ -12,11 +12,16 @@
     <meta property="og:keywords" content="올펀,가구톡세상,가구 플랫폼,가구,가구 도매,가구 소매,가구 판매,가구 구매" />
     <meta property="og:description" content="가구인들을 위한 빠른 홍보. 많은 정보. 쉬운 검색. 세상 모든 가구인을 연결" />
     <meta property="og:url" content="https://all-furn.com" />
-    <meta property="og:image" content="">
+    <meta property="og:image" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:secure_url" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="400">
     <meta property="og:site_name" content="" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content="가구인들을 위한 빠른 홍보. 많은 정보. 쉬운 검색. 세상 모든 가구인을 연결" />
     <meta name="twitter:title" content="전세계 가구 도소매거래 B2B플랫폼. 올펀 (All-Furn)" />
+    <meta name="twitter:image" content="https://all-furn.com/images/og/allfurn-share.png" />
     <meta name=“naver-site-verification” content=“eee38481614b188bcb47ec952b8854688aa4d9de” />
 
     <!-- CSRF Token -->

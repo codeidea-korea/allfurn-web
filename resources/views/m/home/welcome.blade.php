@@ -12,11 +12,16 @@
     <meta property="og:keywords" content="" />
     <meta property="og:description" content="" />
     <meta property="og:url" content="#" />
-    <meta property="og:image" content="">
+    <meta property="og:image" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:secure_url" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="400">
     <meta property="og:site_name" content="" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content="" />
     <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="https://all-furn.com/images/og/allfurn-share.png" />
     <title>All FURN  | Home</title>
 
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
