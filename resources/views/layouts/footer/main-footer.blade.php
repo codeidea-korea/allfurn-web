@@ -39,7 +39,10 @@
         <div class="foo__util">
             <a href="/home/welcome">서비스 소개</a><span class="bar"></span>
             <span onclick="openModal('#reg-agrmnt_service')" style="cursor: pointer;">이용 약관</span><span class="bar"></span>
-            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="cursor: pointer;">개인정보 처리 방침</span>
+            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="cursor: pointer;">개인정보 처리 방침</span><span class="bar"></span>
+            <a class="foo__blog" href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                <img src="/img/naver-blog-pc.png" alt="네이버 블로그" width="76" height="25" style="width:76px; height:25px; object-fit:contain;">
+            </a>
         </div>
 
         <div id="reg-agrmnt_service" class="modal">

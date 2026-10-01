@@ -579,6 +579,16 @@ div:focus {
 	letter-spacing: -0.02em;
 	color: #828282;
 }
+.footer .foo__util .foo__blog {
+	display: inline-flex;
+	align-items: center;
+	flex: 0 0 auto;
+}
+.footer .foo__util .foo__blog img {
+	width: 76px;
+	height: 25px;
+	object-fit: contain;
+}
 .footer .foo__util .bar {
 	display: inline-block;
 	width: 1px;
