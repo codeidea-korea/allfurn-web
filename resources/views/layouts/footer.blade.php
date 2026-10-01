@@ -35,6 +35,11 @@
                 <li><a href="/help/notice">공지사항</a></li>
                 <li><a href="/help/inquiry">1:1 문의</a></li>
                 <li><a href="/help/guide">이용 가이드</a></li>
+                <li class="footer-blog">
+                    <a href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                        <img src="/img/naver-blog-pc.png" alt="네이버 블로그">
+                    </a>
+                </li>
             </ul>
         @endif 
         <div class="info">
@@ -49,6 +54,13 @@
             <li><a href="/home/welcome">서비스소개</a></li>
             <li><a onclick="modalOpen('#agree01-modal')">이용약관</a></li>
             <li><a onclick="modalOpen('#agree02-modal')"><b>개인정보 처리 방침</b></a></li>
+            @if(!Auth::check())
+                <li class="footer-blog">
+                    <a href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                        <img src="/img/naver-blog-pc.png" alt="네이버 블로그">
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </footer>

@@ -11,6 +11,12 @@
                 <li><a href="/help/notice">공지사항</a></li>
                 <li><a href="/help/inquiry">1:1 문의</a></li>
                 <li><a href="/help/guide">이용 가이드</a></li>
+                <li class="footer-blog">
+                    <a href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                        <img src="/img/naver-blog-mobile.png" alt="">
+                        <span>블로그</span>
+                    </a>
+                </li>
             </ul>
             <div class="info">
                 <img src="/img/logo_gray.svg" alt="">

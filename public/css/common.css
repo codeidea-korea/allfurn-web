@@ -455,16 +455,20 @@ header .header_banner svg {width:24px; height:24px; }
     푸터
 ------------------------------------ */
 footer {padding:10px 0 20px; background-color: #F5F5F5; color:var(--gray_color); }
-footer .fnb {padding:30px 0; gap:26px; font-size:15px; }
+footer .fnb {align-items:center; padding:30px 0; gap:26px; font-size:15px; }
 footer .fnb li:hover {color:#46433F; }
 footer .fnb li a {font-weight:500; }
+footer .fnb .footer-blog a {display:flex; align-items:center; }
+footer .fnb .footer-blog img {width:76px; height:25px; object-fit:contain; }
 footer .info {border-top:1px solid rgba(218, 221, 224, 0.60); border-bottom:1px solid rgba(218, 221, 224, 0.60); padding:30px 0 20px; font-size:14px; }
 footer .info img {margin-bottom:20px; }
-footer .bottom_link {padding:20px 0; font-size:13px; }
+footer .bottom_link {align-items:center; padding:20px 0; font-size:13px; }
 footer .bottom_link a {position:relative; padding:0 15px; }
 footer .bottom_link a::before {content:'|'; position:absolute; right:0; top:-1.5px; }
 footer .bottom_link li:first-of-type a {padding-left:0; }
 footer .bottom_link li:last-of-type a::before {display:none; }
+footer .bottom_link .footer-blog a {display:flex; align-items:center; padding-left:15px; }
+footer .bottom_link .footer-blog img {width:76px; height:25px; object-fit:contain; }
 
 
 
