@@ -6642,6 +6642,17 @@ button.swiper-pagination-bullet {
 	height: auto;
 	padding: 16px 24px 72px;
 }
+.allfurn-introduction .mo-wrap .footer .foo__util .foo__blog {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	flex: 0 0 auto;
+}
+.allfurn-introduction .mo-wrap .footer .foo__util .foo__blog img {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+}
 
 .member .tab__item {
 	color: #1B1B1B;

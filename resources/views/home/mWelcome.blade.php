@@ -153,7 +153,11 @@
             <div class="foo__util">
                 <a href="#">서비스 소개</a><span class="bar"></span>
                 <a href="#">이용 약관</a><span class="bar"></span>
-                <a href="#">개인정보 처리 방침</a>
+                <a href="#">개인정보 처리 방침</a><span class="bar"></span>
+                <a class="foo__blog" href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                    <img src="/img/naver-blog-mobile.png" alt="">
+                    <span>블로그</span>
+                </a>
             </div>
         </footer>
         
