@@ -43,7 +43,7 @@ class GenerateBackgroundJob implements ShouldQueue
         }
 
         $imageContent = Storage::disk('public')->get($this->transparentImagePath);
-        $apiKey = env('PHOTOROOM_API_KEY');
+        $apiKey = config('services.photoroom.key');
 
         // 2. 포토룸 API 호출 (v2/edit)
         // 주의: 누끼는 'v1/segment'였지만, 합성은 'v2/edit'을 사용합니다.

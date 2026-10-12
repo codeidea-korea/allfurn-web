@@ -18,7 +18,7 @@ class ProductAiImageService
     public function __construct()
     {
         $this->stabilityApiKey = env('STABILITY_API_KEY');
-        $this->googleApiKey = env('GOOGLE_API_KEY');
+        $this->googleApiKey = config('services.google_ai.key');
         $this->client = new Client();
     }
 
@@ -92,7 +92,7 @@ class ProductAiImageService
     // }
     public function removeBackground($imageFile, $normalizeForAi = false)
         {
-            $apiKey = env('PHOTOROOM_API_KEY');
+            $apiKey = config('services.photoroom.key');
             $normalizedPath = null;
 
             try {

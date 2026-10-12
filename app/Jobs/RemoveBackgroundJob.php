@@ -39,7 +39,7 @@ class RemoveBackgroundJob implements ShouldQueue
             return;
         }
         $imageContent = Storage::get($this->sourceFilePath);
-        $apiKey = env('PHOTOROOM_API_KEY');
+        $apiKey = config('services.photoroom.key');
 
         // 2. 포토룸 API 호출 (v1/segment - 배경 제거)
         $response = Http::withHeaders(['x-api-key' => $apiKey])

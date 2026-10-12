@@ -12,11 +12,16 @@
     <meta property="og:keywords" content="" />
     <meta property="og:description" content="" />
     <meta property="og:url" content="#" />
-    <meta property="og:image" content="">
+    <meta property="og:image" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:secure_url" content="https://all-furn.com/images/og/allfurn-share.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="400">
     <meta property="og:site_name" content="" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content="" />
     <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="https://all-furn.com/images/og/allfurn-share.png" />
     <title>All FURN  | Home</title>
 
     <link rel="stylesheet" href="/ver.1/css/ui.css?210805">
@@ -191,7 +196,11 @@
         <div class="foo__util">
             <a href="#">서비스 소개</a><span class="bar"></span>
             <span onclick="openModal('#reg-agrmnt_service')">이용 약관</span><span class="bar"></span>
-            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="font-weight: 800">개인정보 처리 방침</span>
+            <span onclick="openModal('#reg-agrmnt_privacy-info')" style="font-weight: 800">개인정보 처리 방침</span><span class="bar"></span>
+            <a class="foo__blog" href="https://blog.naver.com/all-furn" target="_blank" rel="noopener noreferrer">
+                <img src="/img/naver-blog-mobile.png" alt="">
+                <span>블로그</span>
+            </a>
         </div>
     </footer>
 
