@@ -486,9 +486,9 @@ class MemberService
         }
 
         return array(
-            'attachmentIdx' => $tmpAttachment->idx,
+            'attachmentIdx' => $tmpAttachment->idx ?? null,
             'bussinessCode' => '0000000000',
-            'licenseImage' => preImgUrl() . $tmpAttachment->folder . '/' . $tmpAttachment->filename,
+            'licenseImage' => $tmpAttachment ? preImgUrl() . $tmpAttachment->folder . '/' . $tmpAttachment->filename : '',
         );
     }
 
