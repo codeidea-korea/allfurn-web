@@ -1538,13 +1538,13 @@ function addOrderOption(optionValueCount = 1) {
             '           <dl class="mb-3">' + 
             '               <dt class="necessary">필수 옵션</dt>' + 
             '               <dd><div class="flex gap-2 btn_select">' +
-            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2" data-val="1">설정</button>' +
-            '                   <button class="option-required_0'+ parseInt( oIdx ) +' w-1/2 active" data-val="0">설정 안함</button>' +
+            '                   <button class="option-required_0'+ _tmp +' w-1/2" data-val="1">설정</button>' +
+            '                   <button class="option-required_0'+ _tmp +' w-1/2 active" data-val="0">설정 안함</button>' +
             '               </div></dd>' + 
             '           </dl>' +
             '           <dl class="mb-3">' +
             '               <dt class="necessary">옵션명</dt>' +
-            '               <dd><input type="text" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" class="input-form w-full cls-opt-nm" placeholder="예시) 색상"></dd>' +
+            '               <dd><input type="text" id="option-name_0' + _tmp + '" name="option-name_0' + _tmp + '" class="input-form w-full cls-opt-nm" placeholder="예시) 색상"></dd>' +
             '           </dl>' +
             '       </div>';
 
@@ -1552,16 +1552,21 @@ function addOrderOption(optionValueCount = 1) {
             const element = '       <div class="option_box item__input-wrap">' + 
                             '           <dl class="mb-3">' + 
                             '               <dt class="necessary">옵션값</dt>' + 
-                            '               <dd><input type="text" id="option-property_0'+ parseInt( oIdx ) +'-' + (inx + 1) + '" name="option-property_name" class="input-form w-full" placeholder="예시) 화이트"></dd>' + 
+                            '               <dd><input type="text" id="option-property_0'+ _tmp +'-' + (inx + 1) + '" name="option-property_name" class="input-form w-full" placeholder="예시) 화이트"></dd>' +
                             '               <dd><input type="text" name="option-price" value="0" oninput="this.value=this.value.replace(/[^0-9.]/g, \'\');" class="input-form w-full mt-2" placeholder="예시) 100,000원"></dd>' + 
                             '           </dl>' + 
-                            '           <button class="flex items-center justify-center gap-1 w-full h-11 rounded option_add input__add-btn"><svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가</button>' + 
+                            '           <div class="flex gap-2">' +
+                            '               <button type="button" class="flex items-center justify-center gap-1 w-1/2 h-11 rounded option_add input__add-btn"><svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가</button>' +
+                            '               <button type="button" class="flex items-center justify-center w-1/2 h-11 rounded option_add input__del-btn">옵션값 삭제</button>' +
+                            '           </div>' +
                             '       </div>';
             titleHtml += element;
         }
         titleHtml += '   </div>' +'</div>';
 
-        $('#optsArea').append(titleHtml);
+        var optionElement = $(titleHtml);
+        $('#optsArea').append(optionElement);
+        return optionElement;
     }
 }
 
@@ -1576,39 +1581,24 @@ function checkRemoveOption( optionIdx ) {
     oIdx = parseInt( oIdx - 1 );
 }
 
-//### 옵션값 추가
-$('body').on('click', '.input__add-btn', function () {
-    if ($(this).is('.input__del-btn')) { // 옵션값 삭제
-        var valueWrap = $(this).parents('.option_value_wrap');
-        var isLast = $(this).parents('.item__input-wrap').is(':last-child')
-        $(this).parents('.item__input-wrap').remove();
-        if (isLast) {
-            valueWrap.find('.item__input-wrap:last').append(valueWrap.find('.input__add-btn:last').clone());
-            valueWrap.find('.input__add-btn:last').removeClass('input__del-btn');
-            valueWrap.find('.input__add-btn:last').html('' +
-                '<svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가'
-            );
-        }
-        if (valueWrap.find('.input__add-btn').length == 2) {
-            valueWrap.find('.input__add-btn.input__del-btn').remove();
-        }
-    } else { // 옵션값 추가
-        if ($(this).parents('.item__input-wrap').index() != 0) {
-            $(this).parents('.item__input-wrap').find('.input__add-btn.input__del-btn').remove();
-        }
-        $(this).addClass('input__del-btn');
-        $(this).html('<i class="ico__delete24"><span class="a11y">삭제</span></i>');
-        var clone = $(this).parents('.item__input-wrap').clone();
-        clone.find('input[name="option-property_name"]').val('');
-        clone.find('input[name="option-price"]').val('0');
-        clone.find('input[name="option-property_name"]').attr('id','option-property_01-'+$(this).parents('.item__input-wrap').index());
-        clone.append(clone.find('.input__add-btn').clone());
-        clone.find('.input__add-btn:last').removeClass('input__del-btn');
-        clone.find('.input__add-btn:last').html('' +
-            '<svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus"></use></svg>옵션값 추가'
-        );
-        $(this).parents('.option_value_wrap').append(clone);
+//### 옵션값 추가·삭제
+$('body').on('click', '#optsArea .input__add-btn', function (e) {
+    e.preventDefault();
+    var clone = $(this).closest('.item__input-wrap').clone();
+    clone.find('input[name="option-property_name"]').val('').removeAttr('id');
+    clone.find('input[name="option-price"]').val('0');
+    $(this).closest('.option_value_wrap').append(clone);
+    clone.find('input[name="option-property_name"]').focus();
+});
+
+$('body').on('click', '#optsArea .input__del-btn', function (e) {
+    e.preventDefault();
+    var valueWrap = $(this).closest('.option_value_wrap');
+    if (valueWrap.find('.item__input-wrap').length <= 1) {
+        alert('옵션값은 최소 1개가 필요합니다. 옵션 전체를 삭제하려면 옵션의 삭제 버튼을 이용해주세요.');
+        return;
     }
+    $(this).closest('.item__input-wrap').remove();
 });
 
 //### 옵션순서 변경 모달
@@ -1647,6 +1637,9 @@ $('#change_order_modal .btn-primary').click(function () {
             $('#optsArea').append(list[i]);
         }
     }
+    $('#optsArea .form__list-wrap').each(function (i) {
+        $(this).children().first().find('p').first().text('옵션 ' + (i + 1));
+    });
 
     modalClose('#change_order_modal');
 });
@@ -1755,7 +1748,22 @@ const goStep = (item, pn)=>{
     $(`.prod_regist_box .${item}`).addClass('active').siblings().removeClass('active')
 }
 
+function validateOrderOptions() {
+    var valid = true;
+    $('#optsArea .form__list-wrap').each(function (i, el) {
+        var nameInput = $(el).find('input[name^="option-name_"]');
+        if ($.trim(nameInput.val() || '') === '') {
+            alert('옵션 ' + (i + 1) + '의 옵션명을 입력해주세요.');
+            nameInput.focus();
+            valid = false;
+            return false;
+        }
+    });
+    return valid;
+}
+
 function saveProduct(regType) {
+    if (!validateOrderOptions()) return;
     if (storedFiles.length === 0 && $('.product-img__add').length === 0) {
         alert('상품 이미지를 최소 1개 이상 등록해주세요.');
         return false; // 여기서 함수를 종료하여 서버(AJAX)로 요청을 보내지 않음
@@ -1874,8 +1882,8 @@ function saveProduct(regType) {
     var data = new Array();
     $('#optsArea .form__list-wrap').each(function (i, el) {
         var option = new Object();
-        option.required = $(el).find('button.option-required_0'+(i+1)+'.active').val();
-        option.optionName = $('#option-name_0' + (i+1)).val();
+        option.required = $(el).find('.btn_select button.active').attr('data-val');
+        option.optionName = $.trim($(el).find('input[name^="option-name_"]').val() || '');
 
         var valueArray = new Array();
         $(el).find('.item__input-wrap').each(function (y, eli) {
@@ -1964,7 +1972,7 @@ function preview() {
     var htmlText = "";
     var requiredCnt = 0;
     $('#optsArea > div.flex').each(function (i, el) {
-        required = $(el).find('input[name="option-required_0' + (i+1) + '"]:checked').val();
+        required = $(el).find('.btn_select button.active').attr('data-val');
         if(required == 1) {
             requiredCnt ++;
         }
@@ -2250,17 +2258,15 @@ function loadProduct() {
                 var obj = $.parseJSON(result['product_option']);
                 console.log(obj);
                 obj.forEach(function (item, i) {
-                    addOrderOption(item.optionValue.length);
-                    //$('button.option-required_0' + (i + 1) + '[data-val=' + item.required + ']').prop('checked', true);
-                    $('input#option-name_0' + (i + 1)).val(item.optionName);
-                    // 나중에 직접 html을 만들어서 #optsArea에 innserhtml로 넣어야 할듯. 
+                    var optionElement = addOrderOption(item.optionValue.length);
+                    if (!optionElement) return;
+                    optionElement.find('.btn_select button').removeClass('active')
+                        .filter('[data-val="' + (item.required || '0') + '"]').addClass('active');
+                    optionElement.find('input[name^="option-name_"]').val(item.optionName || '');
                     item.optionValue.forEach(function (value, y) {
-                        if (y > 0) {
-                            //$('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn').trigger('click');
-                            //console.log(  $('input#option-property_0' + (i + 1) + '-' + (y)).parent().find('.input__add-btn') )
-                        }
-                        $('input#option-property_0' + (i + 1) + '-' + (y + 1)).val(value.propertyName);
-                        $('input#option-property_0' + (i + 1) + '-' + (y + 1)).parent().parent().find('dd > input[name="option-price"]').val(value.price);
+                        var valueElement = optionElement.find('.item__input-wrap').eq(y);
+                        valueElement.find('input[name="option-property_name"]').val(value.propertyName);
+                        valueElement.find('input[name="option-price"]').val(value.price);
                     })
                 });
 
