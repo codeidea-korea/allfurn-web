@@ -7,7 +7,7 @@
                     <div><p class="option_name">{{ $value['propertyName'] ?? $option['optionName'] ?? '' }}</p></div>
                     <div class="mt-2">
                         <div>{{ $value['count'] }}개</div>
-                        <div class="price">{{ number_format($value['each_price']) }}</div>
+                        <div class="price">{{ $pricing['hidden'] ? '업체 협의' : number_format($value['each_price']) }}</div>
                     </div>
                 </div>
             @endforeach
@@ -20,5 +20,5 @@
 </div>
 <div class="prod_option">
     <div class="name">상품금액</div>
-    <div class="total_price">{{ $pricing['inquiry'] ? '업체 문의' : number_format($pricing['subtotal']).'원' }}</div>
+    <div class="total_price">{{ ($pricing['hidden'] || $pricing['inquiry']) ? '업체 협의' : number_format($pricing['subtotal']).'원' }}</div>
 </div>

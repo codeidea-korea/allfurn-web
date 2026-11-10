@@ -74,6 +74,7 @@ class EstimatePricing
             'adjustment' => $adjustment,
             'total' => $subtotal + $adjustment,
             'responded' => $responded,
+            'hidden' => (bool) ($row['price_hidden'] ?? (isset($row['is_price_open']) && (string) $row['is_price_open'] !== '1')),
             'inquiry' => $baseTotal <= 0 && $adjustment === 0,
         ];
     }

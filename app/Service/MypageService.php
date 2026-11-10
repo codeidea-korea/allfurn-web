@@ -492,12 +492,13 @@ class MypageService
             }
         }
 
+        $order->addSelect('AF_product.is_price_open', 'AF_estimate.response_company_idx', 'AF_estimate.response_company_type');
         $orders = $order->get();
         if ($orders->count() < 1) {
             throw new Exception('empty order');
         }
 
-        return $orders;
+        return new \Illuminate\Database\Eloquent\Collection(\App\Support\EstimatePriceVisibility::forViewer($orders, Auth::user()));
     }
 
     /**
@@ -2220,7 +2221,7 @@ class MypageService
         foreach ($estimate as $row) {
             $row->product_option_json = json_encode(\App\Support\EstimatePricing::options($row->product_option_json), JSON_UNESCAPED_UNICODE);
         }
-        return $estimate;
+        return \App\Support\EstimatePriceVisibility::forViewer($estimate, Auth::user());
     }
 
     public function getResponseEstimate(array $params) {

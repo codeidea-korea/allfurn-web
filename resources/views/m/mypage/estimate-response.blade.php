@@ -447,10 +447,10 @@
 
     function getToday(afterDay){
         var date = new Date();
-        date.setTime(new Date().getTime() + 1000*60*60*24* afterDay);
+        date.setDate(date.getDate() + afterDay);
         var year = date.getFullYear();
         var month = ("0" + (1 + date.getMonth())).slice(-2);
-        var day = ("0" + date.getDate() + afterDay).slice(-2);
+        var day = ("0" + date.getDate()).slice(-2);
 
         return year + "-" + month + "-" + day;
     }

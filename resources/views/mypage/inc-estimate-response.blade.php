@@ -47,7 +47,7 @@
                 $grand_total_price = 0;
                 foreach ($lists as $row) {
                     $pricing = \App\Support\EstimatePricing::forEstimate($row);
-                    if ($pricing['inquiry']) $count_close_price++;
+                    if ($pricing['hidden'] || $pricing['inquiry']) $count_close_price++;
                     else $count_open_price++;
                     $grand_total_price += $pricing['subtotal'];
                 }
@@ -55,11 +55,11 @@
             <div>
                 <div class="txt_desc">
                     <div class="name">가격 표기 {{ $count_open_price }}건</div>
-                    <div>견적가 <b>{{ number_format($grand_total_price)  }}</b></div>
+                    <div>견적가 <b>{{ \App\Support\EstimatePriceVisibility::hasHidden($lists) ? '업체 협의' : number_format($grand_total_price) }}</b></div>
                 </div>
                 <div class="txt_desc">
-                    <div class="name">업체문의 상품 {{ $count_close_price }}건</div>
-                    <div>업체문의</div>
+                    <div class="name">업체 협의 상품 {{ $count_close_price }}건</div>
+                    <div>업체 협의</div>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                 <div>
                     <div class="txt_desc">
                         <div class="name">총 상품 {{ count( $lists ) }}건</div>
-                        <div><b id="final_total_display">0</b>원</div>
+                        <div><b id="final_total_display">{{ \App\Support\EstimatePriceVisibility::hasHidden($lists) ? '업체 협의' : '0' }}</b><span class="total_price_unit" @if(\App\Support\EstimatePriceVisibility::hasHidden($lists)) style="display:none" @endif>원</span></div>
                     </div>
                 </div>
             </div>
@@ -100,9 +100,9 @@
                     @foreach( $lists AS $key => $row )
                         @php
                             $pricing = \App\Support\EstimatePricing::forEstimate($row);
-                            $totalPriceForCalc = $pricing['subtotal'];
+                            $totalPriceForCalc = $pricing['hidden'] ? '' : $pricing['subtotal'];
                         @endphp
-                    <div class="prod_info">
+                    <div class="prod_info" data-price-hidden="{{ $pricing['hidden'] ? '1' : '0' }}">
                         <input type="hidden" class="calc_base_price" value="{{ $totalPriceForCalc }}">
                         <div class="img_box">
                             <input type="hidden" name="idx" value="{{ $row->estimate_idx }}">
@@ -115,10 +115,10 @@
                             <div class="prod_name">{{ $row->name }}</div>
                             
                             @include('mypage.estimate-product-price', ['row' => $row])
-                            <input type="hidden" class="calc_option_price" value="{{ $pricing['option_total'] }}">
+                            <input type="hidden" class="calc_option_price" value="{{ $pricing['hidden'] ? '' : $pricing['option_total'] }}">
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required calc_input_price" value="{{ $pricing['adjustment'] }}"></div>
+                                <div>@if($pricing['hidden'])업체 협의@else<input type="text" name="product_each_price" maxLength="10" class="input-form required calc_input_price" value="{{ $pricing['adjustment'] }}">@endif</div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
@@ -193,12 +193,15 @@
 function updateTotalPrice() {
     $('[data-estimate-request-prices]').each(function () {
         let total = 0;
+        let priceHidden = false;
         $(this).find('.prod_info').each(function () {
+            priceHidden = priceHidden || $(this).attr('data-price-hidden') === '1';
             const subtotal = Number($(this).find('.calc_base_price').val()) || 0;
             const adjustment = Number(String($(this).find('.calc_input_price').val() || 0).replace(/,/g, '')) || 0;
             total += subtotal + adjustment;
         });
-        $(this).find('#final_total_display').text(total.toLocaleString());
+        $(this).find('#final_total_display').text(priceHidden ? '업체 협의' : total.toLocaleString());
+        $(this).find('.total_price_unit').toggle(!priceHidden);
     });
 }
 $(function () {

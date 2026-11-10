@@ -30,12 +30,12 @@
                                 $checked_count++;
                                 $pricing = \App\Support\EstimatePricing::forEstimate($row);
                                 $grand_total += $pricing['total'];
-                                $is_any_price_hide = $is_any_price_hide || $pricing['inquiry'];
+                                $is_any_price_hide = $is_any_price_hide || $pricing['hidden'] || $pricing['inquiry'];
                             @endphp
                         @endforeach
                             <div class="txt_desc">
                                 <div class="name">결제금액</div>
-                                <div>{{ $is_any_price_hide ? '업체 문의' : number_format($grand_total, 0) }}</div>
+                                <div>{{ $is_any_price_hide ? '업체 협의' : number_format($grand_total, 0) }}</div>
                             </div>
                             <div class="txt_desc">
                                 <div class="name">배송비</div>
@@ -159,7 +159,7 @@
                                     @include('mypage.estimate-product-price', ['row' => $row])
                                     <div class="prod_option">
                                         <div class="name estimate">견적가</div>
-                                        <div class="name estimate">{{ number_format($pricing['adjustment']) }}원</div>
+                                        <div class="name estimate">{{ $pricing['hidden'] ? '업체 협의' : number_format($pricing['adjustment']).'원' }}</div>
                                     </div>
                                     <div class="prod_option">
                                         <div class="name note">비고</div>

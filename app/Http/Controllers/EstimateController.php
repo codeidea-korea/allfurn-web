@@ -151,7 +151,8 @@ class EstimateController extends BaseController {
         return 
             response() -> json([
                 'success'   => 'success',
-                'total_price' => $order['total_price'],
+                'total_price' => $order['price_hidden'] ? null : $order['total_price'],
+                'price_hidden' => $order['price_hidden'],
                 'order_group_code' => $order['order_group_code']
             ]);
     }

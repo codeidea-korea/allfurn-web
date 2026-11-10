@@ -1080,7 +1080,7 @@ var response_estimate_estimate_total_price = 0;
                     $('.name').text($('#name').val());
                     $('.phone_number').text($('#phone_number').val());
                     $('.address1').text($('#address1').val());
-                    $('#response_order-modal .total_price').text(Number(json.total_price).toLocaleString() + '원');
+                    $('#response_order-modal .total_price').text(json.price_hidden ? '업체 협의' : Number(json.total_price).toLocaleString() + '원');
 
                     $('.response_order_detail:not(button)').attr('href', '/mypage/order/detail?orderGroupCode=' + $('.order_group_code').first().text() + '&type=P');
 

@@ -50,14 +50,14 @@
                     <div class="ml-3">
                         <p class="font-medium">{{ $order -> product_name }}</p>
                         <div class="flex items-center gap-2">
-                            <p class="font-medium">{{ number_format($pricing['total']).'원' }}</p>
+                            <p class="font-medium">{{ $pricing['hidden'] ? '업체 협의' : number_format($pricing['total']).'원' }}</p>
                             <span>|</span>
                             @if($pricing['options'])
                             <span>
                                 @foreach($pricing['options'] as $option)
                                     @foreach($option['optionValue'] as $value)
                                         {{ $value['propertyName'] ?? $option['optionName'] ?? '' }}
-                                        ({{ number_format($value['each_price']) }}원 / {{ $value['count'] }}개)<br />
+                                        ({{ $pricing['hidden'] ? '업체 협의' : number_format($value['each_price']).'원' }} / {{ $value['count'] }}개)<br />
                                     @endforeach
                                 @endforeach
                             </span>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="flex">
                         <p class="text-stone-400">주문 금액</p>
-                        <p class="ml-4">{{ number_format($pricing['total']).'원' }}</p>
+                        <p class="ml-4">{{ $pricing['hidden'] ? '업체 협의' : number_format($pricing['total']).'원' }}</p>
                     </div>
                 </div>
                 <div class="p-4 border rounded-tr flex flex-col items-center justify-center grow">
@@ -142,7 +142,7 @@
                 <hr>
                 <div class="py-5 flex gap-4">
                     <div class="w-[140px] shrink-0 font-bold text-xl">총 주문금액</div>
-                    <div class="text-lg">{{ number_format($orders->sum('price')) }}원 <span class="text-stone-400">{{ $buyer -> price_text ? '(협의 포함)' : '' }}</span></div>
+                    <div class="text-lg">{{ \App\Support\EstimatePriceVisibility::hasHidden($orders) ? '업체 협의' : number_format($orders->sum('price')).'원' }} @if(!\App\Support\EstimatePriceVisibility::hasHidden($orders))<span class="text-stone-400">{{ $buyer -> price_text ? '(협의 포함)' : '' }}</span>@endif</div>
                 </div>
             </div>
         </div>

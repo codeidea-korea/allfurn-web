@@ -337,8 +337,13 @@ class EstimateService {
             if (count($selected) !== count($selectedCodes)) throw new \InvalidArgumentException('견적 상품을 확인해주세요.');
 
             $total = 0;
+            $priceHidden = false;
             $order = null;
             foreach ($selected as $estimate) {
+                $product = Product::find($estimate->product_idx);
+                $visibility = $estimate->getAttributes();
+                $visibility['is_price_open'] = $product ? $product->is_price_open : null;
+                $priceHidden = $priceHidden || \App\Support\EstimatePriceVisibility::hidden($visibility, Auth::user());
                 $pricing = EstimatePricing::forEstimate($estimate);
                 if (!$pricing['responded']) throw new \InvalidArgumentException('견적 답변을 먼저 확인해주세요.');
                 $estimate->estimate_check = 'Y';
@@ -369,7 +374,7 @@ class EstimateService {
             }
             Estimate::where('estimate_group_code', $params['estimate_group_code'])
                 ->whereIn('estimate_code', $selectedCodes)->update(['estimate_total_price' => $total]);
-            return ['order' => $order, 'estimate' => $selected->first(), 'count' => count($selected), 'total_price' => $total];
+            return ['order' => $order, 'estimate' => $selected->first(), 'count' => count($selected), 'total_price' => $total, 'price_hidden' => $priceHidden];
         });
         $order = $result['order'];
         $estimate = $result['estimate'];
@@ -421,7 +426,7 @@ class EstimateService {
             );
         }
 
-        return ['idx' => $order->idx, 'total_price' => $result['total_price'], 'order_group_code' => $order->order_group_code];
+        return ['idx' => $order->idx, 'total_price' => $result['total_price'], 'order_group_code' => $order->order_group_code, 'price_hidden' => $result['price_hidden']];
     }
 
     public function holdOrder(array $params): array {

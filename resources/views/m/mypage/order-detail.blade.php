@@ -65,7 +65,7 @@
                                 @foreach($pricing['options'] as $option)
                                     @foreach($option['optionValue'] as $value)
                                         {{ $value['propertyName'] ?? $option['optionName'] ?? '' }}
-                                        ({{ number_format($value['each_price']) }}원 / {{ $value['count'] }}개)<br />
+                                        ({{ $pricing['hidden'] ? '업체 협의' : number_format($value['each_price']).'원' }} / {{ $value['count'] }}개)<br />
                                     @endforeach
                                 @endforeach
                             </span>
@@ -84,7 +84,7 @@
                     <li>
                         <div class="flex items-center">
                             <p class="w-[100px] shrink-0 text-stone-400">금액</p>
-                            <p>{{ number_format($pricing['total']).'원' }}</p>
+                            <p>{{ $pricing['hidden'] ? '업체 협의' : number_format($pricing['total']).'원' }}</p>
                         </div>
                     </li>
                 </ul>
@@ -105,7 +105,7 @@
                     <li>
                         <div class="flex items-center">
                             <p class="w-[100px] shrink-0 text-stone-400">주문 금액</p>
-                            <p>{{ number_format($pricing['total']).'원' }}</p>
+                            <p>{{ $pricing['hidden'] ? '업체 협의' : number_format($pricing['total']).'원' }}</p>
                         </div>
                     </li>
                 </ul>
@@ -158,7 +158,7 @@
             <div class="bg-white px-3 py-4 flex justify-between">
                 <p class="font-bold">총 주문 금액</p>
                 <div class="text-right">
-                    <p class="text-primary font-bold text-base">{{ number_format($orders->sum('price')).'원' }}</p>
+                    <p class="text-primary font-bold text-base">{{ \App\Support\EstimatePriceVisibility::hasHidden($orders) ? '업체 협의' : number_format($orders->sum('price')).'원' }}</p>
                     <p class="text-stone-400">(협의 포함)</p>
                 </div>
             </div>
