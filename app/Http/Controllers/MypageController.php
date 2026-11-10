@@ -1374,6 +1374,9 @@ class MypageController extends BaseController
     public function getResponseEstimateDevDetail(Request $request): JsonResponse {
         $data = [];
         $data['lists'] = $this -> mypageService -> getRequestEstimateDetail($request -> all());
+        // Sent/received quote documents hide private prices even from the supplier.
+        // Keep the supplier exception on the separate quote-writing endpoint.
+        $data['lists'] = \App\Support\EstimatePriceVisibility::forViewer($data['lists'], null);
         
         return
             response() -> json([
