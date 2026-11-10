@@ -736,7 +736,7 @@
                     $('.name').text($('#name').val());
                     $('.phone_number').text($('#phone_number').val());
                     $('.address1').text($('#address1').val());
-                    $('.total_price').text(response_estimate_estimate_total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원');
+                    $('#response_order-modal .total_price').text(Number(json.total_price).toLocaleString() + '원');
 
                     $('.response_order_detail:not(button)').attr('href', '/mypage/order/detail?orderGroupCode=' + $('.order_group_code').first().text() + '&type=P');
 

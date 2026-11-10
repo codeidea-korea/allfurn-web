@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\Attachment;
 use App\Models\Banner;
 use App\Models\UserRequireAction;
+use App\Support\EstimatePricing;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Auth;
@@ -236,8 +237,34 @@ class EstimateService {
         return $attach->idx;
     }
 
+    private function responsePrices($estimate, array $params): array {
+        if (($params['pricing_mode'] ?? '') !== 'option-combinations') return $params;
+
+        $row = $estimate->getAttributes();
+        if (empty($row['response_time'])) {
+            $product = Product::find($estimate->product_idx);
+            $row['is_price_open'] = $product ? $product->is_price_open : 0;
+        }
+        $pricing = EstimatePricing::forEstimate($row);
+        $adjustment = EstimatePricing::amount($params['response_estimate_product_each_price'] ?? 0);
+        $params['response_estimate_product_each_price'] = $adjustment;
+        $params['response_estimate_product_option_price'] = $pricing['option_total'];
+        $params['response_estimate_product_total_price'] = $pricing['subtotal'];
+        $params['response_estimate_estimate_total_price'] = $pricing['subtotal'] + $adjustment;
+        return $params;
+    }
+
+    private function refreshEstimateTotal($groupCode): void {
+        $total = 0;
+        foreach (Estimate::where('estimate_group_code', $groupCode)->get() as $row) {
+            $total += EstimatePricing::forEstimate($row)['total'];
+        }
+        Estimate::where('estimate_group_code', $groupCode)->update(['estimate_total_price' => $total]);
+    }
+
     public function updateResponse(array $params) {
         $estimate = Estimate::find($params['estimate_idx']);
+        $params = $this->responsePrices($estimate, $params);
 
         $estimate -> estimate_state = 'R';
         $estimate -> estimate_total_price = $params['response_estimate_estimate_total_price'];
@@ -258,6 +285,7 @@ class EstimateService {
         $estimate -> product_memo = (array_key_exists('product_memo', $params) ? $params['product_memo'] : $params['response_estimate_product_memo']);
 
         $estimate -> save();
+        if (($params['pricing_mode'] ?? '') === 'option-combinations') $this->refreshEstimateTotal($estimate->estimate_group_code);
 
         $sql =
             "SELECT * FROM AF_user
@@ -294,87 +322,64 @@ class EstimateService {
         ];
     }
 
-        public function insertOrder(array $params) {
-        $product_total_count = 0;
-        $real_total_price=0;
-        
-        $list = Estimate::where('estimate_group_code', $params['estimate_group_code']) -> get();
-        $selected_code = isset($params['select_idx'])? $params['select_idx'] : [];
+    public function insertOrder(array $params) {
+        $selectedCodes = array_values(array_unique($params['select_idx'] ?? []));
+        if (!$selectedCodes) throw new \InvalidArgumentException('주문할 상품을 선택해주세요.');
 
-        for($i = 0; $i < count($list); $i++) {
-            $estimate = Estimate::find($list[$i]['idx']);
-            if(in_array($estimate->estimate_code, $selected_code)){
-
-                $estimate-> estimate_check = 'Y';
-                $estimate -> estimate_state = 'O';
-                $estimate -> product_count = $list[$i]['product_count'];
-                $estimate -> product_total_price = $list[$i]['product_total_price'];
-                $estimate -> estimate_total_price = $list[$i]['response_estimate_estimate_total_price'];
-                $product_option_price = 0;
-                $product_option_price  = $product_option_price * $list[$i]['product_count'];
-                $estimate -> product_option_price = $product_option_price;
-                $product_total_count += $list[$i]['product_count'];
-                $estimate -> save();
-                $real_total_price += $list[$i]['response_estimate_estimate_total_price'];
-
-            } else {
-                $estimate->delete();
-                continue; 
+        $result = DB::transaction(function () use ($params, $selectedCodes) {
+            $list = Estimate::where('estimate_group_code', $params['estimate_group_code'])->lockForUpdate()->get();
+            if (Order::where('order_group_code', $params['estimate_group_code'])->exists()) {
+                throw new \RuntimeException('이미 주문한 견적서입니다.');
             }
+            $selected = $list->filter(function ($row) use ($selectedCodes) {
+                return in_array($row->estimate_code, $selectedCodes, true);
+            })->values();
+            if (count($selected) !== count($selectedCodes)) throw new \InvalidArgumentException('견적 상품을 확인해주세요.');
 
-            /*
-            $product_option_key = 'product_option_key_'.$list[$i]['product_idx'][$i];
-            $product_option_value = 'product_option_value_'.$list[$i]['product_idx'][$i];
+            $total = 0;
+            $order = null;
+            foreach ($selected as $estimate) {
+                $pricing = EstimatePricing::forEstimate($estimate);
+                if (!$pricing['responded']) throw new \InvalidArgumentException('견적 답변을 먼저 확인해주세요.');
+                $estimate->estimate_check = 'Y';
+                $estimate->estimate_state = 'O';
+                $estimate->product_option_price = $pricing['option_total'];
+                $estimate->save();
 
-            if(isset($list[$i][$product_option_value])) {
-                if(count($list[$i][$product_option_value]) > 0) {
-                    $product_option_arr = array();
-                    Log::info('count($params[$product_option_value]: '.count($list[$i][$product_option_value]));
-                    for($j = 0; $j < count($list[$i][$product_option_value]); $j++) {
-                        $product_option_value_arr = explode(',', $list[$j][$product_option_value]);
-
-                        $product_option_arr[$j]['optionName'] = $list[$j][$product_option_key];
-                        $product_option_arr[$j]['optionValue'][$product_option_value_arr[0]] = $product_option_value_arr[1];
-
-                        $product_option_price += $product_option_value_arr[1];
-                    }
-
-                    $estimate -> product_option_json = json_encode($product_option_arr, JSON_UNESCAPED_UNICODE);
-                }
+                $order = new Order;
+                $order->user_idx = Auth::user()['idx'];
+                $order->order_group_code = $estimate->estimate_group_code;
+                $order->order_code = $estimate->estimate_code;
+                $order->product_idx = $estimate->product_idx;
+                $order->option_json = $estimate->product_option_json ?? '[]';
+                $order->count = $estimate->product_count;
+                $order->memo = $estimate->request_memo;
+                $order->price = $pricing['total'];
+                $order->delivery_info = $estimate->product_delivery_info;
+                $order->name = $estimate->request_company_name;
+                $order->address1 = trim($estimate->request_address1.' '.$estimate->request_address2);
+                $order->phone_number = $estimate->request_phone_number;
+                $order->register_time = date('Y-m-d H:i:s');
+                $order->save();
+                $total += $pricing['total'];
             }
-            */
-        }
-
-        $check = Order::where('order_group_code', $estimate['estimate_group_code']) -> count();
-        if($check > 0) {
-            throw new \Exception('', 500);
-        }
-
-        $order = new Order;
-
-        $order -> user_idx = $list[0]['response_estimate_req_user_idx'];
-        $order -> order_group_code = $estimate['estimate_group_code'];
-        $order -> order_code = $estimate['estimate_code'];
-        $order -> product_idx = $estimate['product_idx'];
-        $order -> option_json = '[]';
-        $order -> count = $product_total_count;
-        $order -> memo = $list[0]['memo'];
-        $order -> price = $list[0]['response_estimate_estimate_total_price'];
-        $order -> delivery_info = $estimate['product_delivery_info'];
-        $order -> name = $list[0]['name'];
-        $order -> address1 = $list[0]['address1'];
-        $order -> phone_number = $list[0]['phone_number'];
-        $order -> register_time = $list[0]['register_time'];
-
-        $order -> save();
-
-        $product = DB::select("SELECT name FROM AF_product WHERE idx = ".$estimate['product_idx']);
-        $productName = count($list) > 1 ?  $product[0]->name .'외 ' .count($list)-1 .'개' : $product[0]->name;
+            // Preserve the existing order-completion behavior for unselected items.
+            foreach ($list as $row) {
+                if (!in_array($row->estimate_code, $selectedCodes, true)) $row->delete();
+            }
+            Estimate::where('estimate_group_code', $params['estimate_group_code'])
+                ->whereIn('estimate_code', $selectedCodes)->update(['estimate_total_price' => $total]);
+            return ['order' => $order, 'estimate' => $selected->first(), 'count' => count($selected), 'total_price' => $total];
+        });
+        $order = $result['order'];
+        $estimate = $result['estimate'];
+        $product = Product::find($estimate->product_idx);
+        $productName = ($product ? $product->name : '상품').($result['count'] > 1 ? ' 외 '.($result['count'] - 1).'개' : '');
 
         // 구매자
         $this -> pushService -> sendPush(
             '신규 주문 안내', $productName.' 상품 주문이 완료되었습니다.',
-            $list[0]['request_estimate_req_user_idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
+            Auth::user()['idx'], $type = 5, env('APP_URL').'/mypage/requestEstimate', env('APP_URL').'/mypage/requestEstimate'
         );
 
         $sql =
@@ -416,7 +421,7 @@ class EstimateService {
             );
         }
 
-        return $order -> idx;
+        return ['idx' => $order->idx, 'total_price' => $result['total_price'], 'order_group_code' => $order->order_group_code];
     }
 
     public function holdOrder(array $params): array {
@@ -736,6 +741,7 @@ class EstimateService {
 
     public function holdOrderCheck(array $params) {
         $estimate = Estimate::find($params['estimate_idx']);
+        $params = $this->responsePrices($estimate, $params);
 
         // 1. 상태를 'F'(견적보류)로 강제 설정
         $estimate -> estimate_state = 'F';
@@ -758,6 +764,7 @@ class EstimateService {
         $estimate -> product_memo = (array_key_exists('product_memo', $params) ? $params['product_memo'] : $params['response_estimate_product_memo']);
 
         $estimate -> save();
+        if (($params['pricing_mode'] ?? '') === 'option-combinations') $this->refreshEstimateTotal($estimate->estimate_group_code);
 
         // 3. 알림 전송 로직은 제거함 (보류 상태이므로)
 

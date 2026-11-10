@@ -452,14 +452,14 @@ class MypageService
         if ($params['type'] === 'S') {
             $order
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_total_price', 'AF_estimate.response_time', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 )
                 -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> where('AF_product.company_type', 'W') -> where('AF_product.company_idx', Auth::user()['company_idx']);
         } else {
             $order
                 -> select(
-                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
+                    'AF_order.*', DB::raw("DATE_FORMAT(AF_order.register_time, '%Y.%m.%d') AS reg_time"), 'AF_product.pay_notice AS p_pay_notice', 'AF_estimate.product_delivery_info AS p_delivery_info', 'AF_product.name AS product_name', 'AF_estimate.product_count', 'AF_estimate.product_each_price', 'AF_estimate.product_each_price_text AS price_text', 'AF_estimate.product_total_price AS product_price', 'AF_estimate.product_total_price', 'AF_estimate.response_time', 'AF_estimate.product_option_json', 'AF_estimate.product_option_price', 'AF_estimate.product_delivery_price', DB::raw('CONCAT("'.preImgUrl().'", AF_attachment.folder, "/", AF_attachment.filename) AS product_image')
                 )
                 -> join('AF_attachment', 'AF_attachment.idx', DB::raw('SUBSTRING_INDEX(AF_product.attachment_idx, ",", 1)'))
                 -> where('AF_user.idx', Auth::user()['idx']);
@@ -2167,7 +2167,7 @@ class MypageService
                 o.order_state as order_state,
 
                 e.idx AS estimate_idx,
-                COALESCE(e.product_option_json, p.product_option) AS product_option_json,
+                e.product_option_json AS product_option_json,
 
                 DATE_FORMAT(e.request_time, '%Y년 %m월 %d일') AS request_time,
 
@@ -2212,56 +2212,13 @@ class MypageService
             LEFT JOIN AF_attachment a1 ON e.request_business_license_attachment_idx = a1.idx 
             LEFT JOIN AF_attachment a2 ON SUBSTRING_INDEX(p.attachment_idx, ',', 1) = a2.idx 
             LEFT JOIN AF_attachment a3 ON e.response_business_license_attachment_idx = a3.idx 
-            LEFT JOIN AF_order o ON o.order_group_code = e.estimate_group_code
+            LEFT JOIN AF_order o ON o.order_code = e.estimate_code
             WHERE e.estimate_group_code = '".$params['group_code']."'";
 //            WHERE e.idx = ".$params['estimate_idx'];
         $estimate = DB::select($sql);
 
-        foreach( $estimate AS $ekey => $erow ) {
-            if(isset($erow->product_option_json) && $erow->product_option_json != '[]') {
-                $arr = (array)json_decode($erow->product_option_json);
-                $arr2 = (array)json_decode($erow->product_option);
-                $responseArr = [];
-
-                for($i = 0; $i < count($arr); $i++) {
-                    if(!isset($arr) || !is_array($arr) || !array_key_exists($i, $arr)) {
-                        continue;
-                    }
-                    $item = (array)($arr[$i]);
-                    if(! array_key_exists($i, $arr2)) {
-                        $item2 = (array)($arr[$i]);
-                    } else {
-                        $item2 = (array)($arr2[$i]);
-                    }
-                    $item['optionValue'] = (array)$item['optionValue'];
-
-                    for($j = 0; $j < count($item['optionValue']); $j++) {
-                        if(!isset($item['optionValue']) || !is_array($item['optionValue']) 
-                            || !array_key_exists($j, $item['optionValue'])) {
-                            continue;
-                        }
-                        $sub = (array)($item['optionValue'][$j]);
-                        $sub2 = (array)($item2['optionValue'][$j]);
-                        if(! array_key_exists('count', $sub)) {
-                            $sub = array_merge( $sub, array( 'count' => 1 ) );
-                        } else {
-                            $sub['count'] = is_numeric($sub['count']) ? $sub['count'] : intval($sub['count']);
-                        }
-                        if(! array_key_exists('price', $sub)) {
-                            $sub = array_merge( $sub, array( 'price' => is_numeric($sub2['price']) ? $sub2['price'] : 0 ) );
-                        } else {
-                            $sub['price'] = is_numeric($sub['price']) ? $sub['price'] : intval($sub['price']);
-                        }
-                        $sub['each_price'] = $sub['count'] * $sub['price'];
-                        $item['optionValue'][$j] = (object) $sub;
-                    }
-                    array_push($responseArr, (object) $item);
-                }
-                if(count($responseArr) < 1) {
-                    continue;
-                }
-                $erow->product_option_json = json_encode($responseArr);
-            }
+        foreach ($estimate as $row) {
+            $row->product_option_json = json_encode(\App\Support\EstimatePricing::options($row->product_option_json), JSON_UNESCAPED_UNICODE);
         }
         return $estimate;
     }

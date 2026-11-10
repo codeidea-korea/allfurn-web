@@ -8,6 +8,7 @@ use App\Service\EstimateService;
 use App\Service\ProductService;
 use App\Service\OrderService;
 use App\Service\CommunityService;
+use App\Support\EstimatePricing;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -90,12 +91,12 @@ class EstimateController extends BaseController {
                 }
             }
             
-            $list['prod'][$key]['prd_price'] = $row['price'];
+            $list['prod'][$key]['prd_price'] = productIsInquiryPrice($row) ? 0 : EstimatePricing::amount($row['price']);
 
-            $list['prod'][$key]['prod_each_price'] = $list['prod'][$key]['prd_count'] * $row['price'];
+            $list['prod'][$key]['prod_each_price'] = $list['prod'][$key]['prd_count'] * $list['prod'][$key]['prd_price'];
             $list['prod'][$key]['prod_delivery_info'] = $row['delivery_info'];
 
-            $total_price += $list['prod'][$key]['prd_count'] * $row['price'];
+            $total_price += $list['prod'][$key]['prod_each_price'] + EstimatePricing::optionTotal($list['prod'][$key]['product_option_json'] ?? '[]');
             $tmp++;
         }
 
@@ -145,11 +146,13 @@ class EstimateController extends BaseController {
         $params= [];
         $params = array_merge($params, $request -> all());
 
-        $this -> estimateService -> insertOrder($params);
+        $order = $this -> estimateService -> insertOrder($params);
 
         return 
             response() -> json([
-                'success'   => 'success'
+                'success'   => 'success',
+                'total_price' => $order['total_price'],
+                'order_group_code' => $order['order_group_code']
             ]);
     }
 

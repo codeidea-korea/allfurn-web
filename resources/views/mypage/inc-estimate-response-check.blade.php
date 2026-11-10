@@ -9,7 +9,7 @@
         </div>
 		<div class="modal_body">
   -->
-            <div class="relative">
+            <div class="relative" data-estimate-received-prices>
                 <div class="info">'{{ $lists[0]->request_company_name }}'업체의 '{{ $lists[0]->response_company_name }}' {{ count( $lists ) }}건 상품 견적서 입니다.</div>
                 <div class="p-3">
                     <!-- 견적 기본정보 -->
@@ -62,7 +62,7 @@
                         <div>
                             <div class="txt_desc">
                                 <div class="name">가격 표기 상품 {{ count( $lists ) }}건</div>
-                                <div><b>{{ number_format( $lists[0]->estimate_total_price ) }}</b></div>
+                                <div><b>{{ number_format(array_sum(array_map(function ($item) { return \App\Support\EstimatePricing::forEstimate($item)['total']; }, $lists))) }}</b></div>
                             </div>
                         </div>
                     </div>
@@ -100,69 +100,8 @@
                                 @foreach( $lists AS $key => $row )
                                     
                                     @php
-                                        // -----------------------------------------------------------
-                                        // 1. 견적가 (Wholesaler's Estimate Price)
-                                        // -----------------------------------------------------------
-                                        $cleanEstimatePrice = (int)preg_replace('/[^0-9]/', '', $row->product_each_price);
-
-                                        // -----------------------------------------------------------
-                                        // 2. 상품 기본가 (Base Unit Price)
-                                        // -----------------------------------------------------------
-                                        // 화면 출력 로직($row->price)과 맞추기 위해 $row->price 사용
-                                        $productBasePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
-
-                                        // 옵션이 없을 때 사용할 예비 단가 (기존 로직 유지용)
-                                        $cleanUnitPrice = 0;
-                                        if(isset($row->product_total_price)) {
-                                            $cleanUnitPrice = (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
-                                        }
-
-                                        // -----------------------------------------------------------
-                                        // 3. 옵션 가격 계산 ($_each_price)
-                                        // -----------------------------------------------------------
-                                        $optionPriceSum = 0;
-                                        $hasOption = false;
-
-                                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                                            $tempOptions = json_decode($row->product_option_json);
-                                            if (!empty($tempOptions) && (is_array($tempOptions) || is_object($tempOptions))) {
-                                                $hasOption = true; 
-                                                foreach($tempOptions as $tempItem) {
-                                                    if (!isset($tempItem->optionValue)) continue;
-                                                    foreach($tempItem->optionValue as $tempSub) {
-                                                        if(!property_exists($tempSub, 'price')) continue;
-                                                        // 옵션 가격 합산
-                                                        $optPrice = isset($tempSub->each_price) ? (int)preg_replace('/[^0-9]/', '', $tempSub->each_price) : 0;
-                                                        $optionPriceSum += $optPrice;
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        // -----------------------------------------------------------
-                                        // 4. 최종 가격 계산 ($totalPriceForCalc) - 요청 로직 반영
-                                        // -----------------------------------------------------------
-                                        
-                                        // 가격 비공개 조건 (0: 비공개, 1: 공개)
-                                        // 혹은 특정 텍스트('수량마다 상이', '업체 문의')가 있는 경우 비공개로 간주
-                                        $isPriceHidden = ($row->is_price_open == 0);
-
-                                        if ($hasOption) {
-                                            // [옵션이 있는 경우]
-                                            if ($isPriceHidden) {
-                                                // Case 1: 텍스트(업체문의 등)가 표시되는 경우
-                                                // 요청: $cleanEstimatePrice + $optionPriceSum
-                                                $totalPriceForCalc = $cleanEstimatePrice + $optionPriceSum;
-                                            } else {
-                                                // Case 2: 숫자(가격+옵션)가 표시되는 경우
-                                                // 요청: $cleanEstimatePrice + ($row->price + $_each_price)
-                                                $totalPriceForCalc = $cleanEstimatePrice + ($productBasePrice + $optionPriceSum);
-                                            }
-                                        } else {
-                                            // [옵션이 없는 경우] 기존 로직 유지
-                                            // (견적가 + 기존단가)
-                                            $totalPriceForCalc = $cleanEstimatePrice + $cleanUnitPrice;
-                                        }
+                                        $pricing = \App\Support\EstimatePricing::forEstimate($row);
+                                        $totalPriceForCalc = $pricing['total'];
                                     @endphp
                                     
 
@@ -178,59 +117,10 @@
                                         <div class="order_num noline">개별주문번호 : {{ $row->estimate_code }}</div>
                                         <div class="prod_name">{{ $row->name }}</div>
                                         
-                                        @if(isset($row->product_option_json) && $row->product_option_json != '[]')
-                                            <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
-                                            <div class="noline">
-                                                @foreach($arr as $item2)                                                
-                                                    @foreach($item2->optionValue as $sub)
-                                                        @php
-                                                        if(! property_exists($sub, 'price')) {
-                                                            continue;
-                                                        }
-                                                        @endphp
-                                                        <div class="option_item">
-                                                            <div class="">
-                                                                <p class="option_name">{{$sub->propertyName}}</p>
-                                                            </div>
-                                                            <div class="mt-2">
-                                                                <div>{{ ($sub->count) . '' }}개</div>
-                                                                <? $_each_price += $sub->each_price; ?>
-                                                                <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                @endforeach
-                                            </div>
-                                            <div class="prod_option">
-                                                <div class="name">가격</div>
-                                                <div class="total_price">
-                                                    @if( $row->is_price_open == 0 ? 1 : 0 )
-                                                        {{ $row->price_text }}
-                                                    @else
-                                                        {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @else
-                                            <div class="prod_option">
-                                                <div class="name">수량</div>
-                                                <div>{{ $row->product_count }}개</div>
-                                            </div>
-                                            <div class="prod_option">
-                                                <div class="name">단가</div>
-                                                
-                                                <div>
-                                                    @if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' )
-                                                        {{ ($row->price_text === null || $row->price_text === '' || $row->price_text === '가격 안내 문구 선택') ? '' : $row->price_text }}
-                                                    @else
-                                                        {{ $row->product_total_price }}
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endif
+                                        @include('mypage.estimate-product-price', ['row' => $row])
                                         <div class="prod_option">
                                             <div class="name estimate">견적가</div>
-                                            <div class="name estimate">{{ $row->product_each_price }}</div>
+                                            <div class="name estimate">{{ number_format($pricing['adjustment']) }}원</div>
                                         </div>
                                         <div class="prod_option">
                                             <div class="name note">비고</div>
@@ -261,73 +151,24 @@
 
   -->
 <script>
-    const prod2 = (item) => {
-        // item은 클릭된 체크박스(input)
-        const label = $(item).next('label'); // 바로 뒤의 label 찾기
-
-        if($(item).prop('checked')){
-            // 체크된 상태 -> '취소'
-            label.text('취소');
-        } else {
-            // 체크 해제된 상태 -> '추가'
-            label.text('추가');
-        }
-    }
-
-
-    function updateEstimateInfo(obj){
+function updateEstimateInfo(obj) {
+    const roots = obj ? $(obj).closest('[data-estimate-received-prices]') : $('[data-estimate-received-prices]');
+    roots.each(function () {
         let count = 0;
         let total = 0;
-        const items = document.querySelectorAll('.item_selector');
-
-        if(obj) {
-            const orderCode = obj.getAttribute('data-code');
-            if(obj.checked) {
-                console.log('개별주문번호 : ' + orderCode + ' 체크!');
-            } else {
-                console.log('개별주문번호 : ' + orderCode + ' 해제!');
-            }
-        }
-
-
-        items.forEach(item => {
-            if(item.checked){
+        $(this).find('.item_selector').each(function () {
+            $(this).next('label').text(this.checked ? '취소' : '추가');
+            if (this.checked) {
                 count++;
-                let priceNum = parseInt(item.getAttribute('data-price')) || 0;
-                total += priceNum;
+                total += Number($(this).attr('data-price')) || 0;
             }
         });
-
-        const countElem = document.getElementById('selected_count');
-        const priceElem = document.getElementById('selected_total_price');
-    
-
-        if(countElem) countElem.innerText = count;
-        if(priceElem) priceElem.innerText = total.toLocaleString();
-        console.log('디버깅 - 선택건수:', count, ' / 총 합계:', total);
-
-    }
-    
-    $(document).ready(function(){
-        // 1. 페이지 로드 시, 이미 체크되어 있는 항목들의 텍스트(추가->취소) 변경
-        $('.item_selector:checked').each(function(){
-            prod2(this);
-        });
-
-        // 2. 체크박스 클릭 시 prod2 함수 실행 (jQuery 이벤트 연결)
-        // HTML의 onclick="updateEstimateInfo(this)"와 별개로 동작하므로
-        // HTML에서는 prod2(this)를 지우셔도 됩니다.
-        $(document).on('click', '.item_selector', function(){
-            prod2(this);
-        });
-
-        // 3. 모달 로드 직후 첫 계산 실행
-        // (updateEstimateInfo는 obj 인자가 없어도 동작하도록 작성되어 있으므로 안전합니다)
-        setTimeout(function() {
-            updateEstimateInfo(null);
-        }, 100);
+        $(this).find('#selected_count').text(count);
+        $(this).find('#selected_total_price').text(total.toLocaleString());
     });
-
-    // 모달 로드 직후 첫 계산 실행
-    //setTimeout(updateEstimateInfo, 100);
+}
+$(function () {
+    $('[data-estimate-received-prices] .item_selector').off('.estimatePrice').on('change.estimatePrice', function () { updateEstimateInfo(this); });
+    updateEstimateInfo(null);
+});
 </script>

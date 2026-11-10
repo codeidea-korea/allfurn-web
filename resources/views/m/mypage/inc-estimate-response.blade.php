@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative" data-estimate-request-prices>
     <div class="info">'{{ $lists[0]->request_company_name }}'업체의 {{ count( $lists ) }}건 상품 견적 요청서 입니다.</div>
     <div class="p-3">
         <!-- 견적 기본정보 -->
@@ -43,51 +43,15 @@
             </div>
             
             @php
-            $sample_total_price = 0;
-            $count_open_price = 0;
-            $count_close_price = 0;
-            $grand_total_price = 0; // [수정] 전체 합계를 담을 별도 변수 선언
-
-            foreach( $lists AS $key => $row ){
-                if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
-                    $count_close_price = $count_close_price + 1;
-                } else {
-                    $count_open_price = $count_open_price + 1;
+                $count_open_price = 0;
+                $count_close_price = 0;
+                $grand_total_price = 0;
+                foreach ($lists as $row) {
+                    $pricing = \App\Support\EstimatePricing::forEstimate($row);
+                    if ($pricing['inquiry']) $count_close_price++;
+                    else $count_open_price++;
+                    $grand_total_price += $pricing['subtotal'];
                 }
-                
-                if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                    $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0;
-                    foreach($arr as $item2)   {                                              
-                        foreach($item2->optionValue as $sub) {
-                            if(! property_exists($sub, 'price')) {
-                                continue;
-                            }
-                            $_each_price += (intval($sub->price) * (property_exists($sub, 'count') && $sub->count == null ? $sub->count : 1)); 
-                        }
-                    }
-                    if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ){
-                        //$lists[0]->is_price_open = 0;
-                        //$lists[0]->price_text = $row->price_text;
-                    }
-
-                    else{
-                        // [수정] 별도 변수에 합산
-                        $grand_total_price += $row->price + $_each_price;
-                    }
-                    
-                } else {
-                    if( $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의' ? 1 : 0 ) {
-                        //$lists[0]->is_price_open = 0;
-                        //$lists[0]->price_text = $row->price_text;
-                    }
-                    
-                    else {
-                     // [수정] 별도 변수에 합산
-                        $grand_total_price += $row->product_count * (!is_numeric($row->price) ? 0 : $row->price);
-                    }
-                    
-                }
-            }
             @endphp
             <div>
                 <div class="txt_desc">
@@ -133,56 +97,9 @@
                 <div class="py-7">
                     @foreach( $lists AS $key => $row )
                     @php
-                        // -------------------------------------------------------------------------
-                        // 1. 기본 변수 설정 및 옵션 가격($_each_price) 미리 계산
-                        // -------------------------------------------------------------------------
-                        
-                        // 상품 기본가 (숫자만 추출)
-                        $productBasePrice = isset($row->price) ? (int)preg_replace('/[^0-9]/', '', $row->price) : 0;
-                        
-                        // 기존 단가 로직 (옵션 없을 때 사용)
-                        $cleanUnitPrice = (!isset($row->product_total_price) || $row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? 0 : (int)preg_replace('/[^0-9]/', '', $row->product_total_price);
-
-                        // 옵션 총액 계산
-                        $_each_price = 0;
-                        $hasOption = false;
-
-                        if(isset($row->product_option_json) && $row->product_option_json != '[]') {
-                            $arr = json_decode($row->product_option_json);
-                            if (!empty($arr) && (is_array($arr) || is_object($arr))) {
-                                $hasOption = true; // 옵션 있음 플래그 설정
-                                foreach($arr as $item2) {
-                                    if (!isset($item2->optionValue)) continue;
-                                    foreach($item2->optionValue as $sub) {
-                                        if(!property_exists($sub, 'price')) continue;
-                                        $cnt = (property_exists($sub, 'count') && $sub->count != null) ? $sub->count : 1;
-                                        $_each_price += (intval($sub->price) * $cnt);
-                                    }
-                                }
-                            }
-                        }
-
-                        // -------------------------------------------------------------------------
-                        // 2. 최종 합계($totalPriceForCalc) 계산
-                        // -------------------------------------------------------------------------
-                        
-                        if ($hasOption) {
-                            // [옵션이 있는 경우] 사용자 요청 로직 적용
-                            
-                            // 조건: 가격이 비공개(0)이면 '업체 문의' 텍스트가 나옴 -> 옵션 가격($_each_price)만 합산
-                            if( $row->is_price_open == 0 ) {
-                                $totalPriceForCalc = $_each_price;
-                            } 
-                            // 조건: 가격이 공개(1)이면 숫자가 나옴 -> (상품기본가 + 옵션가격) 합산
-                            else {
-                                $totalPriceForCalc = $productBasePrice + $_each_price;
-                            }
-
-                        } else {
-                            // [옵션이 없는 경우] 기존 로직 그대로 유지
-                            $totalPriceForCalc = $cleanUnitPrice;
-                        }
-                    @endphp
+                            $pricing = \App\Support\EstimatePricing::forEstimate($row);
+                            $totalPriceForCalc = $pricing['subtotal'];
+                        @endphp
                     <div class="prod_info">
                     <input type="hidden" class="calc_base_price" value="{{ $totalPriceForCalc }}">    
                     <div class="img_box">
@@ -195,53 +112,11 @@
                             <div class="order_num noline">개별주문번호 : {{ $row->estimate_code }}</div>
                             <div class="prod_name">{{ $row->name }}</div>
 
-                            @if(isset($row->product_option_json) && $row->product_option_json != '[]')
-                                <?php $arr = json_decode($row->product_option_json); $required = false; $_each_price = 0; ?>
-                                <div class="noline">
-                                    @foreach($arr as $item2)                                                
-                                        @foreach($item2->optionValue as $sub)
-                                            @php
-                                            if(! property_exists($sub, 'price')) {
-                                                continue;
-                                            }
-                                            @endphp
-                                            <div class="option_item">
-                                                <div class="">
-                                                    <p class="option_name">{{$sub->propertyName}}</p>
-                                                </div>
-                                                <div class="mt-2">
-                                                    <div>{{ ($sub->count) . '' }}개</div>
-                                                    <? $_each_price += $sub->each_price; ?>
-                                                    <div class="price"><?php echo number_format($sub->each_price, 0); ?></div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @endforeach
-                                </div>
-                                <div class="prod_option">
-                                    <div class="name">가격</div>
-                                    <div class="total_price">
-                                        @if( $row->is_price_open == 0 ? 1 : 0 )
-                                            {{ $row->price_text }}
-                                        @else
-                                            {{$row->is_price_open ? number_format($row->price + $_each_price, 0).'원': $row->price_text}}
-                                        @endif
-                                    </div>
-                                </div>
-                            @else
-                                <div class="prod_option">
-                                    <div class="name">수량</div>
-                                    <div>{{ $row->product_count }}개</div>
-                                </div>
-                                <div class="prod_option">
-                                    <div class="name">단가</div>
-                                    <div>{{ ($row->is_price_open == 0 || $row->price_text == '수량마다 상이' || $row->price_text == '업체 문의') ? (($row->price_text === null || $row->price_text === '' || $row->price_text ==='가격 안내 문구 선택') ? '' : $row->price_text) : number_format((int)preg_replace('/[^0-9]/', '', $row->product_total_price)).'원' }}</div>
-                                </div>
-                            @endif
-
+                            @include('mypage.estimate-product-price', ['row' => $row])
+                            <input type="hidden" class="calc_option_price" value="{{ $pricing['option_total'] }}">
                             <div class="prod_option">
                                 <div class="name estimate">견적가</div>
-                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required calc_input_price" value="0"></div>
+                                <div><input type="text" name="product_each_price" maxLength="10" class="input-form required calc_input_price" value="{{ $pricing['adjustment'] }}"></div>
                             </div>
                             <div class="prod_option">
                                 <div class="name note">비고</div>
@@ -314,34 +189,19 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    updateTotalPrice(); // 페이지 로드 시 1회 실행
-
-    // (선택사항) 만약 사용자가 입력창(견적가) 숫자를 바꾸면 실시간으로 합계도 바꾸고 싶다면 아래 주석 해제
-    
-    $('.calc_input_price').on('keyup change', function() {
-        updateTotalPrice();
-    });
-    
-});
-
 function updateTotalPrice() {
-    let grandTotal = 0;
-
-    // 리스트의 각 항목(prod_info)을 순회
-    $('.prod_info').each(function() {
-        // 1. 숨겨둔 product_total_price 값 가져오기 (없으면 0)
-        let basePrice = parseInt($(this).find('.calc_base_price').val()) || 0;
-        
-        // 2. 입력창(견적가) 값 가져오기 (콤마 제거 후 정수 변환, 없으면 0)
-        let inputVal = $(this).find('.calc_input_price').val();
-        let inputPrice = parseInt(inputVal.replace(/,/g, '')) || 0;
-
-        // 3. 두 값을 더해서 전체 합계에 누적
-        grandTotal += (basePrice + inputPrice);
+    $('[data-estimate-request-prices]').each(function () {
+        let total = 0;
+        $(this).find('.prod_info').each(function () {
+            const subtotal = Number($(this).find('.calc_base_price').val()) || 0;
+            const adjustment = Number(String($(this).find('.calc_input_price').val() || 0).replace(/,/g, '')) || 0;
+            total += subtotal + adjustment;
+        });
+        $(this).find('#final_total_display').text(total.toLocaleString());
     });
-
-    // 4. 위쪽(id="final_total_display")에 천단위 콤마 찍어서 출력
-    $('#final_total_display').text(grandTotal.toLocaleString());
 }
+$(function () {
+    $('[data-estimate-request-prices] .calc_input_price').off('.estimatePrice').on('input.estimatePrice change.estimatePrice', updateTotalPrice);
+    updateTotalPrice();
+});
 </script>

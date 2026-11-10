@@ -43,20 +43,22 @@
             </div>
         
             @foreach ($orders as $index => $order)
+            @php($pricing = \App\Support\EstimatePricing::forEstimate($order))
             <div class="flex mt-3">
                 <div class="p-4 border-l border-t border-b rounded-tl flex w-[632px]">
                     <img src="{{ $order -> product_image }}" class="object-cover w-24 h-24 rounded-md" alt="" />
                     <div class="ml-3">
                         <p class="font-medium">{{ $order -> product_name }}</p>
                         <div class="flex items-center gap-2">
-                            <p class="font-medium">{{ $order -> price_text ?: number_format($order -> product_each_price).'원' }}</p>
+                            <p class="font-medium">{{ number_format($pricing['total']).'원' }}</p>
                             <span>|</span>
-                            @if (!empty(json_decode($order -> product_option_json)))
+                            @if($pricing['options'])
                             <span>
-                                @foreach (json_decode($order -> product_option_json) as $key => $val)
-                                    {{ $val -> optionName }}
-                                    {{ key($val -> optionValue).'('.number_format($val -> optionValue -> {key($val -> optionValue)}).'원)' }}
-                                    <br />
+                                @foreach($pricing['options'] as $option)
+                                    @foreach($option['optionValue'] as $value)
+                                        {{ $value['propertyName'] ?? $option['optionName'] ?? '' }}
+                                        ({{ number_format($value['each_price']) }}원 / {{ $value['count'] }}개)<br />
+                                    @endforeach
                                 @endforeach
                             </span>
                             @else
@@ -78,7 +80,7 @@
                     </div>
                     <div class="flex">
                         <p class="text-stone-400">주문 금액</p>
-                        <p class="ml-4">{{ $order -> price_text ?: number_format(($order -> product_price) + ($order -> product_option_price)).'원' }}</p>
+                        <p class="ml-4">{{ number_format($pricing['total']).'원' }}</p>
                     </div>
                 </div>
                 <div class="p-4 border rounded-tr flex flex-col items-center justify-center grow">
@@ -140,7 +142,7 @@
                 <hr>
                 <div class="py-5 flex gap-4">
                     <div class="w-[140px] shrink-0 font-bold text-xl">총 주문금액</div>
-                    <div class="text-lg">{{ number_format($buyer -> total_price) }}원 <span class="text-stone-400">{{ $buyer -> price_text ? '(협의 포함)' : '' }}</span></div>
+                    <div class="text-lg">{{ number_format($orders->sum('price')) }}원 <span class="text-stone-400">{{ $buyer -> price_text ? '(협의 포함)' : '' }}</span></div>
                 </div>
             </div>
         </div>

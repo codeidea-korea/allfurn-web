@@ -460,20 +460,14 @@
 
         sum_price = 0;
         let is_not_all_set = false;
-        $('.fold_area .prod_info').each(function (index) {
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
         	product_price = 0;
 
-            var response_estimate_product_option_price = 0;
-            var options = $($('div .prod_info')[index]).find('.option_item').find('.price');
-            if(options) {
-                for (let idx = 0; idx < options.length; idx++) {
-                    const option = options[idx];
-                    response_estimate_product_option_price += Number(option.innerText);                    
-                }
-            }
+            var response_estimate_product_option_price = Number($(this).find('.calc_option_price').val()) || 0;
 
             products.push({
-                estimate_idx: $('div .prod_info').find('input[name=idx]')[index].value,
+                estimate_idx: $(this).find('input[name=idx]').val(),
+                pricing_mode: 'option-combinations',
                 estimate_code: estimate_code,
                 estimate_group_code: estimate_group_code,
                 response_company_type: response_company_type,
@@ -499,14 +493,11 @@
                 response_estimate_res_memo: "", 
                 response_estimate_res_time: getToday(0),
                 expiration_date: getToday(15),
-                response_estimate_product_each_price: Number($('input[name=product_each_price]')[index].value),
+                response_estimate_product_each_price: Number(String($(this).find('input[name=product_each_price]').val()).replace(/,/g, '')) || 0,
                 response_estimate_product_delivery_info: $('#delivery_type').text(),
                 response_estimate_product_option_price: response_estimate_product_option_price,
                 response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
-                //response_estimate_product_total_price: Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count,
-                //response_estimate_product_total_price: estimate_data.lists[index].product_total_price,
-                response_estimate_product_total_price: Number($('.fold_area .prod_info').eq(index).find('.calc_base_price').val()) || 0,
-                //response_estimate_product_total_price: estimate_data.lists[index].product_total_price,
+                response_estimate_product_total_price: Number($(this).find('.calc_base_price').val()) || 0,
                 product_memo:estimate_data.lists[index].product_memo || '',
                 response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });
@@ -564,13 +555,10 @@
             return;
         }
         sum_price = 0;
-        $('.fold_area .prod_info').each(function (index) {
-            //sum_price += Number($('input[name=product_each_price]')[index].value) * estimate_data.lists[index].product_count;
-            //sum_price += estimate_data.lists[index].product_total_price;
-            sum_price += Number(estimate_data.lists[index].product_total_price);        });
-        $('.fold_area .prod_info').each(function (index) {
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
+            sum_price += products[index].response_estimate_product_total_price + products[index].response_estimate_product_each_price;        });
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
-            //products[index]['response_estimate_product_total_price'] = sum_price;
         });
         
         $.ajax({
@@ -617,21 +605,13 @@
         let sum_price = 0;
         let is_not_all_set = false;
 
-        $('.fold_area .prod_info').each(function (index) {
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
             let product_price = 0;
-            var response_estimate_product_option_price = 0;
-            
-            // 옵션 가격 계산
-            var options = $($('div .prod_info')[index]).find('.option_item').find('.price');
-            if(options) {
-                for (let idx = 0; idx < options.length; idx++) {
-                    const option = options[idx];
-                    response_estimate_product_option_price += Number(option.innerText.replace(/,/g, '')); // 콤마 제거 안전장치 추가
-                }
-            }
+            var response_estimate_product_option_price = Number($(this).find('.calc_option_price').val()) || 0;
 
             products.push({
-                estimate_idx: $('div .prod_info').find('input[name=idx]')[index].value,
+                estimate_idx: $(this).find('input[name=idx]').val(),
+                pricing_mode: 'option-combinations',
                 estimate_code: estimate_code,
                 estimate_group_code: estimate_group_code,
                 response_company_type: response_company_type,
@@ -660,13 +640,13 @@
                 response_estimate_res_memo: "", 
                 response_estimate_res_time: getToday(0),
                 expiration_date: getToday(15),
-                response_estimate_product_each_price: Number($('input[name=product_each_price]')[index].value),
+                response_estimate_product_each_price: Number(String($(this).find('input[name=product_each_price]').val()).replace(/,/g, '')) || 0,
                 response_estimate_product_delivery_info: $('#delivery_type').text(),
                 response_estimate_product_option_price: response_estimate_product_option_price,
                 response_estimate_product_delivery_price: $('#delivery_price').val() || 0,
                 
                 // 화면에 계산된 합계 금액 가져오기
-                response_estimate_product_total_price: Number($('.fold_area .prod_info').eq(index).find('.calc_base_price').val()) || 0,
+                response_estimate_product_total_price: Number($(this).find('.calc_base_price').val()) || 0,
                 product_memo: estimate_data.lists[index].product_memo || '',
                 response_estimate_product_memo: estimate_data.lists[index].product_memo || '',
             });
@@ -729,10 +709,10 @@
 
         // 전체 합계 재계산
         sum_price = 0;
-        $('.fold_area .prod_info').each(function (index) {
-            sum_price += Number(estimate_data.lists[index].product_total_price);
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
+            sum_price += products[index].response_estimate_product_total_price + products[index].response_estimate_product_each_price;
         });
-        $('.fold_area .prod_info').each(function (index) {
+        $('#request_confirm_write-modal [data-estimate-request-prices] .prod_info').each(function (index) {
             products[index]['response_estimate_estimate_total_price'] = sum_price;
         });
         
