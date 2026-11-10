@@ -189,7 +189,7 @@
                     <button onclick="sortOption();">옵션 순서 변경</button>
                 </div>
                 <div id="optsArea" class="option_item mb-2"></div>
-                <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onClick="addOrderOption(_tmp+1);">
+                <button class="flex items-center justify-center gap-1 w-full h-11 text-white bg-stone-600 rounded" onClick="addOrderOption();">
                     <svg class="w-5 h-5 stroke-stone-400"><use xlink:href="/img/m/icon-defs.svg#plus_white"></use></svg>
                     주문 옵션 추가
                 </button>
@@ -1522,14 +1522,15 @@ $('#prod_certifi-modal .btn-primary').click(function () {
 })
 
 //### 옵션 추가
-function addOrderOption(tmp) {
+function addOrderOption(optionValueCount = 1) {
     // 옵션 최대 6개
     oIdx = parseInt( oIdx + 1 );
-    _tmp = parseInt( tmp );
     if (oIdx > 6) {
         oIdx = parseInt( oIdx - 1 );
         openModal('#alert-modal10');
     } else {
+        // 옵션 그룹 식별 번호는 옵션값 개수와 별도로 증가시킨다.
+        _tmp++;
         var titleHtml = '<div class="optNum' + parseInt( _tmp -1 ) + ' form__list-wrap" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
             '   <div class="option_tit"><p>옵션 ' + oIdx + '</p><button onclick="checkRemoveOption(' + parseInt( _tmp -1 ) + ');">삭제</button></div>' +
             '   <div class="option_value_wrap">' + 
@@ -1547,7 +1548,7 @@ function addOrderOption(tmp) {
             '           </dl>' +
             '       </div>';
 
-        for (let inx = 0; inx < _tmp; inx++) {
+        for (let inx = 0; inx < optionValueCount; inx++) {
             const element = '       <div class="option_box item__input-wrap">' + 
                             '           <dl class="mb-3">' + 
                             '               <dt class="necessary">옵션값</dt>' + 

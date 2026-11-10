@@ -143,7 +143,7 @@
                     <div class="flex items-center justify-between">
                         <h3 class="font-medium text-lg">상품 주문 옵션</h3>
                         <div class="flex items-center gap-2 font-medium">
-                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption(_tmp+1);">주문 옵션 추가</button>
+                            <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onClick="addOrderOption();">주문 옵션 추가</button>
                             <button class="h-[48px] w-[160px] rounded-md border border-stone-700 hover:bg-stone-100" onclick="sortOption();">옵션 순서 변경</button>
                         </div>
                     </div>
@@ -714,14 +714,15 @@
     }
 
     //### 옵션 추가
-    function addOrderOption(tmp) {
+    function addOrderOption(optionValueCount = 1) {
         // 옵션 최대 6개
         oIdx = parseInt( oIdx + 1 );
-        _tmp = parseInt( tmp );
         if (oIdx > 6) {
             oIdx = parseInt( oIdx - 1 );
             openModal('#alert-modal10');
         } else {
+            // 옵션 그룹 식별 번호는 옵션값 개수와 별도로 증가시킨다.
+            _tmp++;
             var titleHtml = '<div class="flex gap-3 border-t py-5 optNum' + parseInt( _tmp -1 ) + ' form__list-wrap" data-opt_num="'+ parseInt( _tmp -1 ) +'">' +
                 '   <div class="w-[190px] shrink-0 mt-2">' +
                 '       <p>옵션 ' + oIdx + '</p>' +
@@ -744,7 +745,7 @@
                 '           <input type="text" class="setting_input h-[48px] w-[340px]" id="option-name_0' + parseInt( oIdx ) + '" name="option-name_0' + parseInt( oIdx ) + '" placeholder="예시)색상">' +
                 '       </div>';
 
-            for (let inx = 0; inx < _tmp; inx++) {
+            for (let inx = 0; inx < optionValueCount; inx++) {
                 const element = 
                                 '       <div class="flex items-center mt-3 item__input-wrap">' +
                                 '           <p class="essential w-[130px] shrink-0">옵션값</p>' +
