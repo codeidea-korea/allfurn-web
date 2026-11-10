@@ -59,7 +59,7 @@
                             <input type="hidden" name="product_option_exist" value="1" readOnly />
                             <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                             @foreach($arr as $item)
-                                <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
+                                <div data-product-option="{{ $loop->index }}" class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                     <a href="javascript:;" class="filter_border filter_dropdown2 w-full h-full flex justify-between items-center">
                                         <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                             {{$item->optionName}} 선택
@@ -74,7 +74,7 @@
                                     <div class="filter_dropdown2_wrap w-full" style="display: none;">
                                         <ul>
                                             @foreach($item->optionValue as $sub)
-                                                <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                                                <li data-option-value="{{ $loop->index }}" class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                     <a href="javascript:;" class="flex items-center">
                                                         {{$sub->propertyName}}
                                                         @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
@@ -301,7 +301,7 @@
                                 
                                 <?php $arr = json_decode($data['detail']->product_option); $required = false; ?>
                                     @foreach($arr as $item)
-                                        <div class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
+                                        <div data-product-option="{{ $loop->index }}" class="dropdown relative my_filterbox mt-3 @if(($item->required ?? 0) == 1)required <?php $required = true; ?> @endif">
                                             <a href="javascript:;" class="filter_border filter_dropdown w-full h-full flex justify-between items-center">
                                                 <p class="dropdown__title" data-placeholder="{{$item->optionName}}">
                                                     {{$item->optionName}} 선택
@@ -316,7 +316,7 @@
                                             <div class="filter_dropdown_wrap w-full" style="display: none;">
                                                 <ul>
                                                     @foreach($item->optionValue as $sub)
-                                                        <li class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
+                                                        <li data-option-value="{{ $loop->index }}" class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                             <a href="javascript:;" class="flex items-center">
                                                                 {{$sub->propertyName}}
                                                                 @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
@@ -716,10 +716,9 @@
 
 
 <script src="/js/jquery-1.12.4.js?{{ date('Ymdhis') }}"></script>
+    @include('product.option-selection')
 <script>
-    var opt_idx = 0;
     var isProc = false;
-    var optionTmp = [];
     var modal_page = 0;
     var modal_total = {{ $data['prdCount'] - 1 }};
     let prodData = new FormData();
@@ -952,6 +951,7 @@
     function estimateModalReset(){
         $('input[name="request_memo"]').val('');
         $('input[name="product_count"]').val('1');
+            reCal();
         if ($('.check_btn').hasClass('hidden')) {
             $('.check_btn').removeClass('hidden');
             $('#all_prod').attr('checked', false);
@@ -988,124 +988,9 @@
     });
 
 
-    // 옵션 선택 후 가격 계산
-    function reCal() {
-        if ({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-            $('.product_price').text('업체 문의');
-            $('.product_price').data('total_price', 0);
-            $('._requestEstimateTotalPrice').text('업체 문의');
-            $('._requestEstimateTotalPrice2').text('업체 문의');
-            return;
-        }
-        var price = 0;
-        var instancePrice = {{$data['detail']->price}}; // 단위가 
-        var total_qty = 0;
-        $('.ori .selection__result').map(function () {
-            var resultPrice = 0;
-            $(this).find('.selection__text').map(function () {
-                resultPrice += parseInt($(this).data('price'));
-            })
-            resultPrice = resultPrice * $(this).parents('.option_result').find('input[name=qty_input]').val();
-            total_qty += parseInt($(this).parents('.option_result').find('input[name=qty_input]').val());
-            $(this).find('.selection__price span').text(resultPrice.toLocaleString());
-            price += resultPrice;
-        });
-        price = price / 2;
-        price = price + instancePrice;
-        $('._requestEstimateCount').text(total_qty + '개');
-        if (price > 0) {
-            $('.product_price').text(price.toLocaleString()+'원');
-            $('.product_price').data('total_price', price);
-        }else if (price == 0){
-            var total = parseInt('{{str_replace(',', '', $data['detail']->price)}}') * total_qty;
-            $('.product_price').text(total.toLocaleString()+'원');
-            $('.product_price').data('total_price', total);
-        }
-        if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-            $('._requestEstimateTotalPrice').text("업체 문의");
-            $('._requestEstimateTotalPrice2').text("업체 문의");
-        } else {
-            $('._requestEstimateTotalPrice').text($('.product_price').text());
-            $('._requestEstimateTotalPrice2').text(price.toLocaleString()+'원');
-        }
-    }
-
-
     $(function(){
         initEventListener();
     });
-        /*$('.count_box2 .minus').off().on('click', function(){
-            let num = Number($(this).siblings('input').val());
-            if(isNaN(num)) {
-                num = 1;
-            }
-            if (num !== 1) {
-                $(this).siblings('input').val(`${num - 1}`);
-            }
-            const count = Number($('#requestEstimateProductCount').val()+'');
-            $('._requestEstimateCount').text(count + '개');
-            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-                $('._requestEstimateTotalPrice').text("업체 문의");
-            } else {
-                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
-            }
-        });
-
-        $('.count_box2 .plus').off().on('click', function(){
-            let num = Number($(this).siblings('input').val());
-            if(isNaN(num)) {
-                num = 1;
-            }
-            $(this).siblings('input').val(`${num + 1}`);
-            const count = Number($('#requestEstimateProductCount').val()+'');
-            $('._requestEstimateCount').text(count + '개');
-            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-                $('._requestEstimateTotalPrice').text("업체 문의");
-            } else {
-                $('._requestEstimateTotalPrice').text((count * (price + optionPrice)).toLocaleString('en-US') + '원');
-            }
-        });*/
-        $('.count_box2 .minus').off().on('click', function(){
-            let num = Number($(this).siblings('input').val());
-            if(isNaN(num)) {
-                num = 1;
-            }
-            if (num !== 1) {
-                $(this).siblings('input').val(`${num - 1}`);
-            }
-            const count = Number($('#requestEstimateProductCount').val()+'');
-            $('._requestEstimateCount').text(count + '개');
-            
-            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-                $('._requestEstimateTotalPrice').text("업체 문의");
-            } else {
-                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
-                let unitPrice = Number($('.product_price').data('total_price'));
-                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
-
-                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
-            }
-        });
-
-        $('.count_box2 .plus').off().on('click', function(){
-            let num = Number($(this).siblings('input').val());
-            if(isNaN(num)) {
-                num = 1;
-            }
-            $(this).siblings('input').val(`${num + 1}`);
-            const count = Number($('#requestEstimateProductCount').val()+'');
-            $('._requestEstimateCount').text(count + '개');
-
-            if({{ productIsInquiryPrice($data['detail']) ? 1 : 0 }}) {
-                $('._requestEstimateTotalPrice').text("업체 문의");
-            } else {
-                // [수정됨] .product_price에 저장된 단가를 가져와서 계산
-                let unitPrice = Number($('.product_price').data('total_price'));
-                if(isNaN(unitPrice)) unitPrice = {{ $data['detail']->price }}; // 값이 없을 경우 기본값
-                
-                $('._requestEstimateTotalPrice').text((count * unitPrice).toLocaleString('en-US') + '원');
-            }
-        });
     function initEventListener(){
         
         // 라이브러리 충돌 문제 수정정
@@ -1240,29 +1125,14 @@
             })
             .on('click', '#request_estimate-modal .modal_footer button', function(e) {
                 e.preventDefault();
-                
-                @if(isset($data['detail']->product_option) && $data['detail']->product_option != '[]')
-                if($('.opt_result_area')[1].innerText == '') {
+                reCal();
+                if (!productOptions.isReady()) {
                     alert('본 상품의 필수 옵션을 선택해주세요.');
                     return;
                 }
-                const productOption = [];
-                // option
-                $($('.opt_result_area')[0]).find('.option_item').each((idx, ele) => {
-                    productOption.push({
-                        optionName: $(ele).find('.selection__text').data('name'),
-                        optionValue: [{
-                            propertyName: $(ele).find('.selection__text').data('option_name'),
-                            idx: Number($(ele).find('.ico_opt_remove').data('opt_idx')),
-                            count: Number($(ele).find('.count_box2 > input').val()),
-                            price: $(ele).find('.selection__text').data('price')
-                        }],
-                        // 현재 의미가 없음
-                        required: "0"
-                    });
-                });
-                prodData.append("p_product_option[" + 0 + "]",  JSON.stringify(productOption));
-                @endif
+                prodData = new FormData();
+                const productOption = productOptions.serialize();
+                prodData.set('p_product_option[0]', JSON.stringify(productOption));
 
                 prodData.append('p_idx[0]', {{ $data['detail']->idx }});
                 prodData.append('p_cnt[0]', $('#requestEstimateProductCount').val());
@@ -1358,152 +1228,7 @@
                     }
                 });
             })
-            .on('click', '.ico_opt_remove', function () {
-                var oidx = $(this).data('opt_idx');
-                $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
-                //$(this).parents('.option_result').remove();
-                reCal();
-            })
-            
-            // 수량 변경
-            .on('click', '.option_count .btn_minus', function (e) {
-                e.preventDefault();
-                var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-                var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-                var num = parseInt(stat, 10);
-                num--;
-                if (num <= 0) {
-                    alert('더이상 줄일수 없습니다.');
-                    num = 1;
-                }
-                $("input[data-opt_idx='"+oidx+"']").val(num);
-                //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-                reCal();
-            })
-
-            // 수량 변경
-            .on('click', '.option_count .btn_plus', function (e) {
-                e.preventDefault();
-                var oidx = $(this).parents('.option_count').find("input[name='qty_input']").data('opt_idx');
-                var stat = $(this).parents('.option_count').find("input[name='qty_input']").val();
-                var num = parseInt(stat, 10);
-                num++;
-                $("input[data-opt_idx='"+oidx+"']").val(num);
-                //$(this).parents('.option_count').find("input[name='qty_input']").val(num);
-                reCal();
-            })
-            .on('keyup', '#qty_input', function () {
-                reCal();
-            })
-            // 옵션 삭제
-            .on('click', '.ico_opt_remove', function () {
-                var oidx = $(this).data('opt_idx');
-                $('button[data-opt_idx="'+oidx+'"]').parents('.option_result').remove();
-                //$(this).parents('.option_result').remove();
-                reCal();
-            })
-            
-            .on('click', '.dropdown li', function () {
-                var required = false;
-                var requiredCnt = $('.dropdown.required').length / 2;
-                var idx = $(this).parents('.dropdown').index();
-                var same = false;
-
-                if (!$(this).parents('.dropdown').is('.required')) {
-                    if (required > 0 && $('.selection__result.required').length < 1) {
-                        $(this).parents('.dropdown').find('.dropdown__title').text($(this).parents('.dropdown').find('.dropdown__title').data('placeholder'));
-                        alert('필수 옵션 선택 후 선택해주세요.'); return false;
-                    }
-
-                    var optionName = $(this).data('option_name');
-
-                    $('.selection__result').map(function () {
-                        if ($(this).find('.selection__text').eq(1).text() == optionName) {
-                            same = true;
-                            $('.dropdown').map(function () {
-                                $(this).find('.dropdown__title').text($(this).find('.dropdown__title').data('placeholder'));
-                            })
-                            alert('이미 선택한 옵션입니다. 다시 선택해주세요.'); return false;
-                        }
-                    })
-                } else {
-                    required = true;
-                    if (requiredCnt > 1 && optionTmp.length != idx-1) {
-//                        alert('상위 필수 옵션 선택 후 해당 옵션을 선택해주세요.'); return false;
-                    }
-
-                    optionTmp.push({
-                        'name': $(this).parents('.dropdown').find('.dropdown__title').data('placeholder'),
-                        'option_name': $(this).data('option_name'),
-                        'option_price': $(this).data('price'),
-                    })
-
-                    if (requiredCnt > optionTmp.length) {
-                        return;
-                    } else {
-                        $('.selection__result').map(function () {
-                            eqCnt = 0;
-                            for(i=0; i<optionTmp.length; i++) {
-                                //console.log('selected_option_name', $(this).find('.selection__text').text())
-                                if ($(this).find('.selection__text').text() == optionTmp[i]['option_name']) {
-                                    eqCnt ++;
-
-                                    if (eqCnt == optionTmp.length) {
-                                        same = true;
-                                        $('.dropdown').map(function () {
-                                            $(this).find('.dropdown__title').text($(this).find('.dropdown__title').data('placeholder'));
-                                        })
-                                        optionTmp = [];
-                                        alert('이미 선택한 옵션입니다. 다시 선택해주세요.'); return false;
-                                    }
-                                }
-                            }
-                        })
-                    }
-                }
-
-                if (!same) {
-                        var htmlText = '<div class="option_item w-full option_result mt-3 mb-3"><div class="option_top selection__result' + (required ? ' required' : ' add') + '">';
-                        if (required) {
-                            optionTmp.map(function (item) {
-                                $('._requestEstimateOption').text(item['option_name']);
-
-                                htmlText += '<p class="selection__text" data-name="' + item['name'] + '" data-option_name="' + item['option_name'] + '" data-price="' + item['option_price'] + '">' + item['option_name'] + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
-                            })
-                        } else {
-                            $('._requestEstimateOption').text($(this).data('option_name'));
-
-                            htmlText += '<p class="selection__text" data-name="' + $(this).parents('.dropdown').find('.dropdown__title').data('placeholder') + '" data-option_name="' + $(this).data('option_name') + '" data-price="' + $(this).data('price') + '">' + $(this).data('option_name') + '</p><button class="ico_opt_remove" data-opt_idx="'+opt_idx+'"><svg class="w-6 h-6"><use xlink:href="/img/icon-defs.svg#x"></use></svg></button>';
-                        }
-                        htmlText += '</div>' +
-                            '<div class="option_count">' +
-                            '<div class="count_box2">' +
-                            '<button class="btn_minus"><svg><use xlink:href="/img/icon-defs.svg#minus"></use></svg></button>' +
-                            '<input type="text" id="requestEstimateProductCount" style="width: 40px;" name="qty_input" value="1" maxlength="3" data-opt_idx="'+opt_idx+'">' +
-                            '<button class="btn_plus"><svg><use xlink:href="/img/icon-defs.svg#plus"></use></svg></button>' +
-                            '</div>' +
-                            '<p class="price">';
-                        @if(!productIsInquiryPrice($data['detail']))
-                            htmlText += '<span>'+$(this).data('price').toLocaleString()+'</span>원';
-                        @else
-                            htmlText += '<span>업체 문의</span>';
-                        @endif
-                            htmlText += '</p></div></div>';
-                        if(required && $('.selection__result.add').length > 0 ) {
-                            $('.selection__result.add').first().before(htmlText);
-                        } else {
-                            $('.opt_result_area').append(htmlText);
-                        }
-
-                    $('.dropdown').map(function () {
-                        $(this).find('.dropdown__title').text($(this).find('.dropdown__title').data('placeholder'));
-                    })
-                    optionTmp = [];
-
-                    reCal();
-                }
-            })
-        ;
+            ;
     }
     function openOption(idx, key) {
         $('._productOption_'+idx+'_'+key).toggle();

@@ -24,7 +24,7 @@
                             </div>
                             <div class="mt-2">
                                 <div>{{ $sub->count }}개</div>
-                                <? $_each_price += ((int)$sub->price * (int)$sub->count); ?>
+                                <?php $_each_price += ((int)$sub->price * (int)$sub->count); ?>
                                 <div class="price"><?php echo number_format((int)$sub->price, 0); ?></div>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                     @if( productIsInquiryPrice($item) )
                         업체 문의
                     @else
-                        {{ number_format($item->price + $_each_price, 0).'원' }}
+                        {{ number_format(($item->price * $item->p_cnt) + $_each_price, 0).'원' }}
                     @endif
                 </div>
             </div>
