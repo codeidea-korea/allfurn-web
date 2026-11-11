@@ -286,7 +286,6 @@ class ProductController extends BaseController
             'productList' => $this->getMyProductList(), 
             'request' => $request, 
             'copiedProduct' => $copiedProduct,
-            'data' => $copiedProduct,
             'productIdx' => $productIdx
         ]);
     }
