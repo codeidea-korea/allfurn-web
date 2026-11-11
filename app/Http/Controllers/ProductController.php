@@ -128,6 +128,17 @@ class ProductController extends BaseController
 
         $data = $request->all();
 
+        if ($request->filled('copy_source_idx')) {
+            abort_unless(in_array((string) $request->input('reg_type'), ['0', '1'], true), 422);
+            $source = $this->productService->getProductForImport((int) $request->input('copy_source_idx'));
+            $sourceImages = array_filter(explode(',', $source->attachment_idx ?? ''));
+            $referencedImages = array_filter(explode(',', $data['attachmentIdx'] ?? ''));
+            foreach (explode(',', $data['image_order'] ?? '') as $item) {
+                if (strpos($item, 'idx:') === 0) $referencedImages[] = substr($item, 4);
+            }
+            abort_unless(count(array_diff($referencedImages, $sourceImages)) === 0, 422);
+        }
+
         $newAttachmentIds = []; 
 
         if (isset($data['files'])) {
@@ -242,6 +253,8 @@ class ProductController extends BaseController
 
         if ($request->input('reg_type') == '2') {
             $prductIdx = $this->productService->modify($data);
+        } elseif ($request->filled('copy_source_idx')) {
+            $prductIdx = $this->productService->createFromProduct($data);
         } else {
             $prductIdx = $this->productService->create($data);
         }
@@ -259,7 +272,10 @@ class ProductController extends BaseController
     public function registration(Request $request)
     {
         $productIdx = 0;
-        if ($request->temp != "") {
+        $copiedProduct = null;
+        if ($request->filled('copy')) {
+            $copiedProduct = $this->productService->getProductForImport((int) $request->input('copy'));
+        } elseif ($request->temp != "") {
             $productIdx = $request->temp;
         }
         return view(getDeviceType().'product.product-registration', [
@@ -269,6 +285,8 @@ class ProductController extends BaseController
             'categoryList' => $this->productService->getCategoryTree(),
             'productList' => $this->getMyProductList(), 
             'request' => $request, 
+            'copiedProduct' => $copiedProduct,
+            'data' => $copiedProduct,
             'productIdx' => $productIdx
         ]);
     }

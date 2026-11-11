@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class ProductService
@@ -366,6 +368,97 @@ class ProductService
             ->get();
     }
 
+    /** Read a registration template without recording a product view. */
+    public function getProductForImport(int $productIdx)
+    {
+        $product = Product::where('idx', $productIdx)
+            ->where('user_idx', Auth::user()->idx)
+            ->where('company_idx', Auth::user()->company_idx)
+            ->where('company_type', Auth::user()->type)
+            ->whereNull('deleted_at')->firstOrFail();
+        $fields = [
+            'name', 'category_idx', 'property', 'price', 'is_price_open', 'price_text',
+            'is_new_product', 'pay_type', 'pay_type_text', 'product_code', 'delivery_info',
+            'notice_info', 'auth_info', 'product_detail', 'is_pay_notice', 'pay_notice',
+            'is_delivery_notice', 'delivery_notice', 'is_return_notice', 'return_notice',
+            'is_order_notice', 'order_title', 'order_content', 'product_option', 'attachment_idx',
+        ];
+        $data = (object) $product->only($fields);
+        $category = Category::find($product->category_idx);
+        $parent = $category ? Category::find($category->parent_idx) : null;
+        $data->category = ($parent ? $parent->name.' > ' : '').($category ? $category->name : '');
+        $data->category_parent_idx = $parent ? $parent->idx : null;
+        $data->propertyList = CategoryProperty::whereIn('idx', array_filter(explode(',', $product->property ?? '')))->get();
+        $data->attachment = [];
+        foreach (array_filter(explode(',', $product->attachment_idx ?? '')) as $idx) {
+            $attachment = Attachment::find($idx);
+            $data->attachment[] = $attachment ? ['imgUrl' => rtrim(preImgUrl(), '/').'/'.$attachment->folder.'/'.$attachment->filename] : null;
+        }
+        $data->product_option = $data->product_option ?: '[]';
+        // New registration must not display the source's system number or approval date.
+        $data->product_number = '';
+        $data->access_date = null;
+        return $data;
+    }
+
+    /** Save independent images and a new product; the source is never updated. */
+    public function createFromProduct(array $param)
+    {
+        abort_unless(in_array((string) $param['reg_type'], ['0', '1'], true), 422);
+        $source = $this->getProductForImport((int) $param['copy_source_idx']);
+        $sourceIds = array_filter(explode(',', $source->attachment_idx ?? ''));
+        $copiedPaths = [];
+        try {
+            return DB::transaction(function () use ($param, $sourceIds, &$copiedPaths) {
+                $copies = [];
+                $ids = array_filter(explode(',', $param['attachmentIdx'] ?? ''));
+                foreach ($ids as &$idx) {
+                    if (!in_array((string) $idx, $sourceIds, true)) continue; // newly uploaded image
+                    $originalIdx = $idx;
+                    $idx = $this->copyProductAttachment($idx, $copies, $copiedPaths);
+                    $mapping = ThumbnailMpg::where('main_attach_idx', $originalIdx)->first();
+                    if ($mapping) {
+                        $newMapping = $mapping->replicate();
+                        $newMapping->main_attach_idx = $idx;
+                        foreach ([100, 400, 600, 1000] as $size) {
+                            $field = 'size_'.$size.'_attach_idx';
+                            if ($mapping->$field) $newMapping->$field = $this->copyProductAttachment($mapping->$field, $copies, $copiedPaths);
+                        }
+                        $newMapping->save();
+                    }
+                }
+                unset($idx);
+                $param['attachmentIdx'] = implode(',', $ids);
+                return $this->create($param);
+            });
+        } catch (\Throwable $error) {
+            // Only remove objects created by this attempt, never the source objects.
+            foreach ($copiedPaths as $path) {
+                try { Storage::disk('vultr')->delete($path); } catch (\Throwable $cleanupError) { report($cleanupError); }
+            }
+            throw $error;
+        }
+    }
+
+    private function copyProductAttachment($idx, array &$copies, array &$paths)
+    {
+        if (isset($copies[$idx])) return $copies[$idx];
+        $attachment = Attachment::findOrFail($idx);
+        $extension = pathinfo($attachment->filename, PATHINFO_EXTENSION);
+        $filename = 'copy_'.Str::uuid().($extension ? '.'.$extension : '');
+        $path = 'product/'.$filename;
+        if (!Storage::disk('vultr')->copy($attachment->folder.'/'.$attachment->filename, $path)) {
+            throw new \RuntimeException('상품 이미지를 불러오지 못했습니다. 다시 시도해주세요.');
+        }
+        $paths[] = $path;
+        $copy = $attachment->replicate();
+        $copy->folder = 'product';
+        $copy->filename = $filename;
+        $copy->register_time = DB::raw('now()');
+        $copy->save();
+        return $copies[$idx] = $copy->idx;
+    }
+
     public function getMyProductList()
     {
         $data = Product::select('AF_product.idx', 'AF_product.name',
@@ -378,6 +471,8 @@ class ProductService
                 $query->on('ac2.idx', '=', 'ac.parent_idx');
             })
             ->where('AF_product.user_idx', Auth::user()->idx)
+            ->where('AF_product.company_idx', Auth::user()->company_idx)
+            ->where('AF_product.company_type', Auth::user()->type)
             ->whereNull('AF_product.deleted_at')
             ->orderBy('AF_product.idx', 'desc')
             ->get();

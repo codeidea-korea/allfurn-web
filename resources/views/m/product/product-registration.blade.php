@@ -16,6 +16,11 @@
 
     <div class="prod_regist prod_regist_box com_setting ">
         <div class="step1 active">
+            @if(Route::current()->getName() == 'product.create')
+                <div class="inner" style="padding-top: 16px; padding-bottom: 16px;">
+                    <button type="button" class="btn btn-primary-line w-full" data-open-product-import>기존 상품 불러오기</button>
+                </div>
+            @endif
             <div class="top_info flex itmes-center justify-between">
                 <h6>상품 기본 정보</h6>
                 <p class="txt-gray"><span class="txt-primary">*</span>는 필수 입력 항목입니다.</p>
@@ -208,10 +213,15 @@
 
             <div class="bot_btn">
                 @if(Route::current()->getName() == 'product.create')
-                    <button class="btn btn-primary-line w-1/4" onclick="goStep('step3', 'p')">이전</button>
-                    <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
-                    <button class="btn btn-primary-line w-1/4" onclick="saveProduct(1);">임시등록</button>
-                    <button class="btn btn-primary w-1/4" onclick="saveProduct(0);">등록신청</button>
+                    <div style="width: 100%;">
+                        <button class="btn btn-primary-line w-full" style="margin-bottom: 8px;" onclick="goStep('step3', 'p')">이전</button>
+                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;">
+                            <button type="button" class="btn btn-primary-line" data-open-product-import>기존 상품 불러오기</button>
+                            <button class="btn btn-primary-line" id="previewBtn" onclick="preview();">미리보기</button>
+                            <button class="btn btn-primary-line" onclick="saveProduct(1);">임시등록</button>
+                            <button class="btn btn-primary" onclick="saveProduct(0);">등록신청</button>
+                        </div>
+                    </div>
                 @elseif(Route::current()->getName() == 'product.modify')
                     <button class="btn btn-primary-line w-1/4" onclick="goStep('step3', 'p')">이전</button>
                     <button class="btn btn-primary-line w-1/4" id="previewBtn" onclick="preview();">미리보기</button>
@@ -225,6 +235,7 @@
 
     {{-- ############# 모달 모음 시작 --}}
     @include('m.product.product-reg-modal')
+    @include('product.import-product-modal')
     @include('m.product.modal-ai-generator')
     {{-- ############# 모달 모음 끝 --}}
 
@@ -237,8 +248,11 @@
 
 <link href="/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/js/froala_editor.pkgd.min.js"></script>
+<script src="/js/product-import.js?v=20261111"></script>
 <script type="text/javascript">
 const productIdx = "{{ $productIdx }}";
+const copiedProduct = @json($copiedProduct ?? null);
+const copySourceIdx = {{ isset($copiedProduct) ? (int) $request->input('copy') : 0 }};
 var storedFiles = [];
 var stored100Files = [];
 var stored400Files = [];
@@ -1349,7 +1363,7 @@ function setCategory(){
 
 //### 속성 가져오기2
 function getSubProperty(parentIdx=null, title=null, ord=null) {
-    $.ajax({
+    return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url				: '/product/getCategoryProperty',
         data			: {
@@ -1376,11 +1390,12 @@ function getSubProperty(parentIdx=null, title=null, ord=null) {
 
 //### 속성 가져오기1
 function getProperty(parentIdx=null, title=null) {
-    $.ajax({
+    const propertyRequests = [];
+    return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url				: '/product/getCategoryProperty',
         data			: {
-            'category_idx' : $('input:radio[name=prod_category]:checked').val(),
+            'category_idx' : $('#categoryIdx').data('category_idx'),
             'parent_idx' : parentIdx
         },
         type			: 'POST',
@@ -1392,11 +1407,11 @@ function getProperty(parentIdx=null, title=null) {
             result.forEach(function (e, idx) {
                 if( idx == 0 ) { _active = 'active'; } else { _active = ''; }
                 htmlText += '<li class="' + _active + '" data-property_idx=' + e.idx+ '><button>' + e.name + '</button></li>';
-                getSubProperty(e.idx, e.name, idx);
+                propertyRequests.push(getSubProperty(e.idx, e.name, idx));
             });
             $('#prod_property-modal .prod_property_tab').html(htmlText);
         }
-    });
+    }).then(function () { return $.when.apply($, propertyRequests); });
 }
 
 //### 상품등록 > 속성 모달
@@ -1664,11 +1679,14 @@ function init_editor() {
         imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
 
         events: {
+            'initialized': function () { ProductImport.initializeEditor(this); },
             'image.inserted': function ($img, response) {
+                if (!response) return;
                 var obj = $.parseJSON(response);
                 $img.data('idx', obj.idx);
             },
             'image.removed': function ($img) {
+                if (copiedProduct && !$img.data('idx')) return;
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     method: "DELETE",
@@ -1695,6 +1713,7 @@ const editor = new FroalaEditor('.prod_detail_area', {
     imageMaxSize: 5 * 1024 * 1024,
     imageAllowedTypes: ['jpeg', 'jpg', 'png'],
     events: {
+        'initialized': function () { ProductImport.initializeEditor(this); },
         'image.uploaded': response => {
             const img_url = response;
             editor.image.insert(img_url, false, null, editor.image.get(), response);
@@ -1763,6 +1782,7 @@ function validateOrderOptions() {
 }
 
 function saveProduct(regType) {
+    if (!ProductImport.canSave()) return;
     if (!validateOrderOptions()) return;
     if (storedFiles.length === 0 && $('.product-img__add').length === 0) {
         alert('상품 이미지를 최소 1개 이상 등록해주세요.');
@@ -1896,6 +1916,7 @@ function saveProduct(regType) {
         data.push(option);
     })
     form.append('product_option', JSON.stringify(data));
+    ProductImport.appendFields(form);
 
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -2058,7 +2079,7 @@ function loadProduct() {
     let url = `/product/getProductData/${productIdx}`;
     if (loadType == 0 && tempIdx != null) url += '?type=temp';
 
-    $.ajax({
+    const productRequest = {
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url				: url,
         data			: {},
@@ -2067,6 +2088,7 @@ function loadProduct() {
         success		: function(result) {
             console.log(result);
             result = result['data']['detail'];
+            if (copiedProduct) result.product_detail = ProductImport.detailHtml(result.product_detail);
             if (loadType == 0 || loadType == 1) {
                 $('#form-list01').val(result['name']); // 상품명
                 subCategoryIdx = result['category_idx']; // 카테고리 idx
@@ -2155,12 +2177,12 @@ function loadProduct() {
                 });
                 $('#categoryIdx').data('category_idx', result['category_idx']);
                 $('#categoryIdx').text(result['category']);
-                getProperty(null);
+                const propertyRequest = getProperty(null);
                 $('.propertyList').show();
                 $('.checkedProperties').html('');
 
                 // 카테고리 선택에 따른 상품 속성 값들..
-                setTimeout(function () {
+                propertyRequest.done(function () {
                     result['propertyList'].map(function (item) {
                         var propertyHtmlText = "";
                         $('#prod_property-modal .sub_property_area').each(function(o){
@@ -2182,7 +2204,8 @@ function loadProduct() {
                         });
                         $('.checkedProperties').html(propertyHtmlText);
                     });
-                }, 500);
+                    if (copiedProduct) ProductImport.propertiesLoaded();
+                }).fail(function () { if (copiedProduct) ProductImport.propertiesFailed(); });
 
                 // 상품 가격
                 $('#product-price').val(result['price']); 
@@ -2252,7 +2275,7 @@ function loadProduct() {
                 }
 
                 // 상세 내용 작성
-                editer.html.set(result['product_detail']);
+                if (!copiedProduct) editer.html.set(result['product_detail']);
 
                 // 주문 옵션 추가
                 var obj = $.parseJSON(result['product_option']);
@@ -2275,26 +2298,26 @@ function loadProduct() {
             if (loadType == 0 || loadType == 2) {
                 if (result['is_pay_notice'] == "1") {
                     $('#pay_notice').val(result['pay_notice']);
-                    $('#pay_notice').parent().addClass('active');
+                    if (!copiedProduct) $('#pay_notice').parent().addClass('active');
                     $('.order-info01').val(1);
                 }
 
                 if (result['is_delivery_notice'] == "1") {
                     $('#delivery_notice').val(result['delivery_notice']);
-                    $('#delivery_notice').parent().addClass('active');
+                    if (!copiedProduct) $('#delivery_notice').parent().addClass('active');
                     $('.order-info02').val(1);
                 }
 
                 if (result['is_return_notice'] == "1") {
                     $('#return_notice').val(result['return_notice']);
-                    $('#return_notice').parent().addClass('active');
+                    if (!copiedProduct) $('#return_notice').parent().addClass('active');
                     $('.order-info03').val(1);
                 } 
 
                 if (result['is_order_notice'] == "1") {
                     $('#order_title').val(result['order_title']);
                     $('#order_content').val(result['order_content']);
-                    $('#order_content').parent().addClass('active');
+                    if (!copiedProduct) $('#order_content').parent().addClass('active');
                     $('.order-info04').val(1);
                 }
 
@@ -2305,8 +2328,11 @@ function loadProduct() {
                 }
             }
             window.product_detail = result['product_detail'];
+            if (copiedProduct) ProductImport.finishFields(result);
         }
-    });
+    };
+    if (copiedProduct) productRequest.success({data: {detail: copiedProduct}});
+    else $.ajax(productRequest);
 }
 
 function getUrlVars(){
@@ -2326,7 +2352,10 @@ $(function() {
 //    $("#sortable").sortable();
     // $("#sortable").disableSelection();
 
-    if ($(location).attr('href').includes('modify')) {
+    if (copiedProduct) {
+        $('.product_reg').data('loadtype', 0);
+        loadProduct();
+    } else if ($(location).attr('href').includes('modify')) {
         let idx = "{{ $productIdx }}";
         /** 주문정보 불러오기 일단 보류 */
         //$('#default-modal10 input[name="order-info"][data-product_idx="' + idx + '"]').prop('checked', true);
