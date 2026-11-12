@@ -487,7 +487,7 @@ $(document).ready(function(){
                 ajaxPageLoad.actions.startCheck(200);
             }
         };
-        originFn(options);
+        return originFn(options);
     };
 
 });

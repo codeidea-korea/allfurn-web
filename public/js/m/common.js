@@ -403,7 +403,7 @@ $(document).ready(function(){
                 setTimeout(ajaxPageLoad.actions.checkLoadedImage, 200);
             }
         };
-        originFn(options);
+        return originFn(options);
     };
 
 });
