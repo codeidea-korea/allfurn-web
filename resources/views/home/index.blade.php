@@ -31,6 +31,7 @@
 @endpush
 
 @section('content')
+@include('home.inc-slider-init')
 @include('layouts.header')
 
 
@@ -346,7 +347,7 @@
 <script>
 
 // 팝업
-const popup = new Swiper('.modal .intro_popup .popup_slide',{
+const popup = createHomeSwiper('.modal .intro_popup .popup_slide',{
     loop: true,
     speed:700,
     autoplay: {
@@ -380,7 +381,7 @@ $(document).ready(function () {
 });
 
 // main_visual 
-const main_visual = new Swiper(".main_visual .slide_box", {
+const main_visual = createHomeSwiper(".main_visual .slide_box", {
     effect: "creative",
     loop: true,
     slidesPerView: 1,
@@ -415,14 +416,14 @@ const main_visual = new Swiper(".main_visual .slide_box", {
     },
 });
 $('.main_visual .slide_box').hover(function(){
-    main_visual.autoplay.stop();
+    if (main_visual && main_visual.params.loop) main_visual.autoplay.stop();
 }, function(){
-    main_visual.autoplay.start();
+    if (main_visual && main_visual.params.loop) main_visual.autoplay.start();
 });
 
 
 // main_mid_banner
-const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
+const main_mid_banner = createHomeSwiper(".main_mid_banner .slide_box", {
     slidesPerView: 5,
     spaceBetween: 12,
     navigation: {
@@ -432,7 +433,7 @@ const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
 });
 
 // category_banner
-const category_banner = new Swiper(".category_banner .slide_box", {
+const category_banner = createHomeSwiper(".category_banner .slide_box", {
     slidesPerView: 11.3,
     spaceBetween: 11,
 });
@@ -456,7 +457,7 @@ const category_banner = new Swiper(".category_banner .slide_box", {
 // });
 
 // best_prod_modal
-const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+const zoom_view_modal = createHomeSwiper("#zoom_view-modal .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     grid: {
@@ -491,7 +492,7 @@ const zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
 // });
 
 // new_prod_modal
-const new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
+const new_prod_modal = createHomeSwiper("#zoom_view-modal-new .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     slidesPerGroup: 1,
@@ -527,7 +528,7 @@ $('.theme_prod .tab_layout li').on('click',function(){
 })
 
 // theme_prod 
-const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+const theme_prod_01 = createHomeSwiper(".theme_prod .tab_01 .slide_box", {
     slidesPerView: 3,
     spaceBetween: 20,
     slidesPerGroup: 3,
@@ -541,7 +542,7 @@ const theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
     },
 });
 
-const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+const theme_prod_02 = createHomeSwiper(".theme_prod .tab_02 .slide_box", {
     slidesPerView: 3,
     spaceBetween: 20,
     slidesPerGroup: 3,
@@ -555,7 +556,7 @@ const theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
     },
 });
 
-const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+const theme_prod_03 = createHomeSwiper(".theme_prod .tab_03 .slide_box", {
     slidesPerView: 3,
     spaceBetween: 20,
     slidesPerGroup: 3,
@@ -569,7 +570,7 @@ const theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
     },
 });
 
-const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+const theme_prod_04 = createHomeSwiper(".theme_prod .tab_04 .slide_box", {
     slidesPerView: 3,
     spaceBetween: 20,
     slidesPerGroup: 3,
@@ -583,8 +584,8 @@ const theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
     },
 });
 
-// popular_prod 
-const popular_prod_pager = new Swiper(".popular_prod .pager_box", {
+// popular_prod
+const popular_prod_pager = createHomeSwiper(".popular_prod .pager_box", {
     slidesPerView: 'auto',
     spaceBetween: 10,
     navigation: {
@@ -593,7 +594,7 @@ const popular_prod_pager = new Swiper(".popular_prod .pager_box", {
     },
 });
 
-const popular_prod = new Swiper(".popular_prod .slide_box", {
+const popular_prod = createHomeSwiper(".popular_prod .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     navigation: {
@@ -605,20 +606,20 @@ const popular_prod = new Swiper(".popular_prod .slide_box", {
         type: "fraction",
     },
     thumbs: {
-            swiper: popular_prod_pager,
+        swiper: popular_prod_pager,
+    },
+    on: {
+        init : function(swiper){
+            $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
         },
-        on: {
-            init : function(swiper){
-                $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
-            },
-            slideChange : function(swiper){
-                $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
-            }
+        slideChange : function(swiper){
+            $(".main_popular .bottom_box .right_box .count_pager").html(`<b>${swiper.snapIndex+1}</b> / ${swiper.snapGrid.length}`)
         }
+    }
 });
 
 // sale_prod 
-const sale_prod = new Swiper(".sale_prod .slide_box", {
+const sale_prod = createHomeSwiper(".sale_prod .slide_box", {
     slidesPerView: 2,
     spaceBetween: 30,
     slidesPerGroup: 2,
@@ -633,7 +634,7 @@ const sale_prod = new Swiper(".sale_prod .slide_box", {
 });
 
 // video_prod 
-const video_prod = new Swiper(".video_prod .slide_box", {
+const video_prod = createHomeSwiper(".video_prod .slide_box", {
     slidesPerView: 1,
     navigation: {
         nextEl: ".video_prod .slide_arrow.next",
@@ -657,7 +658,7 @@ $(document)
     })
 ;
 
-var modalswiper = new Swiper('#modalkvSwipe', {
+var modalswiper = createHomeSwiper('#modalkvSwipe', {
     autoplay: {
         delay: 3000,
         disableOnInteraction: false,
@@ -678,9 +679,9 @@ var modalswiper = new Swiper('#modalkvSwipe', {
     },
 });
 $('#modalkvSwipe .swiper-slide').hover(function(){
-    modalswiper.autoplay.stop();
+    if (modalswiper && modalswiper.params.loop) modalswiper.autoplay.stop();
 }, function(){
-    modalswiper.autoplay.start();
+    if (modalswiper && modalswiper.params.loop) modalswiper.autoplay.start();
 });
 
 var getCookie = function (cname) {

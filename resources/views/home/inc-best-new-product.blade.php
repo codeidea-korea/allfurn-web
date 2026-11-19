@@ -62,7 +62,9 @@
 
 @if($hasProductAds)
 <script>
-    $('.best_prod .slide_box ul').slick({
+    $('.best_prod .slide_box ul').filter(function(){
+        return $(this).children('li').length > 0;
+    }).slick({
         dots: true,
         lazyLoad: 'ondemand',
         slidesToShow: 4,

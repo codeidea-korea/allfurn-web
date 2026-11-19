@@ -33,6 +33,7 @@
     @endif
 @endpush
 @section('content')
+@include('home.inc-slider-init')
 @include('layouts.header_m')
 
 
@@ -376,7 +377,7 @@ const initPopupSwiper = ()=>{
         return popup;
     }
 
-    popup = new Swiper('.modal .intro_popup .popup_slide',{
+    popup = createHomeSwiper('.modal .intro_popup .popup_slide',{
         loop: false,
         speed:700,
         pagination: {
@@ -409,7 +410,7 @@ $(document).ready(function () {
 });
 
 // main_visual 
-const main_visual = new Swiper(".main_visual .slide_box", {
+const main_visual = createHomeSwiper(".main_visual .slide_box", {
     loop: true,
     slidesPerView: 1,
     pagination: {
@@ -430,7 +431,7 @@ const main_visual = new Swiper(".main_visual .slide_box", {
 
 
 // main_mid_banner
-const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
+const main_mid_banner = createHomeSwiper(".main_mid_banner .slide_box", {
     slidesPerView: 'auto',
     //spaceBetween: 8,
     navigation: {
@@ -440,7 +441,7 @@ const main_mid_banner = new Swiper(".main_mid_banner .slide_box", {
 });
 
 // category_banner
-const category_banner = new Swiper(".category_banner .slide_box", {
+const category_banner = createHomeSwiper(".category_banner .slide_box", {
     slidesPerView: 'auto',
     //spaceBetween: 17,
 });
@@ -457,7 +458,7 @@ initHomeSwiperNear(".best_prod", ()=>{
         return;
     }
 
-    best_prod = new Swiper(".best_prod .slide_box", {
+    best_prod = createHomeSwiper(".best_prod .slide_box", {
     slidesPerView: 'auto',
     spaceBetween: 8,
     grid: {
@@ -477,7 +478,7 @@ const initZoomViewModal = ()=>{
         return zoom_view_modal;
     }
 
-    zoom_view_modal = new Swiper("#zoom_view-modal .slide_box", {
+    zoom_view_modal = createHomeSwiper("#zoom_view-modal .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     grid: {
@@ -503,7 +504,7 @@ initHomeSwiperNear(".new_prod", ()=>{
         return;
     }
 
-    new_prod = new Swiper(".new_prod .slide_box", {
+    new_prod = createHomeSwiper(".new_prod .slide_box", {
     slidesPerView: 'auto',
     spaceBetween: 8,
     grid: {
@@ -523,7 +524,7 @@ const initNewProdModal = ()=>{
         return new_prod_modal;
     }
 
-    new_prod_modal = new Swiper("#zoom_view-modal-new .slide_box", {
+    new_prod_modal = createHomeSwiper("#zoom_view-modal-new .slide_box", {
     slidesPerView: 1,
     spaceBetween: 120,
     slidesPerGroup: 1,
@@ -574,13 +575,13 @@ initHomeSwiperNear(".theme_prod", ()=>{
         return;
     }
 
-    theme_prod_tab = new Swiper(".theme_prod .tab_layout", {
+    theme_prod_tab = createHomeSwiper(".theme_prod .tab_layout", {
         slidesPerView: 'auto',
         spaceBetween: 10,
     });
 
 // theme_prod 
-    theme_prod_01 = new Swiper(".theme_prod .tab_01 .slide_box", {
+    theme_prod_01 = createHomeSwiper(".theme_prod .tab_01 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -590,7 +591,7 @@ initHomeSwiperNear(".theme_prod", ()=>{
     },
 });
 
-    theme_prod_02 = new Swiper(".theme_prod .tab_02 .slide_box", {
+    theme_prod_02 = createHomeSwiper(".theme_prod .tab_02 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -600,7 +601,7 @@ initHomeSwiperNear(".theme_prod", ()=>{
     },
 });
 
-    theme_prod_03 = new Swiper(".theme_prod .tab_03 .slide_box", {
+    theme_prod_03 = createHomeSwiper(".theme_prod .tab_03 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -610,7 +611,7 @@ initHomeSwiperNear(".theme_prod", ()=>{
     },
 });
 
-    theme_prod_04 = new Swiper(".theme_prod .tab_04 .slide_box", {
+    theme_prod_04 = createHomeSwiper(".theme_prod .tab_04 .slide_box", {
     slidesPerView: 1.3,
     spaceBetween: 12,
     slidesPerGroup: 1,
@@ -630,7 +631,7 @@ initHomeSwiperNear(".popular_prod", ()=>{
         return;
     }
 
-    popular_prod_pager = new Swiper(".popular_prod .pager_box", {
+    popular_prod_pager = createHomeSwiper(".popular_prod .pager_box", {
     slidesPerView: 'auto',
     spaceBetween: 10,
     navigation: {
@@ -639,7 +640,7 @@ initHomeSwiperNear(".popular_prod", ()=>{
     },
 });
 
-    popular_prod = new Swiper(".popular_prod .slide_box", {
+    popular_prod = createHomeSwiper(".popular_prod .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     pagination: {
@@ -667,7 +668,7 @@ initHomeSwiperNear(".sale_prod", ()=>{
         return;
     }
 
-    sale_prod = new Swiper(".sale_prod .slide_box", {
+    sale_prod = createHomeSwiper(".sale_prod .slide_box", {
         slidesPerView: 1.1,
         spaceBetween: 12,
     });
@@ -680,7 +681,7 @@ initHomeSwiperNear(".video_prod", ()=>{
         return;
     }
 
-    video_prod = new Swiper(".video_prod .slide_box", {
+    video_prod = createHomeSwiper(".video_prod .slide_box", {
         slidesPerView: 1,
         spaceBetween: 10,
         pagination: {
