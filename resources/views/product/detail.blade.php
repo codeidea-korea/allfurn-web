@@ -78,7 +78,7 @@
                                                 <li data-option-value="{{ $loop->index }}" class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                     <a href="javascript:;" class="flex items-center">
                                                         {{$sub->propertyName}}
-                                                        @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
+                                                        @if((int)$sub->price != 0 && !productIsInquiryPrice($data['detail']))
                                                             <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                         @endif
                                                     </a>
@@ -336,7 +336,7 @@
                                                         <li data-option-value="{{ $loop->index }}" class="dropdown__item" data-option_name="{{$sub->propertyName}}" data-price="{{$sub->price}}">
                                                             <a href="javascript:;" class="flex items-center">
                                                                 {{$sub->propertyName}}
-                                                                @if((int)$sub->price > 0 && !productIsInquiryPrice($data['detail']))
+                                                                @if((int)$sub->price != 0 && !productIsInquiryPrice($data['detail']))
                                                                     <span class="price" data-price={{$sub->price}}><?php echo number_format((int)$sub->price, 0); ?>원</span>
                                                                 @endif
                                                             </a>
