@@ -40,7 +40,10 @@
                 <div class="accordion-item">
                     <button class="accordion-header py-3 px-5 w-full text-left" type="button">
                         <div class="flex items-center gap-2">
-                            <span class=""><span class="text-xs text-stone-400">공지</span> {{ $row->title }}</span>
+                            <span class="flex items-center gap-3">
+                                <span class="shrink-0 text-xs text-stone-400">공지</span>
+                                <span>{{ $row->title }}</span>
+                            </span>
                             <span class="text-sm text-stone-400">{{ date('Y.m.d', strtotime($row->register_time)) }}</span>
                         </div>
                     </button>
