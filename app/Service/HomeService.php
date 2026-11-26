@@ -148,7 +148,7 @@ class HomeService
         $homePerfLap('popularbrand');
 
         // 할인 상품
-        $data['plandiscount_ad'] = $this->getPlandiscountAds();
+        $data['plandiscount_ad'] = $this->getMonthlyDealBannerAds();
         $homePerfLap('plandiscount');
 
         // 동영상 광고
@@ -435,50 +435,36 @@ class HomeService
         }
         return $popularbrand_ad;
     }
-    function getPlandiscountAds() {
-        $plandiscount_ad = Banner::select('AF_banner_ad.*', 
-            DB::raw('(CASE WHEN AF_banner_ad.company_type = "W" THEN (select aw.company_name from AF_wholesale as aw where aw.idx = AF_banner_ad.company_idx)
-                WHEN AF_banner_ad.company_type = "R" THEN (select ar.company_name from AF_retail as ar where ar.idx = AF_banner_ad.company_idx)
-                ELSE "" END) as companyName,
-                CONCAT("'.preImgUrl().'", at.folder,"/", at.filename) as imgUrl,
-                CONCAT("'.preImgUrl().'", app.folder,"/", app.filename) as appBigImgUrl,
-                CONCAT("'.preImgUrl().'", app51.folder,"/", app51.filename) as app51ImgUrl '
-            ))
-            ->leftjoin('AF_product as ap', function($query){
-                $query->on('ap.idx', DB::raw("SUBSTRING_INDEX(AF_banner_ad.web_link, '/', -1)"));
-            })
-            ->leftjoin('AF_attachment as at', function($query) {
-                $query->on('at.idx', 'AF_banner_ad.web_attachment_idx');
-            })
-            ->leftjoin('AF_attachment as app', function($query) {
-                $query->on('app.idx', 'AF_banner_ad.appbig_attachment_idx');
-            })
-            ->leftjoin('AF_attachment as app51', function($query) {
-                $query->on('app51.idx', 'AF_banner_ad.app51_attachment_idx');
-            })
-            ->where('AF_banner_ad.state', 'G')
-            ->where('AF_banner_ad.start_date', '<', DB::raw("now()"))
-            ->where('AF_banner_ad.end_date', '>', DB::raw("now()"))
-            ->where('AF_banner_ad.ad_location', 'plandiscount')
-            ->where('AF_banner_ad.is_delete', 0)
-            ->where('AF_banner_ad.is_open', 1)
-            ->orderByRaw('banner_price desc, RAND()')->get();
+    function getMonthlyDealBannerAds() {
+        // 이달의 딜 페이지와 동일한 브랜드 배너 및 연결 상품을 조회합니다.
+        $banners = app(ProductService::class)->getThisDealList('dealbrand');
+        $deals = [];
+        $productIds = [];
+        foreach ($banners as $banner) {
+            $deal = (object) $banner->toArray();
+            $products = normalizeProductInfoImageUrls(json_decode($deal->product_info ?? '[]'));
+            $deal->product_info = is_array($products) ? $products : [];
+            foreach ($deal->product_info as $product) {
+                $productIds[] = $product->mdp_gidx;
+            }
+            $deals[] = $deal;
+        }
 
-        foreach($plandiscount_ad as $goods){
-            if (!is_null($goods->web_link)){
-                $tmp_web_link = explode('/', $goods->web_link);
-                $tmpInterest = DB::table('AF_product_interest')->selectRaw('if(count(idx) > 0, 1, 0) as interest')
-                    ->where('product_idx', $tmp_web_link[3])
-                    ->where('user_idx', Auth::user()->idx)
-                    ->first();
-                $goods->interest = $tmpInterest->interest;
-                $goods->gidx = $tmp_web_link[3];
-            }else{
-                $goods->interest = '0';
-                $goods->gidx = '';
+        // 상품마다 개별 조회하지 않고 현재 회원의 찜 상태를 한 번에 가져옵니다.
+        $interests = [];
+        if ($productIds && Auth::check()) {
+            $interests = array_fill_keys(DB::table('AF_product_interest')
+                ->where('user_idx', Auth::user()->idx)
+                ->whereIn('product_idx', array_unique($productIds))
+                ->pluck('product_idx')->all(), 1);
+        }
+        foreach ($deals as $deal) {
+            $deal->isInterest = [];
+            foreach ($deal->product_info as $product) {
+                $deal->isInterest[$product->mdp_gidx] = $interests[$product->mdp_gidx] ?? 0;
             }
         }
-        return $plandiscount_ad;
+        return $deals;
     }
     function getVideos() {
         $video_ad = VideoAd::select('AF_video_ad.*', 

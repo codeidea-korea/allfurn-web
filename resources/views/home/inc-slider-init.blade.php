@@ -16,4 +16,37 @@ function createHomeSwiper(selector, options = {}) {
 
     return new Swiper(target, options);
 }
+
+function initHomeMonthlyDeals() {
+    const section = document.querySelector('.home_monthly_deals');
+    const target = section && section.querySelector('.slide_box');
+    if (!target || target.swiper) {
+        return;
+    }
+
+    const pager = createHomeSwiper('.home_monthly_deals .pager_box', {
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+        watchSlidesProgress: true,
+        navigation: {
+            nextEl: section.querySelector('.bottom_box .arrow.next'),
+            prevEl: section.querySelector('.bottom_box .arrow.prev'),
+        },
+    });
+    createHomeSwiper('.home_monthly_deals .slide_box', {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        // 배너가 한 개여도 하단의 1 / 1 표시를 유지합니다.
+        watchOverflow: false,
+        navigation: {
+            nextEl: section.querySelector('.slide_arrow.next'),
+            prevEl: section.querySelector('.slide_arrow.prev'),
+        },
+        pagination: {
+            el: section.querySelector('.count_pager'),
+            type: 'fraction',
+        },
+        thumbs: { swiper: pager },
+    });
+}
 </script>

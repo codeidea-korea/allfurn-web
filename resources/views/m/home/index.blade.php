@@ -626,25 +626,25 @@ initHomeSwiperNear(".theme_prod", ()=>{
 let popular_prod_pager = null;
 let popular_prod = null;
 
-initHomeSwiperNear(".popular_prod", ()=>{
+initHomeSwiperNear(".main_popular", ()=>{
     if(popular_prod){
         return;
     }
 
-    popular_prod_pager = createHomeSwiper(".popular_prod .pager_box", {
+    popular_prod_pager = createHomeSwiper(".main_popular .pager_box", {
     slidesPerView: 'auto',
     spaceBetween: 10,
     navigation: {
-        nextEl: ".popular_prod .bottom_box .arrow.next",
-        prevEl: ".popular_prod .bottom_box .arrow.prev",
+        nextEl: ".main_popular .bottom_box .arrow.next",
+        prevEl: ".main_popular .bottom_box .arrow.prev",
     },
 });
 
-    popular_prod = createHomeSwiper(".popular_prod .slide_box", {
+    popular_prod = createHomeSwiper(".main_popular .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     pagination: {
-        el: ".popular_prod .main_tit .count_pager",
+        el: ".main_popular .main_tit .count_pager",
         type: "fraction",
     },
     thumbs: {
@@ -661,18 +661,8 @@ initHomeSwiperNear(".popular_prod", ()=>{
 });
 });
 
-// sale_prod 
-let sale_prod = null;
-initHomeSwiperNear(".sale_prod", ()=>{
-    if(sale_prod){
-        return;
-    }
-
-    sale_prod = createHomeSwiper(".sale_prod .slide_box", {
-        slidesPerView: 1.1,
-        spaceBetween: 12,
-    });
-});
+// 이달의 딜 브랜드 배너
+initHomeSwiperNear(".home_monthly_deals", initHomeMonthlyDeals);
 
 // video_prod 
 let video_prod = null;

@@ -585,24 +585,24 @@ const theme_prod_04 = createHomeSwiper(".theme_prod .tab_04 .slide_box", {
 });
 
 // popular_prod
-const popular_prod_pager = createHomeSwiper(".popular_prod .pager_box", {
+const popular_prod_pager = createHomeSwiper(".main_popular .pager_box", {
     slidesPerView: 'auto',
     spaceBetween: 10,
     navigation: {
-        nextEl: ".popular_prod .bottom_box .arrow.next",
-        prevEl: ".popular_prod .bottom_box .arrow.prev",
+        nextEl: ".main_popular .bottom_box .arrow.next",
+        prevEl: ".main_popular .bottom_box .arrow.prev",
     },
 });
 
-const popular_prod = createHomeSwiper(".popular_prod .slide_box", {
+const popular_prod = createHomeSwiper(".main_popular .slide_box", {
     slidesPerView: 1,
     spaceBetween: 0,
     navigation: {
-        nextEl: ".popular_prod .slide_arrow.next",
-        prevEl: ".popular_prod .slide_arrow.prev",
+        nextEl: ".main_popular .slide_arrow.next",
+        prevEl: ".main_popular .slide_arrow.prev",
     },
     pagination: {
-        el: ".popular_prod .main_tit .count_pager",
+        el: ".main_popular .main_tit .count_pager",
         type: "fraction",
     },
     thumbs: {
@@ -618,20 +618,8 @@ const popular_prod = createHomeSwiper(".popular_prod .slide_box", {
     }
 });
 
-// sale_prod 
-const sale_prod = createHomeSwiper(".sale_prod .slide_box", {
-    slidesPerView: 2,
-    spaceBetween: 30,
-    slidesPerGroup: 2,
-    navigation: {
-        nextEl: ".sale_prod .slide_arrow.next",
-        prevEl: ".sale_prod .slide_arrow.prev",
-    },
-    pagination: {
-        el: ".sale_prod .count_pager",
-        type: "fraction",
-    },
-});
+// 이달의 딜 브랜드 배너
+initHomeMonthlyDeals();
 
 // video_prod 
 const video_prod = createHomeSwiper(".video_prod .slide_box", {

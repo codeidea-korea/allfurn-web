@@ -1,38 +1,11 @@
-<section class="main_section sale_prod overflow-hidden">
+<section class="main_section home_monthly_deals thismonth_con01 overflow-hidden">
     <div class="inner">
         <div class="main_tit mb-5 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <h3>할인 상품이 필요하신가요?</h3>
             </div>
         </div>
-        <div class="relative">
-            <div class="slide_box ">
-                <ul class="swiper-wrapper">
-                    @foreach ($data['plandiscount_ad'] as $key => $goods)
-                        @if($loop->index >= 10)
-                        @else
-                        <li class="swiper-slide prod_item type02">
-                            <div class="img_box">
-                                <a href="{{ $goods->web_link }}">
-                                    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="{{ $goods->imgUrl }}" loading="lazy" decoding="async" fetchpriority="low" alt="">
-                                    <span><b>{{ $goods->subtext1 }}</b><br/>{{ $goods->subtext2 }}</span>
-                                </a>
-                                @if ($goods->gidx != "")
-                                    <button class="zzim_btn prd_{{ $goods->gidx }} {{ ($goods->interest == 1) ? 'active' : '' }}" pidx="{{ $goods->gidx }}"><svg><use xlink:href="/img/icon-defs.svg#zzim"></use></svg></button>
-                                @endif 
-                            </div>
-                            <div class="txt_box">
-                                <a href="{{ $goods->web_link }}">
-                                    <strong>{{ $goods->content }}</strong>
-                                    <span>{{ $goods->companyName }}</span>
-                                </a>
-                            </div>
-                        </li>
-                        @endif
-                    @endforeach
-                </ul>
-            </div>
-        </div>
+        @include('home.inc-monthly-deal-slider', ['dealbrand' => $data['plandiscount_ad'], 'mobile' => true])
         <a href="/product/thisMonth" class="btn btn-line4 mt-7">더보기</a>
     </div>
 </section>
